@@ -117,7 +117,7 @@ jobs:
         with:
           python-version: "3.11"
       - name: Install Hugging Face taxonomy client
-        run: python -m pip install --disable-pip-version-check "huggingface_hub>=1.0,<3" "yt-dlp==2026.11.23"
+        run: python -m pip install --disable-pip-version-check "huggingface_hub>=1.0,<3" yt-dlp "yt-dlp==2026.11.23"
       - name: Validate bootcamp configuration and discovery scripts
         run: |
           python -m json.tool config/buddy-open-source-bootcamp.json > /dev/null
@@ -135,7 +135,7 @@ jobs:
           python -m json.tool config/buddy-user-learning-data-manifest.json > /dev/null
           python -m json.tool config/buddy-continuous-study-policy.json > /dev/null
           python -m json.tool config/buddy_1000_source_learning_policy.json > /dev/null
-          python -m py_compile tools/discover_open_source_bootcamp_sources.py tools/discover_huggingface_subject_taxonomy.py tools/build_buddy_source_study_queue.py tools/process_authorized_bootcamp_media.py tools/build_onet_task_curricula.py tools/fetch_onet_task_curricula.py tools/build_government_sales_pipeline.py tools/build_buddy_self_bootcamp.py tools/build_buddy_university_curriculum.py tools/build_buddy_university_daily_plan.py tools/organize_buddy_learning_assets.py buddy/learning/dreamco_summary_source.py
+          python -m py_compile tools/discover_open_source_bootcamp_sources.py tools/discover_huggingface_subject_taxonomy.py tools/build_buddy_source_study_queue.py tools/process_authorized_bootcamp_media.py tools/build_onet_task_curricula.py tools/fetch_onet_task_curricula.py tools/build_government_sales_pipeline.py tools/build_buddy_self_bootcamp.py tools/build_buddy_university_curriculum.py tools/build_buddy_university_daily_plan.py tools/organize_buddy_learning_assets.py buddy/learning/dreamco_summary_source.py tools/sync_freecodecamp_catalog.py
       - name: Run source rights and guide-queue tests
         run: python -m unittest discover -s tests -p 'test_buddy_source_study_queue.py' -v
       - name: Run local media rights and hash tests
