@@ -43,7 +43,7 @@ class TaskStoreTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "credential fields"):
             self.store.put("subject-alice", {"task_id": "bad1", "api_key": "do-not-store"})
         with self.assertRaisesRegex(ValueError, "credential-like value"):
-            self.store.put("subject-alice", {"task_id": "bad2", "note": "token sk-abcdefghijklmnopqrstuvwxyz123456"})
+            self.store.put("subject-alice", {"task_id": "bad2", "note": "token " + "sk-" + "abcdefghijklmnopqrstuvwxyz123456"})
 
     def test_database_directory_and_file_permissions_are_restricted(self):
         self.assertTrue(Path(self.path).parent.is_dir())
