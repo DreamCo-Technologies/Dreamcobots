@@ -10,6 +10,7 @@ ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / "config/generated/division-resource-readiness-map.json"
 RECONCILIATION = ROOT / "config/generated/division-reconciliation.json"
 OUTPUT = ROOT / "config/generated/division-owner-review-queue.json"
+APPROVAL_RECORD = ROOT / "config/review/division-owner-conversation-approval.json"
 
 
 class OwnerReviewQueueError(ValueError):
@@ -40,12 +41,28 @@ def _unique_index(rows: list[dict[str, Any]], key: str, label: str) -> dict[int,
 def build_owner_review_queue(
     source_path: Path = SOURCE,
     reconciliation_path: Path = RECONCILIATION,
+    approval_path: Path | None = None,
 ) -> dict[str, Any]:
     source_raw = source_path.read_bytes()
     reconciliation_raw = reconciliation_path.read_bytes()
     source = json.loads(source_raw)
     reconciliation = json.loads(reconciliation_raw)
     review = source.get("owner_review") or {}
+    approval_raw = approval_path.read_bytes() if approval_path else b""
+    approval = json.loads(approval_raw) if approval_raw else {}
+    if approval and approval.get("schema") != "dreamco.division_owner_conversation_approval.v1":
+        raise OwnerReviewQueueError("invalid_conversation_approval_record_schema")
+    approved_core = {int(row["masterbot_id"]): row for row in approval.get("exact_name_matches", [])}
+    approved_supplemental = {str(row["domain_id"]): row for row in approval.get("supplemental_collaborators", [])}
+    approved_shared_ids = set((approval.get("shared_platform_services") or {}).get("masterbot_ids", []))
+    if approval and (
+        approval.get("status") != "user_approved_pending_github_identity_attestation"
+        or (approval.get("approver") or {}).get("identity_verification") != "not_independently_verified_by_github"
+        or set(approved_core) != set(range(1, 46))
+        or set(approved_supplemental) != {str(row["domain_id"]) for row in review.get("unassigned_domain_profiles", [])}
+        or approved_shared_ids != set(range(46, 66))
+    ):
+        raise OwnerReviewQueueError("conversation_approval_record_must_match_45_10_20_sources_and_remain_unattested")
 
     platform_rows = reconciliation.get("shared_platform_masterbots", [])
     platform_by_id = _unique_index(platform_rows, "id", "shared_platform_masterbot")
@@ -94,6 +111,8 @@ def build_owner_review_queue(
                 "dataset_discovery_lane_id": route.get("dataset_discovery_lane_id"),
                 "capability_pack_ids": list(route.get("capability_pack_ids") or []),
                 "decision": "SHARED_PLATFORM_ROLE_REQUIRES_OWNER_CONFIRMATION",
+                "user_approval_status": (approval.get("shared_platform_services") or {}).get("decision") if ident in approved_shared_ids else None,
+                "github_identity_attestation_required": ident in approved_shared_ids,
                 "owner_confirmation_required": True,
                 "owner_approval": None,
                 "evidence": PLATFORM_EVIDENCE,
@@ -101,7 +120,16 @@ def build_owner_review_queue(
             })
             continue
         if item.get("mapping_status") == "proposed_exact_name_match" or item.get("decision") == "PENDING_OWNER_REVIEW" or item.get("primary_domain_id") is None:
+            route = source_routes.get(ident)
+            if route is None:
+                raise OwnerReviewQueueError("pending_masterbot_mapping_missing_resource_route")
             proposed_domain = item.get("primary_domain_id")
+            approval_item = approved_core.get(ident)
+            if approval_item and (
+                approval_item.get("masterbot_name") != item.get("masterbot_name")
+                or approval_item.get("domain_id") != proposed_domain
+            ):
+                raise OwnerReviewQueueError("conversation_approval_core_identity_mismatch")
             evidence = list(item.get("evidence") or [])
             if not evidence:
                 evidence = [
@@ -116,6 +144,8 @@ def build_owner_review_queue(
                 "candidate_domain_ids": list(item.get("candidate_domain_ids") or ([proposed_domain] if proposed_domain else [])),
                 "proposed_primary_domain_id": proposed_domain,
                 "decision": "PENDING_OWNER_REVIEW",
+                "user_approval_status": approval_item.get("decision") if approval_item else None,
+                "github_identity_attestation_required": bool(approval_item),
                 "owner_approval": item.get("owner_approval"),
                 "evidence": evidence,
                 "no_mapping_inferred": True,
@@ -142,6 +172,12 @@ def build_owner_review_queue(
                 str(supplemental["source_portfolio"]),
             ])
         candidates = [proposed_id] if proposed_id is not None else list(item.get("candidate_masterbot_ids") or [])
+        approval_item = approved_supplemental.get(str(item["domain_id"]))
+        if approval_item and (
+            approval_item.get("domain_name") != item.get("domain_name")
+            or approval_item.get("proposed_collaborator_masterbot_id") != proposed_id
+        ):
+            raise OwnerReviewQueueError("conversation_approval_supplemental_identity_mismatch")
         unassigned.append({
             "domain_id": str(item["domain_id"]),
             "domain_name": str(item["domain_name"]),
@@ -151,6 +187,8 @@ def build_owner_review_queue(
             "masterbot_link_status": "proposed_requires_owner_review" if proposed_id is not None else None,
             "resource_bundle_id": item.get("standalone_resource_bundle_id"),
             "decision": "PENDING_OWNER_REVIEW",
+            "user_approval_status": approval_item.get("decision") if approval_item else None,
+            "github_identity_attestation_required": bool(approval_item),
             "owner_approval": item.get("owner_approval"),
             "evidence": sorted(set(evidence)),
             "no_mapping_inferred": True,
@@ -168,6 +206,13 @@ def build_owner_review_queue(
         "schema": "dreamco.division_owner_review_queue.v1",
         "source_map_sha256": hashlib.sha256(source_raw).hexdigest(),
         "reconciliation_sha256": hashlib.sha256(reconciliation_raw).hexdigest(),
+        "conversation_approval_record": {
+            "record_id": approval.get("approval_record_id"),
+            "status": approval.get("status"),
+            "sha256": hashlib.sha256(approval_raw).hexdigest() if approval_raw else None,
+            "github_identity_attestation_required": bool(approval),
+            "is_signed_github_review": False,
+        },
         "masterbot_domain_decisions": pending,
         "shared_platform_masterbots": shared_platform,
         "unassigned_domain_profiles": unassigned,
@@ -186,12 +231,13 @@ def build_owner_review_queue(
             "evidence_reference_required": True,
             "shared_platform_roles_are_not_domain_owners": True,
             "training_or_model_promotion_blocked_until_required_review": True,
+            "conversation_approval_is_not_signed_github_review": True,
         },
         "truth_boundary": (
             "The 20 MasterBots classified by the reconciliation policy as shared platform services "
             "are not assigned to a primary domain. Their role and operational owner still require "
             "owner confirmation. Supplemental-domain collaborator IDs are evidence-backed proposals, "
-            "not approved assignments. No model training or production readiness is implied."
+            "not approved assignments. Chat approval provenance does not replace GitHub identity attestation or owner review. No model training or production readiness is implied."
         ),
     }
 
@@ -220,6 +266,9 @@ def validate_owner_review_queue(queue: dict[str, Any]) -> None:
             raise OwnerReviewQueueError("unapproved_mapping_or_inferred_assignment_detected")
         if item.get("owner_approval") is not None:
             raise OwnerReviewQueueError("approved_source_item_requires_a_separate_signed_decision_record")
+    for item in queue.get("masterbot_domain_decisions", []):
+        if not item.get("resource_bundle_id") or not item.get("evidence"):
+            raise OwnerReviewQueueError("pending_masterbot_mapping_missing_resource_or_evidence_lineage")
 
     for item in queue.get("shared_platform_masterbots", []):
         if (
@@ -254,7 +303,7 @@ def main() -> int:
     parser.add_argument("--reconciliation", type=Path, default=RECONCILIATION)
     parser.add_argument("--out", type=Path, default=OUTPUT)
     args = parser.parse_args()
-    queue = build_owner_review_queue(args.source, args.reconciliation)
+    queue = build_owner_review_queue(args.source, args.reconciliation, APPROVAL_RECORD)
     validate_owner_review_queue(queue)
     rendered = json.dumps(queue, indent=2, ensure_ascii=False) + "\n"
     if args.check:
