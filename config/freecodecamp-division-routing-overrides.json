@@ -59,12 +59,20 @@
         "Record every signal, decision, rejected order, simulated fill, and metric with reproducible strategy/data versions.",
         "Connect SnapTrade only for approved account discovery/read-only context; keep broker credentials in the secret manager.",
         "Route orders exclusively to Alpaca paper trading; verify order state transitions, retries, idempotency, and cancel behavior.",
-        "Run walk-forward validation, stress tests, transaction-cost sensitivity, and a paper-trading soak before any production review."
+        "Run walk-forward validation, stress tests, transaction-cost sensitivity, and a paper-trading soak before any production review.",
+        "Create Django apps and relational models for symbols, OHLCV bars, portfolios, strategy runs, signals, orders, and fills.",
+        "Build Django admin views and validation for market data and strategy configuration.",
+        "Design a Massive market-data adapter with rate limits, retries, provenance, and secrets stored only in an approved secret manager.",
+        "Add SnapTrade read-only account and holdings access; keep trading permissions disabled in the learning environment.",
+        "Implement a 12-month momentum score across a 50-symbol universe and test look-ahead bias, survivorship bias, missing data, and transaction costs.",
+        "Connect Alpaca only through its paper-trading environment after explicit sandbox verification; do not add a live-order endpoint.",
+        "Build a Django dashboard for portfolio state, signals, backtest results, and audit history.",
+        "Backfill approved historical data and run out-of-sample and walk-forward tests before requesting human review."
       ],
       "practice": "Buddy builds a synthetic-data momentum research lab, replays historical fixtures, compares baseline and candidate strategies, and emits a paper-trading report with risk limits and an audit trail.",
       "assessment": "Pass deterministic strategy unit tests, leakage checks, cost/slippage sensitivity, walk-forward holdout, risk-limit enforcement, duplicate-order/idempotency tests, and a paper-only integration test. No live order is permitted.",
       "benchmark": "DreamFinance momentum strategy benchmark: net-of-cost return, volatility, max drawdown, turnover, exposure, signal stability, and reproducibility; never rank by gross return alone.",
-      "buddy_demo": "Buddy runs `python -m buddy.trading.demo`, explains each signal and next-bar fill, inspects fees/slippage and drawdown, demonstrates a risk-limit rejection, and saves the reproducible paper-only report. No live broker, credentials, or orders are available.",
+      "buddy_demo": "Buddy runs `python -m buddy.trading.demo` on deterministic synthetic data, explains each signal and next-bar fill, inspects fees/slippage and drawdown, demonstrates risk-limit rejection, and saves the reproducible paper-only report. It can teach the planned Django/Massive/SnapTrade/Alpaca-paper phases, but those external integrations are not claimed as implemented. No live broker, credentials, or orders are available.",
       "rights_mode": "public_metadata_link_only_until_item_level_study_and_derivative_rights_review",
       "content_status": "original_implementation_brief"
     },
