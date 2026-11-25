@@ -105,7 +105,7 @@ PROFILES: dict[str, Any] = {
     },
     "io_schema": {
         "engine:analysis": {
-            "input": {"type": "object", "properties": {"objective": {"type": "string"}, "input": {"type": "object", "properties": {
+            "input": {"type": "object", "properties": {"objective": {"type": "string"}, "learning_task": {"type": "boolean"}, "allow_external_learning_fallback": {"type": "boolean"}, "input": {"type": "object", "properties": {
                 "records": {"type": "array"}, "values": {"type": "array"}, "metric": {"type": "string"},
                 "group_by": {"type": "string"}, "filters": {"type": "object"}, "query": {"type": "string"}, "top_n": {"type": "integer"}}}}},
             "output": {"type": "object", "required": ["status", "summary"], "properties": {
@@ -113,14 +113,14 @@ PROFILES: dict[str, Any] = {
                 "row_count": {"type": "integer"}, "numeric_fields": {"type": "object"}, "groups": {"type": "object"}, "top": {"type": "array"}}},
         },
         "engine:classification": {
-            "input": {"type": "object", "properties": {"objective": {"type": "string"}, "input": {"type": "object", "properties": {
+            "input": {"type": "object", "properties": {"objective": {"type": "string"}, "learning_task": {"type": "boolean"}, "allow_external_learning_fallback": {"type": "boolean"}, "input": {"type": "object", "properties": {
                 "text": {"type": "string"}, "labels": {"type": "array"}}}}},
             "output": {"type": "object", "required": ["status", "summary"], "properties": {
                 "status": {"enum": ["ok", "needs_input"]}, "summary": {"type": "string"}, "ranked": {"type": "array"},
                 "confidence": {"type": "number"}, "escalate_to_human": {"type": "boolean"}}},
         },
         "engine:workflow": {
-            "input": {"type": "object", "properties": {"objective": {"type": "string"}, "input": {"type": "object", "properties": {
+            "input": {"type": "object", "properties": {"objective": {"type": "string"}, "learning_task": {"type": "boolean"}, "allow_external_learning_fallback": {"type": "boolean"}, "input": {"type": "object", "properties": {
                 "steps": {"type": "array"}, "completed_steps": {"type": "array"}}}}},
             "output": {"type": "object", "required": ["status", "summary", "steps", "next_actions", "awaiting_owner_approval"], "properties": {
                 "status": {"enum": ["ok"]}, "summary": {"type": "string"}, "steps": {"type": "array"},
