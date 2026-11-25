@@ -4,7 +4,7 @@ Model architecture files are specifications, not permission to update weights. E
 
 1. A versioned architecture profile with `training_policy.enabled=true` and `weight_updates_authorized=true`.
 2. The profile must require a rights-cleared local dataset and keep external data and paid compute disabled.
-3. The profile must record `approved_by` and an `authorization_reference`.
+3. The profile must record `approved_by`, an `authorization_reference`, and an `approved_at` timestamp.
 4. The operator must pass `--authorize-weight-updates`, `--approved-by`, and the matching `--authorization-reference` at execution time.
 5. The dataset must be in the owner-controlled private data root and pass the signed-off manifest's owner, license, permission, path, scope and SHA-256 checks.
 6. Checkpoints and resume files must also stay inside the private data root.
