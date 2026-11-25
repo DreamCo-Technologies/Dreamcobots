@@ -1,0 +1,90 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Buddy benchmark evidence packet",
+  "type": "object",
+  "required": [
+    "schema",
+    "benchmark_id",
+    "model_id",
+    "model_version",
+    "training_fixture_sha256",
+    "holdout_fixture_sha256",
+    "scores",
+    "critical_gates",
+    "evidence"
+  ],
+  "properties": {
+    "schema": {
+      "const": "dreamco.buddy_benchmark_evidence_packet.v1"
+    },
+    "benchmark_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "model_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "model_version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "training_fixture_sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "holdout_fixture_sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "scores": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "integer",
+        "minimum": 0,
+        "maximum": 4
+      }
+    },
+    "critical_gates": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "boolean"
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "required": [
+        "run_id",
+        "evaluated_at_utc",
+        "result_sha256",
+        "source_commit",
+        "evaluator_version",
+        "reviewer_id"
+      ],
+      "properties": {
+        "run_id": {
+          "type": "string"
+        },
+        "evaluated_at_utc": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "result_sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "source_commit": {
+          "type": "string"
+        },
+        "evaluator_version": {
+          "type": "string"
+        },
+        "reviewer_id": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
