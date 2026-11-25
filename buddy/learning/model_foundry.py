@@ -424,6 +424,7 @@ def train_from_scratch(dataset_path: Path, output_path: Path, *, dataset_id: str
         "training_strategy": strategy,
         "dataset_sha256": sha256_file(dataset_path),
         "training_authorization": {"approved_by": approved_by, "authorization_reference": authorization_reference,
+                                  "approved_at": architecture_profile["training_policy"].get("approved_at"),
                                   "explicit_runtime_approval": explicit_training_authorization,
                                   "dataset_rights_manifest_schema": authorization_manifest.get("schema")},
         "architecture": architecture_metadata,
