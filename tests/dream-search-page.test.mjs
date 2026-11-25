@@ -10,6 +10,7 @@ const indexSource = readFileSync('website/data/dreamco-search-index.js', 'utf8')
 const context = { window: {} };
 vm.runInNewContext(indexSource, context);
 const searchIndex = context.window.DREAMCO_SEARCH_DATA;
+const fleet = JSON.parse(readFileSync('config/generated/bots.catalog.json', 'utf8'));
 
 test('DreamSearch page exposes local, web, filter, and Buddy controls', () => {
   for (const id of [
@@ -34,13 +35,13 @@ test('DreamSearch renders repository records without injecting indexed HTML', ()
 test('DreamSearch publishes the current governed repository inventory', () => {
   assert.equal(searchIndex.schema, 'dreamco.search_index.v1');
   assert.ok(searchIndex.documents.length >= 2300);
-  assert.equal(searchIndex.summary.counts_by_type.bot, 1120);
-  assert.equal(searchIndex.summary.canonical_indexed_bot_profiles, 1051);
-  assert.equal(searchIndex.summary.supplemental_indexed_bot_profiles, 69);
+  assert.equal(searchIndex.summary.counts_by_type.bot, fleet.bots.length + fleet.supplemental_bots.length);
+  assert.equal(searchIndex.summary.canonical_indexed_bot_profiles, fleet.bots.length);
+  assert.equal(searchIndex.summary.supplemental_indexed_bot_profiles, fleet.supplemental_bots.length);
   assert.equal(searchIndex.summary.counts_by_type.model, 500);
-  assert.equal(searchIndex.summary.counts_by_type.division, 55);
-  assert.equal(searchIndex.summary.canonical_indexed_divisions, 45);
-  assert.equal(searchIndex.summary.supplemental_indexed_divisions, 10);
+  assert.equal(searchIndex.summary.counts_by_type.division, fleet.divisions.length + fleet.supplemental_divisions.length);
+  assert.equal(searchIndex.summary.canonical_indexed_divisions, fleet.divisions.length);
+  assert.equal(searchIndex.summary.supplemental_indexed_divisions, fleet.supplemental_divisions.length);
 });
 
 test('DreamSearch web mode remains user initiated and privacy gated', () => {
