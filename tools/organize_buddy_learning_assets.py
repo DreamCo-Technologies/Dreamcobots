@@ -39,6 +39,34 @@ def guide_errors(guide:dict[str,Any], divisions:list[str])->list[str]:
     review=guide.get("review") if isinstance(guide.get("review"),dict) else {}
     if review.get("status")!="approved": errors.append("review.status must be approved")
     if not str(review.get("reviewer","")).strip() or not review.get("reviewed_at"): errors.append("reviewer and reviewed_at are required")
+    authorship=guide.get("authorship") if isinstance(guide.get("authorship"),dict) else {}
+    for key in ("authoring_entity","authoring_model","model_version","commissioned_for","human_contribution","owner_designation"):
+        if not str(authorship.get(key,"")).strip():
+            errors.append(f"authorship.{key} is required to preserve user ownership and AI authorship provenance")
+    if authorship.get("owner_confirmation_status") not in {"pending","confirmed","not_applicable"}:
+        errors.append("authorship.owner_confirmation_status must be pending, confirmed or not_applicable")
+    occupational_types={"onet_task","occupation","business_venture","venture_track","job_task"}
+    if source.get("source_type") in occupational_types:
+        workflow=guide.get("workflow",[])
+        if not isinstance(workflow,list) or len(workflow)<5:
+            errors.append("occupational guides require at least five complete workflow steps")
+        software=guide.get("software_and_tools",[])
+        if not isinstance(software,list) or len(software)<3:
+            errors.append("occupational guides require at least three researched software/tool categories")
+        capabilities=guide.get("agent_capabilities",[])
+        if not isinstance(capabilities,list) or len(capabilities)<3:
+            errors.append("occupational guides require at least three agent capabilities")
+        commercial=guide.get("commercial_pathway")
+        if not isinstance(commercial,dict) or not all(key in commercial for key in (
+            "buyer_research","offer_scope","pricing_model","sales_workflow","eligibility_and_credentials"
+        )):
+            errors.append("occupational guides require buyer, offer, pricing, sales and credential sections")
+    for item in guide.get("software_and_tools",[]) if isinstance(guide.get("software_and_tools"),list) else []:
+        if not isinstance(item,dict) or not all(str(item.get(key,"")).strip() for key in (
+            "category","capabilities","examples","alternatives","verification_date","license_or_pricing_review"
+        )):
+            errors.append("software_and_tools entries require category, capabilities, examples, alternatives, verification date and license/pricing review")
+            break
     mapped=[]
     for item in guide.get("division_mapping",[]) if isinstance(guide.get("division_mapping"),list) else []:
         name=item if isinstance(item,str) else item.get("division") if isinstance(item,dict) else None
