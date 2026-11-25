@@ -21,6 +21,10 @@ TRACKS = {
     "tolkien": "config/buddy-tolkien-study-track.json",
     "masterbots": "config/masterbot-65-registry.json",
     "division_crosswalk": "config/generated/masterbot-55-domain-crosswalk.json",
+    "workforce": "config/buddy-workforce-entrepreneurship-bootcamp.json",
+    "benchmark_index": "config/buddy-benchmark-index.json",
+    "benchmark_tasks": "config/buddy-benchmark-task-registry.json",
+    "model_profile": "config/buddy-25m-cpu-architecture-profile.json",
 }
 
 def load(path: Path) -> dict[str, Any]:
@@ -140,6 +144,79 @@ def audit(root: Path = ROOT) -> dict[str, Any]:
         result["errors"].append("Division crosswalk must contain exactly 55 domain records")
     if crosswalk.get("status") != "approved":
         result["warnings"].append("55-division ownership crosswalk is not approved; do not infer primary ownership")
+
+    workforce = docs.get("workforce", {})
+    paths = workforce.get("training_paths", [])
+    required_playbook_sections = workforce.get("task_capability_catalog", {}).get("task_playbook_requirements", [])
+    subject_count = sum(len(path.get("subjects", [])) for path in paths if isinstance(path, dict))
+    result["tracks"]["workforce_and_revenue"] = {
+        "manifest": TRACKS["workforce"],
+        "training_path_count": len(paths) if isinstance(paths, list) else 0,
+        "subject_work_items": subject_count,
+        "required_playbook_sections": len(required_playbook_sections) if isinstance(required_playbook_sections, list) else 0,
+        "status": "authoring_backlog_not_completed_playbooks",
+    }
+    if not isinstance(paths, list) or not paths:
+        result["errors"].append("workforce training_paths must be a non-empty array")
+    if not isinstance(required_playbook_sections, list) or len(required_playbook_sections) < 10:
+        result["errors"].append("workforce task-playbook contract is missing required sections")
+    if any(not isinstance(path, dict) or not path.get("subjects") for path in paths):
+        result["errors"].append("every workforce training path must contain subject work items")
+
+    benchmark_index = docs.get("benchmark_index", {})
+    programs = benchmark_index.get("programs", [])
+    benchmark_tasks = docs.get("benchmark_tasks", {}).get("tasks", [])
+    result["tracks"]["benchmarks"] = {
+        "program_manifest": TRACKS["benchmark_index"],
+        "task_manifest": TRACKS["benchmark_tasks"],
+        "program_count": len(programs) if isinstance(programs, list) else 0,
+        "task_count": len(benchmark_tasks) if isinstance(benchmark_tasks, list) else 0,
+        "status": "guide_and_evidence_backlog",
+        "measured_count": 0,
+    }
+    if not isinstance(programs, list) or not programs:
+        result["errors"].append("benchmark index must contain program records")
+    if not isinstance(benchmark_tasks, list) or not benchmark_tasks:
+        result["errors"].append("benchmark task registry must contain task records")
+
+    model_profile = docs.get("model_profile", {})
+    training_policy = model_profile.get("training_policy", {})
+    result["tracks"]["cpu_25m_model"] = {
+        "manifest": TRACKS["model_profile"],
+        "parameter_target": model_profile.get("parameter_target"),
+        "training_enabled": training_policy.get("enabled") is True,
+        "weight_updates_authorized": training_policy.get("weight_updates_authorized") is True,
+        "status": "architecture_profile_only",
+    }
+    if model_profile.get("parameter_target") != 25000000:
+        result["errors"].append("CPU LLM architecture profile must declare the 25,000,000 parameter target")
+    if training_policy.get("enabled") is not False or training_policy.get("weight_updates_authorized") is not False:
+        result["warnings"].append("25M profile training policy is not in the default disabled state")
+
+    onet_index_path = root / "data/onet/onet-task-index.json"
+    if onet_index_path.is_file():
+        try:
+            onet_index = load(onet_index_path)
+            inventory = onet_index.get("inventory", {})
+            result["tracks"]["onet_task_index"] = {
+                "manifest": "data/onet/onet-task-index.json",
+                "task_records": len(onet_index.get("tasks", [])),
+                "complete": inventory.get("complete") is True,
+                "release": onet_index.get("source", {}).get("release_version"),
+                "status": "verified_index" if inventory.get("complete") is True else "review_required",
+            }
+            if inventory.get("complete") is not True:
+                result["warnings"].append("O*NET task index exists but is not marked complete")
+        except (OSError, json.JSONDecodeError, ValueError) as exc:
+            result["errors"].append(f"invalid O*NET task index: {exc}")
+    else:
+        result["tracks"]["onet_task_index"] = {
+            "manifest": "data/onet/onet-task-index.json",
+            "task_records": 0,
+            "complete": False,
+            "status": "refresh_workflow_required",
+        }
+        result["warnings"].append("O*NET task-level index snapshot is not yet present")
 
     result["status"] = "structural_errors" if result["errors"] else ("coverage_gaps_present" if result["warnings"] else "inventory_passed")
     return result
