@@ -428,7 +428,7 @@ def resources_for_masterbot(masterbot: str, root: Path = ROOT) -> list[Resource]
         Resource(id=lesson.resource_id, name=lesson.title, category=lesson.category, url=lesson.source_url,
                  methods=("study_original_dreamco_guide", "practice_in_sandbox", "complete_assessment",
                           "run_independent_benchmark", "record_evidence"))
-        for lesson in load_course_lessons(root)
+        for lesson in load_course_lessons(root) if lesson.content_status == "authored"
     ]
 
 
