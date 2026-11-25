@@ -12167,7 +12167,7 @@ Every taxonomy subsystem must receive its own owner lane, versioned input/output
 
 ### Hugging Face Datasets API
 
-- **Subsystem ID:** `taxonomy_technology_discovery_source_huggingface-datasets`
+- **Subsystem ID:** `taxonomy_technology_discovery_source_huggingface_datasets`
 - **Group:** `technology_discovery_source`
 - **Mission:** Dedicated technology discovery source subsystem for "Hugging Face Datasets API".
 - **Source files:** `config/buddy/technology-discovery-policy.json`
@@ -12184,7 +12184,7 @@ Every taxonomy subsystem must receive its own owner lane, versioned input/output
 
 ### Ollama Official Model Library
 
-- **Subsystem ID:** `taxonomy_technology_discovery_source_ollama-library`
+- **Subsystem ID:** `taxonomy_technology_discovery_source_ollama_library`
 - **Group:** `technology_discovery_source`
 - **Mission:** Dedicated technology discovery source subsystem for "Ollama Official Model Library".
 - **Source files:** `config/buddy/technology-discovery-policy.json`
