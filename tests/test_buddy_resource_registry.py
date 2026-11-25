@@ -38,6 +38,12 @@ class ResourceRegistryTest(unittest.TestCase):
         self.assertIn("XAI_API_KEY", summary["secret_names_to_set"])
         self.assertIn("xai_outputs_for_training", summary["blocked"])
 
+    def test_local_rag_is_wired_into_buddy_library_runtime(self):
+        local_rag = next(item for item in REGISTRY["resources"] if item["id"] == "local_rag")
+        self.assertIn("buddy/learning/runtime_bridge.py", local_rag["wired_into"])
+        self.assertIn("buddy/datasets/unknown_router.py", local_rag["wired_into"])
+        self.assertIn("buddy.learning.library_knowledge_router", local_rag["gives_buddy"])
+
     def test_xai_router_entry_stays_contract_only_with_training_block(self):
         router = json.loads((ROOT / "config" / "buddy-model-router.json").read_text())
         xai = next(item for item in router["connectors"] if item["id"] == "xai")
