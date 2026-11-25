@@ -104,7 +104,11 @@
         "Temporal",
         "PostgreSQL",
         "pytest",
-        "CodeQL"
+        "CodeQL",
+        "DreamCo PR Review Guardian",
+        "Code Trust Gate",
+        "change-impact-test-policy",
+        "Repository Test Matrix"
       ],
       "agent_tags": [
         "pr-orchestrator",
@@ -113,7 +117,10 @@
         "test-coverage-review-agent",
         "documentation-review-agent",
         "independent-verifier",
-        "human-approval-gate"
+        "human-approval-gate",
+        "diff-classifier-agent",
+        "test-impact-agent",
+        "review-synthesizer"
       ],
       "objective": "Design a fault-tolerant multi-agent pull-request reviewer that applies senior-engineer judgment through explicit review dimensions, auditable findings, confidence, and independent verification.",
       "implementation_steps": [
@@ -133,7 +140,7 @@
       "practice": "Buddy reviews a deliberately seeded test PR using separate security, quality, test, and documentation agents, then has an independent verifier challenge each finding.",
       "assessment": "Pass seeded defect detection, false-positive controls, malicious PR-content isolation, timeout/partial-agent recovery, exact-commit anchoring, evidence validation, and human-approval tests. Auto-merge remains disabled.",
       "benchmark": "DreamCo PR Guardian benchmark: precision/recall by severity, false-positive rate, verified-fix rate, regression escape rate, review latency, and per-review cost.",
-      "buddy_demo": "Demonstrate an end-to-end PR review from webhook to specialist fan-out, structured findings, independent verification, review publication, and human merge approval.",
+      "buddy_demo": "Buddy invokes the DreamCo PR Review Guardian workflow, classifies the diff, maps changed files through config/change-impact-test-policy.json, runs the focused tests and Repository Test Matrix, checks security and dependency risks, summarizes evidence and unresolved risks, and requests human approval. It never auto-merges or approves its own changes.",
       "rights_mode": "public_metadata_link_only_until_item_level_study_and_derivative_rights_review",
       "content_status": "original_implementation_brief"
     },
