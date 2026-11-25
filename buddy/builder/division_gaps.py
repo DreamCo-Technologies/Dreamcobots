@@ -10,12 +10,25 @@ ROOT = Path(__file__).resolve().parents[2]
 
 def check() -> dict:
     rows = []
-    for path in sorted(ROOT.iterdir()):
-        if not path.is_dir() or path.name.startswith(".") or path.name == "node_modules":
-            continue
-        files = sum(1 for item in path.rglob("*") if item.is_file())
-        market = any("market" in item.name.lower() for item in path.glob("*") if item.is_file())
-        rows.append({"division": path.name, "files": files, "market_data": market, "working": False, "production_ready": False})
+    division_root = ROOT / "config" / "divisions"
+    for config_path in sorted(division_root.glob("*.json")):
+        payload = json.loads(config_path.read_text(encoding="utf-8"))
+        identity = payload.get("identity") if isinstance(payload.get("identity"), dict) else {}
+        division = str(identity.get("division") or config_path.stem)
+        source_paths = {
+            str(row.get("source_path"))
+            for row in payload.get("capabilities", [])
+            if isinstance(row, dict) and isinstance(row.get("source_path"), str) and row.get("source_path")
+        }
+        existing_sources = [ROOT / source for source in sorted(source_paths) if (ROOT / source).is_file()]
+        market = any("market" in Path(source).name.lower() for source in source_paths)
+        rows.append({
+            "division": division,
+            "files": len(existing_sources),
+            "market_data": market,
+            "working": False,
+            "production_ready": False,
+        })
     return {"divisions": rows, "working": 0, "production_ready": False}
 
 
