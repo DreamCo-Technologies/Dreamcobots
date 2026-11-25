@@ -106,6 +106,10 @@ Unclassified records are assigned to DreamEducation and CommandCore for metadata
 
 The committed 1,740-video snapshot is still marked **partial** because its original enumerator version and expected playlist count were not recorded. A CI refresh now runs yt-dlp against the official public channel, verifies playlist_count against unique parsed IDs, and uploads the resulting metadata catalog for review. Until that verified snapshot is adopted, division queues are explicitly provisional and daily lesson slots receive no candidate assignments. A successful metadata refresh does not grant transcript, derivative-summary, or training rights.
 
+### Learning modes Buddy must expose
+
+Each specialist path advertises multiple modes: plain-language explanation, visual concept map, worked example, interactive sandbox, guided pair programming, flashcards, retrieval quiz, spaced repetition, voice walkthrough, code review, scenario simulation, and portfolio capstone. Buddy should adapt the mode to the learner and preserve the same assessment and evidence requirements across modes. Metadata-triage records use only metadata review, guided classification, rights check, and human review; they are not presented as lessons.
+
 ### Required Buddy demonstration sequence
 
 1. Resolve the source video metadata and verify the item-level source and rights status.
