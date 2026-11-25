@@ -41,6 +41,7 @@ jobs:
 
       - name: Install deterministic dependencies
         run: npm ci
+          python3 -m pip install --disable-pip-version-check PyYAML
 
       - name: Refresh generated verification contracts
         run: |
