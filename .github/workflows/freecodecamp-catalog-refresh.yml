@@ -31,11 +31,21 @@ jobs:
         run: |
           python tools/sync_freecodecamp_learning_inventory.py
           python tools/sync_freecodecamp_learning_inventory.py --check
-      - name: Validate curriculum and catalog tests
+      - name: Build division queues with truthful inventory status
         run: |
-          python -m py_compile tools/sync_freecodecamp_catalog.py tools/sync_freecodecamp_learning_inventory.py buddy/learning/course_track_registry.py
+          if python -c 'import json; from pathlib import Path; d=json.loads(Path("buddy/bootcamp/sources/freecodecamp/catalog.json").read_text()); i=d.get("inventory", {}); raise SystemExit(0 if d.get("inventory_status") == "complete" and i.get("complete") is True else 1)'; then
+            python tools/build_freecodecamp_division_queues.py --out config/generated/freecodecamp-division-learning-queues.json
+            rm -f config/generated/freecodecamp-provisional-division-learning-queues.json
+          else
+            python tools/build_freecodecamp_division_queues.py --allow-partial --out config/generated/freecodecamp-provisional-division-learning-queues.json
+            rm -f config/generated/freecodecamp-division-learning-queues.json
+          fi
+      - name: Validate curriculum, catalog, and division queue tests
+        run: |
+          python -m py_compile tools/sync_freecodecamp_catalog.py tools/sync_freecodecamp_learning_inventory.py tools/build_freecodecamp_division_queues.py buddy/learning/course_track_registry.py
           python -m unittest discover -s tests -p 'test_freecodecamp_catalog.py' -v
           python -m unittest discover -s tests -p 'test_freecodecamp_learning_inventory.py' -v
+          python -m unittest discover -s tests -p 'test_freecodecamp_division_queues.py' -v
           python -m unittest discover -s tests -p 'test_buddy_course_track_registry.py' -v
       - name: Open a reviewable catalog update PR
         uses: peter-evans/create-pull-request@v7
@@ -63,3 +73,5 @@ jobs:
             buddy/bootcamp/sources/freecodecamp/catalog.json
             config/freecodecamp-complete-learning-path.json
             config/buddy-continuous-study-policy.json
+            config/generated/freecodecamp-division-learning-queues.json
+            config/generated/freecodecamp-provisional-division-learning-queues.json
