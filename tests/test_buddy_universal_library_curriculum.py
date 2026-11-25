@@ -68,6 +68,17 @@ class UniversalLibraryCurriculumTests(unittest.TestCase):
         self.assertIn("training_permission", schema["properties"]["rights"]["required"])
         self.assertIn("holdout", schema["properties"]["evaluation"]["required"])
 
+    def test_bootcamp_yaml_adapter_counts_match_registry_coverage(self):
+        bootcamp = (ROOT / "buddy/bootcamp/buddy_bootcamp.yaml").read_text(encoding="utf-8")
+        coverage = self.read_json("config/buddy-library-ecosystem-adapter-coverage.json")
+        import re
+        automated = re.search(r"automated_ecosystem_discovery_count:\\s*(\\d+)", bootcamp)
+        manual = re.search(r"manual_ecosystem_review_count:\\s*(\\d+)", bootcamp)
+        self.assertIsNotNone(automated)
+        self.assertIsNotNone(manual)
+        self.assertEqual(int(automated.group(1)), coverage["automated_ecosystem_count"])
+        self.assertEqual(int(manual.group(1)), coverage["manual_ecosystem_count"])
+
 
 if __name__ == "__main__":
     unittest.main()
