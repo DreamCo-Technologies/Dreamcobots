@@ -134,7 +134,8 @@ AGENT_CAPABILITY_CATALOG = {
     "field_and_physical_operations": ["scheduling", "dispatch", "routing", "work orders", "asset maintenance", "safety checklists", "IoT/SCADA awareness", "CAD/BIM", "quality inspection"]
 }
 def build(profiles: list[dict[str, Any]], hf: dict[str, Any], fcc: dict[str, Any],
-          onet: dict[str, Any], taxonomy: dict[str, Any], college: dict[str, Any] | None = None,\n          fcc_catalog: dict[str, Any] | None = None) -> dict[str, Any]:
+          onet: dict[str, Any], taxonomy: dict[str, Any], college: dict[str, Any] | None = None,
+          fcc_catalog: dict[str, Any] | None = None) -> dict[str, Any]:
     college = college or {}
     college_domains = college.get("knowledge_domains", college.get("domains", []))
     source_families = college.get("source_families", [])
@@ -323,12 +324,14 @@ def main() -> int:
     parser.add_argument("--freecodecamp-roadmap", required=True)
     parser.add_argument("--onet-curricula", required=True)
     parser.add_argument("--university-curriculum", required=True)
+    parser.add_argument("--freecodecamp-catalog")
     parser.add_argument("--out-dir", required=True)
     args = parser.parse_args()
     read = lambda value: json.loads(Path(value).read_text(encoding="utf-8"))
     profiles = division_profiles(Path(args.division_source).read_text(encoding="utf-8"))
+    fcc_catalog = read(args.freecodecamp_catalog) if args.freecodecamp_catalog else None
     result = build(profiles, read(args.huggingface_taxonomy), read(args.freecodecamp_roadmap),
-                   read(args.onet_curricula), read(args.bootcamp_config), read(args.university_curriculum))
+                   read(args.onet_curricula), read(args.bootcamp_config), read(args.university_curriculum), fcc_catalog)
     out = Path(args.out_dir)
     out.mkdir(parents=True, exist_ok=True)
     (out / "buddy-university-learning-map.json").write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
