@@ -73,8 +73,9 @@ def main() -> int:
                   and item["training_strategy"] == args.strategy), None)
     if match is None:
         raise SystemExit("BLOCKED: dataset is not rights-approved for this division")
+    output_path.parent.mkdir(parents=True, exist_ok=True)
     result = train_from_scratch(
-        dataset_path, args.output, dataset_id=args.dataset_id,
+        dataset_path, output_path, dataset_id=args.dataset_id,
         division_id=args.division_id, strategy=args.strategy, seed=args.seed, steps=args.steps,
         resume_from=resume_path,
         architecture_profile=architecture_profile,
