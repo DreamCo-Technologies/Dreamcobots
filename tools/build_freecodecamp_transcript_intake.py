@@ -42,6 +42,8 @@ def build_intake(catalog: dict[str, Any], manifest: dict[str, Any], *, root: Pat
         raise ValueError("catalog must be the official freeCodeCamp YouTube channel")
     if not isinstance(catalog.get("videos"), list):
         raise ValueError("FreeCodeCamp catalog videos must be a list")
+    if manifest.get("schema") != "dreamco.authorized_transcript_manifest.v1":
+        raise ValueError("unsupported authorized transcript manifest schema")
     policy = manifest.get("rights_policy") or {}
     if policy.get("automatic_caption_scraping") is not False or policy.get("automatic_transcript_download") is not False:
         raise ValueError("automatic caption scraping and transcript download must remain disabled")
@@ -152,6 +154,8 @@ def audit_weekly_tests(
     max_age_days: int = 7,
 ) -> dict[str, Any]:
     now = now or datetime.now(timezone.utc)
+    if isinstance(max_age_days, bool) or not isinstance(max_age_days, int) or max_age_days < 1:
+        raise ValueError("max_age_days must be a positive integer")
     if now.tzinfo is None:
         raise ValueError("audit clock must be timezone-aware")
     if evidence.get("schema") != "dreamco.freecodecamp_weekly_buddy_test_evidence.v1":
