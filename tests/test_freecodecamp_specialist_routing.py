@@ -1,6 +1,10 @@
 from __future__ import annotations
 
+import json
 import unittest
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
 
 from buddy.learning.course_track_registry import (
     load_course_lessons,
@@ -81,6 +85,22 @@ class FreeCodeCampSpecialistRoutingTests(unittest.TestCase):
         self.assertIn("DreamAIInfra", computer_vision.division_targets)
         self.assertGreaterEqual(len(mcp_security.implementation_steps), 8)
         self.assertGreaterEqual(len(computer_vision.implementation_steps), 8)
+
+
+    def test_every_cataloged_machine_learning_agentic_and_devops_video_is_routed(self):
+        catalog = json.loads((ROOT / "buddy/bootcamp/sources/freecodecamp/catalog.json").read_text(encoding="utf-8"))
+        checks = [
+            ("machine_learning_and_deep_learning", "DreamAIInfra"),
+            ("ai_agents_and_mcp", "DreamAgents"),
+            ("cloud_devops_and_ci_cd", "DreamOps"),
+        ]
+        for category, division in checks:
+            rows = [row for row in catalog["videos"] if category in row.get("categories", [])]
+            self.assertTrue(rows, category)
+            for row in rows:
+                lesson = self.by_video[row["video_id"]]
+                self.assertEqual(lesson.content_status, "original_implementation_brief", row["video_id"])
+                self.assertIn(division, lesson.division_targets, row["video_id"])
 
     def test_course_overrides_reference_real_divisions_and_masterbot_lanes(self):
         canonical = {
