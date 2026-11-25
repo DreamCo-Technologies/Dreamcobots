@@ -9,7 +9,9 @@ from tools.generate_buddy_category_system_registry import build
 class BuddyCategorySystemGeneratorTests(unittest.TestCase):
     def test_study_catalogs_are_fully_represented(self):
         root = Path(__file__).resolve().parents[1]
-        registry, mirror = build(root)
+        registry = build(root)
+        import json
+        mirror = json.loads((root / "website/data/category-system-registry.json").read_text(encoding="utf-8"))
         self.assertEqual(registry, mirror)
         expected = set()
         for path in sorted((root / "config").glob("buddy-study-resources-*.json")):
@@ -25,7 +27,7 @@ class BuddyCategorySystemGeneratorTests(unittest.TestCase):
 
     def test_study_records_retain_exact_source_ids_and_files(self):
         root = Path(__file__).resolve().parents[1]
-        registry, _ = build(root)
+        registry = build(root)
         for item in registry["systems"]:
             if item.get("group") != "study":
                 continue
