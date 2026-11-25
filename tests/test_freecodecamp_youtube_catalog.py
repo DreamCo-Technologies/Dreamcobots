@@ -16,6 +16,24 @@ class FreeCodeCampCatalogTests(unittest.TestCase):
         self.assertEqual(result["categories"], ["other_needs_review"])
         self.assertEqual(result["skill_level"], "unknown")
 
+    def test_missing_metadata_is_individually_accounted_for(self):
+        responses = [
+            {"items": [{"contentDetails": {"relatedPlaylists": {"uploads": "uploads123"}}}]},
+            {"items": [
+                {"contentDetails": {"videoId": "videoA"}},
+                {"contentDetails": {"videoId": "videoB"}},
+            ]},
+            {"items": [
+                {"id": "videoA", "snippet": {"title": "Python foundations", "description": "", "publishedAt": "2026-01-01T00:00:00Z", "tags": []}, "contentDetails": {"duration": "PT1H"}}
+            ]},
+        ]
+        with patch("tools.catalog_freecodecamp_youtube._api_get", side_effect=responses):
+            result = catalog_all("test-key", sleep_seconds=0)
+        self.assertEqual(result["metadata_returned_count"], 1)
+        self.assertEqual(result["metadata_unavailable_video_ids"], ["videoB"])
+        self.assertTrue(result["metadata_fetch_complete"])
+        self.assertTrue(result["catalog_complete"])
+
     def test_catalog_paginates_and_marks_reference_only(self):
         responses = [
             {"items": [{"contentDetails": {"relatedPlaylists": {"uploads": "uploads123"}}}]},
@@ -31,6 +49,9 @@ class FreeCodeCampCatalogTests(unittest.TestCase):
         self.assertTrue(result["pagination_exhausted"])
         self.assertEqual(result["video_id_count"], 2)
         self.assertEqual(result["metadata_returned_count"], 2)
+        self.assertEqual(result["metadata_unavailable_video_ids"], [])
+        self.assertTrue(result["metadata_fetch_complete"])
+        self.assertTrue(result["catalog_complete"])
         self.assertEqual(result["videos"][0]["content_rights"], "THIRD_PARTY_REFERENCE_ONLY")
         self.assertEqual(result["videos"][0]["training_permission"], "NOT_GRANTED")
         self.assertFalse(result["videos"][0]["video_downloaded"])
