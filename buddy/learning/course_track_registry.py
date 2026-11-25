@@ -413,11 +413,20 @@ def _rows(track: dict, data: dict, root: Path = ROOT, *, include_blueprint: bool
         source_by_id = {
             str(video["video_id"]): video for video in data.get("videos", [])
         }
+        routing = _read(root / "config/freecodecamp-division-routing-overrides.json")
+        explicit_ids = {str(item.get("video_id")) for item in routing.get("entries", [])}
+        rules = routing.get("routing_rules", [])
         rows = []
         for row in metadata_rows:
             source = source_by_id.get(row["source_video_id"], {})
             categories = {str(value).casefold() for value in source.get("categories", [])}
-            if categories != {"other_or_unclassified"}:
+            searchable = f"{source.get('title', '')} {source.get('description', '')}".casefold()
+            has_specialist_route = row["source_video_id"] in explicit_ids or any(
+                any(str(term).casefold() in searchable for term in rule.get("match_title_terms", []))
+                or bool(categories.intersection(str(value).casefold() for value in rule.get("match_categories", [])))
+                for rule in rules
+            )
+            if categories != {"other_or_unclassified"} or has_specialist_route:
                 continue
             rows.append({
                 **row,
