@@ -23,6 +23,7 @@ tracks:
   - onet_full_content_model_and_task_engineering
   - huggingface_full_learning_map
   - freecodecamp_complete_video_catalog
+  - universal_software_libraries_and_frameworks
 stages:
   - diagnose
   - select_resource
@@ -49,6 +50,21 @@ rules:
   course_track_runtime_adapter: buddy.learning.course_track_registry
   original_study_guide_template: buddy/bootcamp/templates/study-guide-template.md
 learning_sources:
+  - id: universal_software_libraries
+    name: Universal software library and framework catalog
+    curriculum: config/buddy-universal-library-curriculum.json
+    guide_schema: config/buddy-library-study-guide.schema.json
+    guide_standard: docs/BUDDY_UNIVERSAL_LIBRARY_STUDY_GUIDE_STANDARD.md
+    runtime_adapter: planned_buddy_learning_universal_library_registry
+    applies_to: all_55_canonical_divisions_and_65_masterbot_lanes
+    discovery: authoritative_package_registries_first_party_docs_and_source_repositories
+    internal_first: true
+    api_inventory_must_be_version_pinned: true
+    rights_review_required: true
+    sandbox_required_for_untrusted_code: true
+    dataset_scripts_disabled_by_default: true
+    model_weight_training_requires_explicit_approval: true
+    mastery_evidence_required: [guide_review, sandbox_exercises, targeted_benchmark, unseen_holdout, regression]
   - id: freecodecamp
     name: freeCodeCamp.org
     channel_url: https://www.youtube.com/@freecodecamp
