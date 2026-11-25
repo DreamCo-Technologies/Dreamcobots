@@ -13,12 +13,13 @@ from tools.generate_production_evidence_ledger import build  # noqa: E402
 class ProductionEvidenceLedgerTest(unittest.TestCase):
     def test_every_real_division_is_reconciled_without_pseudo_buckets(self):
         data = build()
-        self.assertEqual(data["summary"]["real_divisions"], 55)
-        self.assertEqual(len(data["divisions"]), 55)
-        self.assertEqual(data["summary"]["catalog_profiles"], 1101)
+        self.assertEqual(data["summary"]["real_divisions"], 56)
+        self.assertEqual(len(data["divisions"]), 56)
+        self.assertEqual(data["summary"]["catalog_profiles"], 1120)
         self.assertTrue(data["summary"]["catalogs_reconciled"])
         self.assertNotIn("UNASSIGNED", {row["name"] for row in data["divisions"]})
-        self.assertIn("UNASSIGNED", {row["name"] for row in data["non_division_buckets"]})
+        self.assertIn("GrokTeammates", {row["name"] for row in data["non_division_buckets"]})
+        self.assertNotIn("UNASSIGNED", {row["name"] for row in data["non_division_buckets"]})
 
     def test_no_missing_receipt_can_be_promoted(self):
         data = build()
