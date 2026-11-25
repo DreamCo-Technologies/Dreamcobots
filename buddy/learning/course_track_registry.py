@@ -38,6 +38,13 @@ class CourseLesson:
     rights_mode: str
     delivery: str
     content_status: str = "authored"
+    division_targets: tuple[str, ...] = ()
+    masterbot_targets: tuple[str, ...] = ()
+    capability_tags: tuple[str, ...] = ()
+    tool_tags: tuple[str, ...] = ()
+    agent_tags: tuple[str, ...] = ()
+    implementation_steps: tuple[str, ...] = ()
+    buddy_demo: str = ""
 
 
 def _read(path: Path) -> dict:
@@ -340,19 +347,39 @@ def _rows(track: dict, data: dict, root: Path = ROOT) -> list[dict]:
             raise ValueError("freeCodeCamp video catalog count does not match its video rows")
         if int(inventory.get("observed_entry_count", -1)) != len(videos):
             raise ValueError("freeCodeCamp observed inventory count does not match video rows")
-        return [
-            {
+        routing_path = root / "config/freecodecamp-division-routing-overrides.json"
+        routing = _read(routing_path) if routing_path.is_file() else {}
+        if routing.get("schema") not in {None, "dreamco.freecodecamp_specialist_learning_overrides.v1"}:
+            raise ValueError("unsupported freeCodeCamp specialist routing override schema")
+        overrides = {str(item.get("video_id")): item for item in routing.get("entries", [])}
+        rules = routing.get("routing_rules", [])
+        rows = []
+        for row in videos:
+            searchable = f"{row.get('title', '')} {row.get('description', '')}".casefold()
+            rule = next((
+                candidate for candidate in rules
+                if any(str(term).casefold() in searchable for term in candidate.get("match_title_terms", []))
+            ), {})
+            overlay = {**rule, **overrides.get(str(row.get("video_id")), {})}
+            rows.append({
                 "id": f"fcc-video-{row['video_id']}",
                 "title": row["title"],
-                "objective": row.get("description") or "Study the video only after an authorized transcript or equivalent source is available; title and metadata are not lesson content.",
-                "practice": "Locate item-level study, derivative-summary and evaluation permissions; if authorized, create an original timestamped guide with exercises and answer key. Otherwise remain metadata-only.",
-                "assessment": "Do not mark studied or mastered from a title, video URL or metadata row. Require a rights-cleared source, detailed guide, original exercise and independent assessment.",
-                "benchmark": "FreeCodeCamp detailed video study-guide acceptance suite.",
+                "objective": overlay.get("objective") or row.get("description") or "Study the video only after an authorized transcript or equivalent source is available; title and metadata are not lesson content.",
+                "practice": overlay.get("practice") or "Locate item-level study, derivative-summary and evaluation permissions; if authorized, create an original timestamped guide with exercises and answer key. Otherwise remain metadata-only.",
+                "assessment": overlay.get("assessment") or "Do not mark studied or mastered from a title, video URL or metadata row. Require a rights-cleared source, detailed guide, original exercise and independent assessment.",
+                "benchmark": overlay.get("benchmark", "FreeCodeCamp detailed video study-guide acceptance suite."),
                 "source_url": row["url"],
-                "content_status": "metadata_only",
-            }
-            for row in videos
-        ]
+                "content_status": overlay.get("content_status", "metadata_only"),
+                "division_targets": overlay.get("division_targets", []),
+                "masterbot_targets": overlay.get("masterbot_targets", []),
+                "capability_tags": overlay.get("capability_tags", []),
+                "tool_tags": overlay.get("tool_tags", []),
+                "agent_tags": overlay.get("agent_tags", []),
+                "implementation_steps": overlay.get("implementation_steps", []),
+                "buddy_demo": overlay.get("buddy_demo", ""),
+                "rights_mode": overlay.get("rights_mode", "metadata_only_until_item_level_permissions"),
+            })
+        return rows
     if parser == "huggingface_learning_map":
         courses = [
             {"id": row["id"], "title": row["title"], "objective": row["topics"],
@@ -423,6 +450,8 @@ def load_course_lessons(root: Path = ROOT) -> list[CourseLesson]:
     masterbots = _read(root / "config/masterbot-65-registry.json")
     if len(crosswalk.get("domains", [])) != 55 or len(masterbots.get("divisions", [])) != 65:
         raise ValueError("course-track routing requires the canonical 55-domain and 65-MasterBot registries")
+    allowed_domains = {str(row.get("domain_name")) for row in crosswalk.get("domains", [])}
+    allowed_masterbots = {str(row.get("name")) for row in masterbots.get("divisions", [])}
     lessons: list[CourseLesson] = []
     seen: set[str] = set()
     resource_ids: set[int] = set()
@@ -441,6 +470,12 @@ def load_course_lessons(root: Path = ROOT) -> list[CourseLesson]:
             if rid in resource_ids:
                 raise ValueError("stable course resource ID collision")
             resource_ids.add(rid)
+            division_targets = tuple(str(value) for value in row.get("division_targets", []))
+            masterbot_targets = tuple(str(value) for value in row.get("masterbot_targets", []))
+            if not set(division_targets).issubset(allowed_domains):
+                raise ValueError(f"course {key} references unknown canonical divisions: {sorted(set(division_targets) - allowed_domains)}")
+            if not set(masterbot_targets).issubset(allowed_masterbots):
+                raise ValueError(f"course {key} references unknown MasterBot lanes: {sorted(set(masterbot_targets) - allowed_masterbots)}")
             lessons.append(CourseLesson(
                 resource_id=rid,
                 lesson_id=lesson_id,
@@ -456,6 +491,13 @@ def load_course_lessons(root: Path = ROOT) -> list[CourseLesson]:
                 rights_mode=str(row.get("rights_mode") or track["rights"]),
                 delivery=track["delivery"],
                 content_status=str(row.get("content_status", "authored")),
+                division_targets=division_targets,
+                masterbot_targets=masterbot_targets,
+                capability_tags=tuple(str(value) for value in row.get("capability_tags", [])),
+                tool_tags=tuple(str(value) for value in row.get("tool_tags", [])),
+                agent_tags=tuple(str(value) for value in row.get("agent_tags", [])),
+                implementation_steps=tuple(str(value) for value in row.get("implementation_steps", [])),
+                buddy_demo=str(row.get("buddy_demo", "")),
             ))
     return lessons
 
@@ -470,7 +512,9 @@ def resources_for_division(division: str, root: Path = ROOT) -> list[Resource]:
         Resource(id=lesson.resource_id, name=lesson.title, category=lesson.category, url=lesson.source_url,
                  methods=("study_original_dreamco_guide", "practice_in_sandbox", "complete_assessment",
                           "run_independent_benchmark", "record_evidence"))
-        for lesson in load_course_lessons(root) if lesson.content_status == "authored"
+        for lesson in load_course_lessons(root)
+        if lesson.content_status in {"authored", "original_implementation_brief"}
+        and (not lesson.division_targets or division in lesson.division_targets)
     ]
 
 
@@ -484,7 +528,9 @@ def resources_for_masterbot(masterbot: str, root: Path = ROOT) -> list[Resource]
         Resource(id=lesson.resource_id, name=lesson.title, category=lesson.category, url=lesson.source_url,
                  methods=("study_original_dreamco_guide", "practice_in_sandbox", "complete_assessment",
                           "run_independent_benchmark", "record_evidence"))
-        for lesson in load_course_lessons(root) if lesson.content_status == "authored"
+        for lesson in load_course_lessons(root)
+        if lesson.content_status in {"authored", "original_implementation_brief"}
+        and (not lesson.masterbot_targets or masterbot in lesson.masterbot_targets)
     ]
 
 
@@ -513,6 +559,13 @@ def plan_next_for_division(
         "benchmark": lesson.benchmark,
         "guide_path": lesson.guide_path,
         "rights_mode": lesson.rights_mode,
+        "division_targets": list(lesson.division_targets),
+        "masterbot_targets": list(lesson.masterbot_targets),
+        "capability_tags": list(lesson.capability_tags),
+        "tool_tags": list(lesson.tool_tags),
+        "agent_tags": list(lesson.agent_tags),
+        "implementation_steps": list(lesson.implementation_steps),
+        "buddy_demo": lesson.buddy_demo,
         "completion_status": "queued_not_studied",
         "mastery_awarded": False,
         "model_weight_training_authorized": False,
