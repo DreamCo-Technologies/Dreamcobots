@@ -268,7 +268,7 @@ def library_coverage_report(root: Path = ROOT) -> dict[str, Any]:
         "draft_guide_count": status_counts.get("draft", 0),
         "stale_guide_count": status_counts.get("stale", 0),
         "blocked_guide_count": status_counts.get("blocked", 0),
-        "open_gap_event_count": gaps,
+        "gap_event_count": gaps,
         "ecosystems": [row.get("id") for row in discovered_ecosystems],
         "guide_ids": [guide.canonical_id for guide in guides],
         "status": "partial" if len(guides) == 0 or gaps else "in_progress",
