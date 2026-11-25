@@ -4,7 +4,7 @@ This is a path-based discovery pass, not an exhaustive parser of every textual
 benchmark reference. It creates a review queue and never claims runs or scores.
 """
 from __future__ import annotations
-import argparse,json
+import argparse,json,os
 from pathlib import Path
 from typing import Any
 
@@ -25,14 +25,15 @@ def classify(path:Path)->str:
 def scan_repository(root:Path)->dict[str,Any]:
  root=root.resolve()
  rows=[]
- for path in root.rglob("*"):
-  if not path.is_file(): continue
-  relative=path.relative_to(root)
-  if any(part in EXCLUDED for part in relative.parts): continue
-  if "benchmark" not in str(relative).casefold(): continue
-  if path.suffix.casefold() not in TEXT_EXTENSIONS: continue
-  rel=relative.as_posix()
-  rows.append({"path":rel,"artifact_type":classify(relative),"guide_status":"individual_guide_linkage_not_verified","test_status":"test_linkage_not_verified","execution_status":"not_measured_by_scanner","measured":False,"required_work":["identify_canonical_benchmark_id","document_purpose_and_capability","document_inputs_and_dataset_provenance","document_environment_and_baseline","define_metrics_and_source_backed_thresholds","document_holdout_and_contamination_controls","document_safety_and_permissions","link_executable_tests_and_evidence_schema","record_known_limitations_and_review"]})
+ for current,dirs,files in os.walk(root):
+  dirs[:]=[name for name in dirs if name not in EXCLUDED]
+  for filename in files:
+   path=Path(current)/filename
+   relative=path.relative_to(root)
+   if "benchmark" not in str(relative).casefold(): continue
+   if path.suffix.casefold() not in TEXT_EXTENSIONS: continue
+   rel=relative.as_posix()
+   rows.append({"path":rel,"artifact_type":classify(relative),"guide_status":"individual_guide_linkage_not_verified","test_status":"test_linkage_not_verified","execution_status":"not_measured_by_scanner","measured":False,"required_work":["identify_canonical_benchmark_id","document_purpose_and_capability","document_inputs_and_dataset_provenance","document_environment_and_baseline","define_metrics_and_source_backed_thresholds","document_holdout_and_contamination_controls","document_safety_and_permissions","link_executable_tests_and_evidence_schema","record_known_limitations_and_review"]})
  rows.sort(key=lambda row:row["path"])
  return {"schema":"dreamco.repository_benchmark_artifact_inventory.v1","root":"repository","scan_mode":"path_name_only","artifact_count":len(rows),"status":"discovery_inventory_requires_content_reconciliation","artifacts":rows,"truth_boundary":"A path containing benchmark is a discovery candidate, not proof that it is a benchmark, has an individual guide, has a working test, or has been executed. This scanner does not inspect all textual references and cannot establish exhaustive repository coverage."}
 
