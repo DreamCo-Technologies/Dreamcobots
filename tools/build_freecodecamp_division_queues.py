@@ -100,7 +100,7 @@ def build_queues(catalog: dict[str, Any], crosswalk: dict[str, Any], limit: int 
         and inventory.get("duplicate_video_id_count") == 0
     )
     if not complete_inventory and not provisional_inventory:
-        raise ValueError("verified complete inventory required, or pass allow_partial=True for a clearly provisional queue with verified observed-row integrity")
+        raise ValueError("verified complete inventory for freeCodeCamp required, or pass allow_partial=True for a clearly provisional queue with verified observed-row integrity")
     if not isinstance(domains, list) or len(domains) != 55:
         raise ValueError("canonical 55-domain crosswalk required")
     domain_ids = [row.get("domain_id") for row in domains]

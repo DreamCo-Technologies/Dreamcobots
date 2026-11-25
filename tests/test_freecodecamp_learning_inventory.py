@@ -19,7 +19,7 @@ class FreeCodeCampLearningInventoryTests(unittest.TestCase):
             learning["youtube_video_inventory"]["observed_video_count"],
             learning["youtube_video_inventory"]["expected_entry_count"] or learning["youtube_video_inventory"]["observed_video_count"],
         )
-        self.assertEqual(policy["study_assets"]["course_track_count"], 9)
+        self.assertEqual(policy["study_assets"]["course_track_count"], 11)
         self.assertGreater(policy["study_assets"]["course_lesson_count"], learning["youtube_video_inventory"]["observed_video_count"])
         self.assertIn(learning["youtube_video_inventory"]["inventory_status"], {"complete", "partial"})
 

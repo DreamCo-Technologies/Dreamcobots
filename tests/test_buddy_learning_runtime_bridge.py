@@ -96,7 +96,22 @@ class RuntimeBridgeTests(unittest.TestCase):
         self.assertEqual(queue["schema"], "dreamco.buddy_library_learning_queue.v1")
         self.assertGreaterEqual(queue["available_count"], 1)
         self.assertTrue(any("React" in item["title"] for item in queue["items"]))
-        self.assertTrue(all(item["completion_status"] == "queued_not_studied" for item in queue["items"]))
+        self.assertTrue(all(
+            item["completion_status"] == (
+                "queued_not_studied" if item["content_status"] == "authored"
+                else "metadata_only" if item["content_status"] == "metadata_only"
+                else "authoring_backlog"
+            )
+            for item in queue["items"]
+        ))
+        self.assertTrue(all(
+            item["study_allowed"] is (item["content_status"] == "authored")
+            for item in queue["items"]
+        ))
+        self.assertTrue(all(
+            item["authoring_required"] is (item["content_status"] in {"authoring_backlog", "metadata_only"})
+            for item in queue["items"]
+        ))
         self.assertTrue(all(item["mastery_awarded"] is False for item in queue["items"]))
         self.assertFalse(queue["external_model_call_performed"])
 
