@@ -8,7 +8,7 @@ import { FleetRuntimeRegistry, fleetExecutionRequestSchema } from "../server/fle
 const fleetCatalog = JSON.parse(readFileSync(resolve(process.cwd(), "config", "generated", "bots.catalog.json"), "utf8"));
 const allFleetBots = [...fleetCatalog.bots, ...fleetCatalog.supplemental_bots];
 const expectedFleetProfiles = allFleetBots.length;
-const expectedDeclaredCapabilities = allFleetBots.reduce((total: number, bot: any) => total + bot.capabilities.length, 0);
+const expectedDeclaredCapabilities = allFleetBots.reduce((total: number, bot: any) => total + bot.capability_count, 0);
 
 test("instantiates and health-checks every canonical and supplemental fleet profile", () => {
   const registry = FleetRuntimeRegistry.fromFile();
