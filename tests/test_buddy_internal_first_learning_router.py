@@ -81,7 +81,11 @@ class BuddyInternalFirstLearningRouterTests(unittest.TestCase):
             with patch("buddy.learning.buddy_knowledge_router.search_internal_library_knowledge", return_value={
                 "matches": [], "seed_candidate_matches": [], "knowledge_gap": {"status": "internal_knowledge_gap"},
             }), patch("buddy.learning.buddy_knowledge_router._course_matches", return_value=[]):
-                result = route_buddy_learning_query("unmapped capability zqv 9842", root=root, record_gap=True)
+                with self.assertRaises(PermissionError):
+                    route_buddy_learning_query("unmapped capability zqv 9842", root=root, record_gap=True)
+                result = route_buddy_learning_query(
+                    "unmapped capability zqv 9842", root=root, record_gap=True, query_is_redacted=True
+                )
             self.assertEqual(result["gap_event"]["status"], "open")
             self.assertFalse(result["gap_event"]["external_routing_performed"])
             self.assertTrue((root / "data/buddy-library-knowledge-gaps.jsonl").is_file())
