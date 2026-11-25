@@ -5,7 +5,7 @@ import copy
 from pathlib import Path
 from typing import Any
 
-from . import engines, evidence, permissions
+from . import engines, evidence, permissions, router
 from .customize import apply_customization, effective_customization, load_customizations
 from .contract import expand, load_manifests, validate, validate_bot_manifest, load_schema
 from .routing import resolve_route
@@ -22,6 +22,19 @@ TASK_SCHEMA = {
         "objective": {"type": "string", "minLength": 1},
         "input": {"type": "object"},
         "action_level": {"type": "string"},
+        "learning_task": {"type": "boolean"},
+        "allow_external_learning_fallback": {"type": "boolean"},
+    },
+}
+LEARNING_ROUTE_SCHEMA = {
+    "type": "object",
+    "required": ["schema", "query", "route", "external_model_routing_performed", "mastery_awarded"],
+    "properties": {
+        "schema": {"const": "dreamco.buddy_internal_first_learning_route.v1"},
+        "query": {"type": "string"},
+        "route": {"enum": ["internal_approved_guide", "internal_bootcamp_lesson", "internal_knowledge_gap"]},
+        "external_model_routing_performed": {"type": "boolean"},
+        "mastery_awarded": {"type": "boolean"},
     },
 }
 
@@ -104,6 +117,7 @@ class FleetExecutor:
             if task_errors:
                 return self._finish(manifest, task, "invalid_input", "none", none_perm, {}, None,
                                     {"type": "invalid_input", "message": "; ".join(task_errors)}, stamp)
+            learning_query = str(task.get("objective") or "")
             if manifest.get("prompt"):
                 task["objective"] = f"{manifest['prompt']}\n\n{task.get('objective', '')}"
             permission = permissions.decide(manifest["permissions"]["ceiling"], task.get("action_level", "sandbox"))
@@ -113,6 +127,44 @@ class FleetExecutor:
             if not in_guard["allowed"]:
                 return self._finish(manifest, task, "guardrail_blocked", "none", permission,
                                     {"input": in_guard}, None, None, stamp)
+            if task.get("learning_task") is True:
+                from buddy.learning.buddy_knowledge_router import route_buddy_learning_query
+
+                learning_route = route_buddy_learning_query(learning_query)
+                route_errors = validate(learning_route, LEARNING_ROUTE_SCHEMA)
+                if route_errors:
+                    return self._finish(manifest, task, "error", "none", permission,
+                                        {"input": in_guard}, None,
+                                        {"type": "invalid_learning_route", "message": "; ".join(route_errors[:5])}, stamp)
+                route_kind = learning_route["route"]
+                if route_kind == "internal_approved_guide":
+                    status, mode, result = "ok", "internal_knowledge", learning_route
+                elif route_kind == "internal_bootcamp_lesson":
+                    status, mode, result = "ok", "internal_bootcamp_study", learning_route
+                else:
+                    status, mode, result = "needs_input", "offline_deterministic", learning_route
+                    if task.get("allow_external_learning_fallback") is True:
+                        fallback_profile = dict(self.profiles["model_router"][manifest["model_router"]])
+                        fallback = router.complete(
+                            learning_query,
+                            fallback_profile,
+                            lambda: "No approved internal guide or matching Bootcamp lesson was found.",
+                            env=self.env,
+                        )
+                        result = {
+                            **learning_route,
+                            "external_fallback": {"mode": fallback["mode"], "text": fallback["text"]},
+                            "external_model_routing_performed": fallback["mode"] == "live_model",
+                        }
+                        mode = fallback["mode"]
+                        if mode == "live_model":
+                            status = "ok"
+                out_guard = guardrail(str(result))
+                guards = {"input": in_guard, "output": out_guard}
+                if not out_guard["allowed"]:
+                    return self._finish(manifest, task, "guardrail_blocked", mode, permission, guards,
+                                        {"withheld": True}, None, stamp)
+                return self._finish(manifest, task, status, mode, permission, guards, result, None, stamp)
             profile = dict(self.profiles["model_router"][manifest["model_router"]])
             if manifest.get("model_alias") and profile.get("mode") != "offline_only":
                 profile["live_alias"] = manifest["model_alias"]

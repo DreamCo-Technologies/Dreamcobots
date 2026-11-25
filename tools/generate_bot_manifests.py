@@ -105,7 +105,7 @@ PROFILES: dict[str, Any] = {
     },
     "io_schema": {
         "engine:analysis": {
-            "input": {"type": "object", "properties": {"objective": {"type": "string"}, "input": {"type": "object", "properties": {
+            "input": {"type": "object", "properties": {"objective": {"type": "string"}, "learning_task": {"type": "boolean"}, "allow_external_learning_fallback": {"type": "boolean"}, "input": {"type": "object", "properties": {
                 "records": {"type": "array"}, "values": {"type": "array"}, "metric": {"type": "string"},
                 "group_by": {"type": "string"}, "filters": {"type": "object"}, "query": {"type": "string"}, "top_n": {"type": "integer"}}}}},
             "output": {"type": "object", "required": ["status", "summary"], "properties": {
@@ -113,25 +113,28 @@ PROFILES: dict[str, Any] = {
                 "row_count": {"type": "integer"}, "numeric_fields": {"type": "object"}, "groups": {"type": "object"}, "top": {"type": "array"}}},
         },
         "engine:classification": {
-            "input": {"type": "object", "properties": {"objective": {"type": "string"}, "input": {"type": "object", "properties": {
+            "input": {"type": "object", "properties": {"objective": {"type": "string"}, "learning_task": {"type": "boolean"}, "allow_external_learning_fallback": {"type": "boolean"}, "input": {"type": "object", "properties": {
                 "text": {"type": "string"}, "labels": {"type": "array"}}}}},
             "output": {"type": "object", "required": ["status", "summary"], "properties": {
                 "status": {"enum": ["ok", "needs_input"]}, "summary": {"type": "string"}, "ranked": {"type": "array"},
                 "confidence": {"type": "number"}, "escalate_to_human": {"type": "boolean"}}},
         },
         "engine:workflow": {
-            "input": {"type": "object", "properties": {"objective": {"type": "string"}, "input": {"type": "object", "properties": {
+            "input": {"type": "object", "properties": {"objective": {"type": "string"}, "learning_task": {"type": "boolean"}, "allow_external_learning_fallback": {"type": "boolean"}, "input": {"type": "object", "properties": {
                 "steps": {"type": "array"}, "completed_steps": {"type": "array"}}}}},
             "output": {"type": "object", "required": ["status", "summary", "steps", "next_actions", "awaiting_owner_approval"], "properties": {
                 "status": {"enum": ["ok"]}, "summary": {"type": "string"}, "steps": {"type": "array"},
                 "next_actions": {"type": "array"}, "awaiting_owner_approval": {"type": "array"}}},
         },
         "engine:drafting": {
-            "input": {"type": "object", "properties": {"objective": {"type": "string"}, "input": {"type": "object", "properties": {
-                "audience": {"type": "string"}, "tone": {"type": "string"}}}}},
+            "input": {"type": "object", "properties": {
+                "objective": {"type": "string"}, "learning_task": {"type": "boolean"},
+                "allow_external_learning_fallback": {"type": "boolean"},
+                "input": {"type": "object", "properties": {
+                    "audience": {"type": "string"}, "tone": {"type": "string"}}}}},
             "output": {"type": "object", "required": ["status", "summary", "draft_markdown", "generated_by"], "properties": {
                 "status": {"enum": ["ok"]}, "summary": {"type": "string"}, "draft_markdown": {"type": "string", "minLength": 1},
-                "generated_by": {"enum": ["offline_deterministic", "live_model"]}}},
+                "generated_by": {"enum": ["offline_deterministic", "live_model", "internal_knowledge", "internal_bootcamp_study"]}}},
         },
     },
     "error_handling": {
@@ -419,7 +422,7 @@ def render(collection: dict[str, Any]) -> str:
     head = {k: v for k, v in collection.items() if k != "bots"}
     text = json.dumps(head, indent=2, sort_keys=True, ensure_ascii=False)
     lines = ",\n".join("    " + json.dumps(b, sort_keys=True, ensure_ascii=False, separators=(",", ":")) for b in bots)
-    return text[:-2] + ',\n  "bots": [\n' + lines + "\n  ]\n}\n"
+    return text[:-1] + ',\n  "bots": [\n' + lines + "\n  ]\n}\n"
 
 
 def seed_division_counts() -> dict[str, int]:

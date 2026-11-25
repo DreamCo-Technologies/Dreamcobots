@@ -29,6 +29,9 @@
       "engine:analysis": {
         "input": {
           "properties": {
+            "allow_external_learning_fallback": {
+              "type": "boolean"
+            },
             "input": {
               "properties": {
                 "filters": {
@@ -54,6 +57,9 @@
                 }
               },
               "type": "object"
+            },
+            "learning_task": {
+              "type": "boolean"
             },
             "objective": {
               "type": "string"
@@ -95,6 +101,9 @@
       "engine:classification": {
         "input": {
           "properties": {
+            "allow_external_learning_fallback": {
+              "type": "boolean"
+            },
             "input": {
               "properties": {
                 "labels": {
@@ -105,6 +114,9 @@
                 }
               },
               "type": "object"
+            },
+            "learning_task": {
+              "type": "boolean"
             },
             "objective": {
               "type": "string"
@@ -143,6 +155,9 @@
       "engine:drafting": {
         "input": {
           "properties": {
+            "allow_external_learning_fallback": {
+              "type": "boolean"
+            },
             "input": {
               "properties": {
                 "audience": {
@@ -153,6 +168,9 @@
                 }
               },
               "type": "object"
+            },
+            "learning_task": {
+              "type": "boolean"
             },
             "objective": {
               "type": "string"
@@ -169,7 +187,9 @@
             "generated_by": {
               "enum": [
                 "offline_deterministic",
-                "live_model"
+                "live_model",
+                "internal_knowledge",
+                "internal_bootcamp_study"
               ]
             },
             "status": {
@@ -193,6 +213,9 @@
       "engine:workflow": {
         "input": {
           "properties": {
+            "allow_external_learning_fallback": {
+              "type": "boolean"
+            },
             "input": {
               "properties": {
                 "completed_steps": {
@@ -203,6 +226,9 @@
                 }
               },
               "type": "object"
+            },
+            "learning_task": {
+              "type": "boolean"
             },
             "objective": {
               "type": "string"
@@ -312,7 +338,8 @@
       "App_bots/masterbots-46-65.json": "no bots in file (metadata / pointer file)"
     }
   },
-  "truth_policy": "A manifest is configuration, not proof. Readiness is computed from tests and evidence by tools/fleet_runtime_audit.py.",
+  "truth_policy": "A manifest is configuration, not proof. Readiness is computed from tests and evidence by tools/fleet_runtime_audit.py."
+,
   "bots": [
     {"bench":3,"caps":6,"category":"3d-design","ceiling":"sandbox","division":"DreamArts","engine":"analysis","engine_confidence":0.438,"flags":[],"live":false,"name":"3D Asset Manager","run":"allowed","slug":"3d-asset-mgr","sources":["App_bots/DreamArts.json","bots/3d-asset-mgr.md"],"tier":"enterprise","tier_features_dropped":2},
     {"bench":3,"caps":5,"category":"workplace-org","ceiling":"sandbox","division":"DreamProduction","engine":"analysis","engine_confidence":0.703,"flags":[],"live":false,"name":"5S Workplace Audit Tool","run":"allowed","slug":"5s-audit-tool","sources":["App_bots/DreamProduction.json","bots/5s-audit-tool.md"],"tier":"free","tier_features_dropped":3},

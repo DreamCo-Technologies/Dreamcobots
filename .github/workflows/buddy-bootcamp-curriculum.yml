@@ -70,6 +70,13 @@ on:
       - "config/buddy-onet-content-model-curriculum.json"
       - "config/buddy-course-source-resources.json"
       - "buddy/learning/course_track_registry.py"
+      - "buddy/learning/buddy_knowledge_router.py"
+      - "buddy/fleet_runtime/router.py"
+      - "buddy/fleet_runtime/executor.py"
+      - "buddy/fleet_runtime/engines.py"
+      - "tools/generate_bot_manifests.py"
+      - "config/bots/bot-manifests.generated.json"
+      - "tests/test_fleet_runtime_executor.py"
       - "buddy/learning/universal_library_registry.py"
       - "buddy/learning/library_registry_discovery.py"
       - "config/buddy-library-registry-adapters.json"
@@ -89,6 +96,8 @@ on:
       - "tools/sync_freecodecamp_learning_inventory.py"
       - "config/buddy-continuous-study-policy.json"
       - "tests/test_buddy_course_track_registry.py"
+      - "tests/test_buddy_internal_first_learning_router.py"
+      - "tests/test_buddy_fleet_internal_bootcamp_routing.py"
       - "config/buddy-universal-library-curriculum.json"
       - "config/buddy-library-study-guide.schema.json"
       - "docs/BUDDY_UNIVERSAL_LIBRARY_STUDY_GUIDE_STANDARD.md"
@@ -166,6 +175,13 @@ on:
       - "buddy/learning/universal_library_registry.py"
       - "buddy/learning/library_registry_discovery.py"
       - "buddy/learning/course_track_registry.py"
+      - "buddy/learning/buddy_knowledge_router.py"
+      - "buddy/fleet_runtime/router.py"
+      - "buddy/fleet_runtime/executor.py"
+      - "buddy/fleet_runtime/engines.py"
+      - "tools/generate_bot_manifests.py"
+      - "config/bots/bot-manifests.generated.json"
+      - "tests/test_fleet_runtime_executor.py"
       - "tools/buddy_library_knowledge.py"
       - "tools/create_buddy_library_guide_draft.py"
       - "tools/build_buddy_library_seed_catalog.py"
@@ -176,6 +192,8 @@ on:
       - "tests/test_buddy_library_seed_catalog.py"
       - "tests/test_freecodecamp_learning_inventory.py"
       - "tools/sync_freecodecamp_learning_inventory.py"
+      - "tests/test_buddy_internal_first_learning_router.py"
+      - "tests/test_buddy_fleet_internal_bootcamp_routing.py"
 permissions:
   contents: read
 concurrency:
@@ -264,6 +282,10 @@ jobs:
           python -m unittest discover -s tests -p 'test_buddy_25m_cpu_llm_course.py' -v
           python -m unittest discover -s tests -p 'test_buddy_course_track_registry.py' -v
           python -m unittest discover -s tests -p 'test_buddy_universal_library_registry.py' -v
+          python -m unittest discover -s tests -p 'test_buddy_internal_first_learning_router.py' -v
+          python -m unittest discover -s tests -p 'test_buddy_fleet_internal_bootcamp_routing.py' -v
+          python -m unittest discover -s tests -p 'test_fleet_runtime_executor.py' -v
+          python tools/generate_bot_manifests.py --check
           python -m unittest discover -s tests -p 'test_buddy_library_registry_discovery.py' -v
           python -m unittest discover -s tests -p 'test_freecodecamp_learning_inventory.py' -v
           python -m unittest discover -s tests -p 'test_buddy_library_guide_draft.py' -v
@@ -294,6 +316,10 @@ jobs:
           python -m unittest discover -s tests -p 'test_buddy_25m_cpu_llm_course.py' -v
           python -m unittest discover -s tests -p 'test_buddy_course_track_registry.py' -v
           python -m unittest discover -s tests -p 'test_buddy_universal_library_registry.py' -v
+          python -m unittest discover -s tests -p 'test_buddy_internal_first_learning_router.py' -v
+          python -m unittest discover -s tests -p 'test_buddy_fleet_internal_bootcamp_routing.py' -v
+          python -m unittest discover -s tests -p 'test_fleet_runtime_executor.py' -v
+          python tools/generate_bot_manifests.py --check
           python -m unittest discover -s tests -p 'test_buddy_library_registry_discovery.py' -v
           python -m unittest discover -s tests -p 'test_freecodecamp_learning_inventory.py' -v
           python -m unittest discover -s tests -p 'test_buddy_library_guide_draft.py' -v
