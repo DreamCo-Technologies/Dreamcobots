@@ -77,13 +77,25 @@ def estimate_decoder_parameter_count(architecture: dict[str, Any]) -> int:
     return embeddings + layers * per_layer + 2 * width
 
 
-def validate_training_authorization(profile: dict[str, Any]) -> None:
-    """Fail closed unless a supplied profile explicitly authorizes weight updates."""
+def validate_training_authorization(profile, *, explicit_authorization=False, authorization_reference=None, approved_by=None):
+    """Fail closed unless policy, runtime approval, and an approval record all exist."""
+    if not isinstance(profile, dict):
+        raise PermissionError("an explicit training profile is required for every weight update")
     policy = profile.get("training_policy")
     if not isinstance(policy, dict):
-        raise PermissionError("architecture profile must include an explicit training_policy")
+        raise PermissionError("training profile must include an explicit training_policy")
     if policy.get("enabled") is not True or policy.get("weight_updates_authorized") is not True:
-        raise PermissionError("model weight updates are not explicitly authorized by this profile")
+        raise PermissionError("model weight updates are not enabled and authorized by the profile")
+    if policy.get("requires_rights_cleared_local_dataset") is not True:
+        raise PermissionError("training profile must require a rights-cleared local dataset")
+    if policy.get("external_data_allowed") is not False:
+        raise PermissionError("this trainer only accepts local rights-cleared datasets")
+    if explicit_authorization is not True:
+        raise PermissionError("explicit --authorize-weight-updates approval is required at execution time")
+    if not isinstance(authorization_reference, str) or len(authorization_reference.strip()) < 6:
+        raise PermissionError("a non-empty authorization reference is required")
+    if not isinstance(approved_by, str) or len(approved_by.strip()) < 2:
+        raise PermissionError("an approving owner identity is required")
 
 
 def sha256_file(path: Path) -> str:
@@ -200,8 +212,25 @@ def build_parallel_plan(registry: dict[str, Any], approved: list[dict[str, Any]]
 def train_from_scratch(dataset_path: Path, output_path: Path, *, dataset_id: str,
                        division_id: int, strategy: str, seed: int, steps: int = 100,
                        resume_from: Path | None = None,
-                       architecture_profile: dict[str, Any] | None = None) -> dict[str, Any]:
-    """Train a small byte-level decoder-only model using PyTorch and local approved text."""
+                       architecture_profile: dict[str, Any] | None = None,
+                       authorization_manifest: dict[str, Any] | None = None,
+                       data_root: Path | None = None,
+                       explicit_training_authorization: bool = False,
+                       authorization_reference: str | None = None,
+                       approved_by: str | None = None) -> dict[str, Any]:
+    """Train only after profile, runtime approval, and dataset-rights checks pass."""
+    validate_training_authorization(architecture_profile, explicit_authorization=explicit_training_authorization,
+                                   authorization_reference=authorization_reference, approved_by=approved_by)
+    if authorization_manifest is None or data_root is None:
+        raise PermissionError("the approved dataset manifest and private data root are required")
+    approved_datasets = validate_manifest(authorization_manifest, data_root)
+    approved_dataset = next((row for row in approved_datasets
+        if row.get("dataset_id") == dataset_id
+        and division_id in row.get("approved_division_ids", [])
+        and row.get("training_strategy") == strategy
+        and Path(row["_resolved_path"]).resolve() == dataset_path.resolve()), None)
+    if approved_dataset is None:
+        raise PermissionError("dataset is not rights-approved for this division, strategy, and exact local path")
     if strategy not in STRATEGY_PROFILES:
         raise ValueError(f"unsupported training strategy: {strategy}")
     profile = STRATEGY_PROFILES[strategy]
@@ -219,7 +248,6 @@ def train_from_scratch(dataset_path: Path, output_path: Path, *, dataset_id: str
         "bias": True,
     }
     if architecture_profile is not None:
-        validate_training_authorization(architecture_profile)
         architecture.update({
             key: architecture_profile[key]
             for key in (
@@ -353,6 +381,9 @@ def train_from_scratch(dataset_path: Path, output_path: Path, *, dataset_id: str
         "dataset_id": dataset_id,
         "training_strategy": strategy,
         "dataset_sha256": sha256_file(dataset_path),
+        "training_authorization": {"approved_by": approved_by, "authorization_reference": authorization_reference,
+                                  "explicit_runtime_approval": explicit_training_authorization,
+                                  "dataset_rights_manifest_schema": authorization_manifest.get("schema")},
         "architecture": {**DEFAULT_CONFIG, **architecture, "sequence_length": sequence_length},
         "architecture_profile": architecture,
         "parameter_target": target_parameters,
