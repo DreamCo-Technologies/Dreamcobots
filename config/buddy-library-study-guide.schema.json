@@ -3,41 +3,755 @@
   "$id": "https://dreamco.ai/schemas/buddy-library-study-guide.schema.json",
   "title": "Buddy Universal Library Study Guide",
   "type": "object",
-  "required": ["schema_version","library","provenance","learning_map","api_inventory","use_cases","practice","evaluation","rights","status"],
+  "required": [
+    "schema_version",
+    "library",
+    "provenance",
+    "learning_map",
+    "api_inventory",
+    "use_cases",
+    "practice",
+    "evaluation",
+    "rights",
+    "status"
+  ],
   "properties": {
-    "schema_version": {"const":"dreamco.buddy_library_study_guide.v1"},
-    "library": {
-      "type":"object",
-      "required":["canonical_id","name","ecosystem","artifact_type","official_homepage","version_reviewed"],
-      "properties":{
-        "canonical_id":{"type":"string","minLength":1},
-        "name":{"type":"string","minLength":1},
-        "ecosystem":{"type":"string"},
-        "artifact_type":{"enum":["library","framework","sdk","api","cli","runtime","database","protocol","platform","developer_tool","model_tooling"]},
-        "official_homepage":{"type":"string","format":"uri"},
-        "official_documentation":{"type":"array","items":{"type":"string","format":"uri"}},
-        "repository":{"type":["string","null"],"format":"uri"},
-        "version_reviewed":{"type":"string"},
-        "latest_version_checked_at":{"type":"string","format":"date"},
-        "maintenance_status":{"enum":["active","maintenance","deprecated","archived","unknown"]},
-        "license":{"type":"string"},
-        "supported_platforms":{"type":"array","items":{"type":"string"}}
-      },
-      "additionalProperties":true
+    "schema_version": {
+      "const": "dreamco.buddy_library_study_guide.v1"
     },
-    "provenance":{"type":"object","required":["sources","reviewed_at"],"properties":{"sources":{"type":"array","minItems":1,"items":{"type":"object","required":["url","source_type","accessed_at"],"properties":{"url":{"type":"string","format":"uri"},"source_type":{"type":"string"},"accessed_at":{"type":"string","format":"date"},"revision_or_version":{"type":["string","null"]},"license_or_terms_note":{"type":"string"}}}},"reviewed_at":{"type":"string","format":"date"},"reviewer":{"type":"string"}}},
-    "learning_map":{"type":"object","required":["prerequisites","objectives","concepts"],"properties":{"prerequisites":{"type":"array","items":{"type":"string"}},"objectives":{"type":"array","minItems":1,"items":{"type":"string"}},"concepts":{"type":"array","minItems":1,"items":{"type":"object","required":["name","explanation","limitations"],"properties":{"name":{"type":"string"},"explanation":{"type":"string"},"analogy":{"type":"string"},"limitations":{"type":"array","items":{"type":"string"}},"related_concepts":{"type":"array","items":{"type":"string"}}}}}}},
-    "api_inventory":{"type":"object","required":["inventory_method","coverage","entries"],"properties":{"inventory_method":{"type":"string"},"coverage":{"enum":["complete_for_pinned_version","partial","unknown"]},"entries":{"type":"array","items":{"type":"object","required":["symbol_or_feature","purpose","source"],"properties":{"symbol_or_feature":{"type":"string"},"purpose":{"type":"string"},"source":{"type":"string","format":"uri"},"example_status":{"enum":["verified","not_yet_written","not_applicable"]},"breaking_change_notes":{"type":"array","items":{"type":"string"}}}}}}},
-    "use_cases":{"type":"array","minItems":1,"items":{"type":"object","required":["category","scenario","implementation_pattern","tradeoffs","evidence"],"properties":{"category":{"enum":["common","production","advanced","specialist","cross_domain","experimental"]},"scenario":{"type":"string"},"implementation_pattern":{"type":"string"},"tradeoffs":{"type":"array","items":{"type":"string"}},"evidence":{"type":"array","items":{"type":"string","format":"uri"}},"confidence":{"enum":["high","medium","low","hypothesis"]}}}},
-    "architecture_patterns":{"type":"array","items":{"type":"object","required":["pattern","when_to_use","failure_modes"],"properties":{"pattern":{"type":"string"},"when_to_use":{"type":"string"},"failure_modes":{"type":"array","items":{"type":"string"}},"integrations":{"type":"array","items":{"type":"string"}}}}},
-    "security":{"type":"object","properties":{"threats":{"type":"array","items":{"type":"string"}},"safe_defaults":{"type":"array","items":{"type":"string"}},"secret_handling":{"type":"string"},"supply_chain":{"type":"array","items":{"type":"string"}},"sandbox_required":{"type":"boolean"}}},
-    "performance":{"type":"object","properties":{"profiling_methods":{"type":"array","items":{"type":"string"}},"scaling_limits":{"type":"array","items":{"type":"string"}},"cost_model":{"type":"string"}}},
-    "practice":{"type":"object","required":["worked_examples","exercises","projects","debugging_playbook"],"properties":{"worked_examples":{"type":"array","items":{"type":"object","required":["goal","steps","verification"],"properties":{"goal":{"type":"string"},"steps":{"type":"array","items":{"type":"string"}},"verification":{"type":"array","items":{"type":"string"}}}}},"exercises":{"type":"array","minItems":3,"items":{"type":"object","required":["difficulty","prompt","acceptance_criteria","tests"],"properties":{"difficulty":{"enum":["beginner","intermediate","advanced","expert"]},"prompt":{"type":"string"},"acceptance_criteria":{"type":"array","items":{"type":"string"}},"tests":{"type":"array","items":{"type":"string"}},"hints":{"type":"array","items":{"type":"string"}}}}},"projects":{"type":"array","items":{"type":"object","required":["name","deliverable","rubric"],"properties":{"name":{"type":"string"},"deliverable":{"type":"string"},"rubric":{"type":"array","items":{"type":"string"}},"extensions":{"type":"array","items":{"type":"string"}}}}},"debugging_playbook":{"type":"array","items":{"type":"object","required":["symptom","likely_causes","diagnosis","fix","prevention"],"properties":{"symptom":{"type":"string"},"likely_causes":{"type":"array","items":{"type":"string"}},"diagnosis":{"type":"array","items":{"type":"string"}},"fix":{"type":"array","items":{"type":"string"}},"prevention":{"type":"array","items":{"type":"string"}}}}}}},
-    "crosswalks":{"type":"object","properties":{"onet_tasks":{"type":"array","items":{"type":"string"}},"onet_skills":{"type":"array","items":{"type":"string"}},"huggingface_tasks":{"type":"array","items":{"type":"string"}},"benchmarks":{"type":"array","items":{"type":"string"}},"dreamco_divisions":{"type":"array","items":{"type":"string"}},"masterbot_lanes":{"type":"array","items":{"type":"string"}},"revenue_playbooks":{"type":"array","items":{"type":"string"}}}},
-    "innovation":{"type":"array","items":{"type":"object","required":["hypothesis","baseline","experiment","risk_review","evaluation"],"properties":{"hypothesis":{"type":"string"},"baseline":{"type":"string"},"experiment":{"type":"string"},"risk_review":{"type":"string"},"evaluation":{"type":"string"},"result":{"enum":["proposed","in_progress","supported","rejected","inconclusive"]}}}},
-    "evaluation":{"type":"object","required":["target_benchmark","holdout","regression","evidence_state"],"properties":{"target_benchmark":{"type":"string"},"holdout":{"type":"string"},"regression":{"type":"string"},"evidence_state":{"enum":["discovered","metadata_verified","source_reviewed","guide_drafted","guide_reviewed","sandbox_passed","benchmark_passed","holdout_passed","regression_passed","mastered","stale","blocked"]},"run_ids":{"type":"array","items":{"type":"string"}},"model_version":{"type":"string"}}},
-    "rights":{"type":"object","required":["documentation_access","derivative_summary_permission","evaluation_permission","training_permission"],"properties":{"documentation_access":{"enum":["public","account_required","gated","unknown"]},"derivative_summary_permission":{"enum":["approved","not_required_for_original_notes","pending","denied","unknown"]},"evaluation_permission":{"enum":["approved","pending","denied","unknown"]},"training_permission":{"enum":["approved","pending","denied","unknown"]},"download_permission":{"enum":["approved","pending","denied","unknown"]},"evidence_reference":{"type":"string"}}},
-    "status":{"enum":["draft","review_required","approved_for_study","blocked","stale","mastered"]}
+    "library": {
+      "type": "object",
+      "required": [
+        "canonical_id",
+        "name",
+        "ecosystem",
+        "artifact_type",
+        "official_homepage",
+        "version_reviewed",
+        "latest_version_checked_at"
+      ],
+      "properties": {
+        "canonical_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "ecosystem": {
+          "type": "string"
+        },
+        "artifact_type": {
+          "enum": [
+            "library",
+            "framework",
+            "sdk",
+            "api",
+            "cli",
+            "runtime",
+            "database",
+            "protocol",
+            "platform",
+            "developer_tool",
+            "model_tooling"
+          ]
+        },
+        "official_homepage": {
+          "type": "string",
+          "format": "uri"
+        },
+        "official_documentation": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uri"
+          }
+        },
+        "repository": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "uri"
+        },
+        "version_reviewed": {
+          "type": "string"
+        },
+        "latest_version_checked_at": {
+          "type": "string",
+          "format": "date"
+        },
+        "maintenance_status": {
+          "enum": [
+            "active",
+            "maintenance",
+            "deprecated",
+            "archived",
+            "unknown"
+          ]
+        },
+        "license": {
+          "type": "string"
+        },
+        "supported_platforms": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    "provenance": {
+      "type": "object",
+      "required": [
+        "sources",
+        "reviewed_at"
+      ],
+      "properties": {
+        "sources": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": [
+              "url",
+              "source_type",
+              "accessed_at"
+            ],
+            "properties": {
+              "url": {
+                "type": "string",
+                "format": "uri"
+              },
+              "source_type": {
+                "type": "string"
+              },
+              "accessed_at": {
+                "type": "string",
+                "format": "date"
+              },
+              "revision_or_version": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "license_or_terms_note": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "reviewed_at": {
+          "type": "string",
+          "format": "date"
+        },
+        "reviewer": {
+          "type": "string"
+        }
+      }
+    },
+    "learning_map": {
+      "type": "object",
+      "required": [
+        "prerequisites",
+        "objectives",
+        "concepts"
+      ],
+      "properties": {
+        "prerequisites": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "objectives": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          }
+        },
+        "concepts": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": [
+              "name",
+              "explanation",
+              "limitations"
+            ],
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "explanation": {
+                "type": "string"
+              },
+              "analogy": {
+                "type": "string"
+              },
+              "limitations": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "related_concepts": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "api_inventory": {
+      "type": "object",
+      "required": [
+        "inventory_method",
+        "coverage",
+        "entries"
+      ],
+      "properties": {
+        "inventory_method": {
+          "type": "string"
+        },
+        "coverage": {
+          "enum": [
+            "complete_for_pinned_version",
+            "partial",
+            "unknown"
+          ]
+        },
+        "entries": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "symbol_or_feature",
+              "purpose",
+              "source"
+            ],
+            "properties": {
+              "symbol_or_feature": {
+                "type": "string"
+              },
+              "purpose": {
+                "type": "string"
+              },
+              "source": {
+                "type": "string",
+                "format": "uri"
+              },
+              "example_status": {
+                "enum": [
+                  "verified",
+                  "not_yet_written",
+                  "not_applicable"
+                ]
+              },
+              "breaking_change_notes": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "use_cases": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "category",
+          "scenario",
+          "implementation_pattern",
+          "tradeoffs",
+          "evidence"
+        ],
+        "properties": {
+          "category": {
+            "enum": [
+              "common",
+              "production",
+              "advanced",
+              "specialist",
+              "cross_domain",
+              "experimental"
+            ]
+          },
+          "scenario": {
+            "type": "string"
+          },
+          "implementation_pattern": {
+            "type": "string"
+          },
+          "tradeoffs": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uri"
+            }
+          },
+          "confidence": {
+            "enum": [
+              "high",
+              "medium",
+              "low",
+              "hypothesis"
+            ]
+          }
+        }
+      }
+    },
+    "architecture_patterns": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "pattern",
+          "when_to_use",
+          "failure_modes"
+        ],
+        "properties": {
+          "pattern": {
+            "type": "string"
+          },
+          "when_to_use": {
+            "type": "string"
+          },
+          "failure_modes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "integrations": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "security": {
+      "type": "object",
+      "properties": {
+        "threats": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "safe_defaults": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "secret_handling": {
+          "type": "string"
+        },
+        "supply_chain": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "sandbox_required": {
+          "type": "boolean"
+        }
+      }
+    },
+    "performance": {
+      "type": "object",
+      "properties": {
+        "profiling_methods": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "scaling_limits": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "cost_model": {
+          "type": "string"
+        }
+      }
+    },
+    "practice": {
+      "type": "object",
+      "required": [
+        "worked_examples",
+        "exercises",
+        "projects",
+        "debugging_playbook"
+      ],
+      "properties": {
+        "worked_examples": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "goal",
+              "steps",
+              "verification"
+            ],
+            "properties": {
+              "goal": {
+                "type": "string"
+              },
+              "steps": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "verification": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "exercises": {
+          "type": "array",
+          "minItems": 3,
+          "items": {
+            "type": "object",
+            "required": [
+              "difficulty",
+              "prompt",
+              "acceptance_criteria",
+              "tests"
+            ],
+            "properties": {
+              "difficulty": {
+                "enum": [
+                  "beginner",
+                  "intermediate",
+                  "advanced",
+                  "expert"
+                ]
+              },
+              "prompt": {
+                "type": "string"
+              },
+              "acceptance_criteria": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "tests": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "hints": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "projects": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "name",
+              "deliverable",
+              "rubric"
+            ],
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "deliverable": {
+                "type": "string"
+              },
+              "rubric": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "extensions": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "debugging_playbook": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "symptom",
+              "likely_causes",
+              "diagnosis",
+              "fix",
+              "prevention"
+            ],
+            "properties": {
+              "symptom": {
+                "type": "string"
+              },
+              "likely_causes": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "diagnosis": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "fix": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "prevention": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "crosswalks": {
+      "type": "object",
+      "properties": {
+        "onet_tasks": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "onet_skills": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "huggingface_tasks": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "benchmarks": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "dreamco_divisions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "masterbot_lanes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "revenue_playbooks": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "innovation": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "hypothesis",
+          "baseline",
+          "experiment",
+          "risk_review",
+          "evaluation"
+        ],
+        "properties": {
+          "hypothesis": {
+            "type": "string"
+          },
+          "baseline": {
+            "type": "string"
+          },
+          "experiment": {
+            "type": "string"
+          },
+          "risk_review": {
+            "type": "string"
+          },
+          "evaluation": {
+            "type": "string"
+          },
+          "result": {
+            "enum": [
+              "proposed",
+              "in_progress",
+              "supported",
+              "rejected",
+              "inconclusive"
+            ]
+          }
+        }
+      }
+    },
+    "evaluation": {
+      "type": "object",
+      "required": [
+        "target_benchmark",
+        "holdout",
+        "regression",
+        "evidence_state"
+      ],
+      "properties": {
+        "target_benchmark": {
+          "type": "string"
+        },
+        "holdout": {
+          "type": "string"
+        },
+        "regression": {
+          "type": "string"
+        },
+        "evidence_state": {
+          "enum": [
+            "discovered",
+            "metadata_verified",
+            "source_reviewed",
+            "guide_drafted",
+            "guide_reviewed",
+            "sandbox_passed",
+            "benchmark_passed",
+            "holdout_passed",
+            "regression_passed",
+            "mastered",
+            "stale",
+            "blocked"
+          ]
+        },
+        "run_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "model_version": {
+          "type": "string"
+        }
+      }
+    },
+    "rights": {
+      "type": "object",
+      "required": [
+        "documentation_access",
+        "derivative_summary_permission",
+        "evaluation_permission",
+        "training_permission"
+      ],
+      "properties": {
+        "documentation_access": {
+          "enum": [
+            "public",
+            "account_required",
+            "gated",
+            "unknown"
+          ]
+        },
+        "derivative_summary_permission": {
+          "enum": [
+            "approved",
+            "not_required_for_original_notes",
+            "pending",
+            "denied",
+            "unknown"
+          ]
+        },
+        "evaluation_permission": {
+          "enum": [
+            "approved",
+            "pending",
+            "denied",
+            "unknown"
+          ]
+        },
+        "training_permission": {
+          "enum": [
+            "approved",
+            "pending",
+            "denied",
+            "unknown"
+          ]
+        },
+        "download_permission": {
+          "enum": [
+            "approved",
+            "pending",
+            "denied",
+            "unknown"
+          ]
+        },
+        "evidence_reference": {
+          "type": "string"
+        }
+      }
+    },
+    "status": {
+      "enum": [
+        "draft",
+        "review_required",
+        "approved_for_study",
+        "blocked",
+        "stale",
+        "mastered"
+      ]
+    }
   },
-  "additionalProperties":false
+  "additionalProperties": false
 }
