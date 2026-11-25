@@ -72,6 +72,11 @@ on:
       - "buddy/learning/course_track_registry.py"
       - "buddy/learning/buddy_knowledge_router.py"
       - "buddy/fleet_runtime/router.py"
+      - "buddy/fleet_runtime/executor.py"
+      - "buddy/fleet_runtime/engines.py"
+      - "tools/generate_bot_manifests.py"
+      - "config/bots/bot-manifests.generated.json"
+      - "tests/test_fleet_runtime_executor.py"
       - "buddy/learning/universal_library_registry.py"
       - "buddy/learning/library_registry_discovery.py"
       - "config/buddy-library-registry-adapters.json"
@@ -172,6 +177,11 @@ on:
       - "buddy/learning/course_track_registry.py"
       - "buddy/learning/buddy_knowledge_router.py"
       - "buddy/fleet_runtime/router.py"
+      - "buddy/fleet_runtime/executor.py"
+      - "buddy/fleet_runtime/engines.py"
+      - "tools/generate_bot_manifests.py"
+      - "config/bots/bot-manifests.generated.json"
+      - "tests/test_fleet_runtime_executor.py"
       - "tools/buddy_library_knowledge.py"
       - "tools/create_buddy_library_guide_draft.py"
       - "tools/build_buddy_library_seed_catalog.py"
@@ -272,6 +282,8 @@ jobs:
           python -m unittest discover -s tests -p 'test_buddy_universal_library_registry.py' -v
           python -m unittest discover -s tests -p 'test_buddy_internal_first_learning_router.py' -v
           python -m unittest discover -s tests -p 'test_buddy_fleet_internal_bootcamp_routing.py' -v
+          python -m unittest discover -s tests -p 'test_fleet_runtime_executor.py' -v
+          python tools/generate_bot_manifests.py --check
           python -m unittest discover -s tests -p 'test_buddy_library_registry_discovery.py' -v
           python -m unittest discover -s tests -p 'test_freecodecamp_learning_inventory.py' -v
           python -m unittest discover -s tests -p 'test_buddy_library_guide_draft.py' -v
@@ -304,6 +316,8 @@ jobs:
           python -m unittest discover -s tests -p 'test_buddy_universal_library_registry.py' -v
           python -m unittest discover -s tests -p 'test_buddy_internal_first_learning_router.py' -v
           python -m unittest discover -s tests -p 'test_buddy_fleet_internal_bootcamp_routing.py' -v
+          python -m unittest discover -s tests -p 'test_fleet_runtime_executor.py' -v
+          python tools/generate_bot_manifests.py --check
           python -m unittest discover -s tests -p 'test_buddy_library_registry_discovery.py' -v
           python -m unittest discover -s tests -p 'test_freecodecamp_learning_inventory.py' -v
           python -m unittest discover -s tests -p 'test_buddy_library_guide_draft.py' -v
