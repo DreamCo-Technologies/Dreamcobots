@@ -45,6 +45,18 @@ class PaperBrokerTests(unittest.TestCase):
         with self.assertRaisesRegex(RiskLimitError, "max_position_notional"):
             broker.submit_market_order("XYZ", "buy", 6, 100, "t3")
 
+
+    def test_reducing_a_long_position_is_allowed_after_marked_value_grows(self):
+        broker = PaperBroker(
+            10_000,
+            max_order_notional=1_000,
+            max_position_notional=1_000,
+        )
+        broker.submit_market_order("XYZ", "buy", 5, 100, "t1")
+        fill = broker.submit_market_order("XYZ", "sell", 1, 300, "t2")
+        self.assertEqual(fill.side, "sell")
+        self.assertEqual(broker.positions["XYZ"], 4)
+
     def test_equity_requires_a_mark_for_every_open_position(self):
         broker = PaperBroker(10_000)
         broker.submit_market_order("XYZ", "buy", 1, 100, "t1")
@@ -91,6 +103,28 @@ class BacktestTests(unittest.TestCase):
         self.assertGreater(first.fill_count, 0)
         self.assertGreaterEqual(first.max_drawdown, 0)
         self.assertEqual(len(first.equity_curve), len(bars) + 1)
+
+
+    def test_backtest_splits_large_exit_after_price_appreciation(self):
+        bars = [
+            Bar("t0", "XYZ", 100, 101, 99, 100, 100),
+            Bar("t1", "XYZ", 150, 151, 149, 150, 100),
+            Bar("t2", "XYZ", 200, 201, 199, 200, 100),
+            Bar("t3", "XYZ", 200, 201, 199, 200, 100),
+        ]
+        result = run_backtest(
+            bars,
+            signals=[1, 1, 1, 0],
+            config=BacktestConfig(
+                initial_cash=10_000,
+                allocation_fraction=1.0,
+                max_order_notional=1_000,
+                max_position_notional=1_000,
+                slippage_bps=5,
+            ),
+        )
+        self.assertGreaterEqual(result.fill_count, 3)
+        self.assertEqual(result.ending_cash, result.ending_equity)
 
     def test_backtest_rejects_mixed_symbols_and_bad_signals(self):
         bars = synthetic_bars(12)
