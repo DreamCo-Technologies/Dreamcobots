@@ -33,6 +33,7 @@ on:
       - "tests/test_buddy_fleet_workflow_safety.py"
       - "tests/bot-seed-registry.test.ts"
       - "tests/dreamco-search.test.ts"
+      - "tests/bot-fleet-catalog.test.ts"
   push:
     branches: [main]
     paths:
@@ -66,6 +67,7 @@ on:
       - "tests/test_buddy_fleet_workflow_safety.py"
       - "tests/bot-seed-registry.test.ts"
       - "tests/dreamco-search.test.ts"
+      - "tests/bot-fleet-catalog.test.ts"
   workflow_dispatch:
   schedule:
     - cron: "17 */6 * * *"
@@ -121,7 +123,7 @@ jobs:
           python -m unittest tests.test_generate_bot_manifests
           python -m unittest tests.test_production_evidence_ledger
           python -m pytest -q tests/test_fleet_divisions.py
-          node --import tsx --test tests/bot-seed-registry.test.ts tests/dreamco-search.test.ts
+          node --import tsx --test tests/bot-seed-registry.test.ts tests/dreamco-search.test.ts tests/bot-fleet-catalog.test.ts
           python -m unittest tests.test_buddy_fleet_workflow_safety -v
       - name: Upload generated manifests and Buddy fleet evidence
         uses: actions/upload-artifact@v7
