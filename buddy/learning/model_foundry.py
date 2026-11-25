@@ -77,6 +77,20 @@ def estimate_decoder_parameter_count(architecture: dict[str, Any]) -> int:
     return embeddings + layers * per_layer + 2 * width
 
 
+def build_architecture_metadata(architecture: dict[str, Any], sequence_length: int) -> dict[str, Any]:
+    """Return a checkpoint architecture record with no stale default dimensions."""
+    return {
+        **DEFAULT_CONFIG,
+        "hidden_size": architecture["width"],
+        "layers": architecture["layers"],
+        "attention_heads": architecture["attention_heads"],
+        "feed_forward_size": architecture["feed_forward_size"],
+        "vocab_size": architecture["vocab_size"],
+        "context_size": architecture["context_size"],
+        "sequence_length": sequence_length,
+    }
+
+
 def validate_training_authorization(profile: dict[str, Any]) -> None:
     """Fail closed unless a supplied profile explicitly authorizes weight updates."""
     policy = profile.get("training_policy")
@@ -346,16 +360,7 @@ def train_from_scratch(dataset_path: Path, output_path: Path, *, dataset_id: str
             model(x).reshape(-1, 256), y.reshape(-1)
         ).item())
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    architecture_metadata = {
-        **DEFAULT_CONFIG,
-        "hidden_size": architecture["width"],
-        "layers": architecture["layers"],
-        "attention_heads": architecture["attention_heads"],
-        "feed_forward_size": architecture["feed_forward_size"],
-        "vocab_size": architecture["vocab_size"],
-        "context_size": architecture["context_size"],
-        "sequence_length": sequence_length,
-    }
+    architecture_metadata = build_architecture_metadata(architecture, sequence_length)
     metadata = {
         "schema": "dreamco.model_checkpoint.v1",
         "model_id": f"buddy-division-{division_id:02d}-scratch",
