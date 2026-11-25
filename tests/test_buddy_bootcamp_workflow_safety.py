@@ -8,7 +8,7 @@ WORKFLOW = ROOT / ".github/workflows/buddy-bootcamp-curriculum.yml"
 class BuddyBootcampWorkflowSafetyTests(unittest.TestCase):
     def test_curriculum_generation_is_read_only_and_artifact_based(self):
         text = WORKFLOW.read_text(encoding="utf-8")
-        self.assertIn("permissions:\\n  contents: read", text)
+        self.assertIn("permissions:" + chr(10) + "  contents: read", text)
         self.assertNotIn("pull-requests: write", text)
         self.assertNotIn("peter-evans/create-pull-request@", text)
         self.assertIn("actions/upload-artifact@v4", text)
