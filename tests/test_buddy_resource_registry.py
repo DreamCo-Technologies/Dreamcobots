@@ -42,7 +42,8 @@ class ResourceRegistryTest(unittest.TestCase):
         local_rag = next(item for item in REGISTRY["resources"] if item["id"] == "local_rag")
         self.assertIn("buddy/learning/runtime_bridge.py", local_rag["wired_into"])
         self.assertIn("buddy/datasets/unknown_router.py", local_rag["wired_into"])
-        self.assertIn("buddy.learning.library_knowledge_router", local_rag["gives_buddy"])
+        self.assertIn("BuddyLearningBridge", local_rag["gives_buddy"])
+        self.assertIn("unknown-problem router", local_rag["gives_buddy"])
 
     def test_xai_router_entry_stays_contract_only_with_training_block(self):
         router = json.loads((ROOT / "config" / "buddy-model-router.json").read_text())
