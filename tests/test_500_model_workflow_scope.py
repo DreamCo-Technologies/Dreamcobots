@@ -11,6 +11,8 @@ class FiveHundredModelWorkflowScopeTests(unittest.TestCase):
     def test_benchmark_workflow_never_falls_back_to_unrelated_full_system_runner(self):
         text = WORKFLOW.read_text(encoding="utf-8")
         self.assertIn("tools/run_500_model_benchmarks.py", text)
+        self.assertIn("BLOCKED_RUNNER_NOT_IMPLEMENTED", text)
+        self.assertIn("all matrix rows remain unverified", text)
         self.assertNotIn("--fallback tools/run_everything_now.py", text)
         self.assertIn("BLOCKED_RUNNER_NOT_IMPLEMENTED", text)
         self.assertIn("all matrix rows remain unverified", text)
