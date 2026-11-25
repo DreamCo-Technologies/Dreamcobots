@@ -17,12 +17,15 @@ class DivisionOwnerReviewQueueTests(unittest.TestCase):
         queue = build_owner_review_queue(
             ROOT / "config/generated/division-resource-readiness-map.json",
             ROOT / "config/generated/division-reconciliation.json",
+            ROOT / "config/review/division-owner-conversation-approval.json",
         )
         validate_owner_review_queue(queue)
         self.assertEqual(queue["counts"]["pending_masterbot_mappings"], 45)
         self.assertEqual([row["masterbot_id"] for row in queue["masterbot_domain_decisions"]], list(range(1, 46)))
         self.assertTrue(all(row["decision"] == "PENDING_OWNER_REVIEW" for row in queue["masterbot_domain_decisions"]))
         self.assertTrue(all(row["owner_approval"] is None for row in queue["masterbot_domain_decisions"]))
+        self.assertTrue(all(row["user_approval_status"] == "APPROVED_BY_USER_IN_CHAT_PENDING_GITHUB_IDENTITY_ATTESTATION" for row in queue["masterbot_domain_decisions"]))
+        self.assertTrue(all(row["github_identity_attestation_required"] is True for row in queue["masterbot_domain_decisions"]))
         self.assertEqual(queue["counts"]["shared_platform_role_confirmations"], 20)
         self.assertEqual(queue["counts"]["unassigned_domain_profiles"], 10)
         self.assertEqual(queue["counts"]["proposed_supplemental_collaborator_links"], 10)
@@ -33,8 +36,12 @@ class DivisionOwnerReviewQueueTests(unittest.TestCase):
         self.assertTrue(all(row["primary_domain_owner"] is None for row in queue["shared_platform_masterbots"]))
         self.assertTrue(all(row["no_domain_owner_inferred"] for row in queue["shared_platform_masterbots"]))
         self.assertTrue(all(row["owner_approval"] is None for row in queue["shared_platform_masterbots"]))
+        self.assertTrue(all(row["user_approval_status"] == "ACCEPTED_AS_SHARED_PLATFORM_SERVICES_NO_PRIMARY_DOMAIN_OWNER" for row in queue["shared_platform_masterbots"]))
+        self.assertTrue(all(row["github_identity_attestation_required"] is True for row in queue["shared_platform_masterbots"]))
         self.assertTrue(all(len(row["candidate_masterbot_ids"]) == 1 for row in queue["unassigned_domain_profiles"]))
         self.assertTrue(all(row["no_mapping_inferred"] for row in queue["unassigned_domain_profiles"]))
+        self.assertTrue(all(row["user_approval_status"] == "APPROVED_BY_USER_IN_CHAT_PENDING_GITHUB_IDENTITY_ATTESTATION" for row in queue["unassigned_domain_profiles"]))
+        self.assertTrue(all(row["github_identity_attestation_required"] is True for row in queue["unassigned_domain_profiles"]))
 
     def test_rejects_proposed_core_mapping_without_resource_route(self):
         source = {
