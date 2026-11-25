@@ -161,3 +161,10 @@ This is not exhaustive registry crawling: query APIs are ranked/search interface
 `tools/create_buddy_library_guide_draft.py` creates a structured, original DreamCo guide skeleton from a discovered candidate's canonical ID, name, ecosystem and official HTTPS documentation URLs. It never downloads or executes the library. It writes `review_required`, unknown API coverage, unknown documentation access, and pending evaluation/training/download permissions. It refuses to overwrite an existing guide. The generator is a starting point for research, not an AI-generated assertion that a library has been fully studied.
 
 The first seeded example is `data/buddy-library-study-guides/python-requests.json`, pinned to Requests 2.34.2. It contains an original learning map, partial API inventory, established and experimental use cases, security guidance, exercises, capstones, debugging playbook, benchmark goals, and initial O*NET skill / DreamCo division crosswalks. It remains `review_required`; Buddy's internal search intentionally does not surface it until a reviewer approves it and all rights/evidence gates pass.
+
+
+## Existing DreamCo library mastery seed inventory
+
+The repository's existing `server/seed-buddy-bot.ts` contains a "Complete Library Mastery Curriculum" spanning 37 technology categories. `tools/build_buddy_library_seed_catalog.py` parses that source into `data/buddy-library-seed-catalog.json`: 536 raw entries deduplicated to 531 candidate records. Every candidate is explicitly marked unverified, with unknown version/license/documentation and no download, execution, evaluation or training permission.
+
+All 531 candidates are now included as discovery lessons in the shared course registry, alongside the 38 ecosystem discovery lanes. These assignments require Buddy to verify whether each item is actually a library, framework, SDK, runtime, platform, API or concept; find official sources; pin a version; review rights; and create an original guide. They are not 531 completed study guides. The seed catalog is a useful starting inventory, not a complete map of every software library in the world.
