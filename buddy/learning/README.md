@@ -34,3 +34,12 @@ The Top-1000 study curriculum is separate from the protected DreamCo model catal
 - `tools/buddy_library_knowledge.py` exposes search, gap, report and explicit opt-in discovery commands.
 
 A guide enters internal search and the course queue only after it is approved and passes the guide evidence and rights checks. Drafts, stale items and blocked items remain visible in the coverage report but are not presented as Buddy knowledge.
+
+
+## Runtime bridge and local retrieval
+
+- `runtime_bridge.py` exposes `BuddyLearningBridge.library_knowledge()` to the host-mediated Buddy runtime.
+- The bridge searches approved internal guides first through `foundry.local_rag.LocalRagStore`; the index is local, dependency-free TF-IDF and does not call an embedding or frontier model.
+- An unapproved/missing guide returns a gap and any matching seed candidates, clearly labeled as unverified.
+- Public registry metadata discovery requires an explicit `external_discovery=True` from the host. It does not invoke an external model, download packages or execute code.
+- Knowledge-gap persistence is opt-in and requires the host to mark the query redacted. Gap records are written under ignored `.dreamco/`, never the public guide catalog or website data.
