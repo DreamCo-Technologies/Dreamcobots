@@ -41,8 +41,8 @@ def main() -> int:
     if resume_path is not None and data_root not in resume_path.parents:
         raise SystemExit("resume checkpoint must be inside the owner-controlled private data root")
     architecture_profile = json.loads(args.architecture_profile.read_text(encoding="utf-8"))
-    if not isinstance(architecture_profile, dict):
-        raise SystemExit("architecture profile must be a JSON object")
+    if not isinstance(architecture_profile, dict) or architecture_profile.get("schema") != "dreamco.buddy_cpu_llm_architecture_profile.v1":
+        raise SystemExit("architecture profile must use dreamco.buddy_cpu_llm_architecture_profile.v1")
     manifest_path = ROOT / "config/authorized-training-datasets/manifest.json"
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
     from buddy.learning.model_foundry import validate_manifest
