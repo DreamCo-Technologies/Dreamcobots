@@ -408,6 +408,45 @@ def _rows(track: dict, data: dict, root: Path = ROOT, *, include_blueprint: bool
             for row in metadata_rows
             if row.get("implementation_steps") and row.get("buddy_demo")
         ]
+    if parser == "freecodecamp_metadata_triage":
+        metadata_rows = _rows({"parser": "freecodecamp_video_catalog"}, data, root)
+        source_by_id = {
+            str(video["video_id"]): video for video in data.get("videos", [])
+        }
+        rows = []
+        for row in metadata_rows:
+            source = source_by_id.get(row["source_video_id"], {})
+            categories = {str(value).casefold() for value in source.get("categories", [])}
+            if categories != {"other_or_unclassified"}:
+                continue
+            rows.append({
+                **row,
+                "id": f"fcc-metadata-triage-{row['source_video_id']}",
+                "title": f"FreeCodeCamp classification review: {row['title']}",
+                "objective": "Classify this source safely from public metadata and route it for human review; do not infer lesson content from the title or URL.",
+                "practice": "Inspect the public title, channel, description, date, and category labels. Seek authorized source material before writing any lesson or summary.",
+                "assessment": "The item remains metadata-only until its subject, canonical division, source rights, and an original guide are independently reviewed.",
+                "benchmark": "Every unclassified record has an explicit triage owner, a provenance trail, and a reviewed routing decision or remains unclassified.",
+                "content_status": "metadata_only",
+                "rights_mode": "metadata_only_until_item_level_permissions",
+                "division_targets": ["DreamEducation", "CommandCore"],
+                "masterbot_targets": ["DreamEducation", "CommandCore", "DreamDiscovery"],
+                "capability_tags": ["source-classification", "course-taxonomy", "rights-review", "division-routing"],
+                "tool_tags": ["video-metadata-catalog", "course-taxonomy", "review-queue"],
+                "agent_tags": ["course-curator", "rights-reviewer", "division-router"],
+                "implementation_steps": [
+                    "Confirm the source-video ID, public URL, channel, title, description, and catalog provenance.",
+                    "Review available category labels and identify what is known versus unknown from metadata alone.",
+                    "Search for an authorized transcript, official documentation, or permissioned source before making content claims.",
+                    "Draft candidate subject tags and division/MasterBot owners with confidence and supporting evidence.",
+                    "Check the proposed owners against the canonical 55-domain crosswalk and 65-MasterBot registry.",
+                    "Request human approval for the classification and any proposed specialist route.",
+                    "If authorized learning material exists, create a separate original DreamCo guide with exercises and assessments.",
+                    "Keep the record metadata-only until rights, guide quality, and routing approval are recorded."
+                ],
+                "buddy_demo": "Buddy demonstrates metadata triage, separates known facts from assumptions, proposes a canonical owner, checks source rights, and requests human approval without claiming to teach the video."
+            })
+        return rows
     if parser == "huggingface_learning_map":
         courses = [
             {"id": row["id"], "title": row["title"], "objective": row["topics"],
