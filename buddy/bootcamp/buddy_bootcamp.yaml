@@ -17,6 +17,10 @@ tracks:
   - ollama_local_model_learning
   - division_language_model_research
   - model_foundry_from_scratch
+  - tokenizer_engineering
+  - cpu_first_25m_llm_architecture
+  - tolkien_studies
+  - onet_full_content_model_and_task_engineering
 stages:
   - diagnose
   - select_resource
@@ -72,6 +76,51 @@ learning_sources:
     gated_access: requires_explicit_account_and_terms_approval
     training_approval_default: false
     training_evidence_required: [dataset_revision, license_evidence, provenance, split_hashes, benchmark, holdout, regression]
+  - id: tokenizer_engineering
+    name: Buddy tokenizer engineering and training
+    curriculum: config/buddy-tokenizer-training-curriculum.json
+    study_guide: docs/BUDDY_TOKENIZER_TRAINING_STUDY_GUIDE.md
+    owner_lane: Grok-HF-Tokenizers
+    applies_to: all_55_canonical_divisions_and_65_masterbot_lanes_as_shared_foundation
+    specialist_ownership: preserve_existing_crosswalk
+    scheduler: buddy.learning.study_resource_scheduler
+    training_data_rights_required: true
+    model_weight_training_authorized: false
+    paid_compute_authorized: false
+    mastery_evidence_required: [round_trip_tests, vocabulary_hash, reproducible_config, multilingual_holdout, model_compatibility, regression]
+  - id: cpu_first_25m_llm_course
+    name: CPU-first 25M-class LLM engineering and reinforcement learning
+    curriculum: config/buddy-25m-cpu-llm-course.json
+    study_guide: docs/BUDDY_25M_CPU_LLM_STUDY_GUIDE.md
+    model_training_units: config/buddy-gpt-style-model-training-units.json
+    applies_to: all_55_canonical_divisions_and_65_masterbot_lanes_as_shared_foundation
+    scheduler: buddy.learning.study_resource_scheduler
+    video_id: -gfgQfw2g_E
+    transcript_ingestion: disabled_by_default
+    training_data_rights_required: true
+    model_weight_training_authorized: false
+    paid_compute_authorized: false
+    mastery_evidence_required: [all_module_assessments, exact_parameter_count, reproducible_manifest, private_holdout, multi_seed_statistics, regression, rollback]
+  - id: tolkien_studies
+    name: Tolkien studies, philology and original mythopoeia
+    curriculum: config/buddy-tolkien-study-track.json
+    study_guide: docs/BUDDY_TOLKIEN_STUDY_TRACK.md
+    applies_to: all_55_canonical_divisions_as_shared_elective
+    masterbot_lanes: all_65
+    scheduler: buddy.learning.study_resource_scheduler
+    rights_policy: block_unknown_rights_and_copyrighted_text_ingestion
+    copyrighted_tolkien_text_training: false
+    mastery_evidence_required: [original_artifact, citations, item_level_rights_review, rubric, unseen_assessment, reviewer]
+  - id: onet_full_content_model
+    name: O*NET full content model and task engineering
+    curriculum: config/buddy-onet-content-model-curriculum.json
+    study_guide: docs/BUDDY_ONET_FULL_CONTENT_MODEL_AND_TASK_PLAYBOOKS.md
+    applies_to: all_55_canonical_divisions_and_65_masterbot_lanes
+    scheduler: buddy.learning.study_resource_scheduler
+    source_refresh: official_onet_release
+    task_suitability_review_required: true
+    specialist_ownership: preserve_existing_crosswalk
+    mastery_evidence_required: [source_release, task_id, detailed_guide, sandbox, human_safety_review, independent_benchmark]
   - id: ollama
     name: Ollama local model runtime
     purpose: local_model_import_inference_and_evaluation
