@@ -29,9 +29,15 @@ class BuddyCourseTrackRegistryTests(unittest.TestCase):
         fcc_catalog = load("buddy/bootcamp/sources/freecodecamp/catalog.json")
         library_ecosystems = load("config/library_ecosystems.json")
         library_seed_catalog = load("data/buddy-library-seed-catalog.json")
+        onet_task_index_path = root / "data/onet/onet-task-index.json"
+        onet_task_count = 0
+        if onet_task_index_path.is_file():
+            onet_task_index = load("data/onet/onet-task-index.json")
+            if onet_task_index.get("inventory", {}).get("complete") is True:
+                onet_task_count = len(onet_task_index.get("tasks", []))
         expected_count = (
             len(tol["curriculum"]) + len(tol["extended_study_path"])
-            + len(tok["lessons"]) + len(cpu["modules"]) + len(onet["subject_inventory"])
+            + len(tok["lessons"]) + len(cpu["modules"]) + len(onet["subject_inventory"]) + onet_task_count
             + len(hf_tasks["task_families"])
             + len(fcc["official_platform_inventory"]["core_certifications"])
             + len(fcc["official_platform_inventory"]["additional_certifications"])

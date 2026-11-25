@@ -261,6 +261,69 @@ class BuddyLearningBridge:
             "external_model_call_performed": False,
         }
 
+    def bootcamp_learning_queue(self, *, division: str | None = None,
+                                masterbot: str | None = None, query: str = "",
+                                limit: int = 50) -> dict[str, Any]:
+        """Return all shared Bootcamp course tracks for one canonical division or MasterBot lane."""
+        if bool(division) == bool(masterbot):
+            raise ValueError("provide exactly one canonical division or MasterBot lane")
+        if not isinstance(limit, int) or isinstance(limit, bool) or limit < 1 or limit > 100:
+            raise ValueError("limit must be an integer between 1 and 100")
+        if not isinstance(query, str) or len(query) > 1000:
+            raise ValueError("query must be a string of at most 1000 characters")
+        if division:
+            resources_for_division(division)
+            owner = {"division": division}
+        else:
+            resources_for_masterbot(str(masterbot))
+            owner = {"masterbot": masterbot}
+
+        catalog_lessons = load_course_lessons()
+        lessons = list(catalog_lessons)
+        if query.strip():
+            terms = {token for token in re.findall(r"[a-z0-9][a-z0-9_.+-]*", query.lower()) if len(token) > 1}
+            lessons = [
+                lesson for lesson in lessons
+                if terms & set(re.findall(
+                    r"[a-z0-9][a-z0-9_.+-]*",
+                    f"{lesson.title} {lesson.lesson_id} {lesson.track_id} {lesson.category} "
+                    f"{lesson.objective} {lesson.practice} {lesson.assessment} {lesson.benchmark}".lower()
+                ))
+            ]
+        items = [{
+            "resource_id": lesson.resource_id,
+            "lesson_id": lesson.lesson_id,
+            "track_id": lesson.track_id,
+            "title": lesson.title,
+            "category": lesson.category,
+            "objective": lesson.objective,
+            "practice": lesson.practice,
+            "assessment": lesson.assessment,
+            "benchmark": lesson.benchmark,
+            "source_url": lesson.source_url,
+            "guide_path": lesson.guide_path,
+            "rights_mode": lesson.rights_mode,
+            "completion_status": "queued_not_studied",
+            "mastery_awarded": False,
+            "model_weight_training_authorized": False,
+            "paid_compute_authorized": False,
+        } for lesson in lessons[:limit]]
+        return {
+            "schema": "dreamco.buddy_bootcamp_learning_queue.v1",
+            **owner,
+            "query": query,
+            "scope": "shared_foundation_all_55_canonical_divisions_and_65_masterbot_lanes",
+            "catalog_lesson_count": len(catalog_lessons),
+            "available_count": len(lessons),
+            "returned_count": len(items),
+            "track_ids": sorted({lesson.track_id for lesson in lessons}),
+            "items": items,
+            "study_required": True,
+            "mastery_awarded": False,
+            "external_discovery_performed": False,
+            "external_model_call_performed": False,
+        }
+
     def sop_candidates(self, tenant_id: str, domain: str, *, minimum_successes: int = 3) -> list[dict]:
         """Produce review-only SOP outlines, not inferred steps or executable automation."""
         if minimum_successes < 3:

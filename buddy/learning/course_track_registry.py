@@ -191,13 +191,51 @@ def _rows(track: dict, data: dict, root: Path = ROOT) -> list[dict]:
             for row in data.get("modules", [])
         ]
     if parser == "onet":
-        return [
+        rows = [
             {"id": row["id"], "title": row["name"],
              "objective": f"Understand the O*NET subject {row['name']} and apply its occupational evidence without inferring qualification or authority.",
              "practice": "Build an original subject guide, connect relevant tasks and tools, and classify AI/human responsibilities.",
              "assessment": "Pass a source-grounded subject assessment and task-specific suitability review."}
             for row in data.get("subject_inventory", [])
         ]
+        task_index_path = track.get("task_index_path")
+        task_index_file = root / task_index_path if task_index_path else None
+        if task_index_file and task_index_file.is_file():
+            task_index = _read(task_index_file)
+            # Do not route unverified or release-drifted task rows as authoritative lessons.
+            if task_index.get("inventory", {}).get("complete") is True:
+                source_url = task_index.get("source", {}).get("official_download_url") or track["source_url"]
+                for task in task_index.get("tasks", []):
+                    occupation_code = str(task.get("occupation_code", "")).strip()
+                    task_id = str(task.get("task_id", "")).strip()
+                    statement = str(task.get("task_statement", "")).strip()
+                    if not occupation_code or not task_id or not statement:
+                        continue
+                    occupation = str(task.get("occupation_title", "")).strip() or occupation_code
+                    rows.append({
+                        "id": f"onet-task-{occupation_code}-{task_id}",
+                        "title": f"{occupation}: {statement}",
+                        "objective": (
+                            f"Understand and safely perform the O*NET task '{statement}' for {occupation} "
+                            f"using release {task.get('onet_release', 'unverified')}; distinguish assistive, "
+                            "bounded automation, human-supervised and physical work."
+                        ),
+                        "practice": (
+                            "Create an original step-by-step workflow, identify prerequisites and tools, "
+                            "simulate the task in a safe environment, document failure recovery and define "
+                            "human approval points. Research current commercial, open-source and local tools."
+                        ),
+                        "assessment": (
+                            "Complete a task-specific practical assessment, safety and credential-boundary "
+                            "review, independent unseen task, benchmark and reviewer sign-off; reading the "
+                            "task statement alone is not evidence of competence."
+                        ),
+                        "benchmark": "O*NET task-specific workflow, safety, tool-use and unseen-transfer benchmark.",
+                        "source_url": source_url,
+                        "guide_path": track["guide"],
+                        "rights_mode": track["rights"],
+                    })
+        return rows
     if parser == "huggingface":
         return [
             {"id": row["id"], "title": row["id"].replace("-", " ").title(),

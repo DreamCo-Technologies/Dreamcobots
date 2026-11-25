@@ -162,5 +162,36 @@ class RuntimeBridgeTests(unittest.TestCase):
         self.assertEqual(self.bridge.coach("alice", "technical")["observations"], 0)
 
 
+    def test_bootcamp_learning_queue_exposes_all_internal_tracks(self):
+        queue = self.bridge.bootcamp_learning_queue(division="DreamCodeLab", limit=100)
+        self.assertEqual(queue["schema"], "dreamco.buddy_bootcamp_learning_queue.v1")
+        self.assertGreater(queue["catalog_lesson_count"], 2000)
+        self.assertEqual(queue["returned_count"], 100)
+        self.assertTrue({"onet", "hugging-face", "huggingface-full", "freecodecamp",
+                         "freecodecamp-video-catalog", "tokenizer"}.issubset(set(queue["track_ids"])))
+        self.assertTrue(all(item["completion_status"] == "queued_not_studied" for item in queue["items"]))
+        self.assertTrue(all(item["mastery_awarded"] is False for item in queue["items"]))
+        self.assertFalse(queue["external_discovery_performed"])
+        self.assertFalse(queue["external_model_call_performed"])
+
+    def test_bootcamp_learning_queue_filters_and_supports_masterbot_lanes(self):
+        queue = self.bridge.bootcamp_learning_queue(
+            masterbot="DreamCodeLab", query="hf-llm-course", limit=10
+        )
+        self.assertEqual(queue["masterbot"], "DreamCodeLab")
+        self.assertGreaterEqual(queue["returned_count"], 1)
+        self.assertIn("huggingface-full", queue["track_ids"])
+        self.assertTrue(all(item["lesson_id"] == "hf-llm-course" for item in queue["items"]))
+
+    def test_bootcamp_learning_queue_requires_exactly_one_owner_and_bounded_query(self):
+        with self.assertRaises(ValueError):
+            self.bridge.bootcamp_learning_queue(query="python")
+        with self.assertRaises(ValueError):
+            self.bridge.bootcamp_learning_queue(division="DreamCodeLab", masterbot="DreamCodeLab")
+        with self.assertRaises(ValueError):
+            self.bridge.bootcamp_learning_queue(division="DreamCodeLab", limit=101)
+        with self.assertRaises(ValueError):
+            self.bridge.bootcamp_learning_queue(division="DreamCodeLab", query="x" * 1001)
+
 if __name__ == "__main__":
     unittest.main()

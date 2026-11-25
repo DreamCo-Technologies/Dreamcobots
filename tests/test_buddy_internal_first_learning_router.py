@@ -6,7 +6,7 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from buddy.learning.buddy_knowledge_router import ROOT, route_buddy_learning_query
+from buddy.learning.buddy_knowledge_router import ROOT, route_buddy_learning_query, _supporting_guide
 
 
 class BuddyInternalFirstLearningRouterTests(unittest.TestCase):
@@ -87,6 +87,34 @@ class BuddyInternalFirstLearningRouterTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             route_buddy_learning_query("x" * 1001)
 
+
+    def test_course_route_includes_local_supporting_guide_excerpt(self):
+        result = route_buddy_learning_query("hugging face transformers", root=ROOT, limit=25)
+        self.assertEqual(result["route"], "internal_bootcamp_lesson")
+        available = [
+            row for row in result["course_lessons"]
+            if row["internal_guide"]["status"] == "supporting_guide_available"
+        ]
+        self.assertTrue(available)
+        self.assertTrue(all(row["internal_guide"]["sha256"] for row in available))
+        self.assertTrue(all(row["internal_guide"]["excerpt"] for row in available))
+        self.assertTrue(all(row["internal_guide"]["lesson_specific_guide_complete"] is False for row in available))
+        self.assertGreater(result["supporting_guide_count"], 0)
+        self.assertFalse(result["external_discovery_performed"])
+        self.assertFalse(result["external_discovery_available"])
+        self.assertFalse(result["external_model_routing_performed"])
+
+    def test_supporting_guide_reader_blocks_paths_outside_repository(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp) / "repo"
+            root.mkdir()
+            outside = Path(tmp) / "secret.md"
+            outside.write_text("private fixture", encoding="utf-8")
+            blocked = _supporting_guide("../secret.md", root)
+            missing = _supporting_guide("docs/missing.md", root)
+            self.assertEqual(blocked["status"], "blocked_path")
+            self.assertEqual(missing["status"], "not_in_repository")
+            self.assertEqual(blocked["excerpt"], "")
 
 if __name__ == "__main__":
     unittest.main()

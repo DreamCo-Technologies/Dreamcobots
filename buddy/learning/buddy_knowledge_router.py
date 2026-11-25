@@ -5,6 +5,7 @@ A caller may explicitly request a gap record; otherwise user queries stay in mem
 """
 from __future__ import annotations
 
+import hashlib
 import json
 import re
 from functools import lru_cache
@@ -32,6 +33,31 @@ def _cached_course_lessons(root: Path):
     return tuple(load_course_lessons(root))
 
 
+def _supporting_guide(path: str, root: Path) -> dict[str, Any]:
+    """Read a bounded excerpt from a repository-local supporting guide, never a remote URL."""
+    if not isinstance(path, str) or not path.strip():
+        return {"status": "not_in_repository", "path": path, "excerpt": ""}
+    repo_root = root.resolve()
+    candidate = (repo_root / path).resolve()
+    if not candidate.is_relative_to(repo_root):
+        return {"status": "blocked_path", "path": path, "excerpt": ""}
+    if not candidate.is_file():
+        return {"status": "not_in_repository", "path": path, "excerpt": ""}
+    try:
+        content = candidate.read_text(encoding="utf-8")
+    except (OSError, UnicodeError):
+        return {"status": "unreadable", "path": path, "excerpt": ""}
+    return {
+        "status": "supporting_guide_available",
+        "path": path,
+        "sha256": hashlib.sha256(content.encode("utf-8")).hexdigest(),
+        "excerpt": content[:6000],
+        "truncated": len(content) > 6000,
+        "guide_role": "supporting_reference_not_a_lesson_specific_completion_or_mastery_claim",
+        "lesson_specific_guide_complete": False,
+    }
+
+
 def _course_matches(query: str, root: Path, limit: int) -> list[dict[str, Any]]:
     query_tokens = _tokens(query)
     matches: list[dict[str, Any]] = []
@@ -53,6 +79,7 @@ def _course_matches(query: str, root: Path, limit: int) -> list[dict[str, Any]]:
             "benchmark": lesson.benchmark,
             "source_url": lesson.source_url,
             "guide_path": lesson.guide_path,
+            "internal_guide": _supporting_guide(lesson.guide_path, root),
             "rights_mode": lesson.rights_mode,
             "score": round(len(overlap) / max(len(query_tokens), 1), 4),
             "completion_status": "queued_not_studied",
@@ -106,6 +133,11 @@ def route_buddy_learning_query(
     lessons = _course_matches(normalized_query, root, limit)
     seed_matches = library.get("seed_candidate_matches", [])
     if lessons:
+        supporting_guide_count = sum(
+            row["internal_guide"]["status"] == "supporting_guide_available"
+            for row in lessons
+        )
+        missing_supporting_guide_count = len(lessons) - supporting_guide_count
         return {
             "schema": "dreamco.buddy_internal_first_learning_route.v1",
             "query": normalized_query,
@@ -114,11 +146,19 @@ def route_buddy_learning_query(
             "guide_matches": [],
             "guide_documents": [],
             "course_lessons": lessons,
+            "supporting_guide_count": supporting_guide_count,
+            "missing_supporting_guide_count": missing_supporting_guide_count,
             "seed_candidate_matches": seed_matches,
             "knowledge_gap": library.get("knowledge_gap"),
+            "external_discovery_available": missing_supporting_guide_count > 0,
             "external_discovery_performed": False,
             "external_model_routing_performed": False,
             "study_required": True,
+            "next_action": (
+                "Study the repository-local supporting guide and complete the original practice. "
+                "If it does not cover the requested lesson, find an authoritative first-party source, "
+                "verify its release and rights, then draft and review an original guide."
+            ),
             "mastery_awarded": False,
         }
 
