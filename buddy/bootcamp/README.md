@@ -154,3 +154,10 @@ The adapter does not create a guide, fetch private user data, execute model trai
 ## User-designated ownership
 
 Original summaries, explanations, exercises, and study-path structure authored for the user's DreamCo library are recorded as user-designated assets, subject to applicable law, contributor agreements, and upstream license terms. Third-party source materials keep their original ownership and license; source links and attribution remain attached to each summary. User-provided data remains user-owned and separately permissioned.
+
+
+## Summary authoring and execution
+
+Use `buddy/bootcamp/prompts/open-source-study-guide-authoring.md` for original multi-source guide authoring. It requires the complete permitted source bundle, pinned revision, item-level rights evidence, original explanations and exercises, defensible division mapping, and human review. It explicitly blocks metadata-only summaries and keeps training permission separate.
+
+The summary adapter exposes `execute_study_plan(...)`, which runs the approved package through the existing permissioned study worker and its temporary-workspace cleanup boundary. It allows read-only source access only. It records study, lesson, quiz, exercise, capstone-submission and remediation events when the callback supplies evidence; lesson and capstone pass events additionally require an independent evaluator identifier. It never performs model-weight training or awards mastery. Mastery remains a separate evidence-verifier decision.
