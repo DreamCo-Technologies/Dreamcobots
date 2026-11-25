@@ -1,0 +1,22 @@
+{
+  "schema": "dreamco.dataset_card.v1",
+  "dataset_id": "synthetic-byte-sequence-fixture",
+  "version": 1,
+  "name": "Seeded synthetic byte-sequence evaluation fixture",
+  "owner": "DreamCo Technologies",
+  "source_type": "procedurally_generated",
+  "generation": "torch.randint over byte IDs 0..255 with a pinned seed",
+  "external_sources": [],
+  "personal_data": false,
+  "third_party_content": false,
+  "purpose": "shape_and_initial_baseline_evaluation_only",
+  "rights_status": "NOT_APPROVED_FOR_WEIGHT_TRAINING",
+  "training_approved": false,
+  "holdout": false,
+  "network_download_required": false,
+  "notes": [
+    "This fixture exists only to exercise tensor shapes, deterministic initialization, and initial loss reporting.",
+    "It is not a language corpus and does not establish language capability.",
+    "It must not be used for a weight-training run without a separate reviewed data card and explicit authorization."
+  ]
+}
