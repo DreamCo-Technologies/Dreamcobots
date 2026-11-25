@@ -23,6 +23,19 @@ def load_registry(path: str | Path | None = None) -> dict[str, Any]:
 def validate_registry(registry: dict[str, Any]) -> dict[str, Any]:
     if registry.get("schema") != "dreamco.buddy.model_registry.v1":
         raise ModelRegistryError("Unsupported Buddy model registry schema")
+    sizing = registry.get("parameter_sizing_policy", {})
+    if sizing.get("custom_parameter_count_allowed") is not True:
+        raise ModelRegistryError("user-defined parameter counts must be supported")
+    if sizing.get("minimum_parameters", 0) < 1 or sizing.get("maximum_parameters") is not None:
+        raise ModelRegistryError("parameter sizing must have a positive minimum and no fixed catalog ceiling")
+    if sizing.get("catalog_buckets_are_presets_not_limits") is not True:
+        raise ModelRegistryError("parameter presets must not impose a fixed model-size ceiling")
+    training_modes = registry.get("training_modes")
+    if not isinstance(training_modes, list) or not training_modes:
+        raise ModelRegistryError("training_modes must be a non-empty list")
+    marketplace_policy = registry.get("marketplace_policy", {})
+    if not isinstance(marketplace_policy.get("sale_enabled"), bool):
+        raise ModelRegistryError("marketplace sale_enabled must be explicit")
     models = registry.get("models")
     if not isinstance(models, list):
         raise ModelRegistryError("models must be a list")
@@ -36,6 +49,19 @@ def validate_registry(registry: dict[str, Any]) -> dict[str, Any]:
             raise ModelRegistryError(f"{model.get('model_id')}: incomplete model record")
         if not isinstance(model["capabilities"], list):
             raise ModelRegistryError(f"{model['model_id']}: capabilities must be a list")
+        parameter_count = model.get("parameter_count")
+        if parameter_count is not None and (
+            isinstance(parameter_count, bool) or not isinstance(parameter_count, int) or parameter_count < 1
+        ):
+            raise ModelRegistryError(f"{model['model_id']}: parameter_count must be a positive integer or null")
+        if model.get("training_mode") not in training_modes:
+            raise ModelRegistryError(f"{model['model_id']}: training_mode is not registered")
+        compute_profile = model.get("compute_profile")
+        if not isinstance(compute_profile, dict) or compute_profile.get("status") not in {"NOT_ESTIMATED", "ESTIMATED", "VERIFIED"}:
+            raise ModelRegistryError(f"{model['model_id']}: compute_profile status is invalid")
+        marketplace = model.get("marketplace")
+        if not isinstance(marketplace, dict) or not isinstance(marketplace.get("eligible_for_sale"), bool):
+            raise ModelRegistryError(f"{model['model_id']}: marketplace sale eligibility must be explicit")
         lineage = model["lineage"]
         weights = model["weights"]
         route = model["route_policy"]
@@ -52,8 +78,24 @@ def validate_registry(registry: dict[str, Any]) -> dict[str, Any]:
                 raise ModelRegistryError(f"{model['model_id']}: trained weights require a run ID and immutable base revision")
         elif weights.get("artifact_sha256") or weights.get("artifact_path"):
             raise ModelRegistryError(f"{model['model_id']}: untrained model cannot claim a weight artifact")
+        if weights["trained"]:
+            if parameter_count is None:
+                raise ModelRegistryError(f"{model['model_id']}: trained weights require a measured parameter count")
+            if compute_profile.get("status") not in {"ESTIMATED", "VERIFIED"}:
+                raise ModelRegistryError(f"{model['model_id']}: trained weights require a compute profile")
         if route.get("enabled") is True and not weights["trained"]:
             raise ModelRegistryError(f"{model['model_id']}: untrained model cannot be route-enabled")
+        if marketplace["eligible_for_sale"]:
+            if not marketplace_policy.get("sale_enabled"):
+                raise ModelRegistryError(f"{model['model_id']}: marketplace sales are disabled by policy")
+            if model.get("lifecycle_status") != "PRODUCTION_VERIFIED" or not weights["trained"]:
+                raise ModelRegistryError(f"{model['model_id']}: untrained or unverified model cannot be sold")
+            if lineage.get("dataset_rights_status") != "VERIFIED" or lineage.get("model_license_status") != "VERIFIED":
+                raise ModelRegistryError(f"{model['model_id']}: model sale requires verified dataset and model rights")
+            if not lineage.get("training_authorization_id") or not lineage.get("training_run_id"):
+                raise ModelRegistryError(f"{model['model_id']}: model sale requires separate training authorization and lineage")
+            if not model.get("benchmark_evidence"):
+                raise ModelRegistryError(f"{model['model_id']}: model sale requires benchmark evidence")
     return registry
 
 
@@ -83,6 +125,11 @@ def _eligibility_reasons(model: dict[str, Any], capability: str) -> list[str]:
         reasons.append("training_lineage_incomplete")
     if not SHA256_RE.fullmatch(str(lineage.get("dataset_card_sha256", ""))):
         reasons.append("dataset_card_hash_missing")
+    parameter_count = model.get("parameter_count")
+    if isinstance(parameter_count, bool) or not isinstance(parameter_count, int) or parameter_count < 1:
+        reasons.append("measured_parameter_count_missing")
+    if model.get("compute_profile", {}).get("status") not in {"ESTIMATED", "VERIFIED"}:
+        reasons.append("compute_profile_missing")
     evidence = model.get("benchmark_evidence", [])
     if not evidence:
         reasons.append("benchmark_evidence_missing")
