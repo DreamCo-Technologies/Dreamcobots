@@ -75,6 +75,22 @@ class RuntimeBridgeTests(unittest.TestCase):
         self.assertEqual(self.bridge.sop_candidates("alice", "technical")[0]["steps"], [])
         self.assertFalse(self.bridge.coach("alice", "technical")["automated"])
 
+    def test_library_knowledge_is_internal_first_and_network_off_by_default(self):
+        result = self.bridge.library_knowledge("React", external_discovery=False)
+        self.assertEqual(result["route"], "internal_knowledge_gap")
+        self.assertTrue(result["internal"]["seed_candidate_matches"])
+        self.assertFalse(result["external_discovery_performed"])
+        self.assertFalse(result["external_model_call_performed"])
+
+    def test_library_gap_persistence_requires_redaction(self):
+        with self.assertRaises(PermissionError):
+            self.bridge.library_knowledge("React", persist_gap=True, query_is_redacted=False)
+        result = self.bridge.library_knowledge(
+            "React", persist_gap=True, query_is_redacted=True, gap_root=Path(self.temp.name)
+        )
+        self.assertTrue(result["gap_recorded"])
+        self.assertTrue((Path(self.temp.name) / ".dreamco/library-knowledge-gaps.jsonl").exists())
+
     def test_adapter_registration_requires_review(self):
         adapter = FakeCapabilityAdapter()
         with self.assertRaises(PermissionError):
