@@ -140,19 +140,36 @@ class ExecutorTests(unittest.TestCase):
         self.assertEqual(out["status"], "unmapped")
         self.assertIsNone(out["result"])
 
-    def test_learning_task_routes_to_internal_bootcamp_before_model(self):
-        out = self.ex.run("blog-writer", {"objective": "React 19", "learning_task": True})
-        self.assertEqual(out["status"], "ok")
-        self.assertEqual(out["result"]["generated_by"], "internal_bootcamp_study")
-        self.assertIsNone(out["result"]["model"])
-        self.assertIn("React 19", out["result"]["draft_markdown"])
+    def test_learning_task_routes_to_internal_bootcamp_before_model_for_any_engine(self):
+        out = self.ex.run("analytics-hub", {"objective": "React 19", "learning_task": True})
+        self.assertEqual(out["status"], "study_required")
+        self.assertEqual(out["mode"], "internal_bootcamp_study")
+        self.assertEqual(out["result"]["route"], "internal_bootcamp_lesson")
+        self.assertTrue(any(row["lesson_id"] == "candidate-discovery-seed-react-19" for row in out["result"]["course_lessons"]))
+        self.assertFalse(out["result"]["external_model_routing_performed"])
         self.assertFalse(out["live_external_action_taken"])
 
     def test_learning_task_external_fallback_requires_explicit_flag(self):
         out = self.ex.run("blog-writer", {"objective": "qzxv 9481", "learning_task": True})
-        self.assertEqual(out["result"]["generated_by"], "offline_deterministic")
-        self.assertEqual(out["result"]["fallback_reason"], "internal_knowledge_gap_external_fallback_disabled")
-        self.assertIsNone(out["result"]["model"])
+        self.assertEqual(out["status"], "needs_input")
+        self.assertEqual(out["mode"], "offline_deterministic")
+        self.assertEqual(out["result"]["route"], "internal_knowledge_gap")
+        self.assertFalse(out["result"]["external_model_routing_performed"])
+
+    def test_learning_task_external_fallback_can_run_only_after_gap_and_opt_in(self):
+        env = {router.LIVE_FLAG: "1", "OPENROUTER_API_KEY": "test-key"}
+        fake = {"model": "test-model", "choices": [{"message": {"content": "external fallback text"}}]}
+        executor = FleetExecutor(env=env)
+        with mock.patch("buddy.openrouter.gateway.BuddyGateway.chat", return_value=fake) as chat:
+            out = executor.run("blog-writer", {
+                "objective": "qzxv 9481",
+                "learning_task": True,
+                "allow_external_learning_fallback": True,
+            })
+        chat.assert_called_once()
+        self.assertEqual(out["mode"], "live_model")
+        self.assertTrue(out["result"]["external_model_routing_performed"])
+        self.assertEqual(out["result"]["external_fallback"]["text"], "external fallback text")
 
     def test_permission_gate(self):
         out = self.ex.run("analytics-hub", {"objective": "x", "action_level": "external_side_effect"})
