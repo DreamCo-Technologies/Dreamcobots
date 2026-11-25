@@ -226,6 +226,7 @@ jobs:
           mkdir -p "$RUNNER_TEMP/buddy-bootcamp-weekly"
           python tools/sync_freecodecamp_catalog.py --out "$RUNNER_TEMP/buddy-bootcamp-weekly/freecodecamp-catalog.json"
           python tools/sync_freecodecamp_catalog.py --check --out "$RUNNER_TEMP/buddy-bootcamp-weekly/freecodecamp-catalog.json"
+          cp "$RUNNER_TEMP/buddy-bootcamp-weekly/freecodecamp-catalog.json" buddy/bootcamp/sources/freecodecamp/catalog.json
 
       - name: Build rights-gated freeCodeCamp detailed video guide queue
         run: |
