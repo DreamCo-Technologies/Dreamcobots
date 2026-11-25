@@ -7,6 +7,23 @@ from buddy.learning.buddy_knowledge_router import route_buddy_learning_query
 
 
 class BuddyKnowledgeRouterTests(unittest.TestCase):
+
+    def test_exact_candidate_is_resolved_even_when_seed_search_limit_would_hide_it(self):
+        route = route_buddy_learning_query("React 19")
+        self.assertEqual(route["answer_source"], "dreamco_bootcamp_candidate_discovery")
+        self.assertEqual(
+            [row["lesson_id"] for row in route["course_lessons"]],
+            ["candidate-discovery-seed-react-19"],
+        )
+
+    def test_named_curriculum_track_is_prioritized_over_universal_seed_candidates(self):
+        route = route_buddy_learning_query("hugging face transformers", limit=25)
+        self.assertEqual(route["route"], "internal_bootcamp_lesson")
+        self.assertTrue(
+            any(row["track_id"] in {"hugging-face", "huggingface-full"} for row in route["course_lessons"])
+        )
+        self.assertFalse(route["external_discovery_available"])
+
     def test_exact_seed_candidate_routes_to_its_bootcamp_discovery_lesson(self):
         route = route_buddy_learning_query("React 19")
 
