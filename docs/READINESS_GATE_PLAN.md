@@ -4,7 +4,11 @@ A gate is green only when the check ran on the current revision and produced evi
 
 ## Release gate
 
-`python3 tools/production_readiness_gate.py --strict` is the code gate. It passes when release-blocking runtime checks pass. It still reports `external_config_required` until the host has:
+`python3 tools/production_readiness_gate.py --strict` is the code gate: it checks critical unknowns and release-blocking runtime failures. A passing code gate is not production certification.
+
+Use `python3 tools/production_readiness_gate.py --certification` on the actual production host for the stronger certification gate. It fails closed unless every readiness area is marked `verified`, all release-blocking runtime checks pass, and required external configuration is present. Repository file presence alone remains inventory, never proof. The report separately lists every incomplete area and external configuration blocker.
+
+The certification gate still reports `external_config_required` until the host has:
 
 - `DATABASE_URL`
 - `STRIPE_WEBHOOK_SECRET`
