@@ -9,7 +9,7 @@ from __future__ import annotations
 import json
 import re
 from dataclasses import dataclass
-from datetime import date, datetime, timezone
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Iterable
 
@@ -41,6 +41,69 @@ def _tokens(value: str) -> set[str]:
     return {part for part in re.findall(r"[a-z0-9][a-z0-9_.+-]*", value.lower()) if len(part) > 1}
 
 
+def validate_library_guide_document(data: dict[str, Any]) -> list[str]:
+    """Validate the minimum evidence contract before a guide can be searched."""
+    errors: list[str] = []
+    required = {
+        "schema_version", "library", "provenance", "learning_map", "api_inventory",
+        "use_cases", "practice", "evaluation", "rights", "status",
+    }
+    missing = sorted(required - set(data))
+    if missing:
+        return [f"missing top-level fields: {', '.join(missing)}"]
+    if data.get("schema_version") != "dreamco.buddy_library_study_guide.v1":
+        errors.append("unsupported library guide schema_version")
+    library = data.get("library") if isinstance(data.get("library"), dict) else {}
+    for key in ("canonical_id", "name", "ecosystem", "artifact_type", "official_homepage", "version_reviewed"):
+        if not str(library.get(key, "")).strip():
+            errors.append(f"library.{key} is required")
+    if not str(library.get("official_homepage", "")).startswith("https://"):
+        errors.append("library.official_homepage must use HTTPS")
+    provenance = data.get("provenance") if isinstance(data.get("provenance"), dict) else {}
+    sources = provenance.get("sources")
+    if not isinstance(sources, list) or not sources:
+        errors.append("at least one provenance source is required")
+    elif any(not isinstance(row, dict) or not str(row.get("url", "")).startswith("https://") for row in sources):
+        errors.append("every provenance source must include an HTTPS URL")
+    learning = data.get("learning_map") if isinstance(data.get("learning_map"), dict) else {}
+    if not learning.get("objectives") or not learning.get("concepts"):
+        errors.append("learning_map requires objectives and concepts")
+    api = data.get("api_inventory") if isinstance(data.get("api_inventory"), dict) else {}
+    if api.get("coverage") not in {"complete_for_pinned_version", "partial", "unknown"}:
+        errors.append("api_inventory.coverage must explicitly state its coverage")
+    if not str(api.get("inventory_method", "")).strip():
+        errors.append("api_inventory.inventory_method is required")
+    if not isinstance(api.get("entries"), list):
+        errors.append("api_inventory.entries must be a list")
+    if not isinstance(data.get("use_cases"), list) or not data["use_cases"]:
+        errors.append("at least one use case is required")
+    practice = data.get("practice") if isinstance(data.get("practice"), dict) else {}
+    exercises = practice.get("exercises")
+    if not isinstance(exercises, list) or len(exercises) < 3:
+        errors.append("at least three exercises are required")
+    for key in ("worked_examples", "projects", "debugging_playbook"):
+        if not isinstance(practice.get(key), list):
+            errors.append(f"practice.{key} must be a list")
+    evaluation = data.get("evaluation") if isinstance(data.get("evaluation"), dict) else {}
+    for key in ("target_benchmark", "holdout", "regression", "evidence_state"):
+        if not str(evaluation.get(key, "")).strip():
+            errors.append(f"evaluation.{key} is required")
+    rights = data.get("rights") if isinstance(data.get("rights"), dict) else {}
+    for key in ("documentation_access", "derivative_summary_permission", "evaluation_permission", "training_permission"):
+        if key not in rights:
+            errors.append(f"rights.{key} must be explicitly recorded")
+    if data.get("status") not in {"draft", "review_required", "approved_for_study", "blocked", "stale", "mastered"}:
+        errors.append("invalid guide status")
+    if data.get("status") in APPROVED_STATES:
+        if rights.get("documentation_access") not in {"public", "account_required"}:
+            errors.append("approved guide requires reviewed documentation access")
+        if rights.get("derivative_summary_permission") not in {"approved", "not_required_for_original_notes"}:
+            errors.append("approved guide requires an approved derivative-summary basis")
+        if evaluation.get("evidence_state") not in {"guide_reviewed", "sandbox_passed", "benchmark_passed", "holdout_passed", "regression_passed", "mastered"}:
+            errors.append("approved guide requires reviewed evidence state")
+    return errors
+
+
 def _guide_files(root: Path) -> list[Path]:
     directory = root / "data/buddy-library-study-guides"
     if not directory.exists():
@@ -66,6 +129,9 @@ def load_approved_guides(root: Path = ROOT) -> list[LibraryGuide]:
             raise ValueError(f"invalid library guide status in {path}: {status}")
         if status not in SEARCHABLE_STATES:
             continue
+        validation_errors = validate_library_guide_document(data)
+        if validation_errors:
+            raise ValueError(f"approved library guide failed validation at {path}: {'; '.join(validation_errors)}")
         rights = data.get("rights") if isinstance(data.get("rights"), dict) else {}
         if rights.get("documentation_access") not in {"public", "account_required"}:
             continue
@@ -108,9 +174,9 @@ def search_internal_library_knowledge(
         text_parts.extend(c.get("name", "") + " " + c.get("explanation", "") for c in concepts if isinstance(c, dict))
         for use_case in use_cases:
             if isinstance(use_case, dict):
-                text_parts.extend([str(use_case.get("scenario", "")), str(use_case.get("implementation_pattern", ""))])
                 if not include_experimental and use_case.get("category") == "experimental":
                     continue
+                text_parts.extend([str(use_case.get("scenario", "")), str(use_case.get("implementation_pattern", ""))])
         haystack = _tokens(" ".join(text_parts))
         overlap = query_tokens & haystack
         if not overlap:
