@@ -446,6 +446,7 @@ def train_from_scratch(dataset_path: Path, output_path: Path, *, dataset_id: str
         "tokenizer_type": tokenizer_type,
         "tokenizer_sha256": tokenizer_sha256,
         "tokenizer_training_split_sha256": prepared["tokenizer"].get("training_split_sha256"),
+        "tokenizer_fit_on_training_split_only": prepared["tokenizer"].get("fit_on_training_split_only", False),
         "tokenizer_holdout_used_for_training": prepared["tokenizer"].get("holdout_used_for_training", False),
         "parameter_count": actual_parameters,
         "initialization": "random",
