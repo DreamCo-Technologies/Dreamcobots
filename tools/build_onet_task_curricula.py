@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build occupation/task learning paths from an official O*NET Task Statements export."""
+"""Build occupation/task learning paths from official O*NET JSON or tabular exports."""
 from __future__ import annotations
 
 import argparse
@@ -10,7 +10,36 @@ from pathlib import Path
 from typing import Any
 
 
+def flatten_records(value: Any) -> list[dict[str, Any]]:
+    if isinstance(value, list):
+        if value and all(isinstance(item, dict) for item in value):
+            return value
+        result: list[dict[str, Any]] = []
+        for item in value:
+            result.extend(flatten_records(item))
+        return result
+    if isinstance(value, dict):
+        preferred = ("task statements", "task_statements", "task statements data", "task")
+        for key in preferred:
+            if key in value:
+                found = flatten_records(value[key])
+                if found:
+                    return found
+        result: list[dict[str, Any]] = []
+        for item in value.values():
+            if isinstance(item, (dict, list)):
+                found = flatten_records(item)
+                if found and any(any("task" in str(k).lower() for k in row) for row in found):
+                    return found
+        return result
+    return []
+
+
 def read_rows(path: Path) -> list[dict[str, str]]:
+    if path.suffix.lower() == ".json":
+        document = json.loads(path.read_text(encoding="utf-8-sig"))
+        records = flatten_records(document)
+        return [{str(key): "" if value is None else str(value) for key, value in row.items()} for row in records]
     with path.open("r", encoding="utf-8-sig", newline="") as handle:
         sample = handle.read(4096)
         handle.seek(0)
@@ -40,8 +69,8 @@ def build(rows: list[dict[str, str]], version: str) -> dict[str, Any]:
     seen_tasks: set[tuple[str, str]] = set()
     for row in rows:
         code = pick(row, "O*NET-SOC Code", "O*NET SOC Code", "occupation code")
-        task_id = pick(row, "Task ID", "task id")
-        title = pick(row, "Task", "Task Statement", "task statement")
+        task_id = pick(row, "Task ID", "task id", "id")
+        title = pick(row, "Task", "Task Statement", "task statement", "title")
         if not code or not task_id or not title or (code, task_id) in seen_tasks:
             continue
         seen_tasks.add((code, task_id))
@@ -50,7 +79,7 @@ def build(rows: list[dict[str, str]], version: str) -> dict[str, Any]:
         item["occupation_title"] = pick(row, "Occupation Title", "Title") or item["occupation_title"]
         item["tasks"].append({
             "task_id": task_id, "task": title,
-            "task_type": pick(row, "Task Type", "task type") or "unspecified",
+            "task_type": pick(row, "Task Type", "task type", "category") or "unspecified",
             "date": pick(row, "Date", "date"),
             "domain_source": pick(row, "Domain Source", "domain source"),
             "importance": pick(row, "Importance", "importance") or None,
@@ -68,7 +97,13 @@ def build(rows: list[dict[str, str]], version: str) -> dict[str, Any]:
         }
         item["task_playbooks"] = [{
             "task_id": task["task_id"], "task": task["task"],
+            "learning_summary_status": "not_yet_authored_by_buddy",
             "learning_summary_required": True, "practice_required": True,
+            "guide_authoring_brief": {
+                "must_explain": ["purpose and context", "prerequisite knowledge", "workflow step by step", "inputs and outputs", "tools and materials", "quality criteria", "common errors", "safety and legal boundaries"],
+                "must_include": ["worked example", "beginner exercise", "intermediate exercise", "capstone", "observable acceptance tests", "answer key", "official source citations"],
+                "must_not_infer": ["licenses", "credentials", "buyer demand", "legal authority", "professional competence"],
+            },
             "commercial_pathway": {
                 "status": "research_required", "possible_buyer_types": [],
                 "offer": "Define only after buyer research and credential/scope review.",
@@ -119,7 +154,8 @@ def main() -> int:
         f"- Database version: {args.version}",
         f"- Occupations: {result['inventory']['occupations']}",
         f"- Task statements: {result['inventory']['task_statements']}", "",
-        "Each occupation receives a study path and every task receives a practice and supervised commercial/community pathway template.",
+        "Each occupation receives a study path and every task receives a practice and supervised commercial/community pathway brief.",
+        "Buddy must author and validate the detailed task guide before it can be marked complete.",
         "Reading or summarizing a task does not certify Buddy or a user to perform the work.",
     ]
     (out / "onet-task-curricula.md").write_text("\n".join(summary) + "\n", encoding="utf-8")
