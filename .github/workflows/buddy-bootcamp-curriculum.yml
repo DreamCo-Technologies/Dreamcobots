@@ -17,6 +17,8 @@ on:
       - "tests/test_buddy_dataset_profile_builder.py"
       - "website/dataset-profile-builder.html"
       - "tools/validate_buddy_continuous_study_policy.py"
+      - "tools/sync_freecodecamp_learning_inventory.py"
+      - "tests/test_freecodecamp_learning_inventory.py"
       - "tests/test_buddy_continuous_study_policy.py"
       - "config/huggingface-task-taxonomy.json"
       - "config/hf-capability-download-map.json"
@@ -269,6 +271,8 @@ jobs:
       - name: Validate freeCodeCamp catalog and tests
         run: |
           python tools/sync_freecodecamp_catalog.py --check
+          python tools/sync_freecodecamp_learning_inventory.py
+          python tools/sync_freecodecamp_learning_inventory.py --check
           python -m unittest discover -s tests -p 'test_freecodecamp_catalog.py' -v
           python -m py_compile tools/catalog_freecodecamp_youtube.py
           python -m unittest discover -s tests -p 'test_freecodecamp_youtube_catalog.py' -v
