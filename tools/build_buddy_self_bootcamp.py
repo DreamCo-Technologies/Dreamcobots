@@ -94,7 +94,8 @@ def build(divisions:list[Any], hf:dict[str,Any], onet:dict[str,Any], queue:dict[
     for record in records:
         name=record["division"]
         relevant,matched=map_subjects(record,subjects)
-        division_id=name.lower()
+        record_text=" ".join([name,record.get("purpose",""),record.get("outcome",""),*record.get("focus_areas",[])])
+        record_tokens=normalize_tokens(record_text)
         fcc_paths=[]
         for item in fcc_certifications:
             fcc_text=" ".join([item.get("name",""),*item.get("skills",[]),*item.get("divisions",[])])
@@ -102,8 +103,6 @@ def build(divisions:list[Any], hf:dict[str,Any], onet:dict[str,Any], queue:dict[
             if overlap:
                 fcc_paths.append({"id":item.get("id"),"name":item.get("name"),"skills":item.get("skills",[]),"matched_terms":overlap})
         college_matches=[]
-        record_text=" ".join([name,record.get("purpose",""),record.get("outcome",""),*record.get("focus_areas",[])])
-        record_tokens=normalize_tokens(record_text)
         for domain in college_domains:
             domain_text=" ".join([domain.get("id",""),domain.get("name",""),domain.get("scope",""),*domain.get("tracks",[])])
             overlap=sorted(record_tokens & normalize_tokens(domain_text))
