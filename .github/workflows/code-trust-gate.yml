@@ -98,6 +98,8 @@ jobs:
           python3 -m unittest discover -s tests -p "test_dreamco_original_training_examples.py" -v
       - name: Final repository test registry reconciliation
         run: python3 tools/generate_repository_test_registry.py
+      - name: Test production certification truth rules
+        run: python3 -m unittest tests.test_production_readiness_gate -v
       - name: Full repository verification
         run: npm run test:repository
       - name: Fleet end-to-end verification
