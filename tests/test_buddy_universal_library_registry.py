@@ -39,6 +39,7 @@ class UniversalLibraryRegistryTests(unittest.TestCase):
                 "ecosystem": "python",
                 "artifact_type": "library",
                 "version_reviewed": "2.32.0",
+                "latest_version_checked_at": "2026-11-25",
                 "official_homepage": "https://requests.readthedocs.io/",
             },
             "provenance": {"sources": [{"url": "https://requests.readthedocs.io/", "source_type": "official_docs"}]},
@@ -76,6 +77,17 @@ class UniversalLibraryRegistryTests(unittest.TestCase):
         self.assertEqual(result["source"], "dreamco_approved_library_guides")
         self.assertEqual(result["matches"][0]["canonical_id"], "python-requests")
         self.assertIsNone(result["knowledge_gap"])
+
+    def test_stale_guides_are_not_retrieved_and_are_reported(self):
+        self.write_guide()
+        path = self.root / "data/buddy-library-study-guides/requests.json"
+        guide = json.loads(path.read_text(encoding="utf-8"))
+        guide["library"]["latest_version_checked_at"] = "2020-01-01"
+        path.write_text(json.dumps(guide), encoding="utf-8")
+        result = search_internal_library_knowledge("Python HTTP sessions", root=self.root)
+        self.assertEqual(result["matches"], [])
+        report = library_coverage_report(root=self.root)
+        self.assertEqual(report["stale_due_to_age_count"], 1)
 
     def test_internal_search_excludes_unreviewed_or_rights_blocked_guides(self):
         self.write_guide(status="draft")
