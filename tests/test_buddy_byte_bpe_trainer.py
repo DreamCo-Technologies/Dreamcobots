@@ -1,6 +1,6 @@
 import hashlib, tempfile, unittest
 from pathlib import Path
-from buddy.learning.byte_bpe_trainer import train_byte_bpe, train_from_manifest, encode, decode
+from buddy.learning.byte_bpe_trainer import train_byte_bpe, train_from_manifest, encode, decode, prepare_corpus_splits
 
 def authorized_manifest(root,content=b"banana bandana banana"):
  path=root/"data/buddy-authorized-corpora"/"sample.txt"; path.parent.mkdir(parents=True); path.write_bytes(content)
@@ -35,5 +35,26 @@ class ByteBpeTrainerTests(unittest.TestCase):
   with tempfile.TemporaryDirectory() as tmp:
    root=Path(tmp); manifest=authorized_manifest(root); manifest["corpora"][0]["sha256"]="0"*64
    with self.assertRaisesRegex(ValueError,"SHA-256 mismatch"): train_from_manifest(manifest,root=root)
+
+ def test_model_foundry_bpe_split_trains_tokenizer_on_train_only(self):
+  raw=(b"abcd " * 640)+(b"ZZZZ " * 128)
+  prepared=prepare_corpus_splits(raw,tokenizer_type="byte_bpe",vocab_size=280)
+  self.assertTrue(prepared["tokenizer"]["trained_on_training_split_only"])
+  self.assertFalse(prepared["tokenizer"]["holdout_used_for_training"])
+  self.assertEqual(prepared["tokenizer"]["training_split_sha256"],hashlib.sha256(raw[:int(len(raw)*0.8)]).hexdigest())
+  self.assertFalse(any("5a5a" in merge["token_hex"] for merge in prepared["tokenizer_artifact"]["merges"]))
+  self.assertTrue(all(0<=token<prepared["tokenizer"]["vocabulary_size"] for token in prepared["holdout_ids"]))
+
+ def test_byte_level_split_keeps_existing_256_token_contract(self):
+  prepared=prepare_corpus_splits(b"abcde " * 400,tokenizer_type="byte_level")
+  self.assertEqual(prepared["tokenizer"]["vocabulary_size"],256)
+  self.assertFalse(prepared["tokenizer"]["holdout_used_for_training"])
+
+ def test_bpe_mode_rejects_invalid_utf8_and_unknown_tokenizer(self):
+  with self.assertRaisesRegex(ValueError,"UTF-8"):
+   prepare_corpus_splits(b"a"*1000+b"\\xff"*24,tokenizer_type="byte_bpe")
+  with self.assertRaisesRegex(ValueError,"tokenizer_type"):
+   prepare_corpus_splits(b"abcde "*300,tokenizer_type="unknown")
+
 
 if __name__=="__main__": unittest.main()
