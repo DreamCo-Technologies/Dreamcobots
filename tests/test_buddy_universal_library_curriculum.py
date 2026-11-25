@@ -35,8 +35,8 @@ class UniversalLibraryCurriculumTests(unittest.TestCase):
         ecosystems = coverage["ecosystems"]
         self.assertEqual(len(ecosystems), 38)
         self.assertEqual(coverage["ecosystem_count"], len(ecosystems))
-        self.assertEqual(coverage["automated_ecosystem_count"], 9)
-        self.assertEqual(coverage["manual_ecosystem_count"], 29)
+        self.assertEqual(coverage["automated_ecosystem_count"], 10)
+        self.assertEqual(coverage["manual_ecosystem_count"], 28)
         self.assertEqual(coverage["automated_ecosystem_count"] + coverage["manual_ecosystem_count"], len(ecosystems))
         provider_ids = {provider["id"] for provider in adapters["providers"]}
         for ecosystem in ecosystems:
@@ -45,6 +45,7 @@ class UniversalLibraryCurriculumTests(unittest.TestCase):
             else:
                 self.assertEqual(ecosystem["adapter_status"], "manual_review_required")
         self.assertEqual(next(row for row in ecosystems if row["id"] == "java")["provider"], "maven-central")
+        self.assertEqual(next(row for row in ecosystems if row["id"] == "perl")["provider"], "metacpan")
 
     def test_guide_schema_requires_evidence_and_rights(self):
         schema = self.read_json("config/buddy-library-study-guide.schema.json")
