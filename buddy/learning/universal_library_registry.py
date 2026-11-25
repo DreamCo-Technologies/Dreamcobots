@@ -185,6 +185,38 @@ def load_approved_guides(root: Path = ROOT) -> list[LibraryGuide]:
     return guides
 
 
+def _search_seed_candidates(query: str, root: Path, limit: int) -> list[dict[str, Any]]:
+    curriculum_path = root / "config/buddy-universal-library-curriculum.json"
+    curriculum = _read_json(curriculum_path) if curriculum_path.exists() else {}
+    seed_path = root / curriculum.get("seed_catalog", "data/buddy-library-seed-catalog.json")
+    if not seed_path.exists():
+        return []
+    catalog = _read_json(seed_path)
+    query_tokens = _tokens(query)
+    matches = []
+    for candidate in catalog.get("candidates", []):
+        haystack = _tokens(" ".join([
+            str(candidate.get("name", "")),
+            " ".join(candidate.get("categories", [])),
+            " ".join(candidate.get("raw_variants", [])),
+        ]))
+        overlap = query_tokens & haystack
+        if not overlap:
+            continue
+        matches.append({
+            "candidate_id": candidate.get("id"),
+            "name": candidate.get("name"),
+            "categories": candidate.get("categories", []),
+            "status": candidate.get("status", "seed_candidate_unverified"),
+            "score": round(len(overlap) / max(len(query_tokens), 1), 4),
+            "guide_available": False,
+            "source_path": candidate.get("source", {}).get("path"),
+            "rights": candidate.get("rights", {}),
+        })
+    matches.sort(key=lambda row: (-row["score"], str(row["name"]).lower()))
+    return matches[:limit]
+
+
 def search_internal_library_knowledge(
     query: str,
     *,
@@ -234,16 +266,20 @@ def search_internal_library_knowledge(
         })
     results.sort(key=lambda row: (-row["score"], row["canonical_id"]))
     matches = results[:limit]
+    seed_candidates = _search_seed_candidates(query, root, limit)
     return {
         "schema": "dreamco.buddy_internal_library_search.v1",
         "query": query,
         "source": "dreamco_approved_library_guides",
         "internal_match_count": len(results),
         "matches": matches,
+        "seed_candidate_matches": seed_candidates,
+        "seed_candidates_are_not_guides": True,
         "knowledge_gap": None if matches else {
             "status": "internal_knowledge_gap",
             "reason": "No approved, rights-eligible internal library guide matched the request.",
             "next_action": "Create a gap record, discover authoritative first-party sources, review rights, then author an original guide.",
+            "candidate_matches_found": len(seed_candidates),
             "external_model_routing_required": False,
         },
         "truth_boundary": "Only approved DreamCo guide artifacts are searched. No match does not prove the subject is unknown externally.",
