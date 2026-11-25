@@ -60,7 +60,7 @@ def study_record(category: str, source_files: list[str], source_ids: list[str], 
     }
 
 
-def build(root: Path = ROOT) -> tuple[dict, dict]:
+def build(root: Path = ROOT) -> dict:
     registry_path = root / "config/buddy/category-system-registry.json"
     resource_path = root / "config/buddy/resource-registry.json"
     division_path = root / "config/masterbot-65-registry.json"
@@ -157,7 +157,7 @@ def build(root: Path = ROOT) -> tuple[dict, dict]:
         "division_count_in_placement_audit": len(audited_divisions),
         "division_count_in_master_registry_not_in_placement_audit": len(divisions) - len(audited_divisions),
     })
-    return registry, registry
+    return registry
 
 
 def render(payload: dict) -> str:
@@ -168,9 +168,9 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--check", action="store_true", help="fail if generated files differ from source catalogs")
     args = parser.parse_args()
-    registry, mirror = build()
+    registry = build()
     registry_text = render(registry)
-    mirror_text = render(mirror)
+    mirror_text = registry_text
     stale = []
     if not REGISTRY_PATH.exists() or REGISTRY_PATH.read_text(encoding="utf-8") != registry_text:
         stale.append(REGISTRY_PATH.relative_to(ROOT).as_posix())
