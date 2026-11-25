@@ -2,7 +2,7 @@
 
 ## Goal
 
-Buddy Bootcamp is a continuously refreshed, evidence-based learning system for the 55 DreamCo domain divisions. It discovers upstream repositories, Hugging Face datasets/models/Spaces, technical documentation, and authorized video/audio/music material. It creates detailed independent study guides, lessons, projects, assessments, and training candidates. It does not claim that Buddy has mastered a topic simply because it indexed or summarized a source.
+Buddy Bootcamp is a continuously refreshed, evidence-based learning system for the 55 DreamCo domain divisions. It discovers upstream repositories, Hugging Face datasets/models/Spaces, technical documentation, and authorized video/audio/music material. It discovers resources, verifies provenance and rights, prepares detailed guide-authoring briefs, lessons, projects, assessments, and training candidates. The Buddy guide-authoring runtime must turn eligible briefs into completed guides; a queue or template is not a completed guide. It does not claim that Buddy has mastered a topic simply because it indexed or summarized a source.
 
 ## Repositories first, not YouTube-first
 
@@ -83,7 +83,7 @@ The scheduled workflow can discover and prepare work, but actual GPU training re
 
 ## Hugging Face subject coverage and training paths
 
-The current curriculum starts with 189 subject labels spanning language, vision, audio, video, multimodal systems, code, science, health, education, law, finance, business, robotics, geospatial data, accessibility, fitness and public services. This is a seed taxonomy, not a claim that the Hub itself has exactly 189 subjects. The weekly discovery process must refresh task/tag taxonomies from the Hub, record newly seen tags, preserve unknown tags for review, and report coverage separately for models, datasets and Spaces. Hugging Face supports searching these three artifact types through its Hub APIs; task tags and dataset tags are separate taxonomies. The system must not mistake a successful search for exhaustive enumeration.
+The configured subject labels are a seed taxonomy spanning language, vision, audio, video, multimodal systems, code, science, health, education, law, finance, business, robotics, geospatial data, accessibility, fitness and public services. The weekly taxonomy tool refreshes model and dataset task/tag categories from Hugging Face's HfApi, then the discovery tool unions live terms with configured seeds and searches models, datasets and Spaces. Search results are bounded per subject; a successful search is not an exhaustive enumeration of all Hub repositories. The report must preserve the dynamic taxonomy status, number of terms loaded/searched, artifact types, per-query limits, failures and known coverage gaps.
 
 For every division, the bootcamp builder should generate a subject map, prerequisites, sequence of lessons, source-by-source detailed guides, hands-on exercises, a capstone, weekly knowledge checks, transfer tasks and evidence-based mastery state. Each guide must use the same depth standard as the freeCodeCamp study-guide pipeline. The five-lessons-per-day target is a scheduling target; source eligibility, review capacity and compute budgets control actual execution.
 
@@ -91,7 +91,7 @@ For every division, the bootcamp builder should generate a subject map, prerequi
 
 O*NET is the occupational backbone. The official database publishes task statements and task ratings, and the Web Services API exposes all occupation records and paginated task details. The current API reference documents 1,016 occupation records and the detailed task endpoint; the downloadable database also publishes a versioned task-statement table. Keep source version, task IDs, occupation codes, task type, importance when available and attribution with every generated guide.
 
-Use `tools/fetch_onet_task_curricula.py` with an `ONET_API_KEY` to retrieve occupation/task records from the official Web Services API. A free developer registration is required. Alternatively, provide the official Task Statements export to `tools/build_onet_task_curricula.py`. Generated paths group tasks by occupation and create a task-by-task practice plan.
+Use `tools/fetch_onet_task_curricula.py` to locate and download the current public O*NET Task Statements JSON export from the official O*NET database page; no API key is required for this public database download. The script extracts the current release version, retains the raw source file, verifies a minimum task count, and builds occupation/task learning paths. The builder also accepts official CSV/tabular exports. The current official O*NET 31.0 page lists 18,838 task statements; counts and release version must be re-read each run rather than treated as permanent.
 
 For every task, Buddy should:
 1. Explain the task and the occupation context.
@@ -149,3 +149,4 @@ Each weekly run should add:
 - Community impact measures: training completions, referrals, job placements verified by partners, veteran/homeless services delivered, and privacy/compliance incidents.
 
 No automated contact, application, bid, benefits action, financial transaction or grant submission is permitted without explicit human authorization.
+\n## Current implementation boundary\n\nThe pull request currently defines the source taxonomy, O*NET import/build path, per-task guide-authoring briefs, government opportunity pipeline, and rights-gated source queue. The weekly workflow refreshes metadata and creates artifacts; it does not yet run a generative Buddy guide-authoring service, persist approved guides to the repository, perform real model fine-tuning, or prove weekly mastery. Those are separate runtime integrations and must be reported as pending until their own tests and evidence exist. The default source-rights manifest grants no third-party training permissions.\n
