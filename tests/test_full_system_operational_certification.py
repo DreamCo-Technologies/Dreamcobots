@@ -9,6 +9,7 @@ from tools.build_full_system_certification import (
 
 ROOT = Path(__file__).resolve().parents[1]
 PROGRAM = ROOT / "config" / "full-system-operational-certification.json"
+WORKFLOW = ROOT / ".github" / "workflows" / "full-system-certification.yml"
 BENCH = ROOT / "config" / "system-speed-accuracy-benchmarks.json"
 EVIDENCE = ROOT / "config" / "runtime-connection-evidence.json"
 
@@ -30,6 +31,14 @@ class FullSystemOperationalCertificationTests(unittest.TestCase):
         }:
             self.assertIn(required, dims)
         self.assertGreaterEqual(len(dims), 30)
+
+
+    def test_full_certification_refreshes_fleet_catalog_before_verification_and_uploads_logs(self):
+        workflow = WORKFLOW.read_text(encoding="utf-8")
+        refresh = workflow.index("node --import tsx tools/generate_bot_fleet_catalog.ts")
+        verification = workflow.index("npx tsx tools/run_universal_verification.ts --production")
+        self.assertLess(refresh, verification)
+        self.assertIn("tmp/dreamco-verification/logs/**", workflow)
 
     def test_connection_claims_require_runtime_probe(self):
         self.assertIn("successful runtime probe", self.program["connection_rule"].lower())
