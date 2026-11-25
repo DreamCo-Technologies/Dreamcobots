@@ -21,6 +21,11 @@ def manifest(records=None):
     },"transcripts":records or []}
 
 class StudyGuideQueueTests(unittest.TestCase):
+    def test_builder_source_compiles_before_queue_execution(self):
+        root = Path(__file__).resolve().parents[1]
+        source = root / "tools" / "build_freecodecamp_study_guides.py"
+        compile(source.read_text(encoding="utf-8"), str(source), "exec")
+
     def test_every_catalog_video_gets_a_queue_row_without_fabricating_summaries(self):
         result=build_work_queue(catalog(),manifest())
         self.assertEqual(result["catalog_video_count"],2)
