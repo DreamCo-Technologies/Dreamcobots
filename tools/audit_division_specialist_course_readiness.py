@@ -158,7 +158,7 @@ def main() -> int:
     documents = [json.loads(path.read_text(encoding="utf-8")) for path in (REGISTRY, CROSSWALK, COURSE, ARTIFACTS)]
     report = audit(*documents)
     args.output.parent.mkdir(parents=True, exist_ok=True)
-    args.output.write_text(json.dumps(report, indent=2, ensure_ascii=False) + "\\n", encoding="utf-8")
+    args.output.write_text(json.dumps(report, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     print(json.dumps({key: report[key] for key in (
         "status", "division_count", "masterbot_count", "required_module_count",
         "ready_module_count", "not_ready_module_count", "owner_pending_target_count",
