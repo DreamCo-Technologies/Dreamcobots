@@ -46,8 +46,8 @@ class BacktestConfig:
             raise ValueError("initial_cash must be positive")
         if not 0 < self.allocation_fraction <= 1:
             raise ValueError("allocation_fraction must be in (0, 1]")
-        if self.fee_bps < 0 or self.slippage_bps < 0:
-            raise ValueError("fees and slippage cannot be negative")
+        if self.fee_bps < 0 or not 0 <= self.slippage_bps < 10_000:
+            raise ValueError("fees must be non-negative and slippage must be in [0, 10000) bps")
 
 
 @dataclass(frozen=True)
@@ -85,6 +85,27 @@ def sma_crossover_signals(
         slow_average = mean(history)
         signals[index] = 1 if fast_average > slow_average else 0
     return signals
+
+
+
+def _sell_in_chunks(
+    broker: PaperBroker,
+    symbol: str,
+    quantity: float,
+    reference_price: float,
+    timestamp: str,
+) -> None:
+    """Liquidate a position without violating the per-order notional cap."""
+    execution_factor = 1 - broker.slippage_bps / 10_000.0
+    executable_price = reference_price * execution_factor
+    if executable_price <= 0:
+        raise ValueError("sell execution price must be positive")
+    max_chunk = broker.max_order_notional / executable_price
+    remaining = quantity
+    while remaining > 1e-9:
+        chunk = min(remaining, max_chunk)
+        broker.submit_market_order(symbol, "sell", chunk, reference_price, timestamp)
+        remaining -= chunk
 
 
 def run_backtest(
@@ -137,7 +158,7 @@ def run_backtest(
                     # A risk-rejected order is recorded as no trade, never bypassed.
                     pass
         elif desired_position == 0 and current_quantity > 0:
-            broker.submit_market_order(symbol, "sell", current_quantity, bar.open, bar.timestamp)
+            _sell_in_chunks(broker, symbol, current_quantity, bar.open, bar.timestamp)
 
         marked_equity = broker.equity({symbol: bar.close})
         equity_curve.append(marked_equity)
@@ -147,9 +168,9 @@ def run_backtest(
 
     if settings.liquidate_at_end and broker.positions.get(symbol, 0.0) > 0:
         last_bar = bars[-1]
-        broker.submit_market_order(
+        _sell_in_chunks(
+            broker,
             symbol,
-            "sell",
             broker.positions[symbol],
             last_bar.close,
             f"{last_bar.timestamp}:end_of_backtest",
