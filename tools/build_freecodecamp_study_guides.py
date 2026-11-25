@@ -100,7 +100,7 @@ def validate_guide(guide: dict[str, Any], video: dict[str, Any], rights: dict[st
     if review.get("review_status") not in {"draft", "needs_human_review", "approved", "rejected"}:
         errors.append("review status is missing or invalid")
     if review.get("review_status") == "approved":
-        if not str(review.get("reviewer", "")).strip():
+        if not str(review.get("reviewer", "")).strip() or review.get("reviewer_type") != "human":
             errors.append("approved guide requires a named human reviewer")
         if not str(review.get("review_evidence_ref", "")).strip():
             errors.append("approved guide requires a review evidence reference")
