@@ -233,6 +233,7 @@ def load_route_metadata() -> dict[str, Any]:
             specialist_by_slug[slug] = {
                 "portfolio": portfolio["portfolio"],
                 "owner": portfolio["owner"],
+                "classification": portfolio.get("classification"),
                 "unique_domain": portfolio["unique_domain"],
                 "purpose": item[1],
                 "capabilities": item[2],
@@ -278,9 +279,19 @@ def build_manifest(slug: str, entry: dict[str, Any], api: dict[str, list[str]], 
     specialist = route_metadata["specialist_by_slug"].get(slug)
     teammate = route_metadata["teammate_by_slug"].get(slug) if lane else None
     supplemental_portfolio = specialist.get("portfolio") if specialist else None
+    proposed_domain_owner = None
+    proposed_primary_masterbot_id = None
     if specialist:
         division = source_division if source_division in route_metadata["portfolio_by_name"] else specialist["portfolio"]
-        primary_domain_owner = specialist["owner"]
+        portfolio = route_metadata["portfolio_by_name"][specialist["portfolio"]]
+        if portfolio.get("classification") == "supplemental_domain_profile":
+            # The ten supplemental domains remain unassigned; charter owners are proposals only.
+            primary_domain_owner = None
+            proposed_domain_owner = specialist["owner"]
+            proposed_primary_masterbot_id = route_metadata["masterbot_by_domain"].get(re.sub(r"[^a-z0-9]", "", proposed_domain_owner.casefold()))
+            flags.add("supplemental_domain_unassigned_pending_owner_review")
+        else:
+            primary_domain_owner = specialist["owner"]
         flags.add("supplemental_specialist_portfolio")
     elif teammate:
         division = source_division
@@ -288,7 +299,7 @@ def build_manifest(slug: str, entry: dict[str, Any], api: dict[str, list[str]], 
         flags.add("shared_workforce_lane")
     else:
         division = source_division
-        primary_domain_owner = source_division if source_division in route_metadata["domain_names"] else "DreamDiscovery"
+        primary_domain_owner = source_division if source_division in route_metadata["domain_names"] else None
     if division not in known_divisions:
         flags.add("division_unknown")
         division = "DreamDiscovery"
@@ -344,8 +355,12 @@ def build_manifest(slug: str, entry: dict[str, Any], api: dict[str, list[str]], 
         "division": division or "DreamDiscovery",
         "source_division": source_division,
         "primary_domain_owner": primary_domain_owner,
-        "primary_masterbot_id": route_metadata["masterbot_by_domain"].get(re.sub(r"[^a-z0-9]", "", primary_domain_owner.casefold()), 62),
-        "division_route_status": "proposed_domain_masterbot_match_requires_owner_review" if primary_domain_owner in route_metadata["domain_names"] else "discovery_review_required",
+        "primary_masterbot_id": route_metadata["masterbot_by_domain"].get(re.sub(r"[^a-z0-9]", "", primary_domain_owner.casefold())) if primary_domain_owner else None,
+        "division_route_status": (
+            "supplemental_domain_unassigned_pending_owner_review" if proposed_domain_owner else
+            "proposed_domain_masterbot_match_requires_owner_review" if primary_domain_owner in route_metadata["domain_names"] else
+            "discovery_review_required"
+        ),
         "owner_approval_required": True,
         "shared_platform_masterbot_ids": list(range(46, 66)),
         "tier": (base.get("tier") or "").lower(),
@@ -368,6 +383,9 @@ def build_manifest(slug: str, entry: dict[str, Any], api: dict[str, list[str]], 
     if supplemental_portfolio:
         entry_out["supplemental_portfolio"] = supplemental_portfolio
         entry_out["specialist_capability_domain"] = specialist["unique_domain"]
+    if proposed_domain_owner:
+        entry_out["proposed_domain_owner"] = proposed_domain_owner
+        entry_out["proposed_primary_masterbot_id"] = proposed_primary_masterbot_id
     if teammate:
         entry_out["shared_workforce_group"] = "GrokTeammates"
         entry_out["shared_teammate_masterbot_id"] = int(teammate["shared_masterbot_id"])
