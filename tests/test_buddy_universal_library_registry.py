@@ -107,6 +107,13 @@ class UniversalLibraryRegistryTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             search_internal_library_knowledge("python", root=self.root, limit=0)
 
+    def test_policy_counts_match_the_live_course_registry(self):
+        root = Path(__file__).resolve().parents[1]
+        policy = json.loads((root / "config/buddy-continuous-study-policy.json").read_text(encoding="utf-8"))
+        tracks = json.loads((root / "config/buddy-course-track-registry.json").read_text(encoding="utf-8"))
+        self.assertEqual(policy["study_assets"]["course_track_count"], len(tracks["tracks"]))
+        self.assertEqual(policy["study_assets"]["course_lesson_count"], len(load_course_lessons()))
+
     def test_course_registry_exposes_library_discovery_lessons(self):
         lessons = load_course_lessons()
         rows = [row for row in lessons if row.track_id == "universal-software-libraries"]
