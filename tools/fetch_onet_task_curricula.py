@@ -1,71 +1,104 @@
 #!/usr/bin/env python3
-"""Fetch the complete O*NET OnLine occupation/task inventory using an API key.
+"""Download the current public O*NET task-statements export and build curricula.
 
-Set ONET_API_KEY from an O*NET Web Services developer account. API key is read
-only from the environment and is never written to artifacts or logs.
+The official database files are public downloads. No O*NET API key is needed.
 """
 from __future__ import annotations
-import argparse, json, os, time, urllib.error, urllib.parse, urllib.request
+
+import argparse
+import json
+import re
+import urllib.request
+from html.parser import HTMLParser
 from pathlib import Path
-from build_onet_task_curricula import build
 
-BASE="https://api-v2.onetcenter.org"
+from build_onet_task_curricula import build, read_rows
 
-def get_json(path:str,key:str)->dict:
-    req=urllib.request.Request(BASE+path,headers={"X-API-Key":key,"Accept":"application/json","User-Agent":"DreamCo-Buddy-Bootcamp/1.0"})
-    with urllib.request.urlopen(req,timeout=30) as response:
-        return json.loads(response.read().decode("utf-8"))
+SOURCE_PAGE = "https://www.onetcenter.org/database.html"
+USER_AGENT = "DreamCo-Buddy-Bootcamp/1.0 (O*NET attribution preserved)"
 
-def fetch_all(key:str,delay:float)->tuple[list[dict],int]:
-    occupations=[]; start=1; total=None
-    while total is None or start<=total:
-        data=get_json(f"/online/occupations/?start={start}&end={start+199}",key)
-        batch=data.get("occupation",[])
-        occupations.extend(batch); total=int(data.get("total",len(occupations)))
-        if not batch: break
-        start=int(data.get("end",start+len(batch)))+1
-        time.sleep(delay)
-    rows=[]
-    for index,occupation in enumerate(occupations,1):
-        if occupation.get("datalevel") is False: continue
-        code=occupation.get("code")
-        if not code: continue
-        start=1
-        while True:
-            data=get_json(f"/online/occupations/{urllib.parse.quote(code,safe='')}/details/tasks?sort=category&start={start}&end={start+199}",key)
-            tasks=data.get("task",[])
-            for task in tasks:
-                rows.append({"O*NET-SOC Code":code,"Occupation Title":occupation.get("title"),
-                    "Task ID":task.get("id"),"Task":task.get("title"),
-                    "Task Type":task.get("category","unspecified"),
-                    "Importance":task.get("importance")})
-            if not tasks or not data.get("next"): break
-            start=int(data.get("end",start+len(tasks)))+1
-        if index%25==0: print(f"Processed {index}/{len(occupations)} occupation records; tasks={len(rows)}")
-        time.sleep(delay)
-    return rows,len(occupations)
 
-def main()->int:
-    p=argparse.ArgumentParser()
-    p.add_argument("--out-dir",required=True)
-    p.add_argument("--version",default="O*NET Web Services 2.0 current")
-    p.add_argument("--delay-seconds",type=float,default=0.25)
-    a=p.parse_args()
-    key=os.getenv("ONET_API_KEY")
-    if not key: raise SystemExit("ONET_API_KEY is not set; request a free O*NET Web Services API key.")
-    rows,occupation_records=fetch_all(key,a.delay_seconds)
-    result=build(rows,a.version)
-    result["source"]["official_api"]="https://services.onetcenter.org/reference/online"
-    result["inventory"]["occupation_records_returned"]=occupation_records
-    result["inventory"]["data_level_task_occupations"]=result["inventory"]["occupations"]
-    out=Path(a.out_dir); out.mkdir(parents=True,exist_ok=True)
-    (out/"onet-task-curricula.json").write_text(json.dumps(result,indent=2)+"\n",encoding="utf-8")
-    (out/"onet-task-curricula.md").write_text(
-      "# O*NET occupation and task curricula\n\n"+
-      f"- Occupation records returned: {occupation_records}\n"+
-      f"- Occupations with task records: {result['inventory']['occupations']}\n"+
-      f"- Task statements: {result['inventory']['task_statements']}\n"+
-      "- Source: O*NET Web Services 2.0; retain required attribution and version.\n",encoding="utf-8")
-    print(json.dumps(result["inventory"],indent=2))
+class DownloadLinkParser(HTMLParser):
+    def __init__(self) -> None:
+        super().__init__()
+        self.links: list[str] = []
+        self.page_text: list[str] = []
+
+    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        if tag.lower() == "a":
+            href = dict(attrs).get("href")
+            if href:
+                self.links.append(href)
+
+    def handle_data(self, data: str) -> None:
+        self.page_text.append(data)
+
+
+def fetch_current_export() -> tuple[bytes, str, str]:
+    request = urllib.request.Request(SOURCE_PAGE, headers={"User-Agent": USER_AGENT})
+    with urllib.request.urlopen(request, timeout=45) as response:
+        html = response.read().decode("utf-8", errors="replace")
+    parser = DownloadLinkParser()
+    parser.feed(html)
+    candidates = [link for link in parser.links if "task_statements.json" in link and "/dl_files/database/" in link]
+    if not candidates:
+        raise RuntimeError("Could not locate the official current O*NET task_statements.json link; refusing to use a stale guessed URL.")
+    href = candidates[0]
+    if href.startswith("/"):
+        url = "https://www.onetcenter.org" + href
+    elif href.startswith("http"):
+        url = href
+    else:
+        url = "https://www.onetcenter.org/" + href.lstrip("./")
+    text = " ".join(parser.page_text)
+    match = re.search(r"O\*NET\s*(?:®|&reg;)?\s*([0-9]+\.[0-9]+)\s*Database", text, re.I)
+    version = match.group(1) if match else "current-release-version-unparsed"
+    request = urllib.request.Request(url, headers={"User-Agent": USER_AGENT, "Accept": "application/json"})
+    with urllib.request.urlopen(request, timeout=90) as response:
+        payload = response.read()
+    return payload, version, url
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--out-dir", required=True)
+    parser.add_argument("--minimum-task-count", type=int, default=10000)
+    args = parser.parse_args()
+    out = Path(args.out_dir)
+    out.mkdir(parents=True, exist_ok=True)
+    payload, version, source_url = fetch_current_export()
+    raw_path = out / "onet-task-statements.json"
+    raw_path.write_bytes(payload)
+    rows = read_rows(raw_path)
+    result = build(rows, version)
+    result["source"]["official_download_url"] = source_url
+    result["source"]["release_page"] = SOURCE_PAGE
+    result["source"]["license"] = "Creative Commons Attribution 4.0 International; verify current O*NET license terms and preserve attribution."
+    result["inventory"]["download_bytes"] = len(payload)
+    result["inventory"]["coverage_check"] = {
+        "minimum_task_count": args.minimum_task_count,
+        "passed": result["inventory"]["task_statements"] >= args.minimum_task_count,
+    }
+    if result["inventory"]["task_statements"] < args.minimum_task_count:
+        raise SystemExit(
+            f"Incomplete O*NET task export: {result['inventory']['task_statements']} "
+            f"tasks; expected at least {args.minimum_task_count}."
+        )
+    (out / "onet-task-curricula.json").write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
+    summary = [
+        "# O*NET occupation and task curricula", "",
+        f"- O*NET release: {version}",
+        f"- Occupations: {result['inventory']['occupations']}",
+        f"- Task statements: {result['inventory']['task_statements']}",
+        f"- Official export: {source_url}",
+        "- Rights: O*NET database attribution and license terms must be preserved.",
+        "- Each task is assigned a Buddy study/practice and supervised business/community pathway brief.",
+        "- These are learning plans, not professional credentials or authorization to perform regulated work.",
+    ]
+    (out / "onet-task-curricula.md").write_text("\n".join(summary) + "\n", encoding="utf-8")
+    print(json.dumps(result["inventory"], indent=2))
     return 0
-if __name__=="__main__": raise SystemExit(main())
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
