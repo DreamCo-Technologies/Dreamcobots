@@ -288,15 +288,29 @@ class BuddyLearningBridge:
         catalog_lessons = load_course_lessons()
         lessons = list(catalog_lessons)
         if query.strip():
-            terms = {token for token in re.findall(r"[a-z0-9][a-z0-9_.+-]*", query.lower()) if len(token) > 1}
-            lessons = [
-                lesson for lesson in lessons
-                if terms & set(re.findall(
-                    r"[a-z0-9][a-z0-9_.+-]*",
+            terms = {
+                token.replace("_", "-")
+                for token in re.findall(r"[a-z0-9][a-z0-9_.+-]*", query.lower())
+                if len(token) > 1
+            }
+
+            def matches_query(lesson: CourseLesson) -> bool:
+                text = (
                     f"{lesson.title} {lesson.lesson_id} {lesson.track_id} {lesson.category} "
-                    f"{lesson.objective} {lesson.practice} {lesson.assessment} {lesson.benchmark}".lower()
-                ))
-            ]
+                    f"{lesson.objective} {lesson.practice} {lesson.assessment} {lesson.benchmark}"
+                ).lower()
+                tokens = {
+                    token.replace("_", "-")
+                    for token in re.findall(r"[a-z0-9][a-z0-9_.+-]*", text)
+                }
+                return any(
+                    term == token
+                    or (min(len(term), len(token)) >= 4 and (term.startswith(token) or token.startswith(term)))
+                    for term in terms
+                    for token in tokens
+                )
+
+            lessons = [lesson for lesson in lessons if matches_query(lesson)]
         items = [{
             "resource_id": lesson.resource_id,
             "lesson_id": lesson.lesson_id,
@@ -310,7 +324,14 @@ class BuddyLearningBridge:
             "source_url": lesson.source_url,
             "guide_path": lesson.guide_path,
             "rights_mode": lesson.rights_mode,
-            "completion_status": "queued_not_studied",
+            "content_status": lesson.content_status,
+            "completion_status": (
+                "queued_not_studied" if lesson.content_status == "authored"
+                else "metadata_only" if lesson.content_status == "metadata_only"
+                else "authoring_backlog"
+            ),
+            "study_allowed": lesson.content_status == "authored",
+            "authoring_required": lesson.content_status in {"authoring_backlog", "metadata_only"},
             "mastery_awarded": False,
             "model_weight_training_authorized": False,
             "paid_compute_authorized": False,
