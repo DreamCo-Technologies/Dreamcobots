@@ -49,6 +49,20 @@
       "date": "2025-04-10",
       "role": "fine_tuning_reference",
       "training_data_authorized": false
+    },
+    {
+      "id": "FCC-GLM53-VIDEO-2026",
+      "url": "https://www.youtube.com/watch?v=-gfgQfw2g_E",
+      "date": "2026-11-14",
+      "role": "primary_course_video",
+      "training_data_authorized": false,
+      "transcript_permission": "not_granted"
+    },
+    {
+      "id": "HF-LLM-COURSE",
+      "url": "https://huggingface.co/learn/llm-course/chapter1/1",
+      "role": "complementary_course_reference",
+      "training_data_authorized": false
     }
   ],
   "units": [
@@ -231,6 +245,195 @@
       ],
       "status": "DEFINED_NOT_EXECUTED",
       "weights_trained": false
+    },
+    {
+      "capability_id": "GPTS-11",
+      "objective": "Modern architecture and residual pathways",
+      "lesson": "Explain manifold-constrained hyperconnections, residual streams and measured model specifications.",
+      "practice": "Implement a toy residual block and trace its tensor flow.",
+      "sandbox_task": "Compare baseline and variant with fixed seeds.",
+      "transfer_task": "Measure gradient stability and parameter count.",
+      "rubric": "All architecture changes are isolated, measured and reproducible.",
+      "benchmark": "Residual and gradient stability suite.",
+      "provenance": [
+        "FCC-25M-2026-10-08",
+        "FCC-GLM53-2026-11-14",
+        "FCC-GLM53-VIDEO-2026"
+      ],
+      "status": "DEFINED_NOT_EXECUTED",
+      "weights_trained": false
+    },
+    {
+      "capability_id": "GPTS-12",
+      "objective": "RMSNorm, RoPE, NoPE and tied weights",
+      "lesson": "Implement and compare normalization, positional encoding and shared embedding/output weights.",
+      "practice": "Create reference implementations with shape and numerical tests.",
+      "sandbox_task": "Compare positional and weight-sharing variants on synthetic sequences.",
+      "transfer_task": "Transfer to changed context length and vocabulary size.",
+      "rubric": "No shape errors, finite gradients and exact parameter accounting.",
+      "benchmark": "Position/normalization/weight tying tests.",
+      "provenance": [
+        "FCC-25M-2026-10-08",
+        "FCC-GLM53-2026-11-14",
+        "FCC-GLM53-VIDEO-2026"
+      ],
+      "status": "DEFINED_NOT_EXECUTED",
+      "weights_trained": false
+    },
+    {
+      "capability_id": "GPTS-13",
+      "objective": "Linear and sparse attention with indexers",
+      "lesson": "Compare linear attention memory behavior with sparse attention and distant-context indexers.",
+      "practice": "Build a toy indexer and compare attention masks.",
+      "sandbox_task": "Test causal correctness and retrieval recall on synthetic sequences.",
+      "transfer_task": "Evaluate on longer sequences and adversarial distractors.",
+      "rubric": "Correctness precedes speed; memory/latency are profiled.",
+      "benchmark": "Sparse attention and indexer benchmark.",
+      "provenance": [
+        "FCC-25M-2026-10-08",
+        "FCC-GLM53-2026-11-14",
+        "FCC-GLM53-VIDEO-2026"
+      ],
+      "status": "DEFINED_NOT_EXECUTED",
+      "weights_trained": false
+    },
+    {
+      "capability_id": "GPTS-14",
+      "objective": "Mixture of Experts and shared experts",
+      "lesson": "Build MoE routing with top-k expert selection, shared expert path and load-balancing checks.",
+      "practice": "Implement a small deterministic router.",
+      "sandbox_task": "Measure expert utilization and routing stability.",
+      "transfer_task": "Test skewed inputs and expert collapse.",
+      "rubric": "Routing and fallback invariants pass under multiple seeds.",
+      "benchmark": "MoE routing and load-balance suite.",
+      "provenance": [
+        "FCC-25M-2026-10-08",
+        "FCC-GLM53-2026-11-14",
+        "FCC-GLM53-VIDEO-2026"
+      ],
+      "status": "DEFINED_NOT_EXECUTED",
+      "weights_trained": false
+    },
+    {
+      "capability_id": "GPTS-15",
+      "objective": "Multimodal vision patch pipeline",
+      "lesson": "Convert images into patch embeddings and combine them with text under explicit modality boundaries and 2D positional encoding.",
+      "practice": "Implement a tiny patch encoder using generated geometric images.",
+      "sandbox_task": "Reproduce 32x32 to 16 patch tokens as an example fixture.",
+      "transfer_task": "Transfer to alternate dimensions and held-out patterns.",
+      "rubric": "Patch counts, shapes and modality boundaries pass.",
+      "benchmark": "Vision patch and multimodal boundary tests.",
+      "provenance": [
+        "FCC-25M-2026-10-08",
+        "FCC-GLM53-2026-11-14",
+        "FCC-GLM53-VIDEO-2026"
+      ],
+      "status": "DEFINED_NOT_EXECUTED",
+      "weights_trained": false
+    },
+    {
+      "capability_id": "GPTS-16",
+      "objective": "Sandboxed code-task reinforcement learning",
+      "lesson": "Build a code-generation loop that runs candidate code against isolated unit tests and emits structured rewards.",
+      "practice": "Define task contracts and a network-disabled sandbox.",
+      "sandbox_task": "Run synthetic tasks with resource limits and hidden tests.",
+      "transfer_task": "Test reward hacking, timeout, file access and test leakage.",
+      "rubric": "No unrestricted execution; complete audit and isolation checks.",
+      "benchmark": "Sandbox safety and code-task success benchmark.",
+      "provenance": [
+        "FCC-25M-2026-10-08",
+        "FCC-GLM53-2026-11-14",
+        "FCC-GLM53-VIDEO-2026"
+      ],
+      "status": "DEFINED_NOT_EXECUTED",
+      "weights_trained": false
+    },
+    {
+      "capability_id": "GPTS-17",
+      "objective": "Reward functions and GRPO",
+      "lesson": "Explain group sampling, reward normalization, advantages and GRPO-style policy updates.",
+      "practice": "Implement toy group advantage calculations.",
+      "sandbox_task": "Compare reward variants on synthetic tasks.",
+      "transfer_task": "Test reward scaling, gaming and out-of-distribution prompts.",
+      "rubric": "Reward objectives, guardrails and seed lineage are explicit.",
+      "benchmark": "GRPO math and reward integrity suite.",
+      "provenance": [
+        "FCC-25M-2026-10-08",
+        "FCC-GLM53-2026-11-14",
+        "FCC-GLM53-VIDEO-2026"
+      ],
+      "status": "DEFINED_NOT_EXECUTED",
+      "weights_trained": false
+    },
+    {
+      "capability_id": "GPTS-18",
+      "objective": "Parameter-efficient RL and frozen layers",
+      "lesson": "Control which parameters can change during post-training and compare adapters with full fine-tuning.",
+      "practice": "Build a trainable-parameter allowlist.",
+      "sandbox_task": "Run mocked updates and approved tiny adapter experiments.",
+      "transfer_task": "Verify frozen tensors are bitwise unchanged.",
+      "rubric": "Only allowlisted weights change and checkpoint diff is recorded.",
+      "benchmark": "Parameter-scope and checkpoint integrity tests.",
+      "provenance": [
+        "FCC-25M-2026-10-08",
+        "FCC-GLM53-2026-11-14",
+        "FCC-GLM53-VIDEO-2026"
+      ],
+      "status": "DEFINED_NOT_EXECUTED",
+      "weights_trained": false
+    },
+    {
+      "capability_id": "GPTS-19",
+      "objective": "Research hypotheses, temperature and multiple seeds",
+      "lesson": "Plan controlled experiments for group size, sampling temperature and reward design with statistical analysis.",
+      "practice": "Create a preregistered experiment grid.",
+      "sandbox_task": "Run CPU-safe synthetic sweeps with fixed configurations.",
+      "transfer_task": "Repeat across seeds and report variance/confidence intervals.",
+      "rubric": "No single-run claims; all runs and metrics are traceable.",
+      "benchmark": "Research reproducibility and statistical reporting suite.",
+      "provenance": [
+        "FCC-25M-2026-10-08",
+        "FCC-GLM53-2026-11-14",
+        "FCC-GLM53-VIDEO-2026"
+      ],
+      "status": "DEFINED_NOT_EXECUTED",
+      "weights_trained": false
+    },
+    {
+      "capability_id": "GPTS-20",
+      "objective": "Data interleaving, forgetting and regression",
+      "lesson": "Evaluate curriculum mixtures and interleaving to reduce catastrophic forgetting across tasks.",
+      "practice": "Build a synthetic multi-domain stream.",
+      "sandbox_task": "Measure per-domain retention before and after updates.",
+      "transfer_task": "Run independent regression and holdout checks.",
+      "rubric": "No holdout leakage; retention and regressions are quantified.",
+      "benchmark": "Continual-learning and regression benchmark.",
+      "provenance": [
+        "FCC-25M-2026-10-08",
+        "FCC-GLM53-2026-11-14",
+        "FCC-GLM53-VIDEO-2026"
+      ],
+      "status": "DEFINED_NOT_EXECUTED",
+      "weights_trained": false
     }
-  ]
+  ],
+  "division_coverage": {
+    "canonical_divisions": 55,
+    "masterbot_lanes": 65,
+    "shared_foundation_available_to_every_division": true,
+    "shared_foundation_available_to_every_masterbot_lane": true,
+    "specialist_ownership_unchanged": true,
+    "division_crosswalk": "config/generated/masterbot-55-domain-crosswalk.json",
+    "masterbot_registry": "config/masterbot-65-registry.json",
+    "unresolved_mappings_remain_review_required": true,
+    "course_manifest": "config/buddy-25m-cpu-llm-course.json"
+  },
+  "course_integration": {
+    "course_manifest": "config/buddy-25m-cpu-llm-course.json",
+    "study_guide": "docs/BUDDY_25M_CPU_LLM_STUDY_GUIDE.md",
+    "module_count": 18,
+    "additional_model_units": 10,
+    "video_id": "-gfgQfw2g_E",
+    "status": "DEFINED_NOT_EXECUTED"
+  }
 }
