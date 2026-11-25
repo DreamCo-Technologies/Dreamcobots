@@ -124,6 +124,8 @@ def build_intake(catalog: dict[str, Any], manifest: dict[str, Any], *, root: Pat
         "schema": "dreamco.freecodecamp_transcript_intake.v1",
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "catalog_video_count": len(queue),
+        "source_inventory_status": catalog.get("inventory_status", "unknown"),
+        "source_inventory_complete": catalog.get("inventory_status") == "complete",
         "authorized_transcript_count": authorized,
         "permission_request_count": pending,
         "blocked_manifest_record_count": blocked,
@@ -187,7 +189,9 @@ def audit_weekly_tests(
         else:
             failed.append(transcript["video_id"])
 
-    if not eligible:
+    if intake.get("source_inventory_complete") is not True:
+        status = "BLOCKED_PARTIAL_SOURCE_CATALOG"
+    elif not eligible:
         status = "BLOCKED_NO_AUTHORIZED_TRANSCRIPTS"
     elif failed:
         status = "FAILED_WEEKLY_BUDDY_TEST_EVIDENCE"
@@ -201,6 +205,7 @@ def audit_weekly_tests(
         "generated_at": now.isoformat(),
         "window_days": max_age_days,
         "status": status,
+        "source_inventory_complete": intake.get("source_inventory_complete") is True,
         "authorized_transcript_count": len(eligible),
         "tested_transcript_count": len(results),
         "missing_video_ids": missing,
