@@ -191,6 +191,7 @@ def load_course_lessons(root: Path = ROOT) -> list[CourseLesson]:
     return lessons
 
 
+@lru_cache(maxsize=128)
 def resources_for_division(division: str, root: Path = ROOT) -> list[Resource]:
     crosswalk = _read(root / "config/generated/masterbot-55-domain-crosswalk.json")
     names = {row.get("domain_name") for row in crosswalk.get("domains", [])}
@@ -204,6 +205,7 @@ def resources_for_division(division: str, root: Path = ROOT) -> list[Resource]:
     ]
 
 
+@lru_cache(maxsize=128)
 def resources_for_masterbot(masterbot: str, root: Path = ROOT) -> list[Resource]:
     registry = _read(root / "config/masterbot-65-registry.json")
     names = {row.get("name") for row in registry.get("divisions", [])}
