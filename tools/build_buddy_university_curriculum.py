@@ -278,11 +278,12 @@ def build(profiles: list[dict[str, Any]], hf: dict[str, Any], fcc: dict[str, Any
             brief = playbook.get("guide_authoring_brief", {})
             task_rows.append({"task_ref": task_ref, "occupation_code": code, "occupation_title": title,
                               "task_id": task_id, "task": statement, "division_ids": route_names,
-                              "mapping_status": status, "task_specific_software_categories": brief.get("software_categories_to_assess", []),
-                              "agent_capabilities_to_assess": brief.get("agent_capabilities_to_assess", []),
-                              "detailed_guide_requirements": brief.get("must_include", []),
-                              "commercial_pathway": playbook.get("commercial_pathway", {}),
-                              "community_pathway": playbook.get("community_pathway", {})})
+                              "mapping_status": status, "task_specific_software_category_count": len(brief.get("software_categories_to_assess", [])),
+                              "agent_capability_count": len(brief.get("agent_capabilities_to_assess", [])),
+                              "detailed_guide_requirement_count": len(brief.get("must_include", [])),
+                              "task_playbook_status": playbook.get("learning_summary_status", "not_yet_authored_by_buddy"),
+                              "commercial_pathway_status": (playbook.get("commercial_pathway") or {}).get("status", "not_provided"),
+                              "task_playbook_source": "versioned O*NET curriculum task_playbooks record; see source inventory"})
             for division in route_names:
                 division_tasks[division].append(task_ref)
 
