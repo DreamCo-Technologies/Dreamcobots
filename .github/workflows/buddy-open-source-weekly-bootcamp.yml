@@ -119,20 +119,20 @@ jobs:
           fi
       - name: Build O*NET task-by-task sales and procurement playbooks
         run: |
-          printf '{"opportunities":[]}\\n' > "$RUNNER_TEMP/buddy-bootcamp-weekly/empty-opportunities.json"
-          python tools/build_government_sales_pipeline.py \\
-            --onet "$RUNNER_TEMP/buddy-bootcamp-weekly/onet/onet-task-curricula.json" \\
-            --opportunities "$RUNNER_TEMP/buddy-bootcamp-weekly/empty-opportunities.json" \\
+          printf '{"opportunities":[]}\n' > "$RUNNER_TEMP/buddy-bootcamp-weekly/empty-opportunities.json"
+          python tools/build_government_sales_pipeline.py \
+            --onet "$RUNNER_TEMP/buddy-bootcamp-weekly/onet/onet-task-curricula.json" \
+            --opportunities "$RUNNER_TEMP/buddy-bootcamp-weekly/empty-opportunities.json" \
             --out "$RUNNER_TEMP/buddy-bootcamp-weekly/onet-sales-playbooks.json"
       - name: Build division-specific Buddy self-authoring bootcamp plan
         run: |
-          python tools/build_buddy_self_bootcamp.py \\
-            --division-source shared/division-production-contract.ts \\
-            --hf-taxonomy "$RUNNER_TEMP/buddy-huggingface-taxonomy.json" \\
-            --onet "$RUNNER_TEMP/buddy-bootcamp-weekly/onet/onet-task-curricula.json" \\
-            --source-queue "$RUNNER_TEMP/buddy-bootcamp-weekly/source-study-queue.json" \\
-            --workforce config/buddy-workforce-entrepreneurship-bootcamp.json \\
-            --government config/buddy-government-community-enterprise-curriculum.json \\
+          python tools/build_buddy_self_bootcamp.py \
+            --division-source shared/division-production-contract.ts \
+            --hf-taxonomy "$RUNNER_TEMP/buddy-huggingface-taxonomy.json" \
+            --onet "$RUNNER_TEMP/buddy-bootcamp-weekly/onet/onet-task-curricula.json" \
+            --source-queue "$RUNNER_TEMP/buddy-bootcamp-weekly/source-study-queue.json" \
+            --workforce config/buddy-workforce-entrepreneurship-bootcamp.json \
+            --government config/buddy-government-community-enterprise-curriculum.json \
             --out-dir "$RUNNER_TEMP/buddy-bootcamp-weekly"
 
       - name: Publish weekly discovery report
