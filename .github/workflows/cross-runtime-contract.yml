@@ -4,6 +4,7 @@ on:
   pull_request:
     paths:
       - "config/cross-runtime-contract.json"
+      - "config/dreamco-mastery-continuity-registry.json"
       - "docs/CROSS_REPOSITORY_COMPLETION_AND_COMPETITION.md"
       - "tools/validate_cross_runtime_contract.py"
       - "tests/test_cross_runtime_contract.py"
@@ -15,7 +16,7 @@ permissions:
 
 concurrency:
   group: cross-runtime-contract-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   validate:
