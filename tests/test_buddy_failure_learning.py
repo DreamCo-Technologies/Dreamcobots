@@ -94,4 +94,17 @@ class BuddyFailureLearningTests(unittest.TestCase):
   verification=self._verified_event_inputs()
   verification["test_evidence"]=[]
   with self.assertRaises(ValueError):build_training_event(self.observation,verification)
+
+ def test_training_event_rejects_noncanonical_or_mismatched_commit_url(self):
+  verification=self._verified_event_inputs()
+  verification["source_url"]="https://example.com/not-dreamco"
+  with self.assertRaises(ValueError):build_training_event(self.observation,verification)
+  verification=self._verified_event_inputs()
+  verification["source_commit"]="f"*40
+  with self.assertRaises(ValueError):build_training_event(self.observation,verification)
+ def test_training_event_keeps_numeric_run_id_as_metadata(self):
+  verification=self._verified_event_inputs("44866516527")
+  event=build_training_event(self.observation,verification)
+  self.assertEqual(event["run_id"],"44866516527")
+  self.assertRegex(event["source_fingerprint"],r"^[0-9a-f]{24}$")
 if __name__=="__main__":unittest.main()
