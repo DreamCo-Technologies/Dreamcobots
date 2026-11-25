@@ -92,6 +92,8 @@ jobs:
           python3 -m unittest discover -s tests -p "test_dreamco_bootcamp_seed_data.py" -v
           python3 -m unittest discover -s tests -p "test_dreamco_training_factory.py" -v
           python3 -m unittest discover -s tests -p "test_dreamco_original_training_examples.py" -v
+      - name: Test production certification truth rules
+        run: python3 -m unittest tests.test_production_readiness_gate -v
       - name: Full repository verification
         run: npm run test:repository
       - name: Fleet end-to-end verification
