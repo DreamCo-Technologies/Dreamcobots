@@ -99,6 +99,10 @@ class StudyGuideQueueTests(unittest.TestCase):
                 "reviewed_at":"2026-11-25T12:00:00Z",
                 "review_evidence_ref":"review-record-1",
             })
+            guide["review"]["reviewer_type"]="automated"
+            result=build_work_queue(catalog(),manifest([rights]),{"v1":guide},root=root)
+            self.assertEqual(result["videos"][0]["guide_status"],"NEEDS_REVIEW")
+            guide["review"]["reviewer_type"]="human"
             result=build_work_queue(catalog(),manifest([rights]),{"v1":guide},root=root)
             self.assertEqual(result["videos"][0]["guide_status"],"APPROVED")
             self.assertEqual(result["videos"][0]["guide_validation_errors"],[])
