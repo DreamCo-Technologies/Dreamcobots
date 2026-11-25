@@ -38,7 +38,7 @@ A guide enters internal search and the course queue only after it is approved an
 
 ## Runtime bridge and local retrieval
 
-- `runtime_bridge.py` exposes `BuddyLearningBridge.library_knowledge()` to the host-mediated Buddy runtime.
+- `runtime_bridge.py` exposes `BuddyLearningBridge.library_knowledge()` and `library_learning_queue()` to the host-mediated Buddy runtime; the queue is scoped to a canonical division or MasterBot lane.
 - `buddy/datasets/unknown_router.py` invokes the same internal-first route for library, framework, SDK, package and API questions; it reuses the existing explicit external-discovery gate.
 - The bridge searches approved internal guides first through `foundry.local_rag.LocalRagStore`; the index is local, dependency-free TF-IDF and does not call an embedding or frontier model.
 - An unapproved/missing guide returns a gap and any matching seed candidates, clearly labeled as unverified.
