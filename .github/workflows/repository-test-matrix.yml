@@ -42,6 +42,8 @@ jobs:
           python-version: "3.13"
       - name: Compile DreamCo Model Foundry source and entry points
         run: python -m compileall -q buddy/learning/model_foundry.py tools/build_division_training_matrix.py tools/train_buddy_division_model.py tools/build_model_release_candidate.py
+      - name: Verify Buddy tokenizer curriculum and study-guide coverage
+        run: python3 -m unittest tests.test_buddy_tokenizer_training_curriculum -v
       - name: Test Model Foundry rights gate and parallel division planner
         run: python -m unittest discover -s tests -p "test_model_foundry.py" -v
       - name: Validate pretrained model store catalog and publication gates

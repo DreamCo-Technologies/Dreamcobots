@@ -115,3 +115,8 @@ Every lesson should include:
 - Keep benchmark test sets held out from training and teacher-generated synthetic data.
 - Preserve attribution and source lineage; honor license restrictions and removal/withdrawal obligations.
 - Do not claim a model learned from a resource unless a documented training run actually used approved data and produced an evaluated checkpoint.
+
+## Tokenizer and language-model course references
+
+Buddy's original tokenizer study guide links to [Hugging Face Tokenizers](https://huggingface.co/docs/tokenizers), the [Hugging Face NLP Course tokenizer chapter](https://huggingface.co/learn/nlp-course/chapter6/1), [SentencePiece](https://github.com/google/sentencepiece), and freeCodeCamp's [Train Your Own LLM](https://www.youtube.com/watch?v=9Ge0sMm65jo). These are study references, not blanket permission to reproduce course materials, download captions, or train on third-party text. The corresponding original 12-lesson syllabus is `config/buddy-tokenizer-training-curriculum.json`.
+
