@@ -2,11 +2,15 @@
 
 ## Goal
 
-Run a continuous, evidence-driven learning cycle for all 65 divisions using three source families:
+Run a continuous, evidence-driven learning cycle for all 55 domain divisions, mapped across the 65-MasterBot fleet (including 20 shared-platform MasterBots), using these source families:
 
-1. **freeCodeCamp** — course/video discovery, official learning links and item-level transcript permissions.
-2. **Hugging Face** — dataset/model discovery, task metadata, dataset cards, licenses, gated terms, benchmarks and approved training assets.
-3. **Ollama** — local model execution, model packaging/import, reproducible inference and evaluation of locally available models.
+1. **GitHub repositories** — primary source code, READMEs, tests, notebooks, releases and immutable revisions, subject to license review.
+2. **Hugging Face** — dataset/model/Space discovery, task metadata, cards, licenses, gated terms, benchmarks and approved training assets.
+3. **freeCodeCamp** — course/video discovery, official learning links and item-level transcript permissions.
+4. **O*NET and official workforce sources** — occupation/task definitions and task-to-skill study paths.
+5. **Official procurement and public-service sources** — government sales, grants, contracting and community-service learning with eligibility and human-review safeguards.
+6. **Ollama** — local model execution, model packaging/import, reproducible inference and evaluation of locally available models.
+7. **User-owned data** — separately registered and used only under the user's purpose-specific consent.
 
 The runtime policy is `config/buddy-continuous-study-policy.json`. It schedules work 24/7 but must pause when there is no authorized content, no available compute, a budget cap is reached, or a required evaluator is unavailable. It must not spin endlessly or incur unapproved paid costs.
 
