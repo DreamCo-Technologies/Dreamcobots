@@ -95,12 +95,13 @@ def route_buddy_learning_query(
     root: Path = ROOT,
     limit: int = 5,
     record_gap: bool = False,
-    query_is_redacted: bool = False,
+    redacted_query: str | None = None,
 ) -> dict[str, Any]:
     """Prefer approved internal guide content, then Bootcamp lessons, then a gap.
 
-    record_gap=True is an explicit persistence choice. No external discovery or
-    model routing is ever initiated by this function.
+    record_gap=True is an explicit persistence choice and requires a separate,
+    caller-sanitized redacted_query. The raw search query is never persisted.
+    No external discovery or model routing is ever initiated by this function.
     """
     if not isinstance(query, str) or not query.strip():
         raise ValueError("query must be a non-empty string")
@@ -212,11 +213,13 @@ def route_buddy_learning_query(
     }
     gap_event = None
     if record_gap:
+        if not isinstance(redacted_query, str) or not redacted_query.strip():
+            raise PermissionError("supply a separately redacted query before persisting a knowledge gap")
         gap_event = record_library_knowledge_gap(
-            normalized_query,
+            redacted_query,
             reason="no_approved_internal_guide_or_course_lesson",
             root=root,
-            query_is_redacted=query_is_redacted,
+            query_is_redacted=True,
         )
     return {
         "schema": "dreamco.buddy_internal_first_learning_route.v1",
