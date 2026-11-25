@@ -75,7 +75,7 @@ class BuddyCourseTrackRegistryTests(unittest.TestCase):
         import json
         root = Path(__file__).resolve().parents[1]
         registry = json.loads((root / "config/masterbot-65-registry.json").read_text(encoding="utf-8"))
-        expected = len(load_course_lessons())
+        expected = sum(lesson.content_status == "authored" for lesson in load_course_lessons())
         for row in registry["divisions"]:
             with self.subTest(masterbot=row["name"]):
                 self.assertEqual(len(resources_for_masterbot(row["name"])), expected)
