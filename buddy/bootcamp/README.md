@@ -161,3 +161,14 @@ Original summaries, explanations, exercises, and study-path structure authored f
 Use `buddy/bootcamp/prompts/open-source-study-guide-authoring.md` for original multi-source guide authoring. It requires the complete permitted source bundle, pinned revision, item-level rights evidence, original explanations and exercises, defensible division mapping, and human review. It explicitly blocks metadata-only summaries and keeps training permission separate.
 
 The summary adapter exposes `execute_study_plan(...)`, which runs the approved package through the existing permissioned study worker and its temporary-workspace cleanup boundary. It allows read-only source access only. It records study, lesson, quiz, exercise, capstone-submission and remediation events when the callback supplies evidence; lesson and capstone pass events additionally require an independent evaluator identifier. It never performs model-weight training or awards mastery. Mastery remains a separate evidence-verifier decision.
+
+
+## Buddy AI College and cross-platform subject coverage
+
+The curriculum authority is `config/buddy-university-curriculum.json`; the build standard is `docs/BUDDY_AI_COLLEGE_TRAINING_STANDARD.md`. The university builder maps the 45 knowledge domains, all 55 canonical divisions, Hugging Face model/dataset/Space subjects, freeCodeCamp specialist tracks and video categories, and imported O*NET task statements. It also routes source families outside both platforms, including official vendor documentation, open academic research, government/public data, professional standards and community practice.
+
+ChatGPT is the teacher and Buddy is the student. Each course progresses through foundations, practitioner, advanced and specialist/research levels with lectures/original summaries, worked examples, sandbox labs, independent exercises, projects, retrieval checks, unseen transfer, capstones, remediation and teach-back. The existing scheduler and rights-gated summary adapter remain the execution paths; the university map is a crosswalk and does not claim the source has been studied.
+
+For every occupation/task/venture, use the O*NET task-playbook brief to investigate the actual tools and software relevant to that task, including professional/high-end products, open-source and local alternatives, verified pricing/licensing, APIs, integrations, permissions, safety, operating procedures, unit economics, buyer research and sales/delivery workflows. Never invent product capabilities or attach irrelevant software.
+
+Ownership is recorded as user-designated ownership of original DreamCo-authored instructional expression and structure, subject to applicable law, actual authorship, contributor agreements and upstream licenses. User-provided data remains user-owned, private and separately consented for study, summaries, evaluation, retention and training. Third-party source material and model weights retain their original rights and attribution.
