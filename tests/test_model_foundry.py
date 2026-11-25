@@ -135,8 +135,10 @@ class ModelFoundryRightsTests(unittest.TestCase):
                 "paid_compute_authorized": False,
                 "external_data_allowed": False,
                 "requires_rights_cleared_local_dataset": True,
+                "requires_explicit_training_approval": True,
                 "approved_by": "DreamCo owner",
                 "authorization_reference": "owner-approval-2026-001",
+                "approved_at": "2026-11-25T08:00:00Z",
             },
         }
 
