@@ -31,6 +31,7 @@ class FiveHundredModelWorkflowScopeTests(unittest.TestCase):
         text = WORKFLOW.read_text(encoding="utf-8")
         self.assertNotIn("requirements-media.txt", text)
         self.assertIn("requirements-buddy-learning.txt", text)
+        self.assertIn("tools/build_buddy_learning_os_connection_graph.py", text)
 
     def test_missing_career_pathways_source_data_is_reported_as_skipped_not_passed(self):
         text = WORKFLOW.read_text(encoding="utf-8")
