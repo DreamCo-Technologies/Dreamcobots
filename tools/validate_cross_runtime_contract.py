@@ -100,6 +100,15 @@ def validate(data: dict) -> list[str]:
         errors.append("competition must pin a benchmark suite version")
     if competition.get("fallback_required") is not True:
         errors.append("competition must provide a fallback route")
+    fairness = competition.get("compute_fairness", {})
+    required_fairness_fields = {"policy", "budgets", "environments", "comparison", "anti_cheating", "selection"}
+    if not required_fairness_fields.issubset(fairness):
+        errors.append("competition is missing the detailed equal-compute fairness contract")
+    environment_ids = {item.get("id") for item in fairness.get("environments", []) if isinstance(item, dict)}
+    if not {"owner-laptop", "github-hosted"}.issubset(environment_ids):
+        errors.append("compute fairness must define owner-laptop and GitHub-hosted cohorts")
+    if not fairness.get("anti_cheating"):
+        errors.append("compute fairness must retain anti-cheating controls")
 
     order = data.get("completion_order", [])
     required_order = [
@@ -109,6 +118,8 @@ def validate(data: dict) -> list[str]:
         "execute_tokenizer_training_and_weight_training_only_on_approved_compute",
         "run_private_holdout_safety_and_regression_benchmarks",
         "complete_release_gates_and_recovery_tests",
+        "complete_and_verify_python_repository_runs_and_goals_with_no_unresolved_critical_failures_or_unowned_blockers",
+        "complete_buddy_operational_readiness_and_bootcamp_resource_catalog_and_curriculum",
         "freeze_versioned_shared_contracts",
         "implement_and_test_apple_c_runtime_after_python_completion",
         "preserve_and_adapt_apple_swift_runtime_to_shared_contract_after_python_completion",
@@ -124,6 +135,34 @@ def validate(data: dict) -> list[str]:
 
     if data.get("training", {}).get("scheduled_planning_is_not_training") is not True:
         errors.append("planning must remain distinct from actual training")
+    resource_catalog = data.get("training", {}).get("resource_catalog", {})
+    source_families = {item.get("family") for item in resource_catalog.get("source_families", []) if isinstance(item, dict)}
+    required_source_families = {
+        "open_model_and_dataset_hubs",
+        "research_and_benchmark_repositories",
+        "open_knowledge_and_web_corpora",
+        "code_and_technical_corpora",
+        "approved_enterprise_and_user_owned_data",
+        "teacher_models_and_providers",
+        "compute_and_training_frameworks",
+    }
+    if not required_source_families.issubset(source_families):
+        errors.append("training resource catalog is missing one or more governed source families")
+    if "No crawler or adapter may auto-download or train by discovery alone" not in resource_catalog.get("ingestion_gate", ""):
+        errors.append("resource discovery must not grant automatic download or training permission")
+    apple_ci = data.get("integration", {}).get("apple_repository_ci", {})
+    if "until the canonical Python repository completion gate is satisfied" not in apple_ci.get("phase_gate", ""):
+        errors.append("Apple cross-runtime execution must remain gated behind Python-first completion")
+    if data.get("truth_rules", {}).get("all_required_runs_green_before_cross_runtime_clone") is not True:
+        errors.append("all required Python runs must be green before cross-runtime cloning")
+    if data.get("truth_rules", {}).get("no_candidate_receives_extra_compute_or_hidden_benchmark_advantage") is not True:
+        errors.append("cross-runtime competition must enforce equal compute and no hidden benchmark advantage")
+    if data.get("truth_rules", {}).get("data_discovery_does_not_grant_data_access_or_training_rights") is not True:
+        errors.append("data discovery must not grant data access or training rights")
+    governance = data.get("data_governance", {})
+    required_governance_sections = {"shared_catalog", "division_isolation", "shared_corpora", "buddy_access", "privacy"}
+    if not required_governance_sections.issubset(governance):
+        errors.append("data governance must separate shared metadata from isolated division data")
     if data.get("integration", {}).get("no_credentials_or_private_chat_transcripts_in_git") is not True:
         errors.append("private chat transcripts and credentials must be excluded from Git")
     if data.get("truth_rules", {}).get("native_language_does_not_imply_better_performance") is not True:
