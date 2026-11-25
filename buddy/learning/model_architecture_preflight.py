@@ -45,7 +45,7 @@ def count_decoder_parameters(config: DecoderArchitecture) -> int:
     weights_per_layer = 4 * config.width**2 + 2 * config.width * config.feed_forward_size
     if config.bias:
         # MHA QKV/out, FFN in/out, and two affine LayerNorms.
-        weights_per_layer += 4 * config.width + config.feed_forward_size + 4 * config.width
+        weights_per_layer += 5 * config.width + config.feed_forward_size + 4 * config.width
     final_norm = 2 * config.width
     return embeddings + config.layers * weights_per_layer + final_norm
 
