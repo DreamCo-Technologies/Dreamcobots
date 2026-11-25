@@ -40,7 +40,7 @@ def _read_json(path: Path) -> dict[str, Any]:
 
 
 def _tokens(value: str) -> set[str]:
-    return {part for part in re.findall(r"[a-z0-9][a-z0-9_.+-]*", value.lower()) if len(part) > 1}
+    return {part for part in re.findall(r"[a-z0-9][a-z0-9_.+-]*", value.lower()) if len(part) > 1 and any(char.isalpha() for char in part)}
 
 
 def validate_library_guide_document(data: dict[str, Any]) -> list[str]:
