@@ -502,6 +502,7 @@ def build() -> dict[str, Any]:
             "source_division": source_division or bot.get("source_division") or bot.get("division"),
             "execution_division": bot.get("division"),
             "canonical_owner_division": owner if owner != "UNASSIGNED" else None,
+            "proposed_owner_division": proposed_owner,
             "shared_workforce_group": "GrokTeammates" if is_teammate else None,
             "teammate_lane_route": {"shared_masterbot_id": shared_teammate_masterbot_id, "route": teammate_route, "description": teammate.get("description")} if is_teammate else None,
             "supplemental_portfolio": source_portfolio,

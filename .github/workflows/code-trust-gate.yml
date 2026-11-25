@@ -103,6 +103,8 @@ jobs:
         run: python3 tools/generate_repository_test_registry.py
       - name: Test production certification truth rules
         run: python3 -m unittest tests.test_production_readiness_gate -v
+      - name: Regenerate current fleet end-to-end evidence before repository checks
+        run: node --import tsx tools/run_bot_fleet_e2e.ts
       - name: Full repository verification
         run: npm run test:repository
       - name: Fleet end-to-end verification
