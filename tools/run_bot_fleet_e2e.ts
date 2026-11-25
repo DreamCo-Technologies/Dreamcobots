@@ -15,6 +15,7 @@ const webIndex = {
   capabilityTestContract: report.capabilityTestContract,
   summary: report.summary,
   divisions: report.divisions,
+  portfolioGroupNames: report.portfolioGroupNames,
   profiles: report.profiles.map((profile) => ({
     slug: profile.slug,
     division: profile.division,
@@ -28,6 +29,7 @@ const webIndex = {
 const json = `${JSON.stringify(webIndex, null, 2)}\n`;
 const browserCertification = {
   summary: report.summary,
+  portfolioGroupNames: report.portfolioGroupNames,
   bots: Object.fromEntries(webIndex.profiles.map((profile) => [profile.slug, {
     division: profile.division,
     status: profile.status,
