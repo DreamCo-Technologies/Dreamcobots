@@ -18,7 +18,7 @@ The curriculum also includes task-to-detailed-work-activity relationships, relat
 
 ## Official data refresh
 
-The O*NET 31.0 snapshot reviewed for this curriculum reports 1,016 occupation records, 18,838 task statements, 165,780 task ratings, 338 emerging tasks, 74,702 work-activity rows and 305,389 work-context rows. These are release-specific snapshot counts. Buddy must read the official release version and verify every download rather than assume these counts remain current.
+The current O*NET 31.0 production release (August 2026) reports 1,016 occupation records, 18,838 task statements, 165,780 task ratings, 338 emerging tasks, 74,702 work-activity rows and 305,389 work-context rows. It also includes software skills (31,821), essential skills (18,200), transferable skills (45,500), knowledge (60,060), abilities (94,640), education (11,495), training/experience (26,812), job zones (923), alternate job titles (54,269), reported titles (8,189), related occupations (18,460), task-to-DWA links (24,087), and additional scale, metadata and content-model reference files. The machine-readable file inventory and counts are in `config/buddy-onet-content-model-curriculum.json`. These are release-specific snapshot counts; refresh and verify every file and hash on each O*NET release. The O*NET 31.0 database is CC BY 4.0: preserve attribution to O*NET and the U.S. Department of Labor, link the license, and indicate changes.
 
 Official sources:
 - [O*NET Database](https://www.onetcenter.org/database.html)
