@@ -148,6 +148,15 @@ class BuddyCourseTrackRegistryTests(unittest.TestCase):
         ))
 
 
+
+    def test_onet_subject_and_task_outlines_are_authoring_backlog(self):
+        lessons = [lesson for lesson in load_course_lessons() if lesson.track_id == "onet"]
+        self.assertTrue(lessons)
+        self.assertTrue(all(lesson.content_status == "authoring_backlog" for lesson in lessons))
+        lesson_titles = {lesson.title for lesson in lessons}
+        self.assertFalse(any(resource.name in lesson_titles
+                             for resource in resources_for_division("DreamAIInfra")))
+
     def test_benchmark_programs_and_tasks_are_internal_authoring_backlog(self):
         lessons = [lesson for lesson in load_course_lessons() if lesson.track_id == "benchmark-guides"]
         self.assertEqual(len(lessons), 13 + 11)
