@@ -95,6 +95,7 @@ def route_buddy_learning_query(
     root: Path = ROOT,
     limit: int = 5,
     record_gap: bool = False,
+    query_is_redacted: bool = False,
 ) -> dict[str, Any]:
     """Prefer approved internal guide content, then Bootcamp lessons, then a gap.
 
@@ -215,6 +216,7 @@ def route_buddy_learning_query(
             normalized_query,
             reason="no_approved_internal_guide_or_course_lesson",
             root=root,
+            query_is_redacted=query_is_redacted,
         )
     return {
         "schema": "dreamco.buddy_internal_first_learning_route.v1",
