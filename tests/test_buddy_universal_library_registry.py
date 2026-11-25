@@ -141,6 +141,8 @@ class UniversalLibraryRegistryTests(unittest.TestCase):
         root = Path(__file__).resolve().parents[1]
         report = library_coverage_report(root=root)
         self.assertGreaterEqual(report["review_required_guide_count"], 1)
+        self.assertEqual(report["seed_candidate_count"], 531)
+        self.assertEqual(report["ecosystem_count"], 38)
         self.assertFalse(report["worldwide_completeness_claimed"])
 
     def test_approved_internal_guides_enter_the_shared_course_registry(self):
