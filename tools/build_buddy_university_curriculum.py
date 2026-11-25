@@ -15,6 +15,32 @@ from pathlib import Path
 from typing import Any
 
 STOP = {"and", "or", "the", "of", "for", "to", "with", "in", "on", "a", "an", "from", "by", "when", "where", "how", "use", "using", "support", "systems", "system", "work", "operations"}
+FCC_DIVISION_CROSSWALK = {
+    "computer_science_and_fundamentals": ["DreamCodeLab", "DreamAIInfra", "DreamEducation"],
+    "html_css_and_accessibility": ["DreamCodeLab", "DreamArts", "DreamContent"],
+    "javascript_and_typescript": ["DreamCodeLab", "DreamAutomation", "DreamAIInfra"],
+    "frontend_and_ui_frameworks": ["DreamCodeLab", "DreamArts", "DreamContent"],
+    "backend_and_apis": ["DreamCodeLab", "DreamData", "DreamAIInfra", "DreamCyber"],
+    "python_and_automation": ["DreamCodeLab", "DreamAutomation", "DreamData", "DreamAIInfra"],
+    "java_and_jvm": ["DreamCodeLab", "DreamAutomation", "DreamAIInfra"],
+    "c_cpp_and_systems": ["DreamCodeLab", "DreamAIInfra", "DreamRobotics", "DreamProduction"],
+    "databases_and_sql": ["DreamData", "DreamCodeLab", "DreamAIInfra"],
+    "data_engineering": ["DreamData", "DreamCodeLab", "DreamAIInfra"],
+    "data_science_and_visualization": ["DreamData", "DreamScience", "DreamFinance", "DreamDecision"],
+    "mathematics_and_statistics": ["DreamScience", "DreamFinance", "DreamData", "DreamDecision"],
+    "machine_learning_and_deep_learning": ["DreamAIInfra", "DreamData", "DreamScience", "DreamRobotics"],
+    "generative_ai_and_llms": ["DreamAIInfra", "DreamAgents", "DreamContent"],
+    "ai_agents_and_mcp": ["DreamAgents", "DreamAIInfra", "DreamAutomation", "CommandCore"],
+    "cybersecurity_and_privacy": ["DreamCyber", "DreamAIInfra", "DreamData", "DreamLegal"],
+    "linux_networking_and_it": ["DreamAIInfra", "DreamCyber", "DreamAutomation", "DreamOps"],
+    "cloud_devops_and_ci_cd": ["DreamAIInfra", "DreamAutomation", "DreamCodeLab", "DreamOps"],
+    "mobile_and_cross_platform": ["DreamCodeLab", "DreamContent", "DreamAutomation"],
+    "game_development": ["GameTitan", "DreamArts", "DreamCodeLab", "DreamProduction"],
+    "career_and_interview_skills": ["DreamEducation", "DreamAdmin", "DreamSalesPro", "DreamProServices"],
+    "software_architecture_and_testing": ["DreamCodeLab", "DreamAIInfra", "DreamAutomation", "DreamDecision"],
+    "design_ux_and_product": ["DreamArts", "DreamContent", "DreamCodeLab", "DreamCustIntel"],
+    "other_or_unclassified": ["DreamEducation", "CommandCore"],
+}
 ALIASES = {
     "DreamAIInfra": {"ai", "artificial-intelligence", "machine-learning", "deep-learning", "llm", "llms", "model", "models", "inference", "training", "gpu", "transformer", "embedding", "agent", "agents", "multimodal"},
     "DreamAgents": {"agent", "agents", "autonomous", "orchestration", "tool-use", "mcp", "multi-agent"},
@@ -108,8 +134,15 @@ def build(profiles: list[dict[str, Any]], hf: dict[str, Any], fcc: dict[str, Any
     fcc_rows = []
     division_fcc: dict[str, list[str]] = defaultdict(list)
     for track in fcc.get("specialist_track_details", []):
-        related = [x for x in track.get("related_divisions", []) if x in names]
-        status = "source_declared_related_divisions" if related else "unclassified_shared_review"
+        source_related = track.get("related_divisions", [])
+        related = []
+        for source_division in source_related:
+            if source_division in names:
+                related.append(source_division)
+            related.extend(FCC_DIVISION_CROSSWALK.get(source_division, []))
+        related.extend(FCC_DIVISION_CROSSWALK.get(str(track.get("id")), []))
+        related = sorted({x for x in related if x in names})
+        status = "curated_crosswalk_requires_owner_review" if related else "unclassified_shared_review"
         if not related:
             related = ["DreamEducation", "CommandCore"]
         fcc_rows.append({"track_id": track.get("id"), "name": track.get("name"),
