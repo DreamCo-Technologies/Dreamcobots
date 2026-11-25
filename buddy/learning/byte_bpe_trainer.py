@@ -81,8 +81,7 @@ def train_byte_bpe(texts:Iterable[bytes],vocab_size:int=512)->dict[str,Any]:
    updated.append(out)
   sequences=updated
   merges.append({"left_hex":pair[0].hex(),"right_hex":pair[1].hex(),"token_hex":merged.hex(),"frequency":best_count})
- vocab=[bytes([i]).hex() for i in range(256)]
- vocab.extend(row["token_hex"] for row in merges)
+ vocab=list(dict.fromkeys([bytes([i]).hex() for i in range(256)]+[row["token_hex"] for row in merges]))
  return {"schema":SCHEMA,"algorithm":"deterministic_byte_level_bpe","vocab_size":len(vocab),"requested_vocab_size":vocab_size,"vocab_hex":vocab,"merges":merges,"training_executed":True,"model_weight_training_executed":False,"training_data_downloaded":False}
 
 def encode(text:str,tokenizer:dict[str,Any])->list[str]:
