@@ -268,6 +268,7 @@ jobs:
         run: python tools/sync_freecodecamp_catalog.py
       - name: Validate freeCodeCamp catalog and tests
         run: |
+          export PYTHONPATH="$GITHUB_WORKSPACE${PYTHONPATH:+:$PYTHONPATH}"
           python tools/sync_freecodecamp_catalog.py --check
           python -m unittest discover -s tests -p 'test_freecodecamp_catalog.py' -v
           python -m py_compile tools/catalog_freecodecamp_youtube.py
