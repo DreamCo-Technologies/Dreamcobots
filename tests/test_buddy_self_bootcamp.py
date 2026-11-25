@@ -8,8 +8,12 @@ class SelfBootcampTests(unittest.TestCase):
             for i in range(55)
         )
         self.assertEqual(len(division_names(source)),55)
+        incomplete="\\n".join(
+            f"  Division{i}: {{\\n    purpose: 'purpose',\\n    focusAreas: [],\\n    serves: [],\\n    outcome: 'outcome',\\n    boundary: 'boundary',\\n  }}"
+            for i in range(54)
+        )
         with self.assertRaises(ValueError):
-            division_names(source.replace("  Division54:", "  Missing54:").replace("    boundary: 'boundary',", "    boundary: 'boundary',", 1))
+            division_names(incomplete)
 
     def test_builds_all_division_paths_and_preserves_truth_boundary(self):
         names=[f"Division{i}" for i in range(55)]
