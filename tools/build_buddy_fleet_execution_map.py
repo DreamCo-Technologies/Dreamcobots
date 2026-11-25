@@ -316,7 +316,8 @@ def build_money_os_catalog(registry: dict[str, Any], lane_index: dict[str, dict[
             "registry_lane": lane_key,
             "related_manifest_bot_slug": related_slug,
             "profile_link_status": "linked_to_existing_manifest_profile" if related_slug else "registry_only_profile_link_review_required",
-            "canonical_owner_division": owner,
+            "canonical_owner_division": owner if owner != "UNASSIGNED" else None,
+            "proposed_owner_division": proposed_owner if owner == "UNASSIGNED" else None,
             "primary_masterbot_id": master_by_domain.get(norm(owner)),
             "buddy_orchestrator": "Buddy",
             "buddy_queue": "dependency_aware_governed_task_queue",
@@ -409,33 +410,58 @@ def build() -> dict[str, Any]:
         teammate = teammate_lanes.get(slug) if is_teammate else None
         if is_teammate and teammate is None:
             raise ValueError(f"Grok teammate {slug} has no source lane record")
+        proposed_owner = None
+        owner_for_capabilities = None
         if charter:
-            owner = charter["owner"]
+            proposed_owner = charter["owner"]
+            owner_for_capabilities = proposed_owner
             specialist = next((item for item in charter["bots"] if item[0] == slug), None)
             if specialist is None:
                 raise ValueError(f"Supplemental bot {slug} has no specialist capability charter")
-            exact_overlap = [cap for cap in specialist[2] if norm(cap) in canonical_owner_capabilities[owner]]
+            exact_overlap = [cap for cap in specialist[2] if norm(cap) in canonical_owner_capabilities[owner_for_capabilities]]
             if exact_overlap:
                 raise ValueError(f"Specialist scope duplicates canonical owner capabilities for {slug}: {exact_overlap}")
+            if charter.get("classification") == "supplemental_domain_profile":
+                # The ten supplemental domain profiles remain unassigned until owner approval.
+                owner = "UNASSIGNED"
+            else:
+                owner = proposed_owner
         elif is_teammate:
             owner = teammate_owner_by_slug.get(slug, "DreamDiscovery")
+            owner_for_capabilities = owner
             specialist = None
         elif norm(bot.get("primary_domain_owner") or bot.get("division", "")) in domain_by_key:
             owner = domain_by_key[norm(bot.get("primary_domain_owner") or bot.get("division", ""))]
+            owner_for_capabilities = owner
             specialist = None
         else:
             owner = "DreamDiscovery"
+            owner_for_capabilities = owner
             specialist = None
 
         if is_teammate:
             shared_teammate_masterbot_id, teammate_route = teammate_masterbot_route(teammate)
-            masterbot_id = master_by_domain.get(norm(owner)) if owner != "DreamDiscovery" else 62
+            masterbot_id = master_by_domain.get(norm(owner)) if owner != "DreamDiscovery" else None
+            proposed_masterbot_id = masterbot_id
             route_status = "proposed_domain_masterbot_match_requires_owner_review" if owner != "DreamDiscovery" and masterbot_id else "discovery_review_required"
+        elif charter and charter.get("classification") == "supplemental_domain_profile":
+            shared_teammate_masterbot_id = None
+            teammate_route = None
+            masterbot_id = None
+            proposed_masterbot_id = master_by_domain.get(norm(proposed_owner))
+            route_status = "supplemental_domain_unassigned_pending_owner_review"
         else:
             shared_teammate_masterbot_id = None
-            masterbot_id = master_by_domain.get(norm(owner)) if owner != "DreamDiscovery" else 62
             teammate_route = None
-            route_status = "proposed_domain_masterbot_match_requires_owner_review" if owner != "DreamDiscovery" and masterbot_id else "discovery_review_required"
+            masterbot_id = master_by_domain.get(norm(owner)) if owner != "DreamDiscovery" else None
+            proposed_masterbot_id = masterbot_id
+            route_status = (
+                "proposed_specialist_subportfolio_route_pending_owner_review"
+                if charter and charter.get("portfolio") == "Dream3D" and masterbot_id
+                else "proposed_domain_masterbot_match_requires_owner_review"
+                if owner != "DreamDiscovery" and masterbot_id
+                else "discovery_review_required"
+            )
         flags = list(bot.get("flags", []))
         if len(source_rows) > 1 or "duplicate_profile" in flags or slug in seen_slugs:
             duplicate_status = "duplicate_or_conflicting_profile_review"
@@ -449,7 +475,7 @@ def build() -> dict[str, Any]:
             signature_parts = [str(source.get("category") or bot.get("category") or "")]
             signature_parts.extend(str(x) for x in (source.get("capabilities") or []))
         signature = "|".join(sorted(norm(x) for x in signature_parts if x))
-        duplicate_groups[(norm(owner), signature)].append(slug)
+        duplicate_groups[(norm(owner_for_capabilities or owner), signature)].append(slug)
 
         revenue_input = {**bot, "division": source_division, "description": (teammate or {}).get("description", source.get("description", ""))}
         revenue = None if is_teammate else revenue_route(revenue_input, registry, lanes, sources, source_portfolio)
@@ -500,18 +526,21 @@ def build() -> dict[str, Any]:
             "duplicate_review_status": duplicate_status,
             "division_route": {
                 "status": route_status,
-                "route_scope": "non_privileged_planning_only_until_owner_approval" if route_status != "discovery_review_required" else "discovery_only",
+                "route_scope": "discovery_only" if route_status in {"discovery_review_required", "supplemental_domain_unassigned_pending_owner_review"} else "non_privileged_planning_only_until_owner_approval",
                 "primary_masterbot_id": masterbot_id,
                 "primary_masterbot_name": master["divisions"][masterbot_id - 1]["name"] if masterbot_id else None,
+                "proposed_primary_masterbot_id": proposed_masterbot_id if masterbot_id is None else None,
                 "execution_division": bot.get("division"),
-                "primary_domain_owner": owner,
+                "primary_domain_owner": owner if owner != "UNASSIGNED" else None,
+                "proposed_domain_owner": proposed_owner if owner == "UNASSIGNED" else None,
                 "shared_workforce_group": "GrokTeammates" if is_teammate else None,
                 "teammate_route_rule": teammate_route,
                 "shared_teammate_masterbot_id": shared_teammate_masterbot_id,
                 "shared_platform_masterbot_ids": shared_ids,
                 "unresolved_owner_goes_to": "DreamDiscovery" if route_status == "discovery_review_required" else None,
                 "owner_approval_required_for_remap": True,
-                "owner_approval_required_for_privileged_work": route_status != "discovery_review_required",
+                "owner_approval_required_for_privileged_work": True,
+                "privileged_execution_enabled": False,
             },
             "buddy_execution": {
                 "orchestrator": "Buddy",
