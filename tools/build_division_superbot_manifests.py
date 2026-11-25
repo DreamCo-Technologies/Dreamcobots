@@ -35,7 +35,9 @@ def unique_rows(rows: list[dict[str, Any]], key: str) -> list[dict[str, Any]]:
     for row in rows:
         value = str(row.get(key, "")).strip()
         if value:
-            found.setdefault(value.casefold(), row)
+            # Preserve every bot's provenance even when several bots request the same tool/API.
+            source = str(row.get("source_bot_slug", "")).strip()
+            found.setdefault(f"{value.casefold()}|{source.casefold()}", row)
     return [found[k] for k in sorted(found)]
 
 
@@ -132,7 +134,9 @@ def build_division_manifest(
     capability_rows = _capabilities(canonical_profiles)
     proposed_capability_rows = _capabilities(proposed_profiles)
     outcome_metrics = unique_rows(
-        [{"label": str(row.get("label", "")).strip(), "target": row.get("target"), "status": "declared_not_measured"}
+        [{"label": str(row.get("label", "")).strip(), "target": row.get("target"),
+          "source_bot_slug": row.get("source_bot_slug"), "source_path": row.get("source_path"),
+          "status": "declared_not_measured"}
          for row in benchmarks if row.get("label")], "label")
     return {
         "schema": "dreamco.division_superbot.v2",
