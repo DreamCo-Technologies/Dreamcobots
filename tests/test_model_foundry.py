@@ -227,5 +227,15 @@ class ModelFoundryRightsTests(unittest.TestCase):
                 )
 
 
+    def test_25m_bpe_architecture_profile_parameter_count(self):
+        from buddy.learning.model_foundry import estimate_decoder_parameter_count
+        profile = {
+            "vocab_size": 512, "context_size": 256, "width": 640,
+            "layers": 5, "attention_heads": 10, "feed_forward_size": 2560,
+            "tied_embeddings": True, "bias": True,
+        }
+        self.assertEqual(estimate_decoder_parameter_count(profile), 25_110_400)
+
+
 if __name__ == "__main__":
     unittest.main()
