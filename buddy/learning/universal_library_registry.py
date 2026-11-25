@@ -360,7 +360,7 @@ def library_coverage_report(root: Path = ROOT) -> dict[str, Any]:
         status_counts[status] = status_counts.get(status, 0) + 1
         if status in SEARCHABLE_STATES and _guide_is_stale(guide_doc, root):
             stale_due_to_age += 1
-    gap_path = root / "data/buddy-library-knowledge-gaps.jsonl"
+    gap_path = root / ".dreamco/library-knowledge-gaps.jsonl"
     gaps = 0
     if gap_path.is_file():
         gaps = sum(1 for line in gap_path.read_text(encoding="utf-8").splitlines() if line.strip())
