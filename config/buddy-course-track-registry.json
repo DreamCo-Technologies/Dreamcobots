@@ -134,5 +134,64 @@
       "rights": "repository_owned_metadata_only_no_score_or_mastery_claim"
     }
   ],
-  "resource_catalog": "config/buddy-course-source-resources.json"
+  "resource_catalog": "config/buddy-course-source-resources.json",
+  "learner_contract": {
+    "schema": "dreamco.buddy_bootcamp_dual_learner.v1",
+    "audiences": [
+      "humans",
+      "ai_models"
+    ],
+    "shared_curriculum": true,
+    "separate_progress_records": true,
+    "human": {
+      "purpose": "Teach people concepts, practical skills, safe tool use, and independent problem solving.",
+      "learning_cycle": [
+        "orientation",
+        "lesson",
+        "guided_practice",
+        "independent_project",
+        "assessment",
+        "reflection"
+      ],
+      "evidence_required": [
+        "lesson_version",
+        "learner_id",
+        "practice_artifact_or_submission",
+        "assessment_result",
+        "review_or_rubric",
+        "completion_timestamp"
+      ],
+      "mastery_rule": "Award only from completed human assessments and reviewed practical evidence; never infer from catalog enrollment."
+    },
+    "ai_models": {
+      "purpose": "Improve model capabilities through authorized study material, supervised examples, sandbox tasks, and measured training or adaptation.",
+      "learning_cycle": [
+        "authorized_source_review",
+        "rights_and_provenance_check",
+        "dataset_or_task_curation",
+        "sandbox_practice_or_training_run",
+        "targeted_benchmark",
+        "holdout_and_regression_evaluation",
+        "checkpoint_review"
+      ],
+      "evidence_required": [
+        "source_and_license_provenance",
+        "dataset_or_task_version",
+        "training_or_practice_run_id",
+        "code_and_config_revision",
+        "checkpoint_hash_when_weights_change",
+        "benchmark_and_holdout_results",
+        "regression_results",
+        "cost_and_compute_record"
+      ],
+      "mastery_rule": "A model capability is verified only by repeatable benchmark and holdout evidence; weight training requires a real checkpoint hash and regression review.",
+      "guardrails": [
+        "metadata_or_catalog_presence_is_not_training",
+        "human_course_completion_is_not_model_training",
+        "prompts_and_retrieval_updates_are_not_weight_updates",
+        "no third_party_content_or_weights_without_explicit_rights"
+      ]
+    },
+    "shared_capability_map": "Human and model learners may share objectives and benchmark definitions, but retain distinct learner identities, evidence, progress, and promotion decisions."
+  }
 }
