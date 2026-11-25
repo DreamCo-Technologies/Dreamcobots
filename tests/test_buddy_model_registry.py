@@ -103,7 +103,7 @@ class BuddyModelRegistryTests(unittest.TestCase):
     def test_benchmark_regression_blocks_routing(self):
         candidate = eligible_candidate()
         candidate["benchmark_evidence"][0]["candidate_score"] = 0.60
-        decision = route_model({"schema": "dreamco.buddy.model_registry.v1", "models": [candidate]},
+        decision = route_model(registry_with([candidate]),
                                "causal_language_modeling")
         self.assertEqual(decision["status"], "BLOCKED_NO_ELIGIBLE_MODEL")
         self.assertIn("benchmark_regression", decision["blocked_candidates"][0]["reasons"])
@@ -130,8 +130,7 @@ class BuddyModelRegistryTests(unittest.TestCase):
     def test_duplicate_model_ids_are_rejected(self):
         candidate = eligible_candidate()
         with self.assertRaises(ModelRegistryError):
-            validate_registry({"schema": "dreamco.buddy.model_registry.v1",
-                               "models": [candidate, copy.deepcopy(candidate)]})
+            validate_registry(registry_with([candidate, copy.deepcopy(candidate)]))
 
 
 
