@@ -88,7 +88,7 @@ def build(divisions:list[Any], hf:dict[str,Any], onet:dict[str,Any], queue:dict[
     gov_tracks=government.get("official_sources",[])
     college=college or {}
     freecodecamp=freecodecamp or {}
-    college_domains=college.get("domains",[])
+    college_domains=college.get("knowledge_domains",college.get("domains",[]))
     fcc_certifications=freecodecamp.get("official_platform_inventory",{}).get("core_certifications",[])+freecodecamp.get("official_platform_inventory",{}).get("additional_certifications",[])
     rows=[]
     for record in records:
@@ -105,7 +105,7 @@ def build(divisions:list[Any], hf:dict[str,Any], onet:dict[str,Any], queue:dict[
         record_text=" ".join([name,record.get("purpose",""),record.get("outcome",""),*record.get("focus_areas",[])])
         record_tokens=normalize_tokens(record_text)
         for domain in college_domains:
-            domain_text=" ".join([domain.get("id",""),domain.get("name",""),*domain.get("tracks",[])])
+            domain_text=" ".join([domain.get("id",""),domain.get("name",""),domain.get("scope",""),*domain.get("tracks",[])])
             overlap=sorted(record_tokens & normalize_tokens(domain_text))
             if overlap:
                 college_matches.append({"domain":domain.get("id"),"name":domain.get("name"),"matched_terms":overlap})
