@@ -28,7 +28,7 @@ def complete(prompt: str, profile: dict[str, Any], offline: Callable[[], str],
         from buddy.learning.buddy_knowledge_router import route_buddy_learning_query
 
         learning_route = route_buddy_learning_query(
-            prompt,
+            str(profile.get("internal_learning_query") or prompt),
             root=Path(profile.get("bootcamp_root") or Path(__file__).resolve().parents[2]),
             limit=int(profile.get("internal_learning_limit", 5)),
             record_gap=False,
