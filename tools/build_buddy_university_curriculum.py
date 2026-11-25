@@ -181,9 +181,11 @@ def build(profiles: list[dict[str, Any]], hf: dict[str, Any], fcc: dict[str, Any
     fcc_video_rows = []
     division_fcc_videos: dict[str, list[str]] = defaultdict(list)
     for category in video_tracks:
-        routes = suggest_divisions(str(category), profiles)
-        related = [row["division"] for row in routes]
-        fcc_video_rows.append({"category": category, "division_ids": related, "mapping_status": routes[0]["mapping_status"]})
+        related = sorted({x for x in FCC_DIVISION_CROSSWALK.get(str(category), []) if x in names})
+        status = "curated_crosswalk_requires_owner_review" if related else "unclassified_shared_review"
+        if not related:
+            related = ["DreamEducation", "CommandCore"]
+        fcc_video_rows.append({"category": category, "division_ids": related, "mapping_status": status})
         for division in related:
             division_fcc_videos[division].append(str(category))
 
@@ -257,7 +259,7 @@ def build(profiles: list[dict[str, Any]], hf: dict[str, Any], fcc: dict[str, Any
             "freecodecamp_video_subject_categories": sorted(set(division_fcc_videos[name])),
             "college_domains": sorted(division_college[name], key=lambda x: (-x["score"], x["domain_id"] or "")),
             "source_families": sorted(set(division_source_families[name])),
-            "agent_capability_catalog": AGENT_CAPABILITY_CATALOG,
+            "agent_capability_catalog": college.get("agent_capability_matrix", AGENT_CAPABILITY_CATALOG),
             "onet_task_refs": sorted(set(division_tasks[name])),
             "daily_target": {"lessons": 5, "order": ["prerequisites", "new_concept", "worked_example",
                 "deliberate_practice", "retrieval_or_capstone"], "only_count_verified_guides_and_recorded_attempts": True},
@@ -287,7 +289,7 @@ def build(profiles: list[dict[str, Any]], hf: dict[str, Any], fcc: dict[str, Any
                              "boundary": "not an exhaustive inventory of every Hub repo, model, dataset, Space or discipline"},
             "freecodecamp": {"source": "canonical roadmap and official curriculum inventory", "tracks": len(fcc_rows),
                              "certification_phases": fcc_phases, "video_subject_categories": video_tracks,
-                             "official_platform_inventory": platform_inventory,
+                             "official_platform_inventory": platform_inventory,\n                             "channel_inventory_status": (fcc_catalog or {}).get("inventory_status", "not_supplied"),\n                             "channel_inventory": (fcc_catalog or {}).get("inventory", {}),
                              "boundary": "track roadmap; refresh the official curriculum and channel inventory before claiming every lesson/video is ingested"},
             "onet": {"source": onet.get("source", {}), "occupations": len(occupations), "tasks": len(task_rows),
                      "boundary": onet.get("inventory", {}).get("coverage_warning", "source coverage not independently established")},
@@ -296,7 +298,7 @@ def build(profiles: list[dict[str, Any]], hf: dict[str, Any], fcc: dict[str, Any
         "freecodecamp_track_routes": fcc_rows,
         "freecodecamp_certification_phases": fcc_phases,
         "freecodecamp_video_subject_categories": video_tracks,
-        "freecodecamp_video_category_routes": fcc_video_rows,
+        "freecodecamp_video_category_routes": fcc_video_rows,\n        "freecodecamp_channel_video_routes": video_rows,\n        "academic_structure": college.get("academic_structure", {}),\n        "instructional_model": college.get("instructional_model", {}),
         "college_domain_routes": [{"domain_id":x.get("id"),"name":x.get("name"),"scope":x.get("scope"),"routes":suggest_divisions(" ".join([x.get("id",""),x.get("name",""),x.get("scope",""),*x.get("tracks",[])]),profiles,limit=6)} for x in college_domains],
         "university_curriculum": {"title": college.get("title"), "knowledge_domains": college_domains,
             "shared_core": college.get("shared_core", {}), "academic_structure": academic_structure,
