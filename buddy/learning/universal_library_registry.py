@@ -333,7 +333,7 @@ def record_library_knowledge_gap(
         "next_action": "discover_authoritative_sources_and_review_rights",
         "external_routing_performed": False,
     }
-    path = root / "data/buddy-library-knowledge-gaps.jsonl"
+    path = root / ".dreamco/library-knowledge-gaps.jsonl"
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("a", encoding="utf-8") as handle:
         handle.write(json.dumps(event, sort_keys=True) + "\n")
