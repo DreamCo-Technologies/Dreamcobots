@@ -118,7 +118,7 @@ def prepare_corpus_splits(raw:bytes,*,tokenizer_type:str="byte_level",vocab_size
   raise ValueError("dataset is too small for independent train/validation/holdout splits")
  train_hash=hashlib.sha256(train_bytes).hexdigest()
  if tokenizer_type=="byte_level":
-  tokenizer={"type":"byte_level","vocabulary_size":256,"special_tokens":[],"training_split_sha256":train_hash,"trained_on_training_split_only":True,"holdout_used_for_training":False}
+  tokenizer={"type":"byte_level","vocabulary_size":256,"special_tokens":[],"training_split_sha256":None,"fit_on_training_split_only":False,"holdout_used_for_training":False}
   return {"train_ids":list(train_bytes),"validation_ids":list(validation_bytes),"holdout_ids":list(holdout_bytes),"tokenizer":tokenizer,"tokenizer_artifact":tokenizer,"train_bytes":len(train_bytes),"validation_bytes":len(validation_bytes),"holdout_bytes":len(holdout_bytes)}
  if tokenizer_type!="byte_bpe": raise ValueError("tokenizer_type must be byte_level or byte_bpe")
  try:
@@ -135,9 +135,9 @@ def prepare_corpus_splits(raw:bytes,*,tokenizer_type:str="byte_level",vocab_size
  if min(len(train_ids),len(validation_ids),len(holdout_ids))<65:
   raise ValueError("tokenized dataset is too small for independent sequence training")
  model["training_split_sha256"]=train_hash
- model["trained_on_training_split_only"]=True
+ model["fit_on_training_split_only"]=True
  model["holdout_used_for_training"]=False
- summary={"type":"byte_bpe","vocabulary_size":model["vocab_size"],"merge_count":len(model["merges"]),"training_split_sha256":train_hash,"trained_on_training_split_only":True,"holdout_used_for_training":False}
+ summary={"type":"byte_bpe","vocabulary_size":model["vocab_size"],"merge_count":len(model["merges"]),"training_split_sha256":train_hash,"fit_on_training_split_only":True,"holdout_used_for_training":False}
  return {"train_ids":train_ids,"validation_ids":validation_ids,"holdout_ids":holdout_ids,"tokenizer":summary,"tokenizer_artifact":model,"train_bytes":len(train_bytes),"validation_bytes":len(validation_bytes),"holdout_bytes":len(holdout_bytes)}
 
 
