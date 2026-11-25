@@ -76,10 +76,10 @@ jobs:
         run: python3 tools/generate_bot_manifests.py
       - name: Manifest drift check
         run: python3 tools/generate_bot_manifests.py --check
-      - name: Refresh deterministic repository evidence for this exact checkout
-        run: python3 tools/refresh_repository_evidence.py
       - name: Regenerate fleet status and division audit for this checkout
         run: python3 tools/fleet_runtime_audit.py --skip-folder-tests
+      - name: Refresh dependent repository evidence after fleet status is current
+        run: python3 tools/refresh_repository_evidence.py
       - name: Runtime, generator, auditor and link-check tests
         run: python3 -m pytest -q -p no:cacheprovider tests/test_fleet_runtime_executor.py tests/test_fleet_runtime_customize.py tests/test_generate_bot_manifests.py tests/test_fleet_runtime_audit.py tests/test_check_website_links.py tests/test_run_prospectus.py tests/test_file_prospectus.py tests/test_fleet_divisions.py tests/test_pages_feature_audit.py tests/test_build_queue.py
       - name: Actions workflow count drift (health report must cover every workflow file)
