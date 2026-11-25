@@ -72,8 +72,8 @@ class UniversalLibraryCurriculumTests(unittest.TestCase):
         bootcamp = (ROOT / "buddy/bootcamp/buddy_bootcamp.yaml").read_text(encoding="utf-8")
         coverage = self.read_json("config/buddy-library-ecosystem-adapter-coverage.json")
         import re
-        automated = re.search(r"automated_ecosystem_discovery_count:\\s*(\\d+)", bootcamp)
-        manual = re.search(r"manual_ecosystem_review_count:\\s*(\\d+)", bootcamp)
+        automated = re.search(r"automated_ecosystem_discovery_count:\s*(\d+)", bootcamp)
+        manual = re.search(r"manual_ecosystem_review_count:\s*(\d+)", bootcamp)
         self.assertIsNotNone(automated)
         self.assertIsNotNone(manual)
         self.assertEqual(int(automated.group(1)), coverage["automated_ecosystem_count"])
