@@ -17,10 +17,44 @@ def load(path:Path)->dict[str,Any]:
 def slug(value:str)->str:
     return "-".join("".join(ch.lower() if ch.isalnum() else " " for ch in value).split())
 
+
+def guide_errors(guide:dict[str,Any], divisions:list[str])->list[str]:
+    errors=[]
+    source=guide.get("source") if isinstance(guide.get("source"),dict) else {}
+    for key in ("source_type","source_id","url","revision"):
+        if source.get(key) in (None,""): errors.append(f"source.{key} is required")
+    if not str(source.get("url","")).startswith(("https://","http://")): errors.append("source.url must be an HTTP(S) URL")
+    rights=guide.get("rights") if isinstance(guide.get("rights"),dict) else {}
+    for key in ("study_permission","summary_derivative_permission","evaluation_permission"):
+        if rights.get(key) is not True: errors.append(f"rights.{key} must be explicitly true")
+    if not str(rights.get("evidence_ref","")).strip(): errors.append("rights.evidence_ref is required")
+    if guide.get("schema")!="dreamco.buddy_source_study_guide.v1": errors.append("unsupported guide schema")
+    summary=guide.get("summary") if isinstance(guide.get("summary"),dict) else {}
+    if len(str(summary.get("executive_overview","")).strip())<100: errors.append("summary.executive_overview must contain at least 100 characters")
+    if len(str(summary.get("detailed_explanation","")).strip())<500: errors.append("summary.detailed_explanation must contain at least 500 characters")
+    for key,minimum in (("sections",1),("learning_objectives",3),("key_concepts",5),("worked_examples",1),("exercises",3),("knowledge_checks",5),("answer_key",5),("division_mapping",1),("references",1)):
+        if not isinstance(guide.get(key),list) or len(guide[key])<minimum: errors.append(f"{key} requires at least {minimum} entries")
+    capstone=guide.get("capstone")
+    if not isinstance(capstone,dict) or not capstone.get("acceptance_tests"): errors.append("capstone acceptance_tests are required")
+    review=guide.get("review") if isinstance(guide.get("review"),dict) else {}
+    if review.get("status")!="approved": errors.append("review.status must be approved")
+    if not str(review.get("reviewer","")).strip() or not review.get("reviewed_at"): errors.append("reviewer and reviewed_at are required")
+    mapped=[]
+    for item in guide.get("division_mapping",[]) if isinstance(guide.get("division_mapping"),list) else []:
+        name=item if isinstance(item,str) else item.get("division") if isinstance(item,dict) else None
+        if name in divisions: mapped.append(name)
+    if not mapped: errors.append("division_mapping must reference at least one known division")
+    return errors
+
 def organize(guides:list[dict[str,Any]], divisions:list[str], user_data:list[dict[str,Any]]|None=None)->dict[str,Any]:
     packages=[]
+    rejected=[]
     division_index={name:[] for name in divisions}
     for guide in guides:
+        errors=guide_errors(guide,divisions)
+        if errors:
+            rejected.append({"source_id":(guide.get("source") or {}).get("source_id"),"errors":errors})
+            continue
         source=guide.get("source",{})
         rights=guide.get("rights",{})
         if guide.get("review",{}).get("status")!="approved":
@@ -93,7 +127,7 @@ def organize(guides:list[dict[str,Any]], divisions:list[str], user_data:list[dic
     for row in user_data or []:
         if not isinstance(row,dict): continue
         private.append({"asset_id":row.get("asset_id"),"owner":"user","classification":row.get("classification","user_provided"),"consent_scope":row.get("consent_scope",[]),"study_allowed":row.get("study_allowed") is True,"summary_allowed":row.get("summary_allowed") is True,"evaluation_allowed":row.get("evaluation_allowed") is True,"training_allowed":row.get("training_allowed") is True,"retention_policy":row.get("retention_policy","user_configured"),"source_hash":row.get("sha256"),"source_uri":row.get("source_uri"),"division_ids":row.get("division_ids",[]),"ownership_note":"User retains ownership of user-provided data; consent is purpose-specific and never inferred."})
-    return {"schema":"dreamco.buddy_learning_organization.v1","generated_at":datetime.now(timezone.utc).isoformat(),"status":"organized_from_approved_guides_only","ownership_policy":{"dreamco_original_summaries":"DreamCo-owned original authored expression and instructional structure, subject to applicable law and upstream license terms","user_data":"User retains ownership; purpose-specific consent is required for study, summary, evaluation and training","third_party_sources":"Retain upstream ownership, license, attribution and any reuse restrictions"},"coverage":{"approved_guides_organized":len(packages),"divisions":len(divisions_out),"divisions_with_assets":sum(bool(x["learning_asset_ids"]) for x in divisions_out),"user_data_assets_registered":len(private),"weight_training_eligible_assets":sum(x["training"]["weight_training_eligible"] for x in packages)},"packages":packages,"division_curricula":divisions_out,"user_data_registry":private,"progress_ledger":{"source_of_truth":"append-only progress events emitted by the Buddy runtime","required_events":["asset_assigned","study_started","lesson_completed","knowledge_check_submitted","exercise_passed","capstone_submitted","capstone_passed","mastery_awarded","remediation_assigned","training_run_started","training_run_completed","training_run_evaluated"],"mastery_rule":"Mastery requires configured assessment threshold plus independently verified capstone; exposure or summary reading alone never awards mastery.","training_runs_require":["approved data manifest","training_permission true for every included asset","user-data training consent where user data is included","baseline metrics","holdout evaluation","compute approval and budget","versioned checkpoint","rollback plan"]},"truth_boundary":"This organizer creates division-linked study packages and an initial progress structure. It does not create absent summaries, assign lessons in a running Buddy service, update model weights, or prove study progress."}
+    return {"schema":"dreamco.buddy_learning_organization.v1","generated_at":datetime.now(timezone.utc).isoformat(),"status":"organized_from_approved_guides_only","ownership_policy":{"dreamco_original_summaries":"DreamCo-owned original authored expression and instructional structure, subject to applicable law and upstream license terms","user_data":"User retains ownership; purpose-specific consent is required for study, summary, evaluation and training","third_party_sources":"Retain upstream ownership, license, attribution and any reuse restrictions"},"coverage":{"guides_received":len(guides),"approved_guides_organized":len(packages),"guides_rejected_or_pending":len(rejected),"divisions":len(divisions_out),"divisions_with_assets":sum(bool(x["learning_asset_ids"]) for x in divisions_out),"user_data_assets_registered":len(private),"weight_training_eligible_assets":sum(x["training"]["weight_training_eligible"] for x in packages)},"packages":packages,"rejected_or_pending_guides":rejected,"division_curricula":divisions_out,"user_data_registry":private,"progress_ledger":{"source_of_truth":"append-only progress events emitted by the Buddy runtime","required_events":["asset_assigned","study_started","lesson_completed","knowledge_check_submitted","exercise_passed","capstone_submitted","capstone_passed","mastery_awarded","remediation_assigned","training_run_started","training_run_completed","training_run_evaluated"],"mastery_rule":"Mastery requires configured assessment threshold plus independently verified capstone; exposure or summary reading alone never awards mastery.","training_runs_require":["approved data manifest","training_permission true for every included asset","user-data training consent where user data is included","baseline metrics","holdout evaluation","compute approval and budget","versioned checkpoint","rollback plan"]},"truth_boundary":"This organizer creates division-linked study packages and an initial progress structure. It does not create absent summaries, assign lessons in a running Buddy service, update model weights, or prove study progress."}
 
 def main()->int:
     p=argparse.ArgumentParser()
