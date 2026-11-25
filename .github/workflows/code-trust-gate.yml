@@ -75,6 +75,8 @@ jobs:
           python3 tools/generate_dreamco_repository_master_map.py
           python3 tools/generate_buddy_benchmark_index.py
           python3 tools/generate_command_center_data.py
+          # Refresh the canonical fleet before search indexing and repository verification.
+          node --import tsx tools/generate_bot_fleet_catalog.ts
           node --import tsx tools/generate_dreamco_search_index.ts
           node --import tsx tools/generate_buddy_success_program.ts
           python3 tools/audit_actions_health.py
