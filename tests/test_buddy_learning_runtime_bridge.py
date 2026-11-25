@@ -163,6 +163,22 @@ class RuntimeBridgeTests(unittest.TestCase):
         self.assertTrue(item["authoring_required"])
         self.assertTrue(item["implementation_steps"])
         self.assertTrue(item["buddy_demo"])
+        source_title = item["title"].split(": ", 1)[1]
+        education_metadata = self.bridge.bootcamp_learning_queue(
+            division="DreamEducation", query=source_title, limit=10
+        )
+        finance_metadata = self.bridge.bootcamp_learning_queue(
+            division="DreamFinance", query=source_title, limit=10
+        )
+        self.assertTrue(any(
+            row["track_id"] == "freecodecamp-video-catalog"
+            and row["source_video_id"] == item["source_video_id"]
+            for row in education_metadata["items"]
+        ))
+        self.assertFalse(any(
+            row.get("source_video_id") == item["source_video_id"]
+            for row in finance_metadata["items"]
+        ))
 
     def test_library_learning_queue_contains_all_seed_and_ecosystem_lanes(self):
         queue = self.bridge.library_learning_queue(division="DreamCodeLab", limit=100)
