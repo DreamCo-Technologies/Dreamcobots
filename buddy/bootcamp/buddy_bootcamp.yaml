@@ -21,6 +21,7 @@ tracks:
   - cpu_first_25m_llm_architecture
   - tolkien_studies
   - onet_full_content_model_and_task_engineering
+  - huggingface_full_learning_map
 stages:
   - diagnose
   - select_resource
@@ -114,6 +115,17 @@ learning_sources:
     rights_policy: block_unknown_rights_and_copyrighted_text_ingestion
     copyrighted_tolkien_text_training: false
     mastery_evidence_required: [original_artifact, citations, item_level_rights_review, rubric, unseen_assessment, reviewer]
+  - id: huggingface_full_learning_map
+    name: Hugging Face full official course catalog and ecosystem engineering
+    curriculum: config/buddy-huggingface-full-learning-map.json
+    study_guide: docs/BUDDY_OPEN_SOURCE_MULTIMODAL_BOOTCAMP.md
+    task_taxonomy: config/huggingface-task-taxonomy.json
+    applies_to: all_55_canonical_divisions_and_65_masterbot_lanes
+    scheduler: buddy.learning.course_track_registry
+    transcript_ingestion: disabled_by_default
+    training_data_rights_required: true
+    specialist_ownership: preserve_existing_crosswalk
+    mastery_evidence_required: [course_assessments, original_projects, source_rights_review, independent_task, regression_benchmark]
   - id: onet_full_content_model
     name: O*NET full content model and task engineering
     curriculum: config/buddy-onet-content-model-curriculum.json
