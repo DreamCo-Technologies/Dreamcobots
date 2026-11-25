@@ -12164,3 +12164,37 @@ Every taxonomy subsystem must receive its own owner lane, versioned input/output
 - **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
 - **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
 - **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
+
+### Hugging Face Datasets API
+
+- **Subsystem ID:** `taxonomy_technology_discovery_source_huggingface-datasets`
+- **Group:** `technology_discovery_source`
+- **Mission:** Dedicated technology discovery source subsystem for "Hugging Face Datasets API".
+- **Source files:** `config/buddy/technology-discovery-policy.json`
+- **Source resource IDs:** `huggingface-datasets`
+- **Source record count:** 1
+- **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
+- **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
+- **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
+- **Permissions:** Least privilege; No external side effects without required approval
+- **Safety controls:** Validate source provenance; Preserve exact labels and source IDs; Expose blocked, stale, and unresolved states; Audit consequential actions
+- **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
+- **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
+- **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
+
+### Ollama Official Model Library
+
+- **Subsystem ID:** `taxonomy_technology_discovery_source_ollama-library`
+- **Group:** `technology_discovery_source`
+- **Mission:** Dedicated technology discovery source subsystem for "Ollama Official Model Library".
+- **Source files:** `config/buddy/technology-discovery-policy.json`
+- **Source resource IDs:** `ollama-library`
+- **Source record count:** 1
+- **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
+- **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
+- **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
+- **Permissions:** Least privilege; No external side effects without required approval
+- **Safety controls:** Validate source provenance; Preserve exact labels and source IDs; Expose blocked, stale, and unresolved states; Audit consequential actions
+- **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
+- **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
+- **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
