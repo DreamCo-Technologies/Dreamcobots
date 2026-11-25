@@ -87,6 +87,19 @@ def _rows(track: dict, data: dict) -> list[dict]:
              "assessment": "Complete a task-specific benchmark, rights review and independent holdout."}
             for row in data.get("task_families", [])
         ]
+    if parser == "huggingface_learning_map":
+        courses = [
+            {"id": row["id"], "title": row["title"], "objective": row["topics"],
+             "practice": "Complete the official course activities where available and create an original DreamCo transfer project.",
+             "assessment": row["assessment"], "benchmark": "Course-specific independent benchmark."}
+            for row in data.get("official_courses", [])
+        ]
+        modules = [
+            {"id": row["id"], "title": row["title"], "objective": row["objective"],
+             "practice": row["practice"], "assessment": row["assessment"], "benchmark": row["benchmark"]}
+            for row in data.get("ecosystem_modules", [])
+        ]
+        return courses + modules
     if parser == "freecodecamp":
         certs = [
             {"id": row["id"], "title": row["name"],
