@@ -27,3 +27,8 @@ Unknown/restricted rights block training. Public reachability is not permission.
 
 ## Implementation status
 The Python profile planner validates profiles and emits a training manifest. The static browser builder exports a local JSON profile. These are not yet wired to account persistence, source-content ingestion, GPU jobs, Ollama deployment, or a live five-minute scheduler. Tests are authored but must be executed in the repository workspace before production use.
+
+
+## Rights approval is not self-declared
+
+The browser profile builder records a user's declared source category and any supplied license/permission references, but it always leaves new sources in `pending_review`. A trusted review service must verify training permission before changing a source to `approved`. Approved open-license, public-domain, and licensed sources require a license ID and URL, a rights-evidence record, and an explicit training-permission attestation. Owned sources require an owner attestation/approval; user-authorized sources require an owner approval reference. Content marked available also requires a content hash, immutable content reference, and non-empty provenance. Unknown or restricted rights can be recorded for triage but never enter the learning plan.
