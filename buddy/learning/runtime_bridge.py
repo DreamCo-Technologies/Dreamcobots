@@ -15,6 +15,7 @@ from pathlib import Path
 from typing import Any
 
 from buddy.learning.library_knowledge_router import route_library_question
+from buddy.learning.universal_library_registry import library_coverage_report
 from buddy.learning.course_track_registry import load_course_lessons, resources_for_division, resources_for_masterbot
 from buddy.learning.evidence_acquisition import (
     Capability, CapabilityRegistry, LearningEvent, LearningLedger, benchmark_gate,
@@ -123,6 +124,10 @@ class BuddyLearningBridge:
             requested_by="buddy-runtime",
             gap_root=gap_root,
         )
+
+    def library_coverage(self) -> dict[str, Any]:
+        """Return transparent library catalog, guide, rights and freshness coverage."""
+        return library_coverage_report()
 
     def library_learning_queue(self, *, division: str | None = None,
                                masterbot: str | None = None, query: str = "",
