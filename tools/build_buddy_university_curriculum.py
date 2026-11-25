@@ -147,7 +147,6 @@ def build(profiles: list[dict[str, Any]], hf: dict[str, Any], fcc: dict[str, Any
     fcc_inventory_status = fcc_catalog.get("inventory_status", "not_loaded")
     workforce = workforce or {}
     government = government or {}
-    fcc_catalog = fcc_catalog or {}
     college_domains = college.get("knowledge_domains", college.get("domains", []))
     source_families = college.get("source_families", [])
     academic_structure = college.get("academic_structure", {})
