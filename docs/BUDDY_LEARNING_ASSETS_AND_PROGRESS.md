@@ -1,6 +1,6 @@
-# DreamCo-owned learning assets, division paths and progress
+# User-designated learning assets, division paths and progress
 
-Every completed, rights-cleared Buddy study guide is converted into a structured learning package. The package retains upstream identity, pinned revision, license, attribution and rights evidence, while DreamCo owns its independently authored summary, explanations, exercises, assessments and curriculum organization to the extent permitted by applicable law and source terms.
+Every completed, rights-cleared Buddy study guide is converted into a structured learning package. The package retains upstream identity, pinned revision, license, attribution and rights evidence, while The user is recorded as the designated owner of independently authored summaries, explanations, exercises, assessments and curriculum organization, subject to applicable law, contributor agreements and upstream source terms.
 
 ## User data ownership and permissions
 
