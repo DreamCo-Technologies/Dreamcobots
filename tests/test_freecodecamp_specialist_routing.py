@@ -118,6 +118,7 @@ class FreeCodeCampSpecialistRoutingTests(unittest.TestCase):
         expected = {
             row["video_id"] for row in catalog["videos"]
             if {str(value).casefold() for value in row.get("categories", [])} == {"other_or_unclassified"}
+            and row["video_id"] not in self.paths_by_video
         }
         self.assertEqual(set(self.triage_by_video), expected)
         for lesson in self.triage_by_video.values():
