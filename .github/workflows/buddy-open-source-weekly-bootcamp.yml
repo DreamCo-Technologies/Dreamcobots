@@ -9,13 +9,17 @@ on:
       - "config/buddy-source-study-guide.schema.json"
       - "config/buddy-source-rights-manifest.json"
       - "config/buddy-authorized-media-rights.json"
+      - "config/buddy-workforce-entrepreneurship-bootcamp.json"
+      - "config/buddy-government-community-enterprise-curriculum.json"
+      - "config/buddy-onet-occupation-guide.schema.json"
       - "tools/discover_open_source_bootcamp_sources.py"
+      - "tools/discover_huggingface_subject_taxonomy.py"
       - "tools/build_buddy_source_study_queue.py"
       - "tools/process_authorized_bootcamp_media.py"
       - "tools/build_onet_task_curricula.py"
       - "tools/fetch_onet_task_curricula.py"
-      - "tests/test_onet_task_curricula.py"
       - "tools/build_government_sales_pipeline.py"
+      - "tests/test_onet_task_curricula.py"
       - "tests/test_government_sales_pipeline.py"
       - "tests/test_buddy_source_study_queue.py"
       - "tests/test_process_authorized_bootcamp_media.py"
@@ -27,9 +31,18 @@ on:
       - "config/buddy-source-study-guide.schema.json"
       - "config/buddy-source-rights-manifest.json"
       - "config/buddy-authorized-media-rights.json"
+      - "config/buddy-workforce-entrepreneurship-bootcamp.json"
+      - "config/buddy-government-community-enterprise-curriculum.json"
+      - "config/buddy-onet-occupation-guide.schema.json"
       - "tools/discover_open_source_bootcamp_sources.py"
+      - "tools/discover_huggingface_subject_taxonomy.py"
       - "tools/build_buddy_source_study_queue.py"
       - "tools/process_authorized_bootcamp_media.py"
+      - "tools/build_onet_task_curricula.py"
+      - "tools/fetch_onet_task_curricula.py"
+      - "tools/build_government_sales_pipeline.py"
+      - "tests/test_onet_task_curricula.py"
+      - "tests/test_government_sales_pipeline.py"
       - "tests/test_buddy_source_study_queue.py"
       - "tests/test_process_authorized_bootcamp_media.py"
       - ".github/workflows/buddy-open-source-weekly-bootcamp.yml"
@@ -47,7 +60,7 @@ jobs:
       ONET_API_KEY: ${{ secrets.ONET_API_KEY }}
     if: github.repository == 'DreamCo-Technologies/Dreamcobots'
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 90
     steps:
       - uses: actions/checkout@v4
         with:
@@ -55,13 +68,18 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-      - name: Validate bootcamp configuration and discovery script
+      - name: Install Hugging Face taxonomy client
+        run: python -m pip install --disable-pip-version-check "huggingface_hub>=1.0,<3"
+      - name: Validate bootcamp configuration and discovery scripts
         run: |
           python -m json.tool config/buddy-open-source-bootcamp.json > /dev/null
           python -m json.tool config/buddy-source-study-guide.schema.json > /dev/null
           python -m json.tool config/buddy-source-rights-manifest.json > /dev/null
           python -m json.tool config/buddy-authorized-media-rights.json > /dev/null
-          python -m py_compile tools/discover_open_source_bootcamp_sources.py tools/build_buddy_source_study_queue.py tools/process_authorized_bootcamp_media.py tools/build_onet_task_curricula.py tools/fetch_onet_task_curricula.py tools/build_government_sales_pipeline.py
+          python -m json.tool config/buddy-workforce-entrepreneurship-bootcamp.json > /dev/null
+          python -m json.tool config/buddy-government-community-enterprise-curriculum.json > /dev/null
+          python -m json.tool config/buddy-onet-occupation-guide.schema.json > /dev/null
+          python -m py_compile tools/discover_open_source_bootcamp_sources.py tools/discover_huggingface_subject_taxonomy.py tools/build_buddy_source_study_queue.py tools/process_authorized_bootcamp_media.py tools/build_onet_task_curricula.py tools/fetch_onet_task_curricula.py tools/build_government_sales_pipeline.py
       - name: Run source rights and guide-queue tests
         run: python -m unittest discover -s tests -p 'test_buddy_source_study_queue.py' -v
       - name: Run local media rights and hash tests
@@ -70,12 +88,17 @@ jobs:
         run: python -m unittest discover -s tests -p 'test_onet_task_curricula.py' -v
       - name: Run sales and procurement pipeline tests
         run: python -m unittest discover -s tests -p 'test_government_sales_pipeline.py' -v
+      - name: Refresh live Hugging Face model and dataset task taxonomy
+        run: |
+          python tools/discover_huggingface_subject_taxonomy.py \
+            --out "$RUNNER_TEMP/buddy-huggingface-taxonomy.json"
       - name: Discover GitHub repositories and Hugging Face subjects
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: |
           python tools/discover_open_source_bootcamp_sources.py \
             --out-dir "$RUNNER_TEMP/buddy-bootcamp-weekly" \
+            --taxonomy-file "$RUNNER_TEMP/buddy-huggingface-taxonomy.json" \
             --hf-limit-per-subject 20
       - name: Build O*NET task curricula when API access is configured
         if: ${{ env.ONET_API_KEY != '' }}
