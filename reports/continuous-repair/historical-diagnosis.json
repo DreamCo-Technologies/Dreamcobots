@@ -1,0 +1,50 @@
+{
+  "schema": "dreamco.buddy.historical_failure_diagnosis.v1",
+  "source_run": {
+    "id": 45514404509,
+    "name": "Buddy Sandbox Bootcamp",
+    "conclusion": "failure",
+    "url": "https://github.com/DreamCo-Technologies/Dreamcobots/actions/runs/45514404509",
+    "headSha": "39358f42ff52fc3066e88c43d31ccc44d32d275b"
+  },
+  "observation_count": 1,
+  "recommendations": [
+    {
+      "observation": {
+        "repository": "DreamCo-Technologies/Dreamcobots",
+        "workflow": "Buddy Sandbox Bootcamp",
+        "job": "validate",
+        "failed_step": "Validate all 65 division resource bundles",
+        "error_signature": "failure | failure | Validate all 65 division resource bundles",
+        "run_id": "45514404509",
+        "run_url": "https://github.com/DreamCo-Technologies/Dreamcobots/actions/runs/45514404509",
+        "head_sha": "39358f42ff52fc3066e88c43d31ccc44d32d275b"
+      },
+      "recommendation": {
+        "fingerprint": "d4e99748486514552aca126b",
+        "failure_class": "unknown",
+        "primary_masterbot_id": 62,
+        "collaborating_masterbot_ids": [
+          41
+        ],
+        "recurrence_count": 1,
+        "prior_verified_lesson": null,
+        "recommended_action": "escalate_for_human_approval_before_changes",
+        "automatic_code_change_allowed": false,
+        "requires_human_approval": true,
+        "must_verify": [
+          "original_failure",
+          "targeted_regression",
+          "dependent_checks"
+        ],
+        "historical_candidates": []
+      }
+    }
+  ],
+  "policy": {
+    "historical_matches_are_investigation_only": true,
+    "historical_commits_auto_applied": false,
+    "unverified_records_training_eligible": false,
+    "incident_memory_written": false
+  }
+}
