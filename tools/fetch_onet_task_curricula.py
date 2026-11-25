@@ -17,7 +17,10 @@ from pathlib import Path
 from urllib.parse import urljoin, urlparse
 from typing import Any
 
-from build_onet_task_curricula import build, pick
+try:
+    from build_onet_task_curricula import build, pick
+except ImportError:
+    from tools.build_onet_task_curricula import build, pick
 
 SOURCE_PAGE = "https://www.onetcenter.org/database.html"
 USER_AGENT = "DreamCo-Buddy-Bootcamp/1.1 (O*NET attribution preserved)"
