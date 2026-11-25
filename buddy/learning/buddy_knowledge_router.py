@@ -22,8 +22,9 @@ ROOT = Path(__file__).resolve().parents[2]
 
 
 def _tokens(value: str) -> set[str]:
+    normalized = value.lower().replace("huggingface", "hugging face")
     return {
-        token for token in re.findall(r"[a-z0-9][a-z0-9_.+-]*", value.lower())
+        token for token in re.findall(r"[a-z0-9][a-z0-9_.+-]*", normalized)
         if len(token) > 1 and any(char.isalpha() for char in token)
     }
 
@@ -179,7 +180,8 @@ def route_buddy_learning_query(
             "missing_supporting_guide_count": len(exact_candidate_lessons) - supporting_guide_count,
             "seed_candidate_matches": seed_matches,
             "knowledge_gap": library.get("knowledge_gap"),
-            "external_discovery_available": True,
+            "external_discovery_available": False,
+            "external_discovery_requires_explicit_opt_in": True,
             "external_discovery_performed": False,
             "external_model_routing_performed": False,
             "study_required": True,
@@ -210,14 +212,15 @@ def route_buddy_learning_query(
             "missing_supporting_guide_count": missing_supporting_guide_count,
             "seed_candidate_matches": seed_matches,
             "knowledge_gap": library.get("knowledge_gap"),
-            "external_discovery_available": supporting_guide_count == 0,
+            "external_discovery_available": False,
+            "external_discovery_requires_explicit_opt_in": missing_supporting_guide_count > 0,
             "external_discovery_performed": False,
             "external_model_routing_performed": False,
             "study_required": True,
             "next_action": (
                 "Study the repository-local supporting guide and complete the original practice. "
-                "If it does not cover the requested lesson, find an authoritative first-party source, "
-                "verify its release and rights, then draft and review an original guide."
+                "If it does not cover the requested lesson, ask the user before external research; "
+                "then verify a first-party source, release and rights before drafting an original guide."
             ),
             "mastery_awarded": False,
         }
