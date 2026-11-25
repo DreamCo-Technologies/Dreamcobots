@@ -117,6 +117,12 @@ class UniversalLibraryRegistryTests(unittest.TestCase):
         self.assertEqual(result["matches"], [])
         self.assertEqual(result["knowledge_gap"]["status"], "internal_knowledge_gap")
 
+    def test_repository_coverage_report_counts_unreviewed_requests_draft(self):
+        root = Path(__file__).resolve().parents[1]
+        report = library_coverage_report(root=root)
+        self.assertGreaterEqual(report["review_required_guide_count"], 1)
+        self.assertFalse(report["worldwide_completeness_claimed"])
+
     def test_policy_counts_match_the_live_course_registry(self):
         root = Path(__file__).resolve().parents[1]
         policy = json.loads((root / "config/buddy-continuous-study-policy.json").read_text(encoding="utf-8"))
