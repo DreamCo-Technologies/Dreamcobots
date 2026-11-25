@@ -123,6 +123,7 @@ class DatasetHubRuntimeTests(unittest.TestCase):
             self.assertTrue(result["masterbot_candidates"])
             self.assertFalse(result["claims"]["problem_solved"])
             self.assertFalse(result["claims"]["weights_trained"])
+            self.assertIsNone(result["library_knowledge"])
             self.assertTrue(result["research_task_id"].startswith("research-"))
             self.assertEqual(DatasetHub(Path(temp)).stats()["pending_research_tasks"],1)
 
