@@ -32,7 +32,111 @@
       "route_policy": {
         "enabled": false,
         "reason": "untrained_random_initialization_no_verified_benchmark"
+      },
+      "model_family": "decoder_only_transformer",
+      "architecture": "TinyGPT",
+      "parameter_count": null,
+      "parameter_count_status": "NOT_MEASURED",
+      "training_mode": "from_scratch",
+      "compute_profile": {
+        "status": "NOT_ESTIMATED",
+        "hardware_cohort": null,
+        "estimated_training_seconds": null,
+        "estimated_peak_memory_gb": null,
+        "estimated_storage_gb": null,
+        "estimated_cost_usd": null,
+        "available_compute_hours": null
+      },
+      "marketplace": {
+        "eligible_for_sale": false,
+        "status": "NOT_SELLABLE",
+        "reason": "untrained_baseline_no_weight_artifact"
       }
     }
-  ]
+  ],
+  "parameter_sizing_policy": {
+    "custom_parameter_count_allowed": true,
+    "minimum_parameters": 1,
+    "maximum_parameters": null,
+    "catalog_buckets_are_presets_not_limits": true,
+    "compute_budget_required_before_training": true,
+    "feasibility_estimate_required": true,
+    "feasibility_fields": [
+      "hardware_cohort",
+      "estimated_training_seconds",
+      "estimated_peak_memory_gb",
+      "estimated_storage_gb",
+      "estimated_cost_usd",
+      "available_compute_hours"
+    ],
+    "resource_limit_behavior": "BLOCK_OR_PROPOSE_A_SMALLER_CONFIGURATION_WITHOUT_SILENTLY_CHANGING_THE_USER_REQUEST"
+  },
+  "parameter_presets": [
+    {
+      "label": "25M reference",
+      "parameters": 25000000
+    },
+    {
+      "label": "45M division reference",
+      "parameters": 45000000
+    },
+    {
+      "label": "100M",
+      "parameters": 100000000
+    },
+    {
+      "label": "500M",
+      "parameters": 500000000
+    },
+    {
+      "label": "1B",
+      "parameters": 1000000000
+    },
+    {
+      "label": "7B",
+      "parameters": 7000000000
+    },
+    {
+      "label": "13B",
+      "parameters": 13000000000
+    },
+    {
+      "label": "70B",
+      "parameters": 70000000000
+    }
+  ],
+  "training_modes": [
+    "from_scratch",
+    "continued_pretraining",
+    "supervised_fine_tuning",
+    "LoRA",
+    "distillation",
+    "preference_optimization",
+    "multimodal_fine_tuning",
+    "evaluation_only"
+  ],
+  "marketplace_policy": {
+    "sale_enabled": false,
+    "sale_requires": [
+      "trained_weight_artifact_with_sha256",
+      "dataset_rights_verified",
+      "model_license_verified",
+      "separate_training_authorization",
+      "immutable_training_lineage",
+      "independent_holdout_and_regression_benchmarks",
+      "security_and_secret_scan",
+      "model_card_and_export_format",
+      "human_release_approval"
+    ],
+    "never_sellable_statuses": [
+      "UNTRAINED_RANDOM_INITIALIZATION",
+      "BASELINE_ONLY",
+      "RIGHTS_PENDING",
+      "LICENSE_PENDING",
+      "BENCHMARKS_NOT_RUN",
+      "REGRESSION_FAILED"
+    ],
+    "user_defined_parameter_counts_supported": true,
+    "payment_or_checkout_implementation": "NOT_IMPLEMENTED"
+  }
 }
