@@ -1,6 +1,6 @@
 import unittest
 
-from continuous_learning_controller import EventType, LearningEvent, evaluate_event
+from buddy.learning.continuous_learning_controller import EventType, LearningEvent, evaluate_event
 
 
 class ContinuousLearningControllerTest(unittest.TestCase):
