@@ -1,6 +1,8 @@
 from __future__ import annotations
 
+import json
 import unittest
+from pathlib import Path
 
 from buddy.trading.backtest import BacktestConfig, Bar, run_backtest, sma_crossover_signals
 from buddy.trading.demo import synthetic_bars
@@ -49,6 +51,17 @@ class PaperBrokerTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "missing mark price"):
             broker.equity({})
 
+
+
+    def test_freecodecamp_trading_path_uses_the_paper_only_demo(self):
+        root = Path(__file__).resolve().parents[1]
+        config = json.loads(
+            (root / "config/freecodecamp-division-routing-overrides.json").read_text(encoding="utf-8")
+        )
+        lesson = next(row for row in config["entries"] if row["video_id"] == "zH2Mg782XhA")
+        self.assertIn("python -m buddy.trading.demo", lesson["buddy_demo"])
+        self.assertTrue(any("python -m buddy.trading.demo" in step for step in lesson["implementation_steps"]))
+        self.assertIn("paper-only", lesson["buddy_demo"].lower())
 
 class BacktestTests(unittest.TestCase):
     def test_sma_signal_uses_only_prior_bars(self):
