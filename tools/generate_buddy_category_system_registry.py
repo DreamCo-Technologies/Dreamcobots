@@ -86,7 +86,7 @@ def build(root: Path = ROOT) -> tuple[dict, dict]:
             study_rows.append(row)
 
     model_source = model_path.read_text(encoding="utf-8")
-    model_categories = re.findall(r'category:\s*"([^"]+)"', model_source)
+    model_categories = re.findall('category: *"([^"]+)"', model_source)
     if not model_categories:
         raise ValueError("No model categories found in shared/ai-models.ts")
     model_counts = dict(Counter(model_categories))
@@ -161,7 +161,7 @@ def build(root: Path = ROOT) -> tuple[dict, dict]:
 
 
 def render(payload: dict) -> str:
-    return json.dumps(payload, ensure_ascii=False, indent=2) + "\\n"
+    return json.dumps(payload, ensure_ascii=False, indent=2) + chr(10)
 
 
 def main() -> int:
