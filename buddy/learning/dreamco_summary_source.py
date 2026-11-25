@@ -9,8 +9,9 @@ import hashlib
 import json
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Iterable
+from typing import Iterable, Callable, Any
 
+from buddy.learning.permissioned_study_worker import StudyAuthorization, run_study_attempt
 from buddy.learning.study_resource_scheduler import Capability, Resource, choose_next, study_plan
 
 SCHEMA = "dreamco.buddy_learning_organization.v1"
@@ -140,3 +141,49 @@ def append_progress_event(path: Path, *, asset_id: str, division: str, event_typ
     with path.open("a", encoding="utf-8") as handle:
         handle.write(json.dumps(event, sort_keys=True) + "\n")
     return event
+
+
+def execute_study_plan(plan: dict, authorization: StudyAuthorization, study: Callable[[Any], Any],
+                       workspace_root: Path, progress_path: Path, organization_path: Path) -> dict:
+    """Execute one approved summary study attempt through Buddy's cleanup boundary.
+
+    The callback receives a read-only StudyContext and may use the in-memory plan.
+    Only the official source page is authorized; this adapter never downloads media,
+    ingests transcripts, or trains model weights.
+    """
+    if plan.get("completion_status") != "queued_not_studied":
+        raise ValueError("only queued, not-yet-studied summary plans can be executed")
+    source = plan.get("source") or {}
+    rights = plan.get("rights") or {}
+    if authorization.source_url != source.get("url"):
+        raise ValueError("study authorization URL does not match the selected summary")
+    if authorization.source_name != source.get("source_id"):
+        raise ValueError("study authorization source ID does not match the selected summary")
+    if authorization.review_status != "approved" or not authorization.evidence_ref:
+        raise PermissionError("summary execution requires approved rights evidence")
+    if rights.get("evidence_ref") != authorization.evidence_ref:
+        raise PermissionError("study authorization evidence does not match the summary package")
+    if set(authorization.allowed_operations) != {"open_official_page"}:
+        raise PermissionError("summary study is read-only; media download and transcript ingestion are not authorized")
+    result = run_study_attempt(authorization, lambda context: study(plan, context), workspace_root)
+    evidence = result.get("result") if isinstance(result.get("result"), dict) else {}
+    run_evidence = evidence.get("evidence_ref")
+    if run_evidence:
+        append_progress_event(
+            progress_path, asset_id=plan["asset_id"], division=plan["division"],
+            event_type="study_started", evidence_ref=run_evidence,
+            source_revision=plan.get("source_revision"), organization_path=organization_path
+        )
+    completed = evidence.get("lesson_completed") is True and bool(evidence.get("lesson_evidence_ref"))
+    if completed:
+        append_progress_event(
+            progress_path, asset_id=plan["asset_id"], division=plan["division"],
+            event_type="lesson_completed", evidence_ref=evidence["lesson_evidence_ref"],
+            source_revision=plan.get("source_revision"), organization_path=organization_path
+        )
+    result["division"] = plan["division"]
+    result["asset_id"] = plan["asset_id"]
+    result["completion_status"] = "lesson_completed_with_evidence" if completed else "attempted_evidence_pending"
+    result["lesson_completed"] = completed
+    result["model_training_performed"] = False
+    return result
