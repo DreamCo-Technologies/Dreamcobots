@@ -50,6 +50,10 @@ class Buddy25MCpuLLMCourseTests(unittest.TestCase):
 
     def test_onet_covers_six_content_model_areas_and_all_divisions(self):
         self.assertEqual(len(self.onet["content_model_areas"]), 6)
+        self.assertEqual(self.onet["official_release_snapshot"]["release"], "31.0")
+        self.assertEqual(self.onet["official_release_snapshot"]["row_counts"]["occupations"], 1016)
+        self.assertGreaterEqual(len(self.onet["source_files"]), 20)
+        self.assertIn("CC BY 4.0", self.onet["source"]["license"])
         self.assertEqual(len(self.onet["division_delivery"]["division_crosswalk"]), 55)
         self.assertEqual(len(self.onet["division_delivery"]["masterbot_lanes"]), 65)
         self.assertGreaterEqual(len(self.onet["subject_inventory"]), 25)
