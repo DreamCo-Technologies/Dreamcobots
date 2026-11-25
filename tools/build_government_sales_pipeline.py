@@ -23,19 +23,24 @@ def build(task_doc:dict[str,Any],opp_doc:dict[str,Any],today:date)->dict[str,Any
     opportunities=[]
     for item in opp_doc.get("opportunities",[]):
         due=None
-        try: due=date.fromisoformat(str(item.get("due_date",""))[:10])
-        except ValueError: pass
+        due_date_error=None
+        try:
+            due=date.fromisoformat(str(item.get("due_date",""))[:10])
+        except ValueError as exc:
+            due_date_error=f"invalid or missing due_date: {exc}"
+        due_date_valid=due is not None
         active=item.get("active") is True
-        expired=bool(due and due<today)
+        expired=bool(due_date_valid and due<today)
+        not_expired=due_date_valid and not expired
         eligible=item.get("eligibility_verified") is True
         capability=item.get("capability_match_verified") is True
         compliance=item.get("compliance_review_passed") is True
-        score=sum((active,not expired,eligible,capability,compliance))
-        status="bid_review_ready" if score==5 else ("expired_or_inactive" if expired or not active else "human_review_required")
+        score=sum((active,due_date_valid,not_expired,eligible,capability,compliance))
+        status="bid_review_ready" if score==6 else ("expired_or_inactive" if expired or not active else "human_review_required")
         opportunities.append({"opportunity_id":item.get("opportunity_id"),"title":item.get("title"),
           "agency":item.get("agency"),"due_date":item.get("due_date"),"url":item.get("url"),
-          "naics":item.get("naics"),"readiness_score":score,"readiness_checks":5,"status":status,
-          "missing_checks":[name for name,ok in [("active",active),("not_expired",not expired),("eligibility_verified",eligible),("capability_match_verified",capability),("compliance_review_passed",compliance)] if not ok],
+          "naics":item.get("naics"),"readiness_score":score,"readiness_checks":6,"due_date_valid":due_date_valid,"due_date_error":due_date_error,"status":status,
+          "missing_checks":[name for name,ok in [("active",active),("due_date_valid",due_date_valid),("not_expired",not_expired),("eligibility_verified",eligible),("capability_match_verified",capability),("compliance_review_passed",compliance)] if not ok],
           "next_actions":["review solicitation and amendments","build compliance matrix","calculate fully burdened cost and risk","confirm partner/subcontract roles","human approval before bid submission"],
           "human_approval_required":True})
     return {"schema":"dreamco.sales_and_procurement_pipeline.v1",
