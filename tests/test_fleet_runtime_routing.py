@@ -69,7 +69,7 @@ class GovernedFleetRoutingTests(unittest.TestCase):
 
     def test_fleet_executor_includes_route_in_result_and_evidence(self):
         executor = FleetExecutor(customizations={})
-        bot = next(row for row in executor.collection["bots"]
+        bot = next(row for row in executor.bots.values()
                    if row["division"] == "DreamFinance" and row["engine"] != "unmapped")
         result = executor.run(bot["slug"], {"objective": "Prepare a sandbox-only planning task"})
         self.assertIn("routing", result)
