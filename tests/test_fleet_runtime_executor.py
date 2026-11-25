@@ -173,9 +173,10 @@ class ExecutorTests(unittest.TestCase):
     def test_learning_task_external_fallback_can_run_only_after_gap_and_opt_in(self):
         env = {router.LIVE_FLAG: "1", "OPENROUTER_API_KEY": "test-key"}
         fake = {"model": "test-model", "choices": [{"message": {"content": "external fallback text"}}]}
+        # lib-prisma is explicitly live-enabled; blog-writer is offline-only and must not call a provider.
         executor = FleetExecutor(env=env)
         with mock.patch("buddy.openrouter.gateway.BuddyGateway.chat", return_value=fake) as chat:
-            out = executor.run("blog-writer", {
+            out = executor.run("lib-prisma", {
                 "objective": "qzxv 9481",
                 "learning_task": True,
                 "allow_external_learning_fallback": True,
