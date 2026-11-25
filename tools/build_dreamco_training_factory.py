@@ -13,6 +13,12 @@ from pathlib import Path
 from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
+# Direct script execution sets sys.path[0] to tools/, not the repository root.
+# Add the root explicitly so `python tools/build_dreamco_training_factory.py` can
+# import the same first-party packages that pytest imports from the repo root.
+import sys
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
 FILES = {
     "masterbots": ROOT / "config/masterbot-65-registry.json",
     "tasks": ROOT / "config/huggingface-task-taxonomy.json",
