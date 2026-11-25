@@ -108,6 +108,13 @@ class DreamCoSummarySourceTests(unittest.TestCase):
                 "lesson_status": "verified_pass",
                 "independent_evaluator_id": "independent-test-runner",
                 "lesson_evidence_ref": "lesson:1",
+                "knowledge_check_evidence_ref": "quiz:1",
+                "knowledge_check_score": 0.95,
+                "exercise_status": "verified_pass",
+                "exercise_evidence_ref": "exercise:1",
+                "capstone_evidence_ref": "capstone-submit:1",
+                "capstone_status": "verified_pass",
+                "capstone_pass_evidence_ref": "capstone-pass:1",
             },
             self.root / "workspace",
             self.progress,
@@ -117,7 +124,8 @@ class DreamCoSummarySourceTests(unittest.TestCase):
         self.assertFalse(result["model_training_performed"])
         self.assertTrue(result["temporary_workspace_erased"])
         events = [json.loads(line) for line in self.progress.read_text(encoding="utf-8").splitlines()]
-        self.assertEqual([x["event_type"] for x in events], ["study_started", "lesson_completed"])
+        self.assertEqual([x["event_type"] for x in events], ["study_started", "lesson_completed", "knowledge_check_submitted", "exercise_passed", "capstone_submitted", "capstone_passed"])
+        self.assertEqual(events[2]["score"], 0.95)
 
     def test_summary_execution_rejects_mismatched_rights_and_write_operations(self):
         plan = select_next_for_division(
