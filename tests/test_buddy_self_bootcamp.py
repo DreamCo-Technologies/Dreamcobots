@@ -36,7 +36,7 @@ class SelfBootcampTests(unittest.TestCase):
         self.assertEqual(len(result["divisions"]),55)
         self.assertEqual(result["coverage"]["onet_task_statements"],8)
         self.assertIn("not proof",result["truth_boundary"])
-        self.assertTrue(result["buddy_bootcamp_builder_loop"]["steps"])
+        self.assertTrue(result["buddy_ai_college"]["bootcamp_builder_loop"]["steps"])
         self.assertIn("buddy_ai_college", result)
         self.assertIn("tool_capability_families", result["divisions"][0]["autonomous_agent_capability_curriculum"])
 
