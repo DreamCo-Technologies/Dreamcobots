@@ -382,6 +382,8 @@ def build(profiles: list[dict[str, Any]], hf: dict[str, Any], fcc: dict[str, Any
         "freecodecamp_track_routes": fcc_rows,
         "freecodecamp_certification_phases": fcc_phases,
         "freecodecamp_video_subject_categories": video_tracks,
+        "freecodecamp_video_inventory": {"status": fcc_inventory_status, "inventory_evidence": fcc_inventory,
+            "video_count": len(fcc_videos), "video_routes": fcc_video_route_rows},
         "freecodecamp_video_category_routes": fcc_video_rows,
         "freecodecamp_video_routes": video_rows,
         "freecodecamp_channel_video_routes": video_rows,
