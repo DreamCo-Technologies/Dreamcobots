@@ -109,11 +109,35 @@ class RuntimeBridgeTests(unittest.TestCase):
             for item in queue["items"]
         ))
         self.assertTrue(all(
-            item["authoring_required"] is (item["content_status"] in {"authoring_backlog", "metadata_only"})
+            item["authoring_required"] is (item["content_status"] in {"authoring_backlog", "metadata_only", "original_implementation_brief"})
             for item in queue["items"]
         ))
         self.assertTrue(all(item["mastery_awarded"] is False for item in queue["items"]))
         self.assertFalse(queue["external_model_call_performed"])
+
+
+    def test_specialist_learning_paths_are_scoped_and_demonstrable(self):
+        finance = self.bridge.bootcamp_learning_queue(
+            division="DreamFinance", query="algorithmic trading", limit=10
+        )
+        agents = self.bridge.bootcamp_learning_queue(
+            division="DreamAgents", query="algorithmic trading", limit=10
+        )
+        trade = self.bridge.bootcamp_learning_queue(
+            masterbot="DreamTrade", query="algorithmic trading", limit=10
+        )
+        finance_items = [item for item in finance["items"] if item.get("source_video_id") == "zH2Mg782XhA"]
+        agent_items = [item for item in agents["items"] if item.get("source_video_id") == "zH2Mg782XhA"]
+        trade_items = [item for item in trade["items"] if item.get("source_video_id") == "zH2Mg782XhA"]
+        self.assertTrue(any(item["track_id"] == "freecodecamp-specialist-learning-paths" for item in finance_items))
+        self.assertFalse(agent_items)
+        self.assertTrue(any(item["track_id"] == "freecodecamp-specialist-learning-paths" for item in trade_items))
+        path = next(item for item in finance_items if item["track_id"] == "freecodecamp-specialist-learning-paths")
+        self.assertGreaterEqual(len(path["implementation_steps"]), 10)
+        self.assertTrue(path["buddy_demo"])
+        self.assertFalse(path["study_allowed"])
+        self.assertTrue(path["authoring_required"])
+        self.assertEqual(path["completion_status"], "authoring_backlog")
 
     def test_library_learning_queue_contains_all_seed_and_ecosystem_lanes(self):
         queue = self.bridge.library_learning_queue(division="DreamCodeLab", limit=100)
@@ -236,7 +260,7 @@ class RuntimeBridgeTests(unittest.TestCase):
         self.assertTrue(all(item["completion_status"] in {"queued_not_studied", "metadata_only", "authoring_backlog"} for item in queue["items"]))
         self.assertTrue(all(item["mastery_awarded"] is False for item in queue["items"]))
         self.assertTrue(all(item["study_allowed"] is (item["content_status"] == "authored") for item in queue["items"]))
-        self.assertTrue(all(item["authoring_required"] is (item["content_status"] in {"metadata_only", "authoring_backlog"}) for item in queue["items"]))
+        self.assertTrue(all(item["authoring_required"] is (item["content_status"] in {"metadata_only", "authoring_backlog", "original_implementation_brief"}) for item in queue["items"]))
         self.assertTrue(all(item["mastery_awarded"] is False for item in queue["items"]))
         self.assertFalse(queue["external_discovery_performed"])
         self.assertFalse(queue["external_model_call_performed"])
