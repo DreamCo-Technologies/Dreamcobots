@@ -73,9 +73,10 @@ def build_payloads(root: Path = ROOT) -> tuple[dict, dict]:
         "course_track_rule": (
             "All canonical divisions and MasterBot lanes receive shared foundation queues. "
             "Every currently cataloged freeCodeCamp video is included, along with one discovery lesson for each "
-            "registered software library ecosystem. Video metadata is not lesson content; item-level rights and "
-            "a detailed guide are required before study completion or mastery. Ecosystem discovery lessons are "
-            "not verified package records or mastered library guides."
+            "registered software library ecosystem and 531 candidates from Buddy's existing library mastery seed list. "
+            "Video metadata is not lesson content; item-level rights and a detailed guide are required before study "
+            "completion or mastery. Ecosystem and seed-candidate discovery lessons are not verified package records "
+            "or mastered library guides."
         ),
     })
     return learning, policy
