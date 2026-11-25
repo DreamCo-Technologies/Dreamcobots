@@ -105,7 +105,8 @@ class DreamCoSummarySourceTests(unittest.TestCase):
             authorization,
             lambda selected, context: {
                 "evidence_ref": "study-run:1",
-                "lesson_completed": True,
+                "lesson_status": "verified_pass",
+                "independent_evaluator_id": "independent-test-runner",
                 "lesson_evidence_ref": "lesson:1",
             },
             self.root / "workspace",
