@@ -303,8 +303,8 @@ def build_manifest(slug: str, entry: dict[str, Any], api: dict[str, list[str]], 
     if division not in known_divisions:
         flags.add("division_unknown")
         division = "DreamDiscovery"
-    if primary_domain_owner not in route_metadata["domain_names"]:
-        primary_domain_owner = "DreamDiscovery"
+    if primary_domain_owner is not None and primary_domain_owner not in route_metadata["domain_names"]:
+        primary_domain_owner = None
     seed_division = entry.get("seed_division")
     if seed_division and seed_division not in {"UNASSIGNED", source_division}:
         flags.add("division_conflict_seed")
