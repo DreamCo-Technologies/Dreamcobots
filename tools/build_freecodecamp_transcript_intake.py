@@ -38,6 +38,8 @@ def _safe_transcript_path(value: str, root: Path) -> Path | None:
 def build_intake(catalog: dict[str, Any], manifest: dict[str, Any], *, root: Path = ROOT) -> dict[str, Any]:
     if catalog.get("schema") != "dreamco.freecodecamp_catalog.v1":
         raise ValueError("unsupported FreeCodeCamp catalog schema")
+    if (catalog.get("source") or {}).get("channel_id") != "UC8butISFwT-Wl7EV0hUK0BQ":
+        raise ValueError("catalog must be the official freeCodeCamp YouTube channel")
     if not isinstance(catalog.get("videos"), list):
         raise ValueError("FreeCodeCamp catalog videos must be a list")
     policy = manifest.get("rights_policy") or {}
@@ -64,8 +66,10 @@ def build_intake(catalog: dict[str, Any], manifest: dict[str, Any], *, root: Pat
             continue
         video_id = str(video.get("video_id", ""))
         source_url = str(video.get("url", ""))
-        if not video_id or video_id in seen:
-            continue
+        if not video_id or not source_url:
+            raise ValueError("catalog videos require non-empty video IDs and source URLs")
+        if video_id in seen:
+            raise ValueError("catalog video IDs must be unique")
         seen.add(video_id)
         record = by_video.get(video_id)
         status = "PERMISSION_REQUEST_REQUIRED"
@@ -117,6 +121,9 @@ def build_intake(catalog: dict[str, Any], manifest: dict[str, Any], *, root: Pat
             "automatic_transcript_download": False,
         })
 
+    unknown_manifest_ids = sorted(set(by_video) - seen)
+    if unknown_manifest_ids:
+        raise ValueError("transcript manifest contains video IDs absent from the canonical catalog")
     authorized = sum(row["transcript_asset_present"] for row in queue)
     pending = sum(row["status"] == "PERMISSION_REQUEST_REQUIRED" for row in queue)
     blocked = len(queue) - authorized - pending
@@ -129,6 +136,7 @@ def build_intake(catalog: dict[str, Any], manifest: dict[str, Any], *, root: Pat
         "authorized_transcript_count": authorized,
         "permission_request_count": pending,
         "blocked_manifest_record_count": blocked,
+        "unknown_manifest_video_ids": unknown_manifest_ids,
         "queue": queue,
         "truth_boundary": "This is a permission and intake queue, not a transcript downloader. Public metadata does not grant transcript, study, evaluation, or training rights.",
         "content_downloaded": False,
@@ -210,6 +218,7 @@ def audit_weekly_tests(
         "tested_transcript_count": len(results),
         "missing_video_ids": missing,
         "failed_or_stale_video_ids": failed,
+        "unknown_evidence_video_ids": unknown_evidence_ids,
         "passed_video_ids": results,
         "buddy_test_execution_performed_by_audit": False,
         "model_training_authorized": False,
@@ -236,6 +245,7 @@ def main() -> int:
         "catalog_video_count": intake["catalog_video_count"],
         "authorized_transcript_count": intake["authorized_transcript_count"],
         "permission_request_count": intake["permission_request_count"],
+        "source_inventory_status": intake["source_inventory_status"],
         "weekly_buddy_test_status": audit["status"],
         "weekly_buddy_test_count": audit["tested_transcript_count"],
         "content_downloaded": False,
