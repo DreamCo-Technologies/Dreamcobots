@@ -14,10 +14,10 @@ from buddy.learning.study_resource_scheduler import Capability
 class BuddyCourseTrackRegistryTests(unittest.TestCase):
     def test_all_tracks_are_exposed_as_ordered_course_lessons(self):
         lessons = load_course_lessons()
-        self.assertEqual(len(lessons), 157)
+        self.assertEqual(len(lessons), 187)
         self.assertEqual(len({lesson.resource_id for lesson in lessons}), len(lessons))
         self.assertEqual(len({(lesson.track_id, lesson.lesson_id) for lesson in lessons}), len(lessons))
-        expected = {"tolkien", "tokenizer", "cpu-first-llm", "onet", "hugging-face", "freecodecamp"}
+        expected = {"tolkien", "tokenizer", "cpu-first-llm", "onet", "hugging-face", "freecodecamp", "huggingface-full"}
         self.assertEqual({lesson.track_id for lesson in lessons}, expected)
 
     def test_every_canonical_division_receives_the_shared_course_queue(self):
@@ -27,7 +27,7 @@ class BuddyCourseTrackRegistryTests(unittest.TestCase):
         crosswalk = json.loads((root / "config/generated/masterbot-55-domain-crosswalk.json").read_text(encoding="utf-8"))
         for row in crosswalk["domains"]:
             with self.subTest(division=row["domain_name"]):
-                self.assertEqual(len(resources_for_division(row["domain_name"])), 157)
+                self.assertEqual(len(resources_for_division(row["domain_name"])), 187)
 
     def test_every_masterbot_lane_receives_shared_foundations(self):
         from pathlib import Path
@@ -36,7 +36,20 @@ class BuddyCourseTrackRegistryTests(unittest.TestCase):
         registry = json.loads((root / "config/masterbot-65-registry.json").read_text(encoding="utf-8"))
         for row in registry["divisions"]:
             with self.subTest(masterbot=row["name"]):
-                self.assertEqual(len(resources_for_masterbot(row["name"])), 157)
+                self.assertEqual(len(resources_for_masterbot(row["name"])), 187)
+
+    def test_huggingface_full_map_includes_all_official_courses_and_ecosystem_modules(self):
+        from pathlib import Path
+        import json
+        root = Path(__file__).resolve().parents[1]
+        data = json.loads((root / "config/buddy-huggingface-full-learning-map.json").read_text(encoding="utf-8"))
+        self.assertEqual(len(data["official_courses"]), 12)
+        self.assertEqual(len(data["ecosystem_modules"]), 18)
+        self.assertEqual(data["task_family_count"], 37)
+        self.assertTrue(any(c["id"] == "hf-context-course" for c in data["official_courses"]))
+        deep_rl = next(c for c in data["official_courses"] if c["id"] == "hf-deep-rl-course")
+        self.assertEqual(deep_rl["status"], "available_low_maintenance")
+        self.assertTrue(all(not c["training_data_authorized"] for c in data["official_courses"]))
 
     def test_course_scheduler_returns_queued_lesson_not_mastery(self):
         from pathlib import Path
