@@ -125,6 +125,8 @@ class LibraryRegistryDiscoveryTests(unittest.TestCase):
         self.assertEqual(candidate["training_permission"], "pending")
         self.assertIn("from=20", captured["url"])
         self.assertIn("size=10", captured["url"])
+        self.assertIn("status%3Alatest", captured["url"])
+        self.assertIn("HTTP", captured["url"])
         self.assertIsNone(result["next_page"])
 
     def test_rejects_unknown_provider_and_invalid_query(self):
