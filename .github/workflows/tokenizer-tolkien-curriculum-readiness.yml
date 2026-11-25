@@ -1,0 +1,28 @@
+name: Tokenizer and Tolkien Curriculum Readiness
+
+on:
+  pull_request:
+    paths:
+      - "config/buddy-tokenizer-training-curriculum.json"
+      - "config/buddy-tolkien-study-track.json"
+      - "tools/audit_tokenizer_tolkien_curricula.py"
+      - "tests/test_tokenizer_tolkien_curricula.py"
+      - ".github/workflows/tokenizer-tolkien-curriculum-readiness.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: tokenizer-tolkien-curriculum-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: python -m pip install --disable-pip-version-check pytest
+      - run: python -m pytest -q tests/test_tokenizer_tolkien_curricula.py
+      - run: python tools/audit_tokenizer_tolkien_curricula.py
