@@ -163,6 +163,8 @@ class RuntimeBridgeTests(unittest.TestCase):
         self.assertTrue(item["authoring_required"])
         self.assertTrue(item["implementation_steps"])
         self.assertTrue(item["buddy_demo"])
+        self.assertIn("interactive_sandbox", item["learning_modes"])
+        self.assertIn("voice_walkthrough", item["learning_modes"])
         source_title = item["title"].split(": ", 1)[1]
         education_metadata = self.bridge.bootcamp_learning_queue(
             division="DreamEducation", query=source_title, limit=10
