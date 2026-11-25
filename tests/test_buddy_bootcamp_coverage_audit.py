@@ -38,7 +38,7 @@ def _fixture(root: Path) -> None:
     _write(root, "config/generated/masterbot-55-domain-crosswalk.json", {
         "status": "proposed_requires_owner_review",
         "counts": {"domain_divisions": 55},
-        "domains": [{"owner_approval": None}]
+        "domains": [{"owner_approval": None} for _ in range(55)]
     })
 
 
