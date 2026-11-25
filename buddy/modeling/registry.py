@@ -83,6 +83,10 @@ def validate_registry(registry: dict[str, Any]) -> dict[str, Any]:
                 raise ModelRegistryError(f"{model['model_id']}: trained weights require a measured parameter count")
             if compute_profile.get("status") not in {"ESTIMATED", "VERIFIED"}:
                 raise ModelRegistryError(f"{model['model_id']}: trained weights require a compute profile")
+            for key in ("hardware_cohort", "estimated_training_seconds", "estimated_peak_memory_gb", "estimated_storage_gb", "available_compute_hours"):
+                value = compute_profile.get(key)
+                if not isinstance(value, (int, float, str)) or value in (None, ""):
+                    raise ModelRegistryError(f"{model['model_id']}: compute profile is missing {key}")
         if route.get("enabled") is True and not weights["trained"]:
             raise ModelRegistryError(f"{model['model_id']}: untrained model cannot be route-enabled")
         if marketplace["eligible_for_sale"]:
@@ -96,6 +100,11 @@ def validate_registry(registry: dict[str, Any]) -> dict[str, Any]:
                 raise ModelRegistryError(f"{model['model_id']}: model sale requires separate training authorization and lineage")
             if not model.get("benchmark_evidence"):
                 raise ModelRegistryError(f"{model['model_id']}: model sale requires benchmark evidence")
+            for key in ("ownership_verified", "security_scan_passed", "model_card_verified", "human_release_approved"):
+                if marketplace.get(key) is not True:
+                    raise ModelRegistryError(f"{model['model_id']}: model sale release gate failed: {key}")
+            if not marketplace.get("export_format"):
+                raise ModelRegistryError(f"{model['model_id']}: model sale requires a declared export format")
     return registry
 
 
