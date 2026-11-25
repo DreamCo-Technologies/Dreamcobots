@@ -82,9 +82,10 @@ def route_library_question(
     provider_errors = []
     if external_discovery:
         for candidate in internal.get("seed_candidate_matches", [])[:3]:
-            for provider in CATEGORY_PROVIDERS.get(
-                candidate.get("categories", [""])[0], ()
-            )[:2]:
+            provider_options = []
+            for category in candidate.get("categories", []):
+                provider_options.extend(CATEGORY_PROVIDERS.get(category, ()))
+            for provider in list(dict.fromkeys(provider_options))[:2]:
                 try:
                     result = search_public_registry(
                         provider,
