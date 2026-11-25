@@ -30,6 +30,7 @@ on:
       - "tests/test_fleet_divisions.py"
       - "tests/test_generate_bot_manifests.py"
       - "tests/test_production_evidence_ledger.py"
+      - "tests/test_buddy_fleet_workflow_safety.py"
       - "tests/bot-seed-registry.test.ts"
       - "tests/dreamco-search.test.ts"
   push:
@@ -62,6 +63,7 @@ on:
       - "tests/test_fleet_divisions.py"
       - "tests/test_generate_bot_manifests.py"
       - "tests/test_production_evidence_ledger.py"
+      - "tests/test_buddy_fleet_workflow_safety.py"
       - "tests/bot-seed-registry.test.ts"
       - "tests/dreamco-search.test.ts"
   workflow_dispatch:
@@ -71,13 +73,15 @@ permissions:
   contents: read
 concurrency:
   group: buddy-fleet-execution-map-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: false
 jobs:
   validate:
     runs-on: ubuntu-latest
     timeout-minutes: 35
     steps:
       - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       - uses: actions/setup-python@v7
         with:
           python-version: "3.13"
@@ -119,6 +123,7 @@ jobs:
           python -m unittest tests.test_production_evidence_ledger
           python -m pytest -q tests/test_fleet_divisions.py
           node --import tsx --test tests/bot-seed-registry.test.ts tests/dreamco-search.test.ts
+          python -m unittest tests.test_buddy_fleet_workflow_safety -v
       - name: Upload generated manifests and Buddy fleet evidence
         uses: actions/upload-artifact@v7
         with:
@@ -151,3 +156,58 @@ jobs:
             reports/PRODUCTION_EVIDENCE_LEDGER.md
           if-no-files-found: error
           retention-days: 14
+
+  propose-generated:
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
+      - name: Generate canonical manifests and fleet plan
+        run: |
+          python tools/generate_bot_manifests.py
+          python tools/generate_bot_manifests.py --check
+          python tools/build_buddy_fleet_execution_map.py
+          python tools/build_buddy_fleet_execution_map.py --check
+          python tools/fleet_runtime_audit.py --skip-folder-tests
+          python tools/build_actions_prospectus.py
+          python tools/generate_production_evidence_ledger.py
+      - name: Open or update generated-output review PR
+        if: success()
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          base: main
+          branch: automation/buddy-fleet-generated
+          delete-branch: false
+          add-paths: |
+            config/bots/bot-manifests.generated.json
+            config/bots/division-manifests.generated.json
+            config/generated/buddy-fleet-execution-map.json
+            config/generated/bot-production-readiness.json
+            config/generated/production-evidence-ledger.json
+            website/data/fleet-runtime-status.json
+            website/data/actions-prospectus.json
+            website/data/run-prospectus.json
+            website/data/run-prospectus-bots.json
+            website/data/production-evidence-ledger.json
+            reports/FLEET_RUNTIME_AUDIT.md
+            reports/BOT_FLEET_PROSPECTUS.md
+            reports/BOT_PRODUCTION_READINESS.md
+            reports/PRODUCTION_EVIDENCE_LEDGER.md
+          commit-message: "chore: refresh fleet manifests and execution evidence"
+          title: "chore: refresh fleet manifests and execution evidence"
+          body: |
+            Generated from the canonical 45-domain, 10-supplemental, 65-MasterBot inventory.
+            Every route remains owner-review-gated and privileged execution remains disabled.
+            Revenue plans are forecasts and candidate workflows, not verified revenue.
+            Generated planning does not train model weights or certify production readiness.
+            Human review is required before merging.
