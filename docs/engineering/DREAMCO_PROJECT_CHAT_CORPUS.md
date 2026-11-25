@@ -201,3 +201,142 @@ For PR #17412 head SHA ca452a552ef2abaf9994f109cb50b87175709dd8, ten PR-triggere
 ### Bootcamp version delta and v3 test follow-up
 
 Bootcamp v3 was separately materialized and inspected: 25 archive entries, CRC passed, 51,714 uncompressed bytes. It adds source_policy.py and model_router.py plus corresponding model-router tests compared with v2. Local isolated fixture tests: v3 23 passed. Cross-version shared files are identical by SHA-256 where checked: learning_pipeline.py, scheduler.py, the learning/scheduler tests, and the path bootcamp remain unchanged across v2-v5; model_router.py and source_policy.py appear in v3 and remain unchanged in v4-v5; v4 adds capability_manager.py and routing_policy.py with tests; v5 adds routing_evidence.py and tests. Test totals rise v2 15, v3 23, v4 35, v5 43. This is a staged prototype progression, not evidence that the code is integrated into Dreamcobots or production.
+
+
+## Daily corpus update — 2026-11-24
+
+**Current repository snapshot:** `adc02c1ed95e225d33870ff696808bf95de67234`
+
+### Source inventory refresh
+
+- The recursive Project Library listing still returns **30 files**: 5 Markdown, 2 patch files, 10 ZIP archives, and 13 media assets. No new Library artifact was discovered in this refresh.
+- The initial review states above remain unchanged: `Pasted markdown.md` was previously read; the two large Master Codex directive copies remain partial and not hash-verified; the two unified patch files remain partial and not hash-verified; all 10 ZIP archives remain uninspected; the 13 media assets remain uninspected.
+- The current Files conversation surface returned **0 current-conversation file attachments**. This does not mean there are no historical conversations; it means no full additional transcript was available from that file surface during this run.
+- The existing `CHAT-01`…`CHAT-15` / 210 D01-D14 registry remains an initial index, not proof of complete chat-history coverage. No new CHAT number is assigned without a full source transcript and stable message locator.
+
+### Current-turn source record
+
+Add the current user message as a source record without inventing a conversation ID:
+
+- **Source ID:** `SRC-CURRENT-2026-11-24-DAILY-ENGINEERING`
+- **Locator:** current user message, sections “DAILY TEACHING CURRICULUM”, “DAILY TRAINING AND DISTILLATION WORKFLOW”, “DATABASE ARCHITECTURE, ROUTING, AND DATASET INTELLIGENCE”, “ADDITIONAL REQUIRED DAILY MARKDOWN / BUILD-PLAN RECONCILIATION”, “PULL REQUEST FORENSIC RECONCILIATION”, and “DREAMCO PROJECT-WIDE CHAT AND LIBRARY SOURCE RECONCILIATION”.
+- **Canonical requirement mappings introduced/confirmed:** `REQ-DAILY-5-LESSONS-PER-DIVISION`; `REQ-WEEKLY-REAL-BUDDY-TRANSCRIPT-EVALUATION`; `REQ-DATABASE-ROUTING-AND-SOURCE-REGISTRY`; `REQ-DATASET-RIGHTS-QUALITY-LINEAGE`; `REQ-ALL-MARKDOWN-MD-MDX-COVERAGE`; `REQ-ALL-STATE-PR-FORENSICS`; `REQ-PROJECT-WIDE-CHAT-LIBRARY-CORPUS`. These IDs map to this current-turn source; they do not imply implementation or verification.
+
+### Repository evidence mapped to current requirements
+
+- **Daily lessons:** PR #18207's planner defines five daily slots per each of 65 canonical divisions (325 slots). Its current curriculum-generation check passed, but the slots still require authored/admitted lesson content; no 325 completed lessons or student mastery is claimed.
+- **Weekly transcript evaluation:** PR #18207's weekly audit tests pass, but the run reports `BLOCKED` because `approved_transcript_manifest_missing`; transcript count is 0. No transcript was evaluated by a real Buddy model this week, and no transcript data was used for training.
+- **FreeCodeCamp discovery:** the workflow produced metadata-only video/catalog and routing counts. It did not download videos, audio, or transcripts, and did not train model weights.
+- **Database routing:** main contains `buddy/datasets/database_router.py`, `config/buddy-database-source-registry.json`, `buddy/datasets/hub.py`, and `buddy/datasets/postgres_catalog.py`. The router is policy-only and never connects or executes SQL. The registry contains four source records and is `DOCUMENTED_NOT_CONNECTED`; none is eligible for routing. Supabase and Firebase/Firestore are listed as unverified candidates, not connected services.
+- **Dataset inventory:** two logical repository dataset records are present: the O*NET Occupation Synthesis Pack (versions 0.0.1 skeleton and 0.0.2 44-row sample) and the Computer Science 11.0701 career-pathway candidate. The O*NET 0.0.2 asset gate is `approved_for_private_use`, but its overall quality report is partial, the dataset evaluation scorecard and benchmark are not run, and there are no train/validation/holdout splits. The CS candidate also has a private-use gate outcome but its source asset is not present under the candidate package path and its file integrity is not verified. Counts: **2 discovered/cataloged logical records; 2 private-use gate outcomes (one with an asset-integrity warning); 0 fully quality-approved; 0 training-ready; 0 used in an actual training run.** Do not interpret private-use approval as training approval.
+- **Markdown coverage:** the main Git tree contains **1,676 `.md` files and 0 `.mdx` files**. The automated audit generated on the PR #18210 branch at `2026-11-24T14:49:35Z` scanned **1,675 documents**; the only excluded file is the generated report itself (`reports/MARKDOWN_IMPLEMENTATION_GAP_AUDIT.md`, self-exclusion). It detected 11,924 actionable claim lines, 112 documents with missing path references, 1,590 without implementation references, 68 with implementation references but no test references, and 389 inventory-count claims requiring review. Nine repository Markdown documents were also read directly in this pass. This automated path/claim scan does not prove runtime behavior; requirement-to-code/test verification remains outstanding. Main's collector still uses `*.md`; PR #18210 adds `*.mdx` support, and its safe-repair suite passed 75 scoped tests.
+- **PR traceability:** current all-state GitHub listing has 800 PR records across eight non-empty pages; full forensic review remains 0. See the companion PR ledger's 2026-11-24 update.
+
+### Gmail project signals
+
+The DreamCo/GitHub/Buddy search returned 50 relevant thread results; four relevant threads were expanded for PR/workflow context. Only project subjects, technical decisions, and run/PR evidence were used. No unrelated personal email, credentials, raw personal correspondence, or third-party personal data was used as training material.
+
+### Remaining corpus work
+
+Continue deterministic line-range processing for the two large Master Codex directive files; compare patch hashes and inspect both patches; inventory each ZIP safely before reading contents; inspect the 13 media assets where they correspond to source-backed requirements; retrieve full historical conversation sources and stable message locators beyond CHAT-01…CHAT-15; map every extracted requirement to current code, tests, PRs, commits, and runtime evidence. Corpus coverage remains partial and must not be marked complete.
+
+
+### Follow-up approvals and study-scope additions — 2026-11-24
+
+The user subsequently approved the daily engineering plan and explicitly added Tolkien study, freeCodeCamp metadata/transcript study, and expansion of the study-resource catalog. Preserve these as distinct user-originated requirements rather than treating them as assistant suggestions:
+
+| Source ID | User-originated requirement | Canonical requirement ID | Repository mapping | Status |
+|---|---|---|---|---|
+| `SRC-CURRENT-2026-11-24-TOLKIEN-01` | Add Tolkien training/study to Buddy's curriculum | `REQ-TOLKIEN-STUDY-CURRICULUM` | PR #18214: `config/buddy-study-resources-1101-1200-expansion.json`, `docs/BUDDY_TOLKIEN_STUDY_TRACK.md`, `docs/UNIVERSAL_STUDY_RESOURCE_EXPANSION.md` | Curriculum defined; rights-gated; not completed by Buddy |
+| `SRC-CURRENT-2026-11-24-FCC-01` | Study freeCodeCamp datasets/resource metadata and transcripts | `REQ-FREECODECAMP-METADATA-TRANSCRIPTS` | PR #18216 (clean-base port; source PR #18207 closed as superseded): catalog sync, division queues/routes, weekly transcript readiness | Metadata workflow implemented in branch; no media/transcript download; approved transcript manifest and real Buddy evaluator missing |
+| `SRC-CURRENT-2026-11-24-RESOURCES-01` | Add as many useful study resources as possible | `REQ-EXPAND-STUDY-RESOURCE-CATALOG` | PR #18214: 1101–1200 expansion; 100 resource pointers; Tolkien scholarly lane | 100 resource pointers cataloged; no bulk ingestion or blanket training approval |
+
+#### Tolkien curriculum evidence and rights boundary
+
+The Tolkien lane contains eight lessons covering philology, historical linguistics, comparative mythology, literary architecture, archival provenance, digital humanities, scholarly reception and a cited capstone. It uses catalog resources 1176–1189 and requires original learner-authored artifacts and rubric evidence. The Estate's published guidance identifies restrictions around text quotations, artwork, invented languages/scripts, public readings and derivative uses; the track therefore blocks copyrighted primary-text ingestion, audiobook/transcript downloads, protected-language/script reproduction, derivative generation from protected characters/settings/stories, and model-weight training. Unknown rights remain BLOCKED. See [Tolkien Estate guidance](https://www.tolkienestate.com/frequently-asked-questions-and-links/) and [Marquette Tolkien Collection guidance](https://www.db.mu.edu/library/archives/Mss/JRRT/about.php).
+
+#### FreeCodeCamp first-run artifact evidence
+
+The successful `generate-curriculum` job in workflow run **45432752067** uploaded artifact `buddy-bootcamp-study-artifacts` (artifact ID `14937879223`, SHA-256 `11ada2c43e1da84b9a9d4369357f9fe8505341ad8006ba1b8adc1ded62d98846`). The artifact contains four generated JSON files and reports:
+
+- **1,741** FreeCodeCamp channel video metadata entries, with yt-dlp `2026.11.23`; upstream playlist count and observed entries both equal 1,741, with 0 null entries and 0 duplicate video IDs. The inventory is marked complete for metadata enumeration.
+- **22** catalog topic categories; no video/audio/transcript payloads were downloaded.
+- **65** division routes; every division can discover the shared catalog. Each division queue contains 30 candidate lesson references; queue status is not watched/studied evidence.
+- **325** daily lesson-production slots (5 × 65); `created_lessons=0`, `validated_lessons=0`, and status `target_planned_not_completed`. All 325 slots are `queued_not_created`.
+- Every queue item remains `rights_status=review_required`, `transcript_ingestion_allowed=false`, and `training_eligible=false`.
+
+The weekly transcript readiness job in the same workflow run produced artifact ID `14939004920`: status `blocked`, reason `approved_transcript_manifest_missing`, transcript_count 0, evaluated_count 0, due_count 0, coverage null. This is not a successful Buddy transcript evaluation; no transcript files or approved manifest exist in the main tree.
+
+#### Dataset discovery counts from the current route artifact
+
+The main dataset-routing artifact records 2,976 catalog dataset rows, 727 unique dataset candidates, 1,783 MasterBot-lane candidate rows across 65 routes. Every candidate remains `UNVERIFIED_DATASET_CARD_AND_TERMS_REQUIRED` and `DISCOVERY_ONLY_NOT_TRAINING_APPROVED`; 0 are rights-cleared or training-approved by this artifact. These are catalog counts, not datasets inspected, ingested, or trained on. The route generator was updated on the study-resource PR branch to rename the ambiguous `catalog_train_flag` to `source_catalog_train_hint` and explicitly emit `training_eligible: false`; the generated 1,783 candidate rows were updated with the same fail-closed meaning.
+
+#### PR snapshot pointer
+
+The 2026-11-24 PR metadata inventory is now persisted at `docs/engineering/pr-inventory-snapshots/2026-11-24.json`: 800 PRs, 77 open, 723 closed, 498 merged and 225 closed-unmerged. Every record is explicitly metadata-only; 0 have completed full forensic review. See `docs/engineering/PR_RECONCILIATION_LEDGER.md`.
+
+
+#### Build-acceleration changes in the FreeCodeCamp branch
+
+The FreeCodeCamp PR diff was reduced from 75,767 additions to 5,539 additions (92.7% fewer) by:
+- removing the redundant 45,251-line generated division-queue snapshot from tracked source;
+- keeping division queues and specialty route manifests as CI review artifacts;
+- compacting the 1,740-row legacy catalog to one JSON line per video (27,174 lines to 2,095 lines);
+- changing the runtime adapter to load the canonical catalog directly and validate completeness plus the 65-division registry, avoiding a required generated route file;
+- enabling branch-scoped cancellation of superseded Bootcamp CI runs.
+
+This is measured PR diff-size reduction only. No CI runtime or compute-cost improvement has yet been measured. The committed catalog remains partial (legacy 1,740 entries); the successful CI discovery artifact contained 1,741 entries, so runtime remains fail-closed until the refreshed complete inventory is committed.
+
+
+### Markdown audit evidence refresh — 2026-11-24
+
+The PR-branch Markdown audit artifact generated at 16:15 UTC on `docs/daily-audit-ledger-2026-11-24` reports 1,675 Markdown documents scanned, 11,938 actionable claim lines, 113 documents with missing path references, 1,588 without implementation references, 69 with implementation references but no test references, and 397 fixed-count claims requiring review. The main-branch baseline generated at 06:27 UTC reported 1,674 scanned documents, 11,916 actionable lines, 112 missing-path documents, 1,589 without implementation references, 68 with implementation but no test references, and 389 fixed-count claims requiring review. The 16:15 PR-branch report is the more recent snapshot, but the new FreeCodeCamp PR adds additional Markdown files and its audit check correctly detects stale generated files. Current exact scan coverage for the clean-base PR is therefore **not yet verified**; the 1,675 figure is the earlier audit branch's scan, not the final PR's.
+
+The current audit check fails on the clean-base Bootcamp PR because these generated artifacts are stale against its Markdown changes:
+- `config/generated/markdown-implementation-gap-audit.json`
+- `website/data/markdown-implementation-gap-audit.json`
+- `reports/MARKDOWN_IMPLEMENTATION_GAP_AUDIT.md`
+
+The failure is a traceability/evidence refresh blocker, not proof that the new Markdown content is incorrect. The repository's audit workflow intentionally generates review artifacts on main and does not push them or create PRs automatically. No direct main write was attempted.
+
+### Clean-base FreeCodeCamp integration
+
+The original FreeCodeCamp PR #18207 (source head `80a0749cd8adfb5e67d4dc143d5612177a86e573`) was closed as superseded after all 33 changed paths were ported to PR #18216 from current main. The new PR's per-file blob SHA comparison confirmed **33/33 identical files**, with no missing or extra paths; it is 33 commits ahead and 0 behind main. PR #18216 remains draft pending current-head CI, Markdown audit artifact refresh, and the approved-transcript/evaluator prerequisite.
+
+The first clean-base Bootcamp CI run exposed a test-fixture omission (`video_count`) in the direct-catalog runtime test. The fixture was corrected in head commit `028f3d0c3138e66a9cd54280cc81ba1b7c463083`. The subsequent `generate-curriculum` job passed **67/67 focused tests**: catalog 8/8, division queues 7/7, runtime routes 14/14, cleanup 4/4, permission worker 8/8, daily plan 3/3, original lesson 5/5, learning evidence 6/6, weekly report rules 4/4, and curriculum 8/8.
+- Current study artifact: run 45436272080, artifact ID `14939999424`, SHA-256 `fe1064eef3a290be4ac97b926c57ca99aa33bd37326c52cac3f2a0e4dc4be4ab`. It verifies 1,741/1,741 metadata entries, 0 null entries, 0 duplicate IDs, 65 divisions, 30 candidate references per division, 325 daily slots, 0 created lessons and 0 validated lessons. The committed catalog remains a partial 1,740-row snapshot; the 1,741-row artifact has not been committed.
+- Weekly transcript report artifact: `BLOCKED`, 0 transcripts, 0 evaluated, 0 due, null coverage, reason `approved_transcript_manifest_missing`.
+
+These are test and artifact facts only. No Buddy transcript learning, transcript ingestion, model-weight training, or production deployment occurred.
+
+
+### Current-head integration blockers on PR #18216
+
+- Repository Test Matrix: 18 passed, 1 failed, 11 skipped. The only failure is the repository-wide static-site budget: 55.17 MiB versus a 52 MiB maximum. This PR does not modify `website/`; the largest current public data files include technology radar 9.109 MiB, DreamSearch index 3.352 MiB, fleet catalog 3.132 MiB, command-center capabilities 2.384 MiB and calculators 2.324 MiB. This is a baseline build-size blocker, not a Bootcamp regression.
+- Buddy Markdown Implementation Gap Audit: fails because `config/generated/markdown-implementation-gap-audit.json`, `website/data/markdown-implementation-gap-audit.json`, and `reports/MARKDOWN_IMPLEMENTATION_GAP_AUDIT.md` are stale relative to the new Markdown files in this PR.
+- CodeQL, Dependency Review, Workers build, Buddy benchmark smoke, Command Center data contract, Actions page tests, DreamCo Core Health and PR review manifest completed successfully. Broad benchmark lanes remain pending or also fail on the same deployment-cost gate.
+- PR #18216 remains mergeable at GitHub level but not merge-ready; no merge or deployment was performed.
+
+
+### Additional database and dataset engineering curriculum — 2026-11-24
+
+The study-resource PR #18214 now includes a second specialized study track, `database-and-dataset-engineering`, with ten lessons:
+1. relational modeling and normalization;
+2. transactions, isolation and concurrency;
+3. indexes, query plans and performance;
+4. PostgreSQL/SQLite/Supabase/Firestore/Redis/DuckDB/Iceberg comparison;
+5. Buddy read/write data-source routing;
+6. keyword + vector hybrid retrieval;
+7. dataset discovery and rights review;
+8. dataset quality, splits and contamination;
+9. dataset/model/run lineage;
+10. synthetic-fixture routing/governance capstone.
+
+It references the existing resource catalog (PostgreSQL, SQLite, Supabase, Firebase, Redis, DuckDB, Iceberg, Hugging Face Datasets, UCI, OpenML, Data.gov, corpus methodology and evaluation resources) and adds official docs for PostgreSQL full-text search, pgvector, Qdrant, OpenSearch and SQLite FTS5. It disables production DB access, live writes, production migrations, bulk dataset downloads, private/paid dataset ingestion and model-weight training. Unknown rights remain BLOCKED.
+
+The study-resource validator now enforces 10 lessons, valid source IDs and all safety flags; a regression test checks the rights boundary. The Bootcamp workflow path filter and focused tests were extended to cover this track. The earlier run for PR #18214 passed 14/14 tests before this addition; the current head test run is pending.
+
+
+### Candidate-backed daily lesson slots — 2026-11-24
+
+The clean-base FreeCodeCamp PR #18216 now extends `tools/build_daily_lesson_plan.py` to accept the verified 65-division queue artifact. It assigns the top five candidate video metadata records to each division's five daily slots (325 total), preserving stable video IDs, title, URL, categories and priority score. Every candidate is forced to remain `rights_status=review_required`, `media_download_allowed=false`, `transcript_ingestion_allowed=false`, and `training_eligible=false`. Partial inventories, missing/duplicate IDs, and unsafe permission flags are rejected. The plan remains `queued_not_created`; it does not claim 325 authored lessons or any Buddy mastery. Synthetic regression fixtures verify 325 slots and the fail-closed boundary. Current-head CI run 45438151347 is queued; results are pending.
