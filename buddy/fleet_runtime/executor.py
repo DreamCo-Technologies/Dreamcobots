@@ -106,6 +106,7 @@ class FleetExecutor:
             if task_errors:
                 return self._finish(manifest, task, "invalid_input", "none", none_perm, {}, None,
                                     {"type": "invalid_input", "message": "; ".join(task_errors)}, stamp)
+            learning_query = str(task.get("objective") or "")
             if manifest.get("prompt"):
                 task["objective"] = f"{manifest['prompt']}\n\n{task.get('objective', '')}"
             permission = permissions.decide(manifest["permissions"]["ceiling"], task.get("action_level", "sandbox"))
@@ -118,7 +119,7 @@ class FleetExecutor:
             profile = dict(self.profiles["model_router"][manifest["model_router"]])
             if task.get("learning_task") is True:
                 profile["internal_bootcamp_first"] = True
-                profile["internal_learning_query"] = str(task.get("objective") or "")
+                profile["internal_learning_query"] = learning_query
                 profile["allow_external_learning_fallback"] = task.get("allow_external_learning_fallback") is True
             if manifest.get("model_alias") and profile.get("mode") != "offline_only":
                 profile["live_alias"] = manifest["model_alias"]
