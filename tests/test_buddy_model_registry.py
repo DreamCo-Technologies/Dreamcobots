@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import copy
+import json
 import unittest
 from pathlib import Path
 
@@ -154,6 +155,20 @@ class BuddyModelRegistryTests(unittest.TestCase):
         registry["models"][0]["marketplace"]["eligible_for_sale"] = True
         with self.assertRaisesRegex(ModelRegistryError, "untrained or unverified model cannot be sold"):
             validate_registry(registry)
+
+
+    def test_tiny_gpt_benchmark_contract_blocks_promotion_until_capability_benchmarks_run(self):
+        contract = json.loads((ROOT / "config" / "buddy-tiny-gpt-benchmark-contract.json").read_text(encoding="utf-8"))
+        self.assertEqual(contract["capability_quality_benchmarks"]["status"], "NOT_RUN")
+        self.assertEqual(contract["promotion_status"], "BLOCKED_NOT_TRAINED_NO_CAPABILITY_BENCHMARK")
+        self.assertTrue(all(item["gate"] for item in contract["engineering_checks"]))
+
+    def test_synthetic_baseline_fixture_is_not_training_approved(self):
+        card = json.loads((ROOT / "config" / "buddy-tiny-gpt-synthetic-data-card.json").read_text(encoding="utf-8"))
+        self.assertFalse(card["training_approved"])
+        self.assertFalse(card["third_party_content"])
+        self.assertFalse(card["personal_data"])
+        self.assertFalse(card["network_download_required"])
 
 if __name__ == "__main__":
     unittest.main()
