@@ -37,8 +37,26 @@ def build_division_manifests(collection: dict[str, Any], seed_divisions: dict[st
         if seed_divisions and name in seed_divisions:
             sources.append("server/seed-bots.ts")
         runnable = policy.get("allowed", 0)
+        owner_routes = Counter(
+            (b.get("primary_domain_owner") or b.get("division"), b.get("primary_masterbot_id"))
+            for b in bots
+        )
+        owner_route_rows = [
+            {"primary_domain_owner": owner, "primary_masterbot_id": masterbot_id, "bots": count}
+            for (owner, masterbot_id), count in sorted(owner_routes.items(), key=lambda item: str(item[0]))
+        ]
+        unique_owners = {row["primary_domain_owner"] for row in owner_route_rows}
+        portfolios = {b.get("supplemental_portfolio") for b in bots if b.get("supplemental_portfolio")}
+        divisions_shared_groups = {b.get("shared_workforce_group") for b in bots if b.get("shared_workforce_group")}
         divisions.append({
             "name": name,
+            "primary_domain_owner": next(iter(unique_owners)) if len(unique_owners) == 1 else None,
+            "primary_masterbot_id": owner_route_rows[0]["primary_masterbot_id"] if len(owner_route_rows) == 1 else None,
+            "owner_routes": owner_route_rows,
+            "supplemental_portfolio": next(iter(portfolios)) if len(portfolios) == 1 else None,
+            "shared_workforce_group": next(iter(divisions_shared_groups)) if len(divisions_shared_groups) == 1 else None,
+            "owner_approval_required": True,
+            "shared_platform_masterbot_ids": list(range(46, 66)),
             "bots": len(bots),
             "engines": {e: engines[e] for e in sorted(engines)},
             "run_policy": {k: policy[k] for k in sorted(policy)},
