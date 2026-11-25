@@ -128,6 +128,8 @@ class FreeCodeCampSpecialistRoutingTests(unittest.TestCase):
             self.assertIn("DreamDiscovery", lesson.masterbot_targets)
             self.assertTrue(lesson.implementation_steps)
             self.assertTrue(lesson.buddy_demo)
+            self.assertTrue({"interactive_sandbox", "retrieval_quiz", "spaced_repetition"}.issubset(set(lesson.learning_modes)))
+            self.assertEqual(set(lesson.learning_modes), {"metadata_review", "guided_classification", "rights_check", "human_review"})
             self.assertNotIn(lesson.source_video_id, self.paths_by_video)
 
     def test_every_video_has_a_specialist_path_or_a_triage_record(self):
