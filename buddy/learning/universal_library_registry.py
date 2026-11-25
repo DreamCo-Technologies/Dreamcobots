@@ -13,6 +13,8 @@ from datetime import date, datetime, timezone
 from pathlib import Path
 from typing import Any, Iterable
 
+from foundry.local_rag import Chunk, LocalRagStore
+
 ROOT = Path(__file__).resolve().parents[2]
 CURRICULUM = ROOT / "config/buddy-universal-library-curriculum.json"
 ECOSYSTEMS = ROOT / "config/library_ecosystems.json"
@@ -229,48 +231,71 @@ def search_internal_library_knowledge(
         raise ValueError("query must be a non-empty string")
     if limit < 1 or limit > 100:
         raise ValueError("limit must be between 1 and 100")
-    query_tokens = _tokens(query)
-    results = []
+    store = LocalRagStore()
+    guide_by_id: dict[str, LibraryGuide] = {}
     for guide in load_approved_guides(root):
         doc = guide.document
-        library = doc.get("library", {})
         learning = doc.get("learning_map", {})
         concepts = learning.get("concepts", []) if isinstance(learning, dict) else []
         use_cases = doc.get("use_cases", [])
+        practice = doc.get("practice", {})
         text_parts = [guide.name, guide.canonical_id, guide.ecosystem]
         text_parts.extend(learning.get("objectives", []) if isinstance(learning, dict) else [])
-        text_parts.extend(c.get("name", "") + " " + c.get("explanation", "") for c in concepts if isinstance(c, dict))
+        text_parts.extend(
+            c.get("name", "") + " " + c.get("explanation", "")
+            for c in concepts if isinstance(c, dict)
+        )
         for use_case in use_cases:
             if isinstance(use_case, dict):
                 if not include_experimental and use_case.get("category") == "experimental":
                     continue
-                text_parts.extend([str(use_case.get("scenario", "")), str(use_case.get("implementation_pattern", ""))])
-        haystack = _tokens(" ".join(text_parts))
-        overlap = query_tokens & haystack
-        if not overlap:
-            continue
-        score = len(overlap) / max(len(query_tokens), 1)
+                text_parts.extend([
+                    str(use_case.get("scenario", "")),
+                    str(use_case.get("implementation_pattern", "")),
+                ])
+        api = doc.get("api_inventory", {})
+        text_parts.extend(
+            str(row.get("symbol_or_feature", "")) + " " + str(row.get("purpose", ""))
+            for row in api.get("entries", []) if isinstance(row, dict)
+        )
+        text_parts.extend(
+            str(row.get("prompt", "")) for row in practice.get("exercises", [])
+            if isinstance(row, dict)
+        )
+        library = doc.get("library", {})
+        store.add(Chunk(
+            chunk_id=guide.canonical_id,
+            text=" ".join(str(part) for part in text_parts),
+            source=guide.path.relative_to(root).as_posix(),
+            license=str(library.get("license", "unknown")),
+        ))
+        guide_by_id[guide.canonical_id] = guide
+    results = []
+    for score, chunk in store.query(query, k=limit):
+        guide = guide_by_id[chunk.chunk_id]
+        doc = guide.document
         results.append({
             "canonical_id": guide.canonical_id,
             "name": guide.name,
             "ecosystem": guide.ecosystem,
             "version_reviewed": guide.version_reviewed,
             "status": guide.status,
-            "score": round(score, 4),
-            "guide_path": guide.path.relative_to(root).as_posix(),
+            "score": round(score, 6),
+            "guide_path": chunk.source,
+            "license": chunk.license,
             "source_urls": [
                 row.get("url") for row in doc.get("provenance", {}).get("sources", [])
                 if isinstance(row, dict) and row.get("url")
             ],
             "evidence_state": doc.get("evaluation", {}).get("evidence_state", "unknown"),
         })
-    results.sort(key=lambda row: (-row["score"], row["canonical_id"]))
-    matches = results[:limit]
     seed_candidates = _search_seed_candidates(query, root, limit)
     return {
         "schema": "dreamco.buddy_internal_library_search.v1",
         "query": query,
         "source": "dreamco_approved_library_guides",
+        "retrieval_engine": "foundry.local_rag.LocalRagStore.tfidf",
+        "embeddings_or_external_model_calls": False,
         "internal_match_count": len(results),
         "matches": matches,
         "seed_candidate_matches": seed_candidates,
