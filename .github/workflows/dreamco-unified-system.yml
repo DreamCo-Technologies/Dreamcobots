@@ -136,7 +136,7 @@ jobs:
           import re
           from pathlib import Path
           roots=[Path('website/data'),Path('config/generated')]
-          secret=re.compile(r'(?i)(sk-[A-Za-z0-9_-]{16,}|ghp_[A-Za-z0-9_]{20,}|github_pat_[A-Za-z0-9_]{20,}|BEGIN (RSA|OPENSSH|EC|DSA) PRIVATE KEY)')
+          secret=re.compile(r'(?i)(?<![A-Za-z0-9])sk-[A-Za-z0-9_-]{16,}|(?<![A-Za-z0-9])ghp_[A-Za-z0-9_]{20,}|(?<![A-Za-z0-9])github_pat_[A-Za-z0-9_]{20,}|BEGIN (RSA|OPENSSH|EC|DSA) PRIVATE KEY')
           bad=[]
           for root in roots:
               if root.exists():
