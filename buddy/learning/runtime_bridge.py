@@ -130,8 +130,8 @@ class BuddyLearningBridge:
         """Return queued library lessons for a canonical division or MasterBot lane."""
         if bool(division) == bool(masterbot):
             raise ValueError("provide exactly one canonical division or MasterBot lane")
-        if limit < 1 or limit > 100:
-            raise ValueError("limit must be between 1 and 100")
+        if not isinstance(limit, int) or isinstance(limit, bool) or limit < 1 or limit > 100:
+            raise ValueError("limit must be an integer between 1 and 100")
         if not isinstance(query, str):
             raise ValueError("query must be a string")
         if division:
