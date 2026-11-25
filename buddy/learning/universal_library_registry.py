@@ -106,6 +106,14 @@ def validate_library_guide_document(data: dict[str, Any]) -> list[str]:
             errors.append("approved guide requires an approved derivative-summary basis")
         if evaluation.get("evidence_state") not in {"guide_reviewed", "sandbox_passed", "benchmark_passed", "holdout_passed", "regression_passed", "mastered"}:
             errors.append("approved guide requires reviewed evidence state")
+        if not str(library.get("license", "")).strip() or str(library.get("license", "")).lower() in {"unknown", "unknown_pending_review"}:
+            errors.append("approved guide requires a reviewed license or explicit original-notes-only basis")
+        if rights.get("evaluation_permission") != "approved":
+            errors.append("approved guide requires evaluation permission")
+        if not str(rights.get("evidence_reference", "")).strip():
+            errors.append("approved guide requires a rights evidence reference")
+        if any(not str(row.get("license_or_terms_note", "")).strip() for row in sources if isinstance(row, dict)):
+            errors.append("approved guide requires source-level license/terms notes")
     return errors
 
 
