@@ -104,12 +104,12 @@ The authoring policy forbids copying transcripts, course text, exercises, or ans
 
 ## Daily original-lesson production target
 
-The daily target is five original DreamCo lesson packages per division (65 divisions; 325 planned slots per UTC day). The scheduled workflow builds a metadata-only work plan. A slot remains `queued_not_created` until an actual lesson has original explanations, worked examples, practice, an assessment and answer key, source provenance, a rights review, schema validation, sandbox results, target and holdout benchmarks, and regression evidence. The planner does not count placeholders as lessons and does not claim that a target has been met merely because the workflow ran.
+The daily target is five original DreamCo lesson packages for each of the 55 domain divisions (45 original plus 10 supplemental; 275 planned slots per UTC day). The 20 shared-platform MasterBots are counted separately in the 65-MasterBot inventory and are not additional domain divisions in this lesson-plan crosswalk. The scheduled workflow builds a metadata-only work plan. A slot remains `queued_not_created` until an actual lesson has original explanations, worked examples, practice, an assessment and answer key, source provenance, a rights review, schema validation, sandbox results, target and holdout benchmarks, and regression evidence. The planner does not count placeholders as lessons and does not claim that a target has been met merely because the workflow ran.
 
 Run locally:
 
 ```bash
-python tools/build_daily_lesson_plan.py --lessons-per-division 5
+python tools/build_daily_lesson_plan.py --lessons-per-domain 5
 python -m unittest discover -s tests -p 'test_daily_lesson_plan.py' -v
 ```
 
