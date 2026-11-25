@@ -105,6 +105,8 @@ class UniversalLibraryRegistryTests(unittest.TestCase):
             search_internal_library_knowledge("Python HTTP sessions", root=self.root)
 
     def test_gap_record_is_append_only_and_does_not_route_externally(self):
+        with self.assertRaises(PermissionError):
+            record_library_knowledge_gap("Rust async runtime", root=self.root)
         record_library_knowledge_gap("Rust async runtime", root=self.root, query_is_redacted=True)
         record_library_knowledge_gap("Rust async runtime", root=self.root, reason="follow-up", query_is_redacted=True)
         lines = (self.root / ".dreamco/library-knowledge-gaps.jsonl").read_text().splitlines()
