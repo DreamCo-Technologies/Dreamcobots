@@ -104,3 +104,11 @@ The repository now contains a forward-only tiny decoder baseline:
 The model has byte-level tokenization, one causal self-attention block, a residual MLP, and a next-byte output head. Initialization is deterministic. The runner measures validation and test cross-entropy without changing parameters and records hashes, runtime profile, and commit identity. Buddy Sandbox Bootcamp CI runs the tests and retains the evidence artifact.
 
 **This is not a trained model.** No optimizer, weight update, checkpoint, external dataset, course material, private/customer content, paid compute, or model promotion is involved. The unit's tiny-batch-overfit requirement remains uncompleted until separate explicit authorization for weight updates is provided and all dataset/model rights gates pass.
+
+## Expanded CPU-first 25M-class course integration
+
+The current course reference is [freeCodeCamp's 25M CPU LLM article](https://www.freecodecamp.org/news/build-and-train-a-25m-parameter-llm-from-scratch-on-your-cpu/) and its [linked GLM-5.3-Flash YouTube course](https://www.youtube.com/watch?v=-gfgQfw2g_E). The expanded [GLM-5.3-Flash article](https://www.freecodecamp.org/news/build-and-train-a-glm-53-flash-model-from-scratch-with-python/) provides the updated architecture example. DreamCo's original 18-module course and chapter map live in `config/buddy-25m-cpu-llm-course.json` and `docs/BUDDY_25M_CPU_LLM_STUDY_GUIDE.md`.
+
+The track now includes modern residual/hyperconnection paths, tied weights, RMSNorm, RoPE/NoPE, linear and sparse attention/indexers, MoE/shared experts, image patch embeddings, pretraining and data interleaving, sandboxed code-execution RL, reward functions/GRPO, parameter-efficient updates, frozen layers, temperature/group-size experiments, multiple seeds, statistical significance, regression testing and rollback.
+
+The course is available as shared learning to all 55 canonical divisions and 65 MasterBot lanes. Specialist routing preserves the reviewed ownership crosswalk. The source course/video are link-only references; transcripts are not ingested, third-party course text is not model-training data, paid compute is not authorized, and no Buddy weights are claimed trained.
