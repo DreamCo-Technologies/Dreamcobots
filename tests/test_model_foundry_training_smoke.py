@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import hashlib
+import os
 import tempfile
 import unittest
 from pathlib import Path
@@ -10,14 +11,13 @@ from buddy.learning.model_foundry import SCHEMA, sha256_file, train_from_scratch
 
 
 class ModelFoundrySyntheticTrainingSmokeTests(unittest.TestCase):
-    def test_authorized_synthetic_fixture_trains_and_saves_unpromoted_checkpoint(self):
+    def _train_and_assert(self, root: Path):
         try:
             import torch
         except ImportError:
             self.skipTest("PyTorch is installed by the model-foundry CI smoke workflow")
 
-        with tempfile.TemporaryDirectory() as temp:
-            root = Path(temp) / "private"
+        root.mkdir(parents=True, exist_ok=True)
             root.mkdir()
             dataset = root / "synthetic-fixture.txt"
             dataset.write_text(
@@ -99,8 +99,16 @@ class ModelFoundrySyntheticTrainingSmokeTests(unittest.TestCase):
             self.assertEqual(result["steps"], 2)
             self.assertEqual(result["weights_sha256"], sha256_file(checkpoint))
             saved = torch.load(checkpoint, map_location="cpu", weights_only=False)
-            self.assertEqual(saved["metadata"]["dataset_id"], dataset_id)
-            self.assertEqual(saved["metadata"]["training_status"], "trained_experimental_checkpoint_not_certified")
+        self.assertEqual(saved["metadata"]["dataset_id"], dataset_id)
+        self.assertEqual(saved["metadata"]["training_status"], "trained_experimental_checkpoint_not_certified")
+
+    def test_authorized_synthetic_fixture_trains_and_saves_unpromoted_checkpoint(self):
+        output = os.environ.get("DREAMCO_MODEL_FOUNDRY_SMOKE_OUTPUT")
+        if output:
+            self._train_and_assert(Path(output).resolve() / "private")
+        else:
+            with tempfile.TemporaryDirectory() as temp:
+                self._train_and_assert(Path(temp) / "private")
 
 
 if __name__ == "__main__":
