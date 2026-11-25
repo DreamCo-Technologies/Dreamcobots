@@ -39,7 +39,7 @@ class BuddyCategorySystemGeneratorTests(unittest.TestCase):
 
     def test_generator_does_not_claim_runtime_implementation(self):
         root = Path(__file__).resolve().parents[1]
-        registry, _ = build(root)
+        registry = build(root)
         self.assertTrue(all(
             item["implementation_status"] == "not_implemented"
             for item in registry["systems"] if item.get("group") == "study"
