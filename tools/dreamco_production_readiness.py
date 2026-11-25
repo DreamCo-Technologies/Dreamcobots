@@ -159,6 +159,8 @@ def build_production_gate_records(
                     continue
                 verified_refs.append(ref)
 
+        if isinstance(entry, dict) and entry.get("status") != "VERIFIED":
+            errors.append("evidence ledger entry status is not VERIFIED")
         verified = (
             isinstance(entry, dict)
             and entry.get("status") == "VERIFIED"
@@ -368,6 +370,7 @@ def main() -> int:
     summary = {
         "generated_at": now,
         "repository": repository,
+        "current_sha": current_sha,
         "requirements_candidate_count": len(requirements),
         "requirements_confirmed_count": confirmed_count,
         "untriaged_candidate_count": len(requirements) - confirmed_count,
@@ -410,6 +413,7 @@ def main() -> int:
         "# DreamCo Production Readiness Master List",
         "",
         f"Generated: {now}",
+        f"Current revision: {current_sha}",
         "",
         f"**Status: {readiness}**",
         "",
