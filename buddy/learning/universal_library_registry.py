@@ -297,10 +297,10 @@ def search_internal_library_knowledge(
         "retrieval_engine": "foundry.local_rag.LocalRagStore.tfidf",
         "embeddings_or_external_model_calls": False,
         "internal_match_count": len(results),
-        "matches": matches,
+        "matches": results,
         "seed_candidate_matches": seed_candidates,
         "seed_candidates_are_not_guides": True,
-        "knowledge_gap": None if matches else {
+        "knowledge_gap": None if results else {
             "status": "internal_knowledge_gap",
             "reason": "No approved, rights-eligible internal library guide matched the request.",
             "next_action": "Create a gap record, discover authoritative first-party sources, review rights, then author an original guide.",
