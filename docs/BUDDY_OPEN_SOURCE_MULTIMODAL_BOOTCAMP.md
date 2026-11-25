@@ -174,3 +174,10 @@ The user-data manifest at `config/buddy-user-learning-data-manifest.json` is an 
 There are distinct stages: discovered, rights-cleared, summarized, approved, assigned, studied, assessed, training-eligible, trained, and mastered. The organizer prepares a study path and a progress ledger; the live Buddy runtime must emit progress events. A summary can be used for retrieval/study only when those permissions allow it. Weight training additionally requires explicit training permission for every included asset, an approved dataset manifest, baseline and held-out evaluations, compute authorization, a versioned checkpoint and rollback plan. Never count reading a summary as model-weight training or mastery.
 
 Per-division queues should prioritize prerequisite order, the five-lessons-per-day target, review intervals and weekly assessment coverage. When a learner fails an assessment, record the gap and assign remediation; when a source revision changes, revalidate the guide and schedule a re-study assessment.
+
+
+### Guide validation before division assignment
+
+The learning organizer now rejects incomplete, unapproved, or unmapped guides before packaging them. It checks the source identity and revision, HTTP(S) source URL, explicit rights evidence, minimum summary depth, required sections and objectives, five key concepts, worked examples, exercises, knowledge checks and answer-key entries, references, capstone acceptance tests, human reviewer metadata, and at least one valid division mapping. Rejection reasons are recorded in the output so a missing field can be repaired instead of silently counted as completed learning.
+
+The workflow's pull-request path filters include the organizer, its tests, the user-data manifest, the study-guide library, the division contract, and this documentation so changes to the learning pipeline trigger validation.
