@@ -1581,5 +1581,16 @@
       "rows": 211,
       "url": "https://www.onetcenter.org/database.html"
     }
-  ]
+  ],
+  "task_index": {
+    "path": "data/onet/onet-task-index.json",
+    "generator": "tools/build_onet_task_index.py",
+    "refresh_workflow": ".github/workflows/buddy-onet-task-index-refresh.yml",
+    "runtime_track_id": "onet",
+    "scope": "unique_occupation_task_pairs_from_the_official_task_statements_export",
+    "source_refresh": "monthly_and_manual_workflow_dispatch",
+    "status": "refresh_pipeline_defined_awaiting_first_verified_generated_snapshot",
+    "task_guides_status": "per_task_original_guide_authoring_pending",
+    "completion_boundary": "A generated task index creates study assignments only; detailed guides, practice, safety review, unseen assessments and mastery evidence remain separate."
+  }
 }
