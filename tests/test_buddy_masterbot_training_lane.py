@@ -106,5 +106,19 @@ class MasterBotTrainingPlanTests(unittest.TestCase):
                 lane.main()
 
 
+    def test_continuous_learning_policy_separates_plans_from_training(self):
+        policy = json.loads((ROOT / "config/buddy-continuous-learning-policy.json").read_text(encoding="utf-8"))
+        self.assertEqual(policy["availability"]["planner_outputs"], "PLAN_ONLY_NOT_EXECUTED")
+        self.assertIs(policy["availability"]["weights_trained_by_planner"], False)
+        self.assertEqual(policy["availability"]["training_artifact_filename"], "latest-plan.json")
+        self.assertIn("approved_training_job_manifest", policy["availability"]["actual_training_requires"])
+        self.assertEqual(policy["fleet"]["expected_masterbot_count"], 65)
+        self.assertEqual(policy["fleet"]["count_semantics"]["domain_divisions"], 55)
+        self.assertEqual(policy["fleet"]["count_semantics"]["shared_platform_masterbots"], 20)
+        groups = policy["fleet"]["concurrency_groups"]
+        self.assertIn("rotating-lane", groups["five_minute_rotating_lane"])
+        self.assertIn("full-sweep", groups["six_hour_full_sweep"])
+        self.assertIs(groups["allow_overlap_between_plan_only_workflows"], True)
+
 if __name__ == "__main__":
     unittest.main()
