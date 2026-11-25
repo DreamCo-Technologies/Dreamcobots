@@ -20,12 +20,29 @@ def main() -> int:
     parser.add_argument("--seed", type=int, required=True)
     parser.add_argument("--steps", type=int, default=100)
     parser.add_argument("--resume-from", type=Path)
+    parser.add_argument("--architecture-profile", type=Path, required=True)
+    parser.add_argument("--authorize-weight-updates", action="store_true", help="explicitly approve local model weight updates for this invocation")
+    parser.add_argument("--authorization-reference", required=True, help="owner approval or change-control reference")
+    parser.add_argument("--approved-by", required=True, help="owner/operator authorizing this run")
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
-    dataset_path = args.dataset_path.resolve()
+    if not args.authorize_weight_updates:
+        raise SystemExit("BLOCKED: pass --authorize-weight-updates only after reviewing the dataset rights and training profile")
+    if len(args.authorization_reference.strip()) < 6 or len(args.approved_by.strip()) < 2:
+        raise SystemExit("BLOCKED: authorization reference and approving owner are required")
+    dataset_path = args.dataset_path.expanduser().resolve()
     data_root = Path(__import__("os").environ.get("DREAMCO_AUTHORIZED_DATA_ROOT", str(Path.home() / "DreamCo-private-data"))).resolve()
     if data_root not in dataset_path.parents:
         raise SystemExit("dataset path must be inside the owner-controlled private data root")
+    output_path = args.output.expanduser().resolve()
+    if data_root not in output_path.parents:
+        raise SystemExit("checkpoint output must be inside the owner-controlled private data root")
+    resume_path = args.resume_from.expanduser().resolve() if args.resume_from else None
+    if resume_path is not None and data_root not in resume_path.parents:
+        raise SystemExit("resume checkpoint must be inside the owner-controlled private data root")
+    architecture_profile = json.loads(args.architecture_profile.read_text(encoding="utf-8"))
+    if not isinstance(architecture_profile, dict):
+        raise SystemExit("architecture profile must be a JSON object")
     manifest_path = ROOT / "config/authorized-training-datasets/manifest.json"
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
     from buddy.learning.model_foundry import validate_manifest
@@ -39,7 +56,13 @@ def main() -> int:
     result = train_from_scratch(
         dataset_path, args.output, dataset_id=args.dataset_id,
         division_id=args.division_id, strategy=args.strategy, seed=args.seed, steps=args.steps,
-        resume_from=args.resume_from
+        resume_from=resume_path,
+        architecture_profile=architecture_profile,
+        authorization_manifest=manifest,
+        data_root=data_root,
+        explicit_training_authorization=args.authorize_weight_updates,
+        authorization_reference=args.authorization_reference,
+        approved_by=args.approved_by,
     )
     print(json.dumps(result, indent=2))
     return 0
