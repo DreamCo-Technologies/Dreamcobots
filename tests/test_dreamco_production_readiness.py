@@ -97,6 +97,18 @@ class ProductionReadinessContractTests(unittest.TestCase):
    self.assertEqual(records[0]["status"],"BLOCKED")
    self.assertTrue(any("successfully" in item for item in records[0]["verification_errors"]))
 
+ def test_github_check_verification_requires_success_and_exact_sha(self):
+  from tools.dreamco_production_readiness import verify_github_check
+  sha="c"*40
+  success={"head_sha":sha,"status":"completed","conclusion":"success"}
+  with patch("tools.dreamco_production_readiness.urllib.request.urlopen",return_value=io.BytesIO(json.dumps(success).encode())):
+   self.assertTrue(verify_github_check("DreamCo-Technologies/Dreamcobots","12345",sha,"test-token"))
+  wrong_sha={**success,"head_sha":"d"*40}
+  with patch("tools.dreamco_production_readiness.urllib.request.urlopen",return_value=io.BytesIO(json.dumps(wrong_sha).encode())):
+   self.assertFalse(verify_github_check("DreamCo-Technologies/Dreamcobots","12345",sha,"test-token"))
+  self.assertFalse(verify_github_check("DreamCo-Technologies/Dreamcobots","not-a-run-id",sha,"test-token"))
+  self.assertFalse(verify_github_check("DreamCo-Technologies/Dreamcobots","12345",sha,None))
+
  def test_requirement_source_filter_excludes_notes_and_generated_catalogs(self):
   from tools.dreamco_production_readiness import ROOT, is_requirement_source
   self.assertFalse(is_requirement_source(ROOT/".agents/memory/MEMORY.md"))
