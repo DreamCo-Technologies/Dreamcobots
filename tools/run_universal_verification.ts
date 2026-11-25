@@ -51,7 +51,7 @@ function run(item: VerificationExpectation) {
   const started = Date.now();
   if (!shouldRun(item)) return { expectationId: item.id, state: "skipped" as const, exitCode: null, durationMs: 0, summary: `Skipped in ${mode} mode` };
   const result = spawnSync(item.command, { shell: true, encoding: "utf8", timeout: item.timeoutSeconds * 1000, env: process.env });
-  const output = `${result.stdout ?? ""}\n${result.stderr ?? ""}`.trim();
+  const output = `${result.stdout ?? ""}\n${result.stderr ?? ""}\n${result.error?.message ?? ""}`.trim();
   persistVerificationLog(resolve("tmp", "dreamco-verification"), item.id, output);
   const timedOut = result.error && (result.error as NodeJS.ErrnoException).code === "ETIMEDOUT";
   const state = result.status === 0 ? "passed" as const : "failed" as const;
