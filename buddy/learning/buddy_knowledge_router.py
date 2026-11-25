@@ -135,11 +135,28 @@ def route_buddy_learning_query(
     guide_matches = library.get("matches", [])
     seed_matches = library.get("seed_candidate_matches", [])
 
-    # Approved guides remain the first choice. Only if no approved guide exists
+    if guide_matches:
+        guide_documents = []
+        for match in guide_matches:
+            guide_path = root / str(match["guide_path"])
+            guide_documents.append(json.loads(guide_path.read_text(encoding="utf-8")))
+        return {
+            "schema": "dreamco.buddy_internal_first_learning_route.v1",
+            "query": normalized_query,
+            "route": "internal_approved_guide",
+            "answer_source": "dreamco_approved_library_guides",
+            "guide_matches": guide_matches,
+            "guide_documents": guide_documents,
+            "course_lessons": [],
+            "knowledge_gap": None,
+            "external_discovery_performed": False,
+            "external_model_routing_performed": False,
+            "mastery_awarded": False,
+        }
+
+    # Only if no approved guide exists
     # do we resolve an exact seed-candidate name against the full catalog; the
     # retrieval limit must not hide a precise candidate behind popular matches.
-    lessons = _course_matches(normalized_query, root, limit)
-
     exact_candidate_ids = _exact_seed_candidate_ids(normalized_query, root)
     exact_candidate_lessons = [
         row for row in _course_matches(normalized_query, root, 10_000)
@@ -174,25 +191,7 @@ def route_buddy_learning_query(
             "mastery_awarded": False,
         }
 
-    if guide_matches:
-        guide_documents = []
-        for match in guide_matches:
-            guide_path = root / str(match["guide_path"])
-            guide_documents.append(json.loads(guide_path.read_text(encoding="utf-8")))
-        return {
-            "schema": "dreamco.buddy_internal_first_learning_route.v1",
-            "query": normalized_query,
-            "route": "internal_approved_guide",
-            "answer_source": "dreamco_approved_library_guides",
-            "guide_matches": guide_matches,
-            "guide_documents": guide_documents,
-            "course_lessons": [],
-            "knowledge_gap": None,
-            "external_discovery_performed": False,
-            "external_model_routing_performed": False,
-            "mastery_awarded": False,
-        }
-
+    lessons = _course_matches(normalized_query, root, limit)
     if lessons:
         supporting_guide_count = sum(
             row["internal_guide"]["status"] == "supporting_guide_available"
