@@ -422,7 +422,7 @@ def render(collection: dict[str, Any]) -> str:
     head = {k: v for k, v in collection.items() if k != "bots"}
     text = json.dumps(head, indent=2, sort_keys=True, ensure_ascii=False)
     lines = ",\n".join("    " + json.dumps(b, sort_keys=True, ensure_ascii=False, separators=(",", ":")) for b in bots)
-    return text[:-2] + ',\n  "bots": [\n' + lines + "\n  ]\n}\n"
+    return text[:-1] + ',\n  "bots": [\n' + lines + "\n  ]\n}\n"
 
 
 def seed_division_counts() -> dict[str, int]:
