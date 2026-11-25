@@ -310,6 +310,8 @@ def build_money_os_catalog(registry: dict[str, Any], lane_index: dict[str, dict[
             raise ValueError(f"Money OS source group is not configured: {source_group}")
         monetization = lane.get("monetization", ["subscription"])
         related_slug = MONEY_OS_PROFILE_ALIASES.get(slug)
+        # Ownership proposals must come from the registry; never infer an owner.
+        proposed_owner = row.get("proposed_owner_division")
         catalog.append({
             "slug": slug,
             "name": raw_name,
