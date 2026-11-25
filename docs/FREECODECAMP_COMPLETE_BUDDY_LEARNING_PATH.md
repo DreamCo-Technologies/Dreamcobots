@@ -89,3 +89,28 @@ Every queued video remains metadata-only until item-level source rights and tran
 ## Certification and curriculum-primitive coverage
 
 The course scheduler now includes all seven core current certifications and all five additional official certifications in the roadmap, including the language and C# specialist paths. It also exposes all seven curriculum primitives: theory lessons, workshops, labs, review pages, quizzes, required projects and exams. Legacy curricula are preserved in a separate versioned inventory task and are never silently substituted for current v9 requirements. The scheduler retains the ten learning phases and all 22 video subject tracks, plus every video ID in the current catalog.
+
+
+## Specialist division routing and Buddy demonstrations
+
+The public video catalog and original DreamCo learning paths are separate records:
+
+- `freecodecamp-video-catalog` stores public metadata only. A title, URL, category, or routing tag is not a transcript, a completed lesson, or permission to create a derivative course summary.
+- `freecodecamp-specialist-learning-paths` stores original DreamCo implementation briefs linked to video metadata. These paths include objectives, implementation steps, practice tasks, assessments, capability/tool/agent tags, benchmarks, and a Buddy demonstration.
+- Specialist paths are assigned to canonical divisions and MasterBot lanes. The runtime learning queue filters by the requested division or MasterBot so specialist resources do not leak into unrelated queues.
+- Original implementation briefs remain `authoring_backlog`; Buddy must not mark them studied or mastered until a rights-cleared guide, completed exercises, benchmark, holdout/regression evidence, and reviewer approval exist.
+
+The current category-aware routing covers every catalog row tagged as machine learning/deep learning, AI agents/MCP, and cloud DevOps/CI/CD, plus TypeScript videos identified by title. Curated demonstrations include algorithmic trading (paper-only), multi-agent PR review, agentic AI, OpenClaw patterns, self-healing CI/CD, TypeScript, ML foundations, MLOps, and neural networks from first principles.
+
+### Required Buddy demonstration sequence
+
+1. Resolve the source video metadata and verify the item-level source and rights status.
+2. Load the separate DreamCo implementation path for the owning division.
+3. Explain each implementation step and its prerequisites.
+4. Run the original exercise in an isolated sandbox with synthetic or approved data.
+5. Execute unit, integration, security, and regression checks.
+6. Compare outputs against the path's assessment and benchmark criteria.
+7. Preserve evidence, provenance, model/tool versions, and failure cases.
+8. Request human review; only approved, evidence-backed study can advance the lesson state.
+
+Trading paths are limited to synthetic data, historical backtests, and paper trading. No live brokerage order or credential access is enabled by a course summary.
