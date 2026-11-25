@@ -73,8 +73,9 @@ class BuddyUniversityCurriculumTests(unittest.TestCase):
         task = result["onet_task_routes"][0]
         self.assertIn("DreamCodeLab", task["division_ids"])
         self.assertIn(task["task_ref"], next(x for x in result["divisions"] if x["division"] == "DreamCodeLab")["onet_task_refs"])
-        self.assertIn("IDE", task["task_specific_software_categories"])
-        self.assertIn("debugging", task["agent_capabilities_to_assess"])
+        self.assertEqual(task["task_specific_software_category_count"], 2)
+        self.assertEqual(task["agent_capability_count"], 1)
+        self.assertIn("O*NET", task["task_playbook_source"])
 
     def test_college_domains_and_full_freecodecamp_catalog_are_attached(self):
         college = {
