@@ -19,7 +19,7 @@ ROOT = Path(__file__).resolve().parents[2]
 CURRICULUM = ROOT / "config/buddy-universal-library-curriculum.json"
 ECOSYSTEMS = ROOT / "config/library_ecosystems.json"
 GUIDE_DIR = ROOT / "data/buddy-library-study-guides"
-GAP_LOG = ROOT / "data/buddy-library-knowledge-gaps.jsonl"
+GAP_LOG = ROOT / ".dreamco/library-knowledge-gaps.jsonl"
 APPROVED_STATES = {"approved_for_study", "mastered"}
 SEARCHABLE_STATES = APPROVED_STATES
 
