@@ -1,9 +1,20 @@
 import unittest
 from unittest.mock import patch
-from tools.catalog_freecodecamp_youtube import catalog_all, classify_video
+from urllib.error import URLError
+from tools.catalog_freecodecamp_youtube import catalog_all, classify_video, _api_get, YouTubeAPIError
 
 
 class FreeCodeCampCatalogTests(unittest.TestCase):
+
+    def test_api_key_is_redacted_from_request_errors(self):
+        secret = "private-youtube-api-key"
+        with patch("tools.catalog_freecodecamp_youtube.urlopen",
+                   side_effect=URLError(f"https://www.googleapis.com/youtube/v3/videos?key={secret}")):
+            with self.assertRaises(YouTubeAPIError) as caught:
+                _api_get("videos", {"part": "snippet"}, secret)
+        self.assertNotIn(secret, str(caught.exception))
+        self.assertNotIn(secret, repr(caught.exception.__context__))
+
     def test_video_gets_multiple_subject_categories(self):
         result = classify_video("Build a Python RAG app with FastAPI", "Learn retrieval augmented generation and REST APIs")
         self.assertIn("python", result["categories"])
