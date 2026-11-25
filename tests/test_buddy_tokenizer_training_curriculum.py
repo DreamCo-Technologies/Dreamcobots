@@ -26,6 +26,12 @@ class BuddyTokenizerCurriculumTests(unittest.TestCase):
         self.assertGreaterEqual(len(refs), 4)
         self.assertTrue(all(ref["url"].startswith("https://") and ref.get("rights") for ref in refs))
 
+    def test_25m_cpu_course_is_linked_into_tokenizer_path(self):
+        self.assertTrue(self.data["course_integration"]["shared_foundation_for_all_55_divisions_and_65_masterbot_lanes"])
+        urls = [ref["url"] for ref in self.data["course_references"]]
+        self.assertIn("https://www.youtube.com/watch?v=-gfgQfw2g_E", urls)
+        self.assertIn("https://www.freecodecamp.org/news/build-and-train-a-25m-parameter-llm-from-scratch-on-your-cpu/", urls)
+
     def test_mastery_requires_evidence_not_reading(self):
         self.assertTrue(self.data["mastery"]["reading_alone_is_not_mastery"])
         self.assertTrue(self.data["mastery"]["tokenizer_training_is_not_model_weight_training"])
