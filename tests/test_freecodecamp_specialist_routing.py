@@ -7,7 +7,6 @@ from pathlib import Path
 from buddy.learning.course_track_registry import (
     load_course_lessons,
     resources_for_division,
-    resources_for_masterbot,
 )
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -38,10 +37,9 @@ class FreeCodeCampSpecialistRoutingTests(unittest.TestCase):
         self.assertNotIn("DreamAgents", lesson.division_targets)
         self.assertGreaterEqual(len(lesson.implementation_steps), 10)
         self.assertIn("paper", lesson.assessment.lower())
-        finance = {row.name for row in resources_for_division("DreamFinance")}
-        agents = {row.name for row in resources_for_division("DreamAgents")}
-        self.assertIn(lesson.title, finance)
-        self.assertNotIn(lesson.title, agents)
+        study_ready = {row.name for row in resources_for_division("DreamFinance")}
+        self.assertNotIn(lesson.title, study_ready)
+        self.assertNotIn(metadata.title, study_ready)
 
     def test_multi_agent_pr_reviewer_routes_to_agent_and_engineering_divisions(self):
         lesson = self.paths_by_video["iqRcGCah0Kw"]
@@ -79,10 +77,7 @@ class FreeCodeCampSpecialistRoutingTests(unittest.TestCase):
         self.assertIn("DreamAIInfra", ml.division_targets)
         self.assertIn("DreamScience", from_scratch.division_targets)
         self.assertIn("MLflow", mlops.tool_tags)
-        infra = {row.name for row in resources_for_division("DreamAIInfra")}
-        agents = {row.name for row in resources_for_division("DreamAgents")}
-        self.assertIn(mlops.title, infra)
-        self.assertIn(agentic.title, agents)
+        self.assertNotIn(mlops.title, {row.name for row in resources_for_division("DreamAIInfra")})
 
     def test_subject_category_routing_covers_courses_without_keywords_in_the_title(self):
         mcp_security = self.by_video["gYXLRMycVMk"]
@@ -122,8 +117,7 @@ class FreeCodeCampSpecialistRoutingTests(unittest.TestCase):
         self.assertIn("DreamFinance", canonical)
         self.assertIn("DreamAgents", canonical)
         self.assertIn("DreamQuality", masterbots)
-        trade_resources = {row.name for row in resources_for_masterbot("DreamTrade")}
-        self.assertIn(self.paths_by_video["zH2Mg782XhA"].title, trade_resources)
+        self.assertIn("DreamTrade", self.paths_by_video["zH2Mg782XhA"].masterbot_targets)
 
 
 if __name__ == "__main__":
