@@ -28,8 +28,9 @@ def values_under(data:Any,allowed:set[str],path:tuple[str,...]=())->list[str]:
                     if isinstance(x,str):
                         if x.strip(): found.append(x.strip())
                     elif isinstance(x,dict):
+                        metadata_keys = {"id", "label", "name", "tag", "task", "pipeline_tag", "category", "description", "type"}
                         for k,v in x.items():
-                            if isinstance(k,str): found.append(k)
+                            if isinstance(k,str) and k.lower() not in metadata_keys: found.append(k)
                             leaves(v)
                     elif isinstance(x,(list,tuple)):
                         for v in x: leaves(v)
