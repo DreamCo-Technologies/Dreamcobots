@@ -149,3 +149,8 @@ Build the organization artifact first, then use the adapter:
 - `append_progress_event(...)` writes append-only JSONL evidence events. Training events are checked against the canonical organization artifact for explicit asset-level training permission. Mastery cannot be self-reported through this event writer; it must come from the independent evidence verifier.
 
 The adapter does not create a guide, fetch private user data, execute model training, or award mastery. The organizer artifact must be generated from validated, approved guides. User-owned data remains in its separate registry and is not copied into the summary packages.
+
+
+## User-designated ownership
+
+Original summaries, explanations, exercises, and study-path structure authored for the user's DreamCo library are recorded as user-designated assets, subject to applicable law, contributor agreements, and upstream license terms. Third-party source materials keep their original ownership and license; source links and attribution remain attached to each summary. User-provided data remains user-owned and separately permissioned.
