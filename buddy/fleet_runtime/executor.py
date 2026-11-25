@@ -124,7 +124,7 @@ class FleetExecutor:
                 if route_kind == "internal_approved_guide":
                     status, mode, result = "ok", "internal_knowledge", learning_route
                 elif route_kind == "internal_bootcamp_lesson":
-                    status, mode, result = "study_required", "internal_bootcamp_study", learning_route
+                    status, mode, result = "ok", "internal_bootcamp_study", learning_route
                 else:
                     status, mode, result = "needs_input", "offline_deterministic", learning_route
                     if task.get("allow_external_learning_fallback") is True:
