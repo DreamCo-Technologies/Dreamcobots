@@ -8,7 +8,8 @@ from pathlib import Path
 from buddy.learning.universal_library_registry import (
     library_coverage_report,
     record_library_knowledge_gap,
-    search_internal_library_knowledge,\n    validate_library_guide_document,
+    search_internal_library_knowledge,
+    validate_library_guide_document,
 )
 from buddy.learning.course_track_registry import load_course_lessons
 
@@ -36,6 +37,7 @@ class UniversalLibraryRegistryTests(unittest.TestCase):
                 "canonical_id": "python-requests",
                 "name": "Requests",
                 "ecosystem": "python",
+                "artifact_type": "library",
                 "version_reviewed": "2.32.0",
                 "official_homepage": "https://requests.readthedocs.io/",
             },
