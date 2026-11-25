@@ -38,6 +38,18 @@
       "url": "https://github.com/google/sentencepiece",
       "role": "Unigram/BPE tokenizer implementation and reproducibility",
       "rights": "review software and documentation licenses separately"
+    },
+    {
+      "title": "freeCodeCamp 25M CPU LLM / GLM-5.3-Flash course video",
+      "url": "https://www.youtube.com/watch?v=-gfgQfw2g_E",
+      "role": "byte-level vocabulary and tokenizer-in-model context",
+      "rights": "Link-only study reference; transcript, derivative-summary, evaluation, redistribution and model-training permissions are separate."
+    },
+    {
+      "title": "freeCodeCamp 25M CPU LLM course article",
+      "url": "https://www.freecodecamp.org/news/build-and-train-a-25m-parameter-llm-from-scratch-on-your-cpu/",
+      "role": "CPU-first tokenizer and LLM pretraining course",
+      "rights": "Link-only study reference; no transcript or training permission implied."
     }
   ],
   "objectives": [
@@ -48,7 +60,9 @@
     "Train a tokenizer only on authorized data with source-level splits and a held-out evaluation corpus.",
     "Pin tokenizer artifacts, configuration, library versions, source hashes, and deterministic training settings.",
     "Integrate the exact tokenizer revision with model training, inference, checkpointing, and model release evidence.",
-    "Diagnose tokenizer-induced model regressions without training on evaluation or private holdout data."
+    "Diagnose tokenizer-induced model regressions without training on evaluation or private holdout data.",
+    "Reproduce the course's compact 260-token byte-level vocabulary as a reference experiment and compare it with BPE/WordPiece/Unigram on rights-cleared corpora; do not treat the reference size as universal.",
+    "Measure tokenizer impacts on a 192-token example context, model parameter count, sequence length, language coverage and downstream task quality."
   ],
   "lessons": [
     {
@@ -161,5 +175,14 @@
     "required": "All 12 lesson assessments pass, reproducibility evidence exists, and an independent private holdout evaluation passes.",
     "reading_alone_is_not_mastery": true,
     "tokenizer_training_is_not_model_weight_training": true
+  },
+  "course_integration": {
+    "course_manifest": "config/buddy-25m-cpu-llm-course.json",
+    "study_guide": "docs/BUDDY_25M_CPU_LLM_STUDY_GUIDE.md",
+    "video_id": "-gfgQfw2g_E",
+    "shared_foundation_for_all_55_divisions_and_65_masterbot_lanes": true,
+    "owner_lane": "Grok-HF-Tokenizers",
+    "ownership_changes": false,
+    "status": "REFERENCE_ADDED_NOT_STUDIED"
   }
 }
