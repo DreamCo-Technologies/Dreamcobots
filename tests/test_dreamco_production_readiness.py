@@ -45,4 +45,37 @@ class ProductionReadinessContractTests(unittest.TestCase):
    self.assertIn("## Limitations",markdown)
    self.assertTrue(routes["routes"])
 
+
+ def test_markdown_candidates_are_not_blockers_until_confirmed(self):
+  from tools.dreamco_production_readiness import classify_requirement, missing_requirement_evidence
+  self.assertEqual(classify_requirement({}),"UNTRIAGED_CANDIDATE")
+  self.assertEqual(missing_requirement_evidence({}),[])
+  confirmed={"confirmed_requirement":True}
+  self.assertEqual(classify_requirement(confirmed),"CONFIRMED_REQUIREMENT")
+  self.assertEqual(set(missing_requirement_evidence(confirmed)),{"implementation","tests","runtime_routes","benchmark_evidence"})
+
+ def test_candidate_triage_is_grouped_by_source(self):
+  from tools.dreamco_production_readiness import build_candidate_triage
+  rows=[{"id":"DCO-A","source":"docs/a.md"},{"id":"DCO-B","source":"docs/a.md"},{"id":"DCO-C","source":"docs/b.md"}]
+  result=build_candidate_triage(rows)
+  self.assertEqual([(item["source"],item["candidate_count"]) for item in result],[("docs/a.md",2),("docs/b.md",1)])
+  self.assertLessEqual(len(result[0]["sample_requirement_ids"]),5)
+
+ def test_production_gates_require_verifiable_evidence_references(self):
+  from tools.dreamco_production_readiness import build_production_gate_records
+  policy={"production_gates":["tests_pass"]}
+  records,findings=build_production_gate_records(policy,{})
+  self.assertEqual(records[0]["status"],"BLOCKED")
+  self.assertEqual(len(findings),1)
+  evidence={"production_gates":{"tests_pass":{"status":"VERIFIED","evidence":[{"path":"tests/test_example.py","sha":"abc123","check_id":"run-123"}]}}}
+  records,findings=build_production_gate_records(policy,evidence)
+  self.assertEqual(records[0]["status"],"VERIFIED")
+  self.assertEqual(findings,[])
+
+ def test_requirement_source_filter_excludes_notes_and_generated_catalogs(self):
+  from tools.dreamco_production_readiness import ROOT, is_requirement_source
+  self.assertFalse(is_requirement_source(ROOT/".agents/memory/MEMORY.md"))
+  self.assertFalse(is_requirement_source(ROOT/"docs/BUDDY_ADDITIONAL_TAXONOMY_SYSTEMS.md"))
+  self.assertTrue(is_requirement_source(ROOT/"docs/BUDDY_TOLKIEN_STUDY_TRACK.md"))
+
 if __name__=="__main__": unittest.main()
