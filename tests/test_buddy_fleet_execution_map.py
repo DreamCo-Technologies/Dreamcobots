@@ -1,7 +1,7 @@
 import json
 import unittest
 
-from tools.build_buddy_fleet_execution_map import CHARTERS, build
+from tools.build_buddy_fleet_execution_map import CHARTERS, CROSSWALK, DOMAIN_SOURCE, build, domain_names, norm
 from tools.generate_bot_manifests import main as generate_manifests
 
 
@@ -13,6 +13,14 @@ class BuddyFleetExecutionMapTests(unittest.TestCase):
         cls.payload = build()
         cls.bots = cls.payload["bots"]
         cls.by_slug = {row["slug"]: row for row in cls.bots}
+
+    def test_canonical_domain_parser_uses_the_45_row_crosswalk_not_all_55_source_entries(self):
+        crosswalk = json.loads(CROSSWALK.read_text(encoding="utf-8"))
+        canonical_keys = {norm(row["domain_name"]) for row in crosswalk["domains"]}
+        names = domain_names(DOMAIN_SOURCE.read_text(encoding="utf-8"), canonical_keys)
+        self.assertEqual(len(names), 45)
+        self.assertEqual({norm(name) for name in names}, canonical_keys)
+        self.assertNotIn("Dream3D", names)
 
     def test_full_generated_manifest_is_covered(self):
         self.assertEqual(self.payload["counts"]["manifest_bot_profiles"], len(self.bots))
