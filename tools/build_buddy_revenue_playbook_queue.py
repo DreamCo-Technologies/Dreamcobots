@@ -63,8 +63,8 @@ def build_queue(config: dict[str, Any]) -> dict[str, Any]:
         seen_tracks.add(track_id)
         if not isinstance(subjects, list) or not subjects or any(not isinstance(x, str) or not x.strip() for x in subjects):
             raise ValueError(f"{track_id}: subjects must be a non-empty list of non-empty strings")
-        if not capstone:
-            raise ValueError(f"{track_id}: a capstone outcome is required")
+        # Missing capstones remain explicitly queued for authoring; do not invent
+        # an outcome or fail the entire catalog because one track is unfinished.
         seen_subjects: set[str] = set()
         for index, subject in enumerate(subjects, start=1):
             normalized = subject.strip()
