@@ -76,7 +76,7 @@ def build_factory_plan(configs: dict[str, dict[str, Any]], source_hashes: dict[s
     workforce_tracks = configs.get("workforce", {}).get("training_paths", [])
     government = configs.get("government", {})
     def _tokens(value: str) -> set[str]:
-        expanded = re.sub(r"([a-z])([A-Z])", r"\\1 \\2", value)
+        expanded = re.sub(r"([a-z])([A-Z])", r"\1 \2", value)
         return {x.lower() for x in re.findall(r"[a-z0-9]+", expanded.lower())
                 if len(x) > 2 and x.lower() not in {"dream", "and", "the", "for", "with", "from"}}
     def _domain_routes(bot: dict[str, Any], route: dict[str, Any]) -> list[dict[str, Any]]:
