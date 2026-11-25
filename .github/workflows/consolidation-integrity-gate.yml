@@ -19,6 +19,8 @@ on:
       - "config/buddy-study-resources-*.json"
       - "shared/ai-models.ts"
       - "tools/validate_buddy_category_system_registry.py"
+      - "tools/generate_buddy_category_system_registry.py"
+      - "tests/test_buddy_category_system_generator.py"
       - "tools/validate_buddy_additional_taxonomy_registry.py"
       - "tests/test_buddy_category_system_registry.py"
       - "tests/test_buddy_additional_taxonomy_registry.py"
@@ -75,12 +77,16 @@ jobs:
       - uses: actions/setup-node@v7
         with:
           node-version: "22"
+      - name: Refresh generated Buddy category-system registry
+        run: |
+          python3 tools/generate_buddy_category_system_registry.py
+          python3 tools/generate_buddy_category_system_registry.py --check
       - name: Validate Buddy category-system registry
         run: |
           npm run buddy:category-systems
           python3 tools/audit_markdown_implementation_gaps.py --write
           python3 tools/audit_markdown_implementation_gaps.py --check
-          python3 -m unittest tests.test_markdown_implementation_gaps tests.test_buddy_category_system_registry tests.test_buddy_additional_taxonomy_registry tests.test_buddy_technology_radar tests.test_buddy_task_taxonomy_registry
+          python3 -m unittest tests.test_markdown_implementation_gaps tests.test_buddy_category_system_registry tests.test_buddy_category_system_generator tests.test_buddy_additional_taxonomy_registry tests.test_buddy_technology_radar tests.test_buddy_task_taxonomy_registry
           python3 tools/refresh_buddy_technology_radar.py --project
           python3 tools/refresh_buddy_technology_radar.py --check
           python3 tools/validate_vibe_coding_taxonomy.py
