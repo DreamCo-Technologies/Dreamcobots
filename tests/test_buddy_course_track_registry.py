@@ -32,11 +32,17 @@ class BuddyCourseTrackRegistryTests(unittest.TestCase):
             + len(tok["lessons"]) + len(cpu["modules"]) + len(onet["subject_inventory"])
             + len(hf_tasks["task_families"])
             + len(fcc["official_platform_inventory"]["core_certifications"])
+            + len(fcc["official_platform_inventory"]["additional_certifications"])
+            + len(fcc["official_platform_inventory"]["curriculum_primitives"]) + 1
             + len(fcc["study_sequence"]) + len(fcc["video_learning_tracks"])
             + len(hf_full["official_courses"]) + len(hf_full["ecosystem_modules"])
             + len(fcc_catalog["videos"])
         )
         self.assertEqual(len(lessons), expected_count)
+        fcc_lessons = [lesson for lesson in lessons if lesson.track_id == "freecodecamp"]
+        self.assertTrue(any(lesson.lesson_id == "a2-english-for-developers" for lesson in fcc_lessons))
+        self.assertTrue(any(lesson.lesson_id == "fcc-legacy-curriculum-inventory" for lesson in fcc_lessons))
+        self.assertTrue(any(lesson.lesson_id == "fcc-primitive-workshops" for lesson in fcc_lessons))
         self.assertEqual(len({lesson.resource_id for lesson in lessons}), len(lessons))
         self.assertEqual(len({(lesson.track_id, lesson.lesson_id) for lesson in lessons}), len(lessons))
         expected = {"tolkien", "tokenizer", "cpu-first-llm", "onet", "hugging-face", "freecodecamp", "huggingface-full", "freecodecamp-video-catalog"}
