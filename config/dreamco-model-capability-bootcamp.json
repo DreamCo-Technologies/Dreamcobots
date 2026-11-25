@@ -403,7 +403,27 @@
   "rights_and_privacy": {
     "curriculum": "DreamCo-authored explanations, examples, exercises and assessments; do not reproduce third-party course wording or imply third-party endorsement.",
     "sources": "Keep private provenance and license records for every external reference, asset, dataset and model.",
-    "training": "Training permission is separate from permission to view, index, summarize, evaluate or redistribute material.",
-    "secrets": "Never store credentials in lesson content, task examples, public reports or model datasets."
+    "training": "Buddy has standing authorization to learn from original DreamCo-owned Bootcamp materials without repeated per-asset consent prompts. External materials, learner submissions, customer data, personal data, and third-party licensed works remain governed by their own applicable permissions and privacy settings.",
+    "secrets": "Never store credentials in lesson content, task examples, public reports or model datasets.",
+    "first_party_bootcamp_learning": {
+      "policy_id": "dreamco_first_party_course_materials_v1",
+      "standing_authorization": "DreamCo authorizes Buddy to learn from, index, retrieve, summarize, evaluate, and use for internal model-training experiments all original DreamCo-authored Bootcamp curriculum assets that DreamCo owns or has authority to license.",
+      "no_per_asset_consent_prompt_for_first_party_materials": true,
+      "eligibility_requirements": [
+        "asset is marked first_party_dreamco",
+        "DreamCo ownership_or_authorization is recorded",
+        "asset contains no unlicensed third-party text, media, code, dataset, or personal data",
+        "asset is not learner-submitted content unless that learner's applicable terms explicitly grant the required use"
+      ],
+      "separate_controls": [
+        "privacy and personal-data safeguards still apply",
+        "security-sensitive secrets and credentials must be excluded",
+        "safety restrictions and dataset quality checks still apply",
+        "external third-party materials retain their own license and permission conditions",
+        "customer work and learner submissions are not automatically included in DreamCo model training"
+      ],
+      "default_training_scope": "dreamco_internal_bootcamp_models_and_evaluations",
+      "customer_model_training": "A customer's course content may be used for that customer's model only within the permissions and settings the customer selects; it is not pooled into DreamCo shared training by default."
+    }
   }
 }
