@@ -51,7 +51,9 @@ jobs:
       - name: Validate guide queue and rights gates
         run: python -m unittest discover -s tests -p 'test_freecodecamp_study_guides.py' -v
       - name: Validate specialist division routing and Buddy demonstrations
-        run: python -m unittest discover -s tests -p 'test_freecodecamp_specialist_routing.py' -v
+        run: |
+          export PYTHONPATH="$GITHUB_WORKSPACE${PYTHONPATH:+:$PYTHONPATH}"
+          python -m unittest discover -s tests -p 'test_freecodecamp_specialist_routing.py' -v
       - name: Build per-video guide queue
         run: python tools/build_freecodecamp_study_guides.py --out-dir "$RUNNER_TEMP/freecodecamp-study-guides"
       - name: Publish coverage truth
