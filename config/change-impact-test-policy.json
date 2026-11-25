@@ -460,6 +460,37 @@
       "tests": [
         "tests/test_change_impact_test_policy.py"
       ]
+    },
+    {
+      "sources": [
+        "buddy/learning/course_track_registry.py"
+      ],
+      "tests": [
+        "tests/test_freecodecamp_specialist_routing.py",
+        "tests/test_buddy_learning_runtime_bridge.py",
+        "tests/test_buddy_internal_first_learning_router.py",
+        "tests/test_buddy_knowledge_router.py",
+        "tests/test_buddy_onet_task_index.py"
+      ],
+      "reason": "FreeCodeCamp course metadata, original learning paths, specialist routing, and O*NET learning contracts"
+    },
+    {
+      "sources": [
+        "buddy/learning/runtime_bridge.py"
+      ],
+      "tests": [
+        "tests/test_buddy_learning_runtime_bridge.py"
+      ],
+      "reason": "Buddy learning queue owner scoping, authoring status, and demonstration payload"
+    },
+    {
+      "sources": [
+        "tools/build_freecodecamp_division_queues.py"
+      ],
+      "tests": [
+        "tests/test_freecodecamp_division_queues.py"
+      ],
+      "reason": "FreeCodeCamp inventory completeness and provisional queue fail-closed contract"
     }
   ],
   "evidence_rules": {
