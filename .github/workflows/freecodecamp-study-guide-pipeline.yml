@@ -1,0 +1,64 @@
+name: FreeCodeCamp Complete Study Guide Coverage
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "43 10 * * 1"
+  pull_request:
+    paths:
+      - "buddy/bootcamp/sources/freecodecamp/**"
+      - "config/authorized-transcripts/**"
+      - "config/freecodecamp-complete-learning-path.json"
+      - "config/freecodecamp-detailed-video-study-guide.schema.json"
+      - "tools/build_freecodecamp_study_guides.py"
+      - "tests/test_freecodecamp_study_guides.py"
+      - ".github/workflows/freecodecamp-study-guide-pipeline.yml"
+  push:
+    branches: [main]
+    paths:
+      - "buddy/bootcamp/sources/freecodecamp/**"
+      - "config/authorized-transcripts/**"
+      - "config/freecodecamp-complete-learning-path.json"
+      - "config/freecodecamp-detailed-video-study-guide.schema.json"
+      - "tools/build_freecodecamp_study_guides.py"
+      - "tests/test_freecodecamp_study_guides.py"
+      - ".github/workflows/freecodecamp-study-guide-pipeline.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: freecodecamp-study-guides-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  validate-complete-video-guide-coverage:
+    if: github.repository == 'DreamCo-Technologies/Dreamcobots'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Validate guide queue and rights gates
+        run: |
+          python -m unittest discover -s tests -p 'test_freecodecamp_study_guides.py' -v
+          python tools/build_freecodecamp_study_guides.py --out-dir "$RUNNER_TEMP/freecodecamp-study-guides"
+      - name: Publish coverage truth
+        if: always()
+        run: |
+          if [ -f "$RUNNER_TEMP/freecodecamp-study-guides/summary.json" ]; then
+            cat "$RUNNER_TEMP/freecodecamp-study-guides/summary.json" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "Study guide queue not generated; coverage is unverified." >> "$GITHUB_STEP_SUMMARY"
+          fi
+      - name: Upload per-video work queue
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: freecodecamp-study-guide-queue-${{ github.run_id }}
+          path: "$RUNNER_TEMP/freecodecamp-study-guides/"
+          if-no-files-found: error
+          retention-days: 30
