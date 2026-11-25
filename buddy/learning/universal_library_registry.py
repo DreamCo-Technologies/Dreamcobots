@@ -44,6 +44,8 @@ def _tokens(value: str) -> set[str]:
 def validate_library_guide_document(data: dict[str, Any]) -> list[str]:
     """Validate the minimum evidence contract before a guide can be searched."""
     errors: list[str] = []
+    if not isinstance(data, dict):
+        return ["library guide must be a JSON object"]
     required = {
         "schema_version", "library", "provenance", "learning_map", "api_inventory",
         "use_cases", "practice", "evaluation", "rights", "status",
