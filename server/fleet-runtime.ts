@@ -477,6 +477,7 @@ export class BotRuntimeInstance {
 export class FleetRuntimeRegistry {
   private readonly runtimes = new Map<string, BotRuntimeInstance>();
   readonly catalogSchema: string;
+  private readonly domainDivisionNames: Set<string>;
   readonly loadedAt = new Date().toISOString();
 
   constructor(catalog: FleetCatalog) {
@@ -494,6 +495,10 @@ export class FleetRuntimeRegistry {
     }
     if (this.runtimes.size !== catalog.bots.length + supplemental.length) throw new Error("Runtime instance count mismatch");
     this.catalogSchema = catalog.schema;
+    this.domainDivisionNames = new Set([
+      ...catalog.divisions.map((division) => division.name),
+      ...(catalog.supplemental_divisions || []).map((division) => division.name),
+    ]);
   }
 
   static fromFile(path = resolve(process.cwd(), "config", "generated", "bots.catalog.json")) {
@@ -631,8 +636,12 @@ export class FleetRuntimeRegistry {
       divisionMap.set(profile.division, division);
     }
     const capabilityTests = profiles.flatMap((profile) => profile.capabilityTests);
+    const profileDivisionNames = new Set(profiles.map((profile) => profile.division));
+    const portfolioGroupNames = [...profileDivisionNames]
+      .filter((division) => !this.domainDivisionNames.has(division))
+      .sort((a, b) => a.localeCompare(b));
     return {
-      schema: "dreamco.bot_fleet_e2e.v2",
+      schema: "dreamco.bot_fleet_e2e.v3",
       capabilityTestContract: {
         mode: "repository_controlled_sandbox",
         checks: CAPABILITY_TEST_CHECKS,
@@ -645,7 +654,9 @@ export class FleetRuntimeRegistry {
         profilesTested: profiles.length,
         sandboxCertified: profiles.filter((profile) => profile.status === "sandbox_certified").length,
         failed: profiles.filter((profile) => profile.status === "failed").length,
-        divisionsTested: divisionMap.size,
+        divisionsTested: this.domainDivisionNames.size,
+        profileDivisionLabelsTested: divisionMap.size,
+        supplementalPortfolioGroupsTested: portfolioGroupNames.length,
         declaredCapabilitiesTested: capabilityTests.length,
         sandboxCapabilityTestsPassed: capabilityTests.filter((test) => test.status === "sandbox_contract_passed").length,
         sandboxCapabilityTestsFailed: capabilityTests.filter((test) => test.status === "failed").length,
@@ -658,6 +669,7 @@ export class FleetRuntimeRegistry {
       divisions: [...divisionMap.entries()]
         .map(([division, result]) => ({ division, ...result }))
         .sort((a, b) => a.division.localeCompare(b.division)),
+      portfolioGroupNames,
       profiles,
     } as const;
   }
