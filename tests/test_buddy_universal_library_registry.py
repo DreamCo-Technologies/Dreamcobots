@@ -73,6 +73,17 @@ class UniversalLibraryRegistryTests(unittest.TestCase):
         errors = validate_library_guide_document({"schema_version": "wrong"})
         self.assertTrue(any("missing top-level fields" in error for error in errors))
 
+    def test_approved_guide_validation_handles_malformed_provenance_without_crashing(self):
+        self.write_guide()
+        path = self.root / "data/buddy-library-study-guides/requests.json"
+        guide = json.loads(path.read_text(encoding="utf-8"))
+        guide["provenance"]["sources"] = None
+        errors = validate_library_guide_document(guide)
+        self.assertTrue(any("at least one provenance source" in error for error in errors))
+        guide["provenance"]["sources"] = ["malformed-source-row"]
+        errors = validate_library_guide_document(guide)
+        self.assertTrue(any("every provenance source" in error for error in errors))
+
     def test_internal_search_returns_approved_guide_and_never_claims_mastery(self):
         self.write_guide()
         result = search_internal_library_knowledge("Python HTTP sessions", root=self.root)
