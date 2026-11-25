@@ -7,6 +7,10 @@ on:
     paths:
       - "config/buddy-open-source-bootcamp.json"
       - "tools/discover_open_source_bootcamp_sources.py"
+      - "tools/build_buddy_source_study_queue.py"
+      - "config/buddy-source-study-guide.schema.json"
+      - "config/buddy-source-rights-manifest.json"
+      - "tests/test_buddy_source_study_queue.py"
       - ".github/workflows/buddy-open-source-weekly-bootcamp.yml"
   push:
     branches: [main]
@@ -38,6 +42,8 @@ jobs:
         run: |
           python -m json.tool config/buddy-open-source-bootcamp.json > /dev/null
           python -m py_compile tools/discover_open_source_bootcamp_sources.py
+      - name: Run source rights and guide-queue tests
+        run: python -m unittest discover -s tests -p 'test_buddy_source_study_queue.py' -v
       - name: Discover GitHub repositories and Hugging Face subjects
         env:
           GITHUB_TOKEN: ${{ github.token }}
@@ -45,6 +51,16 @@ jobs:
           python tools/discover_open_source_bootcamp_sources.py \
             --out-dir "$RUNNER_TEMP/buddy-bootcamp-weekly" \
             --hf-limit-per-subject 20
+      - name: Build rights-gated source study queue
+        if: always()
+        run: |
+          if [ -f "$RUNNER_TEMP/buddy-bootcamp-weekly/discovery-snapshot.json" ]; then
+            python tools/build_buddy_source_study_queue.py \
+              --snapshot "$RUNNER_TEMP/buddy-bootcamp-weekly/discovery-snapshot.json" \
+              --out-dir "$RUNNER_TEMP/buddy-bootcamp-weekly"
+          else
+            echo "Discovery snapshot missing; source study queue not generated."
+          fi
       - name: Publish weekly discovery report
         if: always()
         run: |
