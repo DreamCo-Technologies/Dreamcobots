@@ -84,9 +84,13 @@ class BuddyInternalFirstLearningRouterTests(unittest.TestCase):
                 with self.assertRaises(PermissionError):
                     route_buddy_learning_query("unmapped capability zqv 9842", root=root, record_gap=True)
                 result = route_buddy_learning_query(
-                    "unmapped capability zqv 9842", root=root, record_gap=True, query_is_redacted=True
+                    "unmapped capability zqv 9842",
+                    root=root,
+                    record_gap=True,
+                    redacted_query="unmapped capability [candidate redacted]",
                 )
             self.assertEqual(result["gap_event"]["status"], "open")
+            self.assertEqual(result["gap_event"]["query"], "unmapped capability [candidate redacted]")
             self.assertFalse(result["gap_event"]["external_routing_performed"])
             self.assertTrue((root / ".dreamco/library-knowledge-gaps.jsonl").is_file())
 
