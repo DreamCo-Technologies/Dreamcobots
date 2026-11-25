@@ -242,7 +242,9 @@ def train_from_scratch(dataset_path: Path, output_path: Path, *, dataset_id: str
                        data_root: Path | None = None,
                        explicit_training_authorization: bool = False,
                        authorization_reference: str | None = None,
-                       approved_by: str | None = None) -> dict[str, Any]:
+                       approved_by: str | None = None,
+                       tokenizer_type: str = "byte_level",
+                       tokenizer_vocab_size: int = 512) -> dict[str, Any]:
     """Train only after profile, runtime approval, and dataset-rights checks pass."""
     validate_training_authorization(architecture_profile, explicit_authorization=explicit_training_authorization,
                                    authorization_reference=authorization_reference, approved_by=approved_by)
@@ -292,25 +294,11 @@ def train_from_scratch(dataset_path: Path, output_path: Path, *, dataset_id: str
         architecture.update({
             key: architecture_profile[key]
             for key in (
-                "vocab_size", "context_size", "width", "layers",
-                "attention_heads", "feed_forward_size", "tied_embeddings", "bias",
+                "context_size", "width", "layers", "attention_heads",
+                "feed_forward_size", "tied_embeddings", "bias",
             )
             if key in architecture_profile
         })
-    if architecture["vocab_size"] != 256:
-        raise ValueError("byte-level training currently requires vocab_size=256")
-    if architecture["context_size"] < sequence_length:
-        raise ValueError("architecture context_size must be at least the strategy sequence_length")
-    expected_parameters = estimate_decoder_parameter_count(architecture)
-    target_parameters = architecture_profile.get("parameter_target") if architecture_profile else None
-    tolerance = architecture_profile.get("tolerance_fraction", 0.02) if architecture_profile else 0.02
-    if target_parameters is not None:
-        if not isinstance(target_parameters, int) or isinstance(target_parameters, bool) or target_parameters <= 0:
-            raise ValueError("parameter_target must be a positive integer")
-        if not isinstance(tolerance, (int, float)) or isinstance(tolerance, bool) or not 0 <= tolerance <= 0.25:
-            raise ValueError("tolerance_fraction must be between 0 and 0.25")
-        if abs(expected_parameters - target_parameters) / target_parameters > tolerance:
-            raise ValueError("architecture parameter count is outside the configured target tolerance")
     try:
         import torch
         from torch import nn
@@ -326,14 +314,35 @@ def train_from_scratch(dataset_path: Path, output_path: Path, *, dataset_id: str
     torch.manual_seed(seed)
     torch.use_deterministic_algorithms(True, warn_only=True)
     device = torch.device("cpu")
-    data = torch.tensor(list(raw), dtype=torch.long, device=device)
-    train_end = int(len(data) * 0.8)
-    validation_end = int(len(data) * 0.9)
-    train_data = data[:train_end]
-    val_data = data[train_end:validation_end]
-    holdout_data = data[validation_end:]
+    from buddy.learning.byte_bpe_trainer import prepare_corpus_splits
+    prepared = prepare_corpus_splits(raw, tokenizer_type=tokenizer_type, vocab_size=tokenizer_vocab_size)
+    actual_vocab_size = prepared["tokenizer"]["vocabulary_size"]
+    if architecture_profile is not None and "vocab_size" in architecture_profile:
+        if architecture_profile["vocab_size"] != actual_vocab_size:
+            raise ValueError("architecture profile vocab_size must match the selected tokenizer artifact")
+    architecture["vocab_size"] = actual_vocab_size
+    if architecture["context_size"] < sequence_length:
+        raise ValueError("architecture context_size must be at least the strategy sequence_length")
+    expected_parameters = estimate_decoder_parameter_count(architecture)
+    target_parameters = architecture_profile.get("parameter_target") if architecture_profile else None
+    tolerance = architecture_profile.get("tolerance_fraction", 0.02) if architecture_profile else 0.02
+    if target_parameters is not None:
+        if not isinstance(target_parameters, int) or isinstance(target_parameters, bool) or target_parameters <= 0:
+            raise ValueError("parameter_target must be a positive integer")
+        if not isinstance(tolerance, (int, float)) or isinstance(tolerance, bool) or not 0 <= tolerance <= 0.25:
+            raise ValueError("tolerance_fraction must be between 0 and 0.25")
+        if abs(expected_parameters - target_parameters) / target_parameters > tolerance:
+            raise ValueError("architecture parameter count is outside the configured target tolerance")
+    train_bytes = raw[:int(len(raw) * 0.8)]
+    validation_bytes = raw[int(len(raw) * 0.8):int(len(raw) * 0.9)]
+    holdout_bytes = raw[int(len(raw) * 0.9):]
+    train_data = torch.tensor(prepared["train_ids"], dtype=torch.long, device=device)
+    val_data = torch.tensor(prepared["validation_ids"], dtype=torch.long, device=device)
+    holdout_data = torch.tensor(prepared["holdout_ids"], dtype=torch.long, device=device)
     if min(len(train_data), len(val_data), len(holdout_data)) < 65:
-        raise ValueError("dataset is too small for independent train/validation/holdout splits")
+        raise ValueError("dataset is too small for independent train/validation/holdout token splits")
+    tokenizer_artifact_bytes = json.dumps(prepared["tokenizer_artifact"], sort_keys=True, separators=(",", ":")).encode("utf-8")
+    tokenizer_sha256 = hashlib.sha256(tokenizer_artifact_bytes).hexdigest()
 
     class TinyDecoder(nn.Module):
         def __init__(self):
@@ -379,7 +388,8 @@ def train_from_scratch(dataset_path: Path, output_path: Path, *, dataset_id: str
         if (saved_meta.get("dataset_id") != dataset_id or saved_meta.get("division_id") != division_id
                 or saved_meta.get("dataset_sha256") != sha256_file(dataset_path)
                 or saved_meta.get("training_strategy") != strategy
-                or saved_meta.get("architecture_profile") != architecture):
+                or saved_meta.get("architecture_profile") != architecture
+                or saved_meta.get("tokenizer_sha256") != tokenizer_sha256):
             raise ValueError("resume checkpoint provenance does not match this training run")
         model.load_state_dict(saved["model_state_dict"])
         if "optimizer_state_dict" in saved:
@@ -398,7 +408,7 @@ def train_from_scratch(dataset_path: Path, output_path: Path, *, dataset_id: str
     for _ in range(steps):
         x, y = batch(train_data)
         logits = model(x)
-        loss = nn.functional.cross_entropy(logits.reshape(-1, 256), y.reshape(-1))
+        loss = nn.functional.cross_entropy(logits.reshape(-1, architecture["vocab_size"]), y.reshape(-1))
         optimizer.zero_grad(set_to_none=True)
         loss.backward()
         nn.utils.clip_grad_norm_(model.parameters(), 1.0)
@@ -432,8 +442,11 @@ def train_from_scratch(dataset_path: Path, output_path: Path, *, dataset_id: str
         "architecture_profile": architecture,
         "parameter_target": target_parameters,
         "parameter_count_preflight": expected_parameters,
-        "tokenizer": {"type": "byte_level", "vocabulary_size": 256, "special_tokens": []},
-        "tokenizer_sha256": None,
+        "tokenizer": prepared["tokenizer"],
+        "tokenizer_type": tokenizer_type,
+        "tokenizer_sha256": tokenizer_sha256,
+        "tokenizer_training_split_sha256": prepared["tokenizer"].get("training_split_sha256"),
+        "tokenizer_holdout_used_for_training": prepared["tokenizer"].get("holdout_used_for_training", False),
         "parameter_count": actual_parameters,
         "initialization": "random",
         "optimizer": "AdamW",
@@ -444,24 +457,25 @@ def train_from_scratch(dataset_path: Path, output_path: Path, *, dataset_id: str
         "steps": steps,
         "resumed_from_steps": resumed_steps,
         "total_steps": resumed_steps + steps,
-        "train_bytes": len(train_data),
-        "validation_bytes": len(val_data),
-        "holdout_bytes": len(holdout_data),
+        "train_bytes": len(train_bytes),
+        "validation_bytes": len(validation_bytes),
+        "holdout_bytes": len(holdout_bytes),
+        "train_tokens": len(train_data),
+        "validation_tokens": len(val_data),
+        "holdout_tokens": len(holdout_data),
         "holdout_used_for_training": False,
         "validation_loss": validation_loss,
         "holdout_loss": holdout_loss,
-        "train_split_sha256": hashlib.sha256(bytes(train_data.tolist())).hexdigest(),
-        "validation_split_sha256": hashlib.sha256(bytes(val_data.tolist())).hexdigest(),
-        "holdout_split_sha256": hashlib.sha256(bytes(holdout_data.tolist())).hexdigest(),
+        "train_split_sha256": hashlib.sha256(train_bytes).hexdigest(),
+        "validation_split_sha256": hashlib.sha256(validation_bytes).hexdigest(),
+        "holdout_split_sha256": hashlib.sha256(holdout_bytes).hexdigest(),
         "training_code_revision": __import__("os").environ.get("GITHUB_SHA"),
         "torch_version": torch.__version__,
         "training_status": "trained_experimental_checkpoint_not_certified",
         "weights_sha256": None,
     }
-    tokenizer_bytes = json.dumps(metadata["tokenizer"], sort_keys=True, separators=(",", ":")).encode("utf-8")
     tokenizer_path = output_path.with_suffix(output_path.suffix + ".tokenizer.json")
-    tokenizer_path.write_bytes(tokenizer_bytes)
-    metadata["tokenizer_sha256"] = hashlib.sha256(tokenizer_bytes).hexdigest()
+    tokenizer_path.write_bytes(tokenizer_artifact_bytes)
     torch.save({"model_state_dict": model.state_dict(), "optimizer_state_dict": optimizer.state_dict(), "metadata": metadata}, output_path)
     metadata["weights_sha256"] = sha256_file(output_path)
     metadata_path = output_path.with_suffix(output_path.suffix + ".json")
