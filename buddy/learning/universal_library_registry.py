@@ -13,11 +13,13 @@ from datetime import date, datetime, timezone
 from pathlib import Path
 from typing import Any, Iterable
 
+from foundry.local_rag import Chunk, LocalRagStore
+
 ROOT = Path(__file__).resolve().parents[2]
 CURRICULUM = ROOT / "config/buddy-universal-library-curriculum.json"
 ECOSYSTEMS = ROOT / "config/library_ecosystems.json"
 GUIDE_DIR = ROOT / "data/buddy-library-study-guides"
-GAP_LOG = ROOT / "data/buddy-library-knowledge-gaps.jsonl"
+GAP_LOG = ROOT / ".dreamco/library-knowledge-gaps.jsonl"
 APPROVED_STATES = {"approved_for_study", "mastered"}
 SEARCHABLE_STATES = APPROVED_STATES
 
@@ -230,53 +232,76 @@ def search_internal_library_knowledge(
         raise ValueError("query must be a non-empty string")
     if limit < 1 or limit > 100:
         raise ValueError("limit must be between 1 and 100")
-    query_tokens = _tokens(query)
-    results = []
+    store = LocalRagStore()
+    guide_by_id: dict[str, LibraryGuide] = {}
     for guide in load_approved_guides(root):
         doc = guide.document
-        library = doc.get("library", {})
         learning = doc.get("learning_map", {})
         concepts = learning.get("concepts", []) if isinstance(learning, dict) else []
         use_cases = doc.get("use_cases", [])
+        practice = doc.get("practice", {})
         text_parts = [guide.name, guide.canonical_id, guide.ecosystem]
         text_parts.extend(learning.get("objectives", []) if isinstance(learning, dict) else [])
-        text_parts.extend(c.get("name", "") + " " + c.get("explanation", "") for c in concepts if isinstance(c, dict))
+        text_parts.extend(
+            c.get("name", "") + " " + c.get("explanation", "")
+            for c in concepts if isinstance(c, dict)
+        )
         for use_case in use_cases:
             if isinstance(use_case, dict):
                 if not include_experimental and use_case.get("category") == "experimental":
                     continue
-                text_parts.extend([str(use_case.get("scenario", "")), str(use_case.get("implementation_pattern", ""))])
-        haystack = _tokens(" ".join(text_parts))
-        overlap = query_tokens & haystack
-        if not overlap:
-            continue
-        score = len(overlap) / max(len(query_tokens), 1)
+                text_parts.extend([
+                    str(use_case.get("scenario", "")),
+                    str(use_case.get("implementation_pattern", "")),
+                ])
+        api = doc.get("api_inventory", {})
+        text_parts.extend(
+            str(row.get("symbol_or_feature", "")) + " " + str(row.get("purpose", ""))
+            for row in api.get("entries", []) if isinstance(row, dict)
+        )
+        text_parts.extend(
+            str(row.get("prompt", "")) for row in practice.get("exercises", [])
+            if isinstance(row, dict)
+        )
+        library = doc.get("library", {})
+        store.add(Chunk(
+            chunk_id=guide.canonical_id,
+            text=" ".join(str(part) for part in text_parts),
+            source=guide.path.relative_to(root).as_posix(),
+            license=str(library.get("license", "unknown")),
+        ))
+        guide_by_id[guide.canonical_id] = guide
+    results = []
+    for score, chunk in store.query(query, k=limit):
+        guide = guide_by_id[chunk.chunk_id]
+        doc = guide.document
         results.append({
             "canonical_id": guide.canonical_id,
             "name": guide.name,
             "ecosystem": guide.ecosystem,
             "version_reviewed": guide.version_reviewed,
             "status": guide.status,
-            "score": round(score, 4),
-            "guide_path": guide.path.relative_to(root).as_posix(),
+            "score": round(score, 6),
+            "guide_path": chunk.source,
+            "license": chunk.license,
             "source_urls": [
                 row.get("url") for row in doc.get("provenance", {}).get("sources", [])
                 if isinstance(row, dict) and row.get("url")
             ],
             "evidence_state": doc.get("evaluation", {}).get("evidence_state", "unknown"),
         })
-    results.sort(key=lambda row: (-row["score"], row["canonical_id"]))
-    matches = results[:limit]
     seed_candidates = _search_seed_candidates(query, root, limit)
     return {
         "schema": "dreamco.buddy_internal_library_search.v1",
         "query": query,
         "source": "dreamco_approved_library_guides",
+        "retrieval_engine": "foundry.local_rag.LocalRagStore.tfidf",
+        "embeddings_or_external_model_calls": False,
         "internal_match_count": len(results),
-        "matches": matches,
+        "matches": results,
         "seed_candidate_matches": seed_candidates,
         "seed_candidates_are_not_guides": True,
-        "knowledge_gap": None if matches else {
+        "knowledge_gap": None if results else {
             "status": "internal_knowledge_gap",
             "reason": "No approved, rights-eligible internal library guide matched the request.",
             "next_action": "Create a gap record, discover authoritative first-party sources, review rights, then author an original guide.",
@@ -293,8 +318,11 @@ def record_library_knowledge_gap(
     reason: str = "no_approved_internal_guide_match",
     root: Path = ROOT,
     requested_by: str = "buddy",
+    query_is_redacted: bool = False,
 ) -> dict[str, Any]:
-    """Append a gap event. This does not initiate network access or external routing."""
+    """Append a redacted gap event. This does not initiate network access or external routing."""
+    if not query_is_redacted:
+        raise PermissionError("redact the query before persisting a knowledge gap")
     if not isinstance(query, str) or not query.strip():
         raise ValueError("query must be a non-empty string")
     if not isinstance(reason, str) or not reason.strip():
@@ -309,7 +337,7 @@ def record_library_knowledge_gap(
         "next_action": "discover_authoritative_sources_and_review_rights",
         "external_routing_performed": False,
     }
-    path = root / "data/buddy-library-knowledge-gaps.jsonl"
+    path = root / ".dreamco/library-knowledge-gaps.jsonl"
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("a", encoding="utf-8") as handle:
         handle.write(json.dumps(event, sort_keys=True) + "\n")
@@ -336,7 +364,7 @@ def library_coverage_report(root: Path = ROOT) -> dict[str, Any]:
         status_counts[status] = status_counts.get(status, 0) + 1
         if status in SEARCHABLE_STATES and _guide_is_stale(guide_doc, root):
             stale_due_to_age += 1
-    gap_path = root / "data/buddy-library-knowledge-gaps.jsonl"
+    gap_path = root / ".dreamco/library-knowledge-gaps.jsonl"
     gaps = 0
     if gap_path.is_file():
         gaps = sum(1 for line in gap_path.read_text(encoding="utf-8").splitlines() if line.strip())

@@ -51,3 +51,8 @@ For every run, pin base model/license/revision, tokenizer, dataset manifest and 
 ## Current implementation boundary
 
 The route builder consumes the repository's existing dataset catalog and emits discovery-only candidate routes for all 65 registry entries. It does not download or study dataset files, verify current external terms, create checkpoints, or train weights. Live Hugging Face/OpenML/Kaggle/GitHub connectors, dataset storage/versioning, rights-review UI, ingestion workers, quality pipelines, training execution, and per-model evaluation remain follow-on runtime work.
+
+
+## Library and framework knowledge route
+
+The unknown-problem router now checks Buddy's approved internal library guides for library/framework/SDK/package/dependency/module/API questions before external discovery. If no approved guide exists, it returns matching seed candidates as unverified and can use the existing explicit external-discovery gate to query allowlisted package-registry metadata. It does not call an external model, download package source, or execute code. The host-mediated `BuddyLearningBridge.library_knowledge()` exposes the same route directly, while `library_learning_queue()` returns the internal lessons for a canonical division or MasterBot lane.

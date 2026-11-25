@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+from datetime import date
 import tempfile
 import unittest
 from pathlib import Path
@@ -39,7 +40,7 @@ class UniversalLibraryRegistryTests(unittest.TestCase):
                 "ecosystem": "python",
                 "artifact_type": "library",
                 "version_reviewed": "2.32.0",
-                "latest_version_checked_at": "2026-11-25",
+                "latest_version_checked_at": date.today().isoformat(),
                 "license": "MIT",
                 "official_homepage": "https://requests.readthedocs.io/",
             },
@@ -88,6 +89,8 @@ class UniversalLibraryRegistryTests(unittest.TestCase):
         self.write_guide()
         result = search_internal_library_knowledge("Python HTTP sessions", root=self.root)
         self.assertEqual(result["source"], "dreamco_approved_library_guides")
+        self.assertEqual(result["retrieval_engine"], "foundry.local_rag.LocalRagStore.tfidf")
+        self.assertFalse(result["embeddings_or_external_model_calls"])
         self.assertEqual(result["matches"][0]["canonical_id"], "python-requests")
         self.assertIsNone(result["knowledge_gap"])
 
@@ -114,9 +117,11 @@ class UniversalLibraryRegistryTests(unittest.TestCase):
             search_internal_library_knowledge("Python HTTP sessions", root=self.root)
 
     def test_gap_record_is_append_only_and_does_not_route_externally(self):
-        record_library_knowledge_gap("Rust async runtime", root=self.root)
-        record_library_knowledge_gap("Rust async runtime", root=self.root, reason="follow-up")
-        lines = (self.root / "data/buddy-library-knowledge-gaps.jsonl").read_text().splitlines()
+        with self.assertRaises(PermissionError):
+            record_library_knowledge_gap("Rust async runtime", root=self.root)
+        record_library_knowledge_gap("Rust async runtime", root=self.root, query_is_redacted=True)
+        record_library_knowledge_gap("Rust async runtime", root=self.root, reason="follow-up", query_is_redacted=True)
+        lines = (self.root / ".dreamco/library-knowledge-gaps.jsonl").read_text().splitlines()
         self.assertEqual(len(lines), 2)
         self.assertFalse(json.loads(lines[0])["external_routing_performed"])
 

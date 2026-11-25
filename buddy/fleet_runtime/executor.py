@@ -120,7 +120,8 @@ class FleetExecutor:
             learning_query = str(task.get("objective") or "")
             if manifest.get("prompt"):
                 task["objective"] = f"{manifest['prompt']}\n\n{task.get('objective', '')}"
-            permission = permissions.decide(manifest["permissions"]["ceiling"], task.get("action_level", "sandbox"))
+            default_action_level = "read_only" if task.get("learning_task") is True else "sandbox"
+            permission = permissions.decide(manifest["permissions"]["ceiling"], task.get("action_level", default_action_level))
             if not permission["allowed"]:
                 return self._finish(manifest, task, "approval_required", "none", permission, {}, None, None, stamp)
             in_guard = guardrail(f"{task.get('objective', '')} {task.get('input', '')}")

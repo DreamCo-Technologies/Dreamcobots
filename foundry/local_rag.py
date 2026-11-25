@@ -36,7 +36,7 @@ class LocalRagStore:
         tf = Counter(tokens)
         n = max(len(self.chunks), 1)
         return {
-            token: (count / max(len(tokens), 1)) * math.log((n + 1) / (1 + self._df[token]))
+            token: (count / max(len(tokens), 1)) * (math.log((n + 1) / (1 + self._df[token])) + 1.0)
             for token, count in tf.items()
         }
 

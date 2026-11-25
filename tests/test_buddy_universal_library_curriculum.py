@@ -35,8 +35,8 @@ class UniversalLibraryCurriculumTests(unittest.TestCase):
         ecosystems = coverage["ecosystems"]
         self.assertEqual(len(ecosystems), 38)
         self.assertEqual(coverage["ecosystem_count"], len(ecosystems))
-        self.assertEqual(coverage["automated_ecosystem_count"], 9)
-        self.assertEqual(coverage["manual_ecosystem_count"], 29)
+        self.assertEqual(coverage["automated_ecosystem_count"], 10)
+        self.assertEqual(coverage["manual_ecosystem_count"], 28)
         self.assertEqual(coverage["automated_ecosystem_count"] + coverage["manual_ecosystem_count"], len(ecosystems))
         provider_ids = {provider["id"] for provider in adapters["providers"]}
         for ecosystem in ecosystems:
@@ -45,6 +45,21 @@ class UniversalLibraryCurriculumTests(unittest.TestCase):
             else:
                 self.assertEqual(ecosystem["adapter_status"], "manual_review_required")
         self.assertEqual(next(row for row in ecosystems if row["id"] == "java")["provider"], "maven-central")
+        self.assertEqual(next(row for row in ecosystems if row["id"] == "perl")["provider"], "metacpan")
+
+    def test_runtime_bridge_and_discovery_counts_are_consistent(self):
+        curriculum = self.read_json("config/buddy-universal-library-curriculum.json")
+        runtime = curriculum["runtime"]
+        coverage = self.read_json("config/buddy-library-ecosystem-adapter-coverage.json")
+        self.assertEqual(runtime["host_bridge"], "buddy.learning.runtime_bridge.BuddyLearningBridge.library_knowledge")
+        self.assertEqual(runtime["internal_retrieval_engine"], "foundry.local_rag.LocalRagStore.tfidf")
+        self.assertEqual(runtime["automated_ecosystem_metadata_discovery_count"], coverage["automated_ecosystem_count"])
+        self.assertEqual(runtime["manual_ecosystem_catalog_review_count"], coverage["manual_ecosystem_count"])
+        self.assertTrue(runtime["external_discovery_requires_explicit_host_opt_in"])
+        self.assertTrue(runtime["gap_persistence_requires_redacted_query"])
+        self.assertFalse(runtime["general_external_model_routing_on_gap"])
+        self.assertEqual(runtime["study_queue_completion_default"], "queued_not_studied")
+        self.assertFalse(runtime["study_queue_mastery_default"])
 
     def test_guide_schema_requires_evidence_and_rights(self):
         schema = self.read_json("config/buddy-library-study-guide.schema.json")
@@ -52,6 +67,17 @@ class UniversalLibraryCurriculumTests(unittest.TestCase):
         self.assertTrue({"provenance", "api_inventory", "practice", "evaluation", "rights"}.issubset(required))
         self.assertIn("training_permission", schema["properties"]["rights"]["required"])
         self.assertIn("holdout", schema["properties"]["evaluation"]["required"])
+
+    def test_bootcamp_yaml_adapter_counts_match_registry_coverage(self):
+        bootcamp = (ROOT / "buddy/bootcamp/buddy_bootcamp.yaml").read_text(encoding="utf-8")
+        coverage = self.read_json("config/buddy-library-ecosystem-adapter-coverage.json")
+        import re
+        automated = re.search(r"automated_ecosystem_discovery_count:\s*(\d+)", bootcamp)
+        manual = re.search(r"manual_ecosystem_review_count:\s*(\d+)", bootcamp)
+        self.assertIsNotNone(automated)
+        self.assertIsNotNone(manual)
+        self.assertEqual(int(automated.group(1)), coverage["automated_ecosystem_count"])
+        self.assertEqual(int(manual.group(1)), coverage["manual_ecosystem_count"])
 
 
 if __name__ == "__main__":

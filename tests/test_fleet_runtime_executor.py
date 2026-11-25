@@ -149,6 +149,20 @@ class ExecutorTests(unittest.TestCase):
         self.assertFalse(out["result"]["external_model_routing_performed"])
         self.assertFalse(out["live_external_action_taken"])
 
+    def test_read_only_bot_can_study_internal_bootcamp_without_sandbox_permission(self):
+        import copy
+        collection = load_manifests()
+        collection = copy.deepcopy(collection)
+        for bot in collection["bots"]:
+            if bot["slug"] == "analytics-hub":
+                bot["ceiling"] = "read_only"
+                break
+        executor = FleetExecutor(collection=collection, env={})
+        out = executor.run("analytics-hub", {"objective": "React 19", "learning_task": True})
+        self.assertEqual(out["status"], "ok")
+        self.assertEqual(out["mode"], "internal_bootcamp_study")
+        self.assertEqual(out["evidence"]["permission"]["requested_level"], "read_only")
+
     def test_learning_task_external_fallback_requires_explicit_flag(self):
         out = self.ex.run("blog-writer", {"objective": "qzxv 9481", "learning_task": True})
         self.assertEqual(out["status"], "needs_input")

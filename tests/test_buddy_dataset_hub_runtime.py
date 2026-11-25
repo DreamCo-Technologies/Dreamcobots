@@ -72,6 +72,18 @@ class DatasetHubRuntimeTests(unittest.TestCase):
         finally:
             if old is not None: os.environ["DREAMCO_ALLOW_SOURCE_NETWORK"]=old
 
+    def test_unknown_problem_router_checks_library_knowledge_before_external_discovery(self):
+        with tempfile.TemporaryDirectory() as temp:
+            result = route_problem(
+                "Find a Python library for HTTP APIs", DatasetHub(temp), external=False
+            )
+            self.assertIsNotNone(result["library_knowledge"])
+            self.assertEqual(result["library_knowledge"]["route"], "internal_knowledge_gap")
+            self.assertTrue(result["library_knowledge"]["internal"]["seed_candidate_matches"])
+            self.assertFalse(result["library_knowledge"]["external_discovery_performed"])
+            self.assertFalse(result["library_knowledge"]["external_model_call_performed"])
+            self.assertIn("discover_library_sources_and_review_rights", result["next_actions"])
+
     def test_training_job_requires_compute_approval_and_never_executes(self):
         with tempfile.TemporaryDirectory() as temp:
             sample=Path(temp)/"x.jsonl"; sample.write_text('{"instruction":"Do a task","output":"Complete it safely."}\n')
@@ -111,6 +123,7 @@ class DatasetHubRuntimeTests(unittest.TestCase):
             self.assertTrue(result["masterbot_candidates"])
             self.assertFalse(result["claims"]["problem_solved"])
             self.assertFalse(result["claims"]["weights_trained"])
+            self.assertIsNone(result["library_knowledge"])
             self.assertTrue(result["research_task_id"].startswith("research-"))
             self.assertEqual(DatasetHub(Path(temp)).stats()["pending_research_tasks"],1)
 
