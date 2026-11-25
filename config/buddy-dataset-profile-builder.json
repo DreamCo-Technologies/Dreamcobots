@@ -3,10 +3,36 @@
   "version": "1.0.0",
   "purpose": "User-owned, reproducible dataset profiles for retrieval, skill learning, model customization and governed weight training.",
   "default_mode": "retrieval_and_skill_pack",
-  "supported_training_methods": ["retrieval", "skill_pack", "prompt_policy", "sft", "lora", "qlora", "preference_optimization", "distillation", "continued_pretraining"],
-  "default_source_mix": {"official_docs": 0.25, "courses": 0.20, "papers": 0.15, "datasets": 0.15, "code_examples": 0.15, "user_material": 0.10},
+  "supported_training_methods": [
+    "retrieval",
+    "skill_pack",
+    "prompt_policy",
+    "sft",
+    "lora",
+    "qlora",
+    "preference_optimization",
+    "distillation",
+    "continued_pretraining"
+  ],
+  "default_source_mix": {
+    "official_docs": 0.25,
+    "courses": 0.2,
+    "papers": 0.15,
+    "datasets": 0.15,
+    "code_examples": 0.15,
+    "user_material": 0.1
+  },
   "learning_not_browsing": {
-    "required_content_pipeline": ["retrieve_permitted_content", "extract_concepts", "create_original_lessons", "create_practice_tasks", "create_sandbox_labs", "create_training_examples", "evaluate", "record_reusable_knowledge"],
+    "required_content_pipeline": [
+      "retrieve_permitted_content",
+      "extract_concepts",
+      "create_original_lessons",
+      "create_practice_tasks",
+      "create_sandbox_labs",
+      "create_training_examples",
+      "evaluate",
+      "record_reusable_knowledge"
+    ],
     "metadata_only_is_not_learning": true,
     "url_visit_is_not_ingestion": true,
     "content_hash_required_for_deduplication": true
@@ -15,7 +41,14 @@
     "unknown_or_restricted_rights_block_training": true,
     "publicly_accessible_does_not_mean_reusable_training_data": true,
     "retain_source_attribution_and_license": true,
-    "user_upload_requires_explicit_opt_in": true
+    "user_upload_requires_explicit_opt_in": true,
+    "approved_source_requires_trusted_review": true,
+    "approved_source_requires_rights_evidence": true,
+    "approved_source_requires_explicit_training_permission": true,
+    "open_license_public_domain_and_licensed_sources_require_license_id_and_url": true,
+    "owned_sources_require_owner_attestation_or_approval": true,
+    "user_authorized_sources_require_owner_approval_id": true,
+    "profile_builder_never_self_approves_sources": true
   },
   "privacy": {
     "personal_data_default": "exclude_or_redact",
@@ -25,8 +58,12 @@
   },
   "quality": {
     "deduplicate_exact_and_near_duplicate": true,
-    "quality_score_minimum": 0.70,
-    "train_validation_holdout_split": [0.75, 0.10, 0.15],
+    "quality_score_minimum": 0.7,
+    "train_validation_holdout_split": [
+      0.75,
+      0.1,
+      0.15
+    ],
     "holdout_never_used_for_training": true,
     "preserve_source_and_content_hash": true
   },
@@ -42,11 +79,31 @@
     "cadence_minutes": 5,
     "max_one_mutating_training_job_per_profile": true,
     "priority_formula": "expected_learning_gain * capability_gap * user_value * freshness / estimated_compute_cost",
-    "each_tick": ["detect_changed_sources", "ingest_new_approved_content", "build_or_refresh_course_assets", "queue_one_best_bounded_job", "evaluate_due_jobs", "save_evidence_and_checkpoints"],
+    "each_tick": [
+      "detect_changed_sources",
+      "ingest_new_approved_content",
+      "build_or_refresh_course_assets",
+      "queue_one_best_bounded_job",
+      "evaluate_due_jobs",
+      "save_evidence_and_checkpoints"
+    ],
     "skip_unchanged_content": true,
     "respect_rate_limits_and_budget": true,
     "no_idle_gpu_spin": true,
     "requires_connected_worker": true
   },
-  "evidence_required": ["source_manifest", "license_provenance", "dataset_card", "content_hashes", "split_manifest", "baseline_receipt", "training_job_receipt", "checkpoint_hash", "holdout_receipt", "transfer_receipt", "regression_receipt", "cost_receipt"]
+  "evidence_required": [
+    "source_manifest",
+    "license_provenance",
+    "dataset_card",
+    "content_hashes",
+    "split_manifest",
+    "baseline_receipt",
+    "training_job_receipt",
+    "checkpoint_hash",
+    "holdout_receipt",
+    "transfer_receipt",
+    "regression_receipt",
+    "cost_receipt"
+  ]
 }
