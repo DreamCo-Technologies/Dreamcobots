@@ -124,5 +124,5 @@ def append_progress_event(path: Path, *, asset_id: str, division: str, event_typ
     }
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("a", encoding="utf-8") as handle:
-        handle.write(json.dumps(event, sort_keys=True) + "\\n")
+        handle.write(json.dumps(event, sort_keys=True) + "\n")
     return event
