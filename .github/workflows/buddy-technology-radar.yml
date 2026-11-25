@@ -9,44 +9,75 @@ on:
       - "config/buddy/technology-discovery-policy.json"
       - "tools/refresh_buddy_technology_radar.py"
       - "tests/test_buddy_technology_radar.py"
+      - "tests/test_buddy_technology_radar_workflow_safety.py"
       - ".github/workflows/buddy-technology-radar.yml"
-  push:
-    paths:
-      - "config/buddy/technology-discovery-policy.json"
-      - "tools/refresh_buddy_technology_radar.py"
-      - "tests/test_buddy_technology_radar.py"
-      - ".github/workflows/buddy-technology-radar.yml"
-
 permissions:
   contents: write
-
+  pull-requests: write
 concurrency:
-  group: buddy-technology-radar
+  group: buddy-technology-radar-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: false
-
 jobs:
-  refresh:
+  validate-pr:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
+      - name: Compile radar and run offline tests
+        run: |
+          python3 -m py_compile tools/refresh_buddy_technology_radar.py
+          python3 -m unittest tests.test_buddy_technology_radar tests.test_buddy_technology_radar_workflow_safety -v
+
+  refresh-and-propose:
+    if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v7
         with:
-          persist-credentials: true
+          persist-credentials: false
       - uses: actions/setup-python@v7
         with:
           python-version: "3.13"
       - name: Refresh public AI and technology sources
         run: python3 tools/refresh_buddy_technology_radar.py --refresh
-      - name: Validate the refreshed index and Pages mirror
+      - name: Validate the canonical archive and bounded public projection
         run: |
           python3 tools/refresh_buddy_technology_radar.py --check
-          python3 -m unittest tests.test_buddy_technology_radar
-      - name: Commit new discoveries without deleting history
-        if: github.event_name != 'pull_request'
-        run: |
-          git diff --exit-code config/generated/buddy-technology-radar.json website/data/buddy-technology-radar.json && exit 0
-          git config user.name "DreamCo Buddy"
-          git config user.email "buddy@dreamco.local"
-          git add config/generated/buddy-technology-radar.json website/data/buddy-technology-radar.json
-          git commit -m "research: refresh living AI and technology radar"
-          git push
+          python3 -m unittest tests.test_buddy_technology_radar tests.test_buddy_technology_radar_workflow_safety -v
+      - name: Upload refreshed catalog and public projection as fallback evidence
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: buddy-technology-radar-${{ github.run_id }}
+          path: |
+            config/generated/buddy-technology-radar.json
+            website/data/buddy-technology-radar.json
+            website/data/technology-discovery-policy.json
+          if-no-files-found: warn
+          retention-days: 90
+      - name: Open or update human-review pull request
+        if: success()
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          base: main
+          branch: automation/buddy-technology-radar
+          delete-branch: false
+          add-paths: |
+            config/generated/buddy-technology-radar.json
+            website/data/buddy-technology-radar.json
+            website/data/technology-discovery-policy.json
+          commit-message: "research: refresh living AI and technology radar"
+          title: "research: refresh living AI and technology radar"
+          body: |
+            Automated refresh of public AI and technology discovery sources.
+            The canonical archive and bounded Pages projection are generated separately.
+            This PR requires human review; it never pushes directly to main.
+            Discovered tools, models, jobs, or income leads are not verified capabilities or revenue claims.
