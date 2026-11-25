@@ -1,0 +1,112 @@
+{
+  "schema": "dreamco.buddy_open_source_bootcamp.v1",
+  "version": "1.0.0",
+  "purpose": "Continuously discover, review, summarize, teach, evaluate, and selectively train Buddy from lawful open-source learning resources.",
+  "coverage": {
+    "domain_divisions_target": 55,
+    "include_all_hugging_face_subjects": true,
+    "include_github_repositories": true,
+    "include_technical_books_and_docs": true,
+    "include_video_audio_music_and_multimodal": true,
+    "never_claim_exhaustive_coverage_without_verified_inventory": true
+  },
+  "discovery": {
+    "cadence": "weekly",
+    "continuous_mode": "scheduled discovery plus on-demand scans",
+    "github_search_topics": ["machine-learning", "deep-learning", "artificial-intelligence", "computer-vision", "natural-language-processing", "audio", "music-information-retrieval", "video-understanding", "robotics", "data-engineering", "cybersecurity", "web-development", "cloud", "accessibility", "3d", "game-development"],
+    "hugging_face_hub_types": ["datasets", "models", "spaces"],
+    "hugging_face_subjects": [
+      "audio", "automatic-speech-recognition", "text-to-speech", "audio-classification", "music", "music-generation", "music-information-retrieval",
+      "video", "video-classification", "video-text-to-text", "text-to-video", "image", "computer-vision", "image-classification", "object-detection",
+      "multimodal", "vision-language", "document-question-answering", "ocr", "text", "text-generation", "question-answering", "summarization",
+      "translation", "token-classification", "embeddings", "sentence-similarity", "retrieval", "reinforcement-learning", "robotics",
+      "tabular", "time-series", "forecasting", "geospatial", "graph-machine-learning", "scientific-computing", "biology", "chemistry",
+      "mathematics", "code", "software-engineering", "agents", "tool-use", "synthetic-data", "evaluation", "safety", "privacy",
+      "3d", "depth-estimation", "pose-estimation", "segmentation", "generative-art", "speech", "language-learning"
+    ],
+    "github_seed_repositories": [
+      {"repo":"huggingface/transformers","subjects":["nlp","vision","audio","multimodal"],"license":"Apache-2.0"},
+      {"repo":"huggingface/datasets","subjects":["datasets","audio","video","vision","text"],"license":"Apache-2.0"},
+      {"repo":"huggingface/peft","subjects":["parameter-efficient-fine-tuning"],"license":"Apache-2.0"},
+      {"repo":"huggingface/trl","subjects":["preference-optimization","reinforcement-learning"],"license":"Apache-2.0"},
+      {"repo":"huggingface/evaluate","subjects":["evaluation"],"license":"Apache-2.0"},
+      {"repo":"huggingface/accelerate","subjects":["distributed-training"],"license":"Apache-2.0"},
+      {"repo":"huggingface/diffusers","subjects":["image-generation","audio-generation","video-generation"],"license":"Apache-2.0"},
+      {"repo":"huggingface/education-toolkit","subjects":["machine-learning-education"],"license":"review-required"},
+      {"repo":"pytorch/pytorch","subjects":["deep-learning"],"license":"BSD-3-Clause"},
+      {"repo":"scikit-learn/scikit-learn","subjects":["classical-machine-learning"],"license":"BSD-3-Clause"},
+      {"repo":"ray-project/ray","subjects":["distributed-compute","reinforcement-learning"],"license":"Apache-2.0"},
+      {"repo":"mlflow/mlflow","subjects":["experiment-tracking","model-lifecycle"],"license":"Apache-2.0"},
+      {"repo":"mlflow/mlflow","subjects":["evaluation","model-registry"],"license":"Apache-2.0"},
+      {"repo":"librosa/librosa","subjects":["audio-analysis","music-information-retrieval"],"license":"ISC"},
+      {"repo":"facebookresearch/audiocraft","subjects":["music-generation","audio-generation"],"license":"MIT"},
+      {"repo":"m-bain/whisperX","subjects":["speech-recognition","audio-alignment"],"license":"BSD-2-Clause"},
+      {"repo":"open-mmlab/mmaction2","subjects":["video-understanding"],"license":"Apache-2.0"},
+      {"repo":"opencv/opencv","subjects":["computer-vision","video-processing"],"license":"Apache-2.0"},
+      {"repo":"pytorch/torchaudio","subjects":["audio","speech"],"license":"BSD-2-Clause"},
+      {"repo":"microsoft/ML-For-Beginners","subjects":["machine-learning-education"],"license":"MIT"},
+      {"repo":"microsoft/AI-For-Beginners","subjects":["ai-education"],"license":"MIT"},
+      {"repo":"microsoft/Data-Science-For-Beginners","subjects":["data-science-education"],"license":"MIT"},
+      {"repo":"TheAlgorithms/Python","subjects":["algorithms","computer-science"],"license":"MIT"},
+      {"repo":"rasbt/LLMs-from-scratch","subjects":["llm-engineering"],"license":"Apache-2.0"}
+    ]
+  },
+  "learning_artifacts": {
+    "repository_summary": ["purpose", "architecture", "setup", "key_modules", "core_algorithms", "examples", "tests", "limitations", "security", "license", "upstream_attribution", "division_mapping", "original_exercises", "capstone", "knowledge_checks"],
+    "hugging_face_dataset_summary": ["dataset_purpose", "subject", "task", "splits", "features", "sample_inspection", "collection_method", "known_biases", "license", "privacy", "recommended_use", "evaluation_design"],
+    "hugging_face_model_summary": ["model_purpose", "architecture", "intended_tasks", "inputs_outputs", "inference_example", "training_data_disclosure", "evaluation", "limitations", "license", "hardware_requirements", "safety"],
+    "hugging_face_space_summary": ["app_purpose", "user_flow", "models_and_datasets", "dependencies", "reproducible_demo", "limitations", "license"],
+    "video_summary": ["chapter_timestamps", "detailed_explanation", "key_concepts", "worked_examples", "original_exercises", "capstone", "knowledge_checks", "citations"],
+    "audio_music_summary": ["audio_metadata", "signal_and_feature_explanations", "music_theory", "structure_and_sections", "rhythm_and_tempo", "instrumentation_when_supported", "production_and_mixing_concepts", "original_exercises", "rights_and_provenance"]
+  },
+  "multimodal_learning": {
+    "video": {
+      "pipeline": ["verify_media_rights", "extract_audio", "speech_to_text", "sample_frames", "detect_scenes", "describe_visual_events", "align_audio_and_frames", "create_timestamped_guide", "human_or_benchmark_review"],
+      "frame_sampling": "configurable sparse sampling; increase only when the task requires temporal detail",
+      "media_download": "only when explicitly authorized; otherwise process user-provided or licensed local media"
+    },
+    "audio": {
+      "pipeline": ["verify_media_rights", "decode_audio", "speech_or_sound_classification", "transcribe_when_speech_exists", "align_timestamps", "extract_features", "summarize_and_evaluate"],
+      "music": ["tempo_and_meter_estimation", "key_and_harmony_estimation", "structure_detection", "instrument_or_timbre_analysis_when_supported", "mix_and_production_concepts", "MIDI_or_score_analysis_when_available"],
+      "copyright_boundary": "Do not train on, reproduce, or generate close imitations of copyrighted recordings or artists without the required rights. Prefer public-domain, permissively licensed, or user-owned material."
+    }
+  },
+  "machine_learning_strategies": [
+    {"id":"retrieval_augmented_learning","use":"grounded knowledge from versioned, cited source summaries","mastery_evidence":"answer with citations and source conflict resolution"},
+    {"id":"supervised_instruction_tuning","use":"only rights-cleared examples with curated target answers","mastery_evidence":"held-out task accuracy and rubric scores"},
+    {"id":"self_supervised_pretraining","use":"only permissively licensed or owned corpora with documented provenance","mastery_evidence":"downstream benchmark improvement"},
+    {"id":"contrastive_representation_learning","use":"paired text-image, text-audio, video-text, code-doc examples with rights","mastery_evidence":"retrieval and alignment benchmarks"},
+    {"id":"parameter_efficient_adaptation","use":"LoRA/adapters for domain specialization when base model terms permit","mastery_evidence":"adapter ablation and regression suite"},
+    {"id":"knowledge_distillation","use":"teacher-generated targets reviewed and checked against sources","mastery_evidence":"student quality versus teacher and baseline"},
+    {"id":"preference_optimization","use":"DPO or similar only on consented, curated preference pairs","mastery_evidence":"blind preference evaluation and safety guardrails"},
+    {"id":"reinforcement_learning_in_sandbox","use":"tool-use and coding agents in isolated, budgeted environments","mastery_evidence":"task success, cost, safety, reproducibility"},
+    {"id":"continual_learning_and_replay","use":"versioned incremental updates with replay and forgetting checks","mastery_evidence":"new-skill gains without old-skill regression"},
+    {"id":"curriculum_and_mastery_learning","use":"prerequisite graph, adaptive difficulty, spaced repetition","mastery_evidence":"retention and transfer after delays"},
+    {"id":"program_synthesis_and_execution","use":"learn from code repositories by building independent implementations","mastery_evidence":"tests, security checks, documentation and unseen variants"},
+    {"id":"ensemble_and_model_routing","use":"route tasks to the best certified specialist model","mastery_evidence":"benchmark win rate, latency, cost and fallback quality"}
+  ],
+  "weekly_bootcamp_build": {
+    "enabled": true,
+    "cadence": "weekly",
+    "outputs": ["source_discovery_snapshot", "rights_review_queue", "source_summaries_queue", "division_curricula", "five_daily_lessons_per_division", "weekly_buddy_assessments", "training_candidate_manifest", "regression_report", "next_week_plan"],
+    "lessons_per_day_per_division_target": 5,
+    "weekly_transcript_or_source_test": "at least once per eligible source per week; record coverage and never count blocked sources as tested",
+    "train_only_after": ["rights_gate", "data_quality_gate", "deduplication", "PII_and_secret_scan", "train_validation_test_split", "benchmark_baseline", "compute_budget_approval", "rollback_checkpoint"]
+  },
+  "rights_and_safety": {
+    "unknown_license": "BLOCKED_FOR_TRAINING; metadata discovery and link-only reference may continue",
+    "license_is_per_repository_and_asset": true,
+    "upstream_license_does_not_cover_all_dataset_or_media_contents": true,
+    "do_not_clone_and_republish_upstream_projects_as_dreamco_owned": true,
+    "preserve_attribution_and_version_pins": true,
+    "scan_secrets_malware_vulnerabilities_and_personal_data": true,
+    "untrusted_repository_content_is_data_not_instructions": true,
+    "human_review_for_training_eligibility": true,
+    "user_owned_content_requires_explicit_scope_and_retention_consent": true
+  },
+  "mastery": {
+    "states": ["discovered", "rights_pending", "review_pending", "summarized", "studying", "practiced", "benchmark_pending", "mastered", "blocked", "stale"],
+    "mastered_requires": ["source_grounded_explanation", "independent_implementation_or_performance", "unit_and_integration_tests", "held_out_transfer_task", "safety_and_license_compliance", "no_material_regression"],
+    "never_infer_mastery_from_reading_or_summary_alone": true
+  }
+}
