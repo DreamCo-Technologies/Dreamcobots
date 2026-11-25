@@ -315,7 +315,7 @@ def _rows(track: dict, data: dict, root: Path = ROOT) -> list[dict]:
                         ),
                         "assessment": (
                             "Complete a task-specific practical assessment, safety and credential-boundary "
-                            "review, an unseen assessment using an independent task, benchmark and reviewer sign-off; reading the "
+                            "review, independent unseen task, benchmark and reviewer sign-off; reading the "
                             "task statement alone is not evidence of competence."
                         ),
                         "benchmark": "O*NET task-specific workflow, safety, tool-use and unseen-transfer benchmark.",
