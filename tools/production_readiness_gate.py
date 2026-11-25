@@ -174,6 +174,56 @@ def check_runtime_contracts() -> list[dict]:
     })
     return checks
 
+def summarize_readiness(areas: list[dict], runtime_checks: list[dict]) -> dict:
+    """Classify certification from evidence states, never from file presence alone."""
+    critical_ids = {"buddy_orchestration", "benchmark_framework", "security", "deployment", "observability"}
+    blocking_unknowns = [
+        area["id"] for area in areas
+        if area.get("status") == "unknown" and area.get("id") in critical_ids
+    ]
+    incomplete_areas = [
+        area["id"] for area in areas if area.get("status") != "verified"
+    ]
+    blocking_runtime = [
+        check["id"] for check in runtime_checks
+        if check.get("status") == "fail" and check.get("release_blocker")
+    ]
+    external_config = [
+        check["id"] for check in runtime_checks
+        if check.get("status") == "external_config_required"
+    ]
+    production_ready = not blocking_unknowns and not incomplete_areas and not blocking_runtime and not external_config
+    if blocking_unknowns or blocking_runtime:
+        release_status = "blocked"
+    elif incomplete_areas:
+        release_status = "evidence_incomplete"
+    elif external_config:
+        release_status = "external_config_required"
+    else:
+        release_status = "production_ready"
+    blockers = (
+        [f"critical_unknown:{item}" for item in blocking_unknowns]
+        + [f"incomplete_evidence:{item}" for item in incomplete_areas]
+        + [f"runtime_check_failed:{item}" for item in blocking_runtime]
+        + [f"external_configuration_missing:{item}" for item in external_config]
+    )
+    return {
+        "release_status": release_status,
+        "production_ready": production_ready,
+        "blocking_unknowns": blocking_unknowns,
+        "incomplete_areas": incomplete_areas,
+        "blocking_runtime_checks": blocking_runtime,
+        "external_config_required": external_config,
+        "certification_blockers": blockers,
+    }
+
+
+def should_fail_gate(report: dict, *, strict: bool, certification: bool) -> bool:
+    if report.get("blocking_unknowns") or report.get("blocking_runtime_checks"):
+        return True
+    return certification and not report.get("production_ready", False)
+
+
 def write_markdown(report: dict) -> None:
     counts: dict[str, int] = {}
     for check in report["runtime_checks"]:
@@ -208,7 +258,8 @@ def write_markdown(report: dict) -> None:
 
 def main() -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--strict", action="store_true", help="Fail when release-blocking runtime checks fail.")
+    parser.add_argument("--strict", action="store_true", help="Fail on critical unknowns or release-blocking runtime failures (code gate).")
+    parser.add_argument("--certification", action="store_true", help="Fail unless every area is evidence-verified and all runtime/external configuration gates pass.")
     args = parser.parse_args()
     contract=json.loads(CONTRACT.read_text())
     reports=[]
@@ -237,17 +288,14 @@ def main() -> int:
         found=exists_any(common.get(area["id"],[]))
         status="partial" if found else "unknown"
         reports.append({"id":area["id"],"label":area["label"],"status":status,"repository_evidence":found,"required_evidence":area["required"]})
-    critical=[r for r in reports if r["status"]=="unknown" and r["id"] in {"buddy_orchestration","benchmark_framework","security","deployment","observability"}]
     runtime_checks = check_runtime_contracts()
-    blocking_runtime = [c["id"] for c in runtime_checks if c["status"] == "fail" and c.get("release_blocker")]
-    external_config = [c["id"] for c in runtime_checks if c["status"] == "external_config_required"]
-    release_status = "blocked" if critical or blocking_runtime else "external_config_required" if external_config else "not_certified"
-    report={"schema_version":2,"generated_at":datetime.now(timezone.utc).isoformat(),"commit":git_sha(),"policy":"evidence-first","release_status":release_status,"areas":reports,"runtime_checks":runtime_checks,"blocking_unknowns":[r["id"] for r in critical],"blocking_runtime_checks":blocking_runtime,"external_config_required":external_config,"note":"Partial/unknown is intentional until executable evidence is attached. This report is not a claim of production certification."}
+    readiness = summarize_readiness(reports, runtime_checks)
+    report={"schema_version":3,"generated_at":datetime.now(timezone.utc).isoformat(),"commit":git_sha(),"policy":"evidence-first","areas":reports,"runtime_checks":runtime_checks,**readiness,"note":"Repository file presence is inventory only. Production certification requires every area to be evidence-verified, runtime checks to pass, and external production configuration to be confirmed. This report is not a claim of production certification unless production_ready is true."}
     OUT.parent.mkdir(parents=True,exist_ok=True)
     OUT.write_text(json.dumps(report,indent=2)+"\n")
     write_markdown(report)
     print(json.dumps(report,indent=2))
-    if critical or (args.strict and blocking_runtime):
+    if should_fail_gate(report, strict=args.strict, certification=args.certification):
         return 1
     return 0
 
