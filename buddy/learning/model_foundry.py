@@ -257,6 +257,8 @@ def train_from_scratch(dataset_path: Path, output_path: Path, *, dataset_id: str
         raise PermissionError("checkpoint output must remain inside the owner-controlled private data root")
     if output_path == dataset_path:
         raise PermissionError("checkpoint output cannot overwrite the source dataset")
+    if output_path.exists() and (resume_from is None or output_path.resolve() != resume_from.expanduser().resolve()):
+        raise FileExistsError("checkpoint output already exists; choose a new path or resume from that exact checkpoint")
     if resume_from is not None:
         resume_from = resume_from.expanduser().resolve()
         if private_root not in resume_from.parents or not resume_from.is_file():
