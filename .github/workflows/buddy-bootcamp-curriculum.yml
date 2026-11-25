@@ -76,6 +76,9 @@ on:
       - "tests/test_buddy_library_registry_discovery.py"
       - "tools/buddy_library_knowledge.py"
       - "tests/test_buddy_universal_library_registry.py"
+      - "tests/test_freecodecamp_learning_inventory.py"
+      - "tools/sync_freecodecamp_learning_inventory.py"
+      - "config/buddy-continuous-study-policy.json"
       - "tests/test_buddy_course_track_registry.py"
       - "config/buddy-universal-library-curriculum.json"
       - "config/buddy-library-study-guide.schema.json"
@@ -232,6 +235,7 @@ jobs:
           python -m unittest discover -s tests -p 'test_buddy_course_track_registry.py' -v
           python -m unittest discover -s tests -p 'test_buddy_universal_library_registry.py' -v
           python -m unittest discover -s tests -p 'test_buddy_library_registry_discovery.py' -v
+          python -m unittest discover -s tests -p 'test_freecodecamp_learning_inventory.py' -v
           python -m unittest discover -s tests -p 'test_buddy_universal_library_curriculum.py' -v
           python -m unittest discover -s tests -p 'test_freecodecamp_learning_inventory.py' -v
           python tools/build_weekly_transcript_evaluation.py --output /tmp/buddy-weekly-transcript-evaluation.json
@@ -255,6 +259,7 @@ jobs:
           python -m unittest discover -s tests -p 'test_buddy_course_track_registry.py' -v
           python -m unittest discover -s tests -p 'test_buddy_universal_library_registry.py' -v
           python -m unittest discover -s tests -p 'test_buddy_library_registry_discovery.py' -v
+          python -m unittest discover -s tests -p 'test_freecodecamp_learning_inventory.py' -v
           python -m unittest discover -s tests -p 'test_buddy_universal_library_curriculum.py' -v
           python -m unittest discover -s tests -p 'test_dreamco_bootcamp_seed_data.py' -v
           python -m unittest discover -s tests -p 'test_dreamco_training_factory.py' -v
