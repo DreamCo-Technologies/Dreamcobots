@@ -72,5 +72,43 @@ class CrossRuntimeContractTests(unittest.TestCase):
         self.assertTrue(any("incomparable hardware" in error for error in validate(data)))
 
 
+
+    def test_compute_fairness_has_matched_laptop_and_github_cohorts(self):
+        fairness = self.data["competition"]["compute_fairness"]
+        self.assertEqual({x["id"] for x in fairness["environments"]}, {"owner-laptop", "github-hosted"})
+        self.assertIn("wall_clock_limit_seconds", fairness["budgets"])
+        self.assertIn("retry_limit", fairness["budgets"])
+        self.assertTrue(fairness["anti_cheating"])
+
+    def test_compute_fairness_is_mandatory(self):
+        data = json.loads(json.dumps(self.data))
+        del data["competition"]["compute_fairness"]
+        self.assertTrue(any("equal-compute fairness contract" in error for error in validate(data)))
+
+    def test_resource_catalog_covers_multiple_governed_ecosystems(self):
+        families = {x["family"] for x in self.data["training"]["resource_catalog"]["source_families"]}
+        self.assertGreaterEqual(len(families), 7)
+        self.assertIn("teacher_models_and_providers", families)
+        self.assertIn("compute_and_training_frameworks", families)
+
+    def test_discovery_never_grants_download_or_training_rights(self):
+        data = json.loads(json.dumps(self.data))
+        data["training"]["resource_catalog"]["ingestion_gate"] = "Automatically download all discovered data."
+        self.assertTrue(any("automatic download or training permission" in error for error in validate(data)))
+
+    def test_apple_runtime_execution_remains_python_first_gated(self):
+        data = json.loads(json.dumps(self.data))
+        data["integration"]["apple_repository_ci"]["phase_gate"] = "Start C and Swift immediately."
+        self.assertTrue(any("gated behind Python-first completion" in error for error in validate(data)))
+
+    def test_resource_intelligence_workstream_is_registered_without_reusing_dco016(self):
+        root = Path(__file__).resolve().parents[1]
+        registry = json.loads((root / "config/dreamco-mastery-continuity-registry.json").read_text(encoding="utf-8"))
+        workstreams = {x["id"]: x for x in registry["workstreams"]}
+        self.assertIn("DCO-016", workstreams)
+        self.assertIn("DCO-017", workstreams)
+        self.assertIn("resource intelligence", workstreams["DCO-017"]["name"].casefold())
+        self.assertTrue(workstreams["DCO-017"]["continuous"])
+
 if __name__ == "__main__":
     unittest.main()
