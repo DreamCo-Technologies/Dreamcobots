@@ -94,7 +94,8 @@ def test_auditor_reports_a_state_for_every_division():
     status = json.loads((ROOT / "website/data/fleet-runtime-status.json").read_text())
     states = {d["name"]: d for d in status["divisions"]}
     assert set(states) == set(DIVISIONS)
-    expected_state = "TESTED" if status.get("engine_unit_tests_passed") else "IMPLEMENTED"
+    assert isinstance(status.get("engine_unit_tests_passed"), bool), "fleet status must expose an explicit engine-unit-test result"
+    expected_state = "TESTED" if status["engine_unit_tests_passed"] else "IMPLEMENTED"
     for name in APP_DIVISIONS:
         assert states[name]["state"] == expected_state and states[name]["smoke_passed"], name
     assert "UNASSIGNED" not in states
