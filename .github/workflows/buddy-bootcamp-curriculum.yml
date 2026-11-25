@@ -57,6 +57,16 @@ on:
       - "config/authorized-transcripts/manifest.json"
       - "buddy/bootcamp/sources/TRANSCRIPT_EVALUATION.md"
       - "config/buddy-tolkien-study-track.json"
+      - "config/buddy-course-track-registry.json"
+      - "config/buddy-tokenizer-training-curriculum.json"
+      - "config/buddy-25m-cpu-llm-course.json"
+      - "config/buddy-ai-model-course-division-map.json"
+      - "config/buddy-onet-content-model-curriculum.json"
+      - "config/buddy-course-source-resources.json"
+      - "buddy/learning/course_track_registry.py"
+      - "tests/test_buddy_course_track_registry.py"
+      - "tests/test_buddy_25m_cpu_llm_course.py"
+      - "tests/test_buddy_tokenizer_training_curriculum.py"
       - "tests/test_buddy_tolkien_study_track.py"
       - "tools/build_weekly_transcript_evaluation.py"
       - "tests/test_weekly_transcript_evaluation.py"
@@ -201,6 +211,9 @@ jobs:
           python -m unittest discover -s tests -p 'test_freecodecamp_learning_evidence.py' -v
           python -m unittest discover -s tests -p 'test_weekly_transcript_evaluation.py' -v
           python -m unittest discover -s tests -p 'test_buddy_tolkien_study_track.py' -v
+          python -m unittest discover -s tests -p 'test_buddy_tokenizer_training_curriculum.py' -v
+          python -m unittest discover -s tests -p 'test_buddy_25m_cpu_llm_course.py' -v
+          python -m unittest discover -s tests -p 'test_buddy_course_track_registry.py' -v
           python tools/build_weekly_transcript_evaluation.py --output /tmp/buddy-weekly-transcript-evaluation.json
       - name: Publish first weekly transcript coverage report
         if: always()
@@ -217,6 +230,9 @@ jobs:
           python -m unittest discover -s tests -p 'test_buddy_bootcamp_curriculum.py' -v
           python -m unittest discover -s tests -p 'test_buddy_bootcamp_workflow_safety.py' -v
           python -m unittest discover -s tests -p 'test_buddy_tolkien_study_track.py' -v
+          python -m unittest discover -s tests -p 'test_buddy_tokenizer_training_curriculum.py' -v
+          python -m unittest discover -s tests -p 'test_buddy_25m_cpu_llm_course.py' -v
+          python -m unittest discover -s tests -p 'test_buddy_course_track_registry.py' -v
           python -m unittest discover -s tests -p 'test_dreamco_bootcamp_seed_data.py' -v
           python -m unittest discover -s tests -p 'test_dreamco_training_factory.py' -v
           python -m unittest discover -s tests -p 'test_dreamco_original_training_examples.py' -v
