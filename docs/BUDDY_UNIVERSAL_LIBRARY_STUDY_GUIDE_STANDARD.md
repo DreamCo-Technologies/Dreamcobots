@@ -179,3 +179,13 @@ When a query has no approved guide, internal search also checks the 531-entry se
 ## Ecosystem adapter coverage
 
 `config/buddy-library-ecosystem-adapter-coverage.json` records the actual state of all 38 ecosystem lanes. At this stage, nine ecosystem lanes have query or exact-lookup adapters (npm, Maven Central, crates.io, NuGet, RubyGems, Packagist, exact-name PyPI, and Hugging Face model/dataset metadata, with npm also used for Solidity SDK discovery). Twenty-nine lanes remain manual first-party catalog review. The coverage report exposes these counts rather than implying all registries are automated. Each manual lane remains a scheduled discovery task until an official, terms-reviewed adapter is implemented.
+
+## Buddy runtime integration
+
+The internal guide index is now built with the existing `foundry.local_rag.LocalRagStore` (smoothed TF-IDF, no embedding API). `BuddyLearningBridge.library_knowledge()` exposes the route to the host-mediated runtime, and `buddy/datasets/unknown_router.py` checks the library route for library/framework/SDK/package/API problems. Both paths search approved guides first. The unknown-problem route only performs registry metadata searches when its existing explicit external-discovery gate is enabled. A missing guide never triggers an external model call.
+
+Gap persistence requires a redacted query and writes to ignored local `.dreamco/library-knowledge-gaps.jsonl`; raw user queries are not written to the public repository.
+
+The host bridge also exposes `BuddyLearningBridge.library_learning_queue()`. It returns the registered universal-library ecosystem and candidate-discovery lessons for exactly one canonical division or MasterBot lane, with objectives, practice, assessments, benchmark targets, guide paths and rights mode. Every returned lesson starts as `queued_not_studied`; the method never awards mastery or authorizes weight training or paid compute.
+
+The same bridge exposes `library_coverage()`, reporting ecosystem and seed-candidate counts separately from approved, review-required, stale, blocked and mastered guide states. This prevents discovery backlog from being reported as completed learning.
