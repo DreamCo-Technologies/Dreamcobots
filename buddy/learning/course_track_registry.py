@@ -204,7 +204,7 @@ def _rows(track: dict, data: dict, root: Path = ROOT) -> list[dict]:
             if not task_name:
                 continue
             rows.append({
-                "id": f"task-{slug(task_name)}",
+                "id": f"task-{re.sub(r'[^a-z0-9]+', '-', task_name.lower()).strip('-')}",
                 "title": f"Benchmark task guide: {task_name}",
                 "objective": f"Author deterministic, adversarial and unseen-transfer benchmark tasks for {task_name}.",
                 "practice": (
