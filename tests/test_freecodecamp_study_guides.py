@@ -60,6 +60,48 @@ class StudyGuideQueueTests(unittest.TestCase):
             self.assertEqual(result["authorized_for_guide_count"],0)
             self.assertEqual(result["videos"][0]["rights_status"],"BLOCKED_PERMISSION_SCOPE")
 
+    def test_approved_guide_requires_named_human_review_evidence_and_timestamp(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root=Path(temp)
+            transcript=root/"data/freecodecamp/authorized-transcripts/v1.txt"
+            transcript.parent.mkdir(parents=True)
+            transcript.write_text("authorized source transcript",encoding="utf-8")
+            import hashlib
+            digest=hashlib.sha256(transcript.read_bytes()).hexdigest()
+            rights={"video_id":"v1","source_url":"https://www.youtube.com/watch?v=v1",
+                "transcript_path":"data/freecodecamp/authorized-transcripts/v1.txt","transcript_sha256":digest,
+                "rights_status":"VERIFIED","rights_evidence_ref":"permission-1",
+                "study_permission":True,"summary_derivative_permission":True,"evaluation_permission":True,
+                "training_permission":False}
+            video=catalog()["videos"][0]
+            guide={
+                "schema":"dreamco.freecodecamp_video_study_guide.v1",
+                "video_id":"v1",
+                "source":{"url":video["url"],"title":video["title"],"transcript_sha256":digest},
+                "rights":{"evidence_ref":"permission-1"},
+                "summary":{"executive_overview":"x"*120,"detailed_explanation":"y"*600},
+                "chapter_summaries":[{"start_seconds":0,"summary":"intro"}],
+                "learning_objectives":["one","two","three"],
+                "key_concepts":["one","two","three","four","five"],
+                "terminology":["term"],"code_patterns":["pattern"],"worked_examples":["example"],
+                "exercises":["one","two","three"],"projects":["project"],"common_mistakes":["mistake"],
+                "debugging_playbook":["debug"],"prerequisites":["prerequisite"],
+                "division_applications":["application"],"knowledge_checks":["1","2","3","4","5"],
+                "answer_key":["1","2","3","4","5"],"references":["https://www.youtube.com/watch?v=v1"],
+                "review":{"review_status":"approved"},
+            }
+            result=build_work_queue(catalog(),manifest([rights]),{"v1":guide},root=root)
+            self.assertEqual(result["videos"][0]["guide_status"],"NEEDS_REVIEW")
+            self.assertTrue(any("named human reviewer" in error for error in result["videos"][0]["guide_validation_errors"]))
+            guide["review"].update({
+                "reviewer":"human-reviewer-1",
+                "reviewed_at":"2026-11-25T12:00:00Z",
+                "review_evidence_ref":"review-record-1",
+            })
+            result=build_work_queue(catalog(),manifest([rights]),{"v1":guide},root=root)
+            self.assertEqual(result["videos"][0]["guide_status"],"APPROVED")
+            self.assertEqual(result["videos"][0]["guide_validation_errors"],[])
+
     def test_path_traversal_is_blocked(self):
         with tempfile.TemporaryDirectory() as temp:
             row={"video_id":"v1","source_url":"https://www.youtube.com/watch?v=v1",
