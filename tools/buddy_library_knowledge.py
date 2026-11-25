@@ -24,6 +24,7 @@ def main() -> int:
     gap = sub.add_parser("record-gap", help="Append an internal knowledge gap without external routing")
     gap.add_argument("query")
     gap.add_argument("--reason", default="no_approved_internal_guide_match")
+    gap.add_argument("--redacted", action="store_true", help="Confirm the query has been redacted before private persistence")
     discover = sub.add_parser("discover", help="Query public registry metadata (explicit network opt-in required)")
     discover.add_argument("provider")
     discover.add_argument("query")
@@ -38,7 +39,9 @@ def main() -> int:
             include_experimental=args.include_experimental,
         )
     elif args.command == "record-gap":
-        result = record_library_knowledge_gap(args.query, reason=args.reason, root=args.root)
+        if not args.redacted:
+            raise PermissionError("redact the query and pass --redacted before persisting a gap")
+        result = record_library_knowledge_gap(args.query, reason=args.reason, root=args.root, query_is_redacted=True)
     elif args.command == "discover":
         result = search_public_registry(
             args.provider, args.query, allow_network=args.allow_network,
