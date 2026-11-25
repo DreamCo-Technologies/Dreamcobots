@@ -186,3 +186,6 @@ When a query has no approved guide, internal search also checks the 531-entry se
 The internal guide index is now built with the existing `foundry.local_rag.LocalRagStore` (smoothed TF-IDF, no embedding API). `BuddyLearningBridge.library_knowledge()` exposes the route to the host-mediated runtime, and `buddy/datasets/unknown_router.py` checks the library route for library/framework/SDK/package/API problems. Both paths search approved guides first. The unknown-problem route only performs registry metadata searches when its existing explicit external-discovery gate is enabled. A missing guide never triggers an external model call.
 
 Gap persistence requires a redacted query and writes to ignored local `.dreamco/library-knowledge-gaps.jsonl`; raw user queries are not written to the public repository.
+
+
+The host bridge also exposes `BuddyLearningBridge.library_learning_queue()`. It returns the registered universal-library ecosystem and candidate-discovery lessons for exactly one canonical division or MasterBot lane, with objectives, practice, assessments, benchmark targets, guide paths and rights mode. Every returned lesson starts as `queued_not_studied`; the method never awards mastery or authorizes weight training or paid compute.
