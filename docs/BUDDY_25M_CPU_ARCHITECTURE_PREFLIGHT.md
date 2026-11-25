@@ -11,7 +11,7 @@ This profile defines a byte-level decoder architecture with:
 - feed-forward width: 2,560
 - tied token/output embeddings
 
-The parameter estimator counts the PyTorch-style combined QKV/output projections, feed-forward weights, biases, affine layer norms, token/position embeddings, and final norm. The expected count for this architecture is **24,943,360 parameters**, within 2% of the 25,000,000 target.
+The parameter estimator counts the PyTorch-style combined QKV/output projections, feed-forward weights, biases, affine layer norms, token/position embeddings, and final norm. The expected count for this architecture is **24,946,560 parameters**, within 2% of the 25,000,000 target.
 
 ## Run the preflight
 
