@@ -271,6 +271,7 @@ def build_area_reports(
         verified = (
             isinstance(entry, dict)
             and entry.get("status") == "VERIFIED"
+            and isinstance(refs, list)
             and not errors
             and len(verified_refs) == len(refs)
         )
