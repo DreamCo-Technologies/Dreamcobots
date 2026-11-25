@@ -43,3 +43,12 @@ Shared O*NET literacy is available to all 55 canonical divisions and 65 MasterBo
 ## Required task guide
 
 Each task receives an original detailed guide, prerequisite and knowledge map, professional tool comparison, workflow, worked example, practice simulation, answer key, failure recovery, human handoffs, lawful revenue/job pathway where applicable, acceptance tests and independent benchmark. Reading a task statement or generating a plan is not evidence of competence, authorization or job qualification.
+
+
+## Internal task-level study queue
+
+Buddy now has a compact task-index contract at `data/onet/onet-task-index.json`. The scheduled/manual workflow at `.github/workflows/buddy-onet-task-index-refresh.yml` discovers the official current task-statements export, records the release, source URL, SHA-256 digest and attribution, and proposes the refreshed index through a reviewable pull request.
+
+When the verified index is present, `buddy.learning.course_track_registry` exposes one shared study assignment for each unique occupation/task pair to all 55 canonical divisions and 65 MasterBot lanes. A missing index leaves the 31 subject-level foundation lessons available; it does not silently claim that the full task catalog has been loaded.
+
+**Completion boundary:** the task index is not a set of completed detailed guides. Every task still needs original task-specific instruction, tool research, a workflow, practice simulation, AI/human suitability classification, credential and safety review, acceptance tests, an unseen assessment and reviewer evidence. The index is public O*NET metadata, not a certification, license or proof of Buddy's occupational competence. Unknown or changed O*NET releases remain review-required until the reference inventory is reconciled.
