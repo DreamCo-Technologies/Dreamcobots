@@ -29,6 +29,23 @@ class UniversalLibraryCurriculumTests(unittest.TestCase):
         self.assertEqual(track["source"], "config/buddy-universal-library-curriculum.json")
         self.assertEqual(track["guide_schema"], "config/buddy-library-study-guide.schema.json")
 
+    def test_ecosystem_adapter_coverage_matches_registered_providers(self):
+        coverage = self.read_json("config/buddy-library-ecosystem-adapter-coverage.json")
+        adapters = self.read_json("config/buddy-library-registry-adapters.json")
+        ecosystems = coverage["ecosystems"]
+        self.assertEqual(len(ecosystems), 38)
+        self.assertEqual(coverage["ecosystem_count"], len(ecosystems))
+        self.assertEqual(coverage["automated_ecosystem_count"], 9)
+        self.assertEqual(coverage["manual_ecosystem_count"], 29)
+        self.assertEqual(coverage["automated_ecosystem_count"] + coverage["manual_ecosystem_count"], len(ecosystems))
+        provider_ids = {provider["id"] for provider in adapters["providers"]}
+        for ecosystem in ecosystems:
+            if ecosystem["adapter_status"] == "implemented_query_api":
+                self.assertTrue(set(ecosystem["provider"].split(";")).issubset(provider_ids))
+            else:
+                self.assertEqual(ecosystem["adapter_status"], "manual_review_required")
+        self.assertEqual(next(row for row in ecosystems if row["id"] == "java")["provider"], "maven-central")
+
     def test_guide_schema_requires_evidence_and_rights(self):
         schema = self.read_json("config/buddy-library-study-guide.schema.json")
         required = set(schema["required"])
