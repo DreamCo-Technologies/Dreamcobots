@@ -1102,5 +1102,15 @@
       "measure assessment coverage and schedule update"
     ],
     "no_coverage_shortcut": "A new topic remains visible in the global subject registry even if it has no division owner or no authorized source. It is never silently discarded or marked covered."
+  },
+  "parallel_learning_policy": {
+    "division_coverage": "All 55 domain divisions may begin diagnostics, shared foundations, rights-cleared study and assessment in parallel.",
+    "daily_target_per_division": 5,
+    "logical_parallel_division_lanes": 55,
+    "runtime_concurrency": "Schedule up to all eligible divisions concurrently when actual worker capacity, source rights, evaluator availability and budget allow; otherwise use a fair priority queue without starving divisions.",
+    "model_weight_training": "Separate per-MasterBot queue. Zero jobs start until each asset has explicit training permission, privacy review, approved dataset manifest, compute allocation, baseline/holdout plan and rollback checkpoint.",
+    "shared_foundations": "Teach shared-core material once as an owned course package and assign the same versioned asset to all 55 divisions; track each division's independent attempts and evidence separately.",
+    "resource_safety": "Never equate a 55-lane logical schedule with 55 available GPUs or continuous 100-percent utilization. Respect CPU/GPU memory, rate limits, compute budgets and daily caps.",
+    "fairness": "Use prerequisites, measured capability gaps, recency, expected learning gain and aging queue time; reserve rotation slots for every division."
   }
 }
