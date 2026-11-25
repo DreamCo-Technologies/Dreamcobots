@@ -145,12 +145,14 @@ def build(profiles: list[dict[str, Any]], hf: dict[str, Any], fcc: dict[str, Any
     college = college or {}
     workforce = workforce or {}
     government = government or {}
+    fcc_catalog = fcc_catalog or {}
     college_domains = college.get("knowledge_domains", college.get("domains", []))
     source_families = college.get("source_families", [])
     academic_structure = college.get("academic_structure", {})
     instructional_model = college.get("instructional_model", {})
     names = {row["division"] for row in profiles}
-    hf_terms = sorted(set(taxonomy.get("subject_terms", [])) | set(hf.get("discovery", {}).get("hugging_face_subjects", [])))
+    hf_terms = sorted(set(taxonomy.get("subject_terms", [])) |
+                      set(hf.get("discovery", {}).get("hugging_face_subjects", [])))
     subject_rows = []
     division_hf: dict[str, list[str]] = defaultdict(list)
     for term in hf_terms:
@@ -162,91 +164,99 @@ def build(profiles: list[dict[str, Any]], hf: dict[str, Any], fcc: dict[str, Any
     fcc_phases = fcc.get("study_sequence", [])
     video_tracks = fcc.get("video_learning_tracks", [])
     platform_inventory = fcc.get("official_platform_inventory", {})
+    all_fcc_tracks = list(fcc.get("specialist_track_details", []))
+    for certification in platform_inventory.get("core_certifications", []) + platform_inventory.get("additional_certifications", []):
+        all_fcc_tracks.append({**certification, "id": certification.get("id"),
+                               "related_divisions": certification.get("divisions", [])})
     fcc_rows = []
     division_fcc: dict[str, list[str]] = defaultdict(list)
-    all_fcc_tracks = list(fcc.get("specialist_track_details", []))
-    for certification in fcc.get("official_platform_inventory", {}).get("core_certifications", []) + fcc.get("official_platform_inventory", {}).get("additional_certifications", []):
-        all_fcc_tracks.append({**certification, "id": certification.get("id"), "related_divisions": certification.get("divisions", [])})
     for track in all_fcc_tracks:
-        source_related = track.get("related_divisions", [])
         related = []
-        for source_division in source_related:
+        for source_division in track.get("related_divisions", []):
             if source_division in names:
                 related.append(source_division)
-            related.extend(FCC_DIVISION_CROSSWALK.get(source_division, []))
+            related.extend(FCC_DIVISION_CROSSWALK.get(str(source_division), []))
         related.extend(FCC_DIVISION_CROSSWALK.get(str(track.get("id")), []))
         related = sorted({x for x in related if x in names})
         status = "curated_crosswalk_requires_owner_review" if related else "unclassified_shared_review"
         if not related:
-            related = ["DreamEducation", "CommandCore"]
+            related = [x for x in ("DreamEducation", "CommandCore") if x in names]
         fcc_rows.append({"track_id": track.get("id"), "name": track.get("name"),
                          "division_ids": related, "mapping_status": status,
-                         "learning_outcomes": track.get("learning_outcomes", []),
-                         "capstone": track.get("capstone"),
-                         "required_before_mastery": track.get("required_before_mastery", [])})
+                         "learning_outcomes": track.get("learning_outcomes", track.get("skills", [])),
+                         "capstone": track.get("capstone"), "required_before_mastery": track.get("required_before_mastery", [])})
         for division in related:
             division_fcc[division].append(str(track.get("id")))
 
     fcc_video_rows = []
-    division_fcc_videos: dict[str, list[str]] = defaultdict(list)
+    division_fcc_categories: dict[str, list[str]] = defaultdict(list)
     for category in video_tracks:
         related = sorted({x for x in FCC_DIVISION_CROSSWALK.get(str(category), []) if x in names})
         status = "curated_crosswalk_requires_owner_review" if related else "unclassified_shared_review"
         if not related:
-            related = ["DreamEducation", "CommandCore"]
+            related = [x for x in ("DreamEducation", "CommandCore") if x in names]
         fcc_video_rows.append({"category": category, "division_ids": related, "mapping_status": status})
         for division in related:
-            division_fcc_videos[division].append(str(category))
+            division_fcc_categories[division].append(str(category))
 
-    # Route each known official video by its curated category crosswalk and title.
-    # Every division retains shared-catalog access even when no specialty route is defensible.
-    fcc_video_route_rows = []
+    fcc_videos = fcc_catalog.get("videos", []) if fcc_catalog.get("schema") == "dreamco.freecodecamp_catalog.v1" else []
+    fcc_inventory = fcc_catalog.get("inventory", {}) or {}
+    fcc_video_ids = [str(x.get("video_id")) for x in fcc_videos if isinstance(x, dict) and x.get("video_id")]
+    if len(fcc_video_ids) != len(fcc_videos) or len(set(fcc_video_ids)) != len(fcc_video_ids):
+        raise ValueError("FreeCodeCamp video catalog contains missing or duplicate video IDs")
+    if fcc_catalog and fcc_catalog.get("schema") != "dreamco.freecodecamp_catalog.v1":
+        raise ValueError("unsupported freeCodeCamp channel catalog schema")
+    division_videos: dict[str, list[str]] = defaultdict(list)
+    video_rows = []
     for video in fcc_videos:
         categories = video.get("categories") or ["other_or_unclassified"]
-        routed = set()
-        for category in categories:
-            routed.update(FCC_DIVISION_CROSSWALK.get(str(category), []))
-        title_routes = suggest_divisions(str(video.get("title", "")), profiles, limit=4)
-        if not routed:
-            routed.update(x["division"] for x in title_routes if x["score"] > 0)
-        routed = sorted(x for x in routed if x in names)
-        status = "suggested_requires_owner_review" if routed else "unclassified_shared_review"
-        fcc_video_route_rows.append({"video_id": video["video_id"], "title": video.get("title"),
-            "categories": categories, "specialty_division_ids": routed, "mapping_status": status,
-            "rights_status": video.get("rights_status", "review_required"),
-            "learning_status": video.get("learning_status", "not_studied")})
-        for division in routed:
-            division_fcc_videos[division].append(str(video["video_id"]))
+        routes = sorted({division for category in categories
+                         for division in FCC_DIVISION_CROSSWALK.get(str(category), []) if division in names})
+        status = "curated_category_crosswalk_requires_owner_review" if routes else "unclassified_shared_review"
+        if not routes:
+            routes = [x for x in ("DreamEducation", "CommandCore") if x in names]
+        video_id = str(video["video_id"])
+        row = {"video_id": video_id, "title": video.get("title"), "url": video.get("url"),
+               "category_ids": categories, "division_ids": routes, "specialty_division_ids": routes,
+               "mapping_status": status, "rights_status": video.get("rights_status", "review_required"),
+               "learning_status": video.get("learning_status", "not_studied"),
+               "study_allowed": False, "media_download_allowed": False,
+               "transcript_ingestion_allowed": False, "model_training_allowed": False}
+        video_rows.append(row)
+        for division in routes:
+            division_videos[division].append(video_id)
 
     division_college: dict[str, list[dict[str, Any]]] = defaultdict(list)
     for domain in college_domains:
-        domain_terms = " ".join([domain.get("id", ""), domain.get("name", ""), domain.get("scope", ""), *domain.get("tracks", [])])
+        domain_terms = " ".join([domain.get("id", ""), domain.get("name", ""), domain.get("scope", ""),
+                                 *domain.get("tracks", [])])
         routes = suggest_divisions(domain_terms, profiles, limit=6)
         for route in routes:
             division_college[route["division"]].append({"domain_id": domain.get("id"), "name": domain.get("name"),
                 "mapping_status": route["mapping_status"], "score": route["score"]})
 
-    division_source_families: dict[str, list[str]] = defaultdict(list)
     source_family_routes = []
+    division_source_families: dict[str, list[str]] = defaultdict(list)
     for family in source_families:
         family_terms = " ".join([family.get("id", ""), family.get("scope", ""), family.get("source", "")])
         routes = suggest_divisions(family_terms, profiles, limit=6)
-        route_names = [row["division"] for row in routes]
         source_family_routes.append({"source_family_id": family.get("id"), "routes": routes})
-        for division in route_names:
-            division_source_families[division].append(str(family.get("id")))
+        for route in routes:
+            division_source_families[route["division"]].append(str(family.get("id")))
 
     division_ventures: dict[str, list[str]] = defaultdict(list)
     venture_rows = []
-    venture_guide_sections = college.get("occupational_venture_guide_contract", {}).get("required_for_every_occupation_task_or_venture", [])
-    for track in list(hf.get("entrepreneurship_tracks", [])) + list(workforce.get("training_paths", [])):
+    venture_guide_sections = college.get("occupational_venture_guide_contract", {}).get(
+        "required_for_every_occupation_task_or_venture", [])
+    venture_tracks = list(hf.get("entrepreneurship_tracks", [])) + list(workforce.get("training_paths", []))
+    for track in venture_tracks:
         track_id = str(track.get("id", ""))
         title = str(track.get("title", track.get("name", track_id)))
         subjects = track.get("subjects", [])
         routes = suggest_divisions(" ".join([track_id, title, *subjects]), profiles, limit=6)
         route_names = [row["division"] for row in routes]
-        if routes[0]["score"] == 0:
-            route_names = ["DreamBizLaunch", "DreamSalesPro", "DreamEducation", "CommandCore"]
+        if not route_names or routes[0]["score"] == 0:
+            route_names = [x for x in ("DreamBizLaunch", "DreamSalesPro", "DreamEducation", "CommandCore") if x in names]
         venture_rows.append({
             "track_id": track_id, "title": title, "subjects": subjects, "division_ids": route_names,
             "mapping_status": "suggested_requires_owner_review",
@@ -258,7 +268,8 @@ def build(profiles: list[dict[str, Any]], hf: dict[str, Any], fcc: dict[str, Any
             "required_guide_sections": venture_guide_sections,
             "software_capability_categories": AGENT_CAPABILITY_CATALOG,
             "tool_research_rule": "Identify current category leaders, widely used professional tools, open-source alternatives and local/offline tools; verify official product links, current pricing, license, security and integrations before naming them.",
-            "human_approval_required_for": ["external outreach", "spending", "contracts", "account changes", "regulated work", "government bids and grant submissions"],
+            "human_approval_required_for": ["external outreach", "spending", "contracts", "account changes",
+                "regulated work", "government bids and grant submissions"],
             "truth_boundary": "A venture track is a curriculum plan, not a validated business, guaranteed income stream, credential or proof of operational capability."
         })
         for division in route_names:
@@ -266,67 +277,51 @@ def build(profiles: list[dict[str, Any]], hf: dict[str, Any], fcc: dict[str, Any
                 division_ventures[division].append(track_id)
 
     division_tasks: dict[str, list[str]] = defaultdict(list)
-    division_videos: dict[str, list[str]] = defaultdict(list)
-    video_rows = []
-    if fcc_catalog is not None:
-        if fcc_catalog.get("schema") != "dreamco.freecodecamp_catalog.v1":
-            raise ValueError("unsupported freeCodeCamp channel catalog schema")
-        for video in fcc_catalog.get("videos", []):
-            category_ids = video.get("categories", [])
-            routes = sorted({division for category in category_ids for division in FCC_DIVISION_CROSSWALK.get(category, []) if division in names})
-            status = "curated_category_crosswalk_requires_owner_review" if routes else "unclassified_shared_review"
-            if not routes:
-                routes = ["DreamEducation", "CommandCore"]
-            video_id = str(video.get("video_id", ""))
-            video_rows.append({"video_id": video_id, "title": video.get("title"), "url": video.get("url"),
-                               "category_ids": category_ids, "division_ids": routes, "mapping_status": status,
-                               "rights_status": video.get("rights_status", "review_required"),
-                               "learning_status": video.get("learning_status", "not_studied")})
-            for division in routes:
-                division_videos[division].append(video_id)
     task_rows = []
     occupations = onet.get("occupations", [])
     for occupation in occupations:
         code = str(occupation.get("occupation_code", ""))
         title = str(occupation.get("occupation_title", ""))
+        playbooks = {str(x.get("task_id")): x for x in occupation.get("task_playbooks", [])}
         for task in occupation.get("tasks", []):
             task_id = str(task.get("task_id", ""))
             statement = str(task.get("task", ""))
             routes = suggest_divisions(title + " " + statement, profiles)
             route_names = [x["division"] for x in routes]
             status = "suggested_requires_owner_review"
-            if routes[0]["score"] == 0:
-                route_names = ["DreamEducation", "DreamProServices", "CommandCore"]
+            if not route_names or routes[0]["score"] == 0:
+                route_names = [x for x in ("DreamEducation", "DreamProServices", "CommandCore") if x in names]
                 status = "unclassified_shared_review"
             task_ref = f"{code}:{task_id}"
-            playbook = next((x for x in occupation.get("task_playbooks", []) if str(x.get("task_id")) == task_id), {})
+            playbook = playbooks.get(task_id, {})
             brief = playbook.get("guide_authoring_brief", {})
             task_rows.append({"task_ref": task_ref, "occupation_code": code, "occupation_title": title,
-                              "task_id": task_id, "task": statement, "division_ids": route_names,
-                              "mapping_status": status, "task_specific_software_category_count": len(brief.get("software_categories_to_assess", [])),
-                              "agent_capability_count": len(brief.get("agent_capabilities_to_assess", [])),
-                              "detailed_guide_requirement_count": len(brief.get("must_include", [])),
-                              "task_playbook_status": playbook.get("learning_summary_status", "not_yet_authored_by_buddy"),
-                              "commercial_pathway_status": (playbook.get("commercial_pathway") or {}).get("status", "not_provided"),
-                              "task_playbook_source": "versioned O*NET curriculum task_playbooks record; see source inventory"})
+                "task_id": task_id, "task": statement, "division_ids": route_names, "mapping_status": status,
+                "task_specific_software_category_count": len(brief.get("software_categories_to_assess", [])),
+                "agent_capability_count": len(brief.get("agent_capabilities_to_assess", [])),
+                "detailed_guide_requirement_count": len(brief.get("must_include", [])),
+                "task_playbook_status": playbook.get("learning_summary_status", "not_yet_authored_by_buddy"),
+                "commercial_pathway_status": (playbook.get("commercial_pathway") or {}).get("status", "not_provided"),
+                "task_playbook_source": "versioned O*NET curriculum task_playbooks record; see source inventory"})
             for division in route_names:
                 division_tasks[division].append(task_ref)
 
     divisions = []
+    shared_core = college.get("shared_core", {})
+    shared_core_items = shared_core.get("required_for_all_divisions", []) if isinstance(shared_core, dict) else []
     for profile in profiles:
         name = profile["division"]
         divisions.append({
             **profile,
             "curriculum_status": "ready_for_source_guide_assignment_not_proof_of_training",
-            "shared_core": ["learning-to-learn-and-source-literacy", "mathematics-and-data-literacy",
-                            "digital-and-computing-literacy", "communication-and-documentation",
-                            "critical-thinking-and-evidence", "privacy-security-and-safety",
-                            "professional-ethics-and-human-oversight", "project-management-and-quality",
-                            "AI-literacy-and-agent-collaboration", "research-reproducibility-and-citation"],
+            "shared_core": shared_core_items or ["learning-to-learn-and-source-literacy", "mathematics-and-data-literacy",
+                "digital-and-computing-literacy", "communication-and-documentation", "critical-thinking-and-evidence",
+                "privacy-security-and-safety", "professional-ethics-and-human-oversight", "project-management-and-quality",
+                "AI-literacy-and-agent-collaboration", "research-reproducibility-and-citation"],
             "hugging_face_subjects": sorted(set(division_hf[name])),
             "freecodecamp_tracks": sorted(set(division_fcc[name])),
-            "freecodecamp_video_subject_categories": sorted(set(division_fcc_videos[name]) & set(video_tracks)),
-            "freecodecamp_specialty_video_ids": sorted(set(division_fcc_videos[name]) & set(fcc_video_ids)),
+            "freecodecamp_video_subject_categories": sorted(set(division_fcc_categories[name])),
+            "freecodecamp_specialty_video_ids": sorted(set(division_videos[name])),
             "freecodecamp_shared_catalog_access": True,
             "freecodecamp_catalog_video_count": len(fcc_videos),
             "freecodecamp_video_ids": sorted(set(division_videos[name])),
@@ -339,7 +334,8 @@ def build(profiles: list[dict[str, Any]], hf: dict[str, Any], fcc: dict[str, Any
                 "deliberate_practice", "retrieval_or_capstone"], "only_count_verified_guides_and_recorded_attempts": True},
             "weekly_review": {"assess_each_eligible_source": True, "include_unseen_transfer": True,
                 "record_score_and_remediation": True, "mastery_requires_independent_capstone": True},
-            "agentic_occupation_playbooks": {"required_sections": 26, "status": "generate_per_occupation_task_and_venture"},
+            "agentic_occupation_playbooks": {"required_sections": len(venture_guide_sections) or 26,
+                "status": "generate_per_occupation_task_and_venture"},
         })
 
     return {
@@ -349,12 +345,16 @@ def build(profiles: list[dict[str, Any]], hf: dict[str, Any], fcc: dict[str, Any
             "domain_divisions": len(divisions), "hugging_face_subject_terms": len(hf_terms),
             "hugging_face_subjects_with_suggested_routes": sum(bool(x["routes"]) for x in subject_rows),
             "freecodecamp_tracks": len(fcc_rows), "freecodecamp_certification_phases": len(fcc_phases),
-            "freecodecamp_video_subject_categories": len(video_tracks), "freecodecamp_channel_videos": len(video_rows),
-            "freecodecamp_channel_inventory_status": (fcc_catalog or {}).get("inventory_status", "not_supplied"),
-            "college_domains": len(college_domains), "source_families": len(source_families), "onet_occupations": len(occupations),
+            "freecodecamp_video_subject_categories": len(video_tracks),
+            "freecodecamp_channel_videos": len(video_rows),
+            "freecodecamp_channel_inventory_status": fcc_catalog.get("inventory_status", "not_supplied"),
+            "freecodecamp_catalog_videos": len(fcc_videos),
+            "freecodecamp_inventory_status": fcc_catalog.get("inventory_status", "not_loaded"),
+            "college_domains": len(college_domains), "source_families": len(source_families),
+            "onet_occupations": len(occupations), "onet_task_statements": len(task_rows),
             "venture_and_workforce_tracks": len(venture_rows),
             "divisions_with_venture_tracks": sum(bool(x["venture_and_workforce_tracks"]) for x in divisions),
-            "onet_task_statements": len(task_rows), "onet_tasks_with_division_routes": sum(bool(x["division_ids"]) for x in task_rows),
+            "onet_tasks_with_division_routes": sum(bool(x["division_ids"]) for x in task_rows),
             "divisions_with_hf_subjects": sum(bool(x["hugging_face_subjects"]) for x in divisions),
             "divisions_with_freecodecamp_tracks": sum(bool(x["freecodecamp_tracks"]) for x in divisions),
             "divisions_with_freecodecamp_video_categories": sum(bool(x["freecodecamp_video_subject_categories"]) for x in divisions),
@@ -362,35 +362,36 @@ def build(profiles: list[dict[str, Any]], hf: dict[str, Any], fcc: dict[str, Any
             "divisions_with_freecodecamp_channel_videos": sum(bool(x["freecodecamp_video_ids"]) for x in divisions),
             "divisions_with_college_domains": sum(bool(x["college_domains"]) for x in divisions),
             "divisions_with_source_families": sum(bool(x["source_families"]) for x in divisions),
-            "divisions_with_onet_tasks": sum(bool(x["onet_task_refs"]) for x in divisions),
+            "divisions_with_onet_tasks": sum(bool(x["onet_task_refs"]) for x in divisions)
         },
         "source_inventory": {
-            "hugging_face": {"source": "live Hub model, dataset and Space task/tag taxonomies where supported, plus configured seeds", "subject_terms": len(hf_terms),
-                             "boundary": "not an exhaustive inventory of every Hub repository or discipline; bounded search and pagination status must be reported separately"},
-            "freecodecamp": {"source": "canonical roadmap and official curriculum inventory", "tracks": len(fcc_rows),
-                             "certification_phases": fcc_phases, "video_subject_categories": video_tracks,
-                             "official_platform_inventory": platform_inventory,
-                             "channel_inventory_status": (fcc_catalog or {}).get("inventory_status", "not_supplied"),
-                             "channel_inventory": (fcc_catalog or {}).get("inventory", {}),
-                             "official_video_inventory_status": fcc.get("scope", {}).get("coverage_status", "not_provided"),
-                             "catalog_inventory_status": fcc_catalog.get("inventory_status", "not_loaded"),
-                             "catalog_video_count": len(fcc_videos), "catalog_expected_entry_count": fcc_inventory.get("expected_entry_count"),
-                             "boundary": "track roadmap; reconcile all unique official video IDs and refresh the interactive curriculum before claiming full ingestion"},
+            "hugging_face": {"source": "live Hub model, dataset and Space task/tag taxonomies where supported, plus configured seeds",
+                "subject_terms": len(hf_terms), "boundary": "bounded discovery is not an exhaustive inventory of every Hub artifact or discipline"},
+            "freecodecamp": {"source": "official curriculum roadmap and channel catalog",
+                "tracks": len(fcc_rows), "certification_phases": fcc_phases, "video_subject_categories": video_tracks,
+                "official_platform_inventory": platform_inventory,
+                "official_video_inventory_status": fcc.get("scope", {}).get("coverage_status", "not_provided"),
+                "catalog_inventory_status": fcc_catalog.get("inventory_status", "not_loaded"),
+                "catalog_video_count": len(fcc_videos),
+                "catalog_expected_entry_count": fcc_inventory.get("expected_entry_count"),
+                "boundary": "roadmap and observed catalog are not proof that every source guide exists or every video has been studied"},
             "onet": {"source": onet.get("source", {}), "occupations": len(occupations), "tasks": len(task_rows),
-                     "boundary": onet.get("inventory", {}).get("coverage_warning", "source coverage not independently established")},
+                "boundary": onet.get("inventory", {}).get("coverage_warning", "source coverage not independently established")}
         },
         "hugging_face_subject_routes": subject_rows,
         "freecodecamp_track_routes": fcc_rows,
         "freecodecamp_certification_phases": fcc_phases,
         "freecodecamp_video_subject_categories": video_tracks,
         "freecodecamp_video_category_routes": fcc_video_rows,
-        "freecodecamp_video_routes": fcc_video_route_rows,
+        "freecodecamp_video_routes": video_rows,
         "freecodecamp_channel_video_routes": video_rows,
         "academic_structure": academic_structure,
         "instructional_model": instructional_model,
-        "college_domain_routes": [{"domain_id":x.get("id"),"name":x.get("name"),"scope":x.get("scope"),"routes":suggest_divisions(" ".join([x.get("id",""),x.get("name",""),x.get("scope",""),*x.get("tracks",[])]),profiles,limit=6)} for x in college_domains],
+        "college_domain_routes": [{"domain_id": x.get("id"), "name": x.get("name"), "scope": x.get("scope"),
+            "routes": suggest_divisions(" ".join([x.get("id", ""), x.get("name", ""), x.get("scope", ""),
+                *x.get("tracks", [])]), profiles, limit=6)} for x in college_domains],
         "university_curriculum": {"title": college.get("title"), "knowledge_domains": college_domains,
-            "shared_core": college.get("shared_core", {}), "academic_structure": academic_structure,
+            "shared_core": shared_core, "academic_structure": academic_structure,
             "instructional_model": instructional_model, "scope_policy": college.get("scope_policy", {})},
         "source_family_routes": source_family_routes,
         "agent_capability_catalog": college.get("agent_capability_matrix", AGENT_CAPABILITY_CATALOG),
@@ -405,12 +406,14 @@ def build(profiles: list[dict[str, Any]], hf: dict[str, Any], fcc: dict[str, Any
             "contracting_reality": government.get("contracting_reality", {})},
         "divisions": divisions,
         "unclassified_subjects": [x for x in subject_rows if x["mapping_status"] == "unclassified_shared_review"],
-        "mapping_policy": {"all_algorithmic_routes_are_suggestions": True, "owner_approval_required_before_domain_specific_promotion": True,
-                           "unknown_topics_stay_in_shared_review_queue": True},
+        "mapping_policy": {"all_algorithmic_routes_are_suggestions": True,
+            "owner_approval_required_before_domain_specific_promotion": True,
+            "unknown_topics_stay_in_shared_review_queue": True},
         "training_policy": {"five_lessons_per_day_target_per_division": True, "weekly_assessment_per_eligible_source": True,
-                            "study_and_retrieval_are_not_weight_training": True, "no_weight_training_without_asset_level_permission": True},
+            "study_and_retrieval_are_not_weight_training": True, "no_weight_training_without_asset_level_permission": True},
         "truth_boundary": "This artifact maps source inventories and learning routes. It does not prove a source guide exists, Buddy studied it, Buddy changed model weights, or a division achieved mastery."
     }
+
 
 def main() -> int:
     parser = argparse.ArgumentParser()
