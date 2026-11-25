@@ -273,6 +273,30 @@ def build(profiles: list[dict[str, Any]], hf: dict[str, Any], fcc: dict[str, Any
                 if division in names:
                     division_courses[division].append(course_id)
 
+    shared_core_config = college.get("shared_core", {})
+    shared_core_items_for_courses = shared_core_config.get("required_for_all_divisions", []) if isinstance(shared_core_config, dict) else []
+    shared_core_course_ids = []
+    for core_item in shared_core_items_for_courses:
+        core_id = "CORE-" + re.sub(r"[^A-Z0-9]+", "-", str(core_item).upper()).strip("-")
+        shared_core_course_ids.append(core_id)
+        course_catalog.append({
+            "course_id": core_id,
+            "domain_id": "shared-core",
+            "title": str(core_item).replace("-", " ").title(),
+            "level": "100",
+            "level_outcome": "Shared prerequisite for every DreamCo domain division.",
+            "domain_scope": str(core_item),
+            "division_ids": sorted(names),
+            "mapping_status": "shared_foundation_all_divisions",
+            "prerequisites": [],
+            "course_components": course_components,
+            "required_assessments": ["diagnostic", "knowledge_checks", "sandbox_lab", "unseen_transfer"],
+            "capstone": "Demonstrate the shared foundation in a division-relevant practical task.",
+            "status": "course_blueprint_not_yet_authored_or_taught",
+        })
+        for division in names:
+            division_courses[division].append(core_id)
+
     division_source_families: dict[str, list[str]] = defaultdict(list)
     for family in source_families:
         family_terms = " ".join([family.get("id", ""), family.get("scope", ""), family.get("source", "")])
@@ -365,6 +389,7 @@ def build(profiles: list[dict[str, Any]], hf: dict[str, Any], fcc: dict[str, Any
             "venture_and_workforce_tracks": sorted(set(division_ventures[name])),
             "college_domains": sorted(division_college[name], key=lambda x: (-x["score"], x["domain_id"] or "")),
             "college_course_ids": sorted(set(division_courses[name])),
+            "shared_core_course_ids": sorted(shared_core_course_ids),
             "source_families": sorted(set(division_source_families[name])),
             "agent_capability_catalog": college.get("agent_capability_matrix", AGENT_CAPABILITY_CATALOG),
             "onet_task_refs": sorted(set(division_tasks[name])),
