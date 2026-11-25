@@ -235,3 +235,24 @@ O*NET coverage includes worker characteristics, worker requirements, experience 
 ## Shared course scheduler
 
 `config/buddy-course-track-registry.json` and `buddy/learning/course_track_registry.py` expose Tolkien, tokenizer, CPU-first LLM, O*NET, Hugging Face and freeCodeCamp paths as queued lessons for all 55 canonical domains and 65 MasterBot lanes. The adapter reports `queued_not_studied`; it does not award mastery, download media, ingest transcripts, train model weights or authorize paid compute.
+
+## Complete official Hugging Face Learn course catalog
+
+Verified against the official [Hugging Face Learn index](https://huggingface.co/learn) on 2026-11-24. The full 12-course inventory is machine-readable in `config/buddy-huggingface-full-learning-map.json`:
+
+- [LLM Course](https://huggingface.co/learn/llm-course/chapter1/1)
+- [Context Course](https://huggingface.co/learn/context-course/unit0/introduction)
+- [Robotics Course](https://huggingface.co/learn/robotics-course/unit0/1)
+- [A smol course](https://huggingface.co/learn/smol-course/unit0/1)
+- [Agents Course](https://huggingface.co/learn/agents-course/unit0/introduction)
+- [Deep RL Course](https://huggingface.co/learn/deep-rl-course/unit0/introduction)
+- [Community Computer Vision Course](https://huggingface.co/learn/computer-vision-course/unit0/welcome/welcome)
+- [Audio Course](https://huggingface.co/learn/audio-course/chapter0/introduction)
+- [Open-Source AI Cookbook](https://huggingface.co/learn/cookbook/index)
+- [ML for Games Course](https://huggingface.co/learn/ml-games-course/unit0/introduction)
+- [Diffusion Course](https://huggingface.co/learn/diffusion-course/unit0/1)
+- [ML for 3D Course](https://huggingface.co/learn/ml-for-3d-course/unit0/introduction)
+
+The map adds 18 original DreamCo ecosystem modules spanning Hub governance, cards and provenance, dataset engineering, Spaces, Transformers, tokenizers, Accelerate, PEFT, TRL, Diffusers, timm, embeddings/retrieval, kernels/quantization, evaluation, inference/deployment, Gradio/Trackio, agents/environments and robotics/games/3D. The existing 37 task-family taxonomy remains a separate layer.
+
+The Deep RL course is marked low-maintenance because its own introduction notes that some challenge and leaderboard features are no longer operational. A course's presence in Learn does not guarantee every external notebook, service or challenge still works. All courses are queued for original exercises and evidence; links or reading do not count as mastery or grant transcript/model-training rights.
