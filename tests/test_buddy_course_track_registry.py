@@ -29,6 +29,7 @@ class BuddyCourseTrackRegistryTests(unittest.TestCase):
         fcc_catalog = load("buddy/bootcamp/sources/freecodecamp/catalog.json")
         library_ecosystems = load("config/library_ecosystems.json")
         library_seed_catalog = load("data/buddy-library-seed-catalog.json")
+        workforce = load("config/buddy-workforce-entrepreneurship-bootcamp.json")
         onet_task_index_path = root / "data/onet/onet-task-index.json"
         onet_task_count = 0
         if onet_task_index_path.is_file():
@@ -47,6 +48,7 @@ class BuddyCourseTrackRegistryTests(unittest.TestCase):
             + len(fcc_catalog["videos"])
             + len(library_ecosystems["ecosystems"])
             + len(library_seed_catalog["candidates"])
+            + sum(len(path["subjects"]) for path in workforce["training_paths"])
         )
         self.assertEqual(len(lessons), expected_count)
         fcc_lessons = [lesson for lesson in lessons if lesson.track_id == "freecodecamp"]
@@ -55,7 +57,7 @@ class BuddyCourseTrackRegistryTests(unittest.TestCase):
         self.assertTrue(any(lesson.lesson_id == "fcc-primitive-workshops" for lesson in fcc_lessons))
         self.assertEqual(len({lesson.resource_id for lesson in lessons}), len(lessons))
         self.assertEqual(len({(lesson.track_id, lesson.lesson_id) for lesson in lessons}), len(lessons))
-        expected = {"tolkien", "tokenizer", "cpu-first-llm", "onet", "hugging-face", "freecodecamp", "huggingface-full", "freecodecamp-video-catalog", "universal-software-libraries"}
+        expected = {"tolkien", "tokenizer", "cpu-first-llm", "onet", "hugging-face", "freecodecamp", "huggingface-full", "freecodecamp-video-catalog", "universal-software-libraries", "workforce-entrepreneurship"}
         self.assertEqual({lesson.track_id for lesson in lessons}, expected)
 
     def test_every_canonical_division_receives_the_shared_course_queue(self):
@@ -63,7 +65,7 @@ class BuddyCourseTrackRegistryTests(unittest.TestCase):
         import json
         root = Path(__file__).resolve().parents[1]
         crosswalk = json.loads((root / "config/generated/masterbot-55-domain-crosswalk.json").read_text(encoding="utf-8"))
-        expected = len(load_course_lessons())
+        expected = sum(lesson.content_status == "authored" for lesson in load_course_lessons())
         for row in crosswalk["domains"]:
             with self.subTest(division=row["domain_name"]):
                 self.assertEqual(len(resources_for_division(row["domain_name"])), expected)
@@ -73,7 +75,7 @@ class BuddyCourseTrackRegistryTests(unittest.TestCase):
         import json
         root = Path(__file__).resolve().parents[1]
         registry = json.loads((root / "config/masterbot-65-registry.json").read_text(encoding="utf-8"))
-        expected = len(load_course_lessons())
+        expected = sum(lesson.content_status == "authored" for lesson in load_course_lessons())
         for row in registry["divisions"]:
             with self.subTest(masterbot=row["name"]):
                 self.assertEqual(len(resources_for_masterbot(row["name"])), expected)
@@ -126,6 +128,18 @@ class BuddyCourseTrackRegistryTests(unittest.TestCase):
         self.assertFalse(plan["paid_compute_authorized"])
         self.assertTrue(plan["assessment"])
         self.assertTrue(plan["benchmark"])
+
+
+    def test_workforce_paths_are_visible_as_authoring_backlog_not_study_material(self):
+        lessons = [lesson for lesson in load_course_lessons() if lesson.track_id == "workforce-entrepreneurship"]
+        self.assertGreater(len(lessons), 100)
+        self.assertTrue(all(lesson.content_status == "authoring_backlog" for lesson in lessons))
+        self.assertTrue(all("author" in lesson.objective.lower() for lesson in lessons))
+        self.assertFalse(any(
+            resource.name == lesson.title
+            for resource in resources_for_division("DreamAIInfra")
+            for lesson in lessons
+        ))
 
     def test_unknown_division_is_rejected(self):
         with self.assertRaises(ValueError):

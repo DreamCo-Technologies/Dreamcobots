@@ -36,6 +36,7 @@ class CourseLesson:
     guide_path: str
     rights_mode: str
     delivery: str
+    content_status: str = "authored"
 
 
 def _read(path: Path) -> dict:
@@ -165,6 +166,39 @@ def _rows(track: dict, data: dict, root: Path = ROOT) -> list[dict]:
                     "benchmark": "Library candidate provenance and study-guide evidence benchmark.",
                     "source_url": "https://github.com/DreamCo-Technologies/Dreamcobots/blob/main/server/seed-buddy-bot.ts",
                     "rights_mode": "metadata_discovery_only_no_download_no_execution",
+                })
+        return rows
+    if parser == "workforce_entrepreneurship":
+        rows = []
+        for path in data.get("training_paths", []):
+            track_id = str(path.get("id", "")).strip()
+            track_title = str(path.get("title", "")).strip()
+            for index, subject in enumerate(path.get("subjects", []), start=1):
+                subject = str(subject).strip()
+                if not track_id or not track_title or not subject:
+                    continue
+                rows.append({
+                    "id": f"{track_id}-{index:03d}",
+                    "title": f"{track_title}: {subject}",
+                    "objective": (
+                        f"Author an original, source-grounded task playbook for {subject} "
+                        f"within the {track_title} pathway. This catalog record is an authoring "
+                        "assignment, not a completed lesson or verified professional guidance."
+                    ),
+                    "practice": (
+                        "Build the full 18-section task playbook: define the task, inputs/outputs, "
+                        "workflow, decisions, current tools, APIs, permissions, automation boundaries, "
+                        "human approvals, acceptance tests, failure recovery, security, costs, credentials, "
+                        "customer/employer value, portfolio artifact and legitimate work/revenue pathway."
+                    ),
+                    "assessment": (
+                        "Require primary-source verification, current eligibility and jurisdiction checks "
+                        "where relevant, privacy/permission review, realistic cost analysis, human review, "
+                        "and an independent task-specific acceptance test before the playbook is approved."
+                    ),
+                    "benchmark": "Revenue/workforce task-playbook evidence acceptance suite.",
+                    "source_url": track.get("source_url", "https://www.usa.gov/"),
+                    "content_status": "authoring_backlog",
                 })
         return rows
     if parser == "tolkien":
@@ -365,6 +399,7 @@ def load_course_lessons(root: Path = ROOT) -> list[CourseLesson]:
                 guide_path=str(row.get("guide_path") or track["guide"]),
                 rights_mode=str(row.get("rights_mode") or track["rights"]),
                 delivery=track["delivery"],
+                content_status=str(row.get("content_status", "authored")),
             ))
     return lessons
 
@@ -379,7 +414,7 @@ def resources_for_division(division: str, root: Path = ROOT) -> list[Resource]:
         Resource(id=lesson.resource_id, name=lesson.title, category=lesson.category, url=lesson.source_url,
                  methods=("study_original_dreamco_guide", "practice_in_sandbox", "complete_assessment",
                           "run_independent_benchmark", "record_evidence"))
-        for lesson in load_course_lessons(root)
+        for lesson in load_course_lessons(root) if lesson.content_status == "authored"
     ]
 
 
@@ -393,7 +428,7 @@ def resources_for_masterbot(masterbot: str, root: Path = ROOT) -> list[Resource]
         Resource(id=lesson.resource_id, name=lesson.title, category=lesson.category, url=lesson.source_url,
                  methods=("study_original_dreamco_guide", "practice_in_sandbox", "complete_assessment",
                           "run_independent_benchmark", "record_evidence"))
-        for lesson in load_course_lessons(root)
+        for lesson in load_course_lessons(root) if lesson.content_status == "authored"
     ]
 
 

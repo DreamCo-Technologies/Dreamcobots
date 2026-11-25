@@ -155,6 +155,19 @@ class RuntimeBridgeTests(unittest.TestCase):
         if __import__("os").name == "posix":
             self.assertEqual(Path(self.path).stat().st_mode & 0o777, 0o600)
 
+
+    def test_workforce_playbooks_appear_as_authoring_backlog_not_study_ready(self):
+        queue = self.bridge.bootcamp_learning_queue(
+            division="DreamCodeLab", query="government grants", limit=20
+        )
+        self.assertGreater(queue["authoring_backlog_count"], 0)
+        self.assertEqual(queue["study_ready_count"], 0)
+        self.assertTrue(queue["items"])
+        self.assertTrue(all(item["completion_status"] == "authoring_backlog" for item in queue["items"]))
+        self.assertTrue(all(item["study_allowed"] is False for item in queue["items"]))
+        self.assertTrue(all(item["authoring_required"] is True for item in queue["items"]))
+        self.assertTrue(all(item["mastery_awarded"] is False for item in queue["items"]))
+
     def test_forget_deletes_private_records(self):
         task, result = self.completed()
         self.learn(task, result)
