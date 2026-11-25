@@ -15,6 +15,21 @@ class FiveHundredModelWorkflowScopeTests(unittest.TestCase):
         self.assertIn("BLOCKED_RUNNER_NOT_IMPLEMENTED", text)
         self.assertIn("all matrix rows remain unverified", text)
 
+
+    def test_public_secret_scan_uses_token_boundaries(self):
+        import re
+
+        text = WORKFLOW.read_text(encoding="utf-8")
+        self.assertIn("(?<![A-Za-z0-9])sk-", text)
+        pattern = re.compile(
+            r"(?i)(?<![A-Za-z0-9])sk-[A-Za-z0-9_-]{16,}|"
+            r"(?<![A-Za-z0-9])ghp_[A-Za-z0-9_]{20,}|"
+            r"(?<![A-Za-z0-9])github_pat_[A-Za-z0-9_]{20,}|"
+            r"BEGIN (RSA|OPENSSH|EC|DSA) PRIVATE KEY"
+        )
+        self.assertIsNone(pattern.search("task-capability-registry-identifier-123456"))
+        self.assertIsNotNone(pattern.search('"sk-' + "A" * 20 + '"'))
+
     def test_execution_gate_records_blocked_without_fabricating_runs(self):
         status = build_status("standard")
         self.assertEqual(status["status"], "BLOCKED_RUNNER_NOT_IMPLEMENTED")
