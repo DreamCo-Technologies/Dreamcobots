@@ -473,7 +473,7 @@ def build(profiles: list[dict[str, Any]], hf: dict[str, Any], fcc: dict[str, Any
                 *x.get("tracks", [])]), profiles, limit=6)} for x in college_domains],
         "university_curriculum": {"title": college.get("title"), "knowledge_domains": college_domains,
             "shared_core": shared_core, "academic_structure": academic_structure,
-            "instructional_model": instructional_model, "scope_policy": college.get("scope_policy", {})},
+            "instructional_model": instructional_model, "scope_policy": college.get("scope_policy", {}),\n            "world_class_benchmark_framework": college.get("world_class_benchmark_framework", {}),\n            "knowledge_expansion_protocol": college.get("knowledge_expansion_protocol", {})},
         "source_family_routes": source_family_routes,
         "agent_capability_catalog": college.get("agent_capability_matrix", AGENT_CAPABILITY_CATALOG),
         "onet_task_routes": task_rows,
