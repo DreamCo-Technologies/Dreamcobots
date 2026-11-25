@@ -594,7 +594,19 @@
       "objective": "Study the linked TypeScript course as a versioned learning resource, then apply the concepts to a typed DreamCo component or service.",
       "practice": "Build an original TypeScript artifact, validate external input at runtime, add tests, and integrate type-checking into CI.",
       "assessment": "Pass strict compiler checks, runtime validation, negative tests, and the relevant application contract suite.",
-      "benchmark": "DreamCo TypeScript capability benchmark."
+      "benchmark": "DreamCo TypeScript capability benchmark.",
+      "content_status": "original_implementation_brief",
+      "implementation_steps": [
+        "Create a strict TypeScript project and enable noImplicitAny, strictNullChecks, and noUncheckedIndexedAccess where compatible.",
+        "Model application data with primitives, unions, literal types, interfaces, type aliases, generics, and discriminated unions.",
+        "Use narrowing and exhaustive checks to make state transitions explicit.",
+        "Type asynchronous functions, errors, modules, and API contracts.",
+        "Validate all untrusted runtime data with Zod or equivalent schemas; compile-time types do not validate network input.",
+        "Build a reusable typed module or UI/API component with isolated dependencies.",
+        "Add unit, integration, negative-type, and contract tests.",
+        "Run type checking, linting, and tests as required CI gates."
+      ],
+      "buddy_demo": "Build a typed DreamCo agent-tool contract with validated inputs, typed results, a simulated API failure, and CI type-checking."
     },
     {
       "id": "algorithmic-trading-routing",
@@ -628,7 +640,21 @@
       "objective": "Study quantitative strategy research and build a paper-only, risk-controlled implementation.",
       "practice": "Use synthetic or approved historical data, avoid look-ahead leakage, include transaction costs, and run out-of-sample tests.",
       "assessment": "Pass reproducibility, leakage, slippage, risk-limit, and holdout checks; never submit live orders.",
-      "benchmark": "DreamFinance quantitative strategy benchmark."
+      "benchmark": "DreamFinance quantitative strategy benchmark.",
+      "content_status": "original_implementation_brief",
+      "implementation_steps": [
+        "Define a testable strategy hypothesis, market universe, benchmark, and time horizon.",
+        "Load approved historical or synthetic market data with timestamps and provenance.",
+        "Clean and validate prices, calendars, corporate actions, gaps, and duplicate observations.",
+        "Prevent look-ahead and survivorship bias by using point-in-time data and time-based splits.",
+        "Implement a simple baseline signal before adding more complex factors or machine learning.",
+        "Backtest with commissions, spread, slippage, liquidity, and realistic execution assumptions.",
+        "Evaluate out-of-sample and walk-forward performance, drawdown, volatility, turnover, and exposure.",
+        "Add risk caps, position sizing, loss limits, idempotency, audit logs, and a kill switch.",
+        "Run paper trading only and compare expected versus simulated fills.",
+        "Require a separate risk and compliance review before any live-trading design is even considered."
+      ],
+      "buddy_demo": "Build a synthetic or approved-data strategy notebook, run a cost-aware backtest, and show a risk-limited paper order with no live brokerage actions."
     },
     {
       "id": "agentic-ai-routing",
@@ -677,7 +703,21 @@
       "objective": "Study agent architecture, tool use, memory, security, orchestration, and supervised task execution.",
       "practice": "Build an original bounded agent using mock tools, persistent session state, and explicit approval gates.",
       "assessment": "Pass tool contracts, sandbox, memory isolation, prompt-injection, and human-approval tests.",
-      "benchmark": "DreamAgents capability and safety benchmark."
+      "benchmark": "DreamAgents capability and safety benchmark.",
+      "content_status": "original_implementation_brief",
+      "implementation_steps": [
+        "Distinguish a deterministic workflow from an agent loop and define when autonomy is useful.",
+        "Define the task, stop condition, step budget, success rubric, and prohibited actions.",
+        "Select a model and record provider, model version, latency, cost, and limitations.",
+        "Define specialist roles and their narrow responsibilities.",
+        "Specify tools with typed schemas, least-privilege scopes, validation, and timeouts.",
+        "Implement state transitions, retries, idempotency, and durable checkpoints.",
+        "Add short-term context and long-term memory with provenance, retention, and tenant isolation.",
+        "Add prompt-injection defenses, tool allowlists, sandboxing, and human approval for external side effects.",
+        "Evaluate on representative and adversarial tasks with reproducible fixtures.",
+        "Run independent review and regression tests before releasing the agent."
+      ],
+      "buddy_demo": "Demonstrate Buddy coordinating research, coding, memory, and policy agents with mock tools, durable state, sandbox limits, and an approval pause."
     },
     {
       "id": "machine-learning-routing",
@@ -731,7 +771,23 @@
       "objective": "Study machine learning foundations and production ML engineering with reproducible data, experiments, evaluation, and deployment.",
       "practice": "Build a baseline model, validate data, track experiments, register versions, monitor drift, and deploy only through a tested staging pipeline.",
       "assessment": "Pass data-quality, train/serve consistency, holdout, model registry, drift alert, rollback, and regression checks.",
-      "benchmark": "DreamAIInfra ML lifecycle benchmark."
+      "benchmark": "DreamAIInfra ML lifecycle benchmark.",
+      "content_status": "original_implementation_brief",
+      "implementation_steps": [
+        "Define the prediction or decision problem, intended users, target variable, baseline, and evaluation metric.",
+        "Record dataset provenance, collection rights, privacy limits, and permitted uses before ingestion.",
+        "Profile data quality, missingness, duplicates, label quality, class balance, and temporal structure.",
+        "Split train, validation, and holdout data before fitting preprocessing to prevent leakage.",
+        "Build a simple baseline and compare candidate models with reproducible configurations.",
+        "Use cross-validation and bounded hyperparameter search without touching the final holdout.",
+        "Evaluate task-appropriate metrics, calibration, robustness, subgroup performance, and failure cases.",
+        "Log data fingerprints, code commit, parameters, metrics, and artifacts in MLflow or an equivalent tracker.",
+        "Register immutable model versions with model cards, provenance, and approval state.",
+        "Serve predictions through a validated API with consistent training/serving features.",
+        "Monitor input drift, prediction drift, delayed labels, and performance decay.",
+        "Release gradually with canary checks, rollback, and a documented retraining trigger."
+      ],
+      "buddy_demo": "Train a small synthetic-data classifier, validate the dataset, log an experiment, register a version, serve it through a local API, and demonstrate drift alerts and rollback."
     },
     {
       "id": "self-healing-cicd-routing",
@@ -784,7 +840,152 @@
       "objective": "Study automated CI/CD, root-cause analysis, safe repair proposals, and governed deployment.",
       "practice": "Reproduce a seeded failure, collect logs, propose a minimal patch, run targeted tests, and require independent review.",
       "assessment": "Pass least-privilege, secret-safety, regression, approval, and rollback tests.",
-      "benchmark": "DreamCo self-healing CI/CD benchmark."
+      "benchmark": "DreamCo self-healing CI/CD benchmark.",
+      "content_status": "original_implementation_brief",
+      "implementation_steps": [
+        "Collect exact workflow, job, step, commit, and artifact evidence from a failed run.",
+        "Classify the failure as code, test, dependency, infrastructure, permissions, secret, flaky test, or external service.",
+        "Generate a root-cause hypothesis with quoted evidence and confidence; do not guess from the workflow name.",
+        "Create a repair branch from the exact failing commit and constrain writable paths.",
+        "Apply a minimal patch in an isolated workspace without production credentials.",
+        "Run focused tests, then the relevant integration, security, contract, and regression suites.",
+        "Use an independent reviewer to challenge the diagnosis and verify that tests cover the original failure.",
+        "Require human approval for workflow permissions, secrets, protected files, deployment, and merge.",
+        "Merge only when branch protection and required checks pass; otherwise preserve a blocked state.",
+        "Record repair provenance, rollback instructions, recurrence, time-to-diagnose, time-to-repair, and false-repair rate."
+      ],
+      "buddy_demo": "Inject a synthetic CI failure, have Buddy diagnose it from logs, patch a branch, run regression tests, obtain independent review, and stop before a human-controlled merge."
+    },
+    {
+      "id": "mlops-course-routing",
+      "match_title_terms": [
+        "mlops",
+        "mlflow",
+        "model registry",
+        "feature store",
+        "model monitoring",
+        "production grade ml",
+        "machine learning platform"
+      ],
+      "division_targets": [
+        "DreamAIInfra",
+        "DreamData",
+        "DreamOps",
+        "DreamScience"
+      ],
+      "masterbot_targets": [
+        "DreamAIInfra",
+        "DreamData",
+        "DreamOperations",
+        "DreamResearch",
+        "DreamBenchmark",
+        "DreamEvolution"
+      ],
+      "capability_tags": [
+        "mlops",
+        "experiment-tracking",
+        "model-registry",
+        "feature-store",
+        "data-validation",
+        "drift-monitoring",
+        "model-deployment",
+        "rollback"
+      ],
+      "tool_tags": [
+        "MLflow",
+        "Feast",
+        "FastAPI",
+        "Great Expectations",
+        "Evidently",
+        "Docker",
+        "GitHub Actions",
+        "DVC"
+      ],
+      "agent_tags": [
+        "ml-platform-engineer",
+        "data-quality-agent",
+        "model-registry-guardian",
+        "drift-monitor-agent",
+        "ml-release-guardian"
+      ],
+      "objective": "Study the engineering needed to move machine-learning models from experiments into reproducible, monitored, versioned services.",
+      "practice": "Build a local ML platform that validates data, tracks experiments, registers model versions, serves predictions, monitors drift, and rolls back safely.",
+      "assessment": "Pass data validation, reproducibility, model registry, feature consistency, drift detection, deployment, canary, and rollback checks.",
+      "benchmark": "DreamAIInfra MLOps lifecycle benchmark.",
+      "implementation_steps": [
+        "Build a reproducible baseline training pipeline and freeze data, code, and environment versions.",
+        "Track experiments, parameters, metrics, and artifacts in MLflow.",
+        "Register model versions and define promotion aliases such as candidate, champion, and rollback.",
+        "Use a feature store or shared feature definitions to prevent training-serving skew.",
+        "Validate raw and transformed data with explicit schemas and expectations.",
+        "Serve the registered model behind FastAPI with authentication and runtime input validation.",
+        "Containerize the service and pin dependencies for reproducible environments.",
+        "Add CI tests for data contracts, model quality, API behavior, and package security.",
+        "Monitor drift and model decay using delayed labels and alert thresholds.",
+        "Deploy to staging, canary a release, inspect metrics, and roll back on regressions."
+      ],
+      "buddy_demo": "Buddy trains and tracks a small model locally, registers a candidate, serves it through FastAPI, triggers a synthetic drift alert, and rolls back to the previous model.",
+      "content_status": "original_implementation_brief"
+    },
+    {
+      "id": "machine-learning-from-scratch-routing",
+      "match_title_terms": [
+        "no black box",
+        "without libraries",
+        "from scratch",
+        "neural networks without",
+        "build neural network from scratch"
+      ],
+      "division_targets": [
+        "DreamAIInfra",
+        "DreamScience",
+        "DreamData"
+      ],
+      "masterbot_targets": [
+        "DreamAIInfra",
+        "DreamScience",
+        "DreamData",
+        "DreamResearch",
+        "DreamEducation"
+      ],
+      "capability_tags": [
+        "linear-algebra-for-ml",
+        "gradient-descent",
+        "loss-functions",
+        "neural-network-fundamentals",
+        "backpropagation",
+        "numerical-stability"
+      ],
+      "tool_tags": [
+        "Python",
+        "NumPy",
+        "Matplotlib",
+        "Jupyter",
+        "scikit-learn reference implementation"
+      ],
+      "agent_tags": [
+        "ml-foundations-tutor",
+        "math-explainer-agent",
+        "algorithm-verification-agent"
+      ],
+      "objective": "Understand machine-learning algorithms from first principles by implementing their mathematics and comparing results against trusted reference implementations.",
+      "practice": "Implement a small algorithm without ML frameworks, test it on synthetic data, and compare its output with a reference library.",
+      "assessment": "Pass derivation checks, numerical tests, gradient checks, edge cases, and reference-output comparisons.",
+      "benchmark": "DreamAIInfra from-scratch ML benchmark.",
+      "implementation_steps": [
+        "Review vectors, matrices, dot products, derivatives, probability, and optimization concepts used by the target algorithm.",
+        "Define the model inputs, outputs, parameters, and assumptions mathematically.",
+        "Implement a loss or objective function and verify it on hand-calculated examples.",
+        "Implement gradient descent with finite-value checks and convergence diagnostics.",
+        "Build a simple linear or logistic regression implementation and test it on synthetic fixtures.",
+        "Implement a nearest-neighbor or clustering baseline and compare behavior on edge cases.",
+        "Build a small neural network with explicit forward propagation and backpropagation.",
+        "Run numerical gradient checks and detect exploding, vanishing, or non-finite gradients.",
+        "Compare the implementation against a trusted reference library on identical fixtures.",
+        "Explain the algorithm, its assumptions, failure modes, and computational complexity."
+      ],
+      "buddy_demo": "Buddy derives a loss function, implements gradient descent and a small neural network using NumPy primitives, runs gradient checks, and compares results with PyTorch or scikit-learn.",
+      "content_status": "original_implementation_brief"
     }
   ]
 }
