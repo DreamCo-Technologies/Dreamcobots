@@ -114,7 +114,7 @@ class BuddyModelRegistryTests(unittest.TestCase):
         evidence["score_direction"] = "lower_is_better"
         evidence["baseline_score"] = 0.20
         evidence["candidate_score"] = 0.16
-        decision = route_model({"schema": "dreamco.buddy.model_registry.v1", "models": [candidate]},
+        decision = route_model(registry_with([candidate]),
                                "causal_language_modeling")
         self.assertEqual(decision["status"], "ELIGIBLE_FOR_ROUTING")
         self.assertAlmostEqual(decision["weighted_relative_improvement"], 0.20)
