@@ -9,6 +9,7 @@ from __future__ import annotations
 from dataclasses import asdict
 import json
 import os
+import re
 import sqlite3
 from pathlib import Path
 from typing import Any
@@ -142,7 +143,7 @@ class BuddyLearningBridge:
             if lesson.track_id == "universal-software-libraries"
         ]
         if query.strip():
-            terms = {token for token in __import__("re").findall(r"[a-z0-9]+", query.lower()) if len(token) > 1}
+            terms = {token for token in re.findall(r"[a-z0-9]+", query.lower()) if len(token) > 1}
             lessons = [
                 lesson for lesson in lessons
                 if terms & set(__import__("re").findall(
