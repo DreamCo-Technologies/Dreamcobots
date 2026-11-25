@@ -222,6 +222,7 @@ class BuddyCourseTrackRegistryTests(unittest.TestCase):
         self.assertTrue(all(lesson.rights_mode == "metadata_only_until_item_level_permissions" for lesson in lessons))
         self.assertTrue(all(lesson.source_url.startswith("https://www.youtube.com/watch?v=") for lesson in lessons))
         self.assertTrue(all(lesson.content_status == "metadata_only" for lesson in lessons))
+        self.assertTrue(all(lesson.division_targets and lesson.masterbot_targets for lesson in lessons))
         video_titles = {lesson.title for lesson in lessons}
         self.assertFalse(any(resource.name in video_titles for resource in resources_for_division("DreamAIInfra")))
 
