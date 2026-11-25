@@ -27,4 +27,22 @@ class ProductionReadinessContractTests(unittest.TestCase):
   self.assertEqual(result["pull_requests"][0]["head_sha"],"abc")
   fetch.assert_called_once()
 
+
+ def test_generator_writes_valid_json_and_markdown_with_fail_closed_status(self):
+  from tools import dreamco_production_readiness as module
+  with tempfile.TemporaryDirectory() as temp:
+   output=Path(temp)
+   with patch.object(module,"OUT",output), patch.object(module,"tracked",return_value=[]), \
+        patch.object(module,"EVIDENCE",Path(temp)/"missing-evidence.json"), \
+        patch.object(module,"fetch_pull_requests",return_value={"status":"BLOCKED_NO_TOKEN","pull_requests":[],"pages_fetched":0}), \
+        patch("sys.stdout",new=io.StringIO()):
+    self.assertEqual(module.main(),0)
+   report=json.loads((output/"production-readiness-master-list.json").read_text())
+   routes=json.loads((output/"resource-routing-inventory.json").read_text())
+   markdown=(output/"production-readiness-master-list.md").read_text()
+   self.assertEqual(report["summary"]["production_readiness"],"BLOCKED")
+   self.assertEqual(report["summary"]["pull_request_inventory_status"],"BLOCKED_NO_TOKEN")
+   self.assertIn("## Limitations",markdown)
+   self.assertTrue(routes["routes"])
+
 if __name__=="__main__": unittest.main()
