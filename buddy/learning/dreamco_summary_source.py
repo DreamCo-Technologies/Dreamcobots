@@ -167,26 +167,36 @@ def execute_study_plan(plan: dict, authorization: StudyAuthorization, study: Cal
         raise PermissionError("summary study is read-only; media download and transcript ingestion are not authorized")
     result = run_study_attempt(authorization, lambda context: study(plan, context), workspace_root)
     evidence = result.get("result") if isinstance(result.get("result"), dict) else {}
+    recorded_events = []
+    def emit(event_type: str, evidence_ref: str, score: float | None = None) -> None:
+        append_progress_event(
+            progress_path, asset_id=plan["asset_id"], division=plan["division"],
+            event_type=event_type, evidence_ref=evidence_ref, score=score,
+            source_revision=plan.get("source_revision"), organization_path=organization_path
+        )
+        recorded_events.append(event_type)
+
     run_evidence = evidence.get("evidence_ref")
     if run_evidence:
-        append_progress_event(
-            progress_path, asset_id=plan["asset_id"], division=plan["division"],
-            event_type="study_started", evidence_ref=run_evidence,
-            source_revision=plan.get("source_revision"), organization_path=organization_path
-        )
-    completed = (evidence.get("lesson_status") == "verified_pass"
-                 and bool(evidence.get("lesson_evidence_ref"))
-                 and bool(evidence.get("independent_evaluator_id"))
-                 and evidence.get("independent_evaluator_id") != "buddy")
+        emit("study_started", run_evidence)
+    independent = bool(evidence.get("independent_evaluator_id")) and evidence.get("independent_evaluator_id") != "buddy"
+    completed = evidence.get("lesson_status") == "verified_pass" and bool(evidence.get("lesson_evidence_ref")) and independent
     if completed:
-        append_progress_event(
-            progress_path, asset_id=plan["asset_id"], division=plan["division"],
-            event_type="lesson_completed", evidence_ref=evidence["lesson_evidence_ref"],
-            source_revision=plan.get("source_revision"), organization_path=organization_path
-        )
+        emit("lesson_completed", evidence["lesson_evidence_ref"])
+    if evidence.get("knowledge_check_evidence_ref"):
+        emit("knowledge_check_submitted", evidence["knowledge_check_evidence_ref"], evidence.get("knowledge_check_score"))
+    if evidence.get("exercise_status") == "verified_pass" and evidence.get("exercise_evidence_ref") and independent:
+        emit("exercise_passed", evidence["exercise_evidence_ref"])
+    if evidence.get("capstone_evidence_ref"):
+        emit("capstone_submitted", evidence["capstone_evidence_ref"])
+    if evidence.get("capstone_status") == "verified_pass" and evidence.get("capstone_pass_evidence_ref") and independent:
+        emit("capstone_passed", evidence["capstone_pass_evidence_ref"])
+    if evidence.get("remediation_evidence_ref"):
+        emit("remediation_assigned", evidence["remediation_evidence_ref"])
     result["division"] = plan["division"]
     result["asset_id"] = plan["asset_id"]
     result["completion_status"] = "lesson_completed_with_evidence" if completed else "attempted_evidence_pending"
     result["lesson_completed"] = completed
+    result["progress_events_recorded"] = recorded_events
     result["model_training_performed"] = False
     return result
