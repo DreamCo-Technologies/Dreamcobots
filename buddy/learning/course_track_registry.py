@@ -121,13 +121,35 @@ def _rows(track: dict, data: dict) -> list[dict]:
         ]
         return courses + modules
     if parser == "freecodecamp":
+        inventory = data.get("official_platform_inventory", {})
         certs = [
             {"id": row["id"], "title": row["name"],
-             "objective": "; ".join(row.get("skills", [])),
+             "objective": "; ".join(row.get("skills", [])) or f"Complete the {row['name']} learning path.",
              "practice": "Complete original exercises and projects aligned to the official learning outcomes.",
-             "assessment": "Complete the official requirements where authorized plus an independent DreamCo transfer task."}
-            for row in data.get("official_platform_inventory", {}).get("core_certifications", [])
+             "assessment": "Complete official requirements where authorized plus an independent DreamCo transfer task."}
+            for row in inventory.get("core_certifications", [])
         ]
+        additional = [
+            {"id": row["id"], "title": row["name"],
+             "objective": f"Study the {row.get('level', 'specialist')} {row.get('language', 'technology')} learning path.",
+             "practice": "Complete original language or specialist exercises and a practical artifact.",
+             "assessment": "Complete an independent language or technology assessment and reviewer rubric."}
+            for row in inventory.get("additional_certifications", [])
+        ]
+        primitives = [
+            {"id": f"fcc-primitive-{name}", "title": name.replace("_", " ").title(),
+             "objective": f"Understand the freeCodeCamp {name.replace('_', ' ')} learning primitive and its place in a complete course.",
+             "practice": "Build an original example of this learning format and map it to a measurable outcome.",
+             "assessment": "Verify the format has objectives, practice, feedback and a completion criterion."}
+            for name in inventory.get("curriculum_primitives", [])
+        ]
+        legacy = [{
+            "id": "fcc-legacy-curriculum-inventory",
+            "title": "Legacy freeCodeCamp curriculum inventory",
+            "objective": str(inventory.get("legacy_certifications", "Discover and retain versioned legacy curricula.")),
+            "practice": "Catalog legacy certifications by version and preserve historical requirements separately from current v9 pathways.",
+            "assessment": "Verify each legacy source has a version, source link and non-substitution note.",
+        }]
         phases = [
             {"id": row["id"], "title": row["id"].replace("-", " ").title(),
              "objective": "; ".join(row.get("focus", [])),
@@ -142,7 +164,7 @@ def _rows(track: dict, data: dict) -> list[dict]:
              "assessment": "Verify unique video inventory, rights state, detailed guide coverage, practice and independent assessment."}
             for name in data.get("video_learning_tracks", [])
         ]
-        return certs + phases + videos
+        return certs + additional + primitives + legacy + phases + videos
     raise ValueError(f"unsupported course track parser: {parser}")
 
 
