@@ -267,7 +267,7 @@ def load_course_lessons(root: Path = ROOT) -> list[CourseLesson]:
     resource_ids: set[int] = set()
     for track in registry.get("tracks", []):
         data = _read(root / track["source"])
-        for row in _rows(track, data):
+        for row in _rows(track, data, root):
             lesson_id = str(row.get("id", "")).strip()
             title = str(row.get("title", "")).strip()
             if not lesson_id or not title:
