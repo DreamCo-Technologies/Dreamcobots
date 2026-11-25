@@ -171,3 +171,6 @@ All 531 candidates are now included as discovery lessons in the shared course re
 
 
 Approved guides must include `latest_version_checked_at`. The internal retrieval adapter applies the curriculum freshness window (30 days by default) and excludes overdue guides even if their stored status still says `approved_for_study`. Coverage reporting counts these separately as stale-by-age so old documentation cannot silently remain Buddy's current answer.
+
+
+When a query has no approved guide, internal search also checks the 531-entry seed catalog and may return candidate names/categories. These are explicitly labeled `seed_candidate_unverified`, never as guides or answers. Buddy can then open a gap and use the permissioned metadata discovery workflow to find official sources.
