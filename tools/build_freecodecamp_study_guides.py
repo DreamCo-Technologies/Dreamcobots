@@ -99,6 +99,18 @@ def validate_guide(guide: dict[str, Any], video: dict[str, Any], rights: dict[st
     review = guide.get("review") or {}
     if review.get("review_status") not in {"draft", "needs_human_review", "approved", "rejected"}:
         errors.append("review status is missing or invalid")
+    if review.get("review_status") == "approved":
+        if not str(review.get("reviewer", "")).strip():
+            errors.append("approved guide requires a named human reviewer")
+        if not str(review.get("review_evidence_ref", "")).strip():
+            errors.append("approved guide requires a review evidence reference")
+        reviewed_at = review.get("reviewed_at")
+        try:
+            timestamp = datetime.fromisoformat(str(reviewed_at).replace("Z", "+00:00"))
+            if timestamp.tzinfo is None:
+                errors.append("approved guide review timestamp must include a timezone")
+        except (TypeError, ValueError):
+            errors.append("approved guide requires a valid timezone-aware reviewed_at timestamp")
     return errors
 
 
