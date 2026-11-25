@@ -1,0 +1,87 @@
+name: Buddy Open-Source Weekly Bootcamp
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 9 * * 1"
+  pull_request:
+    paths:
+      - "config/buddy-open-source-bootcamp.json"
+      - "tools/discover_open_source_bootcamp_sources.py"
+      - "tools/build_buddy_source_study_queue.py"
+      - "config/buddy-source-study-guide.schema.json"
+      - "config/buddy-source-rights-manifest.json"
+      - "config/buddy-authorized-media-rights.json"
+      - "tools/process_authorized_bootcamp_media.py"
+      - "tests/test_buddy_source_study_queue.py"
+      - "tests/test_process_authorized_bootcamp_media.py"
+      - ".github/workflows/buddy-open-source-weekly-bootcamp.yml"
+  push:
+    branches: [main]
+    paths:
+      - "config/buddy-open-source-bootcamp.json"
+      - "tools/discover_open_source_bootcamp_sources.py"
+      - ".github/workflows/buddy-open-source-weekly-bootcamp.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: buddy-open-source-weekly-bootcamp
+  cancel-in-progress: false
+
+jobs:
+  discover-and-build-weekly-learning-queue:
+    if: github.repository == 'DreamCo-Technologies/Dreamcobots'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Validate bootcamp configuration and discovery script
+        run: |
+          python -m json.tool config/buddy-open-source-bootcamp.json > /dev/null
+          python -m json.tool config/buddy-source-study-guide.schema.json > /dev/null
+          python -m json.tool config/buddy-source-rights-manifest.json > /dev/null
+          python -m json.tool config/buddy-authorized-media-rights.json > /dev/null
+          python -m py_compile tools/discover_open_source_bootcamp_sources.py tools/build_buddy_source_study_queue.py tools/process_authorized_bootcamp_media.py
+      - name: Run source rights and guide-queue tests
+        run: python -m unittest discover -s tests -p 'test_buddy_source_study_queue.py' -v
+      - name: Run local media rights and hash tests
+        run: python -m unittest discover -s tests -p 'test_process_authorized_bootcamp_media.py' -v
+      - name: Discover GitHub repositories and Hugging Face subjects
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          python tools/discover_open_source_bootcamp_sources.py \
+            --out-dir "$RUNNER_TEMP/buddy-bootcamp-weekly" \
+            --hf-limit-per-subject 20
+      - name: Build rights-gated source study queue
+        if: always()
+        run: |
+          if [ -f "$RUNNER_TEMP/buddy-bootcamp-weekly/discovery-snapshot.json" ]; then
+            python tools/build_buddy_source_study_queue.py \
+              --snapshot "$RUNNER_TEMP/buddy-bootcamp-weekly/discovery-snapshot.json" \
+              --out-dir "$RUNNER_TEMP/buddy-bootcamp-weekly"
+          else
+            echo "Discovery snapshot missing; source study queue not generated."
+          fi
+      - name: Publish weekly discovery report
+        if: always()
+        run: |
+          if [ -f "$RUNNER_TEMP/buddy-bootcamp-weekly/summary.md" ]; then
+            cat "$RUNNER_TEMP/buddy-bootcamp-weekly/summary.md" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "Discovery report unavailable; source coverage is unverified." >> "$GITHUB_STEP_SUMMARY"
+          fi
+      - name: Upload source snapshot and review queue
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: buddy-open-source-weekly-${{ github.run_id }}
+          path: ${{ runner.temp }}/buddy-bootcamp-weekly/
+          if-no-files-found: warn
+          retention-days: 90
