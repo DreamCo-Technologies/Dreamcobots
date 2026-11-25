@@ -193,6 +193,24 @@ def build(profiles: list[dict[str, Any]], hf: dict[str, Any], fcc: dict[str, Any
                 "mapping_status": route["mapping_status"], "score": route["score"]})
 
     division_tasks: dict[str, list[str]] = defaultdict(list)
+    division_videos: dict[str, list[str]] = defaultdict(list)
+    video_rows = []
+    if fcc_catalog is not None:
+        if fcc_catalog.get("schema") != "dreamco.freecodecamp_catalog.v1":
+            raise ValueError("unsupported freeCodeCamp channel catalog schema")
+        for video in fcc_catalog.get("videos", []):
+            category_ids = video.get("categories", [])
+            routes = sorted({division for category in category_ids for division in FCC_DIVISION_CROSSWALK.get(category, []) if division in names})
+            status = "curated_category_crosswalk_requires_owner_review" if routes else "unclassified_shared_review"
+            if not routes:
+                routes = ["DreamEducation", "CommandCore"]
+            video_id = str(video.get("video_id", ""))
+            video_rows.append({"video_id": video_id, "title": video.get("title"), "url": video.get("url"),
+                               "category_ids": category_ids, "division_ids": routes, "mapping_status": status,
+                               "rights_status": video.get("rights_status", "review_required"),
+                               "learning_status": video.get("learning_status", "not_studied")})
+            for division in routes:
+                division_videos[division].append(video_id)
     task_rows = []
     occupations = onet.get("occupations", [])
     for occupation in occupations:
