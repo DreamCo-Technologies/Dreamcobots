@@ -170,5 +170,25 @@ class BuddyModelRegistryTests(unittest.TestCase):
         self.assertFalse(card["personal_data"])
         self.assertFalse(card["network_download_required"])
 
+
+    def test_sale_requires_all_rights_security_and_human_release_gates(self):
+        candidate = eligible_candidate()
+        candidate["marketplace"] = {
+            "eligible_for_sale": True,
+            "status": "RELEASE_APPROVED",
+            "ownership_verified": True,
+            "security_scan_passed": True,
+            "model_card_verified": True,
+            "human_release_approved": True,
+            "export_format": "safetensors",
+        }
+        registry = registry_with([candidate])
+        registry["marketplace_policy"]["sale_enabled"] = True
+        self.assertIs(validate_registry(registry)["models"][0], candidate)
+
+        candidate["marketplace"]["security_scan_passed"] = False
+        with self.assertRaisesRegex(ModelRegistryError, "security_scan_passed"):
+            validate_registry(registry)
+
 if __name__ == "__main__":
     unittest.main()
