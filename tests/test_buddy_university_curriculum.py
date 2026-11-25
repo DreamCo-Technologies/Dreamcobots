@@ -149,6 +149,10 @@ class BuddyUniversityCurriculumTests(unittest.TestCase):
         self.assertTrue(all(row["college_course_ids"] for row in result["divisions"]))
         self.assertEqual(result["instructional_model"]["teacher"]["role"].split()[0], "ChatGPT/GPT-6")
         self.assertEqual(result["instructional_model"]["student"]["role"], "Buddy is the student and must demonstrate learning through observable work")
+        benchmark=result["university_curriculum"]["world_class_benchmark_framework"]
+        self.assertEqual(sum(row["weight"] for row in benchmark["dimensions"]),100)
+        self.assertEqual(len(benchmark["dimensions"]),11)
+        self.assertTrue(result["university_curriculum"]["knowledge_expansion_protocol"]["no_coverage_shortcut"])
 
     def test_map_does_not_claim_training_or_mastery(self):
         result = build(self.profiles, self.hf, self.fcc, self.onet, self.taxonomy)
