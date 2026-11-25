@@ -92,6 +92,47 @@ class ModelFoundryRightsTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "unique"):
             validate_manifest({"schema": SCHEMA, "datasets": [self.entry, self.entry]}, self.root)
 
+    
+    def test_25m_architecture_profile_parameter_count_is_exact(self):
+        from buddy.learning.model_foundry import estimate_decoder_parameter_count
+        profile = {
+            "vocab_size": 256, "context_size": 256, "width": 640,
+            "layers": 5, "attention_heads": 10, "feed_forward_size": 2560,
+            "tied_embeddings": True, "bias": True,
+        }
+        self.assertEqual(estimate_decoder_parameter_count(profile), 24_946_560)
+
+    def test_untied_output_head_adds_one_vocabulary_matrix(self):
+        from buddy.learning.model_foundry import estimate_decoder_parameter_count
+        tied = {
+            "vocab_size": 256, "context_size": 128, "width": 128,
+            "layers": 2, "attention_heads": 4, "feed_forward_size": 512,
+            "tied_embeddings": True, "bias": True,
+        }
+        untied = {**tied, "tied_embeddings": False}
+        self.assertEqual(
+            estimate_decoder_parameter_count(untied) - estimate_decoder_parameter_count(tied),
+            256 * 128,
+        )
+
+    def test_invalid_architecture_geometry_is_rejected(self):
+        from buddy.learning.model_foundry import estimate_decoder_parameter_count
+        invalid = {
+            "vocab_size": 256, "context_size": 128, "width": 128,
+            "layers": 2, "attention_heads": 3, "feed_forward_size": 512,
+        }
+        with self.assertRaisesRegex(ValueError, "divisible"):
+            estimate_decoder_parameter_count(invalid)
+
+
+    def test_profiled_weight_updates_require_explicit_authorization(self):
+        from buddy.learning.model_foundry import validate_training_authorization
+        blocked = {"training_policy": {"enabled": False, "weight_updates_authorized": False}}
+        with self.assertRaisesRegex(PermissionError, "not explicitly authorized"):
+            validate_training_authorization(blocked)
+        approved = {"training_policy": {"enabled": True, "weight_updates_authorized": True}}
+        self.assertIsNone(validate_training_authorization(approved))
+
 
 if __name__ == "__main__":
     unittest.main()

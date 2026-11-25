@@ -49,6 +49,43 @@ STRATEGY_PROFILES = {
 }
 
 
+def estimate_decoder_parameter_count(architecture: dict[str, Any]) -> int:
+    """Count the matching tied/untied PyTorch decoder architecture exactly."""
+    vocab = architecture["vocab_size"]
+    context = architecture["context_size"]
+    width = architecture["width"]
+    layers = architecture["layers"]
+    heads = architecture["attention_heads"]
+    feed_forward = architecture["feed_forward_size"]
+    tied = architecture.get("tied_embeddings", True)
+    bias = architecture.get("bias", True)
+    dimensions = (vocab, context, width, layers, heads, feed_forward)
+    if any(not isinstance(value, int) or isinstance(value, bool) or value <= 0 for value in dimensions):
+        raise ValueError("architecture dimensions must be positive integers")
+    if width % heads:
+        raise ValueError("architecture width must be divisible by attention_heads")
+    if not isinstance(tied, bool) or not isinstance(bias, bool):
+        raise ValueError("tied_embeddings and bias must be booleans")
+    embeddings = (vocab + context) * width
+    if not tied:
+        embeddings += vocab * width
+    per_layer = 4 * width**2 + 2 * width * feed_forward
+    if bias:
+        per_layer += 9 * width + feed_forward
+    else:
+        per_layer += 2 * width
+    return embeddings + layers * per_layer + 2 * width
+
+
+def validate_training_authorization(profile: dict[str, Any]) -> None:
+    """Fail closed unless a supplied profile explicitly authorizes weight updates."""
+    policy = profile.get("training_policy")
+    if not isinstance(policy, dict):
+        raise PermissionError("architecture profile must include an explicit training_policy")
+    if policy.get("enabled") is not True or policy.get("weight_updates_authorized") is not True:
+        raise PermissionError("model weight updates are not explicitly authorized by this profile")
+
+
 def sha256_file(path: Path) -> str:
     digest = hashlib.sha256()
     with path.open("rb") as stream:
@@ -162,7 +199,8 @@ def build_parallel_plan(registry: dict[str, Any], approved: list[dict[str, Any]]
 
 def train_from_scratch(dataset_path: Path, output_path: Path, *, dataset_id: str,
                        division_id: int, strategy: str, seed: int, steps: int = 100,
-                       resume_from: Path | None = None) -> dict[str, Any]:
+                       resume_from: Path | None = None,
+                       architecture_profile: dict[str, Any] | None = None) -> dict[str, Any]:
     """Train a small byte-level decoder-only model using PyTorch and local approved text."""
     if strategy not in STRATEGY_PROFILES:
         raise ValueError(f"unsupported training strategy: {strategy}")
@@ -170,6 +208,40 @@ def train_from_scratch(dataset_path: Path, output_path: Path, *, dataset_id: str
     sequence_length = profile["sequence_length"]
     batch_size = profile["batch_size"]
     learning_rate = profile["learning_rate"]
+    architecture = {
+        "vocab_size": 256,
+        "context_size": sequence_length,
+        "width": DEFAULT_CONFIG["hidden_size"],
+        "layers": DEFAULT_CONFIG["layers"],
+        "attention_heads": DEFAULT_CONFIG["attention_heads"],
+        "feed_forward_size": DEFAULT_CONFIG["feed_forward_size"],
+        "tied_embeddings": True,
+        "bias": True,
+    }
+    if architecture_profile is not None:
+        validate_training_authorization(architecture_profile)
+        architecture.update({
+            key: architecture_profile[key]
+            for key in (
+                "vocab_size", "context_size", "width", "layers",
+                "attention_heads", "feed_forward_size", "tied_embeddings", "bias",
+            )
+            if key in architecture_profile
+        })
+    if architecture["vocab_size"] != 256:
+        raise ValueError("byte-level training currently requires vocab_size=256")
+    if architecture["context_size"] < sequence_length:
+        raise ValueError("architecture context_size must be at least the strategy sequence_length")
+    expected_parameters = estimate_decoder_parameter_count(architecture)
+    target_parameters = architecture_profile.get("parameter_target") if architecture_profile else None
+    tolerance = architecture_profile.get("tolerance_fraction", 0.02) if architecture_profile else 0.02
+    if target_parameters is not None:
+        if not isinstance(target_parameters, int) or isinstance(target_parameters, bool) or target_parameters <= 0:
+            raise ValueError("parameter_target must be a positive integer")
+        if not isinstance(tolerance, (int, float)) or isinstance(tolerance, bool) or not 0 <= tolerance <= 0.25:
+            raise ValueError("tolerance_fraction must be between 0 and 0.25")
+        if abs(expected_parameters - target_parameters) / target_parameters > tolerance:
+            raise ValueError("architecture parameter count is outside the configured target tolerance")
     try:
         import torch
         from torch import nn
@@ -197,16 +269,24 @@ def train_from_scratch(dataset_path: Path, output_path: Path, *, dataset_id: str
     class TinyDecoder(nn.Module):
         def __init__(self):
             super().__init__()
-            self.token = nn.Embedding(256, 128)
-            self.position = nn.Embedding(sequence_length, 128)
+            vocab_size = architecture["vocab_size"]
+            width = architecture["width"]
+            self.token = nn.Embedding(vocab_size, width)
+            self.position = nn.Embedding(architecture["context_size"], width)
             layer = nn.TransformerEncoderLayer(
-                d_model=128, nhead=4, dim_feedforward=512, batch_first=True,
-                norm_first=True, activation="gelu"
+                d_model=width,
+                nhead=architecture["attention_heads"],
+                dim_feedforward=architecture["feed_forward_size"],
+                batch_first=True,
+                norm_first=True,
+                activation="gelu",
+                bias=architecture.get("bias", True),
             )
-            self.blocks = nn.TransformerEncoder(layer, num_layers=2)
-            self.norm = nn.LayerNorm(128)
-            self.head = nn.Linear(128, 256, bias=False)
-            self.head.weight = self.token.weight
+            self.blocks = nn.TransformerEncoder(layer, num_layers=architecture["layers"])
+            self.norm = nn.LayerNorm(width)
+            self.head = nn.Linear(width, vocab_size, bias=False)
+            if architecture.get("tied_embeddings", True):
+                self.head.weight = self.token.weight
 
         def forward(self, x):
             length = x.size(1)
@@ -224,7 +304,8 @@ def train_from_scratch(dataset_path: Path, output_path: Path, *, dataset_id: str
         saved_meta = saved.get("metadata", {})
         if (saved_meta.get("dataset_id") != dataset_id or saved_meta.get("division_id") != division_id
                 or saved_meta.get("dataset_sha256") != sha256_file(dataset_path)
-                or saved_meta.get("training_strategy") != strategy):
+                or saved_meta.get("training_strategy") != strategy
+                or saved_meta.get("architecture_profile") != architecture):
             raise ValueError("resume checkpoint provenance does not match this training run")
         model.load_state_dict(saved["model_state_dict"])
         if "optimizer_state_dict" in saved:
@@ -260,6 +341,11 @@ def train_from_scratch(dataset_path: Path, output_path: Path, *, dataset_id: str
             model(x).reshape(-1, 256), y.reshape(-1)
         ).item())
     output_path.parent.mkdir(parents=True, exist_ok=True)
+    actual_parameters = sum(parameter.numel() for parameter in model.parameters())
+    if actual_parameters != expected_parameters:
+        raise RuntimeError(
+            f"instantiated model parameter count {actual_parameters} does not match preflight {expected_parameters}"
+        )
     metadata = {
         "schema": "dreamco.model_checkpoint.v1",
         "model_id": f"buddy-division-{division_id:02d}-scratch",
@@ -267,10 +353,13 @@ def train_from_scratch(dataset_path: Path, output_path: Path, *, dataset_id: str
         "dataset_id": dataset_id,
         "training_strategy": strategy,
         "dataset_sha256": sha256_file(dataset_path),
-        "architecture": {**DEFAULT_CONFIG, "sequence_length": sequence_length},
+        "architecture": {**DEFAULT_CONFIG, **architecture, "sequence_length": sequence_length},
+        "architecture_profile": architecture,
+        "parameter_target": target_parameters,
+        "parameter_count_preflight": expected_parameters,
         "tokenizer": {"type": "byte_level", "vocabulary_size": 256, "special_tokens": []},
         "tokenizer_sha256": None,
-        "parameter_count": sum(parameter.numel() for parameter in model.parameters()),
+        "parameter_count": actual_parameters,
         "initialization": "random",
         "optimizer": "AdamW",
         "learning_rate": learning_rate,
