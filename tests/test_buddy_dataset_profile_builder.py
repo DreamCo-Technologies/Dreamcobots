@@ -45,6 +45,14 @@ class DatasetProfileBuilderTests(unittest.TestCase):
         self.profile["sources"] = [verified_source(rights="unknown")]
         self.assertTrue(any("rights must be reviewed" in error for error in MODULE.validate_profile(self.profile)))
 
+    def test_unknown_rights_can_be_recorded_pending_but_never_learned(self):
+        source = verified_source(rights="unknown", status="pending_review",
+                                 training_permission_verified=False, license_id=None, license_url=None)
+        self.profile["sources"] = [source]
+        self.assertEqual(MODULE.validate_profile(self.profile), [])
+        plan = MODULE.build_learning_plan(self.profile)
+        self.assertEqual(plan["sources_with_content"], 0)
+
     def test_approved_source_without_rights_evidence_is_blocked(self):
         source = verified_source()
         del source["rights_evidence"]
