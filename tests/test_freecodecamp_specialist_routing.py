@@ -71,6 +71,17 @@ class FreeCodeCampSpecialistRoutingTests(unittest.TestCase):
         self.assertIn(mlops.title, infra)
         self.assertIn(agentic.title, agents)
 
+
+    def test_subject_category_routing_covers_courses_without_keywords_in_the_title(self):
+        mcp_security = self.by_video["gYXLRMycVMk"]
+        computer_vision = self.by_video["Q5U-b6gRTaY"]
+        self.assertEqual(mcp_security.content_status, "original_implementation_brief")
+        self.assertIn("DreamAgents", mcp_security.division_targets)
+        self.assertEqual(computer_vision.content_status, "original_implementation_brief")
+        self.assertIn("DreamAIInfra", computer_vision.division_targets)
+        self.assertGreaterEqual(len(mcp_security.implementation_steps), 8)
+        self.assertGreaterEqual(len(computer_vision.implementation_steps), 8)
+
     def test_course_overrides_reference_real_divisions_and_masterbot_lanes(self):
         canonical = {
             name for row in self.lessons for name in row.division_targets
