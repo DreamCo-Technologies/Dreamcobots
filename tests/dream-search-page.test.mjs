@@ -34,9 +34,9 @@ test('DreamSearch renders repository records without injecting indexed HTML', ()
 test('DreamSearch publishes the current governed repository inventory', () => {
   assert.equal(searchIndex.schema, 'dreamco.search_index.v1');
   assert.ok(searchIndex.documents.length >= 2300);
-  assert.equal(searchIndex.summary.counts_by_type.bot, 1101);
+  assert.equal(searchIndex.summary.counts_by_type.bot, 1120);
   assert.equal(searchIndex.summary.canonical_indexed_bot_profiles, 1051);
-  assert.equal(searchIndex.summary.supplemental_indexed_bot_profiles, 50);
+  assert.equal(searchIndex.summary.supplemental_indexed_bot_profiles, 69);
   assert.equal(searchIndex.summary.counts_by_type.model, 500);
   assert.equal(searchIndex.summary.counts_by_type.division, 55);
   assert.equal(searchIndex.summary.canonical_indexed_divisions, 45);
