@@ -143,6 +143,8 @@ def build(profiles: list[dict[str, Any]], hf: dict[str, Any], fcc: dict[str, Any
           fcc_catalog: dict[str, Any] | None = None, workforce: dict[str, Any] | None = None,
           government: dict[str, Any] | None = None) -> dict[str, Any]:
     college = college or {}
+    fcc_catalog = fcc_catalog or {}
+    fcc_inventory_status = fcc_catalog.get("inventory_status", "not_loaded")
     workforce = workforce or {}
     government = government or {}
     fcc_catalog = fcc_catalog or {}
@@ -386,7 +388,7 @@ def build(profiles: list[dict[str, Any]], hf: dict[str, Any], fcc: dict[str, Any
         "freecodecamp_certification_phases": fcc_phases,
         "freecodecamp_video_subject_categories": video_tracks,
         "freecodecamp_video_inventory": {"status": fcc_inventory_status, "inventory_evidence": fcc_inventory,
-            "video_count": len(fcc_videos), "video_routes": fcc_video_route_rows},
+            "video_count": len(fcc_videos), "video_routes": video_rows},
         "freecodecamp_video_category_routes": fcc_video_rows,
         "freecodecamp_video_routes": video_rows,
         "freecodecamp_channel_video_routes": video_rows,
