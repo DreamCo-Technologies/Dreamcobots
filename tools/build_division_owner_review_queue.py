@@ -101,6 +101,9 @@ def build_owner_review_queue(
             })
             continue
         if item.get("mapping_status") == "proposed_exact_name_match" or item.get("decision") == "PENDING_OWNER_REVIEW" or item.get("primary_domain_id") is None:
+            route = source_routes.get(ident)
+            if route is None:
+                raise OwnerReviewQueueError("pending_masterbot_mapping_missing_resource_route")
             proposed_domain = item.get("primary_domain_id")
             evidence = list(item.get("evidence") or [])
             if not evidence:
