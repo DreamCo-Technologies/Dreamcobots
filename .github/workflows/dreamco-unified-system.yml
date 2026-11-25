@@ -75,6 +75,7 @@ jobs:
           if [ -f tools/generate_dreamco_search_index.ts ]; then npx tsx tools/generate_dreamco_search_index.ts; fi
           if [ -f tools/generate_buddy_success_program.ts ]; then npx tsx tools/generate_buddy_success_program.ts; fi
           if [ -f tools/generate_buddy_platform_expansion.py ]; then python3 tools/generate_buddy_platform_expansion.py; fi
+          python3 tools/build_buddy_learning_os_connection_graph.py
       - name: Inventory repository, runtime bindings, capabilities, and learning systems
         run: |
           python3 tools/run_optional_script.py tools/build_repository_inventory.py
