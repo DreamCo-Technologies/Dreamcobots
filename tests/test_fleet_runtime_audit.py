@@ -97,6 +97,17 @@ class RegressionGateTests(unittest.TestCase):
 
 
 class FolderVerdictTests(unittest.TestCase):
+    def test_unit_test_runner_uses_discovery_for_non_package_tests_directory(self):
+        with mock.patch.object(audit, "run", return_value={"code": 0}) as run:
+            self.assertTrue(audit.unit_tests_pass(skip=False))
+        command = run.call_args.args[0]
+        self.assertEqual(command[1:4], ["-m", "unittest", "discover"])
+        self.assertIn("test_fleet_runtime_executor.py", command)
+
+    def test_unit_test_runner_reports_failure(self):
+        with mock.patch.object(audit, "run", return_value={"code": 1}):
+            self.assertFalse(audit.unit_tests_pass(skip=False))
+
     def test_verdicts(self):
         v = audit.verdict
         self.assertEqual(v({"code_files": 0}), "placeholder")

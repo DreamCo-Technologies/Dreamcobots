@@ -13,9 +13,6 @@ sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "tools"))
 import generate_bot_manifests as gen  # noqa: E402
 
-if gen.main([]) != 0:
-    raise RuntimeError("could not generate current division manifests")
-
 from buddy.fleet_runtime import FleetExecutor  # noqa: E402
 from buddy.fleet_runtime.__main__ import run_divisions  # noqa: E402
 from buddy.fleet_runtime.contract import load_manifests  # noqa: E402

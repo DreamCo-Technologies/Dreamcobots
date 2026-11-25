@@ -111,6 +111,50 @@ def route_buddy_learning_query(
     normalized_query = query.strip()
     library = search_internal_library_knowledge(normalized_query, root=root, limit=limit)
     guide_matches = library.get("matches", [])
+    seed_matches = library.get("seed_candidate_matches", [])
+    lessons = _course_matches(normalized_query, root, limit)
+
+    # An exact query for an unverified seed candidate should route to its
+    # explicit discovery-and-verification lesson, not a broader guide that
+    # happens to share one token (for example, "React 19" vs. generic React).
+    exact_candidate_ids = {
+        f"candidate-discovery-{row.get('candidate_id')}"
+        for row in seed_matches
+        if row.get("status") == "seed_candidate_unverified"
+        and str(row.get("name", "")).strip().casefold() == normalized_query.casefold()
+    }
+    exact_candidate_lessons = [
+        row for row in lessons if row["lesson_id"] in exact_candidate_ids
+    ]
+    if exact_candidate_lessons:
+        supporting_guide_count = sum(
+            row["internal_guide"]["status"] == "supporting_guide_available"
+            for row in exact_candidate_lessons
+        )
+        return {
+            "schema": "dreamco.buddy_internal_first_learning_route.v1",
+            "query": normalized_query,
+            "route": "internal_bootcamp_lesson",
+            "answer_source": "dreamco_bootcamp_candidate_discovery",
+            "guide_matches": [],
+            "guide_documents": [],
+            "course_lessons": exact_candidate_lessons,
+            "supporting_guide_count": supporting_guide_count,
+            "missing_supporting_guide_count": len(exact_candidate_lessons) - supporting_guide_count,
+            "seed_candidate_matches": seed_matches,
+            "knowledge_gap": library.get("knowledge_gap"),
+            "external_discovery_available": True,
+            "external_discovery_performed": False,
+            "external_model_routing_performed": False,
+            "study_required": True,
+            "candidate_verification_required": True,
+            "next_action": (
+                "Verify the candidate against authoritative first-party sources, pin its exact version, "
+                "review license and rights, then author and assess an original study guide."
+            ),
+            "mastery_awarded": False,
+        }
+
     if guide_matches:
         guide_documents = []
         for match in guide_matches:
@@ -130,8 +174,6 @@ def route_buddy_learning_query(
             "mastery_awarded": False,
         }
 
-    lessons = _course_matches(normalized_query, root, limit)
-    seed_matches = library.get("seed_candidate_matches", [])
     if lessons:
         supporting_guide_count = sum(
             row["internal_guide"]["status"] == "supporting_guide_available"
