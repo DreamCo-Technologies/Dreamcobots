@@ -233,8 +233,8 @@ def train_from_scratch(dataset_path: Path, output_path: Path, *, dataset_id: str
     if architecture["context_size"] < sequence_length:
         raise ValueError("architecture context_size must be at least the strategy sequence_length")
     expected_parameters = estimate_decoder_parameter_count(architecture)
-    target_parameters = architecture.get("parameter_target")
-    tolerance = architecture.get("tolerance_fraction", 0.02)
+    target_parameters = architecture_profile.get("parameter_target") if architecture_profile else None
+    tolerance = architecture_profile.get("tolerance_fraction", 0.02) if architecture_profile else 0.02
     if target_parameters is not None:
         if not isinstance(target_parameters, int) or isinstance(target_parameters, bool) or target_parameters <= 0:
             raise ValueError("parameter_target must be a positive integer")
