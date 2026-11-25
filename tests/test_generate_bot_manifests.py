@@ -65,11 +65,33 @@ class GeneratorTests(unittest.TestCase):
                 self.assertEqual(b["run"], "spec_only")
 
     def test_unmapped_bots_are_flagged_not_faked(self):
-        unmapped = [b for b in self.collection["bots"] if b["engine"] == "unmapped"]
-        self.assertTrue(unmapped)
-        for b in unmapped:
-            self.assertIn("engine_unmapped", b["flags"])
-            self.assertEqual(b["engine_confidence"], 0.0)
+        # The production catalog currently maps every source profile. Keep the
+        # unmapped contract covered with a synthetic no-signal profile rather
+        # than requiring an intentionally broken production bot to exist.
+        metadata = gen.load_route_metadata()
+        entry = {
+            "app": {
+                "name": "No Signal Profile",
+                "division": "CommandCore",
+                "description": "Unclassified sample profile.",
+                "capabilities": [],
+            },
+            "md": None,
+            "lane": None,
+            "flags": set(),
+            "sources": ["synthetic:no-signal"],
+        }
+        bot = gen.build_manifest(
+            "no-signal-profile",
+            entry,
+            {},
+            set(metadata["division_names"]),
+            metadata,
+        )
+        self.assertEqual(bot["engine"], "unmapped")
+        self.assertIn("engine_unmapped", bot["flags"])
+        self.assertEqual(bot["engine_confidence"], 0.0)
+        self.assertEqual(bot["run"], "spec_only")
 
     def test_tier_boilerplate_not_counted_as_capability(self):
         bot = self.by_slug["ad-copy"]
