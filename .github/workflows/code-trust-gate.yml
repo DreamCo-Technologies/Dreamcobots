@@ -27,13 +27,12 @@ permissions:
 
 concurrency:
   group: code-trust-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   trusted-code:
     runs-on: ubuntu-latest
     timeout-minutes: 90
-    continue-on-error: true
     steps:
       - uses: actions/checkout@v7
         with:
@@ -82,6 +81,11 @@ jobs:
           python3 tools/build_actions_prospectus.py
           # Reconcile the registry after every generator has finished.
           python3 tools/generate_repository_test_registry.py
+      - name: Verify first-party Bootcamp training data factory
+        run: |
+          python3 -m unittest discover -s tests -p "test_dreamco_bootcamp_seed_data.py" -v
+          python3 -m unittest discover -s tests -p "test_dreamco_training_factory.py" -v
+          python3 -m unittest discover -s tests -p "test_dreamco_original_training_examples.py" -v
       - name: Full repository verification
         run: npm run test:repository
       - name: Fleet end-to-end verification
