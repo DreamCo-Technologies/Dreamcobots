@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import unittest
 from pathlib import Path
 
@@ -15,6 +16,8 @@ class BuddyLibrarySeedCatalogTests(unittest.TestCase):
         self.assertEqual(catalog["unique_candidate_count"], 531)
         self.assertEqual(len(catalog["candidates"]), 531)
         self.assertFalse(catalog["worldwide_completeness_claimed"])
+        committed = json.loads((root / "data/buddy-library-seed-catalog.json").read_text(encoding="utf-8"))
+        self.assertEqual(catalog, committed)
 
     def test_seed_candidates_do_not_infer_permissions(self):
         root = Path(__file__).resolve().parents[1]
