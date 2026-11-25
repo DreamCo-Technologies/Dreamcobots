@@ -125,5 +125,14 @@ class ModelFoundryRightsTests(unittest.TestCase):
             estimate_decoder_parameter_count(invalid)
 
 
+    def test_profiled_weight_updates_require_explicit_authorization(self):
+        from buddy.learning.model_foundry import validate_training_authorization
+        blocked = {"training_policy": {"enabled": False, "weight_updates_authorized": False}}
+        with self.assertRaisesRegex(PermissionError, "not explicitly authorized"):
+            validate_training_authorization(blocked)
+        approved = {"training_policy": {"enabled": True, "weight_updates_authorized": True}}
+        self.assertIsNone(validate_training_authorization(approved))
+
+
 if __name__ == "__main__":
     unittest.main()
