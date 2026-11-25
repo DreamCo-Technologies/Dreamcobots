@@ -63,7 +63,7 @@ class DreamCoSummarySourceTests(unittest.TestCase):
     def test_progress_is_append_only_jsonl_and_idempotent(self):
         event = append_progress_event(
             self.progress, asset_id="asset-001", division="DreamAI",
-            event_type="study_started", evidence_ref="evidence:1", source_revision="rev-1"
+            event_type="study_started", evidence_ref="evidence:1", source_revision="rev-1", organization_path=self.organization
         )
         lines = self.progress.read_text(encoding="utf-8").splitlines()
         self.assertEqual(len(lines), 1)
@@ -76,7 +76,7 @@ class DreamCoSummarySourceTests(unittest.TestCase):
         with self.assertRaises(PermissionError):
             append_progress_event(
                 self.progress, asset_id="asset-001", division="DreamAI",
-                event_type="training_run_started", evidence_ref="run:1"
+                event_type="training_run_started", evidence_ref="run:1", organization_path=self.organization
             )
         with self.assertRaises(PermissionError):
             append_progress_event(
@@ -96,7 +96,7 @@ class DreamCoSummarySourceTests(unittest.TestCase):
         with self.assertRaises(PermissionError):
             append_progress_event(
                 self.progress, asset_id="asset-001", division="DreamAI",
-                event_type="mastery_awarded", evidence_ref="claim:1"
+                event_type="mastery_awarded", evidence_ref="claim:1", organization_path=self.organization
             )
 
 
