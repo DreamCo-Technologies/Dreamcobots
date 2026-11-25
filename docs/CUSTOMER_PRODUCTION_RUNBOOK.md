@@ -34,11 +34,19 @@ npm run buddy:site:check
 npm run check
 ```
 
-For a strict code contract gate:
+For a strict code contract gate (not a production certificate):
 
 ```bash
 npm run production:readiness:strict
 ```
+
+For full production certification, run this on the actual production host after evidence and live configuration are available:
+
+```bash
+npm run production:certification
+```
+
+The certification command must fail while any workstream is partial/unknown or required production configuration is missing.
 
 ## Live Smoke Tests
 
