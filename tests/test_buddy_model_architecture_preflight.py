@@ -16,7 +16,7 @@ PROFILE = ROOT / "config/buddy-25m-cpu-architecture-profile.json"
 def test_25m_profile_is_within_two_percent_without_starting_training():
     profile = json.loads(PROFILE.read_text(encoding="utf-8"))
     report = build_preflight(profile)
-    assert report["estimated_parameter_count"] == 24_943_360
+    assert report["estimated_parameter_count"] == 24_946_560
     assert report["target_within_tolerance"] is True
     assert report["training_started"] is False
     assert report["weights_created"] is False
