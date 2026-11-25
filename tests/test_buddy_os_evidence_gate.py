@@ -24,7 +24,10 @@ class BuddyOsEvidenceGateTests(unittest.TestCase):
 
     def test_division_gaps_keep_every_division_not_working(self) -> None:
         report = check()
-        self.assertEqual(len(report["divisions"]), 40)
+        self.assertEqual(
+            len(report["divisions"]),
+            len(list((__import__("pathlib").Path(__file__).resolve().parents[1] / "config" / "divisions").glob("*.json"))),
+        )
         self.assertEqual(report["working"], 0)
         self.assertFalse(report["production_ready"])
         self.assertTrue(all(row["working"] is False for row in report["divisions"]))
