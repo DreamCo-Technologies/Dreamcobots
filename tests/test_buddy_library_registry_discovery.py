@@ -1,0 +1,76 @@
+from __future__ import annotations
+
+import io
+import json
+import tempfile
+import unittest
+from pathlib import Path
+
+from buddy.learning.library_registry_discovery import search_public_registry
+
+
+class LibraryRegistryDiscoveryTests(unittest.TestCase):
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.root = Path(self.tmp.name)
+        (self.root / "config").mkdir()
+        config = {
+            "schema": "dreamco.buddy_library_registry_adapters.v1",
+            "timeout_seconds": 5,
+            "max_response_bytes": 4096,
+            "providers": [{
+                "id": "npm", "kind": "package_search",
+                "endpoint": "https://registry.npmjs.org/-/v1/search",
+                "host": "registry.npmjs.org", "query_parameter": "text",
+                "page_parameter": "from", "page_size_parameter": "size",
+                "parser": "npm", "supports_pagination": True,
+            }],
+        }
+        (self.root / "config/buddy-library-registry-adapters.json").write_text(json.dumps(config), encoding="utf-8")
+
+    def tearDown(self):
+        self.tmp.cleanup()
+
+    def test_network_is_disabled_without_explicit_approval(self):
+        with self.assertRaises(PermissionError):
+            search_public_registry("npm", "react", root=self.root)
+
+    def test_normalizes_metadata_and_never_grants_download_or_training(self):
+        payload = {
+            "objects": [{
+                "package": {
+                    "name": "react", "version": "19.0.0", "description": "UI library",
+                    "links": {"npm": "https://www.npmjs.com/package/react", "repository": "https://github.com/facebook/react"},
+                }
+            }]
+        }
+        captured = {}
+        def opener(request, timeout):
+            captured["url"] = request.full_url
+            captured["timeout"] = timeout
+            captured["agent"] = request.get_header("User-agent")
+            return io.BytesIO(json.dumps(payload).encode("utf-8"))
+        result = search_public_registry("npm", "react", allow_network=True, root=self.root, opener=opener)
+        self.assertEqual(result["candidates"][0]["name"], "react")
+        self.assertFalse(result["candidates"][0]["download_authorized"])
+        self.assertFalse(result["candidates"][0]["execution_authorized"])
+        self.assertEqual(result["candidates"][0]["training_permission"], "pending")
+        self.assertIn("text=react", captured["url"])
+        self.assertEqual(captured["timeout"], 5)
+        self.assertIn("DreamCo-Buddy", captured["agent"])
+
+    def test_rejects_unknown_provider_and_invalid_query(self):
+        with self.assertRaises(ValueError):
+            search_public_registry("missing", "x", allow_network=True, root=self.root)
+        with self.assertRaises(ValueError):
+            search_public_registry("npm", " ", allow_network=True, root=self.root)
+
+    def test_rejects_oversized_registry_response(self):
+        def opener(request, timeout):
+            return io.BytesIO(b"x" * 4097)
+        with self.assertRaises(ValueError):
+            search_public_registry("npm", "react", allow_network=True, root=self.root, opener=opener)
+
+
+if __name__ == "__main__":
+    unittest.main()
