@@ -1,0 +1,42 @@
+name: Buddy Fleet Routing
+
+on:
+  pull_request:
+    paths:
+      - "buddy/fleet_runtime/**"
+      - "config/masterbot-65-registry.json"
+      - "config/generated/masterbot-55-domain-crosswalk.json"
+      - "tests/test_fleet_runtime_routing.py"
+      - ".github/workflows/buddy-fleet-routing.yml"
+  push:
+    branches: [main]
+    paths:
+      - "buddy/fleet_runtime/**"
+      - "config/masterbot-65-registry.json"
+      - "config/generated/masterbot-55-domain-crosswalk.json"
+      - "tests/test_fleet_runtime_routing.py"
+      - ".github/workflows/buddy-fleet-routing.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: buddy-fleet-routing-${{ github.event.pull_request.number || github.sha }}
+  cancel-in-progress: false
+
+jobs:
+  routing-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - name: Validate canonical routing contract
+        run: |
+          python -m unittest discover -s tests -p 'test_fleet_runtime_routing.py' -v
+          python -m unittest discover -s tests -p 'test_fleet_runtime_executor.py' -v
+          python -m py_compile buddy/fleet_runtime/routing.py buddy/fleet_runtime/executor.py buddy/fleet_runtime/evidence.py
