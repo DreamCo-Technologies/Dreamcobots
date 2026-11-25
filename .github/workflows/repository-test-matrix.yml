@@ -82,6 +82,8 @@ jobs:
           python3 -m unittest tests.test_buddy_technology_radar
       - name: Final repository test registry reconciliation
         run: python3 tools/generate_repository_test_registry.py
+      - name: Test production certification truth rules
+        run: python3 -m unittest tests.test_production_readiness_gate -v
       - name: Run DreamCo Universal Verification Engine
         run: npx tsx tools/run_universal_verification.ts
       - name: Save debugging evidence
