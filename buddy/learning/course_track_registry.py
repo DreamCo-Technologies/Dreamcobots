@@ -196,7 +196,7 @@ def _rows(track: dict, data: dict, root: Path = ROOT) -> list[dict]:
                     "separation, and require independent review before claiming capability."
                 ),
                 "benchmark": "Benchmark guide and evidence acceptance suite.",
-                "source_url": program.get("public_page") or "https://github.com/DreamCo-Technologies/Dreamcobots/tree/main/benchmarks",
+                "source_url": "https://github.com/DreamCo-Technologies/Dreamcobots/tree/main/benchmarks",
                 "content_status": "authoring_backlog",
             })
         for task in tasks:
