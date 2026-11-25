@@ -1,0 +1,166 @@
+{
+  "schema": "dreamco.buddy_tokenizer_curriculum.v1",
+  "id": "buddy-tokenizer-training",
+  "title": "Buddy Tokenizer Engineering and Training Course",
+  "status": "curriculum_ready_training_not_executed",
+  "owner_lane": "Grok-HF-Tokenizers",
+  "audience": [
+    "all 55 canonical divisions",
+    "65 MasterBot lanes",
+    "model-foundry learners"
+  ],
+  "prerequisites": [
+    "Python fundamentals",
+    "text preprocessing",
+    "basic probability and statistics",
+    "introductory neural language-model concepts"
+  ],
+  "course_references": [
+    {
+      "title": "Hugging Face Tokenizers documentation",
+      "url": "https://huggingface.co/docs/tokenizers",
+      "role": "primary implementation reference",
+      "rights": "documentation study only; review exact license before copying or redistributing any materials"
+    },
+    {
+      "title": "Hugging Face NLP course",
+      "url": "https://huggingface.co/learn/nlp-course/chapter6/1",
+      "role": "tokenizer concepts and practical training",
+      "rights": "link-only reference; course materials are not automatically cleared for redistribution or model training"
+    },
+    {
+      "title": "freeCodeCamp — Train Your Own LLM",
+      "url": "https://www.youtube.com/watch?v=9Ge0sMm65jo",
+      "role": "LLM training course including BPE tokenization in the broader training sequence",
+      "rights": "link-only reference; no transcript/media download or model-training use without item-level permission"
+    },
+    {
+      "title": "SentencePiece documentation",
+      "url": "https://github.com/google/sentencepiece",
+      "role": "Unigram/BPE tokenizer implementation and reproducibility",
+      "rights": "review software and documentation licenses separately"
+    }
+  ],
+  "objectives": [
+    "Explain tokenization, normalization, pre-tokenization, subword segmentation, vocabulary construction, and token-to-ID mapping.",
+    "Implement and compare byte-level BPE, BPE, WordPiece, and Unigram tokenization on authorized sample corpora.",
+    "Measure fertility, compression, unknown-token behavior, byte coverage, sequence length, and multilingual fairness.",
+    "Design stable special tokens and chat templates with atomic IDs and strict role validation.",
+    "Train a tokenizer only on authorized data with source-level splits and a held-out evaluation corpus.",
+    "Pin tokenizer artifacts, configuration, library versions, source hashes, and deterministic training settings.",
+    "Integrate the exact tokenizer revision with model training, inference, checkpointing, and model release evidence.",
+    "Diagnose tokenizer-induced model regressions without training on evaluation or private holdout data."
+  ],
+  "lessons": [
+    {
+      "id": "tok-01",
+      "title": "Text-to-token pipeline",
+      "outcome": "Trace raw text through normalization, pre-tokenization, segmentation, vocabulary lookup and IDs.",
+      "lab": "Build a transparent whitespace/character tokenizer and round-trip tests.",
+      "assessment": "Round-trip and offset-mapping tests pass."
+    },
+    {
+      "id": "tok-02",
+      "title": "Normalization and Unicode",
+      "outcome": "Explain Unicode normalization, whitespace, punctuation, combining marks and multilingual edge cases.",
+      "lab": "Compare NFC/NFKC and preserve source text offsets.",
+      "assessment": "No silent destructive normalization; documented reversible behavior."
+    },
+    {
+      "id": "tok-03",
+      "title": "Subword algorithms",
+      "outcome": "Compare BPE merges, WordPiece scoring and Unigram probabilistic segmentation.",
+      "lab": "Train tiny vocabularies on a synthetic authorized corpus.",
+      "assessment": "Algorithm comparison includes segmentation examples and complexity notes."
+    },
+    {
+      "id": "tok-04",
+      "title": "Byte-level coverage",
+      "outcome": "Explain byte fallback, UTF-8, unknown tokens and robust coverage.",
+      "lab": "Test emoji, mixed scripts, rare symbols, malformed input and code snippets.",
+      "assessment": "All valid UTF-8 fixtures encode/decode without loss."
+    },
+    {
+      "id": "tok-05",
+      "title": "Vocabulary design",
+      "outcome": "Choose vocabulary size based on measured trade-offs, not arbitrary maximums.",
+      "lab": "Sweep vocabulary sizes and plot token count, model embedding cost and fertility.",
+      "assessment": "Recommendation includes cost and coverage evidence."
+    },
+    {
+      "id": "tok-06",
+      "title": "Corpus quality and rights",
+      "outcome": "Apply license, provenance, privacy, deduplication and contamination controls.",
+      "lab": "Build an authorized-corpus manifest and source-level train/validation split.",
+      "assessment": "Unknown or incompatible rights block tokenizer training."
+    },
+    {
+      "id": "tok-07",
+      "title": "Train with Hugging Face Tokenizers",
+      "outcome": "Use BPE and Unigram trainers with deterministic settings and special tokens.",
+      "lab": "Train a small tokenizer locally on original synthetic/first-party sample data.",
+      "assessment": "Reproducible vocab and merges/model artifact hashes."
+    },
+    {
+      "id": "tok-08",
+      "title": "SentencePiece workflow",
+      "outcome": "Compare SentencePiece BPE/Unigram and whitespace handling.",
+      "lab": "Train and evaluate both models using a pinned library version.",
+      "assessment": "Equivalent corpus and comparable metrics recorded."
+    },
+    {
+      "id": "tok-09",
+      "title": "Special tokens and chat templates",
+      "outcome": "Define BOS/EOS/PAD/UNK and role/tool markers without accidental splitting.",
+      "lab": "Validate Buddy chat template, atomic IDs, role allowlist and tool-call boundaries.",
+      "assessment": "All special tokens atomic; malformed and unknown roles rejected."
+    },
+    {
+      "id": "tok-10",
+      "title": "Tokenizer/model compatibility",
+      "outcome": "Understand embedding matrix size, tokenizer revision pinning and checkpoint coupling.",
+      "lab": "Load a pinned model/tokenizer pair and reject mismatched vocab or special-token maps.",
+      "assessment": "Mismatch is detected before inference or training."
+    },
+    {
+      "id": "tok-11",
+      "title": "Evaluation and fairness",
+      "outcome": "Measure fertility, compression, sequence expansion, coverage and per-language behavior.",
+      "lab": "Evaluate on isolated held-out text across languages, code, names and domain vocabulary.",
+      "assessment": "No evaluation text enters training; disaggregated scorecard produced."
+    },
+    {
+      "id": "tok-12",
+      "title": "Release and operations",
+      "outcome": "Package tokenizer artifacts with provenance, hashes, model card and rollback metadata.",
+      "lab": "Build a release candidate manifest and verify hashes after copy/restore.",
+      "assessment": "Release gate passes only with rights, tests, hashes and reviewed compatibility evidence."
+    }
+  ],
+  "metrics": [
+    "round_trip_exactness",
+    "byte_coverage",
+    "unknown_token_rate",
+    "fertility_tokens_per_word",
+    "compression_bytes_per_token",
+    "sequence_length_expansion",
+    "vocabulary_size",
+    "special_token_atomicity",
+    "offset_mapping_accuracy",
+    "per_language_coverage",
+    "training_reproducibility"
+  ],
+  "gates": {
+    "rights": "PASS only with explicit source rights and purpose-specific authorization",
+    "evaluation": "Separate train, validation, test and private holdout by source; never train on holdout",
+    "artifact": "Pin algorithm, vocab size, normalization, pre-tokenizer, trainer settings, library versions, source hashes and tokenizer revision",
+    "model_compatibility": "Bind tokenizer revision and special-token map hash to the exact base model and checkpoint",
+    "compute": "No paid or background GPU execution without explicit compute approval and budget",
+    "release": "Require independent review, regression tests, private holdout and rollback artifact"
+  },
+  "mastery": {
+    "required": "All 12 lesson assessments pass, reproducibility evidence exists, and an independent held-out evaluation passes.",
+    "reading_alone_is_not_mastery": true,
+    "tokenizer_training_is_not_model_weight_training": true
+  }
+}
