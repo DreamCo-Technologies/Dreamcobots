@@ -170,9 +170,17 @@ def build_work_queue(catalog: dict[str, Any], manifest: dict[str, Any], guides: 
             "duration_seconds": video.get("duration_seconds"),
             "rights_status": status,
             "guide_status": guide_status,
+            "teacher_model": "GPT-6",
+            "student_model": "Buddy",
+            "authoring_prompt": "buddy/bootcamp/prompts/freecodecamp-video-study-guide-authoring.md",
+            "authoring_status": "ready_for_teacher_authoring" if status == "READY_FOR_DETAILED_GUIDE" else "blocked_rights_pending",
+            "owner_designation": "user_designated_owner_pending_review",
+            "study_path_required": ["prerequisites", "chapter_by_chapter_deep_study", "best_knowledge_extraction",
+                "worked_examples", "sandbox_exercises", "knowledge_checks", "independent_project",
+                "teach_back", "unseen_transfer", "spaced_review"],
             "guide_validation_errors": errors,
             "transcript_hash": rights.get("transcript_sha256") if rights else None,
-            "model_training_authorized": bool(rights and rights.get("training_permission") is True and rights.get("training_rights_evidence_ref")),
+            "model_training_authorized": bool(rights and rights.get("training_permission") is True and rights.get("training_rights_evidence_ref")),\n            "model_training_started": False,
         })
     unknown_ids = sorted(set(rights_by_id) - seen)
     if unknown_ids:
