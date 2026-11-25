@@ -142,7 +142,7 @@ def route_buddy_learning_query(
 
     exact_candidate_ids = _exact_seed_candidate_ids(normalized_query, root)
     exact_candidate_lessons = [
-        row for row in _course_matches(normalized_query, root, max(limit, 100))
+        row for row in _course_matches(normalized_query, root, 10_000)
         if row["lesson_id"] in exact_candidate_ids
     ]
     if exact_candidate_lessons:
