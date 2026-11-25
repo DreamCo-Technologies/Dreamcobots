@@ -53,3 +53,4 @@ def test_missing_capstone_is_explicitly_queued_for_definition():
     result = build_queue(config)
     assert result["playbooks"][0]["capstone_status"] == "needs_definition"
     assert result["playbooks"][0]["capstone_outcome"] is None
+    assert result["playbooks"][0]["status"] == "not_authored"
