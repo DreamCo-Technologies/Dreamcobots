@@ -1,10 +1,11 @@
-# Buddy Bootcamp: 65-division learning curriculum
+# Buddy Bootcamp: 55 canonical domains and 65 MasterBot learning lanes
 
-This curriculum gives every canonical MasterBot division a distinct student-model identity and a shared foundation across all 37 Hugging Face task families, then adds division-specific capability packs and pipeline-tag specializations.
+This curriculum serves 55 canonical DreamCo domain divisions and 65 canonical MasterBot lanes. These are distinct registries: the 55-domain crosswalk owns division curriculum routing, while the 65 MasterBot lanes are specialist learning/model lanes. Every MasterBot receives a shared foundation across all 37 Hugging Face task families, then receives specialist packs only through reviewed ownership mappings.
 
 ## Coverage
 
-- 65 division-specific curriculum lanes and independent model artifact namespaces.
+- 55 canonical domain-division curriculum routes and 65 MasterBot learning lanes.
+- 65 specialist model artifact namespaces; these are not a claim that there are 65 canonical domain divisions.
 - All 37 task families from the repository's refreshable Hugging Face task taxonomy.
 - All 10 capability packs from the HF capability download map.
 - 12 dataset discovery dimensions and 9 model discovery dimensions.
@@ -22,4 +23,4 @@ Each division receives its own model name/version and weights, checkpoint, token
 
 ## Evidence boundary
 
-The generated artifact is a curriculum and discovery plan, not proof of training. It does not download Hugging Face datasets/models, authorize licensing, run GPU jobs, certify models or deploy endpoints. Each division remains `SPECIFIED_NOT_TRAINED` until the training runner produces immutable weights/checkpoints/tokenizer hashes and independent benchmark evidence passes.
+The generated artifact is a curriculum and discovery plan, not proof of training. The 10 unresolved domain-to-MasterBot and 20 unresolved MasterBot ownership mappings remain review-required; shared foundations do not resolve ownership. It does not download Hugging Face datasets/models, authorize licensing, run GPU jobs, certify models or deploy endpoints. Each division remains `SPECIFIED_NOT_TRAINED` until the training runner produces immutable weights/checkpoints/tokenizer hashes and independent benchmark evidence passes.
