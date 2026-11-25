@@ -29,12 +29,17 @@ def audit_bot_accounting(root: Path, program: dict, placement: dict) -> dict:
     category_counts = Counter()
     division_counts = Counter()
     supplemental_division_counts = Counter()
+    supplemental_portfolio_counts = Counter()
+    unclassified_growth_counts = Counter()
     canonical_category_counts = Counter()
     supplemental_category_counts = Counter()
     declared_total_mismatches = []
     metadata_errors = []
+    supplemental_baseline = program["supplemental_fleet"]
+    expected_supplemental_divisions = supplemental_baseline["division_profiles"]
+    expected_supplemental_portfolios = supplemental_baseline.get("subportfolio_profiles", {})
 
-    for path in sorted(app_bots.glob("*.json")):
+    for path in sorted(app_bots.glob("*.json")): 
         payload = json.loads(path.read_text(encoding="utf-8"))
         division = payload.get("division") or path.stem
         supplemental = payload.get("growth") is True
@@ -46,9 +51,16 @@ def audit_bot_accounting(root: Path, program: dict, placement: dict) -> dict:
             slug = str(bot.get("slug", "")).strip()
             category = str(bot.get("category", "")).strip()
             slugs[slug].append(division)
-            cohort_divisions = supplemental_division_counts if supplemental else division_counts
             cohort_categories = supplemental_category_counts if supplemental else canonical_category_counts
-            cohort_divisions[division] += 1
+            if supplemental:
+                if division in expected_supplemental_divisions:
+                    supplemental_division_counts[division] += 1
+                elif division in expected_supplemental_portfolios:
+                    supplemental_portfolio_counts[division] += 1
+                else:
+                    unclassified_growth_counts[division] += 1
+            else:
+                division_counts[division] += 1
             cohort_categories[category or "__missing__"] += 1
             category_counts[category or "__missing__"] += 1
             missing = []
@@ -58,7 +70,12 @@ def audit_bot_accounting(root: Path, program: dict, placement: dict) -> dict:
                     missing.append(field)
             if missing:
                 metadata_errors.append({"slug": slug or None, "division": division, "missing": missing, "source": str(path.relative_to(root))})
-            bots.append({"slug": slug, "division": division, "category": category, "source": str(path.relative_to(root)), "cohort": "supplemental" if supplemental else "canonical"})
+            source_classification = (
+                "supplemental_domain" if division in expected_supplemental_divisions else
+                "supplemental_subportfolio" if division in expected_supplemental_portfolios else
+                "unclassified_growth_portfolio"
+            ) if supplemental else "canonical_domain"
+            bots.append({"slug": slug, "division": division, "category": category, "source": str(path.relative_to(root)), "cohort": "supplemental" if supplemental else "canonical", "source_classification": source_classification})
 
     canonical_bots = [bot for bot in bots if bot["cohort"] == "canonical"]
     supplemental_bots = [bot for bot in bots if bot["cohort"] == "supplemental"]
@@ -96,12 +113,10 @@ def audit_bot_accounting(root: Path, program: dict, placement: dict) -> dict:
         blockers.append(f"canonical fleet count {len(canonical_bots)} != expected {baseline['profiles']}")
     if len(division_counts) != baseline["divisions"]:
         blockers.append(f"division count {len(division_counts)} != expected {baseline['divisions']}")
-    supplemental_baseline = program["supplemental_fleet"]
     if len(supplemental_bots) != supplemental_baseline["profiles"]:
         blockers.append(f"supplemental fleet count {len(supplemental_bots)} != expected {supplemental_baseline['profiles']}")
     if len(supplemental_division_counts) != supplemental_baseline["divisions"]:
         blockers.append(f"supplemental division count {len(supplemental_division_counts)} != expected {supplemental_baseline['divisions']}")
-    expected_supplemental_divisions = supplemental_baseline["division_profiles"]
     supplemental_division_mismatches = [
         {"division": division, "expected": expected_supplemental_divisions.get(division, 0),
          "actual": supplemental_division_counts.get(division, 0)}
@@ -110,6 +125,16 @@ def audit_bot_accounting(root: Path, program: dict, placement: dict) -> dict:
     ]
     if supplemental_division_mismatches:
         blockers.append(f"supplemental division membership/count mismatches: {len(supplemental_division_mismatches)}")
+    expected_supplemental_portfolios = supplemental_baseline.get("subportfolio_profiles", {})
+    supplemental_portfolio_mismatches = [
+        {"portfolio": name, "expected": expected_supplemental_portfolios.get(name, 0), "actual": supplemental_portfolio_counts.get(name, 0)}
+        for name in sorted(set(expected_supplemental_portfolios) | set(supplemental_portfolio_counts))
+        if expected_supplemental_portfolios.get(name, 0) != supplemental_portfolio_counts.get(name, 0)
+    ]
+    if supplemental_portfolio_mismatches:
+        blockers.append(f"supplemental subportfolio membership/count mismatches: {len(supplemental_portfolio_mismatches)}")
+    if unclassified_growth_counts:
+        blockers.append(f"unclassified growth portfolios: {len(unclassified_growth_counts)}")
     if duplicate_slugs:
         blockers.append(f"duplicate slugs: {len(duplicate_slugs)}")
     if declared_total_mismatches:
@@ -140,6 +165,9 @@ def audit_bot_accounting(root: Path, program: dict, placement: dict) -> dict:
         "total_accounted_software_workers": len(bots) + len(specialist_agents),
         "division_counts": dict(sorted(division_counts.items())),
         "supplemental_division_counts": dict(sorted(supplemental_division_counts.items())),
+        "supplemental_portfolio_counts": dict(sorted(supplemental_portfolio_counts.items())),
+        "unclassified_growth_counts": dict(sorted(unclassified_growth_counts.items())),
+        "supplemental_portfolio_mismatches": supplemental_portfolio_mismatches,
         "canonical_category_counts": dict(sorted(canonical_category_counts.items())),
         "supplemental_category_counts": dict(sorted(supplemental_category_counts.items())),
         "canonical_profiles": canonical_bots,
@@ -185,6 +213,7 @@ def main() -> int:
         f"- Canonical bots: **{payload['canonical_bot_count']}**",
         f"- Supplemental profiles: **{payload['supplemental_bot_count']}** (catalog/sandbox scope; not production verification)",
         f"- Supplemental divisions: **{payload['supplemental_division_count']}**",
+        f"- Supplemental subportfolio profiles: **{sum(supplemental_portfolio_counts.values())}**",
         f"- Divisions: **{len(division_counts)}**",
         f"- Categories: **{len(category_counts)}**",
         f"- Specialist agents outside fixed fleet: **{len(specialist_agents)}**",
