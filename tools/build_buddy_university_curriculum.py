@@ -40,6 +40,11 @@ FCC_DIVISION_CROSSWALK = {
     "software_architecture_and_testing": ["DreamCodeLab", "DreamAIInfra", "DreamAutomation", "DreamDecision"],
     "design_ux_and_product": ["DreamArts", "DreamContent", "DreamCodeLab", "DreamCustIntel"],
     "other_or_unclassified": ["DreamEducation", "CommandCore"],
+    "a2-english-for-developers": ["DreamGlobal", "DreamEducation", "DreamProServices", "DreamContent"],
+    "b1-english-for-developers": ["DreamGlobal", "DreamEducation", "DreamProServices", "DreamContent"],
+    "a1-professional-spanish": ["DreamGlobal", "DreamEducation", "DreamProServices"],
+    "a1-professional-chinese": ["DreamGlobal", "DreamEducation", "DreamProServices"],
+    "foundational-c-sharp-with-microsoft": ["DreamCodeLab", "DreamAutomation", "DreamAIInfra"],
 }
 ALIASES = {
     "DreamAIInfra": {"ai", "artificial-intelligence", "machine-learning", "deep-learning", "llm", "llms", "model", "models", "inference", "training", "gpu", "transformer", "embedding", "agent", "agents", "multimodal"},
