@@ -1,0 +1,106 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "dreamco.buddy_25m_cpu_llm_resource_catalog.v1",
+  "title": "Buddy 25M CPU LLM reference catalog",
+  "type": "object",
+  "required": [
+    "schema",
+    "title",
+    "version",
+    "resource_count",
+    "resources",
+    "automatic_download",
+    "automatic_transcript_download",
+    "automatic_training_approval",
+    "rights_policy",
+    "truth_boundary"
+  ],
+  "properties": {
+    "schema": {
+      "const": "dreamco.buddy_25m_cpu_llm_resource_catalog.v1"
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "version": {
+      "type": "string"
+    },
+    "resource_count": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "resources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "title",
+          "url",
+          "role",
+          "publisher",
+          "access",
+          "source_status",
+          "rights_status",
+          "training_data_authorized",
+          "transcript_permission"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "role": {
+            "type": "string"
+          },
+          "publisher": {
+            "type": "string"
+          },
+          "access": {
+            "const": "link_only_reference"
+          },
+          "source_status": {
+            "enum": [
+              "needs_current_review",
+              "reviewed"
+            ]
+          },
+          "rights_status": {
+            "const": "review_required"
+          },
+          "training_data_authorized": {
+            "const": false
+          },
+          "transcript_permission": {
+            "const": "not_granted"
+          }
+        }
+      }
+    },
+    "automatic_download": {
+      "const": false
+    },
+    "automatic_transcript_download": {
+      "const": false
+    },
+    "automatic_training_approval": {
+      "const": false
+    },
+    "rights_policy": {
+      "type": "object"
+    },
+    "truth_boundary": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": true
+}

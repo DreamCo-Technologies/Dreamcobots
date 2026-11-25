@@ -14,6 +14,7 @@ class Buddy25MCpuLLMCourseTests(unittest.TestCase):
         cls.model_units = json.loads((ROOT / "config/buddy-gpt-style-model-training-units.json").read_text(encoding="utf-8"))
         cls.division_map = json.loads((ROOT / "config/buddy-ai-model-course-division-map.json").read_text(encoding="utf-8"))
         cls.onet = json.loads((ROOT / "config/buddy-onet-content-model-curriculum.json").read_text(encoding="utf-8"))
+        cls.resources = json.loads((ROOT / "config/buddy-25m-cpu-llm-resource-catalog.json").read_text(encoding="utf-8"))
 
     def test_course_has_all_18_ordered_modules_and_full_video_chapters(self):
         self.assertEqual(len(self.course["modules"]), 18)
@@ -47,6 +48,12 @@ class Buddy25MCpuLLMCourseTests(unittest.TestCase):
         self.assertFalse(self.resources["automatic_download"])
         self.assertFalse(self.resources["automatic_transcript_download"])
         self.assertFalse(self.resources["automatic_training_approval"])
+        ids = [row["id"] for row in self.resources["resources"]]
+        self.assertEqual(len(ids), len(set(ids)))
+        self.assertTrue(all(row["access"] == "link_only_reference" for row in self.resources["resources"]))
+        self.assertTrue(all(row["rights_status"] == "review_required" for row in self.resources["resources"]))
+        self.assertTrue(all(not row["training_data_authorized"] for row in self.resources["resources"]))
+
 
     def test_onet_covers_six_content_model_areas_and_all_divisions(self):
         self.assertEqual(len(self.onet["content_model_areas"]), 6)
