@@ -34,3 +34,12 @@ The Top-1000 study curriculum is separate from the protected DreamCo model catal
 - `tools/buddy_library_knowledge.py` exposes search, gap, report and explicit opt-in discovery commands.
 
 A guide enters internal search and the course queue only after it is approved and passes the guide evidence and rights checks. Drafts, stale items and blocked items remain visible in the coverage report but are not presented as Buddy knowledge.
+
+
+## Internal-first Buddy query routing
+
+- `buddy_knowledge_router.py` is the shared query entry point: it retrieves approved guide documents first, then ranks matching lessons from the shared Bootcamp registry, then returns an explicit knowledge gap.
+- A Bootcamp lesson is a study assignment, not a completed answer or mastery claim. The route records `queued_not_studied` and never awards mastery.
+- The router never invokes a model, contacts a registry, downloads a package, or executes external code. External discovery remains a separate, explicit opt-in action.
+- Gap persistence is off by default because raw user queries should not be written to repository files without a deliberate caller choice. Set `record_gap=True` only when the caller is authorized to persist that query.
+- Results expose whether the route was an approved internal guide, a Bootcamp lesson, or a knowledge gap. External model routing is always reported as not performed.
