@@ -10,7 +10,9 @@ on:
       - "config/freecodecamp-complete-learning-path.json"
       - "config/freecodecamp-detailed-video-study-guide.schema.json"
       - "tools/build_freecodecamp_study_guides.py"
+      - "tools/sync_freecodecamp_catalog.py"
       - "tests/test_freecodecamp_study_guides.py"
+      - "tests/test_freecodecamp_catalog_categories.py"
       - ".github/workflows/freecodecamp-study-guide-pipeline.yml"
   push:
     branches: [main]
@@ -44,6 +46,8 @@ jobs:
           python-version: "3.11"
       - name: Validate guide queue and rights gates
         run: python -m unittest discover -s tests -p 'test_freecodecamp_study_guides.py' -v
+      - name: Validate FreeCodeCamp catalog taxonomy
+        run: python -m unittest discover -s tests -p 'test_freecodecamp_catalog_categories.py' -v
       - name: Build per-video guide queue
         run: python tools/build_freecodecamp_study_guides.py --out-dir "$RUNNER_TEMP/freecodecamp-study-guides"
       - name: Publish coverage truth
