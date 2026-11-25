@@ -60,7 +60,7 @@ class BuddyInternalFirstLearningRouterTests(unittest.TestCase):
             with patch("buddy.learning.buddy_knowledge_router.search_internal_library_knowledge", return_value={
                 "matches": [], "seed_candidate_matches": [], "knowledge_gap": {"status": "internal_knowledge_gap"},
             }), patch("buddy.learning.buddy_knowledge_router._course_matches", return_value=[]):
-                result = route_buddy_learning_query("unmapped capability zqv 9842", root=root)
+                result = route_buddy_learning_query("unmapped capability zebra quartz violet", root=root)
             self.assertEqual(result["route"], "internal_knowledge_gap")
             self.assertIsNone(result["gap_event"])
             self.assertTrue(result["external_discovery_available"])
@@ -81,7 +81,7 @@ class BuddyInternalFirstLearningRouterTests(unittest.TestCase):
             with patch("buddy.learning.buddy_knowledge_router.search_internal_library_knowledge", return_value={
                 "matches": [], "seed_candidate_matches": [], "knowledge_gap": {"status": "internal_knowledge_gap"},
             }), patch("buddy.learning.buddy_knowledge_router._course_matches", return_value=[]):
-                result = route_buddy_learning_query("unmapped capability zqv 9842", root=root, record_gap=True)
+                result = route_buddy_learning_query("unmapped capability zebra quartz violet", root=root, record_gap=True)
             self.assertEqual(result["gap_event"]["status"], "open")
             self.assertFalse(result["gap_event"]["external_routing_performed"])
             self.assertTrue((root / "data/buddy-library-knowledge-gaps.jsonl").is_file())
