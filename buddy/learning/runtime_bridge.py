@@ -14,6 +14,7 @@ from pathlib import Path
 from typing import Any
 
 from buddy.learning.library_knowledge_router import route_library_question
+from buddy.learning.course_track_registry import load_course_lessons, resources_for_division, resources_for_masterbot
 from buddy.learning.evidence_acquisition import (
     Capability, CapabilityRegistry, LearningEvent, LearningLedger, benchmark_gate,
 )
@@ -121,6 +122,61 @@ class BuddyLearningBridge:
             requested_by="buddy-runtime",
             gap_root=gap_root,
         )
+
+    def library_learning_queue(self, *, division: str | None = None,
+                               masterbot: str | None = None, query: str = "",
+                               limit: int = 50) -> dict[str, Any]:
+        """Return queued library lessons for a canonical division or MasterBot lane."""
+        if bool(division) == bool(masterbot):
+            raise ValueError("provide exactly one canonical division or MasterBot lane")
+        if limit < 1 or limit > 100:
+            raise ValueError("limit must be between 1 and 100")
+        if division:
+            resources_for_division(division)
+            owner = {"division": division}
+        else:
+            resources_for_masterbot(str(masterbot))
+            owner = {"masterbot": masterbot}
+        lessons = [
+            lesson for lesson in load_course_lessons()
+            if lesson.track_id == "universal-software-libraries"
+        ]
+        if query.strip():
+            terms = {token for token in __import__("re").findall(r"[a-z0-9]+", query.lower()) if len(token) > 1}
+            lessons = [
+                lesson for lesson in lessons
+                if terms & set(__import__("re").findall(
+                    r"[a-z0-9]+",
+                    f"{lesson.title} {lesson.category} {lesson.objective}".lower()
+                ))
+            ]
+        items = [{
+            "resource_id": lesson.resource_id,
+            "lesson_id": lesson.lesson_id,
+            "track_id": lesson.track_id,
+            "title": lesson.title,
+            "category": lesson.category,
+            "objective": lesson.objective,
+            "practice": lesson.practice,
+            "assessment": lesson.assessment,
+            "benchmark": lesson.benchmark,
+            "source_url": lesson.source_url,
+            "guide_path": lesson.guide_path,
+            "rights_mode": lesson.rights_mode,
+            "completion_status": "queued_not_studied",
+            "mastery_awarded": False,
+            "model_weight_training_authorized": False,
+            "paid_compute_authorized": False,
+        } for lesson in lessons[:limit]]
+        return {
+            "schema": "dreamco.buddy_library_learning_queue.v1",
+            **owner,
+            "query": query,
+            "available_count": len(lessons),
+            "returned_count": len(items),
+            "items": items,
+            "external_model_call_performed": False,
+        }
 
     def sop_candidates(self, tenant_id: str, domain: str, *, minimum_successes: int = 3) -> list[dict]:
         """Produce review-only SOP outlines, not inferred steps or executable automation."""
