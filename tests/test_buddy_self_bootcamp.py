@@ -1,5 +1,5 @@
 import unittest
-from tools.build_buddy_self_bootcamp import build, division_names
+from tools.build_buddy_self_bootcamp import build, division_names, map_subjects
 
 class SelfBootcampTests(unittest.TestCase):
     def test_parser_requires_exactly_55_complete_division_profiles(self):
@@ -15,6 +15,17 @@ class SelfBootcampTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             division_names(incomplete)
 
+    def test_hugging_face_subjects_are_matched_not_broadcast_to_every_division(self):
+        record={"division":"DreamData","purpose":"Build data platforms and analytics",
+          "outcome":"Reliable analytics and data pipelines","focus_areas":["SQL","data engineering","dashboards"],
+          "serves":["data teams"]}
+        selected,matched=map_subjects(record,["audio","music-generation","data-engineering","sql","vision","statistics","business"])
+        self.assertIn("data-engineering",matched)
+        self.assertIn("sql",matched)
+        self.assertNotIn("audio",matched)
+        self.assertNotIn("vision",matched)
+        self.assertIn("statistics",selected)
+
     def test_builds_all_division_paths_and_preserves_truth_boundary(self):
         names=[f"Division{i}" for i in range(55)]
         workforce={"training_paths":[{"id":"sales"}]}
@@ -26,5 +37,7 @@ class SelfBootcampTests(unittest.TestCase):
         self.assertEqual(result["coverage"]["onet_task_statements"],8)
         self.assertIn("not proof",result["truth_boundary"])
         self.assertTrue(result["buddy_bootcamp_builder_loop"]["steps"])
+        self.assertIn("buddy_ai_college", result)
+        self.assertIn("tool_capability_families", result["divisions"][0]["autonomous_agent_capability_curriculum"])
 
 if __name__=="__main__": unittest.main()
