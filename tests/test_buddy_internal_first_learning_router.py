@@ -13,7 +13,7 @@ class BuddyInternalFirstLearningRouterTests(unittest.TestCase):
     def test_query_routes_to_internal_bootcamp_instead_of_a_model(self):
         result = route_buddy_learning_query("React component hooks", root=ROOT, limit=10)
         self.assertEqual(result["route"], "internal_bootcamp_lesson")
-        self.assertTrue(any(row["lesson_id"] == "candidate-discovery-seed-react" for row in result["course_lessons"]))
+        self.assertTrue(any(row["lesson_id"] == "candidate-discovery-seed-react-19" for row in result["course_lessons"]))
         self.assertFalse(result["external_discovery_performed"])
         self.assertFalse(result["external_model_routing_performed"])
         self.assertTrue(result["study_required"])
