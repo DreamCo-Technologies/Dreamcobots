@@ -2,6 +2,18 @@ name: Superbot Migration Ledger
 
 on:
   workflow_dispatch:
+  pull_request:
+    paths:
+      - 'config/superbot-consolidation-v1.json'
+      - 'config/generated/superbot-repository-inventory.json'
+      - 'config/generated/legacy-bot-recovery-manifest.json'
+      - 'tools/compile_superbot_migration.py'
+      - 'tools/build_superbot_repository_inventory.py'
+      - 'tools/build_division_superbot_manifests.py'
+      - 'tools/generate_bot_manifests.py'
+      - 'config/bots/bot-manifests.generated.json'
+      - 'App_bots/**'
+      - 'tests/test_division_superbot_manifests.py'
   push:
     branches: [main, 'codex/superbot-consolidation']
     paths:
