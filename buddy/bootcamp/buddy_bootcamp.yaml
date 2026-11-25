@@ -22,6 +22,7 @@ tracks:
   - tolkien_studies
   - onet_full_content_model_and_task_engineering
   - huggingface_full_learning_map
+  - freecodecamp_complete_video_catalog
 stages:
   - diagnose
   - select_resource
@@ -115,6 +116,19 @@ learning_sources:
     rights_policy: block_unknown_rights_and_copyrighted_text_ingestion
     copyrighted_tolkien_text_training: false
     mastery_evidence_required: [original_artifact, citations, item_level_rights_review, rubric, unseen_assessment, reviewer]
+  - id: freecodecamp_complete_video_catalog
+    name: freeCodeCamp full public video catalog and rights-gated lesson queue
+    curriculum: config/freecodecamp-complete-learning-path.json
+    video_catalog: buddy/bootcamp/sources/freecodecamp/catalog.json
+    study_guide_contract: config/freecodecamp-detailed-video-study-guide.schema.json
+    study_guide: docs/FREECODECAMP_COMPLETE_BUDDY_LEARNING_PATH.md
+    applies_to: all_55_canonical_divisions_and_65_masterbot_lanes
+    scheduler: buddy.learning.course_track_registry
+    metadata_only_until_item_level_permissions: true
+    transcript_ingestion: disabled_by_default
+    model_training_permission: separate_and_not_granted
+    inventory_completeness: partial_until_verified_playlist_count
+    mastery_evidence_required: [authorized_source, timestamped_guide, original_exercises, answer_key, independent_assessment, reviewer]
   - id: huggingface_full_learning_map
     name: Hugging Face full official course catalog and ecosystem engineering
     curriculum: config/buddy-huggingface-full-learning-map.json
