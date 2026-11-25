@@ -36,6 +36,7 @@ on:
       - "tools/build_freecodecamp_routes.py"
       - "buddy/learning/freecodecamp_source.py"
       - "buddy/learning/study_resource_scheduler.py"
+      - "tests/test_study_resource_scheduler.py"
       - "tests/test_freecodecamp_source_routes.py"
       - "buddy/learning/study_artifact_cleanup.py"
       - "tests/test_study_artifact_cleanup.py"
@@ -181,6 +182,7 @@ jobs:
           python tools/build_freecodecamp_routes.py --check --out "$RUNNER_TEMP/freecodecamp-source-routes.json"
           python -m unittest discover -s tests -p 'test_freecodecamp_source_routes.py' -v
           python -m unittest discover -s tests -p 'test_study_artifact_cleanup.py' -v
+          python -m unittest discover -s tests -p 'test_study_resource_scheduler.py' -v
           python -m unittest discover -s tests -p 'test_permissioned_study_worker.py' -v
           python tools/build_daily_lesson_plan.py --queues "$RUNNER_TEMP/freecodecamp-division-learning-queues.json"
           python -m unittest discover -s tests -p 'test_daily_lesson_plan.py' -v
