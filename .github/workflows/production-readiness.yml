@@ -25,6 +25,8 @@ jobs:
         uses: actions/setup-python@v7
         with:
           python-version: '3.12'
+      - name: Test production certification truth rules
+        run: python3 -m unittest tests.test_production_readiness_gate -v
       - name: Run evidence inventory
         run: python3 tools/production_readiness_gate.py | tee production-readiness-report.txt
       - name: Run static site preflight
