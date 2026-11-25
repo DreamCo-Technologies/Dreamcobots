@@ -32,6 +32,8 @@ on:
       - "tests/test_freecodecamp_youtube_catalog.py"
       - "docs/FREECODECAMP_YOUTUBE_LEARNING_LIBRARY.md"
       - "docs/BUDDY_HUMAN_CENTRIC_MULTIMODAL_REQUIREMENTS.md"
+      - "config/buddy-tolkien-study-track.json"
+      - "tests/test_buddy_tolkien_study_track.py"
       - "tools/build_freecodecamp_division_queues.py"
       - "tests/test_freecodecamp_division_queues.py"
       - "tools/validate_freecodecamp_learning_evidence.py"
@@ -86,6 +88,8 @@ on:
       - "tests/test_freecodecamp_youtube_catalog.py"
       - "docs/FREECODECAMP_YOUTUBE_LEARNING_LIBRARY.md"
       - "docs/BUDDY_HUMAN_CENTRIC_MULTIMODAL_REQUIREMENTS.md"
+      - "config/buddy-tolkien-study-track.json"
+      - "tests/test_buddy_tolkien_study_track.py"
       - "tools/build_freecodecamp_division_queues.py"
       - "tests/test_freecodecamp_division_queues.py"
       - "tools/validate_freecodecamp_learning_evidence.py"
@@ -204,6 +208,7 @@ jobs:
           python tools/build_buddy_bootcamp_curriculum.py --check
           python -m unittest discover -s tests -p 'test_buddy_bootcamp_curriculum.py' -v
           python -m unittest discover -s tests -p 'test_buddy_bootcamp_workflow_safety.py' -v
+          python -m unittest discover -s tests -p 'test_buddy_tolkien_study_track.py' -v
           python -m unittest discover -s tests -p 'test_dreamco_bootcamp_seed_data.py' -v
           python -m unittest discover -s tests -p 'test_dreamco_training_factory.py' -v
           python -m unittest discover -s tests -p 'test_dreamco_original_training_examples.py' -v
