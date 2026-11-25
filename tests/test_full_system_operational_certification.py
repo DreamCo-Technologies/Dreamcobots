@@ -2,6 +2,11 @@ import json
 import unittest
 from pathlib import Path
 
+from tools.build_full_system_certification import (
+    runtime_connection_evidence_valid,
+    work_platform_benchmarks_ready,
+)
+
 ROOT = Path(__file__).resolve().parents[1]
 PROGRAM = ROOT / "config" / "full-system-operational-certification.json"
 BENCH = ROOT / "config" / "system-speed-accuracy-benchmarks.json"
@@ -51,6 +56,42 @@ class FullSystemOperationalCertificationTests(unittest.TestCase):
     def test_external_api_accuracy_is_not_faked_by_local_tests(self):
         self.assertIn("external apis", self.bench["truth_rule"].lower())
         self.assertIn("their own runtime latency", self.bench["truth_rule"].lower())
+
+
+    def test_runtime_connection_evidence_requires_consistent_counts_and_provenance(self):
+        valid = {
+            "connection_count": 1,
+            "runtime_verified_count": 1,
+            "all_declared_runtime_connections_verified": True,
+            "connections": [{
+                "connection_id": "provider-a",
+                "state": "runtime_verified",
+                "runtime_verified": True,
+                "evidence_reference": "probe-run-123",
+                "tested_at": "2026-11-25T12:00:00Z",
+            }],
+        }
+        self.assertTrue(runtime_connection_evidence_valid(valid))
+        missing_provenance = json.loads(json.dumps(valid))
+        missing_provenance["connections"][0]["evidence_reference"] = None
+        self.assertFalse(runtime_connection_evidence_valid(missing_provenance))
+        inconsistent_count = json.loads(json.dumps(valid))
+        inconsistent_count["runtime_verified_count"] = 0
+        self.assertFalse(runtime_connection_evidence_valid(inconsistent_count))
+
+    def test_work_platform_catalog_missing_or_empty_backlog_blocks_certification(self):
+        self.assertFalse(work_platform_benchmarks_ready({
+            "status": "work_catalog_missing", "task_count": 0,
+            "benchmark_case_count": 0, "cases": [],
+        }))
+        self.assertFalse(work_platform_benchmarks_ready({
+            "status": "generated", "task_count": 10,
+            "benchmark_case_count": 0, "cases": [],
+        }))
+        self.assertTrue(work_platform_benchmarks_ready({
+            "status": "generated", "task_count": 10,
+            "benchmark_case_count": 2, "cases": [{}, {}],
+        }))
 
 
 if __name__ == "__main__":
