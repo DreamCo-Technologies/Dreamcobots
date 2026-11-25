@@ -1,0 +1,28 @@
+name: Library Candidate Verification Queue
+
+on:
+  pull_request:
+    paths:
+      - "data/buddy-library-seed-catalog.json"
+      - "config/library_ecosystems.json"
+      - "tools/build_library_candidate_verification_queue.py"
+      - "tests/test_library_candidate_verification_queue.py"
+      - ".github/workflows/library-candidate-verification-queue.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: library-candidate-queue-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: python -m pip install --disable-pip-version-check pytest
+      - run: python -m pytest -q tests/test_library_candidate_verification_queue.py
+      - run: python tools/build_library_candidate_verification_queue.py --output /tmp/library-candidate-queue.json
