@@ -55,8 +55,14 @@ def build_owner_review_queue(
     approved_core = {int(row["masterbot_id"]): row for row in approval.get("exact_name_matches", [])}
     approved_supplemental = {str(row["domain_id"]): row for row in approval.get("supplemental_collaborators", [])}
     approved_shared_ids = set((approval.get("shared_platform_services") or {}).get("masterbot_ids", []))
-    if approval and (len(approved_core) != 45 or len(approved_supplemental) != 10 or approved_shared_ids != set(range(46, 66))):
-        raise OwnerReviewQueueError("conversation_approval_record_must_cover_45_10_20_without_duplicates")
+    if approval and (
+        approval.get("status") != "user_approved_pending_github_identity_attestation"
+        or (approval.get("approver") or {}).get("identity_verification") != "not_independently_verified_by_github"
+        or set(approved_core) != set(range(1, 46))
+        or set(approved_supplemental) != {str(row["domain_id"]) for row in review.get("unassigned_domain_profiles", [])}
+        or approved_shared_ids != set(range(46, 66))
+    ):
+        raise OwnerReviewQueueError("conversation_approval_record_must_match_45_10_20_sources_and_remain_unattested")
 
     platform_rows = reconciliation.get("shared_platform_masterbots", [])
     platform_by_id = _unique_index(platform_rows, "id", "shared_platform_masterbot")
