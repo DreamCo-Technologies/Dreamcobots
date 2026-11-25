@@ -14,6 +14,8 @@
   },
   "study_loop": [
     "diagnose_capability_gap",
+    "load_versioned_course_track_registry",
+    "route_shared_course_lessons_to_all_55_domains_and_65_masterbot_lanes",
     "select_authorized_source",
     "retrieve_only_permitted_content",
     "build_original_study_guide",
@@ -118,6 +120,11 @@
       "user_owned_data_with_purpose_specific_consent"
     ],
     "rule": "Only approved complete guides with item-level study, summary-derivative and evaluation permissions enter division learning queues.",
-    "authoring_prompt": "buddy/bootcamp/prompts/open-source-study-guide-authoring.md"
+    "authoring_prompt": "buddy/bootcamp/prompts/open-source-study-guide-authoring.md",
+    "course_track_registry": "config/buddy-course-track-registry.json",
+    "course_track_runtime_adapter": "buddy.learning.course_track_registry",
+    "course_track_count": 6,
+    "course_lesson_count": 156,
+    "course_track_rule": "All 55 canonical divisions and 65 MasterBot lanes receive shared foundation lesson queues; specialty ownership remains governed by the reviewed crosswalk. Queued lessons are not completed lessons or mastery."
   }
 }
