@@ -1,0 +1,56 @@
+name: Buddy Open-Source Weekly Bootcamp
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 9 * * 1"
+  push:
+    branches: [main]
+    paths:
+      - "config/buddy-open-source-bootcamp.json"
+      - "tools/discover_open_source_bootcamp_sources.py"
+      - ".github/workflows/buddy-open-source-weekly-bootcamp.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: buddy-open-source-weekly-bootcamp
+  cancel-in-progress: false
+
+jobs:
+  discover-and-build-weekly-learning-queue:
+    if: github.repository == 'DreamCo-Technologies/Dreamcobots'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Validate bootcamp configuration
+        run: python -m json.tool config/buddy-open-source-bootcamp.json > /dev/null
+      - name: Discover GitHub repositories and Hugging Face subjects
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          python tools/discover_open_source_bootcamp_sources.py \
+            --out-dir "$RUNNER_TEMP/buddy-bootcamp-weekly" \
+            --hf-limit-per-subject 20
+      - name: Publish weekly discovery report
+        if: always()
+        run: |
+          if [ -f "$RUNNER_TEMP/buddy-bootcamp-weekly/summary.md" ]; then
+            cat "$RUNNER_TEMP/buddy-bootcamp-weekly/summary.md" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "Discovery report unavailable; source coverage is unverified." >> "$GITHUB_STEP_SUMMARY"
+          fi
+      - name: Upload source snapshot and review queue
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: buddy-open-source-weekly-${{ github.run_id }}
+          path: ${{ runner.temp }}/buddy-bootcamp-weekly/
+          if-no-files-found: warn
+          retention-days: 90
