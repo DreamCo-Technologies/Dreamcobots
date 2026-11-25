@@ -10,12 +10,26 @@ import json
 from pathlib import Path
 from typing import Any, Callable
 from urllib.error import URLError
-from urllib.parse import urlencode
-from urllib.request import Request, urlopen
+from urllib.parse import quote, urlencode, urlparse
+from urllib.request import HTTPRedirectHandler, Request, build_opener
 
 ROOT = Path(__file__).resolve().parents[2]
 CONFIG = ROOT / "config/buddy-library-registry-adapters.json"
 USER_AGENT = "DreamCo-Buddy-Library-Metadata-Discovery/1.0"
+
+
+class _SameHostRedirectHandler(HTTPRedirectHandler):
+    """Reject redirects to hosts outside the configured registry endpoint."""
+
+    def __init__(self, allowed_host: str):
+        super().__init__()
+        self.allowed_host = allowed_host
+
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        target = urlparse(newurl)
+        if target.scheme != "https" or target.hostname != self.allowed_host:
+            raise ValueError("registry redirect left the configured HTTPS host")
+        return super().redirect_request(req, fp, code, msg, headers, newurl)
 
 
 def _load_config(root: Path) -> dict[str, Any]:
@@ -120,9 +134,9 @@ def search_public_registry(
     endpoint = provider["endpoint"]
     if provider["parser"] == "pypi":
         safe_name = query.strip()
-        if "/" in safe_name or "?" in safe_name or "#" in safe_name:
-            raise ValueError("PyPI exact lookup accepts a package name, not a URL")
-        url = endpoint.replace("{query}", safe_name)
+        if not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._-]*", safe_name):
+            raise ValueError("PyPI exact lookup accepts a valid package name, not a URL or path")
+        url = endpoint.replace("{query}", quote(safe_name, safe=".-_"))
     else:
         params: dict[str, Any] = {provider["query_parameter"]: query.strip()}
         size_key = provider.get("page_size_parameter")
@@ -132,11 +146,10 @@ def search_public_registry(
         if page_key:
             params[page_key] = page * limit if provider_id in {"npm", "nuget", "huggingface-models", "huggingface-datasets"} else page + 1
         url = endpoint + "?" + urlencode(params)
-    from urllib.parse import urlparse
     if urlparse(url).scheme != "https" or urlparse(url).hostname != provider["host"]:
         raise ValueError("registry URL failed the configured HTTPS host allowlist")
     request = Request(url, headers={"User-Agent": USER_AGENT, "Accept": "application/json"})
-    fetch = opener or urlopen
+    fetch = opener or build_opener(_SameHostRedirectHandler(provider["host"])).open
     try:
         response = fetch(request, timeout=int(config.get("timeout_seconds", 12)))
         with response:
