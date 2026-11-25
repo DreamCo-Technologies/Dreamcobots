@@ -24,3 +24,7 @@ python tools/run_tiny_gpt_baseline.py --output artifacts/buddy-gpt-baseline/base
 ```
 
 The runner writes a JSON report only. It has no optimizer, training loop, model downloader, or weight/checkpoint writer. Training remains separately blocked pending dataset/model rights review and explicit authorization.
+
+## Registry and promotion
+
+This baseline is registered in `config/buddy-model-registry.json`. It has no trained weight artifact, no verified capability benchmark, no training authorization, and no marketplace eligibility. Its synthetic byte fixture is engineering/evaluation-only and is not approved for weight training. See `config/buddy-tiny-gpt-benchmark-contract.json` and `docs/BUDDY_MODEL_REGISTRY_AND_USER_DEFINED_SIZES.md` for the gates.
