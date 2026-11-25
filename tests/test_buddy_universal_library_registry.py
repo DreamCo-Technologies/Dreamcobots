@@ -83,10 +83,10 @@ class UniversalLibraryRegistryTests(unittest.TestCase):
         self.assertEqual(result["matches"], [])
         self.assertEqual(result["knowledge_gap"]["status"], "internal_knowledge_gap")
 
-    def test_gated_guide_is_not_in_internal_search_without_approved_access(self):
+    def test_gated_guide_cannot_be_marked_approved_for_internal_search(self):
         self.write_guide(access="gated")
-        result = search_internal_library_knowledge("Python HTTP sessions", root=self.root)
-        self.assertEqual(result["matches"], [])
+        with self.assertRaises(ValueError):
+            search_internal_library_knowledge("Python HTTP sessions", root=self.root)
 
     def test_gap_record_is_append_only_and_does_not_route_externally(self):
         record_library_knowledge_gap("Rust async runtime", root=self.root)
