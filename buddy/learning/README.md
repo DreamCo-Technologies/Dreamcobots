@@ -36,6 +36,16 @@ The Top-1000 study curriculum is separate from the protected DreamCo model catal
 A guide enters internal search and the course queue only after it is approved and passes the guide evidence and rights checks. Drafts, stale items and blocked items remain visible in the coverage report but are not presented as Buddy knowledge.
 
 
+## Runtime bridge and local retrieval
+
+- `runtime_bridge.py` exposes `BuddyLearningBridge.library_knowledge()` and `library_learning_queue()` and `library_coverage()` to the host-mediated Buddy runtime; the queue is scoped to a canonical division or MasterBot lane.
+- `buddy/datasets/unknown_router.py` invokes the same internal-first route for library, framework, SDK, package and API questions; it reuses the existing explicit external-discovery gate.
+- The bridge searches approved internal guides first through `foundry.local_rag.LocalRagStore`; the index is local, dependency-free TF-IDF and does not call an embedding or frontier model.
+- An unapproved/missing guide returns a gap and any matching seed candidates, clearly labeled as unverified.
+- Public registry metadata discovery requires an explicit `external_discovery=True` from the host. It does not invoke an external model, download packages or execute code.
+- Knowledge-gap persistence is opt-in and requires the host to mark the query redacted. Gap records are written under ignored `.dreamco/`, never the public guide catalog or website data.
+
+
 ## Internal-first Buddy query routing
 
 - `buddy_knowledge_router.py` is the shared query entry point: it retrieves approved guide documents first, then ranks matching lessons from the shared Bootcamp registry, then returns an explicit knowledge gap.
