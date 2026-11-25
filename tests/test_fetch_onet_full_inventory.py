@@ -75,7 +75,7 @@ class OnetFullInventoryTests(unittest.TestCase):
         self.assertEqual(playbook["occupation_profile_ref"],"15-1252.00")
         self.assertIn("Python",playbook["guide_authoring_brief"]["official_software_examples"])
         self.assertNotIn("software_skills",playbook.get("official_occupation_profile",{}))
-        self.assertEqual(enriched["source"]["license"].split(".")[0],"Creative Commons Attribution 4.0 International")
+        self.assertTrue(enriched["source"]["license"].startswith("Creative Commons Attribution 4.0 International"))
 
 
 if __name__=="__main__":
