@@ -92,7 +92,12 @@ class BuddyUniversityCurriculumTests(unittest.TestCase):
                         "categories": ["javascript_and_typescript"], "rights_status": "review_required",
                         "learning_status": "not_studied"}],
         }
-        result = build(self.profiles, self.hf, self.fcc, self.onet, self.taxonomy, college, catalog)
+        workforce = {"training_paths": [{"id": "public-procurement", "title": "Government Contracting", "subjects": ["procurement", "sales", "compliance"]}]}
+        government = {"official_sources": [{"id": "sam", "url": "https://sam.gov"}],
+                      "procurement_pipeline": ["market_research", "bid_no_bid"],
+                      "grant_pipeline": ["eligibility_review"],
+                      "benefit_protections": {"no_eligibility_guarantees": True}}
+        result = build(self.profiles, self.hf, self.fcc, self.onet, self.taxonomy, college, catalog, workforce, government)
         self.assertEqual(result["coverage"]["freecodecamp_channel_videos"], 1)
         self.assertEqual(result["coverage"]["freecodecamp_channel_inventory_status"], "complete")
         code = next(row for row in result["divisions"] if row["division"] == "DreamCodeLab")
@@ -101,6 +106,8 @@ class BuddyUniversityCurriculumTests(unittest.TestCase):
         self.assertEqual(code["agent_capability_catalog"][0]["id"], "software")
         self.assertEqual(result["instructional_model"]["teacher"]["role"], "GPT-6 instructor")
         self.assertTrue(result["source_family_routes"])
+        self.assertTrue(result["venture_and_workforce_tracks"])
+        self.assertTrue(result["government_and_community_curriculum"]["benefit_protections"]["no_eligibility_guarantees"])
 
     def test_map_does_not_claim_training_or_mastery(self):
         result = build(self.profiles, self.hf, self.fcc, self.onet, self.taxonomy)
