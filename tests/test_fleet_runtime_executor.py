@@ -140,6 +140,20 @@ class ExecutorTests(unittest.TestCase):
         self.assertEqual(out["status"], "unmapped")
         self.assertIsNone(out["result"])
 
+    def test_learning_task_routes_to_internal_bootcamp_before_model(self):
+        out = self.ex.run("blog-writer", {"objective": "React 19", "learning_task": True})
+        self.assertEqual(out["status"], "ok")
+        self.assertEqual(out["result"]["generated_by"], "internal_bootcamp_study")
+        self.assertIsNone(out["result"]["model"])
+        self.assertIn("React 19", out["result"]["draft_markdown"])
+        self.assertFalse(out["live_external_action_taken"])
+
+    def test_learning_task_external_fallback_requires_explicit_flag(self):
+        out = self.ex.run("blog-writer", {"objective": "unmapped zqv 9842", "learning_task": True})
+        self.assertEqual(out["result"]["generated_by"], "offline_deterministic")
+        self.assertEqual(out["result"]["fallback_reason"], "internal_knowledge_gap_external_fallback_disabled")
+        self.assertIsNone(out["result"]["model"])
+
     def test_permission_gate(self):
         out = self.ex.run("analytics-hub", {"objective": "x", "action_level": "external_side_effect"})
         self.assertEqual(out["status"], "approval_required")
