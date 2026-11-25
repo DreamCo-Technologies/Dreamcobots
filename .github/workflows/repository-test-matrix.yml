@@ -71,6 +71,8 @@ jobs:
         run: python3 tools/audit_bot_division_placement.py
       - name: Audit all bots categories divisions and specialist agents
         run: python3 tools/audit_all_bots_categories_and_agents.py
+      - name: Regenerate canonical bot runtime manifests before repository inventory
+        run: python3 tools/generate_bot_manifests.py
       - name: Refresh derived repository registry after all generators
         run: python3 tools/generate_repository_test_registry.py
       - name: Build bounded public technology radar projection
