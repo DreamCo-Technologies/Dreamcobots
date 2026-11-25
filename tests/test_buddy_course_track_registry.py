@@ -82,8 +82,14 @@ class BuddyCourseTrackRegistryTests(unittest.TestCase):
         catalog = json.loads((root / "buddy/bootcamp/sources/freecodecamp/catalog.json").read_text(encoding="utf-8"))
         self.assertEqual(catalog["video_count"], len(catalog["videos"]))
         self.assertEqual(catalog["inventory"]["observed_entry_count"], len(catalog["videos"]))
-        self.assertFalse(catalog["inventory"]["complete"])
-        self.assertEqual(catalog["inventory_status"], "partial")
+        expected_complete = (
+            catalog["inventory"].get("expected_entry_count") == len(catalog["videos"])
+            and catalog["inventory"].get("observed_entry_count") == len(catalog["videos"])
+            and catalog["inventory"].get("null_entry_count") == 0
+            and catalog["inventory"].get("duplicate_video_id_count") == 0
+        )
+        self.assertEqual(catalog["inventory"]["complete"], expected_complete)
+        self.assertEqual(catalog["inventory_status"], "complete" if expected_complete else "partial")
         lessons = [lesson for lesson in load_course_lessons() if lesson.track_id == "freecodecamp-video-catalog"]
         self.assertEqual(len(lessons), len(catalog["videos"]))
         self.assertTrue(all(lesson.rights_mode == "metadata_only_until_item_level_permissions" for lesson in lessons))
