@@ -80,7 +80,7 @@ jobs:
           python -m json.tool config/buddy-workforce-entrepreneurship-bootcamp.json > /dev/null
           python -m json.tool config/buddy-government-community-enterprise-curriculum.json > /dev/null
           python -m json.tool config/buddy-onet-occupation-guide.schema.json > /dev/null
-          python -m py_compile tools/discover_open_source_bootcamp_sources.py tools/discover_huggingface_subject_taxonomy.py tools/build_buddy_source_study_queue.py tools/process_authorized_bootcamp_media.py tools/build_onet_task_curricula.py tools/fetch_onet_task_curricula.py tools/build_government_sales_pipeline.py
+          python -m py_compile tools/discover_open_source_bootcamp_sources.py tools/discover_huggingface_subject_taxonomy.py tools/build_buddy_source_study_queue.py tools/process_authorized_bootcamp_media.py tools/build_onet_task_curricula.py tools/fetch_onet_task_curricula.py tools/build_government_sales_pipeline.py tools/build_buddy_self_bootcamp.py
       - name: Run source rights and guide-queue tests
         run: python -m unittest discover -s tests -p 'test_buddy_source_study_queue.py' -v
       - name: Run local media rights and hash tests
