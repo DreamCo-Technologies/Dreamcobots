@@ -218,6 +218,8 @@ class RuntimeBridgeTests(unittest.TestCase):
         self.assertTrue(all(item["completion_status"] == "metadata_only" for item in video_items))
         self.assertTrue(all(item["study_allowed"] is False for item in video_items))
         self.assertTrue(all(item["authoring_required"] is True for item in video_items))
+        self.assertTrue(all(not item["implementation_steps"] for item in video_items))
+        self.assertTrue(all(not item["buddy_demo"] for item in video_items))
         self.assertTrue(all(item["mastery_awarded"] is False for item in video_items))
 
     def test_benchmark_guide_work_items_are_discoverable_in_internal_queue(self):
