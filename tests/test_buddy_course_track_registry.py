@@ -54,6 +54,10 @@ class BuddyCourseTrackRegistryTests(unittest.TestCase):
         specialist_paths = [
             lesson for lesson in lessons if lesson.track_id == "freecodecamp-specialist-learning-paths"
         ]
+        triage_video_ids = {
+            str(video["video_id"]) for video in fcc_catalog["videos"]
+            if {str(value).casefold() for value in video.get("categories", [])} == {"other_or_unclassified"}
+        }
         expected_count = (
             len(tol["curriculum"]) + len(tol["extended_study_path"])
             + len(tok["lessons"]) + len(cpu["modules"]) + len(onet["subject_inventory"]) + onet_task_count
@@ -68,7 +72,7 @@ class BuddyCourseTrackRegistryTests(unittest.TestCase):
             + len(library_seed_catalog["candidates"])
             + sum(len(path["subjects"]) for path in workforce["training_paths"])
             + len(benchmark_index["programs"]) + len(benchmark_tasks["tasks"])
-            + len(specialist_video_ids)
+            + len(specialist_video_ids) + len(triage_video_ids)
         )
         self.assertEqual(len(lessons), expected_count)
         fcc_lessons = [lesson for lesson in lessons if lesson.track_id == "freecodecamp"]
@@ -77,7 +81,7 @@ class BuddyCourseTrackRegistryTests(unittest.TestCase):
         self.assertTrue(any(lesson.lesson_id == "fcc-primitive-workshops" for lesson in fcc_lessons))
         self.assertEqual(len({lesson.resource_id for lesson in lessons}), len(lessons))
         self.assertEqual(len({(lesson.track_id, lesson.lesson_id) for lesson in lessons}), len(lessons))
-        expected = {"tolkien", "tokenizer", "cpu-first-llm", "onet", "hugging-face", "freecodecamp", "huggingface-full", "freecodecamp-video-catalog", "freecodecamp-specialist-learning-paths", "universal-software-libraries", "workforce-entrepreneurship", "benchmark-guides"}
+        expected = {"tolkien", "tokenizer", "cpu-first-llm", "onet", "hugging-face", "freecodecamp", "huggingface-full", "freecodecamp-video-catalog", "freecodecamp-specialist-learning-paths", "freecodecamp-metadata-triage", "universal-software-libraries", "workforce-entrepreneurship", "benchmark-guides"}
         self.assertEqual({lesson.track_id for lesson in lessons}, expected)
 
 
@@ -86,7 +90,12 @@ class BuddyCourseTrackRegistryTests(unittest.TestCase):
             lesson for lesson in load_course_lessons()
             if lesson.track_id == "freecodecamp-specialist-learning-paths"
         ]
-        self.assertGreaterEqual(len(lessons), 200)
+        catalog = json.loads((ROOT / "buddy/bootcamp/sources/freecodecamp/catalog.json").read_text(encoding="utf-8"))
+        triage_count = sum(
+            {str(value).casefold() for value in video.get("categories", [])} == {"other_or_unclassified"}
+            for video in catalog["videos"]
+        )
+        self.assertEqual(len(lessons), len(catalog["videos"]) - triage_count)
         self.assertTrue(all(lesson.content_status == "original_implementation_brief" for lesson in lessons))
         self.assertTrue(all(lesson.source_video_id for lesson in lessons))
         self.assertTrue(all(lesson.implementation_steps and lesson.buddy_demo for lesson in lessons))
@@ -95,6 +104,43 @@ class BuddyCourseTrackRegistryTests(unittest.TestCase):
             for resource in resources_for_division("DreamAIInfra")
             for lesson in lessons
         ))
+
+
+    def test_unclassified_videos_enter_metadata_triage_not_study_content(self):
+        catalog = json.loads((ROOT / "buddy/bootcamp/sources/freecodecamp/catalog.json").read_text(encoding="utf-8"))
+        expected = {
+            str(video["video_id"]) for video in catalog["videos"]
+            if {str(value).casefold() for value in video.get("categories", [])} == {"other_or_unclassified"}
+        }
+        triage = [
+            lesson for lesson in load_course_lessons()
+            if lesson.track_id == "freecodecamp-metadata-triage"
+        ]
+        self.assertEqual({lesson.source_video_id for lesson in triage}, expected)
+        self.assertTrue(all(lesson.content_status == "metadata_only" for lesson in triage))
+        self.assertTrue(all(lesson.rights_mode == "metadata_only_until_item_level_permissions" for lesson in triage))
+        self.assertTrue(all(lesson.implementation_steps and lesson.buddy_demo for lesson in triage))
+        self.assertTrue(all(set(lesson.division_targets) == {"DreamEducation", "CommandCore"} for lesson in triage))
+        self.assertTrue(all("DreamDiscovery" in lesson.masterbot_targets for lesson in triage))
+        self.assertFalse(any(
+            resource.name == lesson.title
+            for resource in resources_for_division("DreamEducation")
+            for lesson in triage
+        ))
+
+    def test_every_video_is_in_a_specialist_path_or_metadata_triage(self):
+        catalog = json.loads((ROOT / "buddy/bootcamp/sources/freecodecamp/catalog.json").read_text(encoding="utf-8"))
+        all_ids = {str(video["video_id"]) for video in catalog["videos"]}
+        specialist_ids = {
+            lesson.source_video_id for lesson in load_course_lessons()
+            if lesson.track_id == "freecodecamp-specialist-learning-paths"
+        }
+        triage_ids = {
+            lesson.source_video_id for lesson in load_course_lessons()
+            if lesson.track_id == "freecodecamp-metadata-triage"
+        }
+        self.assertFalse(specialist_ids.intersection(triage_ids))
+        self.assertEqual(specialist_ids.union(triage_ids), all_ids)
 
     def test_every_canonical_division_receives_the_shared_course_queue(self):
         from pathlib import Path
