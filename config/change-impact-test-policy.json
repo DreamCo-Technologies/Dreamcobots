@@ -460,6 +460,37 @@
       "tests": [
         "tests/test_change_impact_test_policy.py"
       ]
+    },
+    {
+      "sources": [
+        "buddy/learning/buddy_knowledge_router.py"
+      ],
+      "tests": [
+        "tests/test_buddy_internal_first_learning_router.py",
+        "tests/test_buddy_knowledge_router.py"
+      ],
+      "reason": "Internal-first learning routes, seed-candidate prioritization, and explicit external discovery"
+    },
+    {
+      "sources": [
+        "buddy/learning/course_track_registry.py"
+      ],
+      "tests": [
+        "tests/test_buddy_internal_first_learning_router.py",
+        "tests/test_buddy_knowledge_router.py",
+        "tests/test_buddy_onet_task_index.py",
+        "tests/test_buddy_learning_runtime_bridge.py"
+      ],
+      "reason": "Course lesson parsing, O*NET assessment wording, and learning resource contracts"
+    },
+    {
+      "sources": [
+        "tools/build_buddy_revenue_playbook_queue.py"
+      ],
+      "tests": [
+        "tests/test_buddy_revenue_playbook_queue.py"
+      ],
+      "reason": "Revenue playbook queue and missing-capstone authoring backlog"
     }
   ],
   "evidence_rules": {
