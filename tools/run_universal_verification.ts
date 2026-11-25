@@ -3,6 +3,7 @@ import { mkdirSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 import type { VerificationExpectation, UniversalVerificationReport } from "../shared/universal-verification-contract.js";
 import { isVerificationRunSuccessful } from "../shared/universal-verification-policy.js";
+import { persistVerificationLog } from "../shared/universal-verification-diagnostics.js";
 
 const args = new Set(process.argv.slice(2));
 const mode = args.has("--production") ? "production" : args.has("--full") ? "full" : args.has("--quick") ? "quick" : "ci";
