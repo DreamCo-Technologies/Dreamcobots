@@ -95,6 +95,7 @@ class StudyGuideQueueTests(unittest.TestCase):
             self.assertTrue(any("named human reviewer" in error for error in result["videos"][0]["guide_validation_errors"]))
             guide["review"].update({
                 "reviewer":"human-reviewer-1",
+                "reviewer_type":"human",
                 "reviewed_at":"2026-11-25T12:00:00Z",
                 "review_evidence_ref":"review-record-1",
             })
