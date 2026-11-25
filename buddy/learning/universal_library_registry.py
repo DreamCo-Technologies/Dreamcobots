@@ -248,6 +248,11 @@ def library_coverage_report(root: Path = ROOT) -> dict[str, Any]:
     ecosystems = _read_json(root / "config/library_ecosystems.json")
     guides = load_approved_guides(root)
     discovered_ecosystems = ecosystems.get("ecosystems", [])
+    status_counts: dict[str, int] = {}
+    for guide_path in _guide_files(root):
+        guide_doc = _read_json(guide_path)
+        status = str(guide_doc.get("status", "unknown"))
+        status_counts[status] = status_counts.get(status, 0) + 1
     gap_path = root / "data/buddy-library-knowledge-gaps.jsonl"
     gaps = 0
     if gap_path.is_file():
@@ -257,6 +262,12 @@ def library_coverage_report(root: Path = ROOT) -> dict[str, Any]:
         "catalog_strategy": curriculum.get("scope", {}).get("catalog_strategy"),
         "ecosystem_count": len(discovered_ecosystems),
         "approved_guide_count": len(guides),
+        "total_guide_file_count": sum(status_counts.values()),
+        "guide_status_counts": status_counts,
+        "review_required_guide_count": status_counts.get("review_required", 0),
+        "draft_guide_count": status_counts.get("draft", 0),
+        "stale_guide_count": status_counts.get("stale", 0),
+        "blocked_guide_count": status_counts.get("blocked", 0),
         "open_gap_event_count": gaps,
         "ecosystems": [row.get("id") for row in discovered_ecosystems],
         "guide_ids": [guide.canonical_id for guide in guides],
