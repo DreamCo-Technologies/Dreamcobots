@@ -105,6 +105,7 @@ jobs:
           suite="${{ inputs.suite || 'quick' }}"
           # Keep generated fleet/runtime/search artifacts synchronized before any selected suite.
           python3 tools/generate_bot_manifests.py
+          python3 tools/generate_repository_test_registry.py
           npx tsx tools/generate_bot_fleet_catalog.ts
           case "$suite" in
             quick)
