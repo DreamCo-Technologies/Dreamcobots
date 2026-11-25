@@ -9,6 +9,9 @@ const fleetCatalog = JSON.parse(readFileSync(resolve(process.cwd(), "config", "g
 const allFleetBots = [...fleetCatalog.bots, ...fleetCatalog.supplemental_bots];
 const expectedFleetProfiles = allFleetBots.length;
 const expectedDeclaredCapabilities = allFleetBots.reduce((total: number, bot: any) => total + bot.capability_count, 0);
+const expectedDomainDivisions = fleetCatalog.divisions.length + fleetCatalog.supplemental_divisions.length;
+const expectedProfileDivisionLabels = new Set(allFleetBots.map((bot: any) => bot.identity.division)).size;
+const expectedPortfolioGroups = expectedProfileDivisionLabels - expectedDomainDivisions;
 
 test("instantiates and health-checks every canonical and supplemental fleet profile", () => {
   const registry = FleetRuntimeRegistry.fromFile();
@@ -176,7 +179,10 @@ test("stops before any requested live external action", () => {
 test("certifies the repository-controlled end-to-end flow for every bot", () => {
   const report = FleetRuntimeRegistry.fromFile().certifyAllEndToEnd();
   assert.equal(report.summary.profilesTested, expectedFleetProfiles);
-  assert.equal(report.summary.divisionsTested, 55);
+  assert.equal(report.summary.divisionsTested, expectedDomainDivisions);
+  assert.equal(report.summary.profileDivisionLabelsTested, expectedProfileDivisionLabels);
+  assert.equal(report.summary.supplementalPortfolioGroupsTested, expectedPortfolioGroups);
+  assert.equal(report.portfolioGroupNames.length, expectedPortfolioGroups);
   assert.equal(report.summary.sandboxCertified, expectedFleetProfiles);
   assert.equal(report.summary.failed, 0);
   assert.equal(report.summary.declaredCapabilitiesTested, expectedDeclaredCapabilities);
