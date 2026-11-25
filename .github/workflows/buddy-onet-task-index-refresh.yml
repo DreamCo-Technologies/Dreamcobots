@@ -31,13 +31,15 @@ jobs:
         run: |
           python - <<'PY'
           import json
+          import os
           import sys
           from pathlib import Path
           sys.path.insert(0, "tools")
           from fetch_onet_task_curricula import fetch_current_export
           payload, version, url = fetch_current_export()
-          Path("$RUNNER_TEMP/onet-task-statements.json").write_bytes(payload)
-          Path("$RUNNER_TEMP/onet-source-metadata.json").write_text(
+          temp = Path(os.environ["RUNNER_TEMP"])
+          temp.joinpath("onet-task-statements.json").write_bytes(payload)
+          temp.joinpath("onet-source-metadata.json").write_text(
               json.dumps({"release_version": version, "official_download_url": url}),
               encoding="utf-8",
           )
