@@ -127,7 +127,7 @@ def check_runtime_contracts() -> list[dict]:
         {
             "id": "required_scripts_exist",
             "label": "Build, typecheck, local app, Pages, and readiness scripts exist",
-            "status": "pass" if all(name in scripts for name in ["build", "check", "buddy:laptop:check", "buddy:site:check", "production:readiness"]) else "fail",
+            "status": "pass" if all(name in scripts for name in ["build", "check", "buddy:laptop:check", "buddy:site:check", "production:readiness", "production:certification"]) else "fail",
             "evidence": ["package.json"],
             "release_blocker": True,
         },
