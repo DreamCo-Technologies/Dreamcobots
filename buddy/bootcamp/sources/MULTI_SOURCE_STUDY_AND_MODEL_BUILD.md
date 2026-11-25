@@ -156,3 +156,8 @@ Every approved source guide is converted into the `dreamco.buddy_learning_packag
 The adapter `buddy.learning.dreamco_summary_source` routes eligible packages into the existing `buddy.learning.study_resource_scheduler`. It validates canonical division and asset IDs, source revisions and rights before returning a study plan. Progress events are append-only and evidence-linked; model-training events additionally require the package's explicit asset-level training permission. A package is queued, not studied, until Buddy completes the learning activity and evidence is recorded. Mastery requires independent assessment and capstone evidence.
 
 The current source rights manifest and user-data manifest are empty. Therefore the pipeline correctly produces an empty or partial approved-guide library until sources and user data are individually authorized and guides are completed and reviewed. This is not a claim that 1,000 summaries, every Hugging Face artifact, or all transcripts already exist.
+
+## Canonical tokenizer course integration
+
+The tokenizer stage now has a 12-lesson Buddy course: [Buddy Tokenizer Engineering and Training Course](../../docs/BUDDY_TOKENIZER_TRAINING_STUDY_GUIDE.md), with its syllabus at `config/buddy-tokenizer-training-curriculum.json`. Map the lessons to the 55 division curricula and 65 MasterBot lanes through the existing reviewed ownership crosswalk. Relevant lanes include Hugging Face Tokenizers, Transformers, model architecture, data quality, evaluation and model release. Keep the course references link-only unless the exact source grants additional rights. The curriculum's mastery gate requires exercises, reproducibility, independent held-out evaluation and model/tokenizer compatibility checks.
+
