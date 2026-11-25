@@ -16,7 +16,8 @@ class FreeCodeCampLearningInventoryTests(unittest.TestCase):
         else:
             self.assertFalse(learning["youtube_video_inventory"]["inventory_complete"])
         self.assertEqual(policy["study_assets"]["course_track_count"], 8)
-        from buddy.learning.course_track_registry import load_course_lessons\n        self.assertEqual(policy["study_assets"]["course_lesson_count"], len(load_course_lessons()))
+        from buddy.learning.course_track_registry import load_course_lessons
+        self.assertEqual(policy["study_assets"]["course_lesson_count"], len(load_course_lessons()))
         self.assertIn(learning["youtube_video_inventory"]["inventory_status"], {"complete", "partial"})
 
     def test_partial_inventory_never_claims_complete(self):
