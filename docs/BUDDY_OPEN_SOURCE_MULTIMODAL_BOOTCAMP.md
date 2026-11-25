@@ -151,7 +151,7 @@ Each weekly run should add:
 No automated contact, application, bid, benefits action, financial transaction or grant submission is permitted without explicit human authorization.
 \n## Current implementation boundary\n\nThe pull request currently defines the source taxonomy, O*NET import/build path, per-task guide-authoring briefs, government opportunity pipeline, and rights-gated source queue. The weekly workflow refreshes metadata and creates artifacts; it does not yet run a generative Buddy guide-authoring service, persist approved guides to the repository, perform real model fine-tuning, or prove weekly mastery. Those are separate runtime integrations and must be reported as pending until their own tests and evidence exist. The default source-rights manifest grants no third-party training permissions.\n
 
-## DreamCo-owned summaries, division study paths, and progress
+## User-designated original summaries, division study paths, and progress
 
 Every completed, rights-cleared guide is intended to become a reusable DreamCo learning asset. The guide-authoring output should be original instructional expression, not copied source text, and must retain upstream attribution, source revision, license and rights evidence. DreamCo's ownership claim applies to the original expression and structure it creates, subject to applicable law and the upstream license; it does not transfer ownership of third-party facts, code, datasets, media, model weights or documentation.
 
@@ -188,3 +188,8 @@ The workflow's pull-request path filters include the organizer, its tests, the u
 The local-media preparation tool is `tools/process_authorized_bootcamp_media.py`. It accepts files only from `data/authorized-media/`, requires an asset-specific SHA-256 match and separate study, derivative-summary, and evaluation permissions, then uses local `ffprobe`/`ffmpeg` to extract audio and sparse video frames. It does not download media or model weights. Its `asset-study-input.json` output is source evidence for a later study step, not itself a transcript, completed summary, training run, or mastery result. The manifest is `config/buddy-authorized-media-rights.json`.
 
 For authorized or user-provided video, a future multimodal study worker can align speech, timestamps, and sampled frames, explain demonstrations, and create original chapter-by-chapter guides. For audio and music, the curriculum covers speech recognition, sound classification, audio signal processing, music information retrieval, tempo and meter, harmony and key estimation, structure, timbre, production, and MIDI/score analysis where supported. Copyrighted recordings are not automatically training data; use public-domain, permissively licensed, or user-owned assets with explicit permissions.
+
+
+### User-designated ownership of original summaries
+
+The organizer records the user as the designated owner of original DreamCo-authored instructional expression and study-package structure. The goal is to deliver original, independently written summaries, not copied third-party text. This designation is subject to applicable law, contributor agreements, and any upstream license terms. It does not transfer rights in upstream source materials, facts, code, datasets, media, or model weights. Each asset retains its provenance and attribution record.
