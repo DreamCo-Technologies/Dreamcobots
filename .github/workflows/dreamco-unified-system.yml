@@ -75,6 +75,7 @@ jobs:
           if [ -f tools/generate_dreamco_search_index.ts ]; then npx tsx tools/generate_dreamco_search_index.ts; fi
           if [ -f tools/generate_buddy_success_program.ts ]; then npx tsx tools/generate_buddy_success_program.ts; fi
           if [ -f tools/generate_buddy_platform_expansion.py ]; then python3 tools/generate_buddy_platform_expansion.py; fi
+          python3 tools/build_buddy_learning_os_connection_graph.py
       - name: Inventory repository, runtime bindings, capabilities, and learning systems
         run: |
           python3 tools/run_optional_script.py tools/build_repository_inventory.py
@@ -92,7 +93,9 @@ jobs:
           REQUESTED_MODE: ${{ github.event.inputs.mode || 'standard' }}
         run: |
           python3 tools/run_500_model_benchmarks.py --mode "$REQUESTED_MODE"
+          echo "BLOCKED_RUNNER_NOT_IMPLEMENTED: no evidence-producing 500-model runner is available."
           echo "The execution gate records the current blocker. No model calls or training are started until an evidence-producing runner is implemented."
+          echo "All matrix rows remain unverified until each model-suite pair has an execution receipt and independent evaluation."
       - name: Build complete model × benchmark-suite prospectus matrix
         if: always()
         run: python3 tools/build_500_model_prospectus_matrix.py
