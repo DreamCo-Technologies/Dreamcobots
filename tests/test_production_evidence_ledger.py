@@ -7,10 +7,16 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
-from tools.generate_production_evidence_ledger import build  # noqa: E402
+from tools.generate_bot_manifests import main as generate_manifests  # noqa: E402
+from tools.generate_production_evidence_ledger import build, main as generate_ledger  # noqa: E402
 
 
 class ProductionEvidenceLedgerTest(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        if generate_manifests([]) != 0 or generate_ledger() != 0:
+            raise RuntimeError("could not generate fleet evidence manifests")
+
     def test_every_real_division_is_reconciled_without_pseudo_buckets(self):
         data = build()
         self.assertEqual(data["summary"]["real_divisions"], 56)
