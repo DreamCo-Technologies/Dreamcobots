@@ -40,4 +40,27 @@ class SelfBootcampTests(unittest.TestCase):
         self.assertIn("buddy_ai_college", result)
         self.assertIn("tool_capability_families", result["divisions"][0]["autonomous_agent_capability_curriculum"])
 
+    def test_freecodecamp_certifications_and_university_domains_are_routed_per_division(self):
+        divisions = [
+            {"division": "DreamCodeLab", "purpose": "Build software", "outcome": "Ship applications",
+             "focus_areas": ["JavaScript", "Python", "web development"], "serves": ["developers"]},
+            {"division": "DreamData", "purpose": "Build data platforms", "outcome": "Reliable analytics",
+             "focus_areas": ["SQL", "data engineering"], "serves": ["analysts"]},
+        ]
+        fcc = {"scope": {"coverage_status": "ROADMAP_DEFINED"},
+               "official_platform_inventory": {"core_certifications": [
+                   {"id": "javascript-v9", "name": "JavaScript", "skills": ["JavaScript", "DOM", "testing"]},
+                   {"id": "relational-databases-v9", "name": "Relational Databases", "skills": ["SQL", "database design"]}
+               ], "additional_certifications": []},
+               "video_learning_tracks": ["javascript_and_typescript"]}
+        college = {"knowledge_domains": [{"id": "software-engineering", "name": "Software Engineering",
+                                           "tracks": ["JavaScript", "testing"]}]}
+        result = build(divisions, {"subject_terms": ["javascript", "sql"]}, {"inventory": {}},
+                       {"counts": {}}, {"training_paths": []}, {"official_sources": []}, college, fcc)
+        code = next(x for x in result["divisions"] if x["division"] == "DreamCodeLab")
+        data = next(x for x in result["divisions"] if x["division"] == "DreamData")
+        self.assertIn("javascript-v9", [x["id"] for x in code["freecodecamp_learning_paths"]["matched_certifications"]])
+        self.assertIn("relational-databases-v9", [x["id"] for x in data["freecodecamp_learning_paths"]["matched_certifications"]])
+        self.assertTrue(code["college_curriculum"]["matched_domains"])
+
 if __name__=="__main__": unittest.main()
