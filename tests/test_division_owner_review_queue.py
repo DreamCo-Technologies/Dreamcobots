@@ -1,3 +1,4 @@
+"""Regression tests for non-inferred owner and resource-bundle lineage."""
 import json
 import tempfile
 import unittest
@@ -20,6 +21,11 @@ class DivisionOwnerReviewQueueTests(unittest.TestCase):
         )
         validate_owner_review_queue(queue)
         self.assertEqual(queue["counts"]["pending_masterbot_mappings"], 45)
+        self.assertEqual(
+            {row["masterbot_id"]: row["resource_bundle_id"] for row in queue["masterbot_domain_decisions"]},
+            {ident: f"division-resource-{ident:03d}" for ident in range(1, 46)},
+        )
+        self.assertTrue(all(row["evidence"] for row in queue["masterbot_domain_decisions"]))
         self.assertEqual([row["masterbot_id"] for row in queue["masterbot_domain_decisions"]], list(range(1, 46)))
         self.assertTrue(all(row["decision"] == "PENDING_OWNER_REVIEW" for row in queue["masterbot_domain_decisions"]))
         self.assertTrue(all(row["owner_approval"] is None for row in queue["masterbot_domain_decisions"]))
