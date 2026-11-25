@@ -1,0 +1,4030 @@
+{
+  "schema": "dreamco.revenue_lane_learning_playbooks.v1",
+  "version": "1.0.0",
+  "source_registry": "money_os/config/revenue_lanes_expanded.json",
+  "lane_count": 34,
+  "status": "playbook_blueprints_defined_lesson_authoring_pending",
+  "common_policy": {
+    "free_first": true,
+    "paid_services_require_explicit_authorization": true,
+    "source_rights_required": true,
+    "customer_data_requires_consent_or_lawful_basis": true,
+    "production_actions_require_explicit_approval": true,
+    "actual_revenue_requires_transaction_evidence": true
+  },
+  "lanes": [
+    {
+      "lane_id": "rfp_matcher",
+      "value": "qualified procurement leads",
+      "monetization": [
+        "lead_fee",
+        "subscription",
+        "proposal_service"
+      ],
+      "status": "playbook_defined_lesson_authoring_pending",
+      "learning_objective": "Teach Buddy to operate the rfp matcher opportunity workflow from discovery through verified outcome, with human review and auditable economics.",
+      "lane_specific_tasks": [
+        "Parse official RFP notices and amendments",
+        "Normalize agency, NAICS/PSC codes, deadlines and set-asides",
+        "Score fit against verified capabilities and past performance",
+        "Build compliance matrix, bid/no-bid memo and response calendar",
+        "Draft response outline and evidence checklist for human approval"
+      ],
+      "shared_execution_sequence": [
+        {
+          "id": "discover_and_qualify",
+          "title": "Discover and qualify the opportunity",
+          "evidence": [
+            "source_url",
+            "retrieved_at",
+            "buyer_problem",
+            "eligibility_facts"
+          ]
+        },
+        {
+          "id": "verify_rights_and_rules",
+          "title": "Verify data rights, rules and scope",
+          "evidence": [
+            "license_or_terms",
+            "consent_or_lawful_basis",
+            "jurisdiction",
+            "review_status"
+          ]
+        },
+        {
+          "id": "model_cost_and_value",
+          "title": "Model costs, price and unit economics",
+          "evidence": [
+            "assumptions",
+            "direct_costs",
+            "fees",
+            "downside_case",
+            "confidence"
+          ]
+        },
+        {
+          "id": "design_and_simulate",
+          "title": "Design and simulate the workflow",
+          "evidence": [
+            "workflow_steps",
+            "synthetic_fixture",
+            "acceptance_criteria",
+            "failure_cases"
+          ]
+        },
+        {
+          "id": "human_review_and_delivery",
+          "title": "Obtain human approval and deliver",
+          "evidence": [
+            "approval_ref",
+            "delivery_receipt",
+            "exceptions",
+            "customer_feedback"
+          ]
+        },
+        {
+          "id": "attribute_and_improve",
+          "title": "Attribute outcomes and improve safely",
+          "evidence": [
+            "event_ids",
+            "gross_fees_net",
+            "refund_state",
+            "regression_result"
+          ]
+        }
+      ],
+      "required_software_research": [
+        "leading current commercial tools",
+        "widely used professional tools",
+        "open-source alternatives",
+        "local/offline options",
+        "APIs and integration methods",
+        "pricing and usage limits",
+        "security and permission model",
+        "license and redistribution terms"
+      ],
+      "required_benchmark": [
+        "unseen opportunity record",
+        "rights/compliance scenario",
+        "cost and unit-economics calculation",
+        "sandbox workflow execution",
+        "failure and recovery scenario",
+        "human approval handoff"
+      ],
+      "guardrails": [
+        "Use official procurement sources; never invent certifications, past performance, pricing or eligibility."
+      ],
+      "truth_rules": [
+        "A lead is not a sale.",
+        "A proposal is not a contract.",
+        "A projection is not collected revenue.",
+        "A listing or opportunity is not verified profit.",
+        "Report fees, refunds, chargebacks and net amounts separately.",
+        "Do not claim completion without tool-confirmed evidence."
+      ],
+      "completion_evidence": [
+        "versioned guide path",
+        "source citations and access dates",
+        "rights review",
+        "sandbox run ID",
+        "benchmark run ID",
+        "human review evidence",
+        "measured outcome event"
+      ]
+    },
+    {
+      "lane_id": "local_service_leads",
+      "value": "qualified local leads",
+      "monetization": [
+        "lead_fee",
+        "subscription"
+      ],
+      "status": "playbook_defined_lesson_authoring_pending",
+      "learning_objective": "Teach Buddy to operate the local service leads opportunity workflow from discovery through verified outcome, with human review and auditable economics.",
+      "lane_specific_tasks": [
+        "Define service geography and buyer qualification criteria",
+        "Collect only permitted business contact and service-intent data",
+        "Deduplicate, verify freshness and record consent/legal basis",
+        "Route qualified leads to eligible providers with audit trail",
+        "Reconcile accepted, rejected, converted and disputed leads"
+      ],
+      "shared_execution_sequence": [
+        {
+          "id": "discover_and_qualify",
+          "title": "Discover and qualify the opportunity",
+          "evidence": [
+            "source_url",
+            "retrieved_at",
+            "buyer_problem",
+            "eligibility_facts"
+          ]
+        },
+        {
+          "id": "verify_rights_and_rules",
+          "title": "Verify data rights, rules and scope",
+          "evidence": [
+            "license_or_terms",
+            "consent_or_lawful_basis",
+            "jurisdiction",
+            "review_status"
+          ]
+        },
+        {
+          "id": "model_cost_and_value",
+          "title": "Model costs, price and unit economics",
+          "evidence": [
+            "assumptions",
+            "direct_costs",
+            "fees",
+            "downside_case",
+            "confidence"
+          ]
+        },
+        {
+          "id": "design_and_simulate",
+          "title": "Design and simulate the workflow",
+          "evidence": [
+            "workflow_steps",
+            "synthetic_fixture",
+            "acceptance_criteria",
+            "failure_cases"
+          ]
+        },
+        {
+          "id": "human_review_and_delivery",
+          "title": "Obtain human approval and deliver",
+          "evidence": [
+            "approval_ref",
+            "delivery_receipt",
+            "exceptions",
+            "customer_feedback"
+          ]
+        },
+        {
+          "id": "attribute_and_improve",
+          "title": "Attribute outcomes and improve safely",
+          "evidence": [
+            "event_ids",
+            "gross_fees_net",
+            "refund_state",
+            "regression_result"
+          ]
+        }
+      ],
+      "required_software_research": [
+        "leading current commercial tools",
+        "widely used professional tools",
+        "open-source alternatives",
+        "local/offline options",
+        "APIs and integration methods",
+        "pricing and usage limits",
+        "security and permission model",
+        "license and redistribution terms"
+      ],
+      "required_benchmark": [
+        "unseen opportunity record",
+        "rights/compliance scenario",
+        "cost and unit-economics calculation",
+        "sandbox workflow execution",
+        "failure and recovery scenario",
+        "human approval handoff"
+      ],
+      "guardrails": [
+        "Honor consent, privacy, telemarketing and platform rules; no deceptive outreach."
+      ],
+      "truth_rules": [
+        "A lead is not a sale.",
+        "A proposal is not a contract.",
+        "A projection is not collected revenue.",
+        "A listing or opportunity is not verified profit.",
+        "Report fees, refunds, chargebacks and net amounts separately.",
+        "Do not claim completion without tool-confirmed evidence."
+      ],
+      "completion_evidence": [
+        "versioned guide path",
+        "source citations and access dates",
+        "rights review",
+        "sandbox run ID",
+        "benchmark run ID",
+        "human review evidence",
+        "measured outcome event"
+      ]
+    },
+    {
+      "lane_id": "commercial_vacancy",
+      "value": "vacancy intelligence",
+      "monetization": [
+        "subscription",
+        "qualified_lead"
+      ],
+      "status": "playbook_defined_lesson_authoring_pending",
+      "learning_objective": "Teach Buddy to operate the commercial vacancy opportunity workflow from discovery through verified outcome, with human review and auditable economics.",
+      "lane_specific_tasks": [
+        "Identify permitted commercial property and vacancy sources",
+        "Normalize property, location, listing status and observation date",
+        "Verify vacancy signal and avoid duplicate or stale records",
+        "Match property intelligence to relevant buyer segments",
+        "Measure subscription value and qualified inquiry outcomes"
+      ],
+      "shared_execution_sequence": [
+        {
+          "id": "discover_and_qualify",
+          "title": "Discover and qualify the opportunity",
+          "evidence": [
+            "source_url",
+            "retrieved_at",
+            "buyer_problem",
+            "eligibility_facts"
+          ]
+        },
+        {
+          "id": "verify_rights_and_rules",
+          "title": "Verify data rights, rules and scope",
+          "evidence": [
+            "license_or_terms",
+            "consent_or_lawful_basis",
+            "jurisdiction",
+            "review_status"
+          ]
+        },
+        {
+          "id": "model_cost_and_value",
+          "title": "Model costs, price and unit economics",
+          "evidence": [
+            "assumptions",
+            "direct_costs",
+            "fees",
+            "downside_case",
+            "confidence"
+          ]
+        },
+        {
+          "id": "design_and_simulate",
+          "title": "Design and simulate the workflow",
+          "evidence": [
+            "workflow_steps",
+            "synthetic_fixture",
+            "acceptance_criteria",
+            "failure_cases"
+          ]
+        },
+        {
+          "id": "human_review_and_delivery",
+          "title": "Obtain human approval and deliver",
+          "evidence": [
+            "approval_ref",
+            "delivery_receipt",
+            "exceptions",
+            "customer_feedback"
+          ]
+        },
+        {
+          "id": "attribute_and_improve",
+          "title": "Attribute outcomes and improve safely",
+          "evidence": [
+            "event_ids",
+            "gross_fees_net",
+            "refund_state",
+            "regression_result"
+          ]
+        }
+      ],
+      "required_software_research": [
+        "leading current commercial tools",
+        "widely used professional tools",
+        "open-source alternatives",
+        "local/offline options",
+        "APIs and integration methods",
+        "pricing and usage limits",
+        "security and permission model",
+        "license and redistribution terms"
+      ],
+      "required_benchmark": [
+        "unseen opportunity record",
+        "rights/compliance scenario",
+        "cost and unit-economics calculation",
+        "sandbox workflow execution",
+        "failure and recovery scenario",
+        "human approval handoff"
+      ],
+      "guardrails": [
+        "Use authorized sources; do not infer ownership or occupancy from sensitive personal data."
+      ],
+      "truth_rules": [
+        "A lead is not a sale.",
+        "A proposal is not a contract.",
+        "A projection is not collected revenue.",
+        "A listing or opportunity is not verified profit.",
+        "Report fees, refunds, chargebacks and net amounts separately.",
+        "Do not claim completion without tool-confirmed evidence."
+      ],
+      "completion_evidence": [
+        "versioned guide path",
+        "source citations and access dates",
+        "rights review",
+        "sandbox run ID",
+        "benchmark run ID",
+        "human review evidence",
+        "measured outcome event"
+      ]
+    },
+    {
+      "lane_id": "equipment_arbitrage",
+      "value": "equipment price spreads",
+      "monetization": [
+        "subscription",
+        "lead_fee"
+      ],
+      "status": "playbook_defined_lesson_authoring_pending",
+      "learning_objective": "Teach Buddy to operate the equipment arbitrage opportunity workflow from discovery through verified outcome, with human review and auditable economics.",
+      "lane_specific_tasks": [
+        "Collect permitted equipment listings and supplier quotes",
+        "Normalize make, model, condition, location and included accessories",
+        "Estimate transport, inspection, fees, taxes and repair exposure",
+        "Calculate conservative net spread and confidence interval",
+        "Prepare buyer/seller comparison with provenance"
+      ],
+      "shared_execution_sequence": [
+        {
+          "id": "discover_and_qualify",
+          "title": "Discover and qualify the opportunity",
+          "evidence": [
+            "source_url",
+            "retrieved_at",
+            "buyer_problem",
+            "eligibility_facts"
+          ]
+        },
+        {
+          "id": "verify_rights_and_rules",
+          "title": "Verify data rights, rules and scope",
+          "evidence": [
+            "license_or_terms",
+            "consent_or_lawful_basis",
+            "jurisdiction",
+            "review_status"
+          ]
+        },
+        {
+          "id": "model_cost_and_value",
+          "title": "Model costs, price and unit economics",
+          "evidence": [
+            "assumptions",
+            "direct_costs",
+            "fees",
+            "downside_case",
+            "confidence"
+          ]
+        },
+        {
+          "id": "design_and_simulate",
+          "title": "Design and simulate the workflow",
+          "evidence": [
+            "workflow_steps",
+            "synthetic_fixture",
+            "acceptance_criteria",
+            "failure_cases"
+          ]
+        },
+        {
+          "id": "human_review_and_delivery",
+          "title": "Obtain human approval and deliver",
+          "evidence": [
+            "approval_ref",
+            "delivery_receipt",
+            "exceptions",
+            "customer_feedback"
+          ]
+        },
+        {
+          "id": "attribute_and_improve",
+          "title": "Attribute outcomes and improve safely",
+          "evidence": [
+            "event_ids",
+            "gross_fees_net",
+            "refund_state",
+            "regression_result"
+          ]
+        }
+      ],
+      "required_software_research": [
+        "leading current commercial tools",
+        "widely used professional tools",
+        "open-source alternatives",
+        "local/offline options",
+        "APIs and integration methods",
+        "pricing and usage limits",
+        "security and permission model",
+        "license and redistribution terms"
+      ],
+      "required_benchmark": [
+        "unseen opportunity record",
+        "rights/compliance scenario",
+        "cost and unit-economics calculation",
+        "sandbox workflow execution",
+        "failure and recovery scenario",
+        "human approval handoff"
+      ],
+      "guardrails": [
+        "No guaranteed resale value; verify condition, title, export and safety requirements."
+      ],
+      "truth_rules": [
+        "A lead is not a sale.",
+        "A proposal is not a contract.",
+        "A projection is not collected revenue.",
+        "A listing or opportunity is not verified profit.",
+        "Report fees, refunds, chargebacks and net amounts separately.",
+        "Do not claim completion without tool-confirmed evidence."
+      ],
+      "completion_evidence": [
+        "versioned guide path",
+        "source citations and access dates",
+        "rights review",
+        "sandbox run ID",
+        "benchmark run ID",
+        "human review evidence",
+        "measured outcome event"
+      ]
+    },
+    {
+      "lane_id": "parts_arbitrage",
+      "value": "parts sourcing opportunities",
+      "monetization": [
+        "affiliate",
+        "b2b_fee"
+      ],
+      "status": "playbook_defined_lesson_authoring_pending",
+      "learning_objective": "Teach Buddy to operate the parts arbitrage opportunity workflow from discovery through verified outcome, with human review and auditable economics.",
+      "lane_specific_tasks": [
+        "Resolve part numbers, revisions and compatibility",
+        "Compare authorized distributors, stock and delivery dates",
+        "Verify authenticity, warranty and supplier status",
+        "Calculate landed cost and margin after shipping and returns",
+        "Create traceable sourcing recommendation"
+      ],
+      "shared_execution_sequence": [
+        {
+          "id": "discover_and_qualify",
+          "title": "Discover and qualify the opportunity",
+          "evidence": [
+            "source_url",
+            "retrieved_at",
+            "buyer_problem",
+            "eligibility_facts"
+          ]
+        },
+        {
+          "id": "verify_rights_and_rules",
+          "title": "Verify data rights, rules and scope",
+          "evidence": [
+            "license_or_terms",
+            "consent_or_lawful_basis",
+            "jurisdiction",
+            "review_status"
+          ]
+        },
+        {
+          "id": "model_cost_and_value",
+          "title": "Model costs, price and unit economics",
+          "evidence": [
+            "assumptions",
+            "direct_costs",
+            "fees",
+            "downside_case",
+            "confidence"
+          ]
+        },
+        {
+          "id": "design_and_simulate",
+          "title": "Design and simulate the workflow",
+          "evidence": [
+            "workflow_steps",
+            "synthetic_fixture",
+            "acceptance_criteria",
+            "failure_cases"
+          ]
+        },
+        {
+          "id": "human_review_and_delivery",
+          "title": "Obtain human approval and deliver",
+          "evidence": [
+            "approval_ref",
+            "delivery_receipt",
+            "exceptions",
+            "customer_feedback"
+          ]
+        },
+        {
+          "id": "attribute_and_improve",
+          "title": "Attribute outcomes and improve safely",
+          "evidence": [
+            "event_ids",
+            "gross_fees_net",
+            "refund_state",
+            "regression_result"
+          ]
+        }
+      ],
+      "required_software_research": [
+        "leading current commercial tools",
+        "widely used professional tools",
+        "open-source alternatives",
+        "local/offline options",
+        "APIs and integration methods",
+        "pricing and usage limits",
+        "security and permission model",
+        "license and redistribution terms"
+      ],
+      "required_benchmark": [
+        "unseen opportunity record",
+        "rights/compliance scenario",
+        "cost and unit-economics calculation",
+        "sandbox workflow execution",
+        "failure and recovery scenario",
+        "human approval handoff"
+      ],
+      "guardrails": [
+        "No counterfeit, stolen, recalled or restricted parts; verify export and safety controls."
+      ],
+      "truth_rules": [
+        "A lead is not a sale.",
+        "A proposal is not a contract.",
+        "A projection is not collected revenue.",
+        "A listing or opportunity is not verified profit.",
+        "Report fees, refunds, chargebacks and net amounts separately.",
+        "Do not claim completion without tool-confirmed evidence."
+      ],
+      "completion_evidence": [
+        "versioned guide path",
+        "source citations and access dates",
+        "rights review",
+        "sandbox run ID",
+        "benchmark run ID",
+        "human review evidence",
+        "measured outcome event"
+      ]
+    },
+    {
+      "lane_id": "business_acquisition",
+      "value": "business-for-sale matching",
+      "monetization": [
+        "subscription",
+        "referral"
+      ],
+      "status": "playbook_defined_lesson_authoring_pending",
+      "learning_objective": "Teach Buddy to operate the business acquisition opportunity workflow from discovery through verified outcome, with human review and auditable economics.",
+      "lane_specific_tasks": [
+        "Capture buyer mandate and investment constraints",
+        "Normalize listings, geography, industry and asking terms",
+        "Screen data completeness and flag unverified financials",
+        "Build diligence checklist and valuation scenario ranges",
+        "Prepare broker/professional handoff and follow-up workflow"
+      ],
+      "shared_execution_sequence": [
+        {
+          "id": "discover_and_qualify",
+          "title": "Discover and qualify the opportunity",
+          "evidence": [
+            "source_url",
+            "retrieved_at",
+            "buyer_problem",
+            "eligibility_facts"
+          ]
+        },
+        {
+          "id": "verify_rights_and_rules",
+          "title": "Verify data rights, rules and scope",
+          "evidence": [
+            "license_or_terms",
+            "consent_or_lawful_basis",
+            "jurisdiction",
+            "review_status"
+          ]
+        },
+        {
+          "id": "model_cost_and_value",
+          "title": "Model costs, price and unit economics",
+          "evidence": [
+            "assumptions",
+            "direct_costs",
+            "fees",
+            "downside_case",
+            "confidence"
+          ]
+        },
+        {
+          "id": "design_and_simulate",
+          "title": "Design and simulate the workflow",
+          "evidence": [
+            "workflow_steps",
+            "synthetic_fixture",
+            "acceptance_criteria",
+            "failure_cases"
+          ]
+        },
+        {
+          "id": "human_review_and_delivery",
+          "title": "Obtain human approval and deliver",
+          "evidence": [
+            "approval_ref",
+            "delivery_receipt",
+            "exceptions",
+            "customer_feedback"
+          ]
+        },
+        {
+          "id": "attribute_and_improve",
+          "title": "Attribute outcomes and improve safely",
+          "evidence": [
+            "event_ids",
+            "gross_fees_net",
+            "refund_state",
+            "regression_result"
+          ]
+        }
+      ],
+      "required_software_research": [
+        "leading current commercial tools",
+        "widely used professional tools",
+        "open-source alternatives",
+        "local/offline options",
+        "APIs and integration methods",
+        "pricing and usage limits",
+        "security and permission model",
+        "license and redistribution terms"
+      ],
+      "required_benchmark": [
+        "unseen opportunity record",
+        "rights/compliance scenario",
+        "cost and unit-economics calculation",
+        "sandbox workflow execution",
+        "failure and recovery scenario",
+        "human approval handoff"
+      ],
+      "guardrails": [
+        "Respect broker licensing and confidentiality; valuation is not financial or legal advice."
+      ],
+      "truth_rules": [
+        "A lead is not a sale.",
+        "A proposal is not a contract.",
+        "A projection is not collected revenue.",
+        "A listing or opportunity is not verified profit.",
+        "Report fees, refunds, chargebacks and net amounts separately.",
+        "Do not claim completion without tool-confirmed evidence."
+      ],
+      "completion_evidence": [
+        "versioned guide path",
+        "source citations and access dates",
+        "rights review",
+        "sandbox run ID",
+        "benchmark run ID",
+        "human review evidence",
+        "measured outcome event"
+      ]
+    },
+    {
+      "lane_id": "digital_asset_scout",
+      "value": "domain/digital asset intelligence",
+      "monetization": [
+        "subscription",
+        "brokerage_fee"
+      ],
+      "status": "playbook_defined_lesson_authoring_pending",
+      "learning_objective": "Teach Buddy to operate the digital asset scout opportunity workflow from discovery through verified outcome, with human review and auditable economics.",
+      "lane_specific_tasks": [
+        "Discover authorized domain and digital asset listings",
+        "Check ownership signals, history and comparable sales",
+        "Screen trademark, reputation, traffic and transfer risks",
+        "Estimate fees, renewal costs and downside scenarios",
+        "Prepare acquisition memo and escrow/transfer checklist"
+      ],
+      "shared_execution_sequence": [
+        {
+          "id": "discover_and_qualify",
+          "title": "Discover and qualify the opportunity",
+          "evidence": [
+            "source_url",
+            "retrieved_at",
+            "buyer_problem",
+            "eligibility_facts"
+          ]
+        },
+        {
+          "id": "verify_rights_and_rules",
+          "title": "Verify data rights, rules and scope",
+          "evidence": [
+            "license_or_terms",
+            "consent_or_lawful_basis",
+            "jurisdiction",
+            "review_status"
+          ]
+        },
+        {
+          "id": "model_cost_and_value",
+          "title": "Model costs, price and unit economics",
+          "evidence": [
+            "assumptions",
+            "direct_costs",
+            "fees",
+            "downside_case",
+            "confidence"
+          ]
+        },
+        {
+          "id": "design_and_simulate",
+          "title": "Design and simulate the workflow",
+          "evidence": [
+            "workflow_steps",
+            "synthetic_fixture",
+            "acceptance_criteria",
+            "failure_cases"
+          ]
+        },
+        {
+          "id": "human_review_and_delivery",
+          "title": "Obtain human approval and deliver",
+          "evidence": [
+            "approval_ref",
+            "delivery_receipt",
+            "exceptions",
+            "customer_feedback"
+          ]
+        },
+        {
+          "id": "attribute_and_improve",
+          "title": "Attribute outcomes and improve safely",
+          "evidence": [
+            "event_ids",
+            "gross_fees_net",
+            "refund_state",
+            "regression_result"
+          ]
+        }
+      ],
+      "required_software_research": [
+        "leading current commercial tools",
+        "widely used professional tools",
+        "open-source alternatives",
+        "local/offline options",
+        "APIs and integration methods",
+        "pricing and usage limits",
+        "security and permission model",
+        "license and redistribution terms"
+      ],
+      "required_benchmark": [
+        "unseen opportunity record",
+        "rights/compliance scenario",
+        "cost and unit-economics calculation",
+        "sandbox workflow execution",
+        "failure and recovery scenario",
+        "human approval handoff"
+      ],
+      "guardrails": [
+        "No cybersquatting, impersonation, stolen accounts or trademark infringement."
+      ],
+      "truth_rules": [
+        "A lead is not a sale.",
+        "A proposal is not a contract.",
+        "A projection is not collected revenue.",
+        "A listing or opportunity is not verified profit.",
+        "Report fees, refunds, chargebacks and net amounts separately.",
+        "Do not claim completion without tool-confirmed evidence."
+      ],
+      "completion_evidence": [
+        "versioned guide path",
+        "source citations and access dates",
+        "rights review",
+        "sandbox run ID",
+        "benchmark run ID",
+        "human review evidence",
+        "measured outcome event"
+      ]
+    },
+    {
+      "lane_id": "saas_savings",
+      "value": "software spend reduction",
+      "monetization": [
+        "audit_fee",
+        "savings_share"
+      ],
+      "status": "playbook_defined_lesson_authoring_pending",
+      "learning_objective": "Teach Buddy to operate the saas savings opportunity workflow from discovery through verified outcome, with human review and auditable economics.",
+      "lane_specific_tasks": [
+        "Inventory authorized software subscriptions and contracts",
+        "Normalize seats, usage, renewal dates and feature overlap",
+        "Identify unused licenses and lower-cost alternatives",
+        "Model migration, security, training and switching costs",
+        "Produce evidence-backed savings plan and post-change verification"
+      ],
+      "shared_execution_sequence": [
+        {
+          "id": "discover_and_qualify",
+          "title": "Discover and qualify the opportunity",
+          "evidence": [
+            "source_url",
+            "retrieved_at",
+            "buyer_problem",
+            "eligibility_facts"
+          ]
+        },
+        {
+          "id": "verify_rights_and_rules",
+          "title": "Verify data rights, rules and scope",
+          "evidence": [
+            "license_or_terms",
+            "consent_or_lawful_basis",
+            "jurisdiction",
+            "review_status"
+          ]
+        },
+        {
+          "id": "model_cost_and_value",
+          "title": "Model costs, price and unit economics",
+          "evidence": [
+            "assumptions",
+            "direct_costs",
+            "fees",
+            "downside_case",
+            "confidence"
+          ]
+        },
+        {
+          "id": "design_and_simulate",
+          "title": "Design and simulate the workflow",
+          "evidence": [
+            "workflow_steps",
+            "synthetic_fixture",
+            "acceptance_criteria",
+            "failure_cases"
+          ]
+        },
+        {
+          "id": "human_review_and_delivery",
+          "title": "Obtain human approval and deliver",
+          "evidence": [
+            "approval_ref",
+            "delivery_receipt",
+            "exceptions",
+            "customer_feedback"
+          ]
+        },
+        {
+          "id": "attribute_and_improve",
+          "title": "Attribute outcomes and improve safely",
+          "evidence": [
+            "event_ids",
+            "gross_fees_net",
+            "refund_state",
+            "regression_result"
+          ]
+        }
+      ],
+      "required_software_research": [
+        "leading current commercial tools",
+        "widely used professional tools",
+        "open-source alternatives",
+        "local/offline options",
+        "APIs and integration methods",
+        "pricing and usage limits",
+        "security and permission model",
+        "license and redistribution terms"
+      ],
+      "required_benchmark": [
+        "unseen opportunity record",
+        "rights/compliance scenario",
+        "cost and unit-economics calculation",
+        "sandbox workflow execution",
+        "failure and recovery scenario",
+        "human approval handoff"
+      ],
+      "guardrails": [
+        "No cancellation or account changes without customer approval; preserve data and compliance."
+      ],
+      "truth_rules": [
+        "A lead is not a sale.",
+        "A proposal is not a contract.",
+        "A projection is not collected revenue.",
+        "A listing or opportunity is not verified profit.",
+        "Report fees, refunds, chargebacks and net amounts separately.",
+        "Do not claim completion without tool-confirmed evidence."
+      ],
+      "completion_evidence": [
+        "versioned guide path",
+        "source citations and access dates",
+        "rights review",
+        "sandbox run ID",
+        "benchmark run ID",
+        "human review evidence",
+        "measured outcome event"
+      ]
+    },
+    {
+      "lane_id": "bill_audit",
+      "value": "utility/telecom savings",
+      "monetization": [
+        "service_fee",
+        "referral"
+      ],
+      "status": "playbook_defined_lesson_authoring_pending",
+      "learning_objective": "Teach Buddy to operate the bill audit opportunity workflow from discovery through verified outcome, with human review and auditable economics.",
+      "lane_specific_tasks": [
+        "Collect customer-authorized invoices and service agreements",
+        "Extract line items, taxes, fees and usage periods",
+        "Compare billed terms with contracts and public tariffs",
+        "Identify discrepancies and document supporting evidence",
+        "Prepare customer-approved dispute or optimization package"
+      ],
+      "shared_execution_sequence": [
+        {
+          "id": "discover_and_qualify",
+          "title": "Discover and qualify the opportunity",
+          "evidence": [
+            "source_url",
+            "retrieved_at",
+            "buyer_problem",
+            "eligibility_facts"
+          ]
+        },
+        {
+          "id": "verify_rights_and_rules",
+          "title": "Verify data rights, rules and scope",
+          "evidence": [
+            "license_or_terms",
+            "consent_or_lawful_basis",
+            "jurisdiction",
+            "review_status"
+          ]
+        },
+        {
+          "id": "model_cost_and_value",
+          "title": "Model costs, price and unit economics",
+          "evidence": [
+            "assumptions",
+            "direct_costs",
+            "fees",
+            "downside_case",
+            "confidence"
+          ]
+        },
+        {
+          "id": "design_and_simulate",
+          "title": "Design and simulate the workflow",
+          "evidence": [
+            "workflow_steps",
+            "synthetic_fixture",
+            "acceptance_criteria",
+            "failure_cases"
+          ]
+        },
+        {
+          "id": "human_review_and_delivery",
+          "title": "Obtain human approval and deliver",
+          "evidence": [
+            "approval_ref",
+            "delivery_receipt",
+            "exceptions",
+            "customer_feedback"
+          ]
+        },
+        {
+          "id": "attribute_and_improve",
+          "title": "Attribute outcomes and improve safely",
+          "evidence": [
+            "event_ids",
+            "gross_fees_net",
+            "refund_state",
+            "regression_result"
+          ]
+        }
+      ],
+      "required_software_research": [
+        "leading current commercial tools",
+        "widely used professional tools",
+        "open-source alternatives",
+        "local/offline options",
+        "APIs and integration methods",
+        "pricing and usage limits",
+        "security and permission model",
+        "license and redistribution terms"
+      ],
+      "required_benchmark": [
+        "unseen opportunity record",
+        "rights/compliance scenario",
+        "cost and unit-economics calculation",
+        "sandbox workflow execution",
+        "failure and recovery scenario",
+        "human approval handoff"
+      ],
+      "guardrails": [
+        "Protect financial/account data; no false claims or unauthorized account access."
+      ],
+      "truth_rules": [
+        "A lead is not a sale.",
+        "A proposal is not a contract.",
+        "A projection is not collected revenue.",
+        "A listing or opportunity is not verified profit.",
+        "Report fees, refunds, chargebacks and net amounts separately.",
+        "Do not claim completion without tool-confirmed evidence."
+      ],
+      "completion_evidence": [
+        "versioned guide path",
+        "source citations and access dates",
+        "rights review",
+        "sandbox run ID",
+        "benchmark run ID",
+        "human review evidence",
+        "measured outcome event"
+      ]
+    },
+    {
+      "lane_id": "insurance_leads",
+      "value": "quote-intent routing",
+      "monetization": [
+        "permitted_lead_fee"
+      ],
+      "status": "playbook_defined_lesson_authoring_pending",
+      "learning_objective": "Teach Buddy to operate the insurance leads opportunity workflow from discovery through verified outcome, with human review and auditable economics.",
+      "lane_specific_tasks": [
+        "Capture explicit quote request and product category",
+        "Validate consent, jurisdiction and contact preferences",
+        "Check producer/broker licensing and carrier appointment constraints",
+        "Route only to eligible licensed recipients",
+        "Record consent, transfer, opt-out and complaint evidence"
+      ],
+      "shared_execution_sequence": [
+        {
+          "id": "discover_and_qualify",
+          "title": "Discover and qualify the opportunity",
+          "evidence": [
+            "source_url",
+            "retrieved_at",
+            "buyer_problem",
+            "eligibility_facts"
+          ]
+        },
+        {
+          "id": "verify_rights_and_rules",
+          "title": "Verify data rights, rules and scope",
+          "evidence": [
+            "license_or_terms",
+            "consent_or_lawful_basis",
+            "jurisdiction",
+            "review_status"
+          ]
+        },
+        {
+          "id": "model_cost_and_value",
+          "title": "Model costs, price and unit economics",
+          "evidence": [
+            "assumptions",
+            "direct_costs",
+            "fees",
+            "downside_case",
+            "confidence"
+          ]
+        },
+        {
+          "id": "design_and_simulate",
+          "title": "Design and simulate the workflow",
+          "evidence": [
+            "workflow_steps",
+            "synthetic_fixture",
+            "acceptance_criteria",
+            "failure_cases"
+          ]
+        },
+        {
+          "id": "human_review_and_delivery",
+          "title": "Obtain human approval and deliver",
+          "evidence": [
+            "approval_ref",
+            "delivery_receipt",
+            "exceptions",
+            "customer_feedback"
+          ]
+        },
+        {
+          "id": "attribute_and_improve",
+          "title": "Attribute outcomes and improve safely",
+          "evidence": [
+            "event_ids",
+            "gross_fees_net",
+            "refund_state",
+            "regression_result"
+          ]
+        }
+      ],
+      "required_software_research": [
+        "leading current commercial tools",
+        "widely used professional tools",
+        "open-source alternatives",
+        "local/offline options",
+        "APIs and integration methods",
+        "pricing and usage limits",
+        "security and permission model",
+        "license and redistribution terms"
+      ],
+      "required_benchmark": [
+        "unseen opportunity record",
+        "rights/compliance scenario",
+        "cost and unit-economics calculation",
+        "sandbox workflow execution",
+        "failure and recovery scenario",
+        "human approval handoff"
+      ],
+      "guardrails": [
+        "Insurance solicitation and advice require applicable licensing; no underwriting or eligibility promises."
+      ],
+      "truth_rules": [
+        "A lead is not a sale.",
+        "A proposal is not a contract.",
+        "A projection is not collected revenue.",
+        "A listing or opportunity is not verified profit.",
+        "Report fees, refunds, chargebacks and net amounts separately.",
+        "Do not claim completion without tool-confirmed evidence."
+      ],
+      "completion_evidence": [
+        "versioned guide path",
+        "source citations and access dates",
+        "rights review",
+        "sandbox run ID",
+        "benchmark run ID",
+        "human review evidence",
+        "measured outcome event"
+      ]
+    },
+    {
+      "lane_id": "auto_opportunities",
+      "value": "vehicle arbitrage intelligence",
+      "monetization": [
+        "subscription",
+        "qualified_lead"
+      ],
+      "status": "playbook_defined_lesson_authoring_pending",
+      "learning_objective": "Teach Buddy to operate the auto opportunities opportunity workflow from discovery through verified outcome, with human review and auditable economics.",
+      "lane_specific_tasks": [
+        "Collect permitted vehicle listings and auction data",
+        "Normalize VIN, title, mileage, condition and location",
+        "Check recall, lien, title and damage records through authorized sources",
+        "Estimate inspection, transport, repair, tax and fee costs",
+        "Calculate downside-adjusted margin and diligence checklist"
+      ],
+      "shared_execution_sequence": [
+        {
+          "id": "discover_and_qualify",
+          "title": "Discover and qualify the opportunity",
+          "evidence": [
+            "source_url",
+            "retrieved_at",
+            "buyer_problem",
+            "eligibility_facts"
+          ]
+        },
+        {
+          "id": "verify_rights_and_rules",
+          "title": "Verify data rights, rules and scope",
+          "evidence": [
+            "license_or_terms",
+            "consent_or_lawful_basis",
+            "jurisdiction",
+            "review_status"
+          ]
+        },
+        {
+          "id": "model_cost_and_value",
+          "title": "Model costs, price and unit economics",
+          "evidence": [
+            "assumptions",
+            "direct_costs",
+            "fees",
+            "downside_case",
+            "confidence"
+          ]
+        },
+        {
+          "id": "design_and_simulate",
+          "title": "Design and simulate the workflow",
+          "evidence": [
+            "workflow_steps",
+            "synthetic_fixture",
+            "acceptance_criteria",
+            "failure_cases"
+          ]
+        },
+        {
+          "id": "human_review_and_delivery",
+          "title": "Obtain human approval and deliver",
+          "evidence": [
+            "approval_ref",
+            "delivery_receipt",
+            "exceptions",
+            "customer_feedback"
+          ]
+        },
+        {
+          "id": "attribute_and_improve",
+          "title": "Attribute outcomes and improve safely",
+          "evidence": [
+            "event_ids",
+            "gross_fees_net",
+            "refund_state",
+            "regression_result"
+          ]
+        }
+      ],
+      "required_software_research": [
+        "leading current commercial tools",
+        "widely used professional tools",
+        "open-source alternatives",
+        "local/offline options",
+        "APIs and integration methods",
+        "pricing and usage limits",
+        "security and permission model",
+        "license and redistribution terms"
+      ],
+      "required_benchmark": [
+        "unseen opportunity record",
+        "rights/compliance scenario",
+        "cost and unit-economics calculation",
+        "sandbox workflow execution",
+        "failure and recovery scenario",
+        "human approval handoff"
+      ],
+      "guardrails": [
+        "No title washing, odometer fraud, stolen vehicles or guaranteed profit."
+      ],
+      "truth_rules": [
+        "A lead is not a sale.",
+        "A proposal is not a contract.",
+        "A projection is not collected revenue.",
+        "A listing or opportunity is not verified profit.",
+        "Report fees, refunds, chargebacks and net amounts separately.",
+        "Do not claim completion without tool-confirmed evidence."
+      ],
+      "completion_evidence": [
+        "versioned guide path",
+        "source citations and access dates",
+        "rights review",
+        "sandbox run ID",
+        "benchmark run ID",
+        "human review evidence",
+        "measured outcome event"
+      ]
+    },
+    {
+      "lane_id": "contractor_bid",
+      "value": "bid and scope automation",
+      "monetization": [
+        "subscription",
+        "service_fee"
+      ],
+      "status": "playbook_defined_lesson_authoring_pending",
+      "learning_objective": "Teach Buddy to operate the contractor bid opportunity workflow from discovery through verified outcome, with human review and auditable economics.",
+      "lane_specific_tasks": [
+        "Parse plans, specifications, addenda and bid instructions",
+        "Extract quantities, scope, exclusions and submission deadlines",
+        "Build takeoff assumptions and supplier quote requests",
+        "Model labor, materials, overhead, contingency and schedule",
+        "Generate estimate and compliance checklist for qualified review"
+      ],
+      "shared_execution_sequence": [
+        {
+          "id": "discover_and_qualify",
+          "title": "Discover and qualify the opportunity",
+          "evidence": [
+            "source_url",
+            "retrieved_at",
+            "buyer_problem",
+            "eligibility_facts"
+          ]
+        },
+        {
+          "id": "verify_rights_and_rules",
+          "title": "Verify data rights, rules and scope",
+          "evidence": [
+            "license_or_terms",
+            "consent_or_lawful_basis",
+            "jurisdiction",
+            "review_status"
+          ]
+        },
+        {
+          "id": "model_cost_and_value",
+          "title": "Model costs, price and unit economics",
+          "evidence": [
+            "assumptions",
+            "direct_costs",
+            "fees",
+            "downside_case",
+            "confidence"
+          ]
+        },
+        {
+          "id": "design_and_simulate",
+          "title": "Design and simulate the workflow",
+          "evidence": [
+            "workflow_steps",
+            "synthetic_fixture",
+            "acceptance_criteria",
+            "failure_cases"
+          ]
+        },
+        {
+          "id": "human_review_and_delivery",
+          "title": "Obtain human approval and deliver",
+          "evidence": [
+            "approval_ref",
+            "delivery_receipt",
+            "exceptions",
+            "customer_feedback"
+          ]
+        },
+        {
+          "id": "attribute_and_improve",
+          "title": "Attribute outcomes and improve safely",
+          "evidence": [
+            "event_ids",
+            "gross_fees_net",
+            "refund_state",
+            "regression_result"
+          ]
+        }
+      ],
+      "required_software_research": [
+        "leading current commercial tools",
+        "widely used professional tools",
+        "open-source alternatives",
+        "local/offline options",
+        "APIs and integration methods",
+        "pricing and usage limits",
+        "security and permission model",
+        "license and redistribution terms"
+      ],
+      "required_benchmark": [
+        "unseen opportunity record",
+        "rights/compliance scenario",
+        "cost and unit-economics calculation",
+        "sandbox workflow execution",
+        "failure and recovery scenario",
+        "human approval handoff"
+      ],
+      "guardrails": [
+        "Do not imply trade licenses or engineering approval; human estimator validates quantities and safety."
+      ],
+      "truth_rules": [
+        "A lead is not a sale.",
+        "A proposal is not a contract.",
+        "A projection is not collected revenue.",
+        "A listing or opportunity is not verified profit.",
+        "Report fees, refunds, chargebacks and net amounts separately.",
+        "Do not claim completion without tool-confirmed evidence."
+      ],
+      "completion_evidence": [
+        "versioned guide path",
+        "source citations and access dates",
+        "rights review",
+        "sandbox run ID",
+        "benchmark run ID",
+        "human review evidence",
+        "measured outcome event"
+      ]
+    },
+    {
+      "lane_id": "ar_recovery",
+      "value": "accounts-receivable workflow",
+      "monetization": [
+        "subscription",
+        "service_fee"
+      ],
+      "status": "playbook_defined_lesson_authoring_pending",
+      "learning_objective": "Teach Buddy to operate the ar recovery opportunity workflow from discovery through verified outcome, with human review and auditable economics.",
+      "lane_specific_tasks": [
+        "Import customer-authorized invoice and payment records",
+        "Match remittances, credits, disputes and aging buckets",
+        "Prioritize outreach by verified balance and dispute state",
+        "Draft compliant reminders and escalation notes",
+        "Reconcile payment, promise-to-pay and dispute outcomes"
+      ],
+      "shared_execution_sequence": [
+        {
+          "id": "discover_and_qualify",
+          "title": "Discover and qualify the opportunity",
+          "evidence": [
+            "source_url",
+            "retrieved_at",
+            "buyer_problem",
+            "eligibility_facts"
+          ]
+        },
+        {
+          "id": "verify_rights_and_rules",
+          "title": "Verify data rights, rules and scope",
+          "evidence": [
+            "license_or_terms",
+            "consent_or_lawful_basis",
+            "jurisdiction",
+            "review_status"
+          ]
+        },
+        {
+          "id": "model_cost_and_value",
+          "title": "Model costs, price and unit economics",
+          "evidence": [
+            "assumptions",
+            "direct_costs",
+            "fees",
+            "downside_case",
+            "confidence"
+          ]
+        },
+        {
+          "id": "design_and_simulate",
+          "title": "Design and simulate the workflow",
+          "evidence": [
+            "workflow_steps",
+            "synthetic_fixture",
+            "acceptance_criteria",
+            "failure_cases"
+          ]
+        },
+        {
+          "id": "human_review_and_delivery",
+          "title": "Obtain human approval and deliver",
+          "evidence": [
+            "approval_ref",
+            "delivery_receipt",
+            "exceptions",
+            "customer_feedback"
+          ]
+        },
+        {
+          "id": "attribute_and_improve",
+          "title": "Attribute outcomes and improve safely",
+          "evidence": [
+            "event_ids",
+            "gross_fees_net",
+            "refund_state",
+            "regression_result"
+          ]
+        }
+      ],
+      "required_software_research": [
+        "leading current commercial tools",
+        "widely used professional tools",
+        "open-source alternatives",
+        "local/offline options",
+        "APIs and integration methods",
+        "pricing and usage limits",
+        "security and permission model",
+        "license and redistribution terms"
+      ],
+      "required_benchmark": [
+        "unseen opportunity record",
+        "rights/compliance scenario",
+        "cost and unit-economics calculation",
+        "sandbox workflow execution",
+        "failure and recovery scenario",
+        "human approval handoff"
+      ],
+      "guardrails": [
+        "No harassment, threats, unauthorized disclosure or regulated debt collection without compliance review."
+      ],
+      "truth_rules": [
+        "A lead is not a sale.",
+        "A proposal is not a contract.",
+        "A projection is not collected revenue.",
+        "A listing or opportunity is not verified profit.",
+        "Report fees, refunds, chargebacks and net amounts separately.",
+        "Do not claim completion without tool-confirmed evidence."
+      ],
+      "completion_evidence": [
+        "versioned guide path",
+        "source citations and access dates",
+        "rights review",
+        "sandbox run ID",
+        "benchmark run ID",
+        "human review evidence",
+        "measured outcome event"
+      ]
+    },
+    {
+      "lane_id": "tax_incentives",
+      "value": "official incentive matching",
+      "monetization": [
+        "subscription",
+        "professional_referral"
+      ],
+      "status": "playbook_defined_lesson_authoring_pending",
+      "learning_objective": "Teach Buddy to operate the tax incentives opportunity workflow from discovery through verified outcome, with human review and auditable economics.",
+      "lane_specific_tasks": [
+        "Search official government incentive and tax-credit sources",
+        "Extract jurisdiction, dates, applicant and project requirements",
+        "Match only documented facts to eligibility criteria",
+        "Prepare evidence checklist and conservative benefit scenario",
+        "Refer complex tax/legal determinations to qualified professionals"
+      ],
+      "shared_execution_sequence": [
+        {
+          "id": "discover_and_qualify",
+          "title": "Discover and qualify the opportunity",
+          "evidence": [
+            "source_url",
+            "retrieved_at",
+            "buyer_problem",
+            "eligibility_facts"
+          ]
+        },
+        {
+          "id": "verify_rights_and_rules",
+          "title": "Verify data rights, rules and scope",
+          "evidence": [
+            "license_or_terms",
+            "consent_or_lawful_basis",
+            "jurisdiction",
+            "review_status"
+          ]
+        },
+        {
+          "id": "model_cost_and_value",
+          "title": "Model costs, price and unit economics",
+          "evidence": [
+            "assumptions",
+            "direct_costs",
+            "fees",
+            "downside_case",
+            "confidence"
+          ]
+        },
+        {
+          "id": "design_and_simulate",
+          "title": "Design and simulate the workflow",
+          "evidence": [
+            "workflow_steps",
+            "synthetic_fixture",
+            "acceptance_criteria",
+            "failure_cases"
+          ]
+        },
+        {
+          "id": "human_review_and_delivery",
+          "title": "Obtain human approval and deliver",
+          "evidence": [
+            "approval_ref",
+            "delivery_receipt",
+            "exceptions",
+            "customer_feedback"
+          ]
+        },
+        {
+          "id": "attribute_and_improve",
+          "title": "Attribute outcomes and improve safely",
+          "evidence": [
+            "event_ids",
+            "gross_fees_net",
+            "refund_state",
+            "regression_result"
+          ]
+        }
+      ],
+      "required_software_research": [
+        "leading current commercial tools",
+        "widely used professional tools",
+        "open-source alternatives",
+        "local/offline options",
+        "APIs and integration methods",
+        "pricing and usage limits",
+        "security and permission model",
+        "license and redistribution terms"
+      ],
+      "required_benchmark": [
+        "unseen opportunity record",
+        "rights/compliance scenario",
+        "cost and unit-economics calculation",
+        "sandbox workflow execution",
+        "failure and recovery scenario",
+        "human approval handoff"
+      ],
+      "guardrails": [
+        "Never guarantee eligibility or calculate final tax liability as professional advice."
+      ],
+      "truth_rules": [
+        "A lead is not a sale.",
+        "A proposal is not a contract.",
+        "A projection is not collected revenue.",
+        "A listing or opportunity is not verified profit.",
+        "Report fees, refunds, chargebacks and net amounts separately.",
+        "Do not claim completion without tool-confirmed evidence."
+      ],
+      "completion_evidence": [
+        "versioned guide path",
+        "source citations and access dates",
+        "rights review",
+        "sandbox run ID",
+        "benchmark run ID",
+        "human review evidence",
+        "measured outcome event"
+      ]
+    },
+    {
+      "lane_id": "energy_rebates",
+      "value": "rebate matching",
+      "monetization": [
+        "subscription",
+        "qualified_lead"
+      ],
+      "status": "playbook_defined_lesson_authoring_pending",
+      "learning_objective": "Teach Buddy to operate the energy rebates opportunity workflow from discovery through verified outcome, with human review and auditable economics.",
+      "lane_specific_tasks": [
+        "Collect project details and customer-authorized utility data",
+        "Search official utility and government rebate programs",
+        "Compare technology, geography, timing and applicant criteria",
+        "Build application evidence and deadline checklist",
+        "Track submission, approval and payment status from verified records"
+      ],
+      "shared_execution_sequence": [
+        {
+          "id": "discover_and_qualify",
+          "title": "Discover and qualify the opportunity",
+          "evidence": [
+            "source_url",
+            "retrieved_at",
+            "buyer_problem",
+            "eligibility_facts"
+          ]
+        },
+        {
+          "id": "verify_rights_and_rules",
+          "title": "Verify data rights, rules and scope",
+          "evidence": [
+            "license_or_terms",
+            "consent_or_lawful_basis",
+            "jurisdiction",
+            "review_status"
+          ]
+        },
+        {
+          "id": "model_cost_and_value",
+          "title": "Model costs, price and unit economics",
+          "evidence": [
+            "assumptions",
+            "direct_costs",
+            "fees",
+            "downside_case",
+            "confidence"
+          ]
+        },
+        {
+          "id": "design_and_simulate",
+          "title": "Design and simulate the workflow",
+          "evidence": [
+            "workflow_steps",
+            "synthetic_fixture",
+            "acceptance_criteria",
+            "failure_cases"
+          ]
+        },
+        {
+          "id": "human_review_and_delivery",
+          "title": "Obtain human approval and deliver",
+          "evidence": [
+            "approval_ref",
+            "delivery_receipt",
+            "exceptions",
+            "customer_feedback"
+          ]
+        },
+        {
+          "id": "attribute_and_improve",
+          "title": "Attribute outcomes and improve safely",
+          "evidence": [
+            "event_ids",
+            "gross_fees_net",
+            "refund_state",
+            "regression_result"
+          ]
+        }
+      ],
+      "required_software_research": [
+        "leading current commercial tools",
+        "widely used professional tools",
+        "open-source alternatives",
+        "local/offline options",
+        "APIs and integration methods",
+        "pricing and usage limits",
+        "security and permission model",
+        "license and redistribution terms"
+      ],
+      "required_benchmark": [
+        "unseen opportunity record",
+        "rights/compliance scenario",
+        "cost and unit-economics calculation",
+        "sandbox workflow execution",
+        "failure and recovery scenario",
+        "human approval handoff"
+      ],
+      "guardrails": [
+        "Do not promise awards; verify current program funding and official requirements."
+      ],
+      "truth_rules": [
+        "A lead is not a sale.",
+        "A proposal is not a contract.",
+        "A projection is not collected revenue.",
+        "A listing or opportunity is not verified profit.",
+        "Report fees, refunds, chargebacks and net amounts separately.",
+        "Do not claim completion without tool-confirmed evidence."
+      ],
+      "completion_evidence": [
+        "versioned guide path",
+        "source citations and access dates",
+        "rights review",
+        "sandbox run ID",
+        "benchmark run ID",
+        "human review evidence",
+        "measured outcome event"
+      ]
+    },
+    {
+      "lane_id": "warranty_recall",
+      "value": "consumer recovery assistant",
+      "monetization": [
+        "subscription"
+      ],
+      "status": "playbook_defined_lesson_authoring_pending",
+      "learning_objective": "Teach Buddy to operate the warranty recall opportunity workflow from discovery through verified outcome, with human review and auditable economics.",
+      "lane_specific_tasks": [
+        "Capture product identity, purchase evidence and issue details",
+        "Check official manufacturer and regulator recall notices",
+        "Match warranty terms, deadlines and remedy options",
+        "Organize customer evidence and draft accurate claim",
+        "Track case status and preserve communications"
+      ],
+      "shared_execution_sequence": [
+        {
+          "id": "discover_and_qualify",
+          "title": "Discover and qualify the opportunity",
+          "evidence": [
+            "source_url",
+            "retrieved_at",
+            "buyer_problem",
+            "eligibility_facts"
+          ]
+        },
+        {
+          "id": "verify_rights_and_rules",
+          "title": "Verify data rights, rules and scope",
+          "evidence": [
+            "license_or_terms",
+            "consent_or_lawful_basis",
+            "jurisdiction",
+            "review_status"
+          ]
+        },
+        {
+          "id": "model_cost_and_value",
+          "title": "Model costs, price and unit economics",
+          "evidence": [
+            "assumptions",
+            "direct_costs",
+            "fees",
+            "downside_case",
+            "confidence"
+          ]
+        },
+        {
+          "id": "design_and_simulate",
+          "title": "Design and simulate the workflow",
+          "evidence": [
+            "workflow_steps",
+            "synthetic_fixture",
+            "acceptance_criteria",
+            "failure_cases"
+          ]
+        },
+        {
+          "id": "human_review_and_delivery",
+          "title": "Obtain human approval and deliver",
+          "evidence": [
+            "approval_ref",
+            "delivery_receipt",
+            "exceptions",
+            "customer_feedback"
+          ]
+        },
+        {
+          "id": "attribute_and_improve",
+          "title": "Attribute outcomes and improve safely",
+          "evidence": [
+            "event_ids",
+            "gross_fees_net",
+            "refund_state",
+            "regression_result"
+          ]
+        }
+      ],
+      "required_software_research": [
+        "leading current commercial tools",
+        "widely used professional tools",
+        "open-source alternatives",
+        "local/offline options",
+        "APIs and integration methods",
+        "pricing and usage limits",
+        "security and permission model",
+        "license and redistribution terms"
+      ],
+      "required_benchmark": [
+        "unseen opportunity record",
+        "rights/compliance scenario",
+        "cost and unit-economics calculation",
+        "sandbox workflow execution",
+        "failure and recovery scenario",
+        "human approval handoff"
+      ],
+      "guardrails": [
+        "No fabricated purchase proof or claims; do not submit without user review."
+      ],
+      "truth_rules": [
+        "A lead is not a sale.",
+        "A proposal is not a contract.",
+        "A projection is not collected revenue.",
+        "A listing or opportunity is not verified profit.",
+        "Report fees, refunds, chargebacks and net amounts separately.",
+        "Do not claim completion without tool-confirmed evidence."
+      ],
+      "completion_evidence": [
+        "versioned guide path",
+        "source citations and access dates",
+        "rights review",
+        "sandbox run ID",
+        "benchmark run ID",
+        "human review evidence",
+        "measured outcome event"
+      ]
+    },
+    {
+      "lane_id": "subscription_savings",
+      "value": "recurring-spend optimization",
+      "monetization": [
+        "subscription"
+      ],
+      "status": "playbook_defined_lesson_authoring_pending",
+      "learning_objective": "Teach Buddy to operate the subscription savings opportunity workflow from discovery through verified outcome, with human review and auditable economics.",
+      "lane_specific_tasks": [
+        "Import user-authorized recurring transaction records",
+        "Detect recurring merchants, amount changes and renewal timing",
+        "Classify essential, discretionary and uncertain charges",
+        "Compare alternatives and cancellation consequences",
+        "Prepare user-approved action list and verify outcomes"
+      ],
+      "shared_execution_sequence": [
+        {
+          "id": "discover_and_qualify",
+          "title": "Discover and qualify the opportunity",
+          "evidence": [
+            "source_url",
+            "retrieved_at",
+            "buyer_problem",
+            "eligibility_facts"
+          ]
+        },
+        {
+          "id": "verify_rights_and_rules",
+          "title": "Verify data rights, rules and scope",
+          "evidence": [
+            "license_or_terms",
+            "consent_or_lawful_basis",
+            "jurisdiction",
+            "review_status"
+          ]
+        },
+        {
+          "id": "model_cost_and_value",
+          "title": "Model costs, price and unit economics",
+          "evidence": [
+            "assumptions",
+            "direct_costs",
+            "fees",
+            "downside_case",
+            "confidence"
+          ]
+        },
+        {
+          "id": "design_and_simulate",
+          "title": "Design and simulate the workflow",
+          "evidence": [
+            "workflow_steps",
+            "synthetic_fixture",
+            "acceptance_criteria",
+            "failure_cases"
+          ]
+        },
+        {
+          "id": "human_review_and_delivery",
+          "title": "Obtain human approval and deliver",
+          "evidence": [
+            "approval_ref",
+            "delivery_receipt",
+            "exceptions",
+            "customer_feedback"
+          ]
+        },
+        {
+          "id": "attribute_and_improve",
+          "title": "Attribute outcomes and improve safely",
+          "evidence": [
+            "event_ids",
+            "gross_fees_net",
+            "refund_state",
+            "regression_result"
+          ]
+        }
+      ],
+      "required_software_research": [
+        "leading current commercial tools",
+        "widely used professional tools",
+        "open-source alternatives",
+        "local/offline options",
+        "APIs and integration methods",
+        "pricing and usage limits",
+        "security and permission model",
+        "license and redistribution terms"
+      ],
+      "required_benchmark": [
+        "unseen opportunity record",
+        "rights/compliance scenario",
+        "cost and unit-economics calculation",
+        "sandbox workflow execution",
+        "failure and recovery scenario",
+        "human approval handoff"
+      ],
+      "guardrails": [
+        "Never cancel services or access accounts without explicit permission; protect transaction data."
+      ],
+      "truth_rules": [
+        "A lead is not a sale.",
+        "A proposal is not a contract.",
+        "A projection is not collected revenue.",
+        "A listing or opportunity is not verified profit.",
+        "Report fees, refunds, chargebacks and net amounts separately.",
+        "Do not claim completion without tool-confirmed evidence."
+      ],
+      "completion_evidence": [
+        "versioned guide path",
+        "source citations and access dates",
+        "rights review",
+        "sandbox run ID",
+        "benchmark run ID",
+        "human review evidence",
+        "measured outcome event"
+      ]
+    },
+    {
+      "lane_id": "freelance_bid_intel",
+      "value": "high-value gig matching",
+      "monetization": [
+        "subscription"
+      ],
+      "status": "playbook_defined_lesson_authoring_pending",
+      "learning_objective": "Teach Buddy to operate the freelance bid intel opportunity workflow from discovery through verified outcome, with human review and auditable economics.",
+      "lane_specific_tasks": [
+        "Collect permitted freelance marketplace and client opportunities",
+        "Extract scope, budget, timeline, skills and eligibility",
+        "Match against verified portfolio and available capacity",
+        "Estimate delivery effort, platform fees and risk",
+        "Draft tailored truthful proposal and follow-up plan"
+      ],
+      "shared_execution_sequence": [
+        {
+          "id": "discover_and_qualify",
+          "title": "Discover and qualify the opportunity",
+          "evidence": [
+            "source_url",
+            "retrieved_at",
+            "buyer_problem",
+            "eligibility_facts"
+          ]
+        },
+        {
+          "id": "verify_rights_and_rules",
+          "title": "Verify data rights, rules and scope",
+          "evidence": [
+            "license_or_terms",
+            "consent_or_lawful_basis",
+            "jurisdiction",
+            "review_status"
+          ]
+        },
+        {
+          "id": "model_cost_and_value",
+          "title": "Model costs, price and unit economics",
+          "evidence": [
+            "assumptions",
+            "direct_costs",
+            "fees",
+            "downside_case",
+            "confidence"
+          ]
+        },
+        {
+          "id": "design_and_simulate",
+          "title": "Design and simulate the workflow",
+          "evidence": [
+            "workflow_steps",
+            "synthetic_fixture",
+            "acceptance_criteria",
+            "failure_cases"
+          ]
+        },
+        {
+          "id": "human_review_and_delivery",
+          "title": "Obtain human approval and deliver",
+          "evidence": [
+            "approval_ref",
+            "delivery_receipt",
+            "exceptions",
+            "customer_feedback"
+          ]
+        },
+        {
+          "id": "attribute_and_improve",
+          "title": "Attribute outcomes and improve safely",
+          "evidence": [
+            "event_ids",
+            "gross_fees_net",
+            "refund_state",
+            "regression_result"
+          ]
+        }
+      ],
+      "required_software_research": [
+        "leading current commercial tools",
+        "widely used professional tools",
+        "open-source alternatives",
+        "local/offline options",
+        "APIs and integration methods",
+        "pricing and usage limits",
+        "security and permission model",
+        "license and redistribution terms"
+      ],
+      "required_benchmark": [
+        "unseen opportunity record",
+        "rights/compliance scenario",
+        "cost and unit-economics calculation",
+        "sandbox workflow execution",
+        "failure and recovery scenario",
+        "human approval handoff"
+      ],
+      "guardrails": [
+        "Respect platform terms; never fabricate portfolio, reviews, identity or qualifications."
+      ],
+      "truth_rules": [
+        "A lead is not a sale.",
+        "A proposal is not a contract.",
+        "A projection is not collected revenue.",
+        "A listing or opportunity is not verified profit.",
+        "Report fees, refunds, chargebacks and net amounts separately.",
+        "Do not claim completion without tool-confirmed evidence."
+      ],
+      "completion_evidence": [
+        "versioned guide path",
+        "source citations and access dates",
+        "rights review",
+        "sandbox run ID",
+        "benchmark run ID",
+        "human review evidence",
+        "measured outcome event"
+      ]
+    },
+    {
+      "lane_id": "creator_sponsorship",
+      "value": "sponsorship matching",
+      "monetization": [
+        "subscription",
+        "marketplace_fee"
+      ],
+      "status": "playbook_defined_lesson_authoring_pending",
+      "learning_objective": "Teach Buddy to operate the creator sponsorship opportunity workflow from discovery through verified outcome, with human review and auditable economics.",
+      "lane_specific_tasks": [
+        "Build creator profile from authorized analytics and audience data",
+        "Discover relevant brands and active sponsorship programs",
+        "Assess audience fit, deliverables, exclusivity and brand safety",
+        "Estimate rates using disclosed assumptions and comparable evidence",
+        "Draft outreach and campaign measurement plan"
+      ],
+      "shared_execution_sequence": [
+        {
+          "id": "discover_and_qualify",
+          "title": "Discover and qualify the opportunity",
+          "evidence": [
+            "source_url",
+            "retrieved_at",
+            "buyer_problem",
+            "eligibility_facts"
+          ]
+        },
+        {
+          "id": "verify_rights_and_rules",
+          "title": "Verify data rights, rules and scope",
+          "evidence": [
+            "license_or_terms",
+            "consent_or_lawful_basis",
+            "jurisdiction",
+            "review_status"
+          ]
+        },
+        {
+          "id": "model_cost_and_value",
+          "title": "Model costs, price and unit economics",
+          "evidence": [
+            "assumptions",
+            "direct_costs",
+            "fees",
+            "downside_case",
+            "confidence"
+          ]
+        },
+        {
+          "id": "design_and_simulate",
+          "title": "Design and simulate the workflow",
+          "evidence": [
+            "workflow_steps",
+            "synthetic_fixture",
+            "acceptance_criteria",
+            "failure_cases"
+          ]
+        },
+        {
+          "id": "human_review_and_delivery",
+          "title": "Obtain human approval and deliver",
+          "evidence": [
+            "approval_ref",
+            "delivery_receipt",
+            "exceptions",
+            "customer_feedback"
+          ]
+        },
+        {
+          "id": "attribute_and_improve",
+          "title": "Attribute outcomes and improve safely",
+          "evidence": [
+            "event_ids",
+            "gross_fees_net",
+            "refund_state",
+            "regression_result"
+          ]
+        }
+      ],
+      "required_software_research": [
+        "leading current commercial tools",
+        "widely used professional tools",
+        "open-source alternatives",
+        "local/offline options",
+        "APIs and integration methods",
+        "pricing and usage limits",
+        "security and permission model",
+        "license and redistribution terms"
+      ],
+      "required_benchmark": [
+        "unseen opportunity record",
+        "rights/compliance scenario",
+        "cost and unit-economics calculation",
+        "sandbox workflow execution",
+        "failure and recovery scenario",
+        "human approval handoff"
+      ],
+      "guardrails": [
+        "Disclose paid relationships; do not inflate audience metrics or fake engagement."
+      ],
+      "truth_rules": [
+        "A lead is not a sale.",
+        "A proposal is not a contract.",
+        "A projection is not collected revenue.",
+        "A listing or opportunity is not verified profit.",
+        "Report fees, refunds, chargebacks and net amounts separately.",
+        "Do not claim completion without tool-confirmed evidence."
+      ],
+      "completion_evidence": [
+        "versioned guide path",
+        "source citations and access dates",
+        "rights review",
+        "sandbox run ID",
+        "benchmark run ID",
+        "human review evidence",
+        "measured outcome event"
+      ]
+    },
+    {
+      "lane_id": "digital_products",
+      "value": "user-created digital goods",
+      "monetization": [
+        "marketplace_fee",
+        "subscription"
+      ],
+      "status": "playbook_defined_lesson_authoring_pending",
+      "learning_objective": "Teach Buddy to operate the digital products opportunity workflow from discovery through verified outcome, with human review and auditable economics.",
+      "lane_specific_tasks": [
+        "Interview target users and validate recurring problem",
+        "Define original product scope and rights-cleared assets",
+        "Build prototype, accessibility and quality checklist",
+        "Test pricing, fulfillment, refunds and support costs",
+        "Launch only after user approval and measure retention"
+      ],
+      "shared_execution_sequence": [
+        {
+          "id": "discover_and_qualify",
+          "title": "Discover and qualify the opportunity",
+          "evidence": [
+            "source_url",
+            "retrieved_at",
+            "buyer_problem",
+            "eligibility_facts"
+          ]
+        },
+        {
+          "id": "verify_rights_and_rules",
+          "title": "Verify data rights, rules and scope",
+          "evidence": [
+            "license_or_terms",
+            "consent_or_lawful_basis",
+            "jurisdiction",
+            "review_status"
+          ]
+        },
+        {
+          "id": "model_cost_and_value",
+          "title": "Model costs, price and unit economics",
+          "evidence": [
+            "assumptions",
+            "direct_costs",
+            "fees",
+            "downside_case",
+            "confidence"
+          ]
+        },
+        {
+          "id": "design_and_simulate",
+          "title": "Design and simulate the workflow",
+          "evidence": [
+            "workflow_steps",
+            "synthetic_fixture",
+            "acceptance_criteria",
+            "failure_cases"
+          ]
+        },
+        {
+          "id": "human_review_and_delivery",
+          "title": "Obtain human approval and deliver",
+          "evidence": [
+            "approval_ref",
+            "delivery_receipt",
+            "exceptions",
+            "customer_feedback"
+          ]
+        },
+        {
+          "id": "attribute_and_improve",
+          "title": "Attribute outcomes and improve safely",
+          "evidence": [
+            "event_ids",
+            "gross_fees_net",
+            "refund_state",
+            "regression_result"
+          ]
+        }
+      ],
+      "required_software_research": [
+        "leading current commercial tools",
+        "widely used professional tools",
+        "open-source alternatives",
+        "local/offline options",
+        "APIs and integration methods",
+        "pricing and usage limits",
+        "security and permission model",
+        "license and redistribution terms"
+      ],
+      "required_benchmark": [
+        "unseen opportunity record",
+        "rights/compliance scenario",
+        "cost and unit-economics calculation",
+        "sandbox workflow execution",
+        "failure and recovery scenario",
+        "human approval handoff"
+      ],
+      "guardrails": [
+        "Respect IP licenses and consumer protection; no copied course content or counterfeit assets."
+      ],
+      "truth_rules": [
+        "A lead is not a sale.",
+        "A proposal is not a contract.",
+        "A projection is not collected revenue.",
+        "A listing or opportunity is not verified profit.",
+        "Report fees, refunds, chargebacks and net amounts separately.",
+        "Do not claim completion without tool-confirmed evidence."
+      ],
+      "completion_evidence": [
+        "versioned guide path",
+        "source citations and access dates",
+        "rights review",
+        "sandbox run ID",
+        "benchmark run ID",
+        "human review evidence",
+        "measured outcome event"
+      ]
+    },
+    {
+      "lane_id": "micro_saas",
+      "value": "validated workflow products",
+      "monetization": [
+        "subscription"
+      ],
+      "status": "playbook_defined_lesson_authoring_pending",
+      "learning_objective": "Teach Buddy to operate the micro saas opportunity workflow from discovery through verified outcome, with human review and auditable economics.",
+      "lane_specific_tasks": [
+        "Discover repetitive workflow and buyer pain",
+        "Validate willingness to pay and competing solutions",
+        "Define MVP, data model, integrations and security controls",
+        "Test onboarding, reliability, support and unit economics",
+        "Run controlled pilot and measure retention and expansion"
+      ],
+      "shared_execution_sequence": [
+        {
+          "id": "discover_and_qualify",
+          "title": "Discover and qualify the opportunity",
+          "evidence": [
+            "source_url",
+            "retrieved_at",
+            "buyer_problem",
+            "eligibility_facts"
+          ]
+        },
+        {
+          "id": "verify_rights_and_rules",
+          "title": "Verify data rights, rules and scope",
+          "evidence": [
+            "license_or_terms",
+            "consent_or_lawful_basis",
+            "jurisdiction",
+            "review_status"
+          ]
+        },
+        {
+          "id": "model_cost_and_value",
+          "title": "Model costs, price and unit economics",
+          "evidence": [
+            "assumptions",
+            "direct_costs",
+            "fees",
+            "downside_case",
+            "confidence"
+          ]
+        },
+        {
+          "id": "design_and_simulate",
+          "title": "Design and simulate the workflow",
+          "evidence": [
+            "workflow_steps",
+            "synthetic_fixture",
+            "acceptance_criteria",
+            "failure_cases"
+          ]
+        },
+        {
+          "id": "human_review_and_delivery",
+          "title": "Obtain human approval and deliver",
+          "evidence": [
+            "approval_ref",
+            "delivery_receipt",
+            "exceptions",
+            "customer_feedback"
+          ]
+        },
+        {
+          "id": "attribute_and_improve",
+          "title": "Attribute outcomes and improve safely",
+          "evidence": [
+            "event_ids",
+            "gross_fees_net",
+            "refund_state",
+            "regression_result"
+          ]
+        }
+      ],
+      "required_software_research": [
+        "leading current commercial tools",
+        "widely used professional tools",
+        "open-source alternatives",
+        "local/offline options",
+        "APIs and integration methods",
+        "pricing and usage limits",
+        "security and permission model",
+        "license and redistribution terms"
+      ],
+      "required_benchmark": [
+        "unseen opportunity record",
+        "rights/compliance scenario",
+        "cost and unit-economics calculation",
+        "sandbox workflow execution",
+        "failure and recovery scenario",
+        "human approval handoff"
+      ],
+      "guardrails": [
+        "No deceptive trials or hidden billing; secure customer data and provide cancellation."
+      ],
+      "truth_rules": [
+        "A lead is not a sale.",
+        "A proposal is not a contract.",
+        "A projection is not collected revenue.",
+        "A listing or opportunity is not verified profit.",
+        "Report fees, refunds, chargebacks and net amounts separately.",
+        "Do not claim completion without tool-confirmed evidence."
+      ],
+      "completion_evidence": [
+        "versioned guide path",
+        "source citations and access dates",
+        "rights review",
+        "sandbox run ID",
+        "benchmark run ID",
+        "human review evidence",
+        "measured outcome event"
+      ]
+    },
+    {
+      "lane_id": "data_quality",
+      "value": "licensed normalized datasets",
+      "monetization": [
+        "data_license",
+        "subscription"
+      ],
+      "status": "playbook_defined_lesson_authoring_pending",
+      "learning_objective": "Teach Buddy to operate the data quality opportunity workflow from discovery through verified outcome, with human review and auditable economics.",
+      "lane_specific_tasks": [
+        "Identify lawful source and documented license scope",
+        "Define schema, provenance, freshness and quality dimensions",
+        "Normalize and deduplicate permitted records",
+        "Run validation, lineage and correction workflows",
+        "Publish only within license and redistribution rights"
+      ],
+      "shared_execution_sequence": [
+        {
+          "id": "discover_and_qualify",
+          "title": "Discover and qualify the opportunity",
+          "evidence": [
+            "source_url",
+            "retrieved_at",
+            "buyer_problem",
+            "eligibility_facts"
+          ]
+        },
+        {
+          "id": "verify_rights_and_rules",
+          "title": "Verify data rights, rules and scope",
+          "evidence": [
+            "license_or_terms",
+            "consent_or_lawful_basis",
+            "jurisdiction",
+            "review_status"
+          ]
+        },
+        {
+          "id": "model_cost_and_value",
+          "title": "Model costs, price and unit economics",
+          "evidence": [
+            "assumptions",
+            "direct_costs",
+            "fees",
+            "downside_case",
+            "confidence"
+          ]
+        },
+        {
+          "id": "design_and_simulate",
+          "title": "Design and simulate the workflow",
+          "evidence": [
+            "workflow_steps",
+            "synthetic_fixture",
+            "acceptance_criteria",
+            "failure_cases"
+          ]
+        },
+        {
+          "id": "human_review_and_delivery",
+          "title": "Obtain human approval and deliver",
+          "evidence": [
+            "approval_ref",
+            "delivery_receipt",
+            "exceptions",
+            "customer_feedback"
+          ]
+        },
+        {
+          "id": "attribute_and_improve",
+          "title": "Attribute outcomes and improve safely",
+          "evidence": [
+            "event_ids",
+            "gross_fees_net",
+            "refund_state",
+            "regression_result"
+          ]
+        }
+      ],
+      "required_software_research": [
+        "leading current commercial tools",
+        "widely used professional tools",
+        "open-source alternatives",
+        "local/offline options",
+        "APIs and integration methods",
+        "pricing and usage limits",
+        "security and permission model",
+        "license and redistribution terms"
+      ],
+      "required_benchmark": [
+        "unseen opportunity record",
+        "rights/compliance scenario",
+        "cost and unit-economics calculation",
+        "sandbox workflow execution",
+        "failure and recovery scenario",
+        "human approval handoff"
+      ],
+      "guardrails": [
+        "Do not resell restricted data or personal data without lawful basis and permission."
+      ],
+      "truth_rules": [
+        "A lead is not a sale.",
+        "A proposal is not a contract.",
+        "A projection is not collected revenue.",
+        "A listing or opportunity is not verified profit.",
+        "Report fees, refunds, chargebacks and net amounts separately.",
+        "Do not claim completion without tool-confirmed evidence."
+      ],
+      "completion_evidence": [
+        "versioned guide path",
+        "source citations and access dates",
+        "rights review",
+        "sandbox run ID",
+        "benchmark run ID",
+        "human review evidence",
+        "measured outcome event"
+      ]
+    },
+    {
+      "lane_id": "api_marketplace",
+      "value": "metered opportunity APIs",
+      "monetization": [
+        "usage_fee",
+        "subscription"
+      ],
+      "status": "playbook_defined_lesson_authoring_pending",
+      "learning_objective": "Teach Buddy to operate the api marketplace opportunity workflow from discovery through verified outcome, with human review and auditable economics.",
+      "lane_specific_tasks": [
+        "Define data product and consumer use cases",
+        "Document source rights, schema and service limits",
+        "Build authentication, quotas, metering and observability",
+        "Test accuracy, latency, resilience and abuse controls",
+        "Publish pricing, terms, support and incident process"
+      ],
+      "shared_execution_sequence": [
+        {
+          "id": "discover_and_qualify",
+          "title": "Discover and qualify the opportunity",
+          "evidence": [
+            "source_url",
+            "retrieved_at",
+            "buyer_problem",
+            "eligibility_facts"
+          ]
+        },
+        {
+          "id": "verify_rights_and_rules",
+          "title": "Verify data rights, rules and scope",
+          "evidence": [
+            "license_or_terms",
+            "consent_or_lawful_basis",
+            "jurisdiction",
+            "review_status"
+          ]
+        },
+        {
+          "id": "model_cost_and_value",
+          "title": "Model costs, price and unit economics",
+          "evidence": [
+            "assumptions",
+            "direct_costs",
+            "fees",
+            "downside_case",
+            "confidence"
+          ]
+        },
+        {
+          "id": "design_and_simulate",
+          "title": "Design and simulate the workflow",
+          "evidence": [
+            "workflow_steps",
+            "synthetic_fixture",
+            "acceptance_criteria",
+            "failure_cases"
+          ]
+        },
+        {
+          "id": "human_review_and_delivery",
+          "title": "Obtain human approval and deliver",
+          "evidence": [
+            "approval_ref",
+            "delivery_receipt",
+            "exceptions",
+            "customer_feedback"
+          ]
+        },
+        {
+          "id": "attribute_and_improve",
+          "title": "Attribute outcomes and improve safely",
+          "evidence": [
+            "event_ids",
+            "gross_fees_net",
+            "refund_state",
+            "regression_result"
+          ]
+        }
+      ],
+      "required_software_research": [
+        "leading current commercial tools",
+        "widely used professional tools",
+        "open-source alternatives",
+        "local/offline options",
+        "APIs and integration methods",
+        "pricing and usage limits",
+        "security and permission model",
+        "license and redistribution terms"
+      ],
+      "required_benchmark": [
+        "unseen opportunity record",
+        "rights/compliance scenario",
+        "cost and unit-economics calculation",
+        "sandbox workflow execution",
+        "failure and recovery scenario",
+        "human approval handoff"
+      ],
+      "guardrails": [
+        "Only expose authorized data; enforce tenant isolation, quotas and privacy."
+      ],
+      "truth_rules": [
+        "A lead is not a sale.",
+        "A proposal is not a contract.",
+        "A projection is not collected revenue.",
+        "A listing or opportunity is not verified profit.",
+        "Report fees, refunds, chargebacks and net amounts separately.",
+        "Do not claim completion without tool-confirmed evidence."
+      ],
+      "completion_evidence": [
+        "versioned guide path",
+        "source citations and access dates",
+        "rights review",
+        "sandbox run ID",
+        "benchmark run ID",
+        "human review evidence",
+        "measured outcome event"
+      ]
+    },
+    {
+      "lane_id": "enterprise_automation",
+      "value": "managed bot automation",
+      "monetization": [
+        "setup_fee",
+        "monthly_fee",
+        "usage_fee"
+      ],
+      "status": "playbook_defined_lesson_authoring_pending",
+      "learning_objective": "Teach Buddy to operate the enterprise automation opportunity workflow from discovery through verified outcome, with human review and auditable economics.",
+      "lane_specific_tasks": [
+        "Map customer process and approval boundaries",
+        "Assess integration permissions, identity and data classification",
+        "Design human-in-loop workflow and rollback",
+        "Pilot with synthetic or approved data and acceptance tests",
+        "Measure reliability, time saved, support load and total cost"
+      ],
+      "shared_execution_sequence": [
+        {
+          "id": "discover_and_qualify",
+          "title": "Discover and qualify the opportunity",
+          "evidence": [
+            "source_url",
+            "retrieved_at",
+            "buyer_problem",
+            "eligibility_facts"
+          ]
+        },
+        {
+          "id": "verify_rights_and_rules",
+          "title": "Verify data rights, rules and scope",
+          "evidence": [
+            "license_or_terms",
+            "consent_or_lawful_basis",
+            "jurisdiction",
+            "review_status"
+          ]
+        },
+        {
+          "id": "model_cost_and_value",
+          "title": "Model costs, price and unit economics",
+          "evidence": [
+            "assumptions",
+            "direct_costs",
+            "fees",
+            "downside_case",
+            "confidence"
+          ]
+        },
+        {
+          "id": "design_and_simulate",
+          "title": "Design and simulate the workflow",
+          "evidence": [
+            "workflow_steps",
+            "synthetic_fixture",
+            "acceptance_criteria",
+            "failure_cases"
+          ]
+        },
+        {
+          "id": "human_review_and_delivery",
+          "title": "Obtain human approval and deliver",
+          "evidence": [
+            "approval_ref",
+            "delivery_receipt",
+            "exceptions",
+            "customer_feedback"
+          ]
+        },
+        {
+          "id": "attribute_and_improve",
+          "title": "Attribute outcomes and improve safely",
+          "evidence": [
+            "event_ids",
+            "gross_fees_net",
+            "refund_state",
+            "regression_result"
+          ]
+        }
+      ],
+      "required_software_research": [
+        "leading current commercial tools",
+        "widely used professional tools",
+        "open-source alternatives",
+        "local/offline options",
+        "APIs and integration methods",
+        "pricing and usage limits",
+        "security and permission model",
+        "license and redistribution terms"
+      ],
+      "required_benchmark": [
+        "unseen opportunity record",
+        "rights/compliance scenario",
+        "cost and unit-economics calculation",
+        "sandbox workflow execution",
+        "failure and recovery scenario",
+        "human approval handoff"
+      ],
+      "guardrails": [
+        "No unattended high-impact actions; document approvals, audit and rollback."
+      ],
+      "truth_rules": [
+        "A lead is not a sale.",
+        "A proposal is not a contract.",
+        "A projection is not collected revenue.",
+        "A listing or opportunity is not verified profit.",
+        "Report fees, refunds, chargebacks and net amounts separately.",
+        "Do not claim completion without tool-confirmed evidence."
+      ],
+      "completion_evidence": [
+        "versioned guide path",
+        "source citations and access dates",
+        "rights review",
+        "sandbox run ID",
+        "benchmark run ID",
+        "human review evidence",
+        "measured outcome event"
+      ]
+    },
+    {
+      "lane_id": "affiliate_partnerships",
+      "value": "affiliate offer and partner operations",
+      "monetization": [
+        "affiliate",
+        "subscription"
+      ],
+      "status": "playbook_defined_lesson_authoring_pending",
+      "learning_objective": "Teach Buddy to operate the affiliate partnerships opportunity workflow from discovery through verified outcome, with human review and auditable economics.",
+      "lane_specific_tasks": [
+        "Identify programs and verify current terms and eligibility",
+        "Map audience intent to relevant offers and disclosures",
+        "Create tracked links and consent-respecting attribution",
+        "Reconcile provider conversions, reversals and commissions",
+        "Optimize only on verified net revenue and customer value"
+      ],
+      "shared_execution_sequence": [
+        {
+          "id": "discover_and_qualify",
+          "title": "Discover and qualify the opportunity",
+          "evidence": [
+            "source_url",
+            "retrieved_at",
+            "buyer_problem",
+            "eligibility_facts"
+          ]
+        },
+        {
+          "id": "verify_rights_and_rules",
+          "title": "Verify data rights, rules and scope",
+          "evidence": [
+            "license_or_terms",
+            "consent_or_lawful_basis",
+            "jurisdiction",
+            "review_status"
+          ]
+        },
+        {
+          "id": "model_cost_and_value",
+          "title": "Model costs, price and unit economics",
+          "evidence": [
+            "assumptions",
+            "direct_costs",
+            "fees",
+            "downside_case",
+            "confidence"
+          ]
+        },
+        {
+          "id": "design_and_simulate",
+          "title": "Design and simulate the workflow",
+          "evidence": [
+            "workflow_steps",
+            "synthetic_fixture",
+            "acceptance_criteria",
+            "failure_cases"
+          ]
+        },
+        {
+          "id": "human_review_and_delivery",
+          "title": "Obtain human approval and deliver",
+          "evidence": [
+            "approval_ref",
+            "delivery_receipt",
+            "exceptions",
+            "customer_feedback"
+          ]
+        },
+        {
+          "id": "attribute_and_improve",
+          "title": "Attribute outcomes and improve safely",
+          "evidence": [
+            "event_ids",
+            "gross_fees_net",
+            "refund_state",
+            "regression_result"
+          ]
+        }
+      ],
+      "required_software_research": [
+        "leading current commercial tools",
+        "widely used professional tools",
+        "open-source alternatives",
+        "local/offline options",
+        "APIs and integration methods",
+        "pricing and usage limits",
+        "security and permission model",
+        "license and redistribution terms"
+      ],
+      "required_benchmark": [
+        "unseen opportunity record",
+        "rights/compliance scenario",
+        "cost and unit-economics calculation",
+        "sandbox workflow execution",
+        "failure and recovery scenario",
+        "human approval handoff"
+      ],
+      "guardrails": [
+        "Disclose affiliate relationships and follow program terms; never fabricate conversions."
+      ],
+      "truth_rules": [
+        "A lead is not a sale.",
+        "A proposal is not a contract.",
+        "A projection is not collected revenue.",
+        "A listing or opportunity is not verified profit.",
+        "Report fees, refunds, chargebacks and net amounts separately.",
+        "Do not claim completion without tool-confirmed evidence."
+      ],
+      "completion_evidence": [
+        "versioned guide path",
+        "source citations and access dates",
+        "rights review",
+        "sandbox run ID",
+        "benchmark run ID",
+        "human review evidence",
+        "measured outcome event"
+      ]
+    },
+    {
+      "lane_id": "franchise_growth",
+      "value": "franchise expansion and franchisee readiness",
+      "monetization": [
+        "subscription",
+        "service_fee",
+        "referral"
+      ],
+      "status": "playbook_defined_lesson_authoring_pending",
+      "learning_objective": "Teach Buddy to operate the franchise growth opportunity workflow from discovery through verified outcome, with human review and auditable economics.",
+      "lane_specific_tasks": [
+        "Research franchise model and jurisdiction requirements",
+        "Build unit economics with explicit assumptions and downside cases",
+        "Map franchisee profile, training and support obligations",
+        "Prepare disclosure and professional-review checklist",
+        "Track pipeline, opening readiness and franchisee performance"
+      ],
+      "shared_execution_sequence": [
+        {
+          "id": "discover_and_qualify",
+          "title": "Discover and qualify the opportunity",
+          "evidence": [
+            "source_url",
+            "retrieved_at",
+            "buyer_problem",
+            "eligibility_facts"
+          ]
+        },
+        {
+          "id": "verify_rights_and_rules",
+          "title": "Verify data rights, rules and scope",
+          "evidence": [
+            "license_or_terms",
+            "consent_or_lawful_basis",
+            "jurisdiction",
+            "review_status"
+          ]
+        },
+        {
+          "id": "model_cost_and_value",
+          "title": "Model costs, price and unit economics",
+          "evidence": [
+            "assumptions",
+            "direct_costs",
+            "fees",
+            "downside_case",
+            "confidence"
+          ]
+        },
+        {
+          "id": "design_and_simulate",
+          "title": "Design and simulate the workflow",
+          "evidence": [
+            "workflow_steps",
+            "synthetic_fixture",
+            "acceptance_criteria",
+            "failure_cases"
+          ]
+        },
+        {
+          "id": "human_review_and_delivery",
+          "title": "Obtain human approval and deliver",
+          "evidence": [
+            "approval_ref",
+            "delivery_receipt",
+            "exceptions",
+            "customer_feedback"
+          ]
+        },
+        {
+          "id": "attribute_and_improve",
+          "title": "Attribute outcomes and improve safely",
+          "evidence": [
+            "event_ids",
+            "gross_fees_net",
+            "refund_state",
+            "regression_result"
+          ]
+        }
+      ],
+      "required_software_research": [
+        "leading current commercial tools",
+        "widely used professional tools",
+        "open-source alternatives",
+        "local/offline options",
+        "APIs and integration methods",
+        "pricing and usage limits",
+        "security and permission model",
+        "license and redistribution terms"
+      ],
+      "required_benchmark": [
+        "unseen opportunity record",
+        "rights/compliance scenario",
+        "cost and unit-economics calculation",
+        "sandbox workflow execution",
+        "failure and recovery scenario",
+        "human approval handoff"
+      ],
+      "guardrails": [
+        "Franchise sales/disclosures are regulated; qualified legal review required before offers."
+      ],
+      "truth_rules": [
+        "A lead is not a sale.",
+        "A proposal is not a contract.",
+        "A projection is not collected revenue.",
+        "A listing or opportunity is not verified profit.",
+        "Report fees, refunds, chargebacks and net amounts separately.",
+        "Do not claim completion without tool-confirmed evidence."
+      ],
+      "completion_evidence": [
+        "versioned guide path",
+        "source citations and access dates",
+        "rights review",
+        "sandbox run ID",
+        "benchmark run ID",
+        "human review evidence",
+        "measured outcome event"
+      ]
+    },
+    {
+      "lane_id": "ai_model_services",
+      "value": "model productization, evaluation and governed AI services",
+      "monetization": [
+        "service_fee",
+        "subscription",
+        "usage_fee"
+      ],
+      "status": "playbook_defined_lesson_authoring_pending",
+      "learning_objective": "Teach Buddy to operate the ai model services opportunity workflow from discovery through verified outcome, with human review and auditable economics.",
+      "lane_specific_tasks": [
+        "Discover buyer workflow and measurable model requirement",
+        "Select permitted model/data stack and evaluate baseline",
+        "Design retrieval, guardrails, observability and fallback",
+        "Benchmark accuracy, latency, cost, safety and human escalation",
+        "Prepare deployment plan, service levels and rollback"
+      ],
+      "shared_execution_sequence": [
+        {
+          "id": "discover_and_qualify",
+          "title": "Discover and qualify the opportunity",
+          "evidence": [
+            "source_url",
+            "retrieved_at",
+            "buyer_problem",
+            "eligibility_facts"
+          ]
+        },
+        {
+          "id": "verify_rights_and_rules",
+          "title": "Verify data rights, rules and scope",
+          "evidence": [
+            "license_or_terms",
+            "consent_or_lawful_basis",
+            "jurisdiction",
+            "review_status"
+          ]
+        },
+        {
+          "id": "model_cost_and_value",
+          "title": "Model costs, price and unit economics",
+          "evidence": [
+            "assumptions",
+            "direct_costs",
+            "fees",
+            "downside_case",
+            "confidence"
+          ]
+        },
+        {
+          "id": "design_and_simulate",
+          "title": "Design and simulate the workflow",
+          "evidence": [
+            "workflow_steps",
+            "synthetic_fixture",
+            "acceptance_criteria",
+            "failure_cases"
+          ]
+        },
+        {
+          "id": "human_review_and_delivery",
+          "title": "Obtain human approval and deliver",
+          "evidence": [
+            "approval_ref",
+            "delivery_receipt",
+            "exceptions",
+            "customer_feedback"
+          ]
+        },
+        {
+          "id": "attribute_and_improve",
+          "title": "Attribute outcomes and improve safely",
+          "evidence": [
+            "event_ids",
+            "gross_fees_net",
+            "refund_state",
+            "regression_result"
+          ]
+        }
+      ],
+      "required_software_research": [
+        "leading current commercial tools",
+        "widely used professional tools",
+        "open-source alternatives",
+        "local/offline options",
+        "APIs and integration methods",
+        "pricing and usage limits",
+        "security and permission model",
+        "license and redistribution terms"
+      ],
+      "required_benchmark": [
+        "unseen opportunity record",
+        "rights/compliance scenario",
+        "cost and unit-economics calculation",
+        "sandbox workflow execution",
+        "failure and recovery scenario",
+        "human approval handoff"
+      ],
+      "guardrails": [
+        "No claims of guaranteed accuracy; protect customer data and disclose model limits."
+      ],
+      "truth_rules": [
+        "A lead is not a sale.",
+        "A proposal is not a contract.",
+        "A projection is not collected revenue.",
+        "A listing or opportunity is not verified profit.",
+        "Report fees, refunds, chargebacks and net amounts separately.",
+        "Do not claim completion without tool-confirmed evidence."
+      ],
+      "completion_evidence": [
+        "versioned guide path",
+        "source citations and access dates",
+        "rights review",
+        "sandbox run ID",
+        "benchmark run ID",
+        "human review evidence",
+        "measured outcome event"
+      ]
+    },
+    {
+      "lane_id": "licensing_marketplace",
+      "value": "commercial intellectual-property licensing and rights administration",
+      "monetization": [
+        "data_license",
+        "subscription",
+        "referral"
+      ],
+      "status": "playbook_defined_lesson_authoring_pending",
+      "learning_objective": "Teach Buddy to operate the licensing marketplace opportunity workflow from discovery through verified outcome, with human review and auditable economics.",
+      "lane_specific_tasks": [
+        "Identify rights holder, asset and chain-of-title evidence",
+        "Classify territory, term, media, exclusivity and permitted uses",
+        "Check existing license conflicts and restrictions",
+        "Draft term sheet and royalty/reporting requirements for legal review",
+        "Track signed grants, usage, renewals and infringement notices"
+      ],
+      "shared_execution_sequence": [
+        {
+          "id": "discover_and_qualify",
+          "title": "Discover and qualify the opportunity",
+          "evidence": [
+            "source_url",
+            "retrieved_at",
+            "buyer_problem",
+            "eligibility_facts"
+          ]
+        },
+        {
+          "id": "verify_rights_and_rules",
+          "title": "Verify data rights, rules and scope",
+          "evidence": [
+            "license_or_terms",
+            "consent_or_lawful_basis",
+            "jurisdiction",
+            "review_status"
+          ]
+        },
+        {
+          "id": "model_cost_and_value",
+          "title": "Model costs, price and unit economics",
+          "evidence": [
+            "assumptions",
+            "direct_costs",
+            "fees",
+            "downside_case",
+            "confidence"
+          ]
+        },
+        {
+          "id": "design_and_simulate",
+          "title": "Design and simulate the workflow",
+          "evidence": [
+            "workflow_steps",
+            "synthetic_fixture",
+            "acceptance_criteria",
+            "failure_cases"
+          ]
+        },
+        {
+          "id": "human_review_and_delivery",
+          "title": "Obtain human approval and deliver",
+          "evidence": [
+            "approval_ref",
+            "delivery_receipt",
+            "exceptions",
+            "customer_feedback"
+          ]
+        },
+        {
+          "id": "attribute_and_improve",
+          "title": "Attribute outcomes and improve safely",
+          "evidence": [
+            "event_ids",
+            "gross_fees_net",
+            "refund_state",
+            "regression_result"
+          ]
+        }
+      ],
+      "required_software_research": [
+        "leading current commercial tools",
+        "widely used professional tools",
+        "open-source alternatives",
+        "local/offline options",
+        "APIs and integration methods",
+        "pricing and usage limits",
+        "security and permission model",
+        "license and redistribution terms"
+      ],
+      "required_benchmark": [
+        "unseen opportunity record",
+        "rights/compliance scenario",
+        "cost and unit-economics calculation",
+        "sandbox workflow execution",
+        "failure and recovery scenario",
+        "human approval handoff"
+      ],
+      "guardrails": [
+        "Do not grant rights without authority; legal counsel reviews agreements and chain of title."
+      ],
+      "truth_rules": [
+        "A lead is not a sale.",
+        "A proposal is not a contract.",
+        "A projection is not collected revenue.",
+        "A listing or opportunity is not verified profit.",
+        "Report fees, refunds, chargebacks and net amounts separately.",
+        "Do not claim completion without tool-confirmed evidence."
+      ],
+      "completion_evidence": [
+        "versioned guide path",
+        "source citations and access dates",
+        "rights review",
+        "sandbox run ID",
+        "benchmark run ID",
+        "human review evidence",
+        "measured outcome event"
+      ]
+    },
+    {
+      "lane_id": "travel_booking",
+      "value": "traveler itinerary, supplier comparison and booking referrals",
+      "monetization": [
+        "affiliate",
+        "subscription"
+      ],
+      "status": "playbook_defined_lesson_authoring_pending",
+      "learning_objective": "Teach Buddy to operate the travel booking opportunity workflow from discovery through verified outcome, with human review and auditable economics.",
+      "lane_specific_tasks": [
+        "Capture traveler dates, preferences and accessibility needs",
+        "Compare supplier inventory, total price and cancellation terms",
+        "Verify current availability and mandatory fees",
+        "Build itinerary with transfer buffers and disruption alternatives",
+        "Refer to supplier for booking and confirm final terms"
+      ],
+      "shared_execution_sequence": [
+        {
+          "id": "discover_and_qualify",
+          "title": "Discover and qualify the opportunity",
+          "evidence": [
+            "source_url",
+            "retrieved_at",
+            "buyer_problem",
+            "eligibility_facts"
+          ]
+        },
+        {
+          "id": "verify_rights_and_rules",
+          "title": "Verify data rights, rules and scope",
+          "evidence": [
+            "license_or_terms",
+            "consent_or_lawful_basis",
+            "jurisdiction",
+            "review_status"
+          ]
+        },
+        {
+          "id": "model_cost_and_value",
+          "title": "Model costs, price and unit economics",
+          "evidence": [
+            "assumptions",
+            "direct_costs",
+            "fees",
+            "downside_case",
+            "confidence"
+          ]
+        },
+        {
+          "id": "design_and_simulate",
+          "title": "Design and simulate the workflow",
+          "evidence": [
+            "workflow_steps",
+            "synthetic_fixture",
+            "acceptance_criteria",
+            "failure_cases"
+          ]
+        },
+        {
+          "id": "human_review_and_delivery",
+          "title": "Obtain human approval and deliver",
+          "evidence": [
+            "approval_ref",
+            "delivery_receipt",
+            "exceptions",
+            "customer_feedback"
+          ]
+        },
+        {
+          "id": "attribute_and_improve",
+          "title": "Attribute outcomes and improve safely",
+          "evidence": [
+            "event_ids",
+            "gross_fees_net",
+            "refund_state",
+            "regression_result"
+          ]
+        }
+      ],
+      "required_software_research": [
+        "leading current commercial tools",
+        "widely used professional tools",
+        "open-source alternatives",
+        "local/offline options",
+        "APIs and integration methods",
+        "pricing and usage limits",
+        "security and permission model",
+        "license and redistribution terms"
+      ],
+      "required_benchmark": [
+        "unseen opportunity record",
+        "rights/compliance scenario",
+        "cost and unit-economics calculation",
+        "sandbox workflow execution",
+        "failure and recovery scenario",
+        "human approval handoff"
+      ],
+      "guardrails": [
+        "Disclose affiliate relationships; respect travel seller rules and never claim a booking before confirmation."
+      ],
+      "truth_rules": [
+        "A lead is not a sale.",
+        "A proposal is not a contract.",
+        "A projection is not collected revenue.",
+        "A listing or opportunity is not verified profit.",
+        "Report fees, refunds, chargebacks and net amounts separately.",
+        "Do not claim completion without tool-confirmed evidence."
+      ],
+      "completion_evidence": [
+        "versioned guide path",
+        "source citations and access dates",
+        "rights review",
+        "sandbox run ID",
+        "benchmark run ID",
+        "human review evidence",
+        "measured outcome event"
+      ]
+    },
+    {
+      "lane_id": "unclaimed_property",
+      "value": "lawfully verified unclaimed-property discovery and claim-preparation support",
+      "monetization": [
+        "subscription",
+        "service_fee"
+      ],
+      "status": "playbook_defined_lesson_authoring_pending",
+      "learning_objective": "Teach Buddy to operate the unclaimed property opportunity workflow from discovery through verified outcome, with human review and auditable economics.",
+      "lane_specific_tasks": [
+        "Search official state and government unclaimed-property portals",
+        "Match records using user-provided identifiers with privacy safeguards",
+        "Explain official claimant evidence and verification process",
+        "Organize forms and supporting documents for user review",
+        "Track claim status using official agency confirmations"
+      ],
+      "shared_execution_sequence": [
+        {
+          "id": "discover_and_qualify",
+          "title": "Discover and qualify the opportunity",
+          "evidence": [
+            "source_url",
+            "retrieved_at",
+            "buyer_problem",
+            "eligibility_facts"
+          ]
+        },
+        {
+          "id": "verify_rights_and_rules",
+          "title": "Verify data rights, rules and scope",
+          "evidence": [
+            "license_or_terms",
+            "consent_or_lawful_basis",
+            "jurisdiction",
+            "review_status"
+          ]
+        },
+        {
+          "id": "model_cost_and_value",
+          "title": "Model costs, price and unit economics",
+          "evidence": [
+            "assumptions",
+            "direct_costs",
+            "fees",
+            "downside_case",
+            "confidence"
+          ]
+        },
+        {
+          "id": "design_and_simulate",
+          "title": "Design and simulate the workflow",
+          "evidence": [
+            "workflow_steps",
+            "synthetic_fixture",
+            "acceptance_criteria",
+            "failure_cases"
+          ]
+        },
+        {
+          "id": "human_review_and_delivery",
+          "title": "Obtain human approval and deliver",
+          "evidence": [
+            "approval_ref",
+            "delivery_receipt",
+            "exceptions",
+            "customer_feedback"
+          ]
+        },
+        {
+          "id": "attribute_and_improve",
+          "title": "Attribute outcomes and improve safely",
+          "evidence": [
+            "event_ids",
+            "gross_fees_net",
+            "refund_state",
+            "regression_result"
+          ]
+        }
+      ],
+      "required_software_research": [
+        "leading current commercial tools",
+        "widely used professional tools",
+        "open-source alternatives",
+        "local/offline options",
+        "APIs and integration methods",
+        "pricing and usage limits",
+        "security and permission model",
+        "license and redistribution terms"
+      ],
+      "required_benchmark": [
+        "unseen opportunity record",
+        "rights/compliance scenario",
+        "cost and unit-economics calculation",
+        "sandbox workflow execution",
+        "failure and recovery scenario",
+        "human approval handoff"
+      ],
+      "guardrails": [
+        "Never impersonate claimants, charge hidden fees, or promise recovery; respect state rules."
+      ],
+      "truth_rules": [
+        "A lead is not a sale.",
+        "A proposal is not a contract.",
+        "A projection is not collected revenue.",
+        "A listing or opportunity is not verified profit.",
+        "Report fees, refunds, chargebacks and net amounts separately.",
+        "Do not claim completion without tool-confirmed evidence."
+      ],
+      "completion_evidence": [
+        "versioned guide path",
+        "source citations and access dates",
+        "rights review",
+        "sandbox run ID",
+        "benchmark run ID",
+        "human review evidence",
+        "measured outcome event"
+      ]
+    },
+    {
+      "lane_id": "price_drops",
+      "value": "verified retailer price-change intelligence and permitted affiliate referrals",
+      "monetization": [
+        "affiliate",
+        "subscription"
+      ],
+      "status": "playbook_defined_lesson_authoring_pending",
+      "learning_objective": "Teach Buddy to operate the price drops opportunity workflow from discovery through verified outcome, with human review and auditable economics.",
+      "lane_specific_tasks": [
+        "Monitor authorized retailer/product feeds and timestamps",
+        "Normalize SKU, variant, shipping, taxes and stock state",
+        "Verify price movement against prior observations",
+        "Calculate total-price change and alert relevance",
+        "Attribute referrals and reconcile returns or reversals"
+      ],
+      "shared_execution_sequence": [
+        {
+          "id": "discover_and_qualify",
+          "title": "Discover and qualify the opportunity",
+          "evidence": [
+            "source_url",
+            "retrieved_at",
+            "buyer_problem",
+            "eligibility_facts"
+          ]
+        },
+        {
+          "id": "verify_rights_and_rules",
+          "title": "Verify data rights, rules and scope",
+          "evidence": [
+            "license_or_terms",
+            "consent_or_lawful_basis",
+            "jurisdiction",
+            "review_status"
+          ]
+        },
+        {
+          "id": "model_cost_and_value",
+          "title": "Model costs, price and unit economics",
+          "evidence": [
+            "assumptions",
+            "direct_costs",
+            "fees",
+            "downside_case",
+            "confidence"
+          ]
+        },
+        {
+          "id": "design_and_simulate",
+          "title": "Design and simulate the workflow",
+          "evidence": [
+            "workflow_steps",
+            "synthetic_fixture",
+            "acceptance_criteria",
+            "failure_cases"
+          ]
+        },
+        {
+          "id": "human_review_and_delivery",
+          "title": "Obtain human approval and deliver",
+          "evidence": [
+            "approval_ref",
+            "delivery_receipt",
+            "exceptions",
+            "customer_feedback"
+          ]
+        },
+        {
+          "id": "attribute_and_improve",
+          "title": "Attribute outcomes and improve safely",
+          "evidence": [
+            "event_ids",
+            "gross_fees_net",
+            "refund_state",
+            "regression_result"
+          ]
+        }
+      ],
+      "required_software_research": [
+        "leading current commercial tools",
+        "widely used professional tools",
+        "open-source alternatives",
+        "local/offline options",
+        "APIs and integration methods",
+        "pricing and usage limits",
+        "security and permission model",
+        "license and redistribution terms"
+      ],
+      "required_benchmark": [
+        "unseen opportunity record",
+        "rights/compliance scenario",
+        "cost and unit-economics calculation",
+        "sandbox workflow execution",
+        "failure and recovery scenario",
+        "human approval handoff"
+      ],
+      "guardrails": [
+        "Respect retailer terms; do not scrape prohibited sources or misstate historical prices."
+      ],
+      "truth_rules": [
+        "A lead is not a sale.",
+        "A proposal is not a contract.",
+        "A projection is not collected revenue.",
+        "A listing or opportunity is not verified profit.",
+        "Report fees, refunds, chargebacks and net amounts separately.",
+        "Do not claim completion without tool-confirmed evidence."
+      ],
+      "completion_evidence": [
+        "versioned guide path",
+        "source citations and access dates",
+        "rights review",
+        "sandbox run ID",
+        "benchmark run ID",
+        "human review evidence",
+        "measured outcome event"
+      ]
+    },
+    {
+      "lane_id": "receipt_rewards",
+      "value": "receipt organization and eligibility-based reward discovery from authorized programs",
+      "monetization": [
+        "subscription",
+        "referral"
+      ],
+      "status": "playbook_defined_lesson_authoring_pending",
+      "learning_objective": "Teach Buddy to operate the receipt rewards opportunity workflow from discovery through verified outcome, with human review and auditable economics.",
+      "lane_specific_tasks": [
+        "Capture user-submitted receipts with consent",
+        "Extract merchant, date, items and totals securely",
+        "Match only current official reward program rules",
+        "Check duplicate/submission limits and user eligibility evidence",
+        "Prepare user-controlled submission and record confirmation"
+      ],
+      "shared_execution_sequence": [
+        {
+          "id": "discover_and_qualify",
+          "title": "Discover and qualify the opportunity",
+          "evidence": [
+            "source_url",
+            "retrieved_at",
+            "buyer_problem",
+            "eligibility_facts"
+          ]
+        },
+        {
+          "id": "verify_rights_and_rules",
+          "title": "Verify data rights, rules and scope",
+          "evidence": [
+            "license_or_terms",
+            "consent_or_lawful_basis",
+            "jurisdiction",
+            "review_status"
+          ]
+        },
+        {
+          "id": "model_cost_and_value",
+          "title": "Model costs, price and unit economics",
+          "evidence": [
+            "assumptions",
+            "direct_costs",
+            "fees",
+            "downside_case",
+            "confidence"
+          ]
+        },
+        {
+          "id": "design_and_simulate",
+          "title": "Design and simulate the workflow",
+          "evidence": [
+            "workflow_steps",
+            "synthetic_fixture",
+            "acceptance_criteria",
+            "failure_cases"
+          ]
+        },
+        {
+          "id": "human_review_and_delivery",
+          "title": "Obtain human approval and deliver",
+          "evidence": [
+            "approval_ref",
+            "delivery_receipt",
+            "exceptions",
+            "customer_feedback"
+          ]
+        },
+        {
+          "id": "attribute_and_improve",
+          "title": "Attribute outcomes and improve safely",
+          "evidence": [
+            "event_ids",
+            "gross_fees_net",
+            "refund_state",
+            "regression_result"
+          ]
+        }
+      ],
+      "required_software_research": [
+        "leading current commercial tools",
+        "widely used professional tools",
+        "open-source alternatives",
+        "local/offline options",
+        "APIs and integration methods",
+        "pricing and usage limits",
+        "security and permission model",
+        "license and redistribution terms"
+      ],
+      "required_benchmark": [
+        "unseen opportunity record",
+        "rights/compliance scenario",
+        "cost and unit-economics calculation",
+        "sandbox workflow execution",
+        "failure and recovery scenario",
+        "human approval handoff"
+      ],
+      "guardrails": [
+        "No fabricated purchases, altered receipts or unauthorized submissions."
+      ],
+      "truth_rules": [
+        "A lead is not a sale.",
+        "A proposal is not a contract.",
+        "A projection is not collected revenue.",
+        "A listing or opportunity is not verified profit.",
+        "Report fees, refunds, chargebacks and net amounts separately.",
+        "Do not claim completion without tool-confirmed evidence."
+      ],
+      "completion_evidence": [
+        "versioned guide path",
+        "source citations and access dates",
+        "rights review",
+        "sandbox run ID",
+        "benchmark run ID",
+        "human review evidence",
+        "measured outcome event"
+      ]
+    },
+    {
+      "lane_id": "resale_arbitrage",
+      "value": "margin-checked resale opportunities from authorized marketplaces and user-supplied inventory",
+      "monetization": [
+        "subscription",
+        "marketplace_fee"
+      ],
+      "status": "playbook_defined_lesson_authoring_pending",
+      "learning_objective": "Teach Buddy to operate the resale arbitrage opportunity workflow from discovery through verified outcome, with human review and auditable economics.",
+      "lane_specific_tasks": [
+        "Collect user inventory and permitted marketplace listings",
+        "Normalize condition, authenticity, fees and shipping",
+        "Estimate sell-through using dated comparable evidence",
+        "Calculate net margin after returns, storage and taxes",
+        "Create listing and fulfillment checklist for user approval"
+      ],
+      "shared_execution_sequence": [
+        {
+          "id": "discover_and_qualify",
+          "title": "Discover and qualify the opportunity",
+          "evidence": [
+            "source_url",
+            "retrieved_at",
+            "buyer_problem",
+            "eligibility_facts"
+          ]
+        },
+        {
+          "id": "verify_rights_and_rules",
+          "title": "Verify data rights, rules and scope",
+          "evidence": [
+            "license_or_terms",
+            "consent_or_lawful_basis",
+            "jurisdiction",
+            "review_status"
+          ]
+        },
+        {
+          "id": "model_cost_and_value",
+          "title": "Model costs, price and unit economics",
+          "evidence": [
+            "assumptions",
+            "direct_costs",
+            "fees",
+            "downside_case",
+            "confidence"
+          ]
+        },
+        {
+          "id": "design_and_simulate",
+          "title": "Design and simulate the workflow",
+          "evidence": [
+            "workflow_steps",
+            "synthetic_fixture",
+            "acceptance_criteria",
+            "failure_cases"
+          ]
+        },
+        {
+          "id": "human_review_and_delivery",
+          "title": "Obtain human approval and deliver",
+          "evidence": [
+            "approval_ref",
+            "delivery_receipt",
+            "exceptions",
+            "customer_feedback"
+          ]
+        },
+        {
+          "id": "attribute_and_improve",
+          "title": "Attribute outcomes and improve safely",
+          "evidence": [
+            "event_ids",
+            "gross_fees_net",
+            "refund_state",
+            "regression_result"
+          ]
+        }
+      ],
+      "required_software_research": [
+        "leading current commercial tools",
+        "widely used professional tools",
+        "open-source alternatives",
+        "local/offline options",
+        "APIs and integration methods",
+        "pricing and usage limits",
+        "security and permission model",
+        "license and redistribution terms"
+      ],
+      "required_benchmark": [
+        "unseen opportunity record",
+        "rights/compliance scenario",
+        "cost and unit-economics calculation",
+        "sandbox workflow execution",
+        "failure and recovery scenario",
+        "human approval handoff"
+      ],
+      "guardrails": [
+        "No counterfeit, stolen, restricted or misrepresented goods; disclose condition accurately."
+      ],
+      "truth_rules": [
+        "A lead is not a sale.",
+        "A proposal is not a contract.",
+        "A projection is not collected revenue.",
+        "A listing or opportunity is not verified profit.",
+        "Report fees, refunds, chargebacks and net amounts separately.",
+        "Do not claim completion without tool-confirmed evidence."
+      ],
+      "completion_evidence": [
+        "versioned guide path",
+        "source citations and access dates",
+        "rights review",
+        "sandbox run ID",
+        "benchmark run ID",
+        "human review evidence",
+        "measured outcome event"
+      ]
+    },
+    {
+      "lane_id": "revenue_intelligence",
+      "value": "cross-lane opportunity scoring and revenue-operations analytics",
+      "monetization": [
+        "subscription",
+        "usage_fee"
+      ],
+      "status": "playbook_defined_lesson_authoring_pending",
+      "learning_objective": "Teach Buddy to operate the revenue intelligence opportunity workflow from discovery through verified outcome, with human review and auditable economics.",
+      "lane_specific_tasks": [
+        "Ingest authorized CRM, billing and campaign events",
+        "Normalize funnel stages, attribution and refund states",
+        "Calculate verified gross, fees, net revenue and cohort metrics",
+        "Identify leakage, seasonality and uncertainty drivers",
+        "Recommend experiments with holdout and rollback plans"
+      ],
+      "shared_execution_sequence": [
+        {
+          "id": "discover_and_qualify",
+          "title": "Discover and qualify the opportunity",
+          "evidence": [
+            "source_url",
+            "retrieved_at",
+            "buyer_problem",
+            "eligibility_facts"
+          ]
+        },
+        {
+          "id": "verify_rights_and_rules",
+          "title": "Verify data rights, rules and scope",
+          "evidence": [
+            "license_or_terms",
+            "consent_or_lawful_basis",
+            "jurisdiction",
+            "review_status"
+          ]
+        },
+        {
+          "id": "model_cost_and_value",
+          "title": "Model costs, price and unit economics",
+          "evidence": [
+            "assumptions",
+            "direct_costs",
+            "fees",
+            "downside_case",
+            "confidence"
+          ]
+        },
+        {
+          "id": "design_and_simulate",
+          "title": "Design and simulate the workflow",
+          "evidence": [
+            "workflow_steps",
+            "synthetic_fixture",
+            "acceptance_criteria",
+            "failure_cases"
+          ]
+        },
+        {
+          "id": "human_review_and_delivery",
+          "title": "Obtain human approval and deliver",
+          "evidence": [
+            "approval_ref",
+            "delivery_receipt",
+            "exceptions",
+            "customer_feedback"
+          ]
+        },
+        {
+          "id": "attribute_and_improve",
+          "title": "Attribute outcomes and improve safely",
+          "evidence": [
+            "event_ids",
+            "gross_fees_net",
+            "refund_state",
+            "regression_result"
+          ]
+        }
+      ],
+      "required_software_research": [
+        "leading current commercial tools",
+        "widely used professional tools",
+        "open-source alternatives",
+        "local/offline options",
+        "APIs and integration methods",
+        "pricing and usage limits",
+        "security and permission model",
+        "license and redistribution terms"
+      ],
+      "required_benchmark": [
+        "unseen opportunity record",
+        "rights/compliance scenario",
+        "cost and unit-economics calculation",
+        "sandbox workflow execution",
+        "failure and recovery scenario",
+        "human approval handoff"
+      ],
+      "guardrails": [
+        "No fabricated revenue; separate projections from booked and collected amounts."
+      ],
+      "truth_rules": [
+        "A lead is not a sale.",
+        "A proposal is not a contract.",
+        "A projection is not collected revenue.",
+        "A listing or opportunity is not verified profit.",
+        "Report fees, refunds, chargebacks and net amounts separately.",
+        "Do not claim completion without tool-confirmed evidence."
+      ],
+      "completion_evidence": [
+        "versioned guide path",
+        "source citations and access dates",
+        "rights review",
+        "sandbox run ID",
+        "benchmark run ID",
+        "human review evidence",
+        "measured outcome event"
+      ]
+    }
+  ],
+  "truth_boundary": "These are task-by-task learning blueprints for the 34 existing revenue lanes, not completed course lessons, production integrations, legal advice, verified leads, or proof of revenue."
+}
