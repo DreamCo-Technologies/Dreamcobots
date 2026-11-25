@@ -168,6 +168,58 @@ def _rows(track: dict, data: dict, root: Path = ROOT) -> list[dict]:
                     "rights_mode": "metadata_discovery_only_no_download_no_execution",
                 })
         return rows
+    if parser == "benchmark_guides":
+        task_registry = _read(root / "config/buddy-benchmark-task-registry.json")
+        programs = data.get("programs", [])
+        tasks = task_registry.get("tasks", [])
+        rows = []
+        for program in programs:
+            benchmark_id = str(program.get("id", "")).strip()
+            title = str(program.get("name", "")).strip()
+            if not benchmark_id or not title:
+                continue
+            rows.append({
+                "id": f"program-{benchmark_id}",
+                "title": f"Benchmark guide: {title}",
+                "objective": (
+                    f"Author an original, reproducible guide for benchmark program {title}. "
+                    "Document task scope, provenance, workload, baselines, scoring, thresholds, "
+                    "reproducibility, holdouts, safety and evidence."
+                ),
+                "practice": (
+                    "Link the canonical generator and check command; define representative and adversarial "
+                    "cases, immutable artifacts, exact versions, scoring, failure analysis and remediation. "
+                    "Do not invent scores or mark the benchmark measured."
+                ),
+                "assessment": (
+                    "Run the suite in an isolated environment, validate its evidence schema, verify holdout "
+                    "separation, and require independent review before claiming capability."
+                ),
+                "benchmark": "Benchmark guide and evidence acceptance suite.",
+                "source_url": program.get("public_page") or "https://github.com/DreamCo-Technologies/Dreamcobots/tree/main/benchmarks",
+                "content_status": "authoring_backlog",
+            })
+        for task in tasks:
+            task_name = str(task).strip()
+            if not task_name:
+                continue
+            rows.append({
+                "id": f"task-{slug(task_name)}",
+                "title": f"Benchmark task guide: {task_name}",
+                "objective": f"Author deterministic, adversarial and unseen-transfer benchmark tasks for {task_name}.",
+                "practice": (
+                    "Define input/output contracts, expected behavior, negative cases, scoring rubric, "
+                    "permissions, reproducible fixtures and immutable run evidence."
+                ),
+                "assessment": (
+                    "Verify deterministic execution, contamination-safe holdout, explicit failure rubric, "
+                    "safety boundaries and regression evidence before a result can be measured."
+                ),
+                "benchmark": "Task-specific benchmark guide acceptance suite.",
+                "source_url": "https://github.com/DreamCo-Technologies/Dreamcobots/tree/main/benchmarks",
+                "content_status": "authoring_backlog",
+            })
+        return rows
     if parser == "workforce_entrepreneurship":
         rows = []
         for path in data.get("training_paths", []):
