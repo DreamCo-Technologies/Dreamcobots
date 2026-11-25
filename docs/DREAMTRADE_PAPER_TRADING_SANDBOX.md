@@ -39,3 +39,19 @@ The demo uses deterministic synthetic OHLCV bars. It does not connect to a broke
 - Oversized orders and positions are rejected.
 - Use synthetic data or properly licensed historical data only.
 - No strategy is guaranteed to be profitable. This sandbox is educational and must not be used as a signal to buy or sell securities.
+
+
+## Source-course expansion roadmap
+
+The source course describes a larger Django application with market-data ingestion, portfolio/account connectivity, a 12-month momentum strategy across a 50-stock universe, a dashboard, historical backfills, and paper execution. The current DreamTrade package is deliberately a smaller local-only foundation. Build the larger system in these reviewed phases:
+
+1. Create Django apps and relational models for symbols, OHLCV bars, portfolio snapshots, strategy runs, signals, orders, and fills.
+2. Add Django admin views and validation for market data, portfolios, and strategy configuration.
+3. Add a Massive market-data adapter with rate limits, retries, provenance, and credentials held only in an approved secret manager.
+4. Add SnapTrade read-only account and holdings access; do not request trading permissions for the learning environment.
+5. Implement and test the 12-month momentum calculation and 50-symbol universe, including survivorship-bias, look-ahead, missing-data, and transaction-cost checks.
+6. Connect Alpaca only through its paper-trading environment after explicit configuration and sandbox verification; do not add a live-order endpoint.
+7. Build the Django dashboard for portfolio state, strategy signals, backtest results, and immutable audit history.
+8. Backfill approved historical data, run out-of-sample and walk-forward tests, and require human review before any integration is enabled.
+
+These are planned phases, not claims that the external integrations already exist. The local synthetic demo remains the default Buddy demonstration.
