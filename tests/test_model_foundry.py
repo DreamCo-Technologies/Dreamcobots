@@ -4,7 +4,8 @@ import unittest
 from pathlib import Path
 
 from buddy.learning.model_foundry import (
-    SCHEMA, STRATEGY_PROFILES, build_parallel_plan, validate_manifest
+    SCHEMA, STRATEGY_PROFILES, build_parallel_plan, validate_manifest,
+    train_from_scratch, validate_training_authorization,
 )
 
 
@@ -125,13 +126,62 @@ class ModelFoundryRightsTests(unittest.TestCase):
             estimate_decoder_parameter_count(invalid)
 
 
-    def test_profiled_weight_updates_require_explicit_authorization(self):
-        from buddy.learning.model_foundry import validate_training_authorization
-        blocked = {"training_policy": {"enabled": False, "weight_updates_authorized": False}}
-        with self.assertRaisesRegex(PermissionError, "not explicitly authorized"):
-            validate_training_authorization(blocked)
-        approved = {"training_policy": {"enabled": True, "weight_updates_authorized": True}}
-        self.assertIsNone(validate_training_authorization(approved))
+    def _training_profile(self):
+        return {
+            "schema": "dreamco.buddy_cpu_llm_architecture_profile.v1",
+            "training_policy": {
+                "enabled": True,
+                "weight_updates_authorized": True,
+                "paid_compute_authorized": False,
+                "external_data_allowed": False,
+                "requires_rights_cleared_local_dataset": True,
+                "requires_explicit_training_approval": True,
+                "approved_by": "DreamCo owner",
+                "authorization_reference": "owner-approval-2026-001",
+                "approved_at": "2026-11-25T08:00:00Z",
+            },
+        }
+
+    def test_profiled_weight_updates_require_profile_and_runtime_approval(self):
+        blocked = {
+            "schema": "dreamco.buddy_cpu_llm_architecture_profile.v1",
+            "training_policy": {"enabled": False, "weight_updates_authorized": False},
+        }
+        with self.assertRaisesRegex(PermissionError, "not enabled and authorized"):
+            validate_training_authorization(
+                blocked, explicit_authorization=True,
+                authorization_reference="owner-approval-2026-001", approved_by="DreamCo owner"
+            )
+        approved = self._training_profile()
+        with self.assertRaisesRegex(PermissionError, "explicit --authorize-weight-updates"):
+            validate_training_authorization(
+                approved, authorization_reference="owner-approval-2026-001", approved_by="DreamCo owner"
+            )
+        with self.assertRaisesRegex(PermissionError, "match the authorization"):
+            validate_training_authorization(
+                approved, explicit_authorization=True,
+                authorization_reference="different-reference", approved_by="DreamCo owner"
+            )
+        self.assertIsNone(validate_training_authorization(
+            approved, explicit_authorization=True,
+            authorization_reference="owner-approval-2026-001", approved_by="DreamCo owner"
+        ))
+
+    def test_training_function_fails_closed_without_profile_or_dataset_manifest(self):
+        with self.assertRaisesRegex(PermissionError, "versioned explicit training profile"):
+            train_from_scratch(
+                self.data, self.root / "checkpoint.pt", dataset_id=self.entry["dataset_id"],
+                division_id=1, strategy="domain_adaptive_pretraining", seed=1,
+            )
+        with self.assertRaisesRegex(PermissionError, "approved dataset manifest"):
+            train_from_scratch(
+                self.data, self.root / "checkpoint.pt", dataset_id=self.entry["dataset_id"],
+                division_id=1, strategy="domain_adaptive_pretraining", seed=1,
+                architecture_profile=self._training_profile(),
+                explicit_training_authorization=True,
+                authorization_reference="owner-approval-2026-001",
+                approved_by="DreamCo owner",
+            )
 
 
     def test_checkpoint_architecture_metadata_uses_profile_dimensions(self):
@@ -147,6 +197,34 @@ class ModelFoundryRightsTests(unittest.TestCase):
         self.assertEqual(metadata["feed_forward_size"], 2560)
         self.assertEqual(metadata["context_size"], 256)
         self.assertEqual(metadata["sequence_length"], 64)
+
+
+    def test_training_api_rejects_checkpoint_and_resume_paths_outside_private_root(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp) / "private"
+            root.mkdir()
+            dataset = root / "dataset.txt"
+            dataset.write_text("authorized fixture", encoding="utf-8")
+            manifest = {"schema": SCHEMA, "datasets": []}
+            kwargs = {
+                "dataset_id": self.entry["dataset_id"],
+                "division_id": 1,
+                "strategy": "domain_adaptive_pretraining",
+                "seed": 1,
+                "architecture_profile": self._training_profile(),
+                "authorization_manifest": manifest,
+                "data_root": root,
+                "explicit_training_authorization": True,
+                "authorization_reference": "owner-approval-2026-001",
+                "approved_by": "DreamCo owner",
+            }
+            with self.assertRaisesRegex(PermissionError, "checkpoint output"):
+                train_from_scratch(dataset, Path(temp) / "outside.pt", **kwargs)
+            with self.assertRaisesRegex(PermissionError, "resume checkpoint"):
+                train_from_scratch(
+                    dataset, root / "checkpoints/model.pt",
+                    resume_from=Path(temp) / "outside.pt", **kwargs
+                )
 
 
 if __name__ == "__main__":
