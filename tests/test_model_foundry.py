@@ -199,5 +199,33 @@ class ModelFoundryRightsTests(unittest.TestCase):
         self.assertEqual(metadata["sequence_length"], 64)
 
 
+    def test_training_api_rejects_checkpoint_and_resume_paths_outside_private_root(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp) / "private"
+            root.mkdir()
+            dataset = root / "dataset.txt"
+            dataset.write_text("authorized fixture", encoding="utf-8")
+            manifest = {"schema": SCHEMA, "datasets": []}
+            kwargs = {
+                "dataset_id": self.entry["dataset_id"],
+                "division_id": 1,
+                "strategy": "domain_adaptive_pretraining",
+                "seed": 1,
+                "architecture_profile": self._training_profile(),
+                "authorization_manifest": manifest,
+                "data_root": root,
+                "explicit_training_authorization": True,
+                "authorization_reference": "owner-approval-2026-001",
+                "approved_by": "DreamCo owner",
+            }
+            with self.assertRaisesRegex(PermissionError, "checkpoint output"):
+                train_from_scratch(dataset, Path(temp) / "outside.pt", **kwargs)
+            with self.assertRaisesRegex(PermissionError, "resume checkpoint"):
+                train_from_scratch(
+                    dataset, root / "checkpoints/model.pt",
+                    resume_from=Path(temp) / "outside.pt", **kwargs
+                )
+
+
 if __name__ == "__main__":
     unittest.main()
