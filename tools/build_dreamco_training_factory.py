@@ -8,6 +8,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import re
 from pathlib import Path
 from typing import Any
 
@@ -74,6 +75,23 @@ def build_factory_plan(configs: dict[str, dict[str, Any]], source_hashes: dict[s
     fcc_video_categories = fcc.get("video_learning_tracks", [])
     workforce_tracks = configs.get("workforce", {}).get("training_paths", [])
     government = configs.get("government", {})
+    def _tokens(value: str) -> set[str]:
+        expanded = re.sub(r"([a-z])([A-Z])", r"\\1 \\2", value)
+        return {x.lower() for x in re.findall(r"[a-z0-9]+", expanded.lower())
+                if len(x) > 2 and x.lower() not in {"dream", "and", "the", "for", "with", "from"}}
+    def _domain_routes(bot: dict[str, Any], route: dict[str, Any]) -> list[dict[str, Any]]:
+        lane_terms = " ".join([bot.get("name", ""), *route.get("subject_terms", []), *route.get("search_queries", [])])
+        lane_tokens = _tokens(lane_terms)
+        ranked = []
+        for domain in university_domains:
+            domain_tokens = _tokens(str(domain.get("id", "")) + " " + str(domain.get("scope", "")))
+            score = len(lane_tokens & domain_tokens)
+            if score:
+                ranked.append((score, str(domain.get("id"))))
+        ranked.sort(key=lambda item: (-item[0], item[1]))
+        return [{"domain_id": domain_id, "score": score, "mapping_status": "suggested_requires_owner_review",
+                 "course_ids": [f"UNI-{domain_id.upper()}-{str(level.get('level'))}" for level in university_levels]}
+                for score, domain_id in ranked[:3]]
     source_records = configs["source_registry"].get("source_families", [])
     source_ids = [record.get("id") for record in source_records if isinstance(record, dict)]
     if len(source_records) != 9 or len(source_ids) != 9 or len(set(source_ids)) != 9:
@@ -116,7 +134,8 @@ def build_factory_plan(configs: dict[str, dict[str, Any]], source_hashes: dict[s
         } for task in tasks]
         crosswalk = route.get("domain_crosswalk", {})
         domain_id = str(crosswalk.get("domain_id", ""))
-        domain_courses = [course_id for course_id in university_course_ids if course_id.startswith(f"UNI-{domain_id.upper()}-")] if domain_id in domain_ids else []
+        university_routes = _domain_routes(bot, route)
+        domain_courses = [course_id for item in university_routes for course_id in item["course_ids"]]
         lanes.append({
             "masterbot_id": mid,
             "masterbot_name": bot["name"],
@@ -130,6 +149,7 @@ def build_factory_plan(configs: dict[str, dict[str, Any]], source_hashes: dict[s
             "owner_review_required": bool(route.get("domain_crosswalk", {}).get("owner_review_required", True)),
             "capability_pack_ids": route.get("capability_pack_ids", []),
             "university_domain_id": domain_id if domain_id in domain_ids else None,
+            "university_domain_routes": university_routes,
             "university_course_ids": sorted(set(shared_core_course_ids + domain_courses)),
             "shared_core_course_ids": shared_core_course_ids,
             "university_domain_course_ids": domain_courses,
