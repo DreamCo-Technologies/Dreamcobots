@@ -57,6 +57,7 @@ class BuddyCourseTrackRegistryTests(unittest.TestCase):
         triage_video_ids = {
             str(video["video_id"]) for video in fcc_catalog["videos"]
             if {str(value).casefold() for value in video.get("categories", [])} == {"other_or_unclassified"}
+            and str(video["video_id"]) not in specialist_video_ids
         }
         expected_count = (
             len(tol["curriculum"]) + len(tol["extended_study_path"])
@@ -91,8 +92,20 @@ class BuddyCourseTrackRegistryTests(unittest.TestCase):
             if lesson.track_id == "freecodecamp-specialist-learning-paths"
         ]
         catalog = json.loads((ROOT / "buddy/bootcamp/sources/freecodecamp/catalog.json").read_text(encoding="utf-8"))
+        routing = load("config/freecodecamp-division-routing-overrides.json")
+        specialist_ids = {str(row.get("video_id")) for row in routing.get("entries", [])}
+        for video in catalog["videos"]:
+            searchable = f"{video.get('title', '')} {video.get('description', '')}".casefold()
+            categories = {str(value).casefold() for value in video.get("categories", [])}
+            if any(
+                any(str(term).casefold() in searchable for term in rule.get("match_title_terms", []))
+                or bool(categories.intersection(str(value).casefold() for value in rule.get("match_categories", [])))
+                for rule in routing.get("routing_rules", [])
+            ):
+                specialist_ids.add(str(video["video_id"]))
         triage_count = sum(
             {str(value).casefold() for value in video.get("categories", [])} == {"other_or_unclassified"}
+            and str(video["video_id"]) not in specialist_ids
             for video in catalog["videos"]
         )
         self.assertEqual(len(lessons), len(catalog["videos"]) - triage_count)
@@ -109,9 +122,21 @@ class BuddyCourseTrackRegistryTests(unittest.TestCase):
 
     def test_unclassified_videos_enter_metadata_triage_not_study_content(self):
         catalog = json.loads((ROOT / "buddy/bootcamp/sources/freecodecamp/catalog.json").read_text(encoding="utf-8"))
+        routing = load("config/freecodecamp-division-routing-overrides.json")
+        specialist_ids = {str(row.get("video_id")) for row in routing.get("entries", [])}
+        for video in catalog["videos"]:
+            searchable = f"{video.get('title', '')} {video.get('description', '')}".casefold()
+            categories = {str(value).casefold() for value in video.get("categories", [])}
+            if any(
+                any(str(term).casefold() in searchable for term in rule.get("match_title_terms", []))
+                or bool(categories.intersection(str(value).casefold() for value in rule.get("match_categories", [])))
+                for rule in routing.get("routing_rules", [])
+            ):
+                specialist_ids.add(str(video["video_id"]))
         expected = {
             str(video["video_id"]) for video in catalog["videos"]
             if {str(value).casefold() for value in video.get("categories", [])} == {"other_or_unclassified"}
+            and str(video["video_id"]) not in specialist_ids
         }
         triage = [
             lesson for lesson in load_course_lessons()
