@@ -191,7 +191,10 @@ def build(profiles: list[dict[str, Any]], hf: dict[str, Any], fcc: dict[str, Any
     fcc_video_rows = []
     division_fcc_categories: dict[str, list[str]] = defaultdict(list)
     for category in video_tracks:
-        related = sorted({x for x in FCC_DIVISION_CROSSWALK.get(str(category), []) if x in names})
+        related = {x for x in FCC_DIVISION_CROSSWALK.get(str(category), []) if x in names}
+        if not related:
+            related.update(x["division"] for x in suggest_divisions(str(category), profiles) if x["score"] > 0)
+        related = sorted(related)
         status = "curated_crosswalk_requires_owner_review" if related else "unclassified_shared_review"
         if not related:
             related = [x for x in ("DreamEducation", "CommandCore") if x in names]
