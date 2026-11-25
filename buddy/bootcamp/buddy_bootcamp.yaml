@@ -60,6 +60,12 @@ learning_sources:
     internal_search: search_internal_library_knowledge
     gap_recorder: record_library_knowledge_gap
     coverage_report: library_coverage_report
+    host_bridge: buddy.learning.runtime_bridge.BuddyLearningBridge.library_knowledge
+    internal_retrieval_engine: foundry.local_rag.LocalRagStore.tfidf
+    external_discovery_requires_explicit_host_opt_in: true
+    gap_persistence_requires_redacted_query: true
+    gap_storage: .dreamco/library-knowledge-gaps.jsonl
+    general_external_model_routing_on_gap: false
     cli: tools/buddy_library_knowledge.py
     registry_adapters: config/buddy-library-registry-adapters.json
     ecosystem_adapter_coverage: config/buddy-library-ecosystem-adapter-coverage.json
