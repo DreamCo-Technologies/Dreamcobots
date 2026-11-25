@@ -136,7 +136,10 @@ AGENT_CAPABILITY_CATALOG = {
 def build(profiles: list[dict[str, Any]], hf: dict[str, Any], fcc: dict[str, Any],
           onet: dict[str, Any], taxonomy: dict[str, Any], college: dict[str, Any] | None = None) -> dict[str, Any]:
     college = college or {}
-    college_domains = college.get("domains", [])
+    college_domains = college.get("knowledge_domains", college.get("domains", []))
+    source_families = college.get("source_families", [])
+    academic_structure = college.get("academic_structure", {})
+    instructional_model = college.get("instructional_model", {})
     names = {row["division"] for row in profiles}
     hf_terms = sorted(set(taxonomy.get("subject_terms", [])) | set(hf.get("discovery", {}).get("hugging_face_subjects", [])))
     subject_rows = []
@@ -186,7 +189,7 @@ def build(profiles: list[dict[str, Any]], hf: dict[str, Any], fcc: dict[str, Any
 
     division_college: dict[str, list[dict[str, Any]]] = defaultdict(list)
     for domain in college_domains:
-        domain_terms = " ".join([domain.get("id", ""), domain.get("name", ""), *domain.get("tracks", [])])
+        domain_terms = " ".join([domain.get("id", ""), domain.get("name", ""), domain.get("scope", ""), *domain.get("tracks", [])])
         routes = suggest_divisions(domain_terms, profiles, limit=6)
         for route in routes:
             division_college[route["division"]].append({"domain_id": domain.get("id"), "name": domain.get("name"),
@@ -253,6 +256,7 @@ def build(profiles: list[dict[str, Any]], hf: dict[str, Any], fcc: dict[str, Any
             "freecodecamp_tracks": sorted(set(division_fcc[name])),
             "freecodecamp_video_subject_categories": sorted(set(division_fcc_videos[name])),
             "college_domains": sorted(division_college[name], key=lambda x: (-x["score"], x["domain_id"] or "")),
+            "source_families": sorted(set(division_source_families[name])),
             "agent_capability_catalog": AGENT_CAPABILITY_CATALOG,
             "onet_task_refs": sorted(set(division_tasks[name])),
             "daily_target": {"lessons": 5, "order": ["prerequisites", "new_concept", "worked_example",
@@ -269,12 +273,13 @@ def build(profiles: list[dict[str, Any]], hf: dict[str, Any], fcc: dict[str, Any
             "domain_divisions": len(divisions), "hugging_face_subject_terms": len(hf_terms),
             "hugging_face_subjects_with_suggested_routes": sum(bool(x["routes"]) for x in subject_rows),
             "freecodecamp_tracks": len(fcc_rows), "freecodecamp_certification_phases": len(fcc_phases),
-            "freecodecamp_video_subject_categories": len(video_tracks), "college_domains": len(college_domains), "onet_occupations": len(occupations),
+            "freecodecamp_video_subject_categories": len(video_tracks), "college_domains": len(college_domains), "source_families": len(source_families), "onet_occupations": len(occupations),
             "onet_task_statements": len(task_rows), "onet_tasks_with_division_routes": sum(bool(x["division_ids"]) for x in task_rows),
             "divisions_with_hf_subjects": sum(bool(x["hugging_face_subjects"]) for x in divisions),
             "divisions_with_freecodecamp_tracks": sum(bool(x["freecodecamp_tracks"]) for x in divisions),
             "divisions_with_freecodecamp_video_categories": sum(bool(x["freecodecamp_video_subject_categories"]) for x in divisions),
             "divisions_with_college_domains": sum(bool(x["college_domains"]) for x in divisions),
+            "divisions_with_source_families": sum(bool(x["source_families"]) for x in divisions),
             "divisions_with_onet_tasks": sum(bool(x["onet_task_refs"]) for x in divisions),
         },
         "source_inventory": {
@@ -292,7 +297,11 @@ def build(profiles: list[dict[str, Any]], hf: dict[str, Any], fcc: dict[str, Any
         "freecodecamp_certification_phases": fcc_phases,
         "freecodecamp_video_subject_categories": video_tracks,
         "freecodecamp_video_category_routes": fcc_video_rows,
-        "college_domain_routes": [{"domain_id":x.get("id"),"name":x.get("name"),"routes":suggest_divisions(" ".join([x.get("id",""),x.get("name",""),*x.get("tracks",[])]),profiles,limit=6)} for x in college_domains],
+        "college_domain_routes": [{"domain_id":x.get("id"),"name":x.get("name"),"scope":x.get("scope"),"routes":suggest_divisions(" ".join([x.get("id",""),x.get("name",""),x.get("scope",""),*x.get("tracks",[])]),profiles,limit=6)} for x in college_domains],
+        "university_curriculum": {"title": college.get("title"), "knowledge_domains": college_domains,
+            "shared_core": college.get("shared_core", {}), "academic_structure": academic_structure,
+            "instructional_model": instructional_model, "scope_policy": college.get("scope_policy", {})},
+        "source_family_routes": source_family_routes,
         "agent_capability_catalog": AGENT_CAPABILITY_CATALOG,
         "onet_task_routes": task_rows,
         "divisions": divisions,
@@ -311,13 +320,13 @@ def main() -> int:
     parser.add_argument("--bootcamp-config", required=True)
     parser.add_argument("--freecodecamp-roadmap", required=True)
     parser.add_argument("--onet-curricula", required=True)
-    parser.add_argument("--college-curriculum", required=True)
+    parser.add_argument("--university-curriculum", required=True)
     parser.add_argument("--out-dir", required=True)
     args = parser.parse_args()
     read = lambda value: json.loads(Path(value).read_text(encoding="utf-8"))
     profiles = division_profiles(Path(args.division_source).read_text(encoding="utf-8"))
     result = build(profiles, read(args.huggingface_taxonomy), read(args.freecodecamp_roadmap),
-                   read(args.onet_curricula), read(args.bootcamp_config), read(args.college_curriculum))
+                   read(args.onet_curricula), read(args.bootcamp_config), read(args.university_curriculum))
     out = Path(args.out_dir)
     out.mkdir(parents=True, exist_ok=True)
     (out / "buddy-university-learning-map.json").write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
