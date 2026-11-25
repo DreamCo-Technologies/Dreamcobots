@@ -36,6 +36,29 @@ class DivisionOwnerReviewQueueTests(unittest.TestCase):
         self.assertTrue(all(len(row["candidate_masterbot_ids"]) == 1 for row in queue["unassigned_domain_profiles"]))
         self.assertTrue(all(row["no_mapping_inferred"] for row in queue["unassigned_domain_profiles"]))
 
+    def test_rejects_proposed_core_mapping_without_resource_route(self):
+        source = {
+            "routes": [],
+            "owner_review": {
+                "proposed_exact_name_matches": [{
+                    "masterbot_id": 1, "masterbot_name": "Alpha",
+                    "primary_domain_id": "alpha",
+                    "mapping_status": "proposed_exact_name_match",
+                    "owner_approval": None,
+                    "evidence": ["config/generated/masterbot-55-domain-crosswalk.json"],
+                }],
+                "masterbot_domain_decisions": [],
+                "shared_platform_services": [],
+                "unassigned_domain_profiles": [],
+            },
+        }
+        with tempfile.TemporaryDirectory() as tmp:
+            source_path = Path(tmp) / "map.json"
+            reconciliation_path = Path(tmp) / "reconciliation.json"
+            source_path.write_text(json.dumps(source))
+            reconciliation_path.write_text(json.dumps({"shared_platform_masterbots": [], "promoted_supplemental_divisions": []}))
+            with self.assertRaisesRegex(OwnerReviewQueueError, "missing_resource_route"):
+                build_owner_review_queue(source_path, reconciliation_path)
     def test_builds_pending_domain_and_supplemental_queues_without_guessing(self):
         source = {
             "routes": [{"masterbot_id": 1, "masterbot_name": "Alpha", "resource_bundle_id": "division-resource-001"}],
