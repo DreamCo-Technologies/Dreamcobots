@@ -50,8 +50,23 @@ def github_repo(repo: str, token: str | None) -> dict[str, Any]:
     }
 
 
+def github_search(topic: str, limit: int, token: str | None) -> list[dict[str, Any]]:
+    query = urllib.parse.urlencode({"q": f"topic:{topic} stars:>25", "sort": "stars", "order": "desc", "per_page": limit})
+    data = request_json(f"https://api.github.com/search/repositories?{query}", token)
+    rows = []
+    for item in data.get("items", []):
+        lic = (item.get("license") or {}).get("spdx_id")
+        rows.append({"source_type":"github_repository","source_id":item.get("full_name"),
+            "url":item.get("html_url"),"description":item.get("description"),
+            "default_branch":item.get("default_branch"),"updated_at":item.get("updated_at"),
+            "stars":item.get("stargazers_count"),"license_spdx":lic,
+            "rights_state":license_status(lic),"archived":item.get("archived",False),
+            "topics":item.get("topics",[]),"discovery_topic":topic,"discovered_at":now()})
+    return rows
+
+
 def hf_search(kind: str, term: str, limit: int) -> list[dict[str, Any]]:
-    query = urllib.parse.urlencode({"search": term, "limit": limit, "sort": "downloads", "direction": "-1"})
+    query = urllib.parse.urlencode({"search": term, "limit": limit})
     data = request_json(f"https://huggingface.co/api/{kind}?{query}")
     rows = []
     for item in data if isinstance(data, list) else []:
@@ -100,6 +115,14 @@ def main() -> int:
         except (urllib.error.URLError, TimeoutError, ValueError, KeyError) as exc:
             errors.append({"source": f"github:{repo}", "error": str(exc)})
         time.sleep(0.15)
+
+    for topic in config["discovery"]["github_search_topics"]:
+        try:
+            for row in github_search(topic, args.github_limit_per_topic, token):
+                records.append(row)
+        except (urllib.error.URLError, TimeoutError, ValueError, KeyError) as exc:
+            errors.append({"source": f"github-topic:{topic}", "error": str(exc)})
+        time.sleep(0.2)
 
     for subject in config["discovery"]["hugging_face_subjects"]:
         for kind in config["discovery"]["hugging_face_hub_types"]:
