@@ -170,7 +170,10 @@ def search_public_registry(
             raise ValueError("PyPI exact lookup accepts a valid package name, not a URL or path")
         url = endpoint.replace("{query}", quote(safe_name, safe=".-_"))
     else:
-        params: dict[str, Any] = {provider["query_parameter"]: query.strip()}
+        search_term = query.strip()
+        if provider_id == "metacpan":
+            search_term = f"status:latest AND {search_term}"
+        params: dict[str, Any] = {provider["query_parameter"]: search_term}
         if provider_id == "maven-central":
             params["wt"] = "json"
         size_key = provider.get("page_size_parameter")
