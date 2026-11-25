@@ -2,6 +2,8 @@
 
 The bootcamp is a closed-loop learning program for Buddy. It does not claim mastery because a lesson was read; it requires measurable benchmark evidence.
 
+See the [Capability Mastery and Revenue Operations Curriculum](../../docs/BUDDY_CAPABILITY_MASTERY_AND_REVENUE_CURRICULUM.md) for the complete capability map, commercial task playbooks, division model-weight pathway, per-run learning order, resource-summary standard, benchmark-guide requirements, and repository-wide completion gates.
+
 ## Daily cycle
 
 1. Inspect benchmark history.
