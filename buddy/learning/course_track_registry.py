@@ -356,11 +356,18 @@ def _rows(track: dict, data: dict, root: Path = ROOT) -> list[dict]:
         rows = []
         for row in videos:
             searchable = f"{row.get('title', '')} {row.get('description', '')}".casefold()
-            rule = next((
+            matched_rules = [
                 candidate for candidate in rules
                 if any(str(term).casefold() in searchable for term in candidate.get("match_title_terms", []))
-            ), {})
-            overlay = {**rule, **overrides.get(str(row.get("video_id")), {})}
+            ]
+            overlay: dict[str, Any] = {}
+            for candidate in matched_rules:
+                for key, value in candidate.items():
+                    if key in {"division_targets", "masterbot_targets", "capability_tags", "tool_tags", "agent_tags"}:
+                        overlay[key] = list(dict.fromkeys([*overlay.get(key, []), *value]))
+                    elif key != "match_title_terms":
+                        overlay[key] = value
+            overlay.update(overrides.get(str(row.get("video_id")), {}))
             rows.append({
                 "id": f"fcc-video-{row['video_id']}",
                 "title": row["title"],
