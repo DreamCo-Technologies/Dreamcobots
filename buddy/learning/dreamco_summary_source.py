@@ -174,7 +174,10 @@ def execute_study_plan(plan: dict, authorization: StudyAuthorization, study: Cal
             event_type="study_started", evidence_ref=run_evidence,
             source_revision=plan.get("source_revision"), organization_path=organization_path
         )
-    completed = evidence.get("lesson_completed") is True and bool(evidence.get("lesson_evidence_ref"))
+    completed = (evidence.get("lesson_status") == "verified_pass"
+                 and bool(evidence.get("lesson_evidence_ref"))
+                 and bool(evidence.get("independent_evaluator_id"))
+                 and evidence.get("independent_evaluator_id") != "buddy")
     if completed:
         append_progress_event(
             progress_path, asset_id=plan["asset_id"], division=plan["division"],
