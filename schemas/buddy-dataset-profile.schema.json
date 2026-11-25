@@ -3,23 +3,340 @@
   "$id": "https://dreamco.example/schemas/buddy-dataset-profile.schema.json",
   "title": "Buddy user dataset and model customization profile",
   "type": "object",
-  "required": ["schema", "profile_id", "owner_id", "name", "goal", "training_methods", "sources", "source_mix", "quality", "privacy", "training", "evaluation"],
+  "required": [
+    "schema",
+    "profile_id",
+    "owner_id",
+    "name",
+    "goal",
+    "training_methods",
+    "sources",
+    "source_mix",
+    "quality",
+    "privacy",
+    "training",
+    "evaluation"
+  ],
   "properties": {
-    "schema": {"const": "dreamco.buddy.dataset_profile.v1"},
-    "profile_id": {"type": "string", "minLength": 5},
-    "owner_id": {"type": "string", "minLength": 1, "description": "Opaque application account ID; never an email or secret."},
-    "name": {"type": "string", "minLength": 1, "maxLength": 120},
-    "goal": {"type": "string", "minLength": 1, "maxLength": 2000},
-    "status": {"enum": ["draft", "ready", "training", "evaluating", "published", "paused"]},
-    "target_model": {"type": "object", "required": ["provider", "model_id"], "properties": {"provider": {"type": "string"}, "model_id": {"type": ["string", "null"]}, "base_model_revision": {"type": ["string", "null"]}}},
-    "training_methods": {"type": "array", "uniqueItems": true, "items": {"enum": ["retrieval", "skill_pack", "prompt_policy", "sft", "lora", "qlora", "preference_optimization", "distillation", "continued_pretraining"]}, "minItems": 1},
-    "capabilities": {"type": "array", "items": {"type": "string"}},
-    "sources": {"type": "array", "items": {"type": "object", "required": ["id", "uri", "category", "status", "rights", "content_state"], "properties": {"id": {"type": "string"}, "uri": {"type": "string", "format": "uri"}, "category": {"type": "string"}, "status": {"enum": ["approved", "pending_review", "blocked"]}, "rights": {"enum": ["owned", "open_license", "public_domain", "licensed", "user_authorized", "unknown", "restricted"]}, "content_state": {"enum": ["content_available", "metadata_only", "not_ingested"]}, "content_ref": {"type": "string"}, "content_hash": {"type": "string"}, "provenance": {"type": "object"}}}},
-    "source_mix": {"type": "object", "minProperties": 1, "additionalProperties": {"type": "number", "minimum": 0}},
-    "quality": {"type": "object"},
-    "privacy": {"type": "object"},
-    "training": {"type": "object"},
-    "evaluation": {"type": "object"}
+    "schema": {
+      "const": "dreamco.buddy.dataset_profile.v1"
+    },
+    "profile_id": {
+      "type": "string",
+      "minLength": 5
+    },
+    "owner_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Opaque application account ID; never an email or secret.",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 120
+    },
+    "goal": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 2000
+    },
+    "status": {
+      "enum": [
+        "draft",
+        "ready",
+        "training",
+        "evaluating",
+        "published",
+        "paused"
+      ]
+    },
+    "target_model": {
+      "type": "object",
+      "required": [
+        "provider",
+        "model_id"
+      ],
+      "properties": {
+        "provider": {
+          "type": "string"
+        },
+        "model_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "base_model_revision": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "training_methods": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "enum": [
+          "retrieval",
+          "skill_pack",
+          "prompt_policy",
+          "sft",
+          "lora",
+          "qlora",
+          "preference_optimization",
+          "distillation",
+          "continued_pretraining"
+        ]
+      },
+      "minItems": 1
+    },
+    "capabilities": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "sources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "uri",
+          "category",
+          "status",
+          "rights",
+          "content_state"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "uri": {
+            "type": "string",
+            "format": "uri"
+          },
+          "category": {
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "approved",
+              "pending_review",
+              "blocked"
+            ]
+          },
+          "rights": {
+            "enum": [
+              "owned",
+              "open_license",
+              "public_domain",
+              "licensed",
+              "user_authorized",
+              "unknown",
+              "restricted"
+            ]
+          },
+          "content_state": {
+            "enum": [
+              "content_available",
+              "metadata_only",
+              "not_ingested"
+            ]
+          },
+          "content_ref": {
+            "type": "string"
+          },
+          "content_hash": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "provenance": {
+            "type": "object"
+          },
+          "license_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "license_url": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "uri"
+          },
+          "rights_evidence": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "training_permission_verified": {
+            "type": "boolean"
+          },
+          "owner_approval_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "owner_attestation_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "status": {
+                  "const": "approved"
+                }
+              },
+              "required": [
+                "status"
+              ]
+            },
+            "then": {
+              "required": [
+                "rights_evidence",
+                "training_permission_verified"
+              ],
+              "properties": {
+                "training_permission_verified": {
+                  "const": true
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "rights": {
+                  "enum": [
+                    "open_license",
+                    "public_domain",
+                    "licensed"
+                  ]
+                },
+                "status": {
+                  "const": "approved"
+                }
+              },
+              "required": [
+                "rights",
+                "status"
+              ]
+            },
+            "then": {
+              "required": [
+                "license_id",
+                "license_url"
+              ]
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "rights": {
+                  "const": "owned"
+                },
+                "status": {
+                  "const": "approved"
+                }
+              },
+              "required": [
+                "rights",
+                "status"
+              ]
+            },
+            "then": {
+              "anyOf": [
+                {
+                  "required": [
+                    "owner_attestation_id"
+                  ]
+                },
+                {
+                  "required": [
+                    "owner_approval_id"
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "rights": {
+                  "const": "user_authorized"
+                },
+                "status": {
+                  "const": "approved"
+                }
+              },
+              "required": [
+                "rights",
+                "status"
+              ]
+            },
+            "then": {
+              "required": [
+                "owner_approval_id"
+              ]
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "content_state": {
+                  "const": "content_available"
+                }
+              },
+              "required": [
+                "content_state"
+              ]
+            },
+            "then": {
+              "required": [
+                "content_ref",
+                "content_hash",
+                "provenance"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "source_mix": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "type": "number",
+        "minimum": 0
+      }
+    },
+    "quality": {
+      "type": "object"
+    },
+    "privacy": {
+      "type": "object"
+    },
+    "training": {
+      "type": "object"
+    },
+    "evaluation": {
+      "type": "object"
+    }
   },
   "additionalProperties": true
 }
