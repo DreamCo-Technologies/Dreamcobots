@@ -127,11 +127,14 @@ PROFILES: dict[str, Any] = {
                 "next_actions": {"type": "array"}, "awaiting_owner_approval": {"type": "array"}}},
         },
         "engine:drafting": {
-            "input": {"type": "object", "properties": {"objective": {"type": "string"}, "input": {"type": "object", "properties": {
-                "audience": {"type": "string"}, "tone": {"type": "string"}}}}},
+            "input": {"type": "object", "properties": {
+                "objective": {"type": "string"}, "learning_task": {"type": "boolean"},
+                "allow_external_learning_fallback": {"type": "boolean"},
+                "input": {"type": "object", "properties": {
+                    "audience": {"type": "string"}, "tone": {"type": "string"}}}}},
             "output": {"type": "object", "required": ["status", "summary", "draft_markdown", "generated_by"], "properties": {
                 "status": {"enum": ["ok"]}, "summary": {"type": "string"}, "draft_markdown": {"type": "string", "minLength": 1},
-                "generated_by": {"enum": ["offline_deterministic", "live_model"]}}},
+                "generated_by": {"enum": ["offline_deterministic", "live_model", "internal_knowledge", "internal_bootcamp_study"]}}},
         },
     },
     "error_handling": {
