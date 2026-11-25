@@ -45,7 +45,7 @@ def _fixture(root: Path) -> None:
             {"id": "career", "subjects": ["resume", "interview"]},
             {"id": "business", "subjects": ["pricing"]}
         ],
-        "task_capability_catalog": {"task_playbook_requirements": ["task_definition", "workflow_steps", "acceptance_tests"]}
+        "task_capability_catalog": {"task_playbook_requirements": [f"section-{i}" for i in range(18)]}
     })
     _write(root, "config/buddy-benchmark-index.json", {
         "programs": [{"id": "repo", "name": "Repository tests"}]
