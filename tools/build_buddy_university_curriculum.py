@@ -135,8 +135,10 @@ AGENT_CAPABILITY_CATALOG = {
 }
 def build(profiles: list[dict[str, Any]], hf: dict[str, Any], fcc: dict[str, Any],
           onet: dict[str, Any], taxonomy: dict[str, Any], college: dict[str, Any] | None = None,
-          fcc_catalog: dict[str, Any] | None = None) -> dict[str, Any]:
+          fcc_catalog: dict[str, Any] | None = None, workforce: dict[str, Any] | None = None,\n          government: dict[str, Any] | None = None) -> dict[str, Any]:
     college = college or {}
+    workforce = workforce or {}
+    government = government or {}
     college_domains = college.get("knowledge_domains", college.get("domains", []))
     source_families = college.get("source_families", [])
     academic_structure = college.get("academic_structure", {})
@@ -208,6 +210,35 @@ def build(profiles: list[dict[str, Any]], hf: dict[str, Any], fcc: dict[str, Any
         for division in route_names:
             division_source_families[division].append(str(family.get("id")))
 
+    division_ventures: dict[str, list[str]] = defaultdict(list)
+    venture_rows = []
+    venture_guide_sections = college.get("occupational_venture_guide_contract", {}).get("required_for_every_occupation_task_or_venture", [])
+    for track in list(hf.get("entrepreneurship_tracks", [])) + list(workforce.get("training_paths", [])):
+        track_id = str(track.get("id", ""))
+        title = str(track.get("title", track.get("name", track_id)))
+        subjects = track.get("subjects", [])
+        routes = suggest_divisions(" ".join([track_id, title, *subjects]), profiles, limit=6)
+        route_names = [row["division"] for row in routes]
+        if routes[0]["score"] == 0:
+            route_names = ["DreamBizLaunch", "DreamSalesPro", "DreamEducation", "CommandCore"]
+        venture_rows.append({
+            "track_id": track_id, "title": title, "subjects": subjects, "division_ids": route_names,
+            "mapping_status": "suggested_requires_owner_review",
+            "study_path": ["market_and_customer_research", "domain_foundations_and_prerequisites",
+                "software_and_tool_stack_selection", "agent_workflow_design_and_permissions",
+                "offer_scope_pricing_and_unit_economics", "legal_compliance_credentials_and_insurance",
+                "sales_pipeline_and_customer_acquisition", "delivery_sop_quality_and_support",
+                "financial_controls_and_risk_management", "portfolio_capstone_and_independent_assessment"],
+            "required_guide_sections": venture_guide_sections,
+            "software_capability_categories": AGENT_CAPABILITY_CATALOG,
+            "tool_research_rule": "Identify current category leaders, widely used professional tools, open-source alternatives and local/offline tools; verify official product links, current pricing, license, security and integrations before naming them.",
+            "human_approval_required_for": ["external outreach", "spending", "contracts", "account changes", "regulated work", "government bids and grant submissions"],
+            "truth_boundary": "A venture track is a curriculum plan, not a validated business, guaranteed income stream, credential or proof of operational capability."
+        })
+        for division in route_names:
+            if division in names:
+                division_ventures[division].append(track_id)
+
     division_tasks: dict[str, list[str]] = defaultdict(list)
     division_videos: dict[str, list[str]] = defaultdict(list)
     video_rows = []
@@ -268,7 +299,7 @@ def build(profiles: list[dict[str, Any]], hf: dict[str, Any], fcc: dict[str, Any
             "hugging_face_subjects": sorted(set(division_hf[name])),
             "freecodecamp_tracks": sorted(set(division_fcc[name])),
             "freecodecamp_video_subject_categories": sorted(set(division_fcc_videos[name])),
-            "freecodecamp_video_ids": sorted(set(division_videos[name])),
+            "freecodecamp_video_ids": sorted(set(division_videos[name])),\n            "venture_and_workforce_tracks": sorted(set(division_ventures[name])),
             "college_domains": sorted(division_college[name], key=lambda x: (-x["score"], x["domain_id"] or "")),
             "source_families": sorted(set(division_source_families[name])),
             "agent_capability_catalog": college.get("agent_capability_matrix", AGENT_CAPABILITY_CATALOG),
@@ -290,7 +321,7 @@ def build(profiles: list[dict[str, Any]], hf: dict[str, Any], fcc: dict[str, Any
             "freecodecamp_video_subject_categories": len(video_tracks), "freecodecamp_channel_videos": len(video_rows),
             "freecodecamp_channel_inventory_status": (fcc_catalog or {}).get("inventory_status", "not_supplied"),
             "college_domains": len(college_domains), "source_families": len(source_families), "onet_occupations": len(occupations),
-            "onet_task_statements": len(task_rows), "onet_tasks_with_division_routes": sum(bool(x["division_ids"]) for x in task_rows),
+            "venture_and_workforce_tracks": len(venture_rows),\n            "divisions_with_venture_tracks": sum(bool(x["venture_and_workforce_tracks"]) for x in divisions),\n            "onet_task_statements": len(task_rows), "onet_tasks_with_division_routes": sum(bool(x["division_ids"]) for x in task_rows),
             "divisions_with_hf_subjects": sum(bool(x["hugging_face_subjects"]) for x in divisions),
             "divisions_with_freecodecamp_tracks": sum(bool(x["freecodecamp_tracks"]) for x in divisions),
             "divisions_with_freecodecamp_video_categories": sum(bool(x["freecodecamp_video_subject_categories"]) for x in divisions),
@@ -325,7 +356,7 @@ def build(profiles: list[dict[str, Any]], hf: dict[str, Any], fcc: dict[str, Any
             "instructional_model": instructional_model, "scope_policy": college.get("scope_policy", {})},
         "source_family_routes": source_family_routes,
         "agent_capability_catalog": college.get("agent_capability_matrix", AGENT_CAPABILITY_CATALOG),
-        "onet_task_routes": task_rows,
+        "onet_task_routes": task_rows,\n        "venture_and_workforce_tracks": venture_rows,\n        "government_and_community_curriculum": {"official_sources": government.get("official_sources", []),\n            "procurement_pipeline": government.get("procurement_pipeline", []),\n            "grant_pipeline": government.get("grant_pipeline", []),\n            "program_eligibility_rules": government.get("program_eligibility_rules", []),\n            "community_delivery_models": government.get("community_delivery_models", []),\n            "benefit_protections": government.get("benefit_protections", {}),\n            "contracting_reality": government.get("contracting_reality", {})},
         "divisions": divisions,
         "unclassified_subjects": [x for x in subject_rows if x["mapping_status"] == "unclassified_shared_review"],
         "mapping_policy": {"all_algorithmic_routes_are_suggestions": True, "owner_approval_required_before_domain_specific_promotion": True,
@@ -344,13 +375,14 @@ def main() -> int:
     parser.add_argument("--onet-curricula", required=True)
     parser.add_argument("--university-curriculum", required=True)
     parser.add_argument("--freecodecamp-catalog")
+    parser.add_argument("--workforce-curriculum", required=True)
+    parser.add_argument("--government-curriculum", required=True)
     parser.add_argument("--out-dir", required=True)
     args = parser.parse_args()
     read = lambda value: json.loads(Path(value).read_text(encoding="utf-8"))
     profiles = division_profiles(Path(args.division_source).read_text(encoding="utf-8"))
     fcc_catalog = read(args.freecodecamp_catalog) if args.freecodecamp_catalog else None
-    result = build(profiles, read(args.huggingface_taxonomy), read(args.freecodecamp_roadmap),
-                   read(args.onet_curricula), read(args.bootcamp_config), read(args.university_curriculum), fcc_catalog)
+    result = build(profiles, read(args.huggingface_taxonomy), read(args.freecodecamp_roadmap),\n                   read(args.onet_curricula), read(args.bootcamp_config), read(args.university_curriculum),\n                   fcc_catalog, read(args.workforce_curriculum), read(args.government_curriculum))
     out = Path(args.out_dir)
     out.mkdir(parents=True, exist_ok=True)
     (out / "buddy-university-learning-map.json").write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
