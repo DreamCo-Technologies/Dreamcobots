@@ -76,10 +76,21 @@ jobs:
         run: python3 tools/generate_bot_manifests.py
       - name: Manifest drift check
         run: python3 tools/generate_bot_manifests.py --check
-      - name: Regenerate fleet status and division audit for this checkout
+      - name: Sample smoke (one bot per engine + permission gate)
+        run: python3 -m buddy.fleet_runtime smoke analytics-hub compliance-scanner task-scheduler ad-copy ach-processor
+      - name: Full offline smoke (every mapped bot, no secrets)
+        run: python3 -m buddy.fleet_runtime smoke --all
+      - name: Division smoke (every division runs at least one of its bots end to end, offline)
+        run: python3 -m buddy.fleet_runtime division-smoke --all
+      - name: Regenerate fleet status after successful smoke evidence
         run: python3 tools/fleet_runtime_audit.py --skip-folder-tests
       - name: Refresh dependent repository evidence after fleet status is current
         run: python3 tools/refresh_repository_evidence.py
+      - name: Refresh Actions health and prospectuses after all source changes
+        run: |
+          python3 tools/audit_actions_health.py
+          python3 tools/build_actions_prospectus.py
+          python3 tools/build_file_prospectus.py
       - name: Runtime, generator, auditor and link-check tests
         run: python3 -m pytest -q -p no:cacheprovider tests/test_fleet_runtime_executor.py tests/test_fleet_runtime_customize.py tests/test_generate_bot_manifests.py tests/test_fleet_runtime_audit.py tests/test_check_website_links.py tests/test_run_prospectus.py tests/test_file_prospectus.py tests/test_fleet_divisions.py tests/test_pages_feature_audit.py tests/test_build_queue.py
       - name: Actions workflow count drift (health report must cover every workflow file)
@@ -106,12 +117,6 @@ jobs:
           fi
       - name: Pages Run/Customize and Actions page tests
         run: node --test tests/buddy-run-page.test.mjs tests/actions-page.test.mjs
-      - name: Smoke sample (one bot per engine + permission gate)
-        run: python3 -m buddy.fleet_runtime smoke analytics-hub compliance-scanner task-scheduler ad-copy ach-processor
-      - name: Full offline smoke (every mapped bot, no secrets)
-        run: python3 -m buddy.fleet_runtime smoke --all
-      - name: Division smoke (every division runs at least one of its bots end to end, offline)
-        run: python3 -m buddy.fleet_runtime division-smoke --all
       - name: Build bounded public technology radar projection
         run: |
           python3 tools/refresh_buddy_technology_radar.py --project
