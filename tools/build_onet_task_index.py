@@ -13,7 +13,10 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
-from tools.build_onet_task_curricula import pick, read_rows
+try:
+    from tools.build_onet_task_curricula import pick, read_rows
+except ModuleNotFoundError:
+    from build_onet_task_curricula import pick, read_rows
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_CONFIG = ROOT / "config/buddy-onet-content-model-curriculum.json"
