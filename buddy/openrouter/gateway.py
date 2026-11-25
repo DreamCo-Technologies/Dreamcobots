@@ -22,10 +22,18 @@ class ClientPolicy:
 
 
 class BuddyGateway:
-    def __init__(self, policy: ClientPolicy):
+    def __init__(
+        self,
+        policy: ClientPolicy,
+        *,
+        api_key: str | None = None,
+        base_url: str | None = None,
+    ):
         self.policy = policy
-        self.base_url = os.getenv("OPENROUTER_BASE_URL", "https://openrouter.ai/api/v1")
-        self.api_key = os.getenv("OPENROUTER_API_KEY")
+        # Explicit injection keeps tests and server-side callers deterministic without
+        # mutating process-global environment variables or exposing credentials.
+        self.base_url = base_url or os.getenv("OPENROUTER_BASE_URL", "https://openrouter.ai/api/v1")
+        self.api_key = api_key if api_key is not None else os.getenv("OPENROUTER_API_KEY")
         if not self.api_key:
             raise RuntimeError("OPENROUTER_API_KEY must remain server-side")
 
