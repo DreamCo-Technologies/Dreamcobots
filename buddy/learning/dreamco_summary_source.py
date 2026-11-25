@@ -128,6 +128,10 @@ def append_progress_event(path: Path, *, asset_id: str, division: str, event_typ
         "recorded_at": datetime.now(timezone.utc).isoformat(),
     }
     path.parent.mkdir(parents=True, exist_ok=True)
+    if path.exists():
+        for line in path.read_text(encoding="utf-8").splitlines():
+            if line.strip() and json.loads(line).get("event_id") == event["event_id"]:
+                return json.loads(line)
     with path.open("a", encoding="utf-8") as handle:
         handle.write(json.dumps(event, sort_keys=True) + "\n")
     return event
