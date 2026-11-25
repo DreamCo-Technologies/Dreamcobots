@@ -13,6 +13,7 @@ import sqlite3
 from pathlib import Path
 from typing import Any
 
+from buddy.learning.library_knowledge_router import route_library_question
 from buddy.learning.evidence_acquisition import (
     Capability, CapabilityRegistry, LearningEvent, LearningLedger, benchmark_gate,
 )
@@ -107,6 +108,19 @@ class BuddyLearningBridge:
                 "teaching": {"mode": "guided", "next_step": summary["next_step"],
                              "check_understanding": "Would you like to review a verified example?"},
                 "automated": False}
+
+    def library_knowledge(self, query: str, *, external_discovery: bool = False,
+                          persist_gap: bool = False, query_is_redacted: bool = False,
+                          gap_root: Path | None = None) -> dict[str, Any]:
+        """Internal-first library retrieval; network and gap persistence require explicit opt-in."""
+        return route_library_question(
+            query,
+            external_discovery=external_discovery,
+            persist_gap=persist_gap,
+            query_is_redacted=query_is_redacted,
+            requested_by="buddy-runtime",
+            gap_root=gap_root,
+        )
 
     def sop_candidates(self, tenant_id: str, domain: str, *, minimum_successes: int = 3) -> list[dict]:
         """Produce review-only SOP outlines, not inferred steps or executable automation."""
