@@ -147,6 +147,9 @@ def build(profiles: list[dict[str, Any]], hf: dict[str, Any], fcc: dict[str, Any
         for route in routes:
             division_hf[route["division"]].append(term)
 
+    fcc_phases = fcc.get("study_sequence", [])
+    video_tracks = fcc.get("video_learning_tracks", [])
+    platform_inventory = fcc.get("official_platform_inventory", {})
     fcc_rows = []
     division_fcc: dict[str, list[str]] = defaultdict(list)
     all_fcc_tracks = list(fcc.get("specialist_track_details", []))
@@ -241,9 +244,6 @@ def build(profiles: list[dict[str, Any]], hf: dict[str, Any], fcc: dict[str, Any
             "agentic_occupation_playbooks": {"required_sections": 26, "status": "generate_per_occupation_task_and_venture"},
         })
 
-    fcc_phases = fcc.get("study_sequence", [])
-    video_tracks = fcc.get("video_learning_tracks", [])
-    platform_inventory = fcc.get("official_platform_inventory", {})
     return {
         "schema": "dreamco.buddy_university_learning_map.v1",
         "status": "generated_crosswalk_suggestions_owner_review_and_source_guides_required",
