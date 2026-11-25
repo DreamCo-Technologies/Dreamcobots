@@ -81,6 +81,8 @@ jobs:
           python3 tools/generate_buddy_platform_expansion.py
           node --import tsx tools/generate_buddy_success_program.ts
           node --import tsx tools/generate_bot_fleet_catalog.ts
+          python3 tools/generate_repository_test_registry.py
+          node --import tsx tools/run_bot_fleet_e2e.ts --write-only
 
       - name: Validate certification policies
         run: |
