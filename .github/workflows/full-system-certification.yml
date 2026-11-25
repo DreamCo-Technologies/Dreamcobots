@@ -16,6 +16,9 @@ on:
       - "tests/test_full_system_operational_certification.py"
       - "config/full-system-operational-certification.json"
       - "tools/build_work_platform_benchmarks.py"
+      - "tools/generate_bot_fleet_catalog.ts"
+      - "config/masterbot-65-registry.json"
+      - "shared/division-production-contract.ts"
       - "tools/audit_runtime_connections.py"
       - "config/runtime-connection-evidence.json"
       - ".github/workflows/full-system-certification.yml"
@@ -77,6 +80,7 @@ jobs:
           node --import tsx tools/generate_dreamco_search_index.ts
           python3 tools/generate_buddy_platform_expansion.py
           node --import tsx tools/generate_buddy_success_program.ts
+          node --import tsx tools/generate_bot_fleet_catalog.ts
 
       - name: Validate certification policies
         run: |
