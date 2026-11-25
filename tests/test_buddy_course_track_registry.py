@@ -45,7 +45,7 @@ class BuddyCourseTrackRegistryTests(unittest.TestCase):
         self.assertTrue(any(lesson.lesson_id == "fcc-primitive-workshops" for lesson in fcc_lessons))
         self.assertEqual(len({lesson.resource_id for lesson in lessons}), len(lessons))
         self.assertEqual(len({(lesson.track_id, lesson.lesson_id) for lesson in lessons}), len(lessons))
-        expected = {"tolkien", "tokenizer", "cpu-first-llm", "onet", "hugging-face", "freecodecamp", "huggingface-full", "freecodecamp-video-catalog"}
+        expected = {"tolkien", "tokenizer", "cpu-first-llm", "onet", "hugging-face", "freecodecamp", "huggingface-full", "freecodecamp-video-catalog", "universal-software-libraries"}
         self.assertEqual({lesson.track_id for lesson in lessons}, expected)
 
     def test_every_canonical_division_receives_the_shared_course_queue(self):
