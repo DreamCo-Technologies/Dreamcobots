@@ -1,4 +1,6 @@
 import unittest
+import json
+from pathlib import Path
 
 from tools.build_buddy_university_curriculum import build, division_profiles
 
@@ -109,6 +111,16 @@ class BuddyUniversityCurriculumTests(unittest.TestCase):
         self.assertTrue(result["source_family_routes"])
         self.assertTrue(result["venture_and_workforce_tracks"])
         self.assertTrue(result["government_and_community_curriculum"]["benefit_protections"]["no_eligibility_guarantees"])
+
+    def test_full_freecodecamp_specialist_and_certification_inventory_maps(self):
+        root = Path(__file__).resolve().parents[1]
+        roadmap = json.loads((root / "config/freecodecamp-complete-learning-path.json").read_text(encoding="utf-8"))
+        result = build(self.profiles, self.hf, roadmap, {"occupations": [], "inventory": {}}, self.taxonomy)
+        self.assertEqual(result["coverage"]["freecodecamp_tracks"], 34)
+        self.assertEqual(result["coverage"]["freecodecamp_video_subject_categories"], 22)
+        self.assertTrue(all(row["division_ids"] for row in result["freecodecamp_track_routes"]))
+        self.assertTrue(all(row["division_ids"] for row in result["freecodecamp_video_category_routes"]))
+        self.assertGreater(result["coverage"]["divisions_with_freecodecamp_tracks"], 0)
 
     def test_map_does_not_claim_training_or_mastery(self):
         result = build(self.profiles, self.hf, self.fcc, self.onet, self.taxonomy)
