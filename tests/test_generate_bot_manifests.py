@@ -16,6 +16,8 @@ import generate_bot_manifests as gen  # noqa: E402
 class GeneratorTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
+        if gen.main([]) != 0:
+            raise RuntimeError("could not generate current bot manifests")
         cls.collection = gen.build()
         cls.by_slug = {b["slug"]: b for b in cls.collection["bots"]}
 
