@@ -68,6 +68,13 @@ class BuddyInternalFirstLearningRouterTests(unittest.TestCase):
             self.assertFalse(result["external_model_routing_performed"])
             self.assertFalse((root / "data/buddy-library-knowledge-gaps.jsonl").exists())
 
+    def test_numeric_only_reference_does_not_match_unrelated_approved_guides(self):
+        result = route_buddy_learning_query("qzxv 9481", root=ROOT)
+        self.assertEqual(result["route"], "internal_knowledge_gap")
+        self.assertFalse(result["external_discovery_performed"])
+        self.assertFalse(result["external_model_routing_performed"])
+        self.assertFalse(result["mastery_awarded"])
+
     def test_gap_persistence_requires_explicit_opt_in(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
