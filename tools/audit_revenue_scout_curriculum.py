@@ -124,7 +124,7 @@ def main() -> int:
     args = parser.parse_args()
     docs = [json.loads(path.read_text(encoding="utf-8")) for path in (PROGRAM, LANES, SOURCES, ARTIFACTS)]
     report = audit(*docs)
-    rendered = json.dumps(report, indent=2, ensure_ascii=False) + "\\n"
+    rendered = json.dumps(report, indent=2, ensure_ascii=False) + "\n"
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(rendered, encoding="utf-8")
     print(json.dumps({k: report[k] for k in (
