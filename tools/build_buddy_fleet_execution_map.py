@@ -322,7 +322,6 @@ def build_money_os_catalog(registry: dict[str, Any], lane_index: dict[str, dict[
             "profile_link_status": "linked_to_existing_manifest_profile" if related_slug else "registry_only_profile_link_review_required",
             "canonical_owner_division": owner if owner != "UNASSIGNED" else None,
             "proposed_owner_division": proposed_owner,
-            "proposed_owner_division": proposed_owner,
             "primary_masterbot_id": master_by_domain.get(norm(owner)),
             "buddy_orchestrator": "Buddy",
             "buddy_queue": "dependency_aware_governed_task_queue",
