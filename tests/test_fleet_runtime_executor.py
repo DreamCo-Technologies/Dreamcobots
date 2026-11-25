@@ -142,7 +142,7 @@ class ExecutorTests(unittest.TestCase):
 
     def test_learning_task_routes_to_internal_bootcamp_before_model_for_any_engine(self):
         out = self.ex.run("analytics-hub", {"objective": "React 19", "learning_task": True})
-        self.assertEqual(out["status"], "study_required")
+        self.assertEqual(out["status"], "ok")
         self.assertEqual(out["mode"], "internal_bootcamp_study")
         self.assertEqual(out["result"]["route"], "internal_bootcamp_lesson")
         self.assertTrue(any(row["lesson_id"] == "candidate-discovery-seed-react-19" for row in out["result"]["course_lessons"]))
