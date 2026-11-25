@@ -1,0 +1,153 @@
+name: Buddy Fleet Execution Map
+on:
+  pull_request:
+    paths:
+      - "config/bots/bot-manifests.generated.json"
+      - "config/supplemental-portfolio-capability-charters.json"
+      - "money_os/**"
+      - "shared/division-production-contract.ts"
+      - "config/masterbot-65-registry.json"
+      - "config/generated/masterbot-45-domain-crosswalk.json"
+      - "tools/build_buddy_fleet_execution_map.py"
+      - "tools/build_live_revenue_readiness.py"
+      - "tests/test_live_revenue_readiness_coverage.py"
+      - "tests/test_buddy_fleet_execution_map.py"
+      - ".github/workflows/buddy-fleet-execution-map.yml"
+      - "config/bots/teammate-lane-division-crosswalk.json"
+      - "config/bots/teammate-lanes.json"
+      - "config/bots/bot-runtime-contract.schema.json"
+      - "buddy/fleet_runtime/**"
+      - "tools/generate_bot_manifests.py"
+      - "tests/test_fleet_runtime_routing.py"
+      - "App_bots/**"
+      - "tools/ensure_bots_production_ready.py"
+      - "tools/generate_bot_fleet_catalog.ts"
+      - "tools/generate_dreamco_search_index.ts"
+      - "tools/build_actions_prospectus.py"
+      - "tools/generate_production_evidence_ledger.py"
+      - "tools/fleet_runtime_audit.py"
+      - "buddy/fleet_runtime/divisions.py"
+      - "tests/test_fleet_divisions.py"
+      - "tests/test_generate_bot_manifests.py"
+      - "tests/test_production_evidence_ledger.py"
+      - "tests/bot-seed-registry.test.ts"
+      - "tests/dreamco-search.test.ts"
+  push:
+    branches: [main]
+    paths:
+      - "config/bots/bot-manifests.generated.json"
+      - "config/supplemental-portfolio-capability-charters.json"
+      - "money_os/**"
+      - "shared/division-production-contract.ts"
+      - "config/masterbot-65-registry.json"
+      - "config/generated/masterbot-45-domain-crosswalk.json"
+      - "tools/build_buddy_fleet_execution_map.py"
+      - "tools/build_live_revenue_readiness.py"
+      - "tests/test_live_revenue_readiness_coverage.py"
+      - "tests/test_buddy_fleet_execution_map.py"
+      - "config/bots/teammate-lane-division-crosswalk.json"
+      - "config/bots/teammate-lanes.json"
+      - "config/bots/bot-runtime-contract.schema.json"
+      - "buddy/fleet_runtime/**"
+      - "tools/generate_bot_manifests.py"
+      - "tests/test_fleet_runtime_routing.py"
+      - "App_bots/**"
+      - "tools/ensure_bots_production_ready.py"
+      - "tools/generate_bot_fleet_catalog.ts"
+      - "tools/generate_dreamco_search_index.ts"
+      - "tools/build_actions_prospectus.py"
+      - "tools/generate_production_evidence_ledger.py"
+      - "tools/fleet_runtime_audit.py"
+      - "buddy/fleet_runtime/divisions.py"
+      - "tests/test_fleet_divisions.py"
+      - "tests/test_generate_bot_manifests.py"
+      - "tests/test_production_evidence_ledger.py"
+      - "tests/bot-seed-registry.test.ts"
+      - "tests/dreamco-search.test.ts"
+  workflow_dispatch:
+  schedule:
+    - cron: "17 */6 * * *"
+permissions:
+  contents: read
+concurrency:
+  group: buddy-fleet-execution-map-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+      - name: Install Python test runner
+        run: python -m pip install pytest
+      - name: Install locked Node dependencies
+        run: npm ci --ignore-scripts
+      - name: Validate production profile completeness
+        run: python tools/ensure_bots_production_ready.py --check
+      - name: Generate canonical division and MasterBot manifests
+        run: |
+          python tools/generate_bot_manifests.py
+          python tools/generate_bot_manifests.py --check
+      - name: Generate complete catalog and searchable specialist portfolio index
+        run: |
+          npx tsx tools/generate_bot_fleet_catalog.ts
+          npx tsx tools/generate_dreamco_search_index.ts
+      - name: Build deterministic full-fleet and Money OS plans
+        run: |
+          python tools/build_buddy_fleet_execution_map.py
+          python tools/build_buddy_fleet_execution_map.py --check
+          python tools/build_live_revenue_readiness.py
+      - name: Generate Buddy runtime division and bot status evidence
+        run: python tools/fleet_runtime_audit.py --skip-folder-tests
+      - name: Generate division run prospectus and production evidence ledger
+        run: |
+          python tools/build_actions_prospectus.py
+          python tools/generate_production_evidence_ledger.py
+      - name: Validate runtime routing, divisions, catalog and revenue plans
+        run: |
+          python -m unittest tests.test_fleet_runtime_routing
+          python -m unittest tests.test_buddy_fleet_execution_map
+          python -m unittest tests.test_live_revenue_readiness_coverage
+          python -m unittest tests.test_generate_bot_manifests
+          python -m unittest tests.test_production_evidence_ledger
+          python -m pytest -q tests/test_fleet_divisions.py
+          node --import tsx --test tests/bot-seed-registry.test.ts tests/dreamco-search.test.ts
+      - name: Upload generated manifests and Buddy fleet evidence
+        uses: actions/upload-artifact@v7
+        with:
+          name: buddy-fleet-execution-map-${{ github.run_id }}
+          path: |
+            config/bots/bot-manifests.generated.json
+            config/bots/division-manifests.generated.json
+            config/generated/buddy-fleet-execution-map.json
+            config/generated/bots.catalog.json
+            config/generated/dreamco_search_index.json
+            config/generated/live-revenue-readiness.json
+            config/generated/bot-production-readiness.json
+            config/generated/production-evidence-ledger.json
+            website/data/bot-fleet-catalog.json
+            website/data/dreamco-search-index.js
+            website/data/repository-system-map.json
+            website/data/fleet-runtime-status.json
+            website/data/actions-prospectus.json
+            website/data/run-prospectus.json
+            website/data/run-prospectus-bots.json
+            website/data/production-evidence-ledger.json
+            website/data/buddy-routing-index.js
+            website/data/bot-fleet/**
+            config/generated/actions-prospectus.json
+            config/buddy/run-with-buddy.generated.json
+            reports/BOT_FLEET_PROSPECTUS.md
+            reports/BOT_PRODUCTION_READINESS.md
+            reports/DREAMCO_SEARCH_INDEX.md
+            reports/FLEET_RUNTIME_AUDIT.md
+            reports/PRODUCTION_EVIDENCE_LEDGER.md
+          if-no-files-found: error
+          retention-days: 14
