@@ -76,7 +76,7 @@ def map_subjects(record:dict[str,Any],subjects:list[str])->tuple[list[str],list[
     selected=sorted(set(FOUNDATION_SUBJECTS).intersection(subjects) | set(matched[:40]))
     return selected,matched
 
-def build(divisions:list[Any], hf:dict[str,Any], onet:dict[str,Any], queue:dict[str,Any], workforce:dict[str,Any], government:dict[str,Any])->dict[str,Any]:
+def build(divisions:list[Any], hf:dict[str,Any], onet:dict[str,Any], queue:dict[str,Any], workforce:dict[str,Any], government:dict[str,Any], college:dict[str,Any]|None=None, freecodecamp:dict[str,Any]|None=None)->dict[str,Any]:
     records=divisions
     if records and isinstance(records[0],str):
         records=[{"division":name,"purpose":"","focus_areas":[],"serves":[],"outcome":"","boundary":""} for name in records]
@@ -86,16 +86,35 @@ def build(divisions:list[Any], hf:dict[str,Any], onet:dict[str,Any], queue:dict[
     sources=queue.get("counts",{})
     tracks=workforce.get("training_paths",[])
     gov_tracks=government.get("official_sources",[])
+    college=college or {}
+    freecodecamp=freecodecamp or {}
+    college_domains=college.get("domains",[])
+    fcc_certifications=freecodecamp.get("official_platform_inventory",{}).get("core_certifications",[])+freecodecamp.get("official_platform_inventory",{}).get("additional_certifications",[])
     rows=[]
     for record in records:
         name=record["division"]
         relevant,matched=map_subjects(record,subjects)
+        division_id=name.lower()
+        fcc_paths=[{"id":item.get("id"),"name":item.get("name"),"skills":item.get("skills",[])}
+                   for item in fcc_certifications if division_id in [str(x).lower() for x in item.get("divisions",[])]]
+        college_matches=[]
+        record_text=" ".join([name,record.get("purpose",""),record.get("outcome",""),*record.get("focus_areas",[])])
+        record_tokens=normalize_tokens(record_text)
+        for domain in college_domains:
+            domain_text=" ".join([domain.get("id",""),domain.get("name",""),*domain.get("tracks",[])])
+            overlap=sorted(record_tokens & normalize_tokens(domain_text))
+            if overlap:
+                college_matches.append({"domain":domain.get("id"),"name":domain.get("name"),"matched_terms":overlap})
         rows.append({
           "division":name,"division_purpose":record.get("purpose"),"focus_areas":record.get("focus_areas",[]),
           "curriculum_status":"planned_not_yet_authored",
           "hugging_face_subject_taxonomy_count":len(subjects),
           "hugging_face_subjects":relevant,"matched_hugging_face_subjects":matched,
           "shared_foundation_subjects":sorted(set(FOUNDATION_SUBJECTS).intersection(subjects)),
+          "freecodecamp_learning_paths":{"catalog_status":freecodecamp.get("scope",{}).get("coverage_status","not_loaded"),
+            "matched_certifications":fcc_paths,"video_tracks":freecodecamp.get("video_learning_tracks",[]),
+            "all_public_video_inventory_required":True,"do_not_claim_all_videos_until_unique_video_id_inventory_verified":True},
+          "college_curriculum":{"matched_domains":college_matches,"all_college_domains_available_as_cross_discipline_electives":True},
           "onet_task_mapping":{"source":"O*NET","occupations_in_current_import":occupations,
             "task_statements_in_current_import":tasks,"status":"awaiting_verified_O*NET_import" if not tasks else "inventory_available_task_to_division_mapping_pending",
             "mapping_policy":"match task statement, occupation, work activities, skills, knowledge, abilities and technology to this division purpose/focus; human-review ambiguous matches",
@@ -127,12 +146,14 @@ def build(divisions:list[Any], hf:dict[str,Any], onet:dict[str,Any], queue:dict[
       "status":"curriculum_map_generated_source_guides_and_model_study_not_yet_executed",
       "coverage":{"domain_divisions":len(rows),"hugging_face_subject_terms":len(subjects),
         "hugging_face_subject_matches":sum(len(x["matched_hugging_face_subjects"]) for x in rows),
+        "college_domains_loaded":len(college_domains),"freecodecamp_certifications_loaded":len(fcc_certifications),
         "divisions_with_at_least_one_hugging_face_match":sum(bool(x["matched_hugging_face_subjects"]) for x in rows),
         "onet_occupations":occupations,"onet_task_statements":tasks,
         "source_discovered":sources.get("discovered",0),"source_guide_authoring_eligible":sources.get("guide_authoring_eligible",0),
         "source_rights_pending":sources.get("rights_pending",0)},
       "divisions":rows,
-      "buddy_ai_college":{
+      "buddy_ai_college":{"college_curriculum_source":"config/buddy-college-curriculum.json","college_domains":college_domains,
+        "freecodecamp_source":"config/freecodecamp-complete-learning-path.json","freecodecamp_certifications":fcc_certifications,
         "teacher":"ChatGPT teacher/research and curriculum designer; Buddy is the learner and must demonstrate independent competence.",
         "student":"Buddy and its 65 MasterBot capability routes; division mapping is explicit and shared-platform routes remain cross-cutting.",
         "program_design":"stackable learning paths from foundations to specialist, professional practice, advanced systems engineering and capstone levels",
@@ -151,10 +172,11 @@ def main()->int:
     p.add_argument("--division-source",required=True); p.add_argument("--hf-taxonomy",required=True)
     p.add_argument("--onet",required=True); p.add_argument("--source-queue",required=True)
     p.add_argument("--workforce",required=True); p.add_argument("--government",required=True)
+    p.add_argument("--college-curriculum"); p.add_argument("--freecodecamp-path")
     p.add_argument("--out-dir",required=True); a=p.parse_args()
     read=lambda x:json.loads(Path(x).read_text(encoding="utf-8"))
     names=division_records(Path(a.division_source).read_text(encoding="utf-8"))
-    result=build(names,read(a.hf_taxonomy),read(a.onet),read(a.source_queue),read(a.workforce),read(a.government))
+    result=build(names,read(a.hf_taxonomy),read(a.onet),read(a.source_queue),read(a.workforce),read(a.government),read(a.college_curriculum) if a.college_curriculum else {},read(a.freecodecamp_path) if a.freecodecamp_path else {})
     out=Path(a.out_dir); out.mkdir(parents=True,exist_ok=True)
     (out/"buddy-self-authoring-bootcamp.json").write_text(json.dumps(result,indent=2)+"\n",encoding="utf-8")
     (out/"buddy-division-names.json").write_text(json.dumps(names,indent=2)+"\n",encoding="utf-8")
