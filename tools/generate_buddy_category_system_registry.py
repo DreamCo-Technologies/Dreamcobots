@@ -93,11 +93,14 @@ def build(root: Path = ROOT) -> tuple[dict, dict]:
     registry_categories = sorted({item["category"] for item in resources})
     model_category_names = sorted(set(model_categories))
 
-    audited_divisions = set(re.findall(
-        r"^\\| ([A-Za-z][A-Za-z0-9]+) \\| \\d+ \\|",
-        audit_path.read_text(encoding="utf-8"),
-        re.MULTILINE,
-    ))
+    audited_divisions = set()
+    for line in audit_path.read_text(encoding="utf-8").splitlines():
+        parts = line.split("|")
+        if len(parts) >= 3:
+            name = parts[1].strip()
+            if name and re.fullmatch("[A-Za-z][A-Za-z0-9]+", name) and parts[2].strip().isdigit():
+                audited_divisions.add(name)
+
 
     existing = {(item.get("group"), item.get("category")): item for item in registry["systems"]}
     used_ids = {item.get("id") for item in registry["systems"]}
