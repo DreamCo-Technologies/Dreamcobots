@@ -105,8 +105,8 @@ def main()->int:
     user=load(Path(a.user_data_manifest)).get("assets",[]) if a.user_data_manifest and Path(a.user_data_manifest).exists() else []
     result=organize(guides,names,user)
     out=Path(a.out_dir);out.mkdir(parents=True,exist_ok=True)
-    (out/"buddy-learning-organization.json").write_text(json.dumps(result,indent=2)+"\\n",encoding="utf-8")
+    (out/"buddy-learning-organization.json").write_text(json.dumps(result,indent=2)+"\n",encoding="utf-8")
     lines=["# Buddy learning organization","",f"- Approved study guides organized: {result['coverage']['approved_guides_organized']}",f"- Divisions with assigned-ready assets: {result['coverage']['divisions_with_assets']} / {result['coverage']['divisions']}",f"- User-owned data assets registered: {result['coverage']['user_data_assets_registered']}",f"- Weight-training eligible assets: {result['coverage']['weight_training_eligible_assets']}","", "This report is not evidence that Buddy has studied or trained on these assets."]
-    (out/"buddy-learning-progress.md").write_text("\\n".join(lines)+"\\n",encoding="utf-8")
+    (out/"buddy-learning-progress.md").write_text("\\n".join(lines)+"\n",encoding="utf-8")
     print(json.dumps(result["coverage"],indent=2));return 0
 if __name__=="__main__":raise SystemExit(main())
