@@ -1,0 +1,107 @@
+{
+  "schema": "dreamco.buddy_library_registry_adapters.v1",
+  "purpose": "Metadata-only query adapters for public package and model/dataset registries. These providers discover candidates; they do not download source code, model weights, datasets or execute packages.",
+  "network_default": false,
+  "max_results_per_request": 100,
+  "max_response_bytes": 1048576,
+  "timeout_seconds": 12,
+  "providers": [
+    {
+      "id": "npm",
+      "kind": "package_search",
+      "endpoint": "https://registry.npmjs.org/-/v1/search",
+      "host": "registry.npmjs.org",
+      "query_parameter": "text",
+      "page_parameter": "from",
+      "page_size_parameter": "size",
+      "parser": "npm",
+      "supports_pagination": true
+    },
+    {
+      "id": "crates",
+      "kind": "package_search",
+      "endpoint": "https://crates.io/api/v1/crates",
+      "host": "crates.io",
+      "query_parameter": "q",
+      "page_parameter": "page",
+      "page_size_parameter": "per_page",
+      "parser": "crates",
+      "supports_pagination": true
+    },
+    {
+      "id": "nuget",
+      "kind": "package_search",
+      "endpoint": "https://azuresearch-usnc.nuget.org/query",
+      "host": "azuresearch-usnc.nuget.org",
+      "query_parameter": "q",
+      "page_parameter": "skip",
+      "page_size_parameter": "take",
+      "parser": "nuget",
+      "supports_pagination": true
+    },
+    {
+      "id": "rubygems",
+      "kind": "package_search",
+      "endpoint": "https://rubygems.org/api/v1/search.json",
+      "host": "rubygems.org",
+      "query_parameter": "query",
+      "page_parameter": "page",
+      "page_size_parameter": null,
+      "parser": "rubygems",
+      "supports_pagination": true
+    },
+    {
+      "id": "packagist",
+      "kind": "package_search",
+      "endpoint": "https://packagist.org/search.json",
+      "host": "packagist.org",
+      "query_parameter": "q",
+      "page_parameter": "page",
+      "page_size_parameter": "per_page",
+      "parser": "packagist",
+      "supports_pagination": true
+    },
+    {
+      "id": "huggingface-models",
+      "kind": "model_metadata_search",
+      "endpoint": "https://huggingface.co/api/models",
+      "host": "huggingface.co",
+      "query_parameter": "search",
+      "page_parameter": "offset",
+      "page_size_parameter": "limit",
+      "parser": "huggingface",
+      "supports_pagination": true
+    },
+    {
+      "id": "huggingface-datasets",
+      "kind": "dataset_metadata_search",
+      "endpoint": "https://huggingface.co/api/datasets",
+      "host": "huggingface.co",
+      "query_parameter": "search",
+      "page_parameter": "offset",
+      "page_size_parameter": "limit",
+      "parser": "huggingface",
+      "supports_pagination": true
+    },
+    {
+      "id": "pypi-exact",
+      "kind": "package_exact_lookup",
+      "endpoint": "https://pypi.org/pypi/{query}/json",
+      "host": "pypi.org",
+      "query_parameter": null,
+      "page_parameter": null,
+      "page_size_parameter": null,
+      "parser": "pypi",
+      "supports_pagination": false
+    }
+  ],
+  "rights_boundary": {
+    "public_metadata_discovery": true,
+    "source_download_authorized": false,
+    "model_weight_download_authorized": false,
+    "dataset_download_authorized": false,
+    "evaluation_permission_granted": false,
+    "training_permission_granted": false,
+    "package_execution_permitted": false
+  }
+}
