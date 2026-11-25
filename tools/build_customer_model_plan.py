@@ -13,10 +13,10 @@ REPORT = ROOT / "reports" / "CUSTOMER_MODEL_BUILDER.md"
 LABS = ROOT / "config" / "public-lab-learning-methods.json"
 
 
-def main() -> int:
+def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--specialty", default="coding")
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
     labs = json.loads(LABS.read_text(encoding="utf-8"))
     plans = [build_plan(track, args.specialty) for track in TRACKS]
     payload = {
