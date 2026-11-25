@@ -24,7 +24,9 @@
     "knowledge_checks",
     "answer_key",
     "references",
-    "review"
+    "review",
+    "capstone",
+    "authorship"
   ],
   "properties": {
     "schema": {
@@ -554,7 +556,8 @@
         "reviewer",
         "review_status",
         "created_at",
-        "quality_checks"
+        "quality_checks",
+        "reviewed_at"
       ],
       "properties": {
         "authoring_model": {
@@ -579,6 +582,91 @@
           "items": {
             "type": "string"
           }
+        },
+        "reviewed_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "capstone": {
+      "type": "object",
+      "required": [
+        "goal",
+        "acceptance_tests",
+        "evidence_artifact"
+      ],
+      "properties": {
+        "goal": {
+          "type": "string",
+          "minLength": 30
+        },
+        "acceptance_tests": {
+          "type": "array",
+          "minItems": 3,
+          "items": {
+            "type": "string"
+          }
+        },
+        "evidence_artifact": {
+          "type": "string"
+        },
+        "stretch_goals": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "authorship": {
+      "type": "object",
+      "required": [
+        "authoring_entity",
+        "authoring_model",
+        "model_version",
+        "commissioned_for",
+        "human_contribution",
+        "owner_designation",
+        "owner_confirmation_status"
+      ],
+      "properties": {
+        "authoring_entity": {
+          "type": "string",
+          "minLength": 2
+        },
+        "authoring_model": {
+          "type": "string",
+          "minLength": 2
+        },
+        "model_version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "commissioned_for": {
+          "type": "string",
+          "minLength": 2
+        },
+        "human_contribution": {
+          "type": "string",
+          "minLength": 10
+        },
+        "owner_designation": {
+          "type": "string",
+          "minLength": 10
+        },
+        "owner_confirmation_status": {
+          "enum": [
+            "pending",
+            "confirmed",
+            "not_applicable"
+          ]
+        },
+        "revision_history_ref": {
+          "type": [
+            "string",
+            "null"
+          ]
         }
       }
     }
