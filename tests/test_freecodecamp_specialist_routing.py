@@ -52,6 +52,25 @@ class FreeCodeCampSpecialistRoutingTests(unittest.TestCase):
         self.assertTrue(all(row.division_targets for row in typescript))
         self.assertTrue(all("DreamCodeLab" in row.division_targets for row in typescript))
 
+
+    def test_agentic_ai_machine_learning_and_mlops_courses_have_demonstrable_paths(self):
+        agentic = self.by_video["Zy7EXDONlTY"]
+        ml = self.by_video["i_LwzRVP7bg"]
+        from_scratch = self.by_video["vDDjtwQDw2k"]
+        mlops = self.by_video["tVskbekONlw"]
+        for lesson in (agentic, ml, from_scratch, mlops):
+            self.assertEqual(lesson.content_status, "original_implementation_brief")
+            self.assertGreaterEqual(len(lesson.implementation_steps), 8)
+            self.assertTrue(lesson.buddy_demo)
+        self.assertIn("DreamAgents", agentic.division_targets)
+        self.assertIn("DreamAIInfra", ml.division_targets)
+        self.assertIn("DreamScience", from_scratch.division_targets)
+        self.assertIn("MLflow", mlops.tool_tags)
+        infra = {row.name for row in resources_for_division("DreamAIInfra")}
+        agents = {row.name for row in resources_for_division("DreamAgents")}
+        self.assertIn(mlops.title, infra)
+        self.assertIn(agentic.title, agents)
+
     def test_course_overrides_reference_real_divisions_and_masterbot_lanes(self):
         canonical = {
             name for row in self.lessons for name in row.division_targets
