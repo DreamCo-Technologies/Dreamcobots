@@ -24,7 +24,7 @@ ROOT = Path(__file__).resolve().parents[2]
 def _tokens(value: str) -> set[str]:
     return {
         token for token in re.findall(r"[a-z0-9][a-z0-9_.+-]*", value.lower())
-        if len(token) > 1
+        if len(token) > 1 and any(char.isalpha() for char in token)
     }
 
 

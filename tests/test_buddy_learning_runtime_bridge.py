@@ -233,7 +233,10 @@ class RuntimeBridgeTests(unittest.TestCase):
         self.assertEqual(queue["returned_count"], 100)
         self.assertTrue({"onet", "hugging-face", "huggingface-full", "freecodecamp",
                          "freecodecamp-video-catalog", "tokenizer"}.issubset(set(queue["track_ids"])))
-        self.assertTrue(all(item["completion_status"] == "queued_not_studied" for item in queue["items"]))
+        self.assertTrue(all(item["completion_status"] in {"queued_not_studied", "metadata_only", "authoring_backlog"} for item in queue["items"]))
+        self.assertTrue(all(item["mastery_awarded"] is False for item in queue["items"]))
+        self.assertTrue(all(item["study_allowed"] is (item["content_status"] == "authored") for item in queue["items"]))
+        self.assertTrue(all(item["authoring_required"] is (item["content_status"] in {"metadata_only", "authoring_backlog"}) for item in queue["items"]))
         self.assertTrue(all(item["mastery_awarded"] is False for item in queue["items"]))
         self.assertFalse(queue["external_discovery_performed"])
         self.assertFalse(queue["external_model_call_performed"])

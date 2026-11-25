@@ -57,7 +57,8 @@ def test_every_source_division_is_reconciled_to_56_business_divisions_and_shared
 def test_division_manifests_are_generated_not_hand_edited():
     import generate_bot_manifests as gen
 
-    text = gen.render_divisions(load_manifests())
+    # Use a fresh source build; load_manifests() is cached and may predate a generator refresh in another test.
+    text = gen.render_divisions(gen.build())
     assert (ROOT / "config/bots/division-manifests.generated.json").read_text() == text
 
 

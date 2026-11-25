@@ -11,7 +11,7 @@ TOKEN = re.compile(r"[a-z0-9]+")
 
 
 def tokenize(text: str) -> list[str]:
-    return TOKEN.findall(text.lower())
+    return [token for token in TOKEN.findall(text.lower()) if any(char.isalpha() for char in token)]
 
 
 @dataclass
