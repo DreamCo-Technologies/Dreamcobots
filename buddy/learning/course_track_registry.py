@@ -390,7 +390,7 @@ def _rows(track: dict, data: dict, root: Path = ROOT) -> list[dict]:
                 "agent_tags": overlay.get("agent_tags", []),
                 "implementation_steps": overlay.get("implementation_steps", []),
                 "buddy_demo": overlay.get("buddy_demo", ""),
-                "rights_mode": overlay.get("rights_mode", "metadata_only_until_item_level_permissions"),
+                "rights_mode": "metadata_only_until_item_level_permissions",
             })
         return rows
     if parser == "freecodecamp_specialist_learning_paths":
@@ -542,7 +542,7 @@ def resources_for_division(division: str, root: Path = ROOT) -> list[Resource]:
                  methods=("study_original_dreamco_guide", "practice_in_sandbox", "complete_assessment",
                           "run_independent_benchmark", "record_evidence"))
         for lesson in load_course_lessons(root)
-        if lesson.content_status in {"authored", "original_implementation_brief"}
+        if lesson.content_status == "authored"
         and (not lesson.division_targets or division in lesson.division_targets)
     ]
 
@@ -558,7 +558,7 @@ def resources_for_masterbot(masterbot: str, root: Path = ROOT) -> list[Resource]
                  methods=("study_original_dreamco_guide", "practice_in_sandbox", "complete_assessment",
                           "run_independent_benchmark", "record_evidence"))
         for lesson in load_course_lessons(root)
-        if lesson.content_status in {"authored", "original_implementation_brief"}
+        if lesson.content_status == "authored"
         and (not lesson.masterbot_targets or masterbot in lesson.masterbot_targets)
     ]
 
