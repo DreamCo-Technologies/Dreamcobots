@@ -48,6 +48,12 @@ class Buddy25MCpuLLMCourseTests(unittest.TestCase):
         self.assertFalse(self.resources["automatic_download"])
         self.assertFalse(self.resources["automatic_transcript_download"])
         self.assertFalse(self.resources["automatic_training_approval"])
+        ids = [row["id"] for row in self.resources["resources"]]
+        self.assertEqual(len(ids), len(set(ids)))
+        self.assertTrue(all(row["access"] == "link_only_reference" for row in self.resources["resources"]))
+        self.assertTrue(all(row["rights_status"] == "review_required" for row in self.resources["resources"]))
+        self.assertTrue(all(not row["training_data_authorized"] for row in self.resources["resources"]))
+
 
     def test_onet_covers_six_content_model_areas_and_all_divisions(self):
         self.assertEqual(len(self.onet["content_model_areas"]), 6)
