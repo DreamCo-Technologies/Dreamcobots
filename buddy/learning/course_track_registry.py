@@ -202,8 +202,10 @@ def _rows(track: dict, data: dict, root: Path = ROOT) -> list[dict]:
         task_index_file = root / task_index_path if task_index_path else None
         if task_index_file and task_index_file.is_file():
             task_index = _read(task_index_file)
-            source_url = task_index.get("source", {}).get("official_download_url") or track["source_url"]
-            for task in task_index.get("tasks", []):
+            # Do not route unverified or release-drifted task rows as authoritative lessons.
+            if task_index.get("inventory", {}).get("complete") is True:
+                source_url = task_index.get("source", {}).get("official_download_url") or track["source_url"]
+                for task in task_index.get("tasks", []):
                 occupation_code = str(task.get("occupation_code", "")).strip()
                 task_id = str(task.get("task_id", "")).strip()
                 statement = str(task.get("task_statement", "")).strip()
