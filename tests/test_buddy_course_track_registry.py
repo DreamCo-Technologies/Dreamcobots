@@ -14,7 +14,29 @@ from buddy.learning.study_resource_scheduler import Capability
 class BuddyCourseTrackRegistryTests(unittest.TestCase):
     def test_all_tracks_are_exposed_as_ordered_course_lessons(self):
         lessons = load_course_lessons()
-        self.assertEqual(len(lessons), sum(1 for _ in lessons))
+        from pathlib import Path
+        import json
+        root = Path(__file__).resolve().parents[1]
+        def load(path):
+            return json.loads((root / path).read_text(encoding="utf-8"))
+        tol = load("config/buddy-tolkien-study-track.json")
+        tok = load("config/buddy-tokenizer-training-curriculum.json")
+        cpu = load("config/buddy-25m-cpu-llm-course.json")
+        onet = load("config/buddy-onet-content-model-curriculum.json")
+        hf_tasks = load("config/huggingface-task-taxonomy.json")
+        fcc = load("config/freecodecamp-complete-learning-path.json")
+        hf_full = load("config/buddy-huggingface-full-learning-map.json")
+        fcc_catalog = load("buddy/bootcamp/sources/freecodecamp/catalog.json")
+        expected_count = (
+            len(tol["curriculum"]) + len(tol["extended_study_path"])
+            + len(tok["lessons"]) + len(cpu["modules"]) + len(onet["subject_inventory"])
+            + len(hf_tasks["task_families"])
+            + len(fcc["official_platform_inventory"]["core_certifications"])
+            + len(fcc["study_sequence"]) + len(fcc["video_learning_tracks"])
+            + len(hf_full["official_courses"]) + len(hf_full["ecosystem_modules"])
+            + len(fcc_catalog["videos"])
+        )
+        self.assertEqual(len(lessons), expected_count)
         self.assertEqual(len({lesson.resource_id for lesson in lessons}), len(lessons))
         self.assertEqual(len({(lesson.track_id, lesson.lesson_id) for lesson in lessons}), len(lessons))
         expected = {"tolkien", "tokenizer", "cpu-first-llm", "onet", "hugging-face", "freecodecamp", "huggingface-full", "freecodecamp-video-catalog"}
