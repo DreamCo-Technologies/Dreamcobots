@@ -270,6 +270,7 @@ jobs:
         run: python tools/sync_freecodecamp_catalog.py
       - name: Validate freeCodeCamp catalog and tests
         run: |
+          export PYTHONPATH="$GITHUB_WORKSPACE${PYTHONPATH:+:$PYTHONPATH}"
           python tools/sync_freecodecamp_catalog.py --check
           python tools/sync_freecodecamp_learning_inventory.py
           python tools/sync_freecodecamp_learning_inventory.py --check
