@@ -1,0 +1,27 @@
+name: O*NET 31 Subject Study Guides
+on:
+  pull_request:
+    paths:
+      - "config/buddy-onet-content-model-curriculum.json"
+      - "config/buddy-onet-31-subject-study-guides.json"
+      - "tools/validate_buddy_onet_31_subject_guides.py"
+      - "tests/test_buddy_onet_31_subject_guides.py"
+      - ".github/workflows/onet-31-subject-study-guides.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: onet-31-subject-guides-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: python -m pip install --disable-pip-version-check pytest
+      - run: python -m pytest -q tests/test_buddy_onet_31_subject_guides.py
+      - run: python tools/validate_buddy_onet_31_subject_guides.py
