@@ -47,6 +47,20 @@ class BuddyFleetExecutionMapTests(unittest.TestCase):
                 self.assertTrue(route["primary_masterbot_id"])
             self.assertEqual(bot["execution_plan_status"], "plan_only_not_runtime_proof")
 
+    def test_supplemental_owner_proposal_is_exposed_at_top_level_and_matches_route(self):
+        supplemental = [
+            bot for bot in self.bots
+            if bot["division_route"]["status"] == "supplemental_domain_unassigned_pending_owner_review"
+        ]
+        self.assertEqual(len(supplemental), 50)
+        for bot in supplemental:
+            self.assertIsNone(bot["canonical_owner_division"])
+            self.assertTrue(bot["proposed_owner_division"])
+            self.assertEqual(
+                bot["proposed_owner_division"],
+                bot["division_route"]["proposed_domain_owner"],
+            )
+
     def test_ten_supplemental_domains_remain_unassigned_with_proposals_only(self):
         supplemental = [bot for bot in self.bots if bot["division_route"]["status"] == "supplemental_domain_unassigned_pending_owner_review"]
         self.assertEqual(len(supplemental), 50)
