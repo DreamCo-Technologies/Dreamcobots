@@ -132,6 +132,8 @@ class BuddyLearningBridge:
             raise ValueError("provide exactly one canonical division or MasterBot lane")
         if limit < 1 or limit > 100:
             raise ValueError("limit must be between 1 and 100")
+        if not isinstance(query, str):
+            raise ValueError("query must be a string")
         if division:
             resources_for_division(division)
             owner = {"division": division}
