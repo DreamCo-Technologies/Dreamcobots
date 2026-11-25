@@ -4,7 +4,9 @@ on:
     paths:
       - ".github/workflows/buddy-bootcamp-curriculum.yml"
       - "tools/build_buddy_bootcamp_curriculum.py"
+      - "tests/test_buddy_bootcamp_workflow_safety.py"
       - "tests/test_buddy_bootcamp_curriculum.py"
+      - "tests/test_buddy_bootcamp_workflow_safety.py"
       - "config/masterbot-65-registry.json"
       - "config/huggingface-task-taxonomy.json"
       - "config/hf-capability-download-map.json"
@@ -201,6 +203,7 @@ jobs:
           python tools/build_buddy_bootcamp_curriculum.py
           python tools/build_buddy_bootcamp_curriculum.py --check
           python -m unittest discover -s tests -p 'test_buddy_bootcamp_curriculum.py' -v
+          python -m unittest discover -s tests -p 'test_buddy_bootcamp_workflow_safety.py' -v
           python -m unittest discover -s tests -p 'test_dreamco_bootcamp_seed_data.py' -v
           python -m unittest discover -s tests -p 'test_dreamco_training_factory.py' -v
           python -m unittest discover -s tests -p 'test_dreamco_original_training_examples.py' -v
