@@ -1,6 +1,9 @@
 from __future__ import annotations
 
 import unittest
+import json
+import tempfile
+from pathlib import Path
 
 from tools.production_readiness_gate import should_fail_gate, summarize_readiness
 
@@ -59,6 +62,67 @@ class ProductionCertificationTruthTests(unittest.TestCase):
         )
         self.assertIn("security", report["blocking_unknowns"])
         self.assertTrue(should_fail_gate(report, strict=True, certification=False))
+
+
+    def test_area_status_requires_existing_artifact_and_successful_same_sha_check(self):
+        from tools.production_readiness_gate import build_area_reports, AREA_EVIDENCE_SCHEMA
+        contract = {"areas": [
+            {"id": "buddy_orchestration", "label": "Buddy", "required": ["router tests"]},
+            {"id": "security", "label": "Security", "required": ["secret scan"]},
+        ]}
+        sha = "a" * 40
+        empty = {"schema": AREA_EVIDENCE_SCHEMA, "areas": {}}
+        reports = build_area_reports(contract, empty, sha, "DreamCo-Technologies/Dreamcobots", "token")
+        self.assertEqual([row["status"] for row in reports], ["unknown", "unknown"])
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            artifact = root / "tests/test_router.py"
+            artifact.parent.mkdir(parents=True)
+            artifact.write_text("test", encoding="utf-8")
+            manifest = {
+                "schema": AREA_EVIDENCE_SCHEMA,
+                "areas": {
+                    "buddy_orchestration": {
+                        "status": "VERIFIED",
+                        "evidence": [{"path": "tests/test_router.py", "sha": sha, "check_id": "12345"}],
+                    }
+                },
+            }
+            verifier = lambda repository, check_id, revision, token: (
+                repository == "DreamCo-Technologies/Dreamcobots"
+                and check_id == "12345" and revision == sha and token == "token"
+            )
+            reports = build_area_reports(
+                contract, manifest, sha, "DreamCo-Technologies/Dreamcobots", "token",
+                root=root, verify_check=verifier,
+            )
+            self.assertEqual(reports[0]["status"], "verified")
+            self.assertEqual(reports[1]["status"], "unknown")
+            stale = json.loads(json.dumps(manifest))
+            stale["areas"]["buddy_orchestration"]["evidence"][0]["sha"] = "b" * 40
+            reports = build_area_reports(
+                contract, stale, sha, "DreamCo-Technologies/Dreamcobots", "token",
+                root=root, verify_check=verifier,
+            )
+            self.assertEqual(reports[0]["status"], "partial")
+            self.assertTrue(any("SHA" in item for item in reports[0]["evidence_errors"]))
+            failed = lambda *args: False
+            reports = build_area_reports(
+                contract, manifest, sha, "DreamCo-Technologies/Dreamcobots", "token",
+                root=root, verify_check=failed,
+            )
+            self.assertEqual(reports[0]["status"], "partial")
+            self.assertTrue(any("successful" in item for item in reports[0]["evidence_errors"]))
+
+    def test_file_discovery_alone_never_marks_an_area_verified(self):
+        from tools.production_readiness_gate import build_area_reports, AREA_EVIDENCE_SCHEMA
+        contract = {"areas": [{"id": "deployment", "label": "Deployment", "required": ["build", "rollback"]}]}
+        reports = build_area_reports(
+            contract, {"schema": AREA_EVIDENCE_SCHEMA, "areas": {}},
+            "a" * 40, "DreamCo-Technologies/Dreamcobots", None,
+        )
+        self.assertEqual(reports[0]["status"], "unknown")
+        self.assertEqual(reports[0]["evidence"], [])
 
 
 if __name__ == "__main__":
