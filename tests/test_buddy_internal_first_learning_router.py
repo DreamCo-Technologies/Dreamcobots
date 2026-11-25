@@ -20,6 +20,22 @@ class BuddyInternalFirstLearningRouterTests(unittest.TestCase):
         self.assertFalse(result["mastery_awarded"])
         self.assertTrue(all(row["completion_status"] == "queued_not_studied" for row in result["course_lessons"]))
 
+    def test_huggingface_onet_and_freecodecamp_tracks_are_reachable_internally(self):
+        cases = [
+            ("hugging face transformers", {"hugging-face", "huggingface-full"}),
+            ("onet occupations skills", {"onet"}),
+            ("freecodecamp javascript algorithms", {"freecodecamp", "freecodecamp-video-catalog"}),
+        ]
+        for query, expected_tracks in cases:
+            with self.subTest(query=query):
+                result = route_buddy_learning_query(query, root=ROOT, limit=25)
+                self.assertEqual(result["route"], "internal_bootcamp_lesson")
+                self.assertTrue(
+                    any(row["track_id"] in expected_tracks for row in result["course_lessons"]),
+                    [row["track_id"] for row in result["course_lessons"]],
+                )
+                self.assertFalse(result["external_model_routing_performed"])
+
     def test_approved_guide_is_retrieved_before_course_matching(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
