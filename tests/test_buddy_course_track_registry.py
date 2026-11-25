@@ -115,6 +115,9 @@ class BuddyCourseTrackRegistryTests(unittest.TestCase):
         self.assertEqual(len(lessons), len(catalog["videos"]))
         self.assertTrue(all(lesson.rights_mode == "metadata_only_until_item_level_permissions" for lesson in lessons))
         self.assertTrue(all(lesson.source_url.startswith("https://www.youtube.com/watch?v=") for lesson in lessons))
+        self.assertTrue(all(lesson.content_status == "metadata_only" for lesson in lessons))
+        video_titles = {lesson.title for lesson in lessons}
+        self.assertFalse(any(resource.name in video_titles for resource in resources_for_division("DreamAIInfra")))
 
     def test_course_scheduler_returns_queued_lesson_not_mastery(self):
         from pathlib import Path
