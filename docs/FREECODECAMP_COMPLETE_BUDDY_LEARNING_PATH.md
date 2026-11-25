@@ -104,6 +104,8 @@ The current snapshot contains 1,740 public video-metadata records: 1,232 categor
 
 Unclassified records are assigned to DreamEducation and CommandCore for metadata triage, with DreamDiscovery as the review lane. They are not assigned to a guessed technical division and remain metadata-only until a human approves the topic, owner, and source rights.
 
+The committed 1,740-video snapshot is still marked **partial** because its original enumerator version and expected playlist count were not recorded. A CI refresh now runs yt-dlp against the official public channel, verifies playlist_count against unique parsed IDs, and uploads the resulting metadata catalog for review. Until that verified snapshot is adopted, division queues are explicitly provisional and daily lesson slots receive no candidate assignments. A successful metadata refresh does not grant transcript, derivative-summary, or training rights.
+
 ### Required Buddy demonstration sequence
 
 1. Resolve the source video metadata and verify the item-level source and rights status.
