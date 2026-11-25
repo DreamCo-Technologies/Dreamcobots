@@ -77,6 +77,15 @@ def estimate_decoder_parameter_count(architecture: dict[str, Any]) -> int:
     return embeddings + layers * per_layer + 2 * width
 
 
+def validate_training_authorization(profile: dict[str, Any]) -> None:
+    """Fail closed unless a supplied profile explicitly authorizes weight updates."""
+    policy = profile.get("training_policy")
+    if not isinstance(policy, dict):
+        raise PermissionError("architecture profile must include an explicit training_policy")
+    if policy.get("enabled") is not True or policy.get("weight_updates_authorized") is not True:
+        raise PermissionError("model weight updates are not explicitly authorized by this profile")
+
+
 def sha256_file(path: Path) -> str:
     digest = hashlib.sha256()
     with path.open("rb") as stream:
@@ -210,7 +219,15 @@ def train_from_scratch(dataset_path: Path, output_path: Path, *, dataset_id: str
         "bias": True,
     }
     if architecture_profile is not None:
-        architecture.update(architecture_profile)
+        validate_training_authorization(architecture_profile)
+        architecture.update({
+            key: architecture_profile[key]
+            for key in (
+                "vocab_size", "context_size", "width", "layers",
+                "attention_heads", "feed_forward_size", "tied_embeddings", "bias",
+            )
+            if key in architecture_profile
+        })
     if architecture["vocab_size"] != 256:
         raise ValueError("byte-level training currently requires vocab_size=256")
     if architecture["context_size"] < sequence_length:
