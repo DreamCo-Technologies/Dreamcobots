@@ -15,7 +15,6 @@ on:
 permissions:
   actions: read
   contents: write
-  pull-requests: write
 
 concurrency:
   group: buddy-ci-safe-repair-${{ github.event.workflow_run.id }}
@@ -36,6 +35,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+      - name: Install pinned workflow parser dependency
+        run: python -m pip install --disable-pip-version-check "PyYAML==6.0.3"
       - name: Normalize failed job into a safe repair observation
         if: github.event_name == 'workflow_run'
         uses: actions/github-script@v7
@@ -72,10 +73,11 @@ jobs:
           python tools/build_division_model_fleet.py
           python tools/generate_division_model_manifest.py
           python tools/build_pages_connection_index.py
+          python tools/generate_bot_manifests.py
+          python tools/fleet_runtime_audit.py --skip-folder-tests
           python tools/audit_actions_health.py
           python tools/build_actions_prospectus.py
           python tools/build_file_prospectus.py
-          python tools/generate_bot_manifests.py
           python tools/audit_markdown_implementation_gaps.py --write
       - name: Verify repaired indexes and Buddy repair-learning tests
         run: |
@@ -122,9 +124,8 @@ jobs:
           git commit -m "chore(ci): apply verified allowlisted DreamCo repair"
           AUTH="$(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w0)"
           git -c core.hooksPath=/dev/null -c http.extraheader="AUTHORIZATION: basic $AUTH" push "https://github.com/$GITHUB_REPOSITORY.git" "HEAD:refs/heads/$REPAIR_BRANCH"
-          gh pr create --repo "$GITHUB_REPOSITORY" --base main --head "$REPAIR_BRANCH" \
-            --title "Buddy safe CI repair for run ${{ github.event.workflow_run.id }}" \
-            --body "This PR contains only allowlisted deterministic generated-index repairs. Original failing run: ${{ github.event.workflow_run.html_url }}. Review the diff and CI evidence before merging."
+          echo "Verified generated repairs are available on [`$REPAIR_BRANCH`](https://github.com/$GITHUB_REPOSITORY/tree/$REPAIR_BRANCH)." >> "$GITHUB_STEP_SUMMARY"
+          echo "The repository blocks GITHUB_TOKEN pull-request creation; open a review PR from this branch." >> "$GITHUB_STEP_SUMMARY"
       - name: Preserve repair evidence
         if: always()
         uses: actions/upload-artifact@v4
