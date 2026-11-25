@@ -1,6 +1,15 @@
 from __future__ import annotations
 
+import json
 import unittest
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+
+
+def load(path):
+    return json.loads((ROOT / path).read_text(encoding="utf-8"))
+
 
 from buddy.learning.course_track_registry import (
     load_course_lessons,
