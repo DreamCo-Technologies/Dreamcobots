@@ -154,3 +154,10 @@ The opt-in metadata-only provider adapter is `buddy.learning.library_registry_di
 The CLI requires the explicit `discover PROVIDER QUERY --allow-network` flag for one network request. Requests use HTTPS host allowlists, bounded response sizes, bounded timeouts and a fixed user agent. Pagination is caller-controlled and one page is requested per invocation. Results are normalized candidate metadata only, with license/source review pending and download, execution, evaluation and training permissions false or pending.
 
 This is not exhaustive registry crawling: query APIs are ranked/search interfaces, not proof of full package inventory. PyPI support is exact-name lookup rather than global enumeration. Additional ecosystem providers and verified pagination/cursor workflows must be added as their official APIs and terms are reviewed. Do not infer a package's license from a search result; fetch and review authoritative metadata and source terms in a separate governed step.
+
+
+## Guide authoring workflow
+
+`tools/create_buddy_library_guide_draft.py` creates a structured, original DreamCo guide skeleton from a discovered candidate's canonical ID, name, ecosystem and official HTTPS documentation URLs. It never downloads or executes the library. It writes `review_required`, unknown API coverage, unknown documentation access, and pending evaluation/training/download permissions. It refuses to overwrite an existing guide. The generator is a starting point for research, not an AI-generated assertion that a library has been fully studied.
+
+The first seeded example is `data/buddy-library-study-guides/python-requests.json`, pinned to Requests 2.34.2. It contains an original learning map, partial API inventory, established and experimental use cases, security guidance, exercises, capstones, debugging playbook, benchmark goals, and initial O*NET skill / DreamCo division crosswalks. It remains `review_required`; Buddy's internal search intentionally does not surface it until a reviewer approves it and all rights/evidence gates pass.
