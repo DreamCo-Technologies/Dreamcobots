@@ -117,22 +117,20 @@ def _rows(track: dict, data: dict, root: Path = ROOT) -> list[dict]:
                 "benchmark": "Universal library discovery and guide evidence acceptance suite.",
                 "source_url": registry_urls.get(ecosystem_id, "https://github.com/"),
             })
-        guide_dir = root / "data/buddy-library-study-guides"
-        if guide_dir.exists():
-            for guide_path in sorted(guide_dir.glob("*.json")):
-                guide = _read(guide_path)
-                library = guide.get("library", {})
-                if guide.get("status") not in {"approved_for_study", "mastered"}:
-                    continue
-                rows.append({
-                    "id": f"library-guide-{library.get('canonical_id', guide_path.stem)}",
-                    "title": f"Study {library.get('name', guide_path.stem)}",
-                    "objective": "; ".join(guide.get("learning_map", {}).get("objectives", [])),
-                    "practice": "Complete the guide exercises and original capstone in an isolated sandbox.",
-                    "assessment": "Pass the guide's targeted benchmark, unseen holdout and regression checks.",
-                    "benchmark": guide.get("evaluation", {}).get("target_benchmark", "library-specific benchmark"),
-                    "source_url": library.get("official_homepage", "https://github.com/"),
-                })
+        from buddy.learning.universal_library_registry import load_approved_guides
+        for approved_guide in load_approved_guides(root):
+            guide = approved_guide.document
+            library = guide.get("library", {})
+            rows.append({
+                "id": f"library-guide-{approved_guide.canonical_id}",
+                "title": f"Study {approved_guide.name}",
+                "objective": "; ".join(guide.get("learning_map", {}).get("objectives", [])),
+                "practice": "Complete the guide exercises and original capstone in an isolated sandbox.",
+                "assessment": "Pass the guide's targeted benchmark, unseen holdout and regression checks.",
+                "benchmark": guide.get("evaluation", {}).get("target_benchmark", "library-specific benchmark"),
+                "source_url": library.get("official_homepage", "https://github.com/"),
+                "guide_path": approved_guide.path.relative_to(root).as_posix(),
+            })
         return rows
     if parser == "tolkien":
         return [
@@ -291,7 +289,7 @@ def load_course_lessons(root: Path = ROOT) -> list[CourseLesson]:
                 assessment=str(row.get("assessment", "")).strip(),
                 benchmark=str(row.get("benchmark", "independent task and regression suite")).strip(),
                 source_url=str(row.get("source_url") or track["source_url"]),
-                guide_path=track["guide"],
+                guide_path=str(row.get("guide_path") or track["guide"]),
                 rights_mode=track["rights"],
                 delivery=track["delivery"],
             ))
