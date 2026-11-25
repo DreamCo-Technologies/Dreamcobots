@@ -3,13 +3,13 @@ from tools.build_buddy_self_bootcamp import build, division_names
 
 class SelfBootcampTests(unittest.TestCase):
     def test_parser_requires_exactly_55_complete_division_profiles(self):
-        source="\\n".join(
-            f"  Division{i}: {{\\n    purpose: 'purpose',\\n    focusAreas: [],\\n    serves: [],\\n    outcome: 'outcome',\\n    boundary: 'boundary',\\n  }}"
+        source="\n".join(
+            f"  Division{i}: {{\n    purpose: 'purpose',\n    focusAreas: [],\n    serves: [],\n    outcome: 'outcome',\n    boundary: 'boundary',\n  }}"
             for i in range(55)
         )
         self.assertEqual(len(division_names(source)),55)
-        incomplete="\\n".join(
-            f"  Division{i}: {{\\n    purpose: 'purpose',\\n    focusAreas: [],\\n    serves: [],\\n    outcome: 'outcome',\\n    boundary: 'boundary',\\n  }}"
+        incomplete="\n".join(
+            f"  Division{i}: {{\n    purpose: 'purpose',\n    focusAreas: [],\n    serves: [],\n    outcome: 'outcome',\n    boundary: 'boundary',\n  }}"
             for i in range(54)
         )
         with self.assertRaises(ValueError):
