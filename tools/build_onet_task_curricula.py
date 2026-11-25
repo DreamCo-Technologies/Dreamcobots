@@ -57,7 +57,7 @@ def flatten_records(value: Any) -> list[dict[str, Any]]:
             result.extend(flatten_records(item))
         return result
     if isinstance(value, dict):
-        preferred = ("task statements", "task_statements", "task statements data", "task")
+        preferred = ("task statements", "task_statements", "task statements data", "task", "data")
         for key in preferred:
             if key in value:
                 found = flatten_records(value[key])
