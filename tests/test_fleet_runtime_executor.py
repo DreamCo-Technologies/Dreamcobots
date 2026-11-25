@@ -149,7 +149,7 @@ class ExecutorTests(unittest.TestCase):
         self.assertFalse(out["live_external_action_taken"])
 
     def test_learning_task_external_fallback_requires_explicit_flag(self):
-        out = self.ex.run("blog-writer", {"objective": "unmapped zqv 9842", "learning_task": True})
+        out = self.ex.run("blog-writer", {"objective": "qzxv 9481", "learning_task": True})
         self.assertEqual(out["result"]["generated_by"], "offline_deterministic")
         self.assertEqual(out["result"]["fallback_reason"], "internal_knowledge_gap_external_fallback_disabled")
         self.assertIsNone(out["result"]["model"])
