@@ -37,6 +37,9 @@ def build_daily_plan(university_map: dict[str, Any], organization_path: Path,
     if len(set(names)) != 55 or any(not isinstance(x, str) or not x for x in names):
         raise ValueError("division names must be unique and non-empty")
     organization = load_organization(organization_path)
+    organization_divisions = [row.get("division") for row in organization["division_curricula"]]
+    if len(organization_divisions) != 55 or len(set(organization_divisions)) != 55 or set(organization_divisions) != set(names):
+        raise ValueError("learning organization must contain the exact same 55 canonical divisions as the University map")
     package_by_id = {row.get("asset_id"): row for row in organization["packages"]}
     if len(package_by_id) != len(organization["packages"]):
         raise ValueError("learning asset IDs must be unique")
