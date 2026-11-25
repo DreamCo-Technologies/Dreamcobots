@@ -139,6 +139,31 @@ class RuntimeBridgeTests(unittest.TestCase):
         self.assertTrue(path["authoring_required"])
         self.assertEqual(path["completion_status"], "authoring_backlog")
 
+
+    def test_unclassified_video_triage_is_visible_only_to_review_lanes(self):
+        education = self.bridge.bootcamp_learning_queue(
+            division="DreamEducation", query="classification review", limit=10
+        )
+        finance = self.bridge.bootcamp_learning_queue(
+            division="DreamFinance", query="classification review", limit=10
+        )
+        discovery = self.bridge.bootcamp_learning_queue(
+            masterbot="DreamDiscovery", query="classification review", limit=10
+        )
+        education_items = [item for item in education["items"] if item["track_id"] == "freecodecamp-metadata-triage"]
+        finance_items = [item for item in finance["items"] if item["track_id"] == "freecodecamp-metadata-triage"]
+        discovery_items = [item for item in discovery["items"] if item["track_id"] == "freecodecamp-metadata-triage"]
+        self.assertTrue(education_items)
+        self.assertFalse(finance_items)
+        self.assertTrue(discovery_items)
+        item = education_items[0]
+        self.assertEqual(item["content_status"], "metadata_only")
+        self.assertEqual(item["completion_status"], "metadata_only")
+        self.assertFalse(item["study_allowed"])
+        self.assertTrue(item["authoring_required"])
+        self.assertTrue(item["implementation_steps"])
+        self.assertTrue(item["buddy_demo"])
+
     def test_library_learning_queue_contains_all_seed_and_ecosystem_lanes(self):
         queue = self.bridge.library_learning_queue(division="DreamCodeLab", limit=100)
         self.assertGreaterEqual(queue["available_count"], 569)
