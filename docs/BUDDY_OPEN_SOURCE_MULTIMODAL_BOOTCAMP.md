@@ -181,3 +181,10 @@ Per-division queues should prioritize prerequisite order, the five-lessons-per-d
 The learning organizer now rejects incomplete, unapproved, or unmapped guides before packaging them. It checks the source identity and revision, HTTP(S) source URL, explicit rights evidence, minimum summary depth, required sections and objectives, five key concepts, worked examples, exercises, knowledge checks and answer-key entries, references, capstone acceptance tests, human reviewer metadata, and at least one valid division mapping. Rejection reasons are recorded in the output so a missing field can be repaired instead of silently counted as completed learning.
 
 The workflow's pull-request path filters include the organizer, its tests, the user-data manifest, the study-guide library, the division contract, and this documentation so changes to the learning pipeline trigger validation.
+
+
+## Authorized local media preparation
+
+The local-media preparation tool is `tools/process_authorized_bootcamp_media.py`. It accepts files only from `data/authorized-media/`, requires an asset-specific SHA-256 match and separate study, derivative-summary, and evaluation permissions, then uses local `ffprobe`/`ffmpeg` to extract audio and sparse video frames. It does not download media or model weights. Its `asset-study-input.json` output is source evidence for a later study step, not itself a transcript, completed summary, training run, or mastery result. The manifest is `config/buddy-authorized-media-rights.json`.
+
+For authorized or user-provided video, a future multimodal study worker can align speech, timestamps, and sampled frames, explain demonstrations, and create original chapter-by-chapter guides. For audio and music, the curriculum covers speech recognition, sound classification, audio signal processing, music information retrieval, tempo and meter, harmony and key estimation, structure, timbre, production, and MIDI/score analysis where supported. Copyrighted recordings are not automatically training data; use public-domain, permissively licensed, or user-owned assets with explicit permissions.
