@@ -89,6 +89,7 @@ def select_next_for_division(division: str, gaps: Iterable[Capability], path: Pa
         "division": division,
         "asset_id": package["asset_id"],
         "source_revision": (package.get("source") or {}).get("revision"),
+        "source": package.get("source") or {},
         "summary": package.get("summary"),
         "study_path": package.get("study_path"),
         "assessment": package.get("assessment"),
