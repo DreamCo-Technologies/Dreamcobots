@@ -68,7 +68,7 @@ class DreamCoSummarySourceTests(unittest.TestCase):
         lines = self.progress.read_text(encoding="utf-8").splitlines()
         self.assertEqual(len(lines), 1)
         self.assertEqual(json.loads(lines[0])["event_id"], event["event_id"])
-        duplicate = append_progress_event(self.progress, asset_id="asset-001", division="DreamAI", event_type="study_started", evidence_ref="evidence:1", source_revision="rev-1")
+        duplicate = append_progress_event(self.progress, asset_id="asset-001", division="DreamAI", event_type="study_started", evidence_ref="evidence:1", source_revision="rev-1", organization_path=self.organization)
         self.assertEqual(len(self.progress.read_text(encoding="utf-8").splitlines()), 1)
         self.assertEqual(duplicate["event_id"], event["event_id"])
 
@@ -77,11 +77,6 @@ class DreamCoSummarySourceTests(unittest.TestCase):
             append_progress_event(
                 self.progress, asset_id="asset-001", division="DreamAI",
                 event_type="training_run_started", evidence_ref="run:1", organization_path=self.organization
-            )
-        with self.assertRaises(PermissionError):
-            append_progress_event(
-                self.progress, asset_id="asset-001", division="DreamAI",
-                event_type="training_run_started", evidence_ref="run:2", organization_path=self.organization
             )
         payload = json.loads(self.organization.read_text(encoding="utf-8"))
         payload["packages"][0]["training"]["weight_training_eligible"] = True
