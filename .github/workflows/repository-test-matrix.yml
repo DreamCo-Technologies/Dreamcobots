@@ -76,6 +76,8 @@ jobs:
           python3 tools/refresh_buddy_technology_radar.py --project
           python3 tools/refresh_buddy_technology_radar.py --check
           python3 -m unittest tests.test_buddy_technology_radar
+      - name: Regenerate canonical bot runtime manifests
+        run: python3 tools/generate_bot_manifests.py
       - name: Run DreamCo Universal Verification Engine
         run: npx tsx tools/run_universal_verification.ts
       - name: Save debugging evidence
