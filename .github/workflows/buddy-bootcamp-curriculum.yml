@@ -71,6 +71,10 @@ on:
       - "config/buddy-course-source-resources.json"
       - "buddy/learning/course_track_registry.py"
       - "tests/test_buddy_course_track_registry.py"
+      - "config/buddy-universal-library-curriculum.json"
+      - "config/buddy-library-study-guide.schema.json"
+      - "docs/BUDDY_UNIVERSAL_LIBRARY_STUDY_GUIDE_STANDARD.md"
+      - "tests/test_buddy_universal_library_curriculum.py"
       - "tests/test_buddy_25m_cpu_llm_course.py"
       - "tests/test_buddy_tokenizer_training_curriculum.py"
       - "tests/test_buddy_tolkien_study_track.py"
@@ -220,6 +224,7 @@ jobs:
           python -m unittest discover -s tests -p 'test_buddy_tokenizer_training_curriculum.py' -v
           python -m unittest discover -s tests -p 'test_buddy_25m_cpu_llm_course.py' -v
           python -m unittest discover -s tests -p 'test_buddy_course_track_registry.py' -v
+          python -m unittest discover -s tests -p 'test_buddy_universal_library_curriculum.py' -v
           python -m unittest discover -s tests -p 'test_freecodecamp_learning_inventory.py' -v
           python tools/build_weekly_transcript_evaluation.py --output /tmp/buddy-weekly-transcript-evaluation.json
       - name: Publish first weekly transcript coverage report
@@ -240,6 +245,7 @@ jobs:
           python -m unittest discover -s tests -p 'test_buddy_tokenizer_training_curriculum.py' -v
           python -m unittest discover -s tests -p 'test_buddy_25m_cpu_llm_course.py' -v
           python -m unittest discover -s tests -p 'test_buddy_course_track_registry.py' -v
+          python -m unittest discover -s tests -p 'test_buddy_universal_library_curriculum.py' -v
           python -m unittest discover -s tests -p 'test_dreamco_bootcamp_seed_data.py' -v
           python -m unittest discover -s tests -p 'test_dreamco_training_factory.py' -v
           python -m unittest discover -s tests -p 'test_dreamco_original_training_examples.py' -v
