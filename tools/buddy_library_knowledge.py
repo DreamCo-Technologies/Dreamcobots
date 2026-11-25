@@ -41,7 +41,7 @@ def main() -> int:
     elif args.command == "record-gap":
         if not args.redacted:
             raise PermissionError("redact the query and pass --redacted before persisting a gap")
-        result = record_library_knowledge_gap(args.query, reason=args.reason, root=args.root)
+        result = record_library_knowledge_gap(args.query, reason=args.reason, root=args.root, query_is_redacted=True)
     elif args.command == "discover":
         result = search_public_registry(
             args.provider, args.query, allow_network=args.allow_network,
