@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import io
 import json
+from datetime import date
 import tempfile
 import unittest
 from pathlib import Path
@@ -22,6 +23,7 @@ class BuddyLibraryKnowledgeRouterTests(unittest.TestCase):
             )
             guide = json.loads((ROOT / "data/buddy-library-study-guides/python-requests.json").read_text(encoding="utf-8"))
             guide["status"] = "approved_for_study"
+            guide["library"]["latest_version_checked_at"] = date.today().isoformat()
             guide["evaluation"]["evidence_state"] = "guide_reviewed"
             (root / "data/buddy-library-study-guides/python-requests.json").write_text(
                 json.dumps(guide), encoding="utf-8"
