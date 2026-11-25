@@ -1,0 +1,80 @@
+import tempfile
+import unittest
+from pathlib import Path
+from tools.build_freecodecamp_study_guides import build_work_queue, validate_guide
+
+def catalog():
+    return {
+        "schema":"dreamco.freecodecamp_catalog.v1",
+        "source":{"channel_id":"UC8butISFwT-Wl7EV0hUK0BQ"},
+        "inventory_status":"complete",
+        "inventory":{"complete":True,"expected_entry_count":2,"observed_entry_count":2},
+        "videos":[
+            {"video_id":"v1","title":"Python foundations","url":"https://www.youtube.com/watch?v=v1","categories":["python_and_automation"]},
+            {"video_id":"v2","title":"SQL basics","url":"https://www.youtube.com/watch?v=v2","categories":["databases_and_sql"]}
+        ]
+    }
+
+def manifest(records=None):
+    return {"schema":"dreamco.authorized_transcript_manifest.v1","rights_policy":{
+        "automatic_caption_scraping":False,"automatic_transcript_download":False,"automatic_model_training":False
+    },"transcripts":records or []}
+
+class StudyGuideQueueTests(unittest.TestCase):
+    def test_every_catalog_video_gets_a_queue_row_without_fabricating_summaries(self):
+        result=build_work_queue(catalog(),manifest())
+        self.assertEqual(result["catalog_video_count"],2)
+        self.assertEqual(result["source_inventory_status"],"COMPLETE")
+        self.assertEqual(result["authorized_for_guide_count"],0)
+        self.assertTrue(all(row["guide_status"]=="NOT_CREATED" for row in result["videos"]))
+        self.assertIn("not a summary",result["truth_boundary"])
+
+    def test_transcript_requires_all_three_separate_permissions_and_valid_hash(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root=Path(temp)
+            transcript=root/"data/freecodecamp/authorized-transcripts/v1.txt"
+            transcript.parent.mkdir(parents=True)
+            transcript.write_text("authorized source transcript",encoding="utf-8")
+            import hashlib
+            digest=hashlib.sha256(transcript.read_bytes()).hexdigest()
+            row={"video_id":"v1","source_url":"https://www.youtube.com/watch?v=v1",
+                "transcript_path":"data/freecodecamp/authorized-transcripts/v1.txt","transcript_sha256":digest,
+                "rights_status":"VERIFIED","rights_evidence_ref":"permission-1",
+                "study_permission":True,"summary_derivative_permission":True,"evaluation_permission":True,
+                "training_permission":False}
+            result=build_work_queue(catalog(),manifest([row]),root=root)
+            self.assertEqual(result["authorized_for_guide_count"],1)
+            self.assertEqual(result["videos"][0]["guide_status"],"READY_TO_AUTHOR")
+            self.assertFalse(result["videos"][0]["model_training_authorized"])
+            row["summary_derivative_permission"]=False
+            result=build_work_queue(catalog(),manifest([row]),root=root)
+            self.assertEqual(result["authorized_for_guide_count"],0)
+            self.assertEqual(result["videos"][0]["rights_status"],"BLOCKED_PERMISSION_SCOPE")
+
+    def test_path_traversal_is_blocked(self):
+        with tempfile.TemporaryDirectory() as temp:
+            row={"video_id":"v1","source_url":"https://www.youtube.com/watch?v=v1",
+                "transcript_path":"data/freecodecamp/authorized-transcripts/../../secret.txt",
+                "transcript_sha256":"a"*64,"rights_status":"VERIFIED","rights_evidence_ref":"p",
+                "study_permission":True,"summary_derivative_permission":True,"evaluation_permission":True}
+            result=build_work_queue(catalog(),manifest([row]),root=Path(temp))
+            self.assertEqual(result["videos"][0]["rights_status"],"BLOCKED_TRANSCRIPT_PATH")
+
+    def test_partial_inventory_never_claims_complete(self):
+        source=catalog()
+        source["inventory_status"]="partial"
+        result=build_work_queue(source,manifest())
+        self.assertEqual(result["source_inventory_status"],"PARTIAL_OR_UNVERIFIED")
+
+    def test_duplicate_ids_and_unsafe_scraping_policy_are_rejected(self):
+        source=catalog()
+        source["videos"].append(dict(source["videos"][0]))
+        with self.assertRaisesRegex(ValueError,"unique"):
+            build_work_queue(source,manifest())
+        bad=manifest()
+        bad["rights_policy"]["automatic_caption_scraping"]=True
+        with self.assertRaisesRegex(ValueError,"automatic caption scraping"):
+            build_work_queue(catalog(),bad)
+
+if __name__=="__main__":
+    unittest.main()
