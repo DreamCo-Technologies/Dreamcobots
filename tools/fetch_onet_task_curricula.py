@@ -50,6 +50,72 @@ def discover_json_links(parser: DownloadLinkParser) -> dict[str, str]:
     return discovered
 
 
+def read_table_rows(path: Path) -> list[dict[str, str]]:
+    """Backward-compatible public name for the JSON/CSV/TSV row reader."""
+    return read_rows(path)
+
+
+def enrich_occupations(result: dict, exports: dict[str, list[dict]], manifest: dict) -> dict:
+    """Attach official O*NET profile data, software examples, and task ratings.
+
+    The function copies its input and preserves raw export provenance. It does not
+    infer credentials, licenses, or permission to perform regulated work.
+    """
+    enriched = json.loads(json.dumps(result))
+    occupation_data = {
+        row.get("onetsoc_code"): row for row in exports.get("occupation_data", [])
+        if row.get("onetsoc_code")
+    }
+    profile_sources = (
+        "essential_skills", "transferable_skills", "knowledge", "abilities",
+        "work_activities", "work_context", "work_styles", "education",
+        "training_and_experience", "job_titles", "related_occupations",
+        "career_interest_types", "specific_interest_areas",
+    )
+    for occupation in enriched.get("occupations", []):
+        code = occupation.get("occupation_code")
+        base = occupation_data.get(code, {})
+        if base.get("title"):
+            occupation["occupation_title"] = base["title"]
+        if base.get("description"):
+            occupation["description"] = base["description"]
+        profile = {
+            key: [row for row in exports.get(key, []) if row.get("onetsoc_code") == code]
+            for key in profile_sources
+        }
+        software_rows = [row for row in exports.get("software_skills", []) if row.get("onetsoc_code") == code]
+        software_examples = sorted({row.get("workplace_example", "").strip()
+                                     for row in software_rows if row.get("workplace_example", "").strip()})
+        hot_technologies = sorted({row.get("workplace_example", "").strip()
+                                   for row in software_rows
+                                   if row.get("workplace_example", "").strip()
+                                   and str(row.get("hot_technology", "")).strip().upper() in {"Y", "YES", "TRUE", "1"}})
+        profile["software_skill_examples"] = software_examples
+        profile["hot_technologies"] = hot_technologies
+        occupation["profile"] = profile
+        job_zone = next((row for row in exports.get("job_zones", []) if row.get("onetsoc_code") == code), None)
+        if job_zone:
+            occupation["job_zone"] = job_zone
+        ratings_by_task: dict[str, list[dict]] = {}
+        for row in exports.get("task_ratings", []):
+            if row.get("onetsoc_code") == code and row.get("task_id"):
+                ratings_by_task.setdefault(row["task_id"], []).append(row)
+        for task in occupation.get("tasks", []):
+            task["ratings"] = ratings_by_task.get(task.get("task_id"), [])
+        for playbook in occupation.get("task_playbooks", []):
+            playbook["occupation_profile_ref"] = code
+            brief = dict(playbook.get("guide_authoring_brief") or {})
+            brief["official_software_examples"] = software_examples
+            playbook["guide_authoring_brief"] = brief
+            playbook["official_occupation_profile"] = dict(profile)
+    enriched.setdefault("source", {})["license"] = (
+        "Creative Commons Attribution 4.0 International; verify current O*NET license terms and preserve attribution."
+    )
+    enriched["source"]["export_manifest"] = manifest
+    enriched.setdefault("inventory", {})["enriched_occupation_profiles"] = len(enriched.get("occupations", []))
+    return enriched
+
+
 def fetch_current_export() -> tuple[bytes, str, str]:
     request = urllib.request.Request(SOURCE_PAGE, headers={"User-Agent": USER_AGENT})
     with urllib.request.urlopen(request, timeout=45) as response:

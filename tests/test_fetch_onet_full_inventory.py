@@ -24,6 +24,15 @@ class OnetFullInventoryTests(unittest.TestCase):
         self.assertNotIn("skills",links)
         self.assertTrue(links["task_statements"].endswith("task_statements.json"))
 
+    def test_table_reader_compatibility_alias_uses_json_reader(self):
+        import json
+        import tempfile
+        from pathlib import Path
+        with tempfile.TemporaryDirectory() as temp:
+            path = Path(temp) / "skills.json"
+            path.write_text(json.dumps({"data": [{"onetsoc_code": "15-1252.00", "element_name": "Programming"}]}), encoding="utf-8")
+            self.assertEqual(read_table_rows(path)[0]["element_name"], "Programming")
+
     def test_occupation_profiles_attach_skills_software_tools_and_task_ratings(self):
         result={
             "source":{},
