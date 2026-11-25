@@ -75,6 +75,8 @@ jobs:
           python3 tools/generate_dreamco_repository_master_map.py
           python3 tools/generate_buddy_benchmark_index.py
           python3 tools/generate_command_center_data.py
+          # Refresh runtime manifests before regenerating the repository inventory that hashes them.
+          python3 tools/generate_bot_manifests.py
           # Refresh the canonical fleet before search indexing and repository verification.
           node --import tsx tools/generate_bot_fleet_catalog.ts
           node --import tsx tools/generate_dreamco_search_index.ts
@@ -92,6 +94,8 @@ jobs:
           python3 -m unittest discover -s tests -p "test_dreamco_bootcamp_seed_data.py" -v
           python3 -m unittest discover -s tests -p "test_dreamco_training_factory.py" -v
           python3 -m unittest discover -s tests -p "test_dreamco_original_training_examples.py" -v
+      - name: Final repository test registry reconciliation
+        run: python3 tools/generate_repository_test_registry.py
       - name: Full repository verification
         run: npm run test:repository
       - name: Fleet end-to-end verification

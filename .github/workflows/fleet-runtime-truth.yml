@@ -72,6 +72,8 @@ jobs:
           node-version: 22
       - name: Install test dependencies
         run: python3 -m pip install --quiet pyyaml pytest
+      - name: Regenerate canonical bot manifests for this exact checkout
+        run: python3 tools/generate_bot_manifests.py
       - name: Manifest drift check
         run: python3 tools/generate_bot_manifests.py --check
       - name: Refresh deterministic repository evidence for this exact checkout
