@@ -57,7 +57,7 @@ test("supplemental division documents are usable search results with source evid
     assert.equal(record.url, `bots.html?q=${encodeURIComponent(division.name)}`);
     assert.ok(rankDreamSearchDocuments(index.documents, division.name, searchConfig, { type: "division" }).some((result) => result.document.id === record.id));
   }
-  const dream3dPortfolioBots = fleet.supplemental_bots.filter((bot: any) => bot.identity.division === "Dream3D");
+  const dream3dPortfolioBots = fleet.supplemental_bots.filter((bot: any) => bot.evidence.catalog_source === "App_bots/Dream3D.json");
   assert.equal(dream3dPortfolioBots.length, 19);
   assert.ok(!fleet.supplemental_divisions.some((division: any) => division.name === "Dream3D"));
   for (const bot of fleet.supplemental_bots) {
