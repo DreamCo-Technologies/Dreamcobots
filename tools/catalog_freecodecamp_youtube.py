@@ -116,12 +116,16 @@ def catalog_all(api_key: str, channel_id: str = CHANNEL_ID, sleep_seconds: float
             break
     video_ids = list(dict.fromkeys(video_ids))
     videos = []
+    returned_ids = set()
     for start in range(0, len(video_ids), 50):
         batch = video_ids[start:start + 50]
         response = _api_get("videos", {
             "part": "snippet,contentDetails", "id": ",".join(batch), "maxResults": 50
         }, api_key, sleep_seconds)
         for item in response.get("items", []):
+            if item.get("id") not in video_ids or item.get("id") in returned_ids:
+                continue
+            returned_ids.add(item["id"])
             snippet = item.get("snippet", {})
             tags = snippet.get("tags", [])
             classification = classify_video(snippet.get("title", ""), snippet.get("description", ""), tags)
@@ -143,6 +147,8 @@ def catalog_all(api_key: str, channel_id: str = CHANNEL_ID, sleep_seconds: float
                 "video_downloaded": False
             })
     videos.sort(key=lambda row: (row.get("published_at") or "", row["video_id"]))
+    unavailable_ids = sorted(set(video_ids) - returned_ids)
+    metadata_accounted_for = len(returned_ids) + len(unavailable_ids) == len(video_ids)
     return {
         "schema": "dreamco.educational_video_catalog.v1",
         "publisher": "freeCodeCamp.org",
@@ -154,6 +160,10 @@ def catalog_all(api_key: str, channel_id: str = CHANNEL_ID, sleep_seconds: float
         "pagination_pages": pages,
         "video_id_count": len(video_ids),
         "metadata_returned_count": len(videos),
+        "metadata_unavailable_count": len(unavailable_ids),
+        "metadata_unavailable_video_ids": unavailable_ids,
+        "metadata_fetch_complete": metadata_accounted_for,
+        "catalog_complete": metadata_accounted_for,
         "pagination_exhausted": True,
         "videos": videos,
         "rights_notice": "Metadata catalog only. This does not grant transcript, training, redistribution, or commercial rights."
@@ -176,6 +186,8 @@ def main() -> int:
     print(json.dumps({
         "video_id_count": result["video_id_count"],
         "metadata_returned_count": result["metadata_returned_count"],
+        "metadata_unavailable_count": result["metadata_unavailable_count"],
+        "catalog_complete": result["catalog_complete"],
         "pagination_exhausted": result["pagination_exhausted"],
         "training_permission": "NOT_GRANTED",
         "transcripts_fetched": False
