@@ -127,6 +127,23 @@ class BuddyUniversityCurriculumTests(unittest.TestCase):
         self.assertTrue(all(row["division_ids"] for row in result["freecodecamp_video_category_routes"]))
         self.assertGreater(result["coverage"]["divisions_with_freecodecamp_tracks"], 0)
 
+    def test_full_university_has_course_blueprints_for_every_division(self):
+        root = Path(__file__).resolve().parents[1]
+        college = json.loads((root / "config/buddy-university-curriculum.json").read_text(encoding="utf-8"))
+        roadmap = json.loads((root / "config/freecodecamp-complete-learning-path.json").read_text(encoding="utf-8"))
+        bootcamp = json.loads((root / "config/buddy-open-source-bootcamp.json").read_text(encoding="utf-8"))
+        workforce = json.loads((root / "config/buddy-workforce-entrepreneurship-bootcamp.json").read_text(encoding="utf-8"))
+        government = json.loads((root / "config/buddy-government-community-enterprise-curriculum.json").read_text(encoding="utf-8"))
+        result = build(self.profiles, bootcamp, roadmap, {"occupations": [], "inventory": {}},
+                       self.taxonomy, college, None, workforce, government)
+        self.assertEqual(result["coverage"]["college_domains"], 45)
+        self.assertEqual(result["coverage"]["college_courses"], 45 * 4 + len(college["shared_core"]["required_for_all_divisions"]))
+        self.assertEqual(len(result["divisions"]), 55)
+        self.assertTrue(all(len(row["shared_core_course_ids"]) == 10 for row in result["divisions"]))
+        self.assertTrue(all(row["college_course_ids"] for row in result["divisions"]))
+        self.assertEqual(result["instructional_model"]["teacher"]["role"].split()[0], "ChatGPT/GPT-6")
+        self.assertEqual(result["instructional_model"]["student"]["role"], "Buddy is the student and must demonstrate learning through observable work")
+
     def test_map_does_not_claim_training_or_mastery(self):
         result = build(self.profiles, self.hf, self.fcc, self.onet, self.taxonomy)
         self.assertIn("does not prove", result["truth_boundary"])
