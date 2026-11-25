@@ -12,6 +12,9 @@ on:
       - "tools/discover_open_source_bootcamp_sources.py"
       - "tools/build_buddy_source_study_queue.py"
       - "tools/process_authorized_bootcamp_media.py"
+      - "tools/build_onet_task_curricula.py"
+      - "tools/fetch_onet_task_curricula.py"
+      - "tests/test_onet_task_curricula.py"
       - "tests/test_buddy_source_study_queue.py"
       - "tests/test_process_authorized_bootcamp_media.py"
       - ".github/workflows/buddy-open-source-weekly-bootcamp.yml"
@@ -54,11 +57,13 @@ jobs:
           python -m json.tool config/buddy-source-study-guide.schema.json > /dev/null
           python -m json.tool config/buddy-source-rights-manifest.json > /dev/null
           python -m json.tool config/buddy-authorized-media-rights.json > /dev/null
-          python -m py_compile tools/discover_open_source_bootcamp_sources.py tools/build_buddy_source_study_queue.py tools/process_authorized_bootcamp_media.py
+          python -m py_compile tools/discover_open_source_bootcamp_sources.py tools/build_buddy_source_study_queue.py tools/process_authorized_bootcamp_media.py tools/build_onet_task_curricula.py tools/fetch_onet_task_curricula.py
       - name: Run source rights and guide-queue tests
         run: python -m unittest discover -s tests -p 'test_buddy_source_study_queue.py' -v
       - name: Run local media rights and hash tests
         run: python -m unittest discover -s tests -p 'test_process_authorized_bootcamp_media.py' -v
+      - name: Run O*NET task curriculum tests
+        run: python -m unittest discover -s tests -p 'test_onet_task_curricula.py' -v
       - name: Discover GitHub repositories and Hugging Face subjects
         env:
           GITHUB_TOKEN: ${{ github.token }}
@@ -66,6 +71,14 @@ jobs:
           python tools/discover_open_source_bootcamp_sources.py \
             --out-dir "$RUNNER_TEMP/buddy-bootcamp-weekly" \
             --hf-limit-per-subject 20
+      - name: Build O*NET task curricula when API access is configured
+        if: env.ONET_API_KEY != ''
+        env:
+          ONET_API_KEY: ${{ secrets.ONET_API_KEY }}
+        run: python tools/fetch_onet_task_curricula.py --out-dir "$RUNNER_TEMP/buddy-bootcamp-weekly/onet"
+      - name: Report O*NET setup requirement when API access is absent
+        if: env.ONET_API_KEY == ''
+        run: echo "O*NET API key not configured; add ONET_API_KEY after free O*NET developer registration to fetch the complete task curriculum." >> "$GITHUB_STEP_SUMMARY"
       - name: Build rights-gated source study queue
         if: always()
         run: |
