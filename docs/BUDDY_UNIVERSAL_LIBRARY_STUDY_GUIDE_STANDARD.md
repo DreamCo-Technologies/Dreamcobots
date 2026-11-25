@@ -189,3 +189,6 @@ Gap persistence requires a redacted query and writes to ignored local `.dreamco/
 
 
 The host bridge also exposes `BuddyLearningBridge.library_learning_queue()`. It returns the registered universal-library ecosystem and candidate-discovery lessons for exactly one canonical division or MasterBot lane, with objectives, practice, assessments, benchmark targets, guide paths and rights mode. Every returned lesson starts as `queued_not_studied`; the method never awards mastery or authorizes weight training or paid compute.
+
+
+The same bridge exposes `library_coverage()`, reporting ecosystem and seed-candidate counts separately from approved, review-required, stale, blocked and mastered guide states. This prevents discovery backlog from being reported as completed learning.
