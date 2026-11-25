@@ -1,0 +1,549 @@
+{
+  "schema": "dreamco.freecodecamp_specialist_learning_overrides.v1",
+  "version": "1.0.0",
+  "purpose": "Curated, first-party DreamCo learning overlays for public freeCodeCamp video metadata. Overrides survive catalog refreshes and define education routing, original practice, capability/tool/agent links, and reproducible Buddy demonstrations.",
+  "truth_boundary": [
+    "A catalog row is not a studied lesson, transcript, permission grant, model-training dataset, or mastery result.",
+    "These are original DreamCo implementation briefs based on public course descriptions and chapter outlines; do not reproduce third-party course transcripts or protected course materials.",
+    "Division targets route learning resources only. They do not grant runtime permissions, financial authority, or production access.",
+    "Model weight training requires separately verified source rights, approved datasets, reproducible runs, checkpoint hashes, and holdout/regression evidence."
+  ],
+  "entries": [
+    {
+      "video_id": "zH2Mg782XhA",
+      "title": "Python Algorithmic Trading with SnapTrade, Massive, Alpaca",
+      "division_targets": [
+        "DreamFinance"
+      ],
+      "masterbot_targets": [
+        "DreamFinance"
+      ],
+      "capability_tags": [
+        "market-data-ingestion",
+        "momentum-factor-research",
+        "signal-generation",
+        "portfolio-risk",
+        "backtesting",
+        "paper-trading",
+        "brokerage-adapter",
+        "trading-observability"
+      ],
+      "tool_tags": [
+        "Python",
+        "Django",
+        "pandas",
+        "Massive market data",
+        "SnapTrade",
+        "Alpaca paper trading",
+        "PostgreSQL"
+      ],
+      "agent_tags": [
+        "market-data-engineer",
+        "quant-research-agent",
+        "strategy-backtester",
+        "portfolio-risk-guardian",
+        "paper-trading-operator",
+        "trade-audit-agent"
+      ],
+      "objective": "Build a reproducible, risk-controlled momentum research and paper-trading system. The course describes a 12-month lookback that excludes the most recent month, a Django application, Massive market data, SnapTrade brokerage connectivity, and Alpaca execution.",
+      "implementation_steps": [
+        "Define the strategy hypothesis, asset universe, benchmark, evaluation period, and explicit non-goals.",
+        "Create a Django project with versioned instruments, bars, corporate actions, strategy configurations, signals, orders, fills, and audit records.",
+        "Build a Massive market-data adapter with pagination, rate limits, source timestamps, adjusted-price handling, and immutable raw snapshots.",
+        "Validate missing bars, duplicate timestamps, symbol changes, splits, dividends, survivorship bias, and look-ahead leakage.",
+        "Calculate momentum over the prior 12 months while excluding the most recent month; pin the exact formula and trading calendar.",
+        "Rank the eligible universe and generate deterministic buy/sell candidates with explainable factor inputs.",
+        "Backtest using point-in-time data, realistic transaction costs, spread, slippage, market impact assumptions, and out-of-sample periods.",
+        "Add portfolio constraints: per-position limits, concentration limits, max drawdown stop, daily loss limit, exposure caps, and a global kill switch.",
+        "Record every signal, decision, rejected order, simulated fill, and metric with reproducible strategy/data versions.",
+        "Connect SnapTrade only for approved account discovery/read-only context; keep broker credentials in the secret manager.",
+        "Route orders exclusively to Alpaca paper trading; verify order state transitions, retries, idempotency, and cancel behavior.",
+        "Run walk-forward validation, stress tests, transaction-cost sensitivity, and a paper-trading soak before any production review."
+      ],
+      "practice": "Buddy builds a synthetic-data momentum research lab, replays historical fixtures, compares baseline and candidate strategies, and emits a paper-trading report with risk limits and an audit trail.",
+      "assessment": "Pass deterministic strategy unit tests, leakage checks, cost/slippage sensitivity, walk-forward holdout, risk-limit enforcement, duplicate-order/idempotency tests, and a paper-only integration test. No live order is permitted.",
+      "benchmark": "DreamFinance momentum strategy benchmark: net-of-cost return, volatility, max drawdown, turnover, exposure, signal stability, and reproducibility; never rank by gross return alone.",
+      "buddy_demo": "Demonstrate a complete synthetic-data-to-backtest-to-paper-order workflow; show each stage, its input/output schema, risk rejection behavior, and the final audit report.",
+      "rights_mode": "public_metadata_link_only_until_item_level_study_and_derivative_rights_review",
+      "content_status": "original_implementation_brief"
+    },
+    {
+      "video_id": "iqRcGCah0Kw",
+      "title": "System Design for AI Agents – Building a Multi-Agent PR Reviewer",
+      "division_targets": [
+        "DreamAgents",
+        "CommandCore",
+        "DreamCodeLab",
+        "DreamQuality",
+        "DreamBenchmark",
+        "DreamCyber"
+      ],
+      "masterbot_targets": [
+        "DreamAgents",
+        "CommandCore",
+        "DreamCodeLab",
+        "DreamQuality",
+        "DreamBenchmark",
+        "DreamCyber"
+      ],
+      "capability_tags": [
+        "multi-agent-review",
+        "pr-risk-classification",
+        "security-review",
+        "test-review",
+        "documentation-review",
+        "confidence-scoring",
+        "review-memory",
+        "independent-verification"
+      ],
+      "tool_tags": [
+        "GitHub API",
+        "GitHub Actions",
+        "LangGraph",
+        "Temporal",
+        "PostgreSQL",
+        "pytest",
+        "CodeQL"
+      ],
+      "agent_tags": [
+        "pr-orchestrator",
+        "security-review-agent",
+        "code-quality-review-agent",
+        "test-coverage-review-agent",
+        "documentation-review-agent",
+        "independent-verifier",
+        "human-approval-gate"
+      ],
+      "objective": "Design a fault-tolerant multi-agent pull-request reviewer that applies senior-engineer judgment through explicit review dimensions, auditable findings, confidence, and independent verification.",
+      "implementation_steps": [
+        "Map the existing human PR-review process into triggers, inputs, outputs, risk tiers, and approval boundaries.",
+        "Define failure modes including hallucinated findings, missed defects, tool timeouts, partial agent results, prompt injection, and unavailable model providers.",
+        "Create four specialist review perspectives: security, code quality, tests, and documentation/maintainability.",
+        "Implement a fan-out/fan-in orchestration pattern with bounded concurrency, timeouts, retries, cancellation, and partial-result handling.",
+        "Define structured finding records with file/line, evidence, severity, confidence, reproducibility, and remediation guidance.",
+        "Design durable state and memory schemas for PR identity, commit SHA, findings, reviewer decisions, and prior resolved regressions.",
+        "Compare LangGraph state-machine orchestration with Temporal durable workflows; choose based on replay, retries, persistence, and operations needs.",
+        "Run each specialist against the exact immutable PR head SHA and collect tool/version provenance.",
+        "Require an independent verifier to challenge findings and test the proposed fixes against the original request.",
+        "Deduplicate findings, suppress unsupported claims, and distinguish blocking defects from suggestions.",
+        "Publish a concise review report with confidence and evidence; request human approval for changes and all merge decisions.",
+        "Evaluate on seeded defect suites and historical PRs with precision, recall, false-positive rate, escaped-defect rate, latency, and cost."
+      ],
+      "practice": "Buddy reviews a deliberately seeded test PR using separate security, quality, test, and documentation agents, then has an independent verifier challenge each finding.",
+      "assessment": "Pass seeded defect detection, false-positive controls, malicious PR-content isolation, timeout/partial-agent recovery, exact-commit anchoring, evidence validation, and human-approval tests. Auto-merge remains disabled.",
+      "benchmark": "DreamCo PR Guardian benchmark: precision/recall by severity, false-positive rate, verified-fix rate, regression escape rate, review latency, and per-review cost.",
+      "buddy_demo": "Demonstrate an end-to-end PR review from webhook to specialist fan-out, structured findings, independent verification, review publication, and human merge approval.",
+      "rights_mode": "public_metadata_link_only_until_item_level_study_and_derivative_rights_review",
+      "content_status": "original_implementation_brief"
+    },
+    {
+      "video_id": "AZDSpS5v57w",
+      "title": "AI Agents For Beginners – OpenClaw Case Study",
+      "division_targets": [
+        "DreamAgents",
+        "CommandCore",
+        "DreamAIInfra",
+        "DreamIntegration",
+        "DreamCyber"
+      ],
+      "masterbot_targets": [
+        "DreamAgents",
+        "CommandCore",
+        "DreamAIInfra",
+        "DreamIntegration",
+        "DreamCyber"
+      ],
+      "capability_tags": [
+        "agent-orchestration",
+        "tool-calling",
+        "memory-management",
+        "guardrails",
+        "human-in-the-loop",
+        "sandbox-execution",
+        "agent-evaluation"
+      ],
+      "tool_tags": [
+        "Python",
+        "LLM APIs",
+        "MCP",
+        "Docker",
+        "JSON Schema",
+        "SQLite",
+        "PostgreSQL"
+      ],
+      "agent_tags": [
+        "buddy-orchestrator",
+        "research-agent",
+        "memory-agent",
+        "coding-agent",
+        "policy-guardian",
+        "tool-executor"
+      ],
+      "objective": "Teach the foundations of LLM agents, the distinction between workflows and autonomous loops, structured tool use, memory, guardrails, approvals, and sandboxed execution.",
+      "implementation_steps": [
+        "Explain tokens, context windows, model outputs, sampling, and common hallucination/failure modes.",
+        "Contrast deterministic workflows with agents that choose the next action based on state and tool results.",
+        "Build a minimal agent loop with explicit state, bounded steps, and a stop condition.",
+        "Define tool contracts with JSON schemas, input validation, output validation, and permission scopes.",
+        "Add specialist agents for orchestration, research, memory, and code/automation with explicit responsibilities.",
+        "Persist sessions and memory with provenance, retention, tenant isolation, and deletion controls.",
+        "Add structured output validation, input/output guardrails, policy checks, and tool allowlists.",
+        "Run risky tools inside isolated sandboxes with resource limits and no ambient host credentials.",
+        "Add human approval for external side effects, spending, account changes, publishing, and production deployments.",
+        "Build evaluations for tool correctness, task completion, recovery, safety violations, latency, and cost.",
+        "Study OpenClaw's architecture as a case study and map transferable patterns to Buddy without importing unreviewed skills."
+      ],
+      "practice": "Buddy builds a local task agent that can read a fixture, call an allowlisted calculator/search mock, retain session memory, and ask approval before a simulated side effect.",
+      "assessment": "Pass tool-schema validation, prompt-injection resistance, memory isolation, sandbox boundary, step-limit, approval-gate, and reproducibility tests.",
+      "benchmark": "DreamAgents foundational agent benchmark: task success, tool-call validity, recovery, policy violations, and cost per completed task.",
+      "buddy_demo": "Demonstrate workflow-vs-agent comparison, four specialist roles, persistent memory, a tool call, sandbox rejection, and approval pause/resume.",
+      "rights_mode": "public_metadata_link_only_until_item_level_study_and_derivative_rights_review",
+      "content_status": "original_implementation_brief"
+    },
+    {
+      "video_id": "n1sfrc-RjyM",
+      "title": "OpenClaw Full Tutorial for Beginners",
+      "division_targets": [
+        "DreamAgents",
+        "CommandCore",
+        "DreamIntegration",
+        "DreamCyber",
+        "DreamAIInfra"
+      ],
+      "masterbot_targets": [
+        "DreamAgents",
+        "CommandCore",
+        "DreamIntegration",
+        "DreamCyber",
+        "DreamAIInfra"
+      ],
+      "capability_tags": [
+        "gateway-control-plane",
+        "agent-workspaces",
+        "persistent-memory",
+        "skill-lifecycle",
+        "messaging-connectors",
+        "sandboxing",
+        "security-audits"
+      ],
+      "tool_tags": [
+        "OpenClaw concepts",
+        "Docker",
+        "MCP",
+        "YAML",
+        "Markdown skills",
+        "WhatsApp/Telegram/Discord adapters"
+      ],
+      "agent_tags": [
+        "buddy-gateway-agent",
+        "skill-auditor",
+        "connector-setup-agent",
+        "memory-curator",
+        "sandbox-guardian"
+      ],
+      "objective": "Study a local autonomous assistant architecture covering gateway setup, onboarding, skills, memory, messaging connectors, health checks, and sandbox security.",
+      "implementation_steps": [
+        "Understand the gateway as the control plane for sessions, tools, events, and channel connections.",
+        "Document prerequisites, installation options, supported model providers, and environment configuration.",
+        "Create an isolated local workspace and initialize the assistant through a guided onboarding flow.",
+        "Configure model access, local state, session persistence, and remote-access boundaries.",
+        "Run health checks and security audits before connecting any external channel.",
+        "Inspect workspace and memory files; define safe persistence, provenance, and retention behavior.",
+        "Implement skill manifests in YAML/Markdown with explicit tools, scopes, dependencies, and risk levels.",
+        "Connect a messaging adapter in a test workspace and validate sender identity, pairing, and permission checks.",
+        "Build a small original email skill using a mock inbox and explicit send approval.",
+        "Configure multi-agent roles and session switching without sharing private memory across users.",
+        "Run tools inside Docker sandbox modes and test filesystem, network, process, and credential restrictions.",
+        "Add skill review, version pinning, revocation, audit logs, and rollback for every third-party capability."
+      ],
+      "practice": "Buddy builds a local gateway prototype with one test channel, one original mock email skill, a memory store, and a Docker-isolated tool runner.",
+      "assessment": "Pass gateway health, channel identity, skill manifest validation, memory isolation, Docker sandbox escape tests, secret redaction, and connector revocation tests.",
+      "benchmark": "DreamCo OpenClaw-pattern benchmark: setup success, task completion, isolation violations, connector reliability, and recovery.",
+      "buddy_demo": "Demonstrate setup wizard, gateway status, skill installation review, test messaging, persistent memory, sandbox denial, and connector revocation.",
+      "rights_mode": "public_metadata_link_only_until_item_level_study_and_derivative_rights_review",
+      "content_status": "original_implementation_brief"
+    },
+    {
+      "video_id": "vj68el9hRvU",
+      "title": "Build a Self-Healing CI/CD Pipeline with AI",
+      "division_targets": [
+        "DreamAIInfra",
+        "DreamOperations",
+        "DreamQuality",
+        "DreamCodeLab",
+        "DreamSecurity",
+        "DreamAgents",
+        "CommandCore"
+      ],
+      "masterbot_targets": [
+        "DreamAIInfra",
+        "DreamOperations",
+        "DreamQuality",
+        "DreamCodeLab",
+        "DreamSecurity",
+        "DreamAgents",
+        "CommandCore"
+      ],
+      "capability_tags": [
+        "ci-failure-detection",
+        "log-triage",
+        "root-cause-analysis",
+        "patch-proposal",
+        "targeted-regression",
+        "independent-review",
+        "rollback",
+        "pipeline-observability"
+      ],
+      "tool_tags": [
+        "GitHub Actions",
+        "GitHub API",
+        "Python",
+        "pytest",
+        "CodeQL",
+        "Docker",
+        "OpenTelemetry"
+      ],
+      "agent_tags": [
+        "ci-failure-diagnoser",
+        "root-cause-agent",
+        "patch-builder",
+        "test-runner-agent",
+        "independent-code-reviewer",
+        "release-guardian"
+      ],
+      "objective": "Build a governed self-healing pipeline that diagnoses failed checks, proposes minimal repairs, validates them in isolation, and requires policy-compliant review before integration.",
+      "implementation_steps": [
+        "Collect workflow, job, step, commit, branch, and test-artifact evidence for each failed run.",
+        "Classify failures into source defects, test defects, dependency drift, infrastructure outages, permissions, secrets, flaky tests, and external-service failures.",
+        "Correlate failures with recent commits and prior incidents without assuming temporal correlation proves causation.",
+        "Generate a root-cause hypothesis with exact log evidence and confidence; request more evidence when uncertain.",
+        "Create a minimal repair branch from the exact failing commit and restrict writable paths by policy.",
+        "Apply a patch proposal in an isolated workspace with no production credentials or unrestricted network access.",
+        "Run the smallest relevant test first, then unit, integration, security, contract, and regression suites.",
+        "Have an independent reviewer compare the patch with the original task and challenge the test coverage.",
+        "Require human approval for protected files, secrets, workflow permissions, production deployment, and merges.",
+        "Merge only after required checks and branch protection pass; otherwise preserve the failure and publish a blocked report.",
+        "Support rollback, incident linking, and post-repair regression tests.",
+        "Track time-to-detect, time-to-diagnose, time-to-repair, false repair rate, recurrence rate, and compute cost."
+      ],
+      "practice": "Buddy receives a synthetic failing GitHub Actions run, identifies its root cause, proposes a one-file patch on a new branch, runs targeted tests, and submits a reviewable PR.",
+      "assessment": "Pass seeded root-cause cases, least-privilege branch scope, malicious-log prompt injection, secret protection, deterministic tests, independent review, blocked-merge, and rollback tests.",
+      "benchmark": "DreamCo Self-Healing CI benchmark: diagnosis accuracy, safe repair rate, regression rate, mean time to repair, false repair rate, and spend per incident.",
+      "buddy_demo": "Demonstrate failed-run intake, evidence extraction, diagnosis, patch branch, test sequence, independent review, and a human-controlled merge decision.",
+      "rights_mode": "public_metadata_link_only_until_item_level_study_and_derivative_rights_review",
+      "content_status": "original_implementation_brief"
+    },
+    {
+      "video_id": "gp5H0Vw39yw",
+      "title": "Learn TypeScript - Full Course for Beginners",
+      "division_targets": [
+        "DreamCodeLab",
+        "DreamAIInfra",
+        "DreamAgents",
+        "DreamIntegration",
+        "DreamProduct",
+        "DreamOperations"
+      ],
+      "masterbot_targets": [
+        "DreamCodeLab",
+        "DreamAIInfra",
+        "DreamAgents",
+        "DreamIntegration",
+        "DreamProduct",
+        "DreamOperations"
+      ],
+      "capability_tags": [
+        "typescript-fundamentals",
+        "type-modeling",
+        "api-contracts",
+        "runtime-validation",
+        "async-programming",
+        "testing"
+      ],
+      "tool_tags": [
+        "TypeScript",
+        "Node.js",
+        "tsc",
+        "ESLint",
+        "Vitest",
+        "Zod"
+      ],
+      "agent_tags": [
+        "typescript-engineer",
+        "api-contract-auditor",
+        "test-author-agent"
+      ],
+      "objective": "Build strong TypeScript foundations for safe application code, typed APIs, agent tools, and shared platform contracts.",
+      "implementation_steps": [
+        "Configure a strict TypeScript project and understand compiler options.",
+        "Practice primitive, union, literal, array, tuple, enum, and object types.",
+        "Model interfaces, type aliases, generics, narrowing, and discriminated unions.",
+        "Type functions, async code, errors, and module boundaries.",
+        "Validate untrusted runtime input with schemas instead of trusting TypeScript types alone.",
+        "Write unit and contract tests and integrate type-checking into CI."
+      ],
+      "practice": "Convert one small DreamCo JavaScript utility into strict TypeScript and expose a validated typed API.",
+      "assessment": "Pass strict compilation, runtime schema validation, negative type tests, unit tests, and API contract checks.",
+      "benchmark": "DreamCo TypeScript foundations benchmark: type safety, runtime validation, test coverage, and maintainability.",
+      "buddy_demo": "Demonstrate type inference, discriminated unions, generic helpers, runtime validation, and CI type-check failure handling.",
+      "rights_mode": "public_metadata_link_only_until_item_level_study_and_derivative_rights_review",
+      "content_status": "original_implementation_brief"
+    },
+    {
+      "video_id": "JHEB7RhJG1Y",
+      "title": "Practical TypeScript – Course for Beginners",
+      "division_targets": [
+        "DreamCodeLab",
+        "DreamAIInfra",
+        "DreamAgents",
+        "DreamIntegration",
+        "DreamProduct",
+        "DreamOperations"
+      ],
+      "masterbot_targets": [
+        "DreamCodeLab",
+        "DreamAIInfra",
+        "DreamAgents",
+        "DreamIntegration",
+        "DreamProduct",
+        "DreamOperations"
+      ],
+      "capability_tags": [
+        "typescript-application-design",
+        "typed-data-models",
+        "modular-code",
+        "testable-architecture"
+      ],
+      "tool_tags": [
+        "TypeScript",
+        "Node.js",
+        "Vitest",
+        "ESLint"
+      ],
+      "agent_tags": [
+        "typescript-engineer",
+        "refactoring-agent",
+        "test-author-agent"
+      ],
+      "objective": "Apply TypeScript to realistic modular programs and maintainable application code.",
+      "implementation_steps": [
+        "Set up the compiler and project structure.",
+        "Design typed data models and module interfaces.",
+        "Implement functions and classes with explicit contracts.",
+        "Handle nullable values and unknown external input safely.",
+        "Refactor duplicated logic into reusable typed modules.",
+        "Test behavior and enforce type checks in CI."
+      ],
+      "practice": "Build a typed division capability registry with validation and tests.",
+      "assessment": "Pass compile, schema, behavior, regression, and maintainability checks.",
+      "benchmark": "DreamCo practical TypeScript project benchmark.",
+      "buddy_demo": "Demonstrate typed registry loading, invalid record rejection, and test-driven refactoring.",
+      "rights_mode": "public_metadata_link_only_until_item_level_study_and_derivative_rights_review",
+      "content_status": "original_implementation_brief"
+    },
+    {
+      "video_id": "bYgphDEWwvs",
+      "title": "TypeScript in Express – TypeScript Tutorial",
+      "division_targets": [
+        "DreamCodeLab",
+        "DreamAIInfra",
+        "DreamAgents",
+        "DreamIntegration",
+        "DreamOperations"
+      ],
+      "masterbot_targets": [
+        "DreamCodeLab",
+        "DreamAIInfra",
+        "DreamAgents",
+        "DreamIntegration",
+        "DreamOperations"
+      ],
+      "capability_tags": [
+        "typed-rest-api",
+        "middleware-contracts",
+        "request-validation",
+        "api-security",
+        "integration-testing"
+      ],
+      "tool_tags": [
+        "TypeScript",
+        "Express",
+        "Node.js",
+        "Zod",
+        "Vitest",
+        "Supertest"
+      ],
+      "agent_tags": [
+        "api-engineer-agent",
+        "typescript-engineer",
+        "api-security-reviewer"
+      ],
+      "objective": "Build typed Express services with validated request boundaries, middleware contracts, and integration tests.",
+      "implementation_steps": [
+        "Initialize an Express TypeScript service with strict compiler settings.",
+        "Define typed request, response, and domain contracts.",
+        "Implement middleware for authentication, validation, errors, and request IDs.",
+        "Validate all external input at runtime.",
+        "Separate routes, services, repositories, and adapters.",
+        "Add integration tests for success, invalid input, authorization, and failures.",
+        "Document OpenAPI contracts and enforce them in CI."
+      ],
+      "practice": "Create a typed Buddy tool API with a read-only endpoint and a permission-gated mock action.",
+      "assessment": "Pass type checks, runtime validation, auth tests, error contract tests, and OpenAPI parity.",
+      "benchmark": "DreamCo typed API contract benchmark.",
+      "buddy_demo": "Demonstrate a typed route, middleware chain, schema rejection, and integration-test output.",
+      "rights_mode": "public_metadata_link_only_until_item_level_study_and_derivative_rights_review",
+      "content_status": "original_implementation_brief"
+    },
+    {
+      "video_id": "aJP1AbZSqz8",
+      "title": "TypeScript in React – Full Tutorial",
+      "division_targets": [
+        "DreamCodeLab",
+        "DreamProduct",
+        "DreamAIInfra",
+        "DreamIntegration"
+      ],
+      "masterbot_targets": [
+        "DreamCodeLab",
+        "DreamProduct",
+        "DreamAIInfra",
+        "DreamIntegration"
+      ],
+      "capability_tags": [
+        "react-typescript",
+        "component-contracts",
+        "typed-state",
+        "accessible-ui-testing"
+      ],
+      "tool_tags": [
+        "TypeScript",
+        "React",
+        "Vite",
+        "Vitest",
+        "Testing Library"
+      ],
+      "agent_tags": [
+        "frontend-engineer-agent",
+        "accessibility-reviewer",
+        "ui-test-agent"
+      ],
+      "objective": "Build accessible React interfaces with explicit component props, typed state, reusable hooks, and UI tests.",
+      "implementation_steps": [
+        "Configure React with strict TypeScript.",
+        "Type component props, events, children, and reusable components.",
+        "Model API data and loading/error states with discriminated unions.",
+        "Build typed hooks and context boundaries.",
+        "Add accessible interaction patterns and semantic markup.",
+        "Test components and user journeys with Testing Library.",
+        "Enforce type, lint, accessibility, and test gates in CI."
+      ],
+      "practice": "Build a typed DreamCo division health dashboard component with loading, error, and empty states.",
+      "assessment": "Pass strict type checking, component tests, keyboard accessibility, and visual-state coverage.",
+      "benchmark": "DreamCo React TypeScript UI benchmark.",
+      "buddy_demo": "Demonstrate typed props, safe async state, accessible controls, and UI test failure diagnosis.",
+      "rights_mode": "public_metadata_link_only_until_item_level_study_and_derivative_rights_review",
+      "content_status": "original_implementation_brief"
+    }
+  ]
+}
