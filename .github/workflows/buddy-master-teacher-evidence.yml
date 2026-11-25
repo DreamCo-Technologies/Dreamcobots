@@ -1,0 +1,52 @@
+name: Buddy Master Teacher Evidence and REA Tests
+on:
+  pull_request:
+    paths:
+      - 'tools/master_teacher_evidence_gate.py'
+      - 'tools/master_teacher_distillation_loop.py'
+      - 'tools/buddy_feature_reconstruction.py'
+      - 'tools/buddy_paired_inference.py'
+      - 'tools/buddy_reverse_engineering.py'
+      - 'tools/rea_benchmark_adapter.py'
+      - 'tools/buddy_preventive_site_audit.py'
+      - 'tests/test_master_teacher_*.py'
+      - 'tests/test_buddy_feature_reconstruction.py'
+      - 'tests/test_buddy_inference_and_rea.py'
+      - 'tests/test_buddy_preventive_site_audit.py'
+      - 'config/buddy-resources/rea.json'
+      - 'docs/MASTER_TEACHER_EVIDENCE_GATE.md'
+      - 'docs/BUDDY_REA_REVERSE_ENGINEERING.md'
+      - '.github/workflows/buddy-master-teacher-evidence.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'tools/master_teacher_evidence_gate.py'
+      - 'tools/master_teacher_distillation_loop.py'
+      - 'tools/rea_benchmark_adapter.py'
+      - 'tests/test_master_teacher_*.py'
+permissions:
+  contents: read
+concurrency:
+  group: buddy-master-teacher-evidence
+  cancel-in-progress: false
+jobs:
+  offline-evidence:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.13'
+      - name: Run evidence, REA and site-audit unit tests
+        run: |
+          python -m unittest discover -s tests -p 'test_master_teacher_evidence_gate.py' -v
+          python -m unittest discover -s tests -p 'test_master_teacher_distillation_loop.py' -v
+          python -m unittest discover -s tests -p 'test_buddy_feature_reconstruction.py' -v
+          python -m unittest discover -s tests -p 'test_buddy_inference_and_rea.py' -v
+          python -m unittest discover -s tests -p 'test_buddy_preventive_site_audit.py' -v
+          python -m py_compile tools/master_teacher_evidence_gate.py tools/master_teacher_distillation_loop.py tools/buddy_feature_reconstruction.py tools/buddy_paired_inference.py tools/buddy_reverse_engineering.py tools/rea_benchmark_adapter.py tools/buddy_preventive_site_audit.py
