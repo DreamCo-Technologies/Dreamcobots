@@ -28,6 +28,7 @@ class BuddyCourseTrackRegistryTests(unittest.TestCase):
         hf_full = load("config/buddy-huggingface-full-learning-map.json")
         fcc_catalog = load("buddy/bootcamp/sources/freecodecamp/catalog.json")
         library_ecosystems = load("config/library_ecosystems.json")
+        library_seed_catalog = load("data/buddy-library-seed-catalog.json")
         expected_count = (
             len(tol["curriculum"]) + len(tol["extended_study_path"])
             + len(tok["lessons"]) + len(cpu["modules"]) + len(onet["subject_inventory"])
@@ -39,6 +40,7 @@ class BuddyCourseTrackRegistryTests(unittest.TestCase):
             + len(hf_full["official_courses"]) + len(hf_full["ecosystem_modules"])
             + len(fcc_catalog["videos"])
             + len(library_ecosystems["ecosystems"])
+            + len(library_seed_catalog["candidates"])
         )
         self.assertEqual(len(lessons), expected_count)
         fcc_lessons = [lesson for lesson in lessons if lesson.track_id == "freecodecamp"]
