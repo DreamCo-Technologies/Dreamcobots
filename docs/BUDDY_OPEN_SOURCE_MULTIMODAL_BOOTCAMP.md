@@ -193,3 +193,29 @@ For authorized or user-provided video, a future multimodal study worker can alig
 ### User-designated ownership of original summaries
 
 The organizer records the user as the designated owner of original DreamCo-authored instructional expression and study-package structure. The goal is to deliver original, independently written summaries, not copied third-party text. This designation is subject to applicable law, contributor agreements, and any upstream license terms. It does not transfer rights in upstream source materials, facts, code, datasets, media, or model weights. Each asset retains its provenance and attribution record.
+
+
+## DreamCo Buddy University: GPT-6 teaches, Buddy learns
+
+The University curriculum is a living, cross-disciplinary program, not a promise that every human subject or source has already been inventoried.
+
+- 45 knowledge-domain families extend beyond Hugging Face task tags and freeCodeCamp's software curriculum.
+- 10 shared foundation courses are attached to all 55 domain divisions.
+- Four course levels (100/200/300/400) generate 180 domain-course blueprints; together with the shared core this produces 190 planned course blueprints.
+- 20 shared agent-capability families describe the software and operational work Buddy should learn to perform.
+- The canonical freeCodeCamp roadmap includes 22 specialist/video subject tracks, the seven core certifications and five additional language/C# certifications. The channel metadata catalog is refreshed separately and must prove its expected inventory count before it is called complete.
+- Every current Hugging Face model/dataset task tag is routed to suggested divisions. New or unmapped tags remain in the shared review queue rather than being silently dropped.
+- O*NET occupation/task records and 11 entrepreneurship tracks plus 12 workforce tracks feed division study paths. Each occupation task receives a detailed software/tool and autonomous-agent playbook brief.
+- Government procurement, grants, veteran services, workforce development and community-service learning are included with official-source, eligibility and human-review safeguards.
+
+### Teaching and student assessment
+
+The teacher-authoring protocol is located at buddy/bootcamp/prompts/buddy-university-teacher-authoring.md. GPT-6 acts as the instructor and Buddy is the student. The learning loop includes diagnostic assessment, prerequisite checks, explanation, worked examples, independent sandbox practice, retrieval, teach-back, unseen transfer, capstone, remediation and spaced review.
+
+The weekly workflow builds a daily plan with five lesson slots per division (275 slots across 55 divisions). A slot becomes assignable only when a complete, reviewed and rights-cleared original guide exists. If no guide exists, the slot remains awaiting_approved_original_summary; it is not counted as a lesson. The plan does not itself run a study session or train model weights.
+
+### Ownership and learning assets
+
+The source-guide organizer preserves authorship, user ownership designation, source provenance, upstream licenses and purpose-specific rights. Every guide must identify the AI authoring model, the user's contribution/commissioning role and the owner-confirmation status. User-provided data stays in a separate user-owned registry. The repository's current user-data manifest is empty until the user explicitly registers assets and their consent scopes.
+
+DreamCo's ownership designation applies to original instructional expression it creates, subject to applicable law and contributor agreements. Third-party materials, source code, datasets, model weights, video/audio and documentation keep their own ownership and licenses. Study, summary creation, evaluation, redistribution, commercial use and model-weight training remain separate permissions. A summary or course blueprint is not proof that Buddy has studied or mastered it.
