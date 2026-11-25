@@ -82,6 +82,23 @@ class RuntimeBridgeTests(unittest.TestCase):
         self.assertFalse(result["external_discovery_performed"])
         self.assertFalse(result["external_model_call_performed"])
 
+    def test_library_learning_queue_serves_internal_curriculum_without_mastery_claims(self):
+        queue = self.bridge.library_learning_queue(
+            division="DreamCodeLab", query="React", limit=10
+        )
+        self.assertEqual(queue["schema"], "dreamco.buddy_library_learning_queue.v1")
+        self.assertGreaterEqual(queue["available_count"], 1)
+        self.assertTrue(any("React" in item["title"] for item in queue["items"]))
+        self.assertTrue(all(item["completion_status"] == "queued_not_studied" for item in queue["items"]))
+        self.assertTrue(all(item["mastery_awarded"] is False for item in queue["items"]))
+        self.assertFalse(queue["external_model_call_performed"])
+
+    def test_library_learning_queue_requires_exactly_one_owner(self):
+        with self.assertRaises(ValueError):
+            self.bridge.library_learning_queue(query="React")
+        with self.assertRaises(ValueError):
+            self.bridge.library_learning_queue(division="DreamCodeLab", masterbot="DreamCodeLab")
+
     def test_library_gap_persistence_requires_redaction(self):
         with self.assertRaises(PermissionError):
             self.bridge.library_knowledge("React", persist_gap=True, query_is_redacted=False)
