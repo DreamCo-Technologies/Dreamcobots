@@ -241,8 +241,12 @@ def main() -> int:
     catalog = build_catalog(videos, inventory)
     args.out.parent.mkdir(parents=True, exist_ok=True)
     args.out.write_text(render_catalog(catalog), encoding="utf-8")
+    try:
+        display_path = str(args.out.relative_to(ROOT))
+    except ValueError:
+        display_path = str(args.out)
     print(json.dumps({
-        "written": str(args.out.relative_to(ROOT)),
+        "written": display_path,
         "inventory_status": catalog["inventory_status"],
         "video_count": len(videos),
         "expected_entry_count": inventory["expected_entry_count"],
