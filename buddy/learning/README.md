@@ -29,7 +29,7 @@ The Top-1000 study curriculum is separate from the protected DreamCo model catal
 
 - `universal_library_registry.py` searches only approved, rights-eligible DreamCo library guides and records internal knowledge gaps without automatic external routing.
 - `library_registry_discovery.py` performs one opt-in metadata-only query against an allowlisted public registry provider. It never downloads or executes package code.
-- `course_track_registry.py` exposes the 38 existing library ecosystem discovery lanes and includes approved library guides in the shared 55-domain / 65-MasterBot lesson queue.
+- `course_track_registry.py` exposes the 38 existing library ecosystem discovery lanes, all 531 unverified candidates parsed from the existing library mastery curriculum, and approved library guides in the shared 55-domain / 65-MasterBot lesson queue.
 - `tools/create_buddy_library_guide_draft.py` creates review-required guide skeletons; it cannot grant rights or approve a guide.
 - `tools/buddy_library_knowledge.py` exposes search, gap, report and explicit opt-in discovery commands.
 
