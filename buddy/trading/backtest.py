@@ -128,7 +128,8 @@ def run_backtest(
                 settings.max_order_notional,
                 settings.max_position_notional,
             )
-            quantity = budget / bar.open
+            execution_factor = 1 + settings.slippage_bps / 10_000.0
+            quantity = budget / (bar.open * execution_factor)
             if quantity > 0:
                 try:
                     broker.submit_market_order(symbol, "buy", quantity, bar.open, bar.timestamp)
