@@ -8,6 +8,7 @@ from typing import Any
 from .hub import DatasetHub
 from .sources import discover
 from .license_policy import assess_training_candidate
+from buddy.learning.library_knowledge_router import route_library_question
 
 ROOT = Path(__file__).resolve().parents[2]
 REGISTRY = ROOT / "config/masterbot-65-registry.json"
@@ -57,6 +58,8 @@ def route_problem(problem: str, hub: DatasetHub | None = None, external: bool | 
         external = os.environ.get("DREAMCO_AUTO_DISCOVERY") == "1" and os.environ.get("DREAMCO_ALLOW_SOURCE_NETWORK") == "1"
     local = catalog.search(clean, limit=15)
     outside = discover(clean, limit=5) if external else {"query": clean, "results": [], "source_errors": {"network": "Not requested"}, "downloaded_files": False, "training_approved": False}
+    library_related = bool(re.search(r"\b(library|libraries|framework|frameworks|sdk|sdks|package|packages|dependency|dependencies|module|modules|plugin|plugins|http client|api client)\b", clean, re.IGNORECASE))
+    library_knowledge = route_library_question(clean, external_discovery=bool(external)) if library_related else None
     routed_masterbot = int(ranked[0]["masterbot_id"]) if ranked else 62
     recorded = 0
     for candidate in outside["results"] + outside.get("model_results", []):
@@ -64,18 +67,25 @@ def route_problem(problem: str, hub: DatasetHub | None = None, external: bool | 
         candidate["license_assessment"] = assess_training_candidate(candidate)
         catalog.record_external_candidate(candidate, routed_masterbot, clean)
         recorded += 1
-    status = "CANDIDATES_FOUND_REQUIRES_REVIEW" if local or outside["results"] or ranked else "MISSING_DATA_RESEARCH_REQUIRED"
+    library_candidates = bool(library_knowledge and (
+        library_knowledge.get("internal", {}).get("matches")
+        or library_knowledge.get("internal", {}).get("seed_candidate_matches")
+        or library_knowledge.get("registry_candidates")
+    ))
+    status = "CANDIDATES_FOUND_REQUIRES_REVIEW" if local or outside["results"] or ranked or library_candidates else "MISSING_DATA_RESEARCH_REQUIRED"
     result = {
         "schema": "dreamco.unknown_problem_route.v1", "problem": clean,
         "capability_gap": "UNCLASSIFIED_REQUIRES_SPECIALIST_REVIEW",
         "masterbot_candidates": ranked[:5], "local_dataset_candidates": local,
+        "library_knowledge": library_knowledge,
         "external_metadata_candidates": outside["results"], "external_model_candidates": outside.get("model_results", []), "external_candidates_persisted": recorded, "source_errors": outside["source_errors"],
         "status": status, "next_actions": [
             "verify_primary_masterbot_and_collaborators", "review_source_license_terms_and_access",
             "inspect_authorized_sample", "create_versioned_dataset_card_and_quality_report",
             "create_holdout_benchmark_fixture", "retest_unknown_problem"
-        ],
-        "claims": {"problem_solved": False, "datasets_downloaded": False, "weights_trained": False, "mastery_awarded": False}
+        ] + (["study_internal_library_guide"] if library_knowledge and library_knowledge.get("route") == "internal_approved_guide" else ["discover_library_sources_and_review_rights"] if library_related else []),
+        "claims": {"problem_solved": False, "datasets_downloaded": False, "weights_trained": False, "mastery_awarded": False,
+                   "library_guide_mastery_awarded": False}
     }
     result["research_task_id"] = catalog.enqueue_research_task(result)
     return result
