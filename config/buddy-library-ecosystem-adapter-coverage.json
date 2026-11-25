@@ -23,10 +23,10 @@
     {
       "id": "java",
       "registry_source": "https://central.sonatype.com/",
-      "discovery_mode": "manual_first_party_catalog",
-      "provider": null,
-      "adapter_status": "manual_review_required",
-      "limitation": "Maven Central search integration is not implemented."
+      "discovery_mode": "query_api",
+      "provider": "maven-central",
+      "adapter_status": "implemented_query_api",
+      "limitation": "Maven Central search metadata only; result ranking and pagination depend on Maven Central's index."
     },
     {
       "id": "dotnet",
@@ -309,6 +309,6 @@
       "limitation": "Model/dataset metadata only; no weight or dataset download."
     }
   ],
-  "automated_ecosystem_count": 8,
-  "manual_ecosystem_count": 30
+  "automated_ecosystem_count": 9,
+  "manual_ecosystem_count": 29
 }

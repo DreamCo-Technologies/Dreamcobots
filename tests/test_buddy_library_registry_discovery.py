@@ -24,6 +24,12 @@ class LibraryRegistryDiscoveryTests(unittest.TestCase):
                 "host": "registry.npmjs.org", "query_parameter": "text",
                 "page_parameter": "from", "page_size_parameter": "size",
                 "parser": "npm", "supports_pagination": True,
+            }, {
+                "id": "maven-central", "kind": "package_search",
+                "endpoint": "https://search.maven.org/solrsearch/select",
+                "host": "search.maven.org", "query_parameter": "q",
+                "page_parameter": "start", "page_size_parameter": "rows",
+                "parser": "maven", "supports_pagination": True,
             }],
         }
         (self.root / "config/buddy-library-registry-adapters.json").write_text(json.dumps(config), encoding="utf-8")
@@ -58,6 +64,31 @@ class LibraryRegistryDiscoveryTests(unittest.TestCase):
         self.assertIn("text=react", captured["url"])
         self.assertEqual(captured["timeout"], 5)
         self.assertIn("DreamCo-Buddy", captured["agent"])
+
+    def test_maven_central_normalizes_coordinates_and_uses_zero_based_pagination(self):
+        payload = {"response": {"docs": [{
+            "id": "org.example:demo-client", "g": "org.example", "a": "demo-client",
+            "latestVersion": "4.2.1", "p": "jar", "versionCount": 12,
+        }]}}
+        captured = {}
+        def opener(request, timeout):
+            captured["url"] = request.full_url
+            return io.BytesIO(json.dumps(payload).encode("utf-8"))
+        result = search_public_registry(
+            "maven-central", "http client", allow_network=True, page=2, limit=10,
+            root=self.root, opener=opener,
+        )
+        candidate = result["candidates"][0]
+        self.assertEqual(candidate["name"], "org.example:demo-client")
+        self.assertEqual(candidate["group"], "org.example")
+        self.assertEqual(candidate["artifact"], "demo-client")
+        self.assertEqual(candidate["version"], "4.2.1")
+        self.assertFalse(candidate["download_authorized"])
+        self.assertEqual(candidate["training_permission"], "pending")
+        self.assertIn("start=20", captured["url"])
+        self.assertIn("rows=10", captured["url"])
+        self.assertIn("wt=json", captured["url"])
+        self.assertIsNone(result["next_page"])
 
     def test_rejects_unknown_provider_and_invalid_query(self):
         with self.assertRaises(ValueError):
