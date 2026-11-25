@@ -15,6 +15,7 @@ class BuddyLibrarySeedCatalogTests(unittest.TestCase):
         self.assertEqual(catalog["raw_candidate_count"], 536)
         self.assertEqual(catalog["unique_candidate_count"], 531)
         self.assertEqual(len(catalog["candidates"]), 531)
+        self.assertEqual(len({category for item in catalog["candidates"] for category in item["categories"]}), 37)
         self.assertFalse(catalog["worldwide_completeness_claimed"])
         committed = json.loads((root / "data/buddy-library-seed-catalog.json").read_text(encoding="utf-8"))
         self.assertEqual(catalog, committed)
