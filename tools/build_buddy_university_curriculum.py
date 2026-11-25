@@ -241,6 +241,39 @@ def build(profiles: list[dict[str, Any]], hf: dict[str, Any], fcc: dict[str, Any
                 "mapping_status": route["mapping_status"], "score": route["score"]})
 
     source_family_routes = []
+    division_courses: dict[str, list[str]] = defaultdict(list)
+    course_catalog = []
+    course_components = college.get("academic_structure", {}).get("course_components", [
+        "lecture", "source reading", "lab", "project", "quiz", "capstone"
+    ])
+    for domain in college_domains:
+        domain_id = str(domain.get("id", "unclassified-domain"))
+        domain_scope = str(domain.get("scope", domain.get("name", domain_id)))
+        routes = suggest_divisions(" ".join([domain_id, domain_scope]), profiles, limit=6)
+        route_names = [row["division"] for row in routes]
+        for level in academic_structure.get("levels", []):
+            level_id = str(level.get("level", "100"))
+            course_id = f"UNI-{domain_id.upper()}-{level_id}"
+            course = {
+                "course_id": course_id,
+                "domain_id": domain_id,
+                "title": f"{domain_id.replace('-', ' ').title()} — {level.get('name', 'Course')}",
+                "level": level_id,
+                "level_outcome": level.get("outcome", ""),
+                "domain_scope": domain_scope,
+                "division_ids": route_names,
+                "mapping_status": "suggested_requires_owner_review" if routes[0]["score"] else "unclassified_shared_review",
+                "prerequisites": [] if level_id == "100" else [f"UNI-{domain_id.upper()}-{int(level_id)-100}"],
+                "course_components": course_components,
+                "required_assessments": ["diagnostic", "knowledge_checks", "sandbox_lab", "independent_project", "unseen_transfer", "capstone"],
+                "capstone": f"Build and defend an original applied project demonstrating {domain_scope}.",
+                "status": "course_blueprint_not_yet_authored_or_taught",
+            }
+            course_catalog.append(course)
+            for division in route_names:
+                if division in names:
+                    division_courses[division].append(course_id)
+
     division_source_families: dict[str, list[str]] = defaultdict(list)
     for family in source_families:
         family_terms = " ".join([family.get("id", ""), family.get("scope", ""), family.get("source", "")])
@@ -332,6 +365,7 @@ def build(profiles: list[dict[str, Any]], hf: dict[str, Any], fcc: dict[str, Any
             "freecodecamp_video_ids": sorted(set(division_videos[name])),
             "venture_and_workforce_tracks": sorted(set(division_ventures[name])),
             "college_domains": sorted(division_college[name], key=lambda x: (-x["score"], x["domain_id"] or "")),
+            "college_course_ids": sorted(set(division_courses[name])),
             "source_families": sorted(set(division_source_families[name])),
             "agent_capability_catalog": college.get("agent_capability_matrix", AGENT_CAPABILITY_CATALOG),
             "onet_task_refs": sorted(set(division_tasks[name])),
