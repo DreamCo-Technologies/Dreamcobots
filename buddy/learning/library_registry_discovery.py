@@ -51,6 +51,19 @@ def _normalize(provider: dict[str, Any], payload: Any) -> list[dict[str, Any]]:
             "homepage": row.get("links", {}).get("npm"),
             "repository": row.get("links", {}).get("repository"),
         } for row in rows]
+    if parser == "maven":
+        response = payload.get("response", {})
+        return [{
+            "name": row.get("id"),
+            "version": row.get("latestVersion"),
+            "description": row.get("description"),
+            "homepage": None,
+            "repository": None,
+            "group": row.get("g"),
+            "artifact": row.get("a"),
+            "packaging": row.get("p"),
+            "version_count": row.get("versionCount"),
+        } for row in response.get("docs", [])]
     if parser == "crates":
         return [{
             "name": row.get("id"),
@@ -145,7 +158,7 @@ def search_public_registry(
             params[size_key] = limit
         page_key = provider.get("page_parameter")
         if page_key:
-            params[page_key] = page * limit if provider_id in {"npm", "nuget", "huggingface-models", "huggingface-datasets"} else page + 1
+            params[page_key] = page * limit if provider_id in {"npm", "nuget", "huggingface-models", "huggingface-datasets", "maven-central"} else page + 1
         url = endpoint + "?" + urlencode(params)
     if urlparse(url).scheme != "https" or urlparse(url).hostname != provider["host"]:
         raise ValueError("registry URL failed the configured HTTPS host allowlist")
