@@ -99,6 +99,9 @@ class BuddyInternalFirstLearningRouterTests(unittest.TestCase):
         self.assertTrue(all(row["internal_guide"]["sha256"] for row in available))
         self.assertTrue(all(row["internal_guide"]["excerpt"] for row in available))
         self.assertTrue(all(row["internal_guide"]["lesson_specific_guide_complete"] is False for row in available))
+        self.assertGreater(result["supporting_guide_count"], 0)
+        self.assertFalse(result["external_discovery_performed"])
+        self.assertTrue(result["external_discovery_available"] or result["supporting_guide_count"] > 0)
         self.assertFalse(result["external_model_routing_performed"])
 
     def test_supporting_guide_reader_blocks_paths_outside_repository(self):
