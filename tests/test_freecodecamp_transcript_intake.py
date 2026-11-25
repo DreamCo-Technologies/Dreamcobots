@@ -126,6 +126,23 @@ class FreeCodeCampTranscriptIntakeTests(unittest.TestCase):
             }])
             self.assertEqual(audit_weekly_tests(intake, stale, now=now)["status"], "FAILED_WEEKLY_BUDDY_TEST_EVIDENCE")
 
+    def test_reports_evidence_for_video_ids_outside_catalog(self):
+        intake = build_intake(catalog("complete"), manifest())
+        evidence = weekly_evidence([{
+            "video_id": "not-in-catalog",
+            "tested_at": "2026-11-25T12:00:00+00:00",
+            "status": "PASS",
+            "buddy_model_id": "buddy-local",
+            "buddy_model_version": "0.1.0",
+            "run_id": "run-unknown",
+            "suite_id": "freecodecamp-transcript-weekly-v1",
+            "evaluation_permission_ref": "unknown-rights-ref",
+            "result_sha256": "f" * 64,
+        }])
+        audit = audit_weekly_tests(intake, evidence, now=datetime(2026, 11, 25, 12, 0, tzinfo=timezone.utc))
+        self.assertEqual(audit["unknown_evidence_video_ids"], ["not-in-catalog"])
+        self.assertEqual(audit["tested_transcript_count"], 0)
+
     def test_path_traversal_and_unverified_rights_are_blocked(self):
         base = {
             "video_id": "video-1",
