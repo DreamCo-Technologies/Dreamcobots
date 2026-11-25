@@ -70,7 +70,8 @@ def _api_get(resource: str, params: dict, api_key: str, sleep_seconds: float = 0
         with urlopen(request, timeout=30) as response:
             return json.loads(response.read().decode("utf-8"))
     except Exception as exc:
-        raise YouTubeAPIError(f"YouTube API request failed for {resource}: {exc}") from exc
+        # HTTPError/URLError strings can contain the full request URL, including the API key.
+        raise YouTubeAPIError(f"YouTube API request failed for {resource}: {type(exc).__name__}") from None
 
 
 def classify_video(title: str, description: str = "", tags: list[str] | None = None) -> dict:
