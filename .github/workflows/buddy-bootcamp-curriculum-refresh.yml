@@ -50,7 +50,7 @@ jobs:
           python -m unittest discover -s tests -p 'test_freecodecamp_source_routes.py' -v
       - name: Build five-lesson-per-division target and transcript readiness report
         run: |
-          python tools/build_daily_lesson_plan.py --lessons-per-division 5 --queues "$RUNNER_TEMP/freecodecamp-division-learning-queues.json"
+          python tools/build_daily_lesson_plan.py --lessons-per-domain 5 --queues "$RUNNER_TEMP/freecodecamp-division-learning-queues.json"
           python tools/build_buddy_bootcamp_curriculum.py
           python tools/build_buddy_bootcamp_curriculum.py --check
           python -m unittest discover -s tests -p 'test_daily_lesson_plan.py' -v
