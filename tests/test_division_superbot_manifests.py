@@ -45,6 +45,13 @@ class DivisionSuperbotManifestTests(unittest.TestCase):
         self.assertTrue(all(row["status"] == "declared_target_not_measured" for row in result["benchmarks"]))
         self.assertEqual(result["commercial"]["status"], "source_declared_not_financially_verified")
 
+    def test_duplicate_tool_names_preserve_each_bot_source(self):
+        second = dict(self.canonical[0], slug="portfolio-risk", source_path="App_bots/DreamFinance.json")
+        second["toolsNeeded"] = ["Sandbox harness"]
+        result = build_division_manifest(self.division, self.canonical + [second], [], [])
+        matching = [row for row in result["tools"] if row["name"] == "Sandbox harness"]
+        self.assertEqual({row["source_bot_slug"] for row in matching}, {"algo-trading", "portfolio-risk"})
+
     def test_missing_operational_contracts_are_explicit_gaps(self):
         result = build_division_manifest(self.division, [], [], [])
         areas = {row["area"] for row in result["gaps"]}
