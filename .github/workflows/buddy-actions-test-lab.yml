@@ -150,8 +150,10 @@ jobs:
                 cp config/generated/bot-division-placement-audit.json tmp/buddy-actions/bot-division-placement-audit.json
                 cp reports/BOT_DIVISION_PLACEMENT_AUDIT.md tmp/buddy-actions/BOT_DIVISION_PLACEMENT_AUDIT.md
                 npm run buddy:fleet
+                python3 -m unittest tests.test_fleet_runtime_routing -v
                 npm run buddy:fleet-quality
                 npm run buddy:fleet:e2e
+                python3 -m unittest tests.test_fleet_runtime_routing -v
                 npm run buddy:daily-division-benchmarks
               } 2>&1 | tee tmp/buddy-actions/test.log
               ;;
