@@ -64,6 +64,24 @@ def _normalize(provider: dict[str, Any], payload: Any) -> list[dict[str, Any]]:
             "packaging": row.get("p"),
             "version_count": row.get("versionCount"),
         } for row in response.get("docs", [])]
+    if parser == "metacpan":
+        hits = payload.get("hits", {}).get("hits", [])
+        rows = []
+        for hit in hits:
+            row = hit.get("_source") or hit.get("fields") or {}
+            resources = row.get("resources") or {}
+            repository = resources.get("repository") or {}
+            rows.append({
+                "name": row.get("distribution") or row.get("name"),
+                "version": row.get("version"),
+                "description": row.get("abstract") or row.get("description"),
+                "homepage": resources.get("homepage"),
+                "repository": repository.get("url") if isinstance(repository, dict) else repository,
+                "license": row.get("license"),
+                "author": row.get("author"),
+                "release_date": row.get("date"),
+            })
+        return rows
     if parser == "crates":
         return [{
             "name": row.get("id"),
@@ -160,7 +178,7 @@ def search_public_registry(
             params[size_key] = limit
         page_key = provider.get("page_parameter")
         if page_key:
-            params[page_key] = page * limit if provider_id in {"npm", "nuget", "huggingface-models", "huggingface-datasets", "maven-central"} else page + 1
+            params[page_key] = page * limit if provider_id in {"npm", "nuget", "huggingface-models", "huggingface-datasets", "maven-central", "metacpan"} else page + 1
         url = endpoint + "?" + urlencode(params)
     if urlparse(url).scheme != "https" or urlparse(url).hostname != provider["host"]:
         raise ValueError("registry URL failed the configured HTTPS host allowlist")
