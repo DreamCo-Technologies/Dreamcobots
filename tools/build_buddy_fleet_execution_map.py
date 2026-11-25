@@ -29,7 +29,7 @@ def slug_norm(value: str) -> str:
     return re.sub(r"[^a-z0-9]+", "-", str(value).casefold()).strip("-")
 
 def domain_names(source: str, canonical_domain_keys: set[str] | None = None) -> list[str]:
-    pattern = re.compile(r"^  ([A-Za-z][A-Za-z0-9]+): \\{\\n([\\s\\S]*?)^  \\},?$", re.MULTILINE)
+    pattern = re.compile(r"^  ([A-Za-z][A-Za-z0-9]+): \{\n([\s\S]*?)^  \},?$", re.MULTILINE)
     parsed = [m.group(1) for m in pattern.finditer(source)
               if "purpose:" in m.group(2) and "focusAreas:" in m.group(2)]
     names = [name for name in parsed if canonical_domain_keys is None or norm(name) in canonical_domain_keys]
