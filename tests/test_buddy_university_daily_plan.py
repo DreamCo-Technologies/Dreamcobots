@@ -46,6 +46,7 @@ class BuddyUniversityDailyPlanTests(unittest.TestCase):
         self.university = {
             "schema": "dreamco.buddy_university_learning_map.v1",
             "instructional_model": {"teacher": {"role": "GPT-6 teacher"}, "student": {"role": "Buddy student"}},
+            "university_curriculum": {"parallel_learning_policy": {"logical_parallel_division_lanes": 55, "runtime_concurrency": "fair queue"}},
             "divisions": [{"division": name, "focus_areas": ["model serving"]} for name in DIVISIONS],
         }
 
@@ -58,6 +59,8 @@ class BuddyUniversityDailyPlanTests(unittest.TestCase):
         self.assertEqual(plan["daily_target_slots"], 275)
         self.assertEqual(plan["ready_to_assign_slots"], 1)
         self.assertEqual(plan["awaiting_approved_summary_slots"], 274)
+        self.assertEqual(plan["parallel_execution"]["logical_division_lanes"], 55)
+        self.assertEqual(plan["parallel_execution"]["weight_training_jobs_started"], 0)
         ai = next(row for row in plan["divisions"] if row["division"] == "DreamAIInfra")
         self.assertEqual(ai["progress"]["assigned"], 1)
         self.assertEqual(ai["slots"][0]["completion_status"], "queued_not_studied")
