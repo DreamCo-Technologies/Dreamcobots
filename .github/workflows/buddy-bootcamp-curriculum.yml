@@ -280,8 +280,33 @@ jobs:
           python tools/validate_buddy_continuous_study_policy.py
           python -m unittest discover -s tests -p 'test_buddy_continuous_study_policy.py' -v
           python -m unittest discover -s tests -p 'test_buddy_dataset_profile_builder.py' -v
-          python tools/build_freecodecamp_division_queues.py --allow-partial --out "$RUNNER_TEMP/freecodecamp-provisional-division-learning-queues.json"
-          python tools/build_freecodecamp_division_queues.py --check --allow-partial --out "$RUNNER_TEMP/freecodecamp-provisional-division-learning-queues.json"
+          if python - <<'PY'
+          import json
+          from pathlib import Path
+          catalog = json.loads(Path("buddy/bootcamp/sources/freecodecamp/catalog.json").read_text(encoding="utf-8"))
+          videos = catalog.get("videos") or []
+          inventory = catalog.get("inventory") or {}
+          complete = (
+              catalog.get("inventory_status") == "complete"
+              and inventory.get("complete") is True
+              and inventory.get("expected_entry_count") == len(videos)
+              and inventory.get("observed_entry_count") == len(videos)
+              and inventory.get("null_entry_count") == 0
+              and inventory.get("duplicate_video_id_count") == 0
+          )
+          raise SystemExit(0 if complete else 1)
+          PY
+          then
+            echo "Verified complete FreeCodeCamp inventory; candidate queues may be assigned."
+            python tools/build_freecodecamp_division_queues.py --out "$RUNNER_TEMP/freecodecamp-division-learning-queues.json"
+            python tools/build_freecodecamp_division_queues.py --check --out "$RUNNER_TEMP/freecodecamp-division-learning-queues.json"
+            python tools/build_daily_lesson_plan.py --queues "$RUNNER_TEMP/freecodecamp-division-learning-queues.json" --output "$RUNNER_TEMP/daily-lesson-production-plan.json"
+          else
+            echo "Source inventory is partial; build a provisional queue and leave daily candidate assignments blocked."
+            python tools/build_freecodecamp_division_queues.py --allow-partial --out "$RUNNER_TEMP/freecodecamp-provisional-division-learning-queues.json"
+            python tools/build_freecodecamp_division_queues.py --check --allow-partial --out "$RUNNER_TEMP/freecodecamp-provisional-division-learning-queues.json"
+            python tools/build_daily_lesson_plan.py --output "$RUNNER_TEMP/daily-lesson-production-plan.json"
+          fi
           python -m unittest discover -s tests -p 'test_freecodecamp_division_queues.py' -v
           python tools/build_freecodecamp_routes.py --out "$RUNNER_TEMP/freecodecamp-source-routes.json"
           python tools/build_freecodecamp_routes.py --check --out "$RUNNER_TEMP/freecodecamp-source-routes.json"
@@ -289,8 +314,6 @@ jobs:
           python -m unittest discover -s tests -p 'test_study_artifact_cleanup.py' -v
           python -m unittest discover -s tests -p 'test_study_resource_scheduler.py' -v
           python -m unittest discover -s tests -p 'test_permissioned_study_worker.py' -v
-          echo "Source inventory is partial; daily lesson slots are generated without candidate assignments."
-          python tools/build_daily_lesson_plan.py --output "$RUNNER_TEMP/daily-lesson-production-plan.json"
           python -m unittest discover -s tests -p 'test_daily_lesson_plan.py' -v
           python -m unittest discover -s tests -p 'test_original_lesson.py' -v
           python -m unittest discover -s tests -p 'test_freecodecamp_learning_evidence.py' -v
