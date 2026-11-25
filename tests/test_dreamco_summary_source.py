@@ -49,6 +49,7 @@ class DreamCoSummarySourceTests(unittest.TestCase):
             "DreamAI", [Capability(name="AI", category="DreamAI")], self.organization
         )
         self.assertEqual(plan["asset_id"], "asset-001")
+        self.assertEqual(plan["source"], {"source_id": "example/guide", "url": "https://example.org/guide", "revision": "rev-1"})
         self.assertEqual(plan["completion_status"], "queued_not_studied")
         self.assertEqual(len(plan["study_path"]["sequence"]), 1)
         self.assertFalse(plan["weight_training_eligible"])
