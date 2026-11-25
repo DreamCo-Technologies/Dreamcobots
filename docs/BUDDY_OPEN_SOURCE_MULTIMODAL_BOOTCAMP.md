@@ -219,3 +219,19 @@ The weekly workflow builds a daily plan with five lesson slots per division (275
 The source-guide organizer preserves authorship, user ownership designation, source provenance, upstream licenses and purpose-specific rights. Every guide must identify the AI authoring model, the user's contribution/commissioning role and the owner-confirmation status. User-provided data stays in a separate user-owned registry. The repository's current user-data manifest is empty until the user explicitly registers assets and their consent scopes.
 
 DreamCo's ownership designation applies to original instructional expression it creates, subject to applicable law and contributor agreements. Third-party materials, source code, datasets, model weights, video/audio and documentation keep their own ownership and licenses. Study, summary creation, evaluation, redistribution, commercial use and model-weight training remain separate permissions. A summary or course blueprint is not proof that Buddy has studied or mastered it.
+
+## Complete Hugging Face ecosystem study map
+
+Buddy's living Hub study map covers model, dataset and Space repositories/cards; task families; Transformers and Transformers.js; Tokenizers; Datasets; Accelerate; PEFT; TRL; Diffusers; timm; Sentence Transformers; Kernels; Optimum; Safetensors; Bitsandbytes; Lighteval; Inference Providers and dedicated Endpoints; Gradio; Trackio; smolagents; OpenEnv; LeRobot and Reachy Mini; Chat UI; Leaderboards; Xet; Hub APIs/clients; deployment to AWS, Azure and Google Cloud; and relevant hardware/serving backends. Refresh product documentation and record the products actually found; this seed map is not a permanent exhaustive count.
+
+## CPU-first 25M-class model course
+
+The course manifest `config/buddy-25m-cpu-llm-course.json` contains 18 original lessons mapped from the freeCodeCamp 25M CPU LLM article and linked YouTube course. It includes byte-level tokenization, embeddings, exact parameter accounting, hyperconnections, RMSNorm, RoPE/NoPE, linear and sparse attention, MoE, image patches, pretraining, data interleaving, sandboxed code RL, reward functions/GRPO, parameter-efficient updates, multi-seed experiments, statistical evaluation and release/rollback. The 260-token vocabulary, 192-token context and 32×32 image/16-patch example are course-specific reference settings, not universal defaults.
+
+## O*NET full content model
+
+O*NET coverage includes worker characteristics, worker requirements, experience requirements, occupational requirements, occupation-specific information and workforce characteristics, plus the detailed subject and task inventories in `config/buddy-onet-content-model-curriculum.json`. Every task is classified individually for assistive AI, bounded automation, human-supervised/regulated work, physical/sensor-dependent work or not-assessed. O*NET records are not evidence that AI can perform every job or that a user has professional qualifications.
+
+## Shared course scheduler
+
+`config/buddy-course-track-registry.json` and `buddy/learning/course_track_registry.py` expose Tolkien, tokenizer, CPU-first LLM, O*NET, Hugging Face and freeCodeCamp paths as queued lessons for all 55 canonical domains and 65 MasterBot lanes. The adapter reports `queued_not_studied`; it does not award mastery, download media, ingest transcripts, train model weights or authorize paid compute.
