@@ -94,7 +94,8 @@ def process(path:Path, asset_id:str, manifest:dict[str,Any], out_dir:Path, frame
       "derived_assets":{"audio_path":str(audio),"audio_sha256":sha256(audio),
                         "frame_directory":str(frames),"frame_count":len(frame_files),
                         "frame_files":frame_files},
-      "music_analysis":analyze_music(audio),\n      "next_steps":["run local ASR if speech is present","analyze sampled frames with a vision model",
+      "music_analysis":analyze_music(audio),
+      "next_steps":["run local ASR if speech is present","analyze sampled frames with a vision model",
                     "align transcript segments with frame timestamps","author detailed guide and knowledge checks",
                     "evaluate on a held-out task"],
       "truth_boundary":"Extraction is not transcription, a completed summary, training authorization, or mastery."}
