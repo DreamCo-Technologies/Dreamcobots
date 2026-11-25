@@ -157,6 +157,18 @@ class RuntimeBridgeTests(unittest.TestCase):
 
 
 
+
+    def test_freecodecamp_video_metadata_is_not_presented_as_study_content(self):
+        queue = self.bridge.bootcamp_learning_queue(
+            division="DreamCodeLab", query="fcc-video", limit=100
+        )
+        video_items = [item for item in queue["items"] if item["track_id"] == "freecodecamp-video-catalog"]
+        self.assertTrue(video_items)
+        self.assertTrue(all(item["completion_status"] == "metadata_only" for item in video_items))
+        self.assertTrue(all(item["study_allowed"] is False for item in video_items))
+        self.assertTrue(all(item["authoring_required"] is True for item in video_items))
+        self.assertTrue(all(item["mastery_awarded"] is False for item in video_items))
+
     def test_benchmark_guide_work_items_are_discoverable_in_internal_queue(self):
         queue = self.bridge.bootcamp_learning_queue(
             division="DreamCodeLab", query="long_context", limit=20
