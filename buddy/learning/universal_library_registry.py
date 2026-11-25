@@ -322,6 +322,11 @@ def library_coverage_report(root: Path = ROOT) -> dict[str, Any]:
     discovered_ecosystems = ecosystems.get("ecosystems", [])
     seed_path = root / curriculum.get("seed_catalog", "data/buddy-library-seed-catalog.json")
     seed_catalog = _read_json(seed_path) if seed_path.exists() else {"candidates": [], "raw_candidate_count": 0}
+    adapter_path = root / curriculum.get("ecosystem_adapter_coverage", "config/buddy-library-ecosystem-adapter-coverage.json")
+    adapter_coverage = _read_json(adapter_path) if adapter_path.exists() else {"ecosystems": []}
+    adapter_rows = adapter_coverage.get("ecosystems", [])
+    automated_ecosystems = sum(1 for row in adapter_rows if str(row.get("adapter_status", "")).startswith("implemented"))
+    manual_ecosystems = sum(1 for row in adapter_rows if row.get("adapter_status") == "manual_review_required")
     status_counts: dict[str, int] = {}
     stale_due_to_age = 0
     for guide_path in _guide_files(root):
@@ -338,6 +343,9 @@ def library_coverage_report(root: Path = ROOT) -> dict[str, Any]:
         "schema": "dreamco.buddy_library_coverage_report.v1",
         "catalog_strategy": curriculum.get("scope", {}).get("catalog_strategy"),
         "ecosystem_count": len(discovered_ecosystems),
+        "automated_ecosystem_discovery_count": automated_ecosystems,
+        "manual_ecosystem_review_count": manual_ecosystems,
+        "ecosystem_adapter_coverage_count": len(adapter_rows),
         "seed_candidate_count": len(seed_catalog.get("candidates", [])),
         "seed_raw_candidate_count": seed_catalog.get("raw_candidate_count", 0),
         "approved_guide_count": len(guides),
