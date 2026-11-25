@@ -248,7 +248,21 @@ def train_from_scratch(dataset_path: Path, output_path: Path, *, dataset_id: str
                                    authorization_reference=authorization_reference, approved_by=approved_by)
     if authorization_manifest is None or data_root is None:
         raise PermissionError("the approved dataset manifest and private data root are required")
-    approved_datasets = validate_manifest(authorization_manifest, data_root)
+    private_root = data_root.expanduser().resolve()
+    dataset_path = dataset_path.expanduser().resolve()
+    output_path = output_path.expanduser().resolve()
+    if private_root not in dataset_path.parents:
+        raise PermissionError("dataset path must remain inside the owner-controlled private data root")
+    if private_root not in output_path.parents:
+        raise PermissionError("checkpoint output must remain inside the owner-controlled private data root")
+    if output_path == dataset_path:
+        raise PermissionError("checkpoint output cannot overwrite the source dataset")
+    if resume_from is not None:
+        resume_from = resume_from.expanduser().resolve()
+        if private_root not in resume_from.parents or not resume_from.is_file():
+            raise PermissionError("resume checkpoint must be an existing file inside the private data root")
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    approved_datasets = validate_manifest(authorization_manifest, private_root)
     approved_dataset = next((row for row in approved_datasets
         if row.get("dataset_id") == dataset_id
         and division_id in row.get("approved_division_ids", [])
