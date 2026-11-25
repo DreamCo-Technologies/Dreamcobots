@@ -75,6 +75,16 @@ class GeneratorTests(unittest.TestCase):
         bot = self.by_slug["ad-copy"]
         self.assertGreater(bot["tier_features_dropped"], 0)
 
+    def test_ten_supplemental_domains_keep_proposed_owners_but_no_primary_owner(self):
+        supplemental = [b for b in self.collection["bots"] if "supplemental_domain_unassigned_pending_owner_review" in b["flags"]]
+        self.assertEqual(len(supplemental), 50)
+        self.assertEqual(len({b["division"] for b in supplemental}), 10)
+        for bot in supplemental:
+            self.assertIsNone(bot["primary_domain_owner"])
+            self.assertIsNone(bot["primary_masterbot_id"])
+            self.assertIn(bot["proposed_domain_owner"], gen.load_route_metadata()["domain_names"])
+            self.assertIn(bot["proposed_primary_masterbot_id"], range(1, 46))
+
     def test_threejs_markdown_specs_are_specialized_and_owned_by_dreamcodelab(self):
         bot = self.by_slug["threejs-core"]
         self.assertNotIn("md_only", bot["flags"])
@@ -121,7 +131,11 @@ class GeneratorTests(unittest.TestCase):
         for portfolio in charters["portfolios"]:
             name = portfolio["portfolio"]
             self.assertIn(f"App_bots/{name}.json", divisions[name]["sources"])
-            self.assertEqual(divisions[name]["primary_domain_owner"], portfolio["owner"])
+            if portfolio.get("classification") == "supplemental_domain_profile":
+                self.assertIsNone(divisions[name]["primary_domain_owner"])
+                self.assertEqual(divisions[name]["proposed_domain_owner"], portfolio["owner"])
+            else:
+                self.assertEqual(divisions[name]["primary_domain_owner"], portfolio["owner"])
         self.assertEqual(divisions["GrokTeammates"]["bots"], 112)
         seeds = gen.seed_division_counts()
         self.assertTrue(seeds)
