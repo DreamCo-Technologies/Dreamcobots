@@ -108,6 +108,39 @@ def train_from_manifest(manifest:dict[str,Any],*,root:Path,vocab_size:int=512)->
  tokenizer["model_weight_training_executed"]=False
  return tokenizer
 
+
+def prepare_corpus_splits(raw:bytes,*,tokenizer_type:str="byte_level",vocab_size:int=512)->dict[str,Any]:
+ """Split raw bytes first, then train BPE on the training split only."""
+ if len(raw)<1024: raise ValueError("dataset must contain at least 1024 bytes for isolated splits")
+ train_end=int(len(raw)*0.8); validation_end=int(len(raw)*0.9)
+ train_bytes=raw[:train_end]; validation_bytes=raw[train_end:validation_end]; holdout_bytes=raw[validation_end:]
+ if min(len(train_bytes),len(validation_bytes),len(holdout_bytes))<65:
+  raise ValueError("dataset is too small for independent train/validation/holdout splits")
+ train_hash=hashlib.sha256(train_bytes).hexdigest()
+ if tokenizer_type=="byte_level":
+  tokenizer={"type":"byte_level","vocabulary_size":256,"special_tokens":[],"training_split_sha256":train_hash,"trained_on_training_split_only":True,"holdout_used_for_training":False}
+  return {"train_ids":list(train_bytes),"validation_ids":list(validation_bytes),"holdout_ids":list(holdout_bytes),"tokenizer":tokenizer,"tokenizer_artifact":tokenizer,"train_bytes":len(train_bytes),"validation_bytes":len(validation_bytes),"holdout_bytes":len(holdout_bytes)}
+ if tokenizer_type!="byte_bpe": raise ValueError("tokenizer_type must be byte_level or byte_bpe")
+ try:
+  train_text=train_bytes.decode("utf-8"); validation_text=validation_bytes.decode("utf-8"); holdout_text=holdout_bytes.decode("utf-8")
+ except UnicodeDecodeError as exc:
+  raise ValueError("byte_bpe tokenizer requires UTF-8 corpus splits") from exc
+ model=train_byte_bpe([train_bytes],vocab_size)
+ vocab_to_id={token:index for index,token in enumerate(model["vocab_hex"])}
+ def ids(text:str)->list[int]:
+  encoded=encode(text,model)
+  try: return [vocab_to_id[token] for token in encoded]
+  except KeyError as exc: raise ValueError("BPE encoder produced a token absent from the vocabulary") from exc
+ train_ids=ids(train_text); validation_ids=ids(validation_text); holdout_ids=ids(holdout_text)
+ if min(len(train_ids),len(validation_ids),len(holdout_ids))<65:
+  raise ValueError("tokenized dataset is too small for independent sequence training")
+ model["training_split_sha256"]=train_hash
+ model["trained_on_training_split_only"]=True
+ model["holdout_used_for_training"]=False
+ summary={"type":"byte_bpe","vocabulary_size":model["vocab_size"],"merge_count":len(model["merges"]),"training_split_sha256":train_hash,"trained_on_training_split_only":True,"holdout_used_for_training":False}
+ return {"train_ids":train_ids,"validation_ids":validation_ids,"holdout_ids":holdout_ids,"tokenizer":summary,"tokenizer_artifact":model,"train_bytes":len(train_bytes),"validation_bytes":len(validation_bytes),"holdout_bytes":len(holdout_bytes)}
+
+
 def main()->int:
  parser=argparse.ArgumentParser(description=__doc__)
  parser.add_argument("--manifest",required=True,type=Path)
