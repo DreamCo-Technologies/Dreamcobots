@@ -76,6 +76,32 @@ class BuddyUniversityCurriculumTests(unittest.TestCase):
         self.assertIn("IDE", task["task_specific_software_categories"])
         self.assertIn("debugging", task["agent_capabilities_to_assess"])
 
+    def test_college_domains_and_full_freecodecamp_catalog_are_attached(self):
+        college = {
+            "knowledge_domains": [{"id": "computer-science", "scope": "software engineering and programming"}],
+            "source_families": [{"id": "official-docs", "scope": "programming and engineering documentation"}],
+            "agent_capability_matrix": [{"id": "software", "capabilities": ["coding", "testing"]}],
+            "academic_structure": {"levels": [{"level": "100"}]},
+            "instructional_model": {"teacher": {"role": "GPT-6 instructor"}, "student": {"role": "Buddy learner"}},
+        }
+        catalog = {
+            "schema": "dreamco.freecodecamp_catalog.v1",
+            "inventory_status": "complete",
+            "inventory": {"complete": True, "expected_entry_count": 1, "observed_entry_count": 1},
+            "videos": [{"video_id": "video-1", "title": "JavaScript", "url": "https://youtube.com/watch?v=video-1",
+                        "categories": ["javascript_and_typescript"], "rights_status": "review_required",
+                        "learning_status": "not_studied"}],
+        }
+        result = build(self.profiles, self.hf, self.fcc, self.onet, self.taxonomy, college, catalog)
+        self.assertEqual(result["coverage"]["freecodecamp_channel_videos"], 1)
+        self.assertEqual(result["coverage"]["freecodecamp_channel_inventory_status"], "complete")
+        code = next(row for row in result["divisions"] if row["division"] == "DreamCodeLab")
+        self.assertIn("video-1", code["freecodecamp_video_ids"])
+        self.assertTrue(code["college_domains"])
+        self.assertEqual(code["agent_capability_catalog"][0]["id"], "software")
+        self.assertEqual(result["instructional_model"]["teacher"]["role"], "GPT-6 instructor")
+        self.assertTrue(result["source_family_routes"])
+
     def test_map_does_not_claim_training_or_mastery(self):
         result = build(self.profiles, self.hf, self.fcc, self.onet, self.taxonomy)
         self.assertIn("does not prove", result["truth_boundary"])
