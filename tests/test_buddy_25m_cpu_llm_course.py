@@ -41,8 +41,8 @@ class Buddy25MCpuLLMCourseTests(unittest.TestCase):
         self.assertEqual(self.model_units["division_coverage"]["masterbot_lanes"], 65)
 
     def test_course_source_catalog_is_link_only_and_complete(self):
-        self.assertEqual(self.resources["resource_count"], 30)
-        self.assertEqual(len(self.resources["resources"]), 30)
+        self.assertEqual(self.resources["resource_count"], 42)
+        self.assertEqual(len(self.resources["resources"]), 42)
         self.assertTrue(all(row["url"].startswith("https://") for row in self.resources["resources"]))
         self.assertFalse(self.resources["automatic_download"])
         self.assertFalse(self.resources["automatic_transcript_download"])
