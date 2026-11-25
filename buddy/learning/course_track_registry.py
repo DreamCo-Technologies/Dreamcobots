@@ -43,6 +43,7 @@ class CourseLesson:
     capability_tags: tuple[str, ...] = ()
     tool_tags: tuple[str, ...] = ()
     agent_tags: tuple[str, ...] = ()
+    learning_modes: tuple[str, ...] = ()
     implementation_steps: tuple[str, ...] = ()
     buddy_demo: str = ""
     source_video_id: str = ""
@@ -448,6 +449,7 @@ def _rows(track: dict, data: dict, root: Path = ROOT, *, include_blueprint: bool
                 "masterbot_targets": ["DreamEducation", "CommandCore", "DreamDiscovery"],
                 "capability_tags": ["source-classification", "course-taxonomy", "rights-review", "division-routing"],
                 "tool_tags": ["video-metadata-catalog", "course-taxonomy", "review-queue"],
+                "learning_modes": ["metadata_review", "guided_classification", "rights_check", "human_review"],
                 "agent_tags": ["course-curator", "rights-reviewer", "division-router"],
                 "implementation_steps": [
                     "Confirm the source-video ID, public URL, channel, title, description, and catalog provenance.",
@@ -578,6 +580,7 @@ def load_course_lessons(root: Path = ROOT) -> list[CourseLesson]:
                 capability_tags=tuple(str(value) for value in row.get("capability_tags", [])),
                 tool_tags=tuple(str(value) for value in row.get("tool_tags", [])),
                 agent_tags=tuple(str(value) for value in row.get("agent_tags", [])),
+                learning_modes=tuple(str(value) for value in row.get("learning_modes", [])),
                 implementation_steps=tuple(str(value) for value in row.get("implementation_steps", [])),
                 buddy_demo=str(row.get("buddy_demo", "")),
                 source_video_id=str(row.get("source_video_id", "")),
@@ -647,6 +650,7 @@ def plan_next_for_division(
         "capability_tags": list(lesson.capability_tags),
         "tool_tags": list(lesson.tool_tags),
         "agent_tags": list(lesson.agent_tags),
+        "learning_modes": list(lesson.learning_modes),
         "implementation_steps": list(lesson.implementation_steps),
         "buddy_demo": lesson.buddy_demo,
         "source_video_id": lesson.source_video_id,
