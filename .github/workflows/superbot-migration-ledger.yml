@@ -10,6 +10,14 @@ on:
       - 'config/generated/legacy-bot-recovery-manifest.json'
       - 'tools/compile_superbot_migration.py'
       - 'tools/build_division_superbot_manifests.py'
+      - 'tools/generate_bot_manifests.py'
+      - 'config/bots/bot-manifests.generated.json'
+      - 'App_bots/**'
+      - 'tests/test_division_superbot_manifests.py'
+
+permissions:
+  contents: write
+  pull-requests: write
 
 jobs:
   compile:
@@ -23,6 +31,15 @@ jobs:
         run: python tools/recover_legacy_bots.py
       - name: Build whole-repository inventory
         run: python tools/build_superbot_repository_inventory.py
+      - name: Generate current bot routing manifests
+        run: |
+          python tools/generate_bot_manifests.py
+          python tools/generate_bot_manifests.py --check
+      - name: Build source-backed Division Superbot manifests
+        run: |
+          python tools/build_division_superbot_manifests.py
+          python tools/build_division_superbot_manifests.py --check
+          python -m unittest tests.test_division_superbot_manifests -v
       - name: Compile migration ledger
         run: python tools/compile_superbot_migration.py
       - name: Validate migration ledger
@@ -38,3 +55,21 @@ jobs:
             reports/SUPERBOT_MIGRATION_LEDGER.md
             config/generated/legacy-bot-recovery-manifest.json
             reports/LEGACY_BOT_RECOVERY.md
+            config/divisions/
+      - name: Open generated Division Superbot manifest review PR
+        if: github.ref == 'refs/heads/main'
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          base: main
+          branch: automation/division-superbot-manifests
+          delete-branch: false
+          add-paths: |
+            config/divisions/**
+          commit-message: "chore: refresh source-backed Division Superbot manifests"
+          title: "chore: refresh source-backed Division Superbot manifests"
+          body: |
+            Generated from canonical bot profiles, owner-routing metadata, and repository inventory.
+            Canonical capabilities and proposed-owner candidates are kept separate.
+            Tools/connectors/benchmarks are not marked connected, tested, or measured without evidence.
+            Review all provenance and gap records before merging.
