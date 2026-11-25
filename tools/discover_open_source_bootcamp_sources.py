@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 """Discover public GitHub and Hugging Face learning resources.
 
-Discovery is metadata-first. It does not clone repositories, download media,
-train models, or grant rights. Unknown licenses remain review-only/blocked.
+Metadata-first only: no cloning, media downloads, training, or rights grants.
 """
 from __future__ import annotations
 
@@ -32,9 +31,13 @@ def request_json(url: str, token: str | None = None) -> Any:
 
 
 def license_status(spdx: str | None) -> str:
-    if not spdx or spdx.upper() in {"NOASSERTION", "OTHER"}:
+    if not spdx or str(spdx).upper() in {"NOASSERTION", "OTHER"}:
         return "rights_pending"
     return "license_review_required"
+
+
+def now() -> str:
+    return datetime.now(timezone.utc).isoformat()
 
 
 def github_repo(repo: str, token: str | None) -> dict[str, Any]:
@@ -43,10 +46,11 @@ def github_repo(repo: str, token: str | None) -> dict[str, Any]:
     return {
         "source_type": "github_repository", "source_id": data.get("full_name"),
         "url": data.get("html_url"), "description": data.get("description"),
-        "default_branch": data.get("default_branch"), "updated_at": data.get("updated_at"),
-        "stars": data.get("stargazers_count"), "license_spdx": lic,
-        "rights_state": license_status(lic), "archived": data.get("archived", False),
-        "topics": data.get("topics", []), "discovered_at": now(),
+        "default_branch": data.get("default_branch"), "revision": data.get("default_branch"),
+        "updated_at": data.get("updated_at"), "stars": data.get("stargazers_count"),
+        "license_spdx": lic, "rights_state": license_status(lic),
+        "archived": data.get("archived", False), "topics": data.get("topics", []),
+        "discovered_at": now(),
     }
 
 
@@ -56,12 +60,15 @@ def github_search(topic: str, limit: int, token: str | None) -> list[dict[str, A
     rows = []
     for item in data.get("items", []):
         lic = (item.get("license") or {}).get("spdx_id")
-        rows.append({"source_type":"github_repository","source_id":item.get("full_name"),
-            "url":item.get("html_url"),"description":item.get("description"),
-            "default_branch":item.get("default_branch"),"updated_at":item.get("updated_at"),
-            "stars":item.get("stargazers_count"),"license_spdx":lic,
-            "rights_state":license_status(lic),"archived":item.get("archived",False),
-            "topics":item.get("topics",[]),"discovery_topic":topic,"discovered_at":now()})
+        rows.append({
+            "source_type": "github_repository", "source_id": item.get("full_name"),
+            "url": item.get("html_url"), "description": item.get("description"),
+            "default_branch": item.get("default_branch"), "revision": item.get("default_branch"),
+            "updated_at": item.get("updated_at"), "stars": item.get("stargazers_count"),
+            "license_spdx": lic, "rights_state": license_status(lic),
+            "archived": item.get("archived", False), "topics": item.get("topics", []),
+            "discovery_topic": topic, "discovered_at": now(),
+        })
     return rows
 
 
@@ -71,31 +78,48 @@ def hf_search(kind: str, term: str, limit: int) -> list[dict[str, Any]]:
     rows = []
     for item in data if isinstance(data, list) else []:
         card = item.get("cardData") or {}
-        lic = card.get("license") or (item.get("tags") or [])
-        if isinstance(lic, list):
-            lic = next((x.split(":", 1)[1] for x in lic if x.startswith("license:")), None)
+        tags = item.get("tags") or []
+        license_value = card.get("license")
+        if not license_value and isinstance(tags, list):
+            license_value = next((x.split(":", 1)[1] for x in tags if isinstance(x, str) and x.startswith("license:")), None)
+        repo_type = kind[:-1] if kind.endswith("s") else kind
         rows.append({
-            "source_type": f"huggingface_{kind[:-1] if kind.endswith('s') else kind}",
-            "source_id": item.get("id"), "url": f"https://huggingface.co/{item.get('id')}",
-            "pipeline_tag": item.get("pipeline_tag"), "tags": item.get("tags", []),
-            "license": lic, "rights_state": license_status(lic),
+            "source_type": f"huggingface_{repo_type}", "source_id": item.get("id"),
+            "url": f"https://huggingface.co/{item.get('id')}",
+            "revision": item.get("sha"), "pipeline_tag": item.get("pipeline_tag"),
+            "tags": tags, "license": license_value,
+            "rights_state": license_status(license_value),
             "downloads": item.get("downloads"), "likes": item.get("likes"),
             "last_modified": item.get("lastModified"), "discovered_at": now(),
         })
     return rows
 
 
-def now() -> str:
-    return datetime.now(timezone.utc).isoformat()
+def load_subjects(config: dict[str, Any], taxonomy_file: str | None) -> tuple[list[str], str, int]:
+    seed = set(config["discovery"].get("hugging_face_subjects", []))
+    if not taxonomy_file:
+        return sorted(seed), "configured_seed_taxonomy_only", 0
+    path = Path(taxonomy_file)
+    if not path.is_file():
+        return sorted(seed), "configured_seed_taxonomy_fallback_missing_file", 0
+    doc = json.loads(path.read_text(encoding="utf-8"))
+    dynamic = {str(x).strip().lower().replace(" ", "-") for x in doc.get("subject_terms", []) if str(x).strip()}
+    if not dynamic:
+        return sorted(seed), "configured_seed_taxonomy_fallback_empty_live_taxonomy", 0
+    return sorted(seed | dynamic), "live_taxonomy_plus_configured_seeds", len(dynamic)
 
 
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--out-dir", default=str(DEFAULT_OUT))
     parser.add_argument("--hf-limit-per-subject", type=int, default=20)
-    parser.add_argument("--github-limit-per-topic", type=int, default=10)\n    parser.add_argument("--taxonomy-file", default=None, help="Live Hugging Face subject taxonomy JSON")
+    parser.add_argument("--github-limit-per-topic", type=int, default=10)
+    parser.add_argument("--taxonomy-file", default=None, help="Live Hugging Face subject taxonomy JSON")
     args = parser.parse_args()
+    if args.hf_limit_per_subject < 1 or args.github_limit_per_topic < 1:
+        parser.error("discovery limits must be positive")
     config = json.loads(CONFIG.read_text(encoding="utf-8"))
+    subjects, taxonomy_status, dynamic_count = load_subjects(config, args.taxonomy_file)
     out_dir = Path(args.out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
     token = os.getenv("GITHUB_TOKEN") or os.getenv("GH_TOKEN")
@@ -118,8 +142,7 @@ def main() -> int:
 
     for topic in config["discovery"]["github_search_topics"]:
         try:
-            for row in github_search(topic, args.github_limit_per_topic, token):
-                records.append(row)
+            records.extend(github_search(topic, args.github_limit_per_topic, token))
         except (urllib.error.URLError, TimeoutError, ValueError, KeyError) as exc:
             errors.append({"source": f"github-topic:{topic}", "error": str(exc)})
         time.sleep(0.2)
@@ -137,24 +160,39 @@ def main() -> int:
     unique: dict[tuple[str, str], dict[str, Any]] = {}
     for row in records:
         key = (str(row.get("source_type")), str(row.get("source_id")))
-        if key[1] and key not in unique:
-            unique[key] = row
+        if key[1]:
+            if key not in unique:
+                unique[key] = row
+            else:
+                old = unique[key]
+                old["discovery_subjects"] = sorted(set(old.get("discovery_subjects", [old.get("discovery_subject")]) + [row.get("discovery_subject")]) - {None})
     final = {
         "schema": "dreamco.buddy_bootcamp_discovery_snapshot.v1",
         "generated_at": now(),
-        "discovery_scope": {"hf_subject_count": len(subjects),\n                            "hf_seed_subject_count": len(config["discovery"]["hugging_face_subjects"]),\n                            "hf_dynamic_taxonomy_status": taxonomy_status,
-                            "hf_artifact_types": config["discovery"]["hugging_face_hub_types"],
-                            "github_seed_count": len(seen)},
-        "counts": {"discovered_unique": len(unique), "hugging_face_subjects_searched": len(subjects), "rights_pending_or_review": sum(r["rights_state"] != "approved" for r in unique.values()),
-                   "errors": len(errors)},
+        "discovery_scope": {
+            "hf_subject_count": len(subjects), "hf_seed_subject_count": len(config["discovery"]["hugging_face_subjects"]),
+            "hf_dynamic_taxonomy_count": dynamic_count, "hf_dynamic_taxonomy_status": taxonomy_status,
+            "hf_artifact_types": config["discovery"]["hugging_face_hub_types"],
+            "github_seed_count": len(seen), "github_topics_searched": len(config["discovery"]["github_search_topics"]),
+        },
+        "counts": {
+            "discovered_unique": len(unique), "hugging_face_subjects_searched": len(subjects),
+            "rights_pending_or_review": sum(r["rights_state"] != "approved" for r in unique.values()),
+            "errors": len(errors),
+        },
         "resources": list(unique.values()), "errors": errors,
-        "truth_boundary": "Discovery metadata is not a summary, rights approval, training authorization, or mastery evidence."
+        "truth_boundary": "Discovery metadata is not a detailed summary, rights approval, training authorization, or mastery evidence. Search results are bounded per subject and are not an exhaustive inventory of the Hub.",
     }
     (out_dir / "discovery-snapshot.json").write_text(json.dumps(final, indent=2) + "\n", encoding="utf-8")
-    summary = ["# Buddy Bootcamp weekly discovery", "", f"- Generated: {final['generated_at']}",
-               f"- Hugging Face subjects searched: {len(subjects)} ({taxonomy_status})", f"- Unique resources discovered: {len(unique)}", f"- Rights review required: {final['counts']['rights_pending_or_review']}",
-               f"- Discovery errors: {len(errors)}", "",
-               "This run discovers metadata only. It does not download source media, create full guides, or train Buddy."]
+    summary = [
+        "# Buddy Bootcamp weekly discovery", "", f"- Generated: {final['generated_at']}",
+        f"- Hugging Face subjects searched: {len(subjects)} ({taxonomy_status})",
+        f"- Dynamic Hugging Face terms loaded: {dynamic_count}",
+        f"- Unique resources discovered: {len(unique)}",
+        f"- Rights review required: {final['counts']['rights_pending_or_review']}",
+        f"- Discovery errors: {len(errors)}", "",
+        "This run discovers bounded metadata samples only. It does not download source media, create full guides, or train Buddy.",
+    ]
     (out_dir / "summary.md").write_text("\n".join(summary) + "\n", encoding="utf-8")
     print(json.dumps(final["counts"], indent=2))
     return 0
