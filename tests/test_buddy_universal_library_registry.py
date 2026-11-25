@@ -105,7 +105,7 @@ class UniversalLibraryRegistryTests(unittest.TestCase):
     def test_gap_record_is_append_only_and_does_not_route_externally(self):
         record_library_knowledge_gap("Rust async runtime", root=self.root)
         record_library_knowledge_gap("Rust async runtime", root=self.root, reason="follow-up")
-        lines = (self.root / "data/buddy-library-knowledge-gaps.jsonl").read_text().splitlines()
+        lines = (self.root / ".dreamco/library-knowledge-gaps.jsonl").read_text().splitlines()
         self.assertEqual(len(lines), 2)
         self.assertFalse(json.loads(lines[0])["external_routing_performed"])
 
