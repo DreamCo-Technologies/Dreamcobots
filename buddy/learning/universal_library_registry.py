@@ -9,7 +9,7 @@ from __future__ import annotations
 import json
 import re
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 from pathlib import Path
 from typing import Any, Iterable
 
@@ -59,6 +59,11 @@ def validate_library_guide_document(data: dict[str, Any]) -> list[str]:
             errors.append(f"library.{key} is required")
     if not str(library.get("official_homepage", "")).startswith("https://"):
         errors.append("library.official_homepage must use HTTPS")
+    checked_at = library.get("latest_version_checked_at")
+    try:
+        date.fromisoformat(str(checked_at))
+    except ValueError:
+        errors.append("library.latest_version_checked_at must be a valid ISO date")
     provenance = data.get("provenance") if isinstance(data.get("provenance"), dict) else {}
     sources = provenance.get("sources")
     if not isinstance(sources, list) or not sources:
@@ -104,6 +109,23 @@ def validate_library_guide_document(data: dict[str, Any]) -> list[str]:
     return errors
 
 
+def _guide_is_stale(data: dict[str, Any], root: Path) -> bool:
+    library = data.get("library") if isinstance(data.get("library"), dict) else {}
+    checked = library.get("latest_version_checked_at")
+    if not isinstance(checked, str):
+        return True
+    try:
+        checked_date = date.fromisoformat(checked)
+    except ValueError:
+        return True
+    curriculum_path = root / "config/buddy-universal-library-curriculum.json"
+    freshness_days = 30
+    if curriculum_path.exists():
+        freshness_days = int(_read_json(curriculum_path).get("freshness", {}).get("recheck_official_docs_days", 30))
+    age = (date.today() - checked_date).days
+    return age < 0 or age > freshness_days
+
+
 def _guide_files(root: Path) -> list[Path]:
     directory = root / "data/buddy-library-study-guides"
     if not directory.exists():
@@ -132,6 +154,8 @@ def load_approved_guides(root: Path = ROOT) -> list[LibraryGuide]:
         validation_errors = validate_library_guide_document(data)
         if validation_errors:
             raise ValueError(f"approved library guide failed validation at {path}: {'; '.join(validation_errors)}")
+        if _guide_is_stale(data, root):
+            continue
         rights = data.get("rights") if isinstance(data.get("rights"), dict) else {}
         if rights.get("documentation_access") not in {"public", "account_required"}:
             continue
@@ -249,10 +273,13 @@ def library_coverage_report(root: Path = ROOT) -> dict[str, Any]:
     guides = load_approved_guides(root)
     discovered_ecosystems = ecosystems.get("ecosystems", [])
     status_counts: dict[str, int] = {}
+    stale_due_to_age = 0
     for guide_path in _guide_files(root):
         guide_doc = _read_json(guide_path)
         status = str(guide_doc.get("status", "unknown"))
         status_counts[status] = status_counts.get(status, 0) + 1
+        if status in SEARCHABLE_STATES and _guide_is_stale(guide_doc, root):
+            stale_due_to_age += 1
     gap_path = root / "data/buddy-library-knowledge-gaps.jsonl"
     gaps = 0
     if gap_path.is_file():
@@ -266,7 +293,8 @@ def library_coverage_report(root: Path = ROOT) -> dict[str, Any]:
         "guide_status_counts": status_counts,
         "review_required_guide_count": status_counts.get("review_required", 0),
         "draft_guide_count": status_counts.get("draft", 0),
-        "stale_guide_count": status_counts.get("stale", 0),
+        "stale_guide_count": status_counts.get("stale", 0) + stale_due_to_age,
+        "stale_due_to_age_count": stale_due_to_age,
         "blocked_guide_count": status_counts.get("blocked", 0),
         "gap_event_count": gaps,
         "ecosystems": [row.get("id") for row in discovered_ecosystems],
