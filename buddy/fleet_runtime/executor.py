@@ -22,6 +22,8 @@ TASK_SCHEMA = {
         "objective": {"type": "string", "minLength": 1},
         "input": {"type": "object"},
         "action_level": {"type": "string"},
+        "learning_task": {"type": "boolean"},
+        "allow_external_learning_fallback": {"type": "boolean"},
     },
 }
 
@@ -114,6 +116,10 @@ class FleetExecutor:
                 return self._finish(manifest, task, "guardrail_blocked", "none", permission,
                                     {"input": in_guard}, None, None, stamp)
             profile = dict(self.profiles["model_router"][manifest["model_router"]])
+            if task.get("learning_task") is True:
+                profile["internal_bootcamp_first"] = True
+                profile["internal_learning_query"] = str(task.get("objective") or "")
+                profile["allow_external_learning_fallback"] = task.get("allow_external_learning_fallback") is True
             if manifest.get("model_alias") and profile.get("mode") != "offline_only":
                 profile["live_alias"] = manifest["model_alias"]
             func = engines.ENGINE_FUNCS[engine_name]
