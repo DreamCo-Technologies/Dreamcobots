@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+from datetime import date
 import tempfile
 import unittest
 from pathlib import Path
@@ -39,7 +40,7 @@ class UniversalLibraryRegistryTests(unittest.TestCase):
                 "ecosystem": "python",
                 "artifact_type": "library",
                 "version_reviewed": "2.32.0",
-                "latest_version_checked_at": "2026-11-25",
+                "latest_version_checked_at": date.today().isoformat(),
                 "license": "MIT",
                 "official_homepage": "https://requests.readthedocs.io/",
             },
