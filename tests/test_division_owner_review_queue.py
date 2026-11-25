@@ -19,7 +19,10 @@ class DivisionOwnerReviewQueueTests(unittest.TestCase):
             ROOT / "config/generated/division-reconciliation.json",
         )
         validate_owner_review_queue(queue)
-        self.assertEqual(queue["counts"]["pending_masterbot_mappings"], 0)
+        self.assertEqual(queue["counts"]["pending_masterbot_mappings"], 45)
+        self.assertEqual([row["masterbot_id"] for row in queue["masterbot_domain_decisions"]], list(range(1, 46)))
+        self.assertTrue(all(row["decision"] == "PENDING_OWNER_REVIEW" for row in queue["masterbot_domain_decisions"]))
+        self.assertTrue(all(row["owner_approval"] is None for row in queue["masterbot_domain_decisions"]))
         self.assertEqual(queue["counts"]["shared_platform_role_confirmations"], 20)
         self.assertEqual(queue["counts"]["unassigned_domain_profiles"], 10)
         self.assertEqual(queue["counts"]["proposed_supplemental_collaborator_links"], 10)
