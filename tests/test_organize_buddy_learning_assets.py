@@ -24,6 +24,7 @@ class LearningOrganizationTests(unittest.TestCase):
         self.assertEqual(result["coverage"]["guides_rejected_or_pending"],0)
         p=result["packages"][0]
         self.assertEqual(p["division_ids"],["AI"])
+        self.assertEqual(p["ownership"]["artifact_owner"],"user_designated_owner")
         self.assertEqual(len(p["study_path"]["sequence"]),7)
         self.assertFalse(p["training"]["weight_training_eligible"])
         self.assertIn("core_concepts",p["summary"]["best_knowledge_extracted"])
