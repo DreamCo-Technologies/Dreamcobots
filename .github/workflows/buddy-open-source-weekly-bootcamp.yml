@@ -42,6 +42,7 @@ on:
       - "tools/organize_buddy_learning_assets.py"
       - "buddy/learning/dreamco_summary_source.py"
       - "buddy/bootcamp/README.md"
+      - "buddy/bootcamp/prompts/buddy-university-teacher-authoring.md"
       - "buddy/bootcamp/prompts/open-source-study-guide-authoring.md"
       - "tests/test_buddy_self_bootcamp.py"
       - "tests/test_buddy_university_curriculum.py"
@@ -130,6 +131,7 @@ jobs:
         run: |
           python -m json.tool config/buddy-open-source-bootcamp.json > /dev/null
           python -m json.tool config/buddy-university-curriculum.json > /dev/null
+          python -m json.tool config/buddy-source-study-guide.schema.json > /dev/null
           python -m json.tool config/buddy-college-curriculum.json > /dev/null
           python -m json.tool config/freecodecamp-complete-learning-path.json > /dev/null
           python -m json.tool config/freecodecamp-detailed-video-study-guide.schema.json > /dev/null
