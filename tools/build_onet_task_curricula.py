@@ -9,6 +9,44 @@ from collections import defaultdict
 from pathlib import Path
 from typing import Any
 
+SOFTWARE_CAPABILITY_CATEGORIES = [
+    "industry-specific line-of-business systems", "CRM and customer success platforms",
+    "ERP and business management", "accounting, payroll and tax software",
+    "project, portfolio and work management", "scheduling, dispatch and workforce management",
+    "document, records and knowledge management", "spreadsheets, databases and BI",
+    "data integration, ETL and workflow automation", "communications, collaboration and contact centers",
+    "sales enablement, marketing automation and ecommerce", "procurement, inventory and supply chain",
+    "CAD, BIM, GIS and technical design where relevant", "simulation, digital twins and specialist engineering tools",
+    "development environments, source control, testing and CI/CD where relevant",
+    "cloud, infrastructure, monitoring and observability where relevant",
+    "cybersecurity, identity, secrets and endpoint protection",
+    "AI assistants, agent frameworks, retrieval and model evaluation",
+    "image, audio, video and content production where relevant",
+    "mobile, field-service and offline-first applications",
+    "accessibility, localization and assistive technology",
+    "compliance, audit, risk and quality management",
+    "payments, billing, subscriptions and financial operations",
+    "customer portals, help desks and ticketing",
+    "reporting, analytics, forecasting and decision support",
+    "backup, disaster recovery and business continuity"
+]
+
+AGENT_CAPABILITIES = [
+    "research and source verification", "task decomposition and prerequisite planning",
+    "browser and computer-use interaction within approved scopes", "API and connector integration",
+    "structured data extraction and validation", "document, spreadsheet and presentation authoring",
+    "CRM updates and customer communication drafting", "calendar, scheduling and dispatch support",
+    "code generation, debugging and test execution in authorized sandboxes",
+    "workflow automation, event handling, retries and rollback",
+    "data analysis, forecasting and dashboard creation", "proposal, quote and statement-of-work preparation",
+    "inventory, procurement and supplier comparison", "quality assurance and acceptance-test execution",
+    "multimodal interpretation of authorized images, audio and video",
+    "knowledge-base retrieval, citation and version tracking", "risk detection and exception escalation",
+    "progress reporting, audit logs and evidence capture", "multi-agent delegation with bounded tool permissions",
+    "human approval handoff for consequential actions"
+]
+
+
 
 def flatten_records(value: Any) -> list[dict[str, Any]]:
     if isinstance(value, list):
@@ -100,17 +138,47 @@ def build(rows: list[dict[str, str]], version: str) -> dict[str, Any]:
             "learning_summary_status": "not_yet_authored_by_buddy",
             "learning_summary_required": True, "practice_required": True,
             "guide_authoring_brief": {
-                "must_explain": ["purpose and context", "prerequisite knowledge", "workflow step by step", "inputs and outputs", "tools and materials", "quality criteria", "common errors", "safety and legal boundaries"],
-                "must_include": ["worked example", "beginner exercise", "intermediate exercise", "capstone", "observable acceptance tests", "answer key", "official source citations"],
+                "must_explain": [
+                    "purpose, customer problem and real-world context",
+                    "prerequisite knowledge, skills, abilities and proficiency levels",
+                    "complete workflow and every meaningful subtask from intake through closeout",
+                    "inputs, outputs, data structures, records and handoffs",
+                    "common, specialist and high-end software categories used in this occupation",
+                    "current leading commercial tools, open-source alternatives and offline/local options",
+                    "agent capabilities, tool permissions, automation boundaries and human handoffs",
+                    "decision rules, exceptions, edge cases and escalation triggers",
+                    "quality standards, safety controls, legal duties, licenses and credentials",
+                    "privacy, security, retention, accessibility and records requirements",
+                    "labor, time, material, compute, insurance and overhead cost drivers",
+                    "buyer types, market demand evidence, competitors and procurement routes",
+                    "service packaging, pricing, unit economics and realistic delivery capacity",
+                    "sales discovery, qualification, CRM, proposals, negotiation and account care",
+                    "delivery SOP, customer support, warranty, rework and continuous improvement",
+                ],
+                "software_categories_to_assess": SOFTWARE_CAPABILITY_CATEGORIES,
+                "agent_capabilities_to_assess": AGENT_CAPABILITIES,
+                "tool_research_rule": "For each relevant category, research current high-end commercial products, widely used professional tools, open-source alternatives, local/offline options, integrations, costs, license terms and security posture. Record verification date and official product links; do not invent adoption or recommend a tool solely because it is popular.",
+                "must_include": [
+                    "source-grounded detailed summary", "step-by-step workflow", "tool comparison matrix",
+                    "worked examples", "beginner, intermediate and advanced exercises",
+                    "sandbox simulation", "portfolio capstone", "acceptance tests and answer key",
+                    "common failure scenarios and recovery", "official citations and rights evidence",
+                ],
                 "must_not_infer": ["licenses", "credentials", "buyer demand", "legal authority", "professional competence"],
             },
             "commercial_pathway": {
-                "status": "research_required", "possible_buyer_types": [],
-                "offer": "Define only after buyer research and credential/scope review.",
+                "status": "research_required",
+                "possible_buyer_types": ["consumer", "small business", "enterprise", "nonprofit", "government buyer", "prime contractor", "subcontractor"],
+                "buyer_research": ["buyer pain and authority", "budget and procurement route", "competitor and incumbent analysis", "demand evidence and seasonality"],
+                "offer": "Define only after buyer research, capability proof, legal scope, credential and insurance review.",
+                "pricing_models_to_evaluate": ["hourly", "fixed fee", "retainer", "subscription", "usage-based", "project milestone", "cost-plus where lawful"],
+                "unit_economics": ["labor and delivery time", "materials and software", "compute and API usage", "insurance and compliance", "sales acquisition cost", "support and rework", "tax and cash-flow timing"],
                 "sales_sequence": [
                     "identify legitimate buyer", "confirm problem and authority", "qualify need and budget",
-                    "define scope and exclusions", "estimate labor/material/overhead/insurance",
-                    "prepare truthful proposal", "obtain human approval", "deliver and document quality",
+                    "research incumbent and procurement route", "define scope, exclusions and acceptance criteria",
+                    "estimate fully burdened cost, working capital and delivery risk",
+                    "prepare truthful capability evidence and proposal", "obtain human approval",
+                    "deliver under contract", "measure quality, support, invoice and close out",
                 ],
                 "not_a_claim_of_qualification": True,
             },
