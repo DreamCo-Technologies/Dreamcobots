@@ -17,12 +17,17 @@
     "select_authorized_source",
     "retrieve_only_permitted_content",
     "build_original_study_guide",
+    "package_approved_summary_into_user_designated_learning_asset",
+    "map_summary_to_relevant_domain_divisions",
+    "schedule_prerequisite_ordered_study_and_spaced_review",
     "run_sandbox_practice",
     "run_targeted_benchmark",
     "run_unseen_holdout",
     "run_regression_suite",
     "record_evidence",
-    "schedule_spaced_retrieval"
+    "schedule_spaced_retrieval",
+    "record_append_only_progress_and_evidence",
+    "allow_weight_training_only_with_asset_level_training_permission"
   ],
   "mastery": {
     "minimum_targeted_pass_rate": 0.9,
@@ -90,5 +95,29 @@
       "weight_hash"
     ]
   },
-  "truth_boundary": "This policy schedules work; it does not itself download transcripts, run Buddy inference, train weights, or prove mastery. A lesson slot is not a completed lesson. A dataset/model listing is not permission to train. A 45M-parameter model is not GPT-5-equivalent."
+  "truth_boundary": "This policy schedules work; it does not itself download transcripts, run Buddy inference, train weights, or prove mastery. A lesson slot is not a completed lesson. A dataset/model listing is not permission to train. A 45M-parameter model is not GPT-5-equivalent.",
+  "study_assets": {
+    "status": "adapter_ready_authorized_guide_artifact_required",
+    "guide_schema": "config/buddy-source-study-guide.schema.json",
+    "learning_package_schema": "config/buddy-learning-package.schema.json",
+    "guide_library": "data/buddy-study-guides/",
+    "organization_builder": "tools/organize_buddy_learning_assets.py",
+    "organization_artifact": "buddy-learning-organization.json",
+    "runtime_adapter": "buddy.learning.dreamco_summary_source",
+    "scheduler": "buddy.learning.study_resource_scheduler",
+    "progress_events": "append-only JSONL with canonical asset, division, source revision and evidence reference",
+    "ownership": "user_designated_owner_for_original_instructional_expression_subject_to_law_and_upstream_terms",
+    "source_families": [
+      "github_repositories",
+      "huggingface_models",
+      "huggingface_datasets",
+      "huggingface_spaces",
+      "freecodecamp_authorized_assets",
+      "onet_official_task_data",
+      "official_government_procurement_and_grant_sources",
+      "user_owned_data_with_purpose_specific_consent"
+    ],
+    "rule": "Only approved complete guides with item-level study, summary-derivative and evaluation permissions enter division learning queues.",
+    "authoring_prompt": "buddy/bootcamp/prompts/open-source-study-guide-authoring.md"
+  }
 }

@@ -8,6 +8,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import re
 from pathlib import Path
 from typing import Any
 
@@ -20,7 +21,10 @@ FILES = {
     "dataset_policy": ROOT / "config/buddy-dataset-routing-policy.json",
     "source_registry": ROOT / "config/dreamco-training-source-registry.json",
     "provenance_policy": ROOT / "config/buddy-training-data-provenance-policy.json",
-    "source_registry": ROOT / "config/dreamco-training-source-registry.json",
+    "university": ROOT / "config/buddy-university-curriculum.json",
+    "freecodecamp": ROOT / "config/freecodecamp-complete-learning-path.json",
+    "workforce": ROOT / "config/buddy-workforce-entrepreneurship-bootcamp.json",
+    "government": ROOT / "config/buddy-government-community-enterprise-curriculum.json",
     "bootcamp": ROOT / "config/buddy-bootcamp-program.json",
     "curriculum": ROOT / "config/buddy-bootcamp-curriculum-v1.json",
     "serving_policy": ROOT / "config/buddy-model-serving-policy.json",
@@ -54,6 +58,40 @@ def build_factory_plan(configs: dict[str, dict[str, Any]], source_hashes: dict[s
     policy = configs["dataset_policy"]
     source_registry = configs["source_registry"]
     bootcamp = configs["bootcamp"]
+    university = configs.get("university", {})
+    university_domains = university.get("knowledge_domains", [])
+    university_levels = university.get("academic_structure", {}).get("levels", [])
+    shared_core = university.get("shared_core", {}).get("required_for_all_divisions", [])
+    if university and (len(university_domains) != 45 or len(university_levels) != 4 or len(shared_core) != 10):
+        raise ValueError("Buddy University must define 45 domains, four levels and ten shared foundation courses")
+    domain_ids = {str(x.get("id")) for x in university_domains}
+    university_course_ids = [f"UNI-{str(domain.get('id')).upper()}-{str(level.get('level'))}"
+                             for domain in university_domains for level in university_levels]
+    shared_core_course_ids = ["CORE-" + re.sub(r"[^A-Z0-9]+", "-", str(x).upper()).strip("-")
+                              for x in shared_core]
+    fcc = configs.get("freecodecamp", {})
+    fcc_inventory = fcc.get("official_platform_inventory", {})
+    fcc_track_count = len(fcc.get("specialist_track_details", [])) + len(fcc_inventory.get("core_certifications", [])) + len(fcc_inventory.get("additional_certifications", []))
+    fcc_video_categories = fcc.get("video_learning_tracks", [])
+    workforce_tracks = configs.get("workforce", {}).get("training_paths", [])
+    government = configs.get("government", {})
+    def _tokens(value: str) -> set[str]:
+        expanded = re.sub(r"([a-z])([A-Z])", r"\1 \2", value)
+        return {x.lower() for x in re.findall(r"[a-z0-9]+", expanded.lower())
+                if len(x) > 2 and x.lower() not in {"dream", "and", "the", "for", "with", "from"}}
+    def _domain_routes(bot: dict[str, Any], route: dict[str, Any]) -> list[dict[str, Any]]:
+        lane_terms = " ".join([bot.get("name", ""), *route.get("subject_terms", []), *route.get("search_queries", [])])
+        lane_tokens = _tokens(lane_terms)
+        ranked = []
+        for domain in university_domains:
+            domain_tokens = _tokens(str(domain.get("id", "")) + " " + str(domain.get("scope", "")))
+            score = len(lane_tokens & domain_tokens)
+            if score:
+                ranked.append((score, str(domain.get("id"))))
+        ranked.sort(key=lambda item: (-item[0], item[1]))
+        return [{"domain_id": domain_id, "score": score, "mapping_status": "suggested_requires_owner_review",
+                 "course_ids": [f"UNI-{domain_id.upper()}-{str(level.get('level'))}" for level in university_levels]}
+                for score, domain_id in ranked[:3]]
     source_records = configs["source_registry"].get("source_families", [])
     source_ids = [record.get("id") for record in source_records if isinstance(record, dict)]
     if len(source_records) != 9 or len(source_ids) != 9 or len(set(source_ids)) != 9:
@@ -94,6 +132,10 @@ def build_factory_plan(configs: dict[str, dict[str, Any]], source_hashes: dict[s
             "rights_status": "REVIEW_REQUIRED",
             "training_status": "NOT_APPROVED",
         } for task in tasks]
+        crosswalk = route.get("domain_crosswalk", {})
+        domain_id = str(crosswalk.get("domain_id", ""))
+        university_routes = _domain_routes(bot, route)
+        domain_courses = [course_id for item in university_routes for course_id in item["course_ids"]]
         lanes.append({
             "masterbot_id": mid,
             "masterbot_name": bot["name"],
@@ -106,6 +148,11 @@ def build_factory_plan(configs: dict[str, dict[str, Any]], source_hashes: dict[s
             "domain_crosswalk_status": route.get("domain_crosswalk", {}).get("mapping_status", "UNRESOLVED"),
             "owner_review_required": bool(route.get("domain_crosswalk", {}).get("owner_review_required", True)),
             "capability_pack_ids": route.get("capability_pack_ids", []),
+            "university_domain_id": domain_id if domain_id in domain_ids else None,
+            "university_domain_routes": university_routes,
+            "university_course_ids": sorted(set(shared_core_course_ids + domain_courses)),
+            "shared_core_course_ids": shared_core_course_ids,
+            "university_domain_course_ids": domain_courses,
             "teacher_model_candidates": "See resource map; candidates require revision, license, safety and access review",
             "resource_readiness": resource.get("readiness_status", "UNKNOWN"),
             "task_families": task_records,
@@ -132,6 +179,14 @@ def build_factory_plan(configs: dict[str, dict[str, Any]], source_hashes: dict[s
             "masterbots": len(lanes),
             "task_families": len(tasks),
             "division_task_assignments": len(lanes) * len(tasks),
+            "university_domains": len(university_domains),
+            "university_levels": len(university_levels),
+            "university_course_blueprints": len(university_course_ids) + len(shared_core_course_ids),
+            "shared_core_courses": len(shared_core_course_ids),
+            "freecodecamp_tracks": fcc_track_count,
+            "freecodecamp_video_subject_categories": len(fcc_video_categories),
+            "workforce_venture_tracks": len(workforce_tracks),
+            "government_official_sources": len(government.get("official_sources", [])),
             "bootcamp_levels": len(bootcamp.get("curriculum_levels", [])),
             "source_families": len(source_family_records),
             "source_catalog_items": len(source_types),
@@ -139,6 +194,28 @@ def build_factory_plan(configs: dict[str, dict[str, Any]], source_hashes: dict[s
             "data_planes": len(planes),
         },
         "source_families": source_types,
+        "university": {
+            "title": university.get("title"),
+            "teacher": university.get("instructional_model", {}).get("teacher", {}),
+            "student": university.get("instructional_model", {}).get("student", {}),
+            "knowledge_domains": university_domains,
+            "academic_levels": university_levels,
+            "shared_core_courses": shared_core,
+            "course_blueprint_ids": university_course_ids + shared_core_course_ids,
+            "course_blueprints_are_not_authored_lessons": True,
+        },
+        "career_and_public_service": {
+            "workforce_tracks": workforce_tracks,
+            "government_official_sources": government.get("official_sources", []),
+            "procurement_pipeline": government.get("procurement_pipeline", []),
+            "grant_pipeline": government.get("grant_pipeline", []),
+            "benefit_protections": government.get("benefit_protections", {}),
+        },
+        "freecodecamp_coverage": {
+            "certification_track_count": fcc_track_count,
+            "video_subject_categories": fcc_video_categories,
+            "full_video_catalog_is_separate_and_must_be_verified": True,
+        },
         "source_registry": {
             "version": source_registry.get("version"),
             "source_family_ids": source_family_ids,

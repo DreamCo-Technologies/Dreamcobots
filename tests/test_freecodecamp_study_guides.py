@@ -27,6 +27,8 @@ class StudyGuideQueueTests(unittest.TestCase):
         self.assertEqual(result["source_inventory_status"],"COMPLETE")
         self.assertEqual(result["authorized_for_guide_count"],0)
         self.assertTrue(all(row["guide_status"]=="NOT_CREATED" for row in result["videos"]))
+        self.assertTrue(all(row["teacher_model"]=="GPT-6" and row["student_model"]=="Buddy" for row in result["videos"]))
+        self.assertTrue(all(row["authoring_prompt"].endswith("freecodecamp-video-study-guide-authoring.md") for row in result["videos"]))
         self.assertIn("not a summary",result["truth_boundary"])
 
     def test_transcript_requires_all_three_separate_permissions_and_valid_hash(self):
@@ -46,6 +48,8 @@ class StudyGuideQueueTests(unittest.TestCase):
             self.assertEqual(result["authorized_for_guide_count"],1)
             self.assertEqual(result["videos"][0]["guide_status"],"READY_TO_AUTHOR")
             self.assertFalse(result["videos"][0]["model_training_authorized"])
+            self.assertFalse(result["videos"][0]["model_training_started"])
+            self.assertEqual(result["videos"][0]["authoring_status"],"ready_for_teacher_authoring")
             row["summary_derivative_permission"]=False
             result=build_work_queue(catalog(),manifest([row]),root=root)
             self.assertEqual(result["authorized_for_guide_count"],0)

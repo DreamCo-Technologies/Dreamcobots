@@ -2,11 +2,15 @@
 
 ## Goal
 
-Run a continuous, evidence-driven learning cycle for all 65 divisions using three source families:
+Run a continuous, evidence-driven learning cycle for all 55 domain divisions, mapped across the 65-MasterBot fleet (including 20 shared-platform MasterBots), using these source families:
 
-1. **freeCodeCamp** — course/video discovery, official learning links and item-level transcript permissions.
-2. **Hugging Face** — dataset/model discovery, task metadata, dataset cards, licenses, gated terms, benchmarks and approved training assets.
-3. **Ollama** — local model execution, model packaging/import, reproducible inference and evaluation of locally available models.
+1. **GitHub repositories** — primary source code, READMEs, tests, notebooks, releases and immutable revisions, subject to license review.
+2. **Hugging Face** — dataset/model/Space discovery, task metadata, cards, licenses, gated terms, benchmarks and approved training assets.
+3. **freeCodeCamp** — course/video discovery, official learning links and item-level transcript permissions.
+4. **O*NET and official workforce sources** — occupation/task definitions and task-to-skill study paths.
+5. **Official procurement and public-service sources** — government sales, grants, contracting and community-service learning with eligibility and human-review safeguards.
+6. **Ollama** — local model execution, model packaging/import, reproducible inference and evaluation of locally available models.
+7. **User-owned data** — separately registered and used only under the user's purpose-specific consent.
 
 The runtime policy is `config/buddy-continuous-study-policy.json`. It schedules work 24/7 but must pause when there is no authorized content, no available compute, a budget cap is reached, or a required evaluator is unavailable. It must not spin endlessly or incur unapproved paid costs.
 
@@ -28,7 +32,7 @@ The transcript pipeline must:
 
 ## Continuous daily study schedule
 
-- All 65 divisions receive five candidate lesson slots each day: 325 planned slots/day.
+- All 55 domain divisions receive five candidate lesson slots each day: 275 planned domain-lesson slots/day. The 65-MasterBot fleet is mapped to those curricula through the crosswalk; unresolved or unapproved ownership mappings do not receive privileged routing or training assignments.
 - Buddy diagnoses each division's benchmark gaps and prerequisites before choosing material.
 - The study worker prioritizes high expected learning gain per minute and rotates fairly across divisions.
 - A lesson moves through source review, study-guide generation, sandbox exercise, targeted test, unseen holdout, regression and evidence ledger.
@@ -85,9 +89,9 @@ Per division, the proposed research path is:
 
 A 45M model is a useful compact research model, not a frontier GPT-5 system. Reaching similar behavior cannot be inferred from parameter count. It requires independent evidence across capability, reliability, safety and scale.
 
-### One shared engine, 65 division targets
+### One shared engine, 65 MasterBot model targets
 
-Keep one tested training codebase and architecture generator. Generate 65 division-specific configurations, datasets, evaluation suites and model cards from the canonical 65-division registry. Do not silently share training data across divisions: each corpus item must be rights-cleared and routed under its approved scope. If compute is constrained, first train and validate one representative pilot; scale to the remaining divisions only after measured cost, throughput and quality justify it. Division adapters may be compared with independent full models, but do not claim they are equivalent.
+Keep one tested training codebase and architecture generator. Generate 55 domain-division curriculum configurations from the canonical 55-domain registry. Separately, generate up to 65 MasterBot model blueprints from the canonical 65-MasterBot registry, then connect them to domain curricula only through reviewed crosswalk entries. Do not treat 65 MasterBots as 65 domain divisions. Do not silently share training data across divisions: each corpus item must be rights-cleared and routed under its approved scope. If compute is constrained, first train and validate one representative pilot; scale to the remaining divisions only after measured cost, throughput and quality justify it. Division adapters may be compared with independent full models, but do not claim they are equivalent.
 
 ## Original Buddy Bootcamp course factory
 
@@ -130,7 +134,7 @@ The Ollama adapter is `buddy.learning.ollama_runtime.OllamaLocalRuntime`. It acc
 
 ### Reference 45M-class architecture blueprint
 
-The architecture generator `tools/build_division_45m_model_blueprints.py` builds one design-only configuration per canonical division. The reference configuration is:
+The architecture generator `tools/build_division_45m_model_blueprints.py` builds one design-only configuration per canonical MasterBot. The reference configuration is:
 - 384 hidden width, 19 decoder blocks, 6 attention heads (64 dimensions/head)
 - 1,536 SwiGLU intermediate width, 512-token vocabulary and 1,024-token context
 - fused Q/K/V plus output projection, RoPE, pre-norm RMSNorm, no linear biases
@@ -140,6 +144,15 @@ For this explicit no-bias architecture, the count is:
 
 `vocab × hidden + layers × (4 × hidden² + 3 × hidden × intermediate + 2 × hidden) + hidden`
 
-That yields **45,038,208 trainable parameters** per blueprint, about 45.038M. The generator validates all 65 division IDs and uploads a JSON blueprint artifact. This is an architecture calculation—not a trained model, not a 45M weight file, and not evidence of GPT-5-level capability. The output intentionally leaves tokenizer/weight hashes and authorized dataset manifests empty and sets training approval false.
+That yields **45,038,208 trainable parameters** per blueprint, about 45.038M. The generator validates all 65 MasterBot IDs and writes a JSON blueprint artifact. This is an architecture calculation—not a trained model, not a 45M weight file, and not evidence of GPT-5-level capability. The output intentionally leaves tokenizer/weight hashes and authorized dataset manifests empty and sets training approval false.
 
 The separate Ollama and blueprint workflows validate the adapter contract and exact parameter arithmetic. They do not incur GPU charges or start a training run.
+
+
+## User-designated summary library integration
+
+Every approved source guide is converted into the `dreamco.buddy_learning_package.v1` format by `tools/organize_buddy_learning_assets.py`. The package retains the original source revision, rights evidence and attribution, extracts the best knowledge, and includes a sequenced study path, examples, exercises, answer key, knowledge checks, capstone and spaced review. The user is recorded as the designated owner of original DreamCo-authored instructional expression, subject to applicable law, contributor agreements and upstream license terms; third-party materials remain owned by their respective rightsholders.
+
+The adapter `buddy.learning.dreamco_summary_source` routes eligible packages into the existing `buddy.learning.study_resource_scheduler`. It validates canonical division and asset IDs, source revisions and rights before returning a study plan. Progress events are append-only and evidence-linked; model-training events additionally require the package's explicit asset-level training permission. A package is queued, not studied, until Buddy completes the learning activity and evidence is recorded. Mastery requires independent assessment and capstone evidence.
+
+The current source rights manifest and user-data manifest are empty. Therefore the pipeline correctly produces an empty or partial approved-guide library until sources and user data are individually authorized and guides are completed and reviewed. This is not a claim that 1,000 summaries, every Hugging Face artifact, or all transcripts already exist.

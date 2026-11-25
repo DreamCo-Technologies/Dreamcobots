@@ -55,3 +55,12 @@ Prefer retrieval and tool improvements before weight updates when knowledge chan
 `tools/build_dreamco_training_factory.py` produces a 65-lane plan from pinned configuration files. It does not create training examples, download source data, approve rights, provision PostgreSQL/S3/queues, run a model, or change weights. The current dataset hub uses local SQLite/content-addressed objects; production shared storage remains a separate integration gate.
 
 A plan, catalog entry, CI success, dry run or curriculum count is not training evidence. A model is considered trained only when the approved runner records the exact dataset/model/tokenizer revisions, compute allocation, seed, checkpoint hashes, logs, baseline/post-training results and independent review.
+
+
+## Buddy University connection
+
+The training-factory planner now reads `config/buddy-university-curriculum.json`, the freeCodeCamp roadmap, workforce/entrepreneurship tracks and government/community curriculum. It validates the 45 academic/professional knowledge domains, four academic levels and ten shared-core subjects, then attaches shared-core course references to all 65 MasterBot lanes and suggests relevant domain course routes from each lane's reviewed subject terms. The plan reports 190 course blueprints (45 × 4 levels + 10 shared-core courses). Domain routes are suggestions requiring owner review; unresolved MasterBots are not silently assigned a primary domain.
+
+ChatGPT/GPT-6 is the teacher and Buddy is the student. The course blueprint contains an instructional sequence and required assessments, but is not itself an authored lesson, source guide, study attempt, training example or proof of mastery. The university map separately connects all 55 canonical domain divisions to 45 knowledge domains, source families, freeCodeCamp items, Hugging Face subjects and O*NET tasks.
+
+The weekly first-party training-data workflow validates that these university course references are present in the 65-lane plan. It still does not authorize third-party data, ingest private user data, or start training. All 65 model identities remain `SPECIFIED_NOT_TRAINED` until a rights-approved run produces checkpoint and independent evaluation evidence.

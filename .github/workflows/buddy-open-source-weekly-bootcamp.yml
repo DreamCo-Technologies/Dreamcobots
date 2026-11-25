@@ -5,21 +5,110 @@ on:
     - cron: "17 9 * * 1"
   pull_request:
     paths:
+      - "tests/test_freecodecamp_study_guides.py"
+      - "tools/build_freecodecamp_study_guides.py"
+      - "config/freecodecamp-detailed-video-study-guide.schema.json"
+      - "config/authorized-transcripts/manifest.json"
+      - "docs/BUDDY_AI_COLLEGE_TRAINING_STANDARD.md"
+      - "docs/BUDDY_CAPABILITY_MASTERY_AND_REVENUE_CURRICULUM.md"
       - "config/buddy-open-source-bootcamp.json"
-      - "tools/discover_open_source_bootcamp_sources.py"
-      - "tools/build_buddy_source_study_queue.py"
+      - "config/buddy-university-curriculum.json"
+      - "config/buddy-college-curriculum.json"
+      - "config/freecodecamp-complete-learning-path.json"
+      - "tests/test_huggingface_subject_taxonomy.py"
+      - "config/buddy-agentic-occupation-playbook.schema.json"
+      - "config/freecodecamp-complete-learning-path.json"
+      - "tools/sync_freecodecamp_catalog.py"
       - "config/buddy-source-study-guide.schema.json"
       - "config/buddy-source-rights-manifest.json"
       - "config/buddy-authorized-media-rights.json"
+      - "config/buddy-workforce-entrepreneurship-bootcamp.json"
+      - "config/buddy-government-community-enterprise-curriculum.json"
+      - "config/buddy-onet-occupation-guide.schema.json"
+      - "config/buddy-user-learning-data-manifest.json"
+      - "config/buddy-learning-package.schema.json"
+      - "config/buddy-continuous-study-policy.json"
+      - "config/buddy_1000_source_learning_policy.json"
+      - "buddy/bootcamp/sources/MULTI_SOURCE_STUDY_AND_MODEL_BUILD.md"
+      - "tools/discover_open_source_bootcamp_sources.py"
+      - "tools/discover_huggingface_subject_taxonomy.py"
+      - "tools/build_buddy_source_study_queue.py"
       - "tools/process_authorized_bootcamp_media.py"
+      - "tools/build_onet_task_curricula.py"
+      - "tools/fetch_onet_task_curricula.py"
+      - "tools/build_government_sales_pipeline.py"
+      - "tools/build_buddy_self_bootcamp.py"
+      - "tools/build_buddy_university_curriculum.py"
+      - "tools/build_buddy_university_daily_plan.py"
+      - "tools/organize_buddy_learning_assets.py"
+      - "buddy/learning/dreamco_summary_source.py"
+      - "buddy/bootcamp/README.md"
+      - "buddy/bootcamp/prompts/buddy-university-teacher-authoring.md"
+      - "buddy/bootcamp/prompts/open-source-study-guide-authoring.md"
+      - "tests/test_buddy_self_bootcamp.py"
+      - "tests/test_buddy_university_curriculum.py"
+      - "tests/test_buddy_university_daily_plan.py"
+      - "tests/test_onet_task_curricula.py"
+      - "tests/test_bootcamp_discovery.py"
+      - "tests/test_government_sales_pipeline.py"
       - "tests/test_buddy_source_study_queue.py"
       - "tests/test_process_authorized_bootcamp_media.py"
+      - "tests/test_organize_buddy_learning_assets.py"
+      - "tests/test_dreamco_summary_source.py"
+      - "data/buddy-study-guides/**"
+      - "shared/division-production-contract.ts"
+      - "docs/BUDDY_OPEN_SOURCE_MULTIMODAL_BOOTCAMP.md"
+      - "docs/BUDDY_LEARNING_ASSETS_AND_PROGRESS.md"
       - ".github/workflows/buddy-open-source-weekly-bootcamp.yml"
   push:
     branches: [main]
     paths:
+      - "tests/test_freecodecamp_study_guides.py"
+      - "tools/build_freecodecamp_study_guides.py"
+      - "config/freecodecamp-detailed-video-study-guide.schema.json"
+      - "config/authorized-transcripts/manifest.json"
+      - "docs/BUDDY_AI_COLLEGE_TRAINING_STANDARD.md"
+      - "docs/BUDDY_CAPABILITY_MASTERY_AND_REVENUE_CURRICULUM.md"
+      - "tools/build_buddy_university_curriculum.py"
+      - "tools/build_buddy_university_daily_plan.py"
+      - "buddy/bootcamp/prompts/buddy-university-teacher-authoring.md"
+      - "tests/test_buddy_university_daily_plan.py"
+      - "tests/test_buddy_university_curriculum.py"
+      - "tests/test_huggingface_subject_taxonomy.py"
+      - "config/freecodecamp-complete-learning-path.json"
+      - "config/buddy-university-curriculum.json"
       - "config/buddy-open-source-bootcamp.json"
+      - "config/buddy-source-study-guide.schema.json"
+      - "config/buddy-source-rights-manifest.json"
+      - "config/buddy-authorized-media-rights.json"
+      - "config/buddy-workforce-entrepreneurship-bootcamp.json"
+      - "config/buddy-government-community-enterprise-curriculum.json"
+      - "config/buddy-onet-occupation-guide.schema.json"
+      - "config/buddy-user-learning-data-manifest.json"
+      - "config/buddy-learning-package.schema.json"
       - "tools/discover_open_source_bootcamp_sources.py"
+      - "tools/discover_huggingface_subject_taxonomy.py"
+      - "tools/build_buddy_source_study_queue.py"
+      - "tools/process_authorized_bootcamp_media.py"
+      - "tools/build_onet_task_curricula.py"
+      - "tools/fetch_onet_task_curricula.py"
+      - "tools/build_government_sales_pipeline.py"
+      - "tools/build_buddy_self_bootcamp.py"
+      - "tools/organize_buddy_learning_assets.py"
+      - "buddy/learning/dreamco_summary_source.py"
+      - "buddy/bootcamp/README.md"
+      - "tests/test_buddy_self_bootcamp.py"
+      - "tests/test_onet_task_curricula.py"
+      - "tests/test_bootcamp_discovery.py"
+      - "tests/test_government_sales_pipeline.py"
+      - "tests/test_buddy_source_study_queue.py"
+      - "tests/test_process_authorized_bootcamp_media.py"
+      - "tests/test_organize_buddy_learning_assets.py"
+      - "tests/test_dreamco_summary_source.py"
+      - "data/buddy-study-guides/**"
+      - "shared/division-production-contract.ts"
+      - "docs/BUDDY_OPEN_SOURCE_MULTIMODAL_BOOTCAMP.md"
+      - "docs/BUDDY_LEARNING_ASSETS_AND_PROGRESS.md"
       - ".github/workflows/buddy-open-source-weekly-bootcamp.yml"
 
 permissions:
@@ -33,7 +122,7 @@ jobs:
   discover-and-build-weekly-learning-queue:
     if: github.repository == 'DreamCo-Technologies/Dreamcobots'
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 90
     steps:
       - uses: actions/checkout@v4
         with:
@@ -41,24 +130,80 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-      - name: Validate bootcamp configuration and discovery script
+      - name: Install Hugging Face taxonomy client
+        run: python -m pip install --disable-pip-version-check "huggingface_hub>=1.0,<3" yt-dlp "yt-dlp==2026.11.23"
+      - name: Validate bootcamp configuration and discovery scripts
         run: |
           python -m json.tool config/buddy-open-source-bootcamp.json > /dev/null
+          python -m json.tool config/buddy-university-curriculum.json > /dev/null
+          python -m json.tool config/buddy-source-study-guide.schema.json > /dev/null
+          python -m json.tool config/buddy-college-curriculum.json > /dev/null
+          python -m json.tool config/freecodecamp-complete-learning-path.json > /dev/null
+          python -m json.tool config/freecodecamp-detailed-video-study-guide.schema.json > /dev/null
+          python -m json.tool config/authorized-transcripts/manifest.json > /dev/null
+          python -m json.tool config/buddy-agentic-occupation-playbook.schema.json > /dev/null
           python -m json.tool config/buddy-source-study-guide.schema.json > /dev/null
           python -m json.tool config/buddy-source-rights-manifest.json > /dev/null
           python -m json.tool config/buddy-authorized-media-rights.json > /dev/null
-          python -m py_compile tools/discover_open_source_bootcamp_sources.py tools/build_buddy_source_study_queue.py tools/process_authorized_bootcamp_media.py
+          python -m json.tool config/buddy-workforce-entrepreneurship-bootcamp.json > /dev/null
+          python -m json.tool config/buddy-government-community-enterprise-curriculum.json > /dev/null
+          python -m json.tool config/buddy-onet-occupation-guide.schema.json > /dev/null
+          python -m json.tool config/buddy-learning-package.schema.json > /dev/null
+          python -m json.tool config/buddy-user-learning-data-manifest.json > /dev/null
+          python -m json.tool config/buddy-continuous-study-policy.json > /dev/null
+          python -m json.tool config/buddy_1000_source_learning_policy.json > /dev/null
+          python -m py_compile tools/discover_open_source_bootcamp_sources.py tools/discover_huggingface_subject_taxonomy.py tools/build_buddy_source_study_queue.py tools/process_authorized_bootcamp_media.py tools/build_onet_task_curricula.py tools/fetch_onet_task_curricula.py tools/build_government_sales_pipeline.py tools/build_buddy_self_bootcamp.py tools/build_buddy_university_curriculum.py tools/build_buddy_university_daily_plan.py tools/organize_buddy_learning_assets.py buddy/learning/dreamco_summary_source.py tools/sync_freecodecamp_catalog.py
       - name: Run source rights and guide-queue tests
         run: python -m unittest discover -s tests -p 'test_buddy_source_study_queue.py' -v
       - name: Run local media rights and hash tests
         run: python -m unittest discover -s tests -p 'test_process_authorized_bootcamp_media.py' -v
+      - name: Run O*NET task curriculum tests
+        run: python -m unittest discover -s tests -p 'test_onet_task_curricula.py' -v
+      - name: Run freeCodeCamp transcript rights and guide-queue tests
+        run: python -m unittest discover -s tests -p 'test_freecodecamp_study_guides.py' -v
+      - name: Run Hugging Face taxonomy tests
+        run: python -m unittest discover -s tests -p 'test_huggingface_subject_taxonomy.py' -v
+      - name: Run Hugging Face and O*NET discovery regression tests
+        run: python -m unittest discover -s tests -p 'test_bootcamp_discovery.py' -v
+      - name: Run sales and procurement pipeline tests
+        run: python -m unittest discover -s tests -p 'test_government_sales_pipeline.py' -v
+      - name: Run Buddy self-authoring bootcamp tests
+        run: python -m unittest discover -s tests -p 'test_buddy_self_bootcamp.py' -v
+      - name: Run Buddy University curriculum crosswalk tests
+        run: python -m unittest discover -s tests -p 'test_buddy_university_curriculum.py' -v
+      - name: Run Buddy University daily assignment tests
+        run: python -m unittest discover -s tests -p 'test_buddy_university_daily_plan.py' -v
+      - name: Run summary-to-division learning organization tests
+        run: python -m unittest discover -s tests -p 'test_organize_buddy_learning_assets.py' -v
+      - name: Run DreamCo summary scheduler adapter tests
+        run: python -m unittest discover -s tests -p 'test_dreamco_summary_source.py' -v
+      - name: Refresh live Hugging Face model, dataset and Space task taxonomy
+        run: |
+          python tools/discover_huggingface_subject_taxonomy.py \
+            --out "$RUNNER_TEMP/buddy-huggingface-taxonomy.json"
       - name: Discover GitHub repositories and Hugging Face subjects
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: |
           python tools/discover_open_source_bootcamp_sources.py \
             --out-dir "$RUNNER_TEMP/buddy-bootcamp-weekly" \
+            --taxonomy-file "$RUNNER_TEMP/buddy-huggingface-taxonomy.json" \
             --hf-limit-per-subject 20
+      - name: Download current public O*NET task export and build occupation curricula
+        run: python tools/fetch_onet_task_curricula.py --out-dir "$RUNNER_TEMP/buddy-bootcamp-weekly/onet"
+      - name: Refresh complete freeCodeCamp public video metadata inventory
+        run: |
+          mkdir -p "$RUNNER_TEMP/buddy-bootcamp-weekly"
+          python tools/sync_freecodecamp_catalog.py --out "$RUNNER_TEMP/buddy-bootcamp-weekly/freecodecamp-catalog.json"
+          python tools/sync_freecodecamp_catalog.py --check --out "$RUNNER_TEMP/buddy-bootcamp-weekly/freecodecamp-catalog.json"
+
+      - name: Build rights-gated freeCodeCamp detailed video guide queue
+        run: |
+          python tools/build_freecodecamp_study_guides.py \
+            --catalog "$RUNNER_TEMP/buddy-bootcamp-weekly/freecodecamp-catalog.json" \
+            --manifest config/authorized-transcripts/manifest.json \
+            --guides-dir buddy/bootcamp/sources/freecodecamp/study-guides \
+            --out-dir "$RUNNER_TEMP/buddy-bootcamp-weekly/freecodecamp-study-guides"
       - name: Build rights-gated source study queue
         if: always()
         run: |
@@ -69,6 +214,55 @@ jobs:
           else
             echo "Discovery snapshot missing; source study queue not generated."
           fi
+      - name: Build O*NET task-by-task sales and procurement playbooks
+        run: |
+          printf '{"opportunities":[]}\n' > "$RUNNER_TEMP/buddy-bootcamp-weekly/empty-opportunities.json"
+          python tools/build_government_sales_pipeline.py \
+            --onet "$RUNNER_TEMP/buddy-bootcamp-weekly/onet/onet-task-curricula.json" \
+            --opportunities "$RUNNER_TEMP/buddy-bootcamp-weekly/empty-opportunities.json" \
+            --out "$RUNNER_TEMP/buddy-bootcamp-weekly/onet-sales-playbooks.json"
+      - name: Build division-specific Buddy self-authoring bootcamp plan
+        run: |
+          python tools/build_buddy_self_bootcamp.py \
+            --division-source shared/division-production-contract.ts \
+            --hf-taxonomy "$RUNNER_TEMP/buddy-huggingface-taxonomy.json" \
+            --onet "$RUNNER_TEMP/buddy-bootcamp-weekly/onet/onet-task-curricula.json" \
+            --source-queue "$RUNNER_TEMP/buddy-bootcamp-weekly/source-study-queue.json" \
+            --workforce config/buddy-workforce-entrepreneurship-bootcamp.json \
+            --government config/buddy-government-community-enterprise-curriculum.json \
+            --college-curriculum config/buddy-university-curriculum.json \
+            --freecodecamp-path config/freecodecamp-complete-learning-path.json \
+            --out-dir "$RUNNER_TEMP/buddy-bootcamp-weekly"
+
+      - name: Build cross-disciplinary Buddy University curriculum map
+        run: |
+          python tools/build_buddy_university_curriculum.py \
+            --division-source shared/division-production-contract.ts \
+            --huggingface-taxonomy "$RUNNER_TEMP/buddy-huggingface-taxonomy.json" \
+            --bootcamp-config config/buddy-open-source-bootcamp.json \
+            --freecodecamp-roadmap config/freecodecamp-complete-learning-path.json \
+            --onet-curricula "$RUNNER_TEMP/buddy-bootcamp-weekly/onet/onet-task-curricula.json" \
+            --university-curriculum config/buddy-university-curriculum.json \
+            --freecodecamp-catalog "$RUNNER_TEMP/buddy-bootcamp-weekly/freecodecamp-catalog.json" \
+            --workforce-curriculum config/buddy-workforce-entrepreneurship-bootcamp.json \
+            --government-curriculum config/buddy-government-community-enterprise-curriculum.json \
+            --out-dir "$RUNNER_TEMP/buddy-bootcamp-weekly/university"
+
+      - name: Organize approved summaries into division study paths and progress ledger
+        run: |
+          python tools/organize_buddy_learning_assets.py \
+            --guides-dir data/buddy-study-guides \
+            --divisions "$RUNNER_TEMP/buddy-bootcamp-weekly/buddy-division-names.json" \
+            --user-data-manifest config/buddy-user-learning-data-manifest.json \
+            --out-dir "$RUNNER_TEMP/buddy-bootcamp-weekly/learning-organization"
+
+      - name: Build five-lesson-per-division Buddy University daily plan
+        run: |
+          python tools/build_buddy_university_daily_plan.py \
+            --university-map "$RUNNER_TEMP/buddy-bootcamp-weekly/university/buddy-university-learning-map.json" \
+            --organization "$RUNNER_TEMP/buddy-bootcamp-weekly/learning-organization/buddy-learning-organization.json" \
+            --out "$RUNNER_TEMP/buddy-bootcamp-weekly/university/buddy-university-daily-plan.json"
+
       - name: Publish weekly discovery report
         if: always()
         run: |

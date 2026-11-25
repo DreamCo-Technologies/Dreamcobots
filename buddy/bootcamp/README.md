@@ -2,6 +2,8 @@
 
 The bootcamp is a closed-loop learning program for Buddy. It does not claim mastery because a lesson was read; it requires measurable benchmark evidence.
 
+See the [Capability Mastery and Revenue Operations Curriculum](../../docs/BUDDY_CAPABILITY_MASTERY_AND_REVENUE_CURRICULUM.md) for the complete capability map, commercial task playbooks, division model-weight pathway, per-run learning order, resource-summary standard, benchmark-guide requirements, and repository-wide completion gates.
+
 ## Daily cycle
 
 1. Inspect benchmark history.
@@ -137,3 +139,38 @@ python -m unittest discover -s tests -p 'test_freecodecamp_study_guides.py' -v
 ```
 
 The weekly workflow publishes queue coverage as an artifact. Metadata-only videos remain pending; the generator never invents a summary from a title. A transcript must have separately evidenced study, derivative-summary and evaluation permissions before Buddy may author and retain a detailed guide. Model training remains a separate permission.
+
+
+## DreamCo summary library integration
+
+Approved summary packages created by `tools/organize_buddy_learning_assets.py` are consumable by `buddy.learning.dreamco_summary_source`. This adapter uses the existing evidence-driven `buddy.learning.study_resource_scheduler` rather than introducing a second scheduler.
+
+Build the organization artifact first, then use the adapter:
+- `resources_for_division(canonical_division_name, organization_path)` exposes only packages whose study, derivative-summary, and evaluation permissions are explicitly true.
+- `select_next_for_division(...)` returns the chosen DreamCo summary, full study path, assessment, source revision, rights, and ownership record with status `queued_not_studied`.
+- `append_progress_event(...)` writes append-only JSONL evidence events. Training events are checked against the canonical organization artifact for explicit asset-level training permission. Mastery cannot be self-reported through this event writer; it must come from the independent evidence verifier.
+
+The adapter does not create a guide, fetch private user data, execute model training, or award mastery. The organizer artifact must be generated from validated, approved guides. User-owned data remains in its separate registry and is not copied into the summary packages.
+
+
+## User-designated ownership
+
+Original summaries, explanations, exercises, and study-path structure authored for the user's DreamCo library are recorded as user-designated assets, subject to applicable law, contributor agreements, and upstream license terms. Third-party source materials keep their original ownership and license; source links and attribution remain attached to each summary. User-provided data remains user-owned and separately permissioned.
+
+
+## Summary authoring and execution
+
+Use `buddy/bootcamp/prompts/open-source-study-guide-authoring.md` for original multi-source guide authoring. It requires the complete permitted source bundle, pinned revision, item-level rights evidence, original explanations and exercises, defensible division mapping, and human review. It explicitly blocks metadata-only summaries and keeps training permission separate.
+
+The summary adapter exposes `execute_study_plan(...)`, which runs the approved package through the existing permissioned study worker and its temporary-workspace cleanup boundary. It allows read-only source access only. It records study, lesson, quiz, exercise, capstone-submission and remediation events when the callback supplies evidence; lesson and capstone pass events additionally require an independent evaluator identifier. It never performs model-weight training or awards mastery. Mastery remains a separate evidence-verifier decision.
+
+
+## Buddy AI College and cross-platform subject coverage
+
+The curriculum authority is `config/buddy-university-curriculum.json`; the build standard is `docs/BUDDY_AI_COLLEGE_TRAINING_STANDARD.md`. The university builder maps the 45 knowledge domains, all 55 canonical divisions, Hugging Face model/dataset/Space subjects, freeCodeCamp specialist tracks and video categories, and imported O*NET task statements. It also routes source families outside both platforms, including official vendor documentation, open academic research, government/public data, professional standards and community practice.
+
+ChatGPT is the teacher and Buddy is the student. Each course progresses through foundations, practitioner, advanced and specialist/research levels with lectures/original summaries, worked examples, sandbox labs, independent exercises, projects, retrieval checks, unseen transfer, capstones, remediation and teach-back. The existing scheduler and rights-gated summary adapter remain the execution paths; the university map is a crosswalk and does not claim the source has been studied.
+
+For every occupation/task/venture, use the O*NET task-playbook brief to investigate the actual tools and software relevant to that task, including professional/high-end products, open-source and local alternatives, verified pricing/licensing, APIs, integrations, permissions, safety, operating procedures, unit economics, buyer research and sales/delivery workflows. Never invent product capabilities or attach irrelevant software.
+
+Ownership is recorded as user-designated ownership of original DreamCo-authored instructional expression and structure, subject to applicable law, actual authorship, contributor agreements and upstream licenses. User-provided data remains user-owned, private and separately consented for study, summaries, evaluation, retention and training. Third-party source material and model weights retain their original rights and attribution.
