@@ -57,7 +57,7 @@ def validate_guide(guide: dict[str, Any], video: dict[str, Any], rights: dict[st
         errors.append("unsupported guide schema")
     if guide.get("video_id") != video.get("video_id"):
         errors.append("guide video ID does not match catalog")
-    source = guide.get("source") or {}
+    source = guide.get("source") if isinstance(guide.get("source"), dict) else {}
     if source.get("url") != video.get("url") or source.get("title") != video.get("title"):
         errors.append("guide source title or URL does not match canonical catalog")
     if source.get("transcript_sha256") != rights.get("transcript_sha256"):
@@ -68,7 +68,8 @@ def validate_guide(guide: dict[str, Any], video: dict[str, Any], rights: dict[st
     evidence = str(rights.get("rights_evidence_ref", "")).strip()
     if not evidence:
         errors.append("missing rights evidence reference")
-    if guide.get("rights", {}).get("evidence_ref") != evidence:
+    guide_rights = guide.get("rights") if isinstance(guide.get("rights"), dict) else {}
+    if guide_rights.get("evidence_ref") != evidence:
         errors.append("guide rights evidence reference mismatch")
     for section in REQUIRED_SECTIONS:
         if section not in guide or guide[section] in (None, "", [], {}):
@@ -80,7 +81,11 @@ def validate_guide(guide: dict[str, Any], video: dict[str, Any], rights: dict[st
         errors.append("detailed explanation must contain at least 500 characters")
     if len(guide.get("chapter_summaries", [])) < 1:
         errors.append("at least one timestamped chapter summary is required")
-    starts = [x.get("start_seconds") for x in guide.get("chapter_summaries", [])]
+    chapters = guide.get("chapter_summaries", [])
+    if not isinstance(chapters, list):
+        errors.append("chapter summaries must be a list")
+        chapters = []
+    starts = [x.get("start_seconds") if isinstance(x, dict) else None for x in chapters]
     if any(not isinstance(x, int) or x < 0 for x in starts) or starts != sorted(starts):
         errors.append("chapter timestamps must be non-negative integers in ascending order")
     if len(guide.get("learning_objectives", [])) < 3:
