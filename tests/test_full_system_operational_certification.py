@@ -36,9 +36,16 @@ class FullSystemOperationalCertificationTests(unittest.TestCase):
     def test_full_certification_refreshes_fleet_catalog_before_verification_and_uploads_logs(self):
         workflow = WORKFLOW.read_text(encoding="utf-8")
         refresh = workflow.index("node --import tsx tools/generate_bot_fleet_catalog.ts")
+        repository_registry = workflow.index("python3 tools/generate_repository_test_registry.py")
+        fleet_report = workflow.index("node --import tsx tools/run_bot_fleet_e2e.ts --write-only")
         verification = workflow.index("npx tsx tools/run_universal_verification.ts --production")
-        self.assertLess(refresh, verification)
+        self.assertLess(refresh, repository_registry)
+        self.assertLess(repository_registry, fleet_report)
+        self.assertLess(fleet_report, verification)
         self.assertIn("tmp/dreamco-verification/logs/**", workflow)
+        fleet_script = (ROOT / "tools" / "run_bot_fleet_e2e.ts").read_text(encoding="utf-8")
+        self.assertIn('process.argv.includes("--write-only")', fleet_script)
+        self.assertIn("!writeOnly &&", fleet_script)
 
     def test_connection_claims_require_runtime_probe(self):
         self.assertIn("successful runtime probe", self.program["connection_rule"].lower())
