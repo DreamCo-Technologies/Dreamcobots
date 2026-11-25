@@ -119,8 +119,24 @@ def suggest_divisions(term: str, profiles: list[dict[str, Any]], limit: int = 4)
     return [{"division": name, "score": score, "mapping_status": "suggested_requires_owner_review"}
             for score, name in positive[:limit]]
 
+
+AGENT_CAPABILITY_CATALOG = {
+    "research_and_intelligence": ["source discovery", "web research", "public-record research", "source verification", "citation management", "competitive intelligence", "document extraction", "OCR", "RAG", "knowledge graphs"],
+    "software_and_platform_engineering": ["Python", "JavaScript/TypeScript", "Java", "C/C++", "SQL", "Git", "GitHub", "Docker", "Kubernetes", "Linux", "CI/CD", "API design", "testing", "observability"],
+    "ai_and_data": ["PyTorch", "TensorFlow", "scikit-learn", "Hugging Face", "Jupyter", "MLflow", "Airflow", "dbt", "Spark", "DuckDB", "PostgreSQL", "vector databases", "model evaluation", "fine-tuning", "inference optimization"],
+    "office_and_business_operations": ["spreadsheets", "documents", "presentations", "email", "calendar", "forms", "e-signature", "accounting", "ERP", "inventory", "procurement", "contract lifecycle"],
+    "sales_and_customer_success": ["CRM", "lead enrichment", "sales engagement", "CPQ", "proposal automation", "customer support", "ticketing", "knowledge base", "call analytics"],
+    "marketing_and_commerce": ["CMS", "SEO", "analytics", "tag management", "email marketing", "social publishing", "ad platforms", "e-commerce storefronts", "product feeds", "affiliate tracking", "payments", "subscription billing"],
+    "design_and_media": ["Figma", "Canva", "Adobe Creative Cloud", "video editing", "audio editing", "3D/CAD", "prototyping", "accessibility testing", "digital asset management"],
+    "automation_and_integration": ["workflow orchestration", "webhooks", "OAuth", "MCP servers", "RPA", "iPaaS", "message queues", "schedulers", "secrets vaults", "event-driven systems"],
+    "security_and_governance": ["IAM", "SSO", "least privilege", "vulnerability scanning", "SAST/DAST", "SIEM", "DLP", "audit logging", "privacy impact assessment", "backup and recovery"],
+    "delivery_and_management": ["Agile", "Scrum", "Kanban", "roadmapping", "project portfolio management", "SLA/SLO", "quality management", "risk registers", "change management"],
+    "field_and_physical_operations": ["scheduling", "dispatch", "routing", "work orders", "asset maintenance", "safety checklists", "IoT/SCADA awareness", "CAD/BIM", "quality inspection"]
+}
 def build(profiles: list[dict[str, Any]], hf: dict[str, Any], fcc: dict[str, Any],
-          onet: dict[str, Any], taxonomy: dict[str, Any]) -> dict[str, Any]:
+          onet: dict[str, Any], taxonomy: dict[str, Any], college: dict[str, Any] | None = None) -> dict[str, Any]:
+    college = college or {}
+    college_domains = college.get("domains", [])
     names = {row["division"] for row in profiles}
     hf_terms = sorted(set(taxonomy.get("subject_terms", [])) | set(hf.get("discovery", {}).get("hugging_face_subjects", [])))
     subject_rows = []
@@ -133,7 +149,10 @@ def build(profiles: list[dict[str, Any]], hf: dict[str, Any], fcc: dict[str, Any
 
     fcc_rows = []
     division_fcc: dict[str, list[str]] = defaultdict(list)
-    for track in fcc.get("specialist_track_details", []):
+    all_fcc_tracks = list(fcc.get("specialist_track_details", []))
+    for certification in fcc.get("official_platform_inventory", {}).get("core_certifications", []) + fcc.get("official_platform_inventory", {}).get("additional_certifications", []):
+        all_fcc_tracks.append({**certification, "id": certification.get("id"), "related_divisions": certification.get("divisions", [])})
+    for track in all_fcc_tracks:
         source_related = track.get("related_divisions", [])
         related = []
         for source_division in source_related:
@@ -153,6 +172,23 @@ def build(profiles: list[dict[str, Any]], hf: dict[str, Any], fcc: dict[str, Any
         for division in related:
             division_fcc[division].append(str(track.get("id")))
 
+    fcc_video_rows = []
+    division_fcc_videos: dict[str, list[str]] = defaultdict(list)
+    for category in video_tracks:
+        routes = suggest_divisions(str(category), profiles)
+        related = [row["division"] for row in routes]
+        fcc_video_rows.append({"category": category, "division_ids": related, "mapping_status": routes[0]["mapping_status"]})
+        for division in related:
+            division_fcc_videos[division].append(str(category))
+
+    division_college: dict[str, list[dict[str, Any]]] = defaultdict(list)
+    for domain in college_domains:
+        domain_terms = " ".join([domain.get("id", ""), domain.get("name", ""), *domain.get("tracks", [])])
+        routes = suggest_divisions(domain_terms, profiles, limit=6)
+        for route in routes:
+            division_college[route["division"]].append({"domain_id": domain.get("id"), "name": domain.get("name"),
+                "mapping_status": route["mapping_status"], "score": route["score"]})
+
     division_tasks: dict[str, list[str]] = defaultdict(list)
     task_rows = []
     occupations = onet.get("occupations", [])
@@ -169,9 +205,15 @@ def build(profiles: list[dict[str, Any]], hf: dict[str, Any], fcc: dict[str, Any
                 route_names = ["DreamEducation", "DreamProServices", "CommandCore"]
                 status = "unclassified_shared_review"
             task_ref = f"{code}:{task_id}"
+            playbook = next((x for x in occupation.get("task_playbooks", []) if str(x.get("task_id")) == task_id), {})
+            brief = playbook.get("guide_authoring_brief", {})
             task_rows.append({"task_ref": task_ref, "occupation_code": code, "occupation_title": title,
                               "task_id": task_id, "task": statement, "division_ids": route_names,
-                              "mapping_status": status})
+                              "mapping_status": status, "task_specific_software_categories": brief.get("software_categories_to_assess", []),
+                              "agent_capabilities_to_assess": brief.get("agent_capabilities_to_assess", []),
+                              "detailed_guide_requirements": brief.get("must_include", []),
+                              "commercial_pathway": playbook.get("commercial_pathway", {}),
+                              "community_pathway": playbook.get("community_pathway", {})})
             for division in route_names:
                 division_tasks[division].append(task_ref)
 
@@ -188,6 +230,9 @@ def build(profiles: list[dict[str, Any]], hf: dict[str, Any], fcc: dict[str, Any
                             "AI-literacy-and-agent-collaboration", "research-reproducibility-and-citation"],
             "hugging_face_subjects": sorted(set(division_hf[name])),
             "freecodecamp_tracks": sorted(set(division_fcc[name])),
+            "freecodecamp_video_subject_categories": sorted(set(division_fcc_videos[name])),
+            "college_domains": sorted(division_college[name], key=lambda x: (-x["score"], x["domain_id"] or "")),
+            "agent_capability_catalog": AGENT_CAPABILITY_CATALOG,
             "onet_task_refs": sorted(set(division_tasks[name])),
             "daily_target": {"lessons": 5, "order": ["prerequisites", "new_concept", "worked_example",
                 "deliberate_practice", "retrieval_or_capstone"], "only_count_verified_guides_and_recorded_attempts": True},
@@ -206,10 +251,12 @@ def build(profiles: list[dict[str, Any]], hf: dict[str, Any], fcc: dict[str, Any
             "domain_divisions": len(divisions), "hugging_face_subject_terms": len(hf_terms),
             "hugging_face_subjects_with_suggested_routes": sum(bool(x["routes"]) for x in subject_rows),
             "freecodecamp_tracks": len(fcc_rows), "freecodecamp_certification_phases": len(fcc_phases),
-            "freecodecamp_video_subject_categories": len(video_tracks), "onet_occupations": len(occupations),
+            "freecodecamp_video_subject_categories": len(video_tracks), "college_domains": len(college_domains), "onet_occupations": len(occupations),
             "onet_task_statements": len(task_rows), "onet_tasks_with_division_routes": sum(bool(x["division_ids"]) for x in task_rows),
             "divisions_with_hf_subjects": sum(bool(x["hugging_face_subjects"]) for x in divisions),
             "divisions_with_freecodecamp_tracks": sum(bool(x["freecodecamp_tracks"]) for x in divisions),
+            "divisions_with_freecodecamp_video_categories": sum(bool(x["freecodecamp_video_subject_categories"]) for x in divisions),
+            "divisions_with_college_domains": sum(bool(x["college_domains"]) for x in divisions),
             "divisions_with_onet_tasks": sum(bool(x["onet_task_refs"]) for x in divisions),
         },
         "source_inventory": {
@@ -226,6 +273,9 @@ def build(profiles: list[dict[str, Any]], hf: dict[str, Any], fcc: dict[str, Any
         "freecodecamp_track_routes": fcc_rows,
         "freecodecamp_certification_phases": fcc_phases,
         "freecodecamp_video_subject_categories": video_tracks,
+        "freecodecamp_video_category_routes": fcc_video_rows,
+        "college_domain_routes": [{"domain_id":x.get("id"),"name":x.get("name"),"routes":suggest_divisions(" ".join([x.get("id",""),x.get("name",""),*x.get("tracks",[])]),profiles,limit=6)} for x in college_domains],
+        "agent_capability_catalog": AGENT_CAPABILITY_CATALOG,
         "onet_task_routes": task_rows,
         "divisions": divisions,
         "unclassified_subjects": [x for x in subject_rows if x["mapping_status"] == "unclassified_shared_review"],
@@ -243,12 +293,13 @@ def main() -> int:
     parser.add_argument("--bootcamp-config", required=True)
     parser.add_argument("--freecodecamp-roadmap", required=True)
     parser.add_argument("--onet-curricula", required=True)
+    parser.add_argument("--college-curriculum", required=True)
     parser.add_argument("--out-dir", required=True)
     args = parser.parse_args()
     read = lambda value: json.loads(Path(value).read_text(encoding="utf-8"))
     profiles = division_profiles(Path(args.division_source).read_text(encoding="utf-8"))
     result = build(profiles, read(args.huggingface_taxonomy), read(args.freecodecamp_roadmap),
-                   read(args.onet_curricula), read(args.bootcamp_config))
+                   read(args.onet_curricula), read(args.bootcamp_config), read(args.college_curriculum))
     out = Path(args.out_dir)
     out.mkdir(parents=True, exist_ok=True)
     (out / "buddy-university-learning-map.json").write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
