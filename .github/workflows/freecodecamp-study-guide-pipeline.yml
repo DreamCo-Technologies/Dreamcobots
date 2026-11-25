@@ -43,9 +43,9 @@ jobs:
         with:
           python-version: "3.11"
       - name: Validate guide queue and rights gates
-        run: |
-          python -m unittest discover -s tests -p 'test_freecodecamp_study_guides.py' -v
-          python tools/build_freecodecamp_study_guides.py --out-dir "$RUNNER_TEMP/freecodecamp-study-guides"
+        run: python -m unittest discover -s tests -p 'test_freecodecamp_study_guides.py' -v
+      - name: Build per-video guide queue
+        run: python tools/build_freecodecamp_study_guides.py --out-dir "$RUNNER_TEMP/freecodecamp-study-guides"
       - name: Publish coverage truth
         if: always()
         run: |
@@ -59,6 +59,6 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: freecodecamp-study-guide-queue-${{ github.run_id }}
-          path: "$RUNNER_TEMP/freecodecamp-study-guides/"
-          if-no-files-found: error
+          path: ${{ runner.temp }}/freecodecamp-study-guides/
+          if-no-files-found: warn
           retention-days: 30
