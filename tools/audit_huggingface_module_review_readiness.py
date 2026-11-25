@@ -80,7 +80,7 @@ def audit(guides: dict[str, Any], reviews: dict[str, Any], *, root: Path = ROOT)
             path_status[field] = exists
         citations = row.get("citations")
         citations_ok = isinstance(citations, list) and bool(citations) and all(
-            isinstance(c, dict) and c.get("url", "").startswith("https://")
+            isinstance(c, dict) and isinstance(c.get("url"), str) and c.get("url").startswith("https://")
             and c.get("accessed_at") and c.get("rights_evidence_ref")
             for c in citations
         )
@@ -142,7 +142,7 @@ def main() -> int:
     reviews = json.loads(REVIEWS.read_text(encoding="utf-8"))
     report = audit(guides, reviews)
     args.output.parent.mkdir(parents=True, exist_ok=True)
-    args.output.write_text(json.dumps(report, indent=2, ensure_ascii=False) + "\\n", encoding="utf-8")
+    args.output.write_text(json.dumps(report, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     print(json.dumps({key: report[key] for key in (
         "status", "official_course_reference_count", "module_count",
         "ready_for_study_count", "review_pending_count", "gap_counts",
