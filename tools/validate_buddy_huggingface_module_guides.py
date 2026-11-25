@@ -6,7 +6,7 @@ MAP=ROOT/"config/buddy-huggingface-full-learning-map.json"
 GUIDES=ROOT/"config/buddy-huggingface-18-ecosystem-module-guides.json"
 def validate(source,guides):
  errors=[]
- if source.get("schema")!="dreamco.huggingface_full_learning_map.v1": errors.append("unsupported Hugging Face learning map schema")
+ if source.get("schema")!="dreamco.buddy_huggingface_full_learning_map.v1": errors.append("unsupported Hugging Face learning map schema")
  if guides.get("schema")!="dreamco.huggingface_18_ecosystem_module_guides.v1": errors.append("unsupported module guide schema")
  expected={x.get("id") for x in source.get("ecosystem_modules",[]) if isinstance(x,dict)}
  rows=guides.get("modules",[])
