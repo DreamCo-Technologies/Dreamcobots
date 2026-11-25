@@ -1,0 +1,226 @@
+#!/usr/bin/env python3
+"""Build a living cross-disciplinary university curriculum for every DreamCo division.
+
+The output connects Hugging Face task tags, freeCodeCamp tracks, O*NET tasks,
+and wider academic/professional domains. It records uncertain mappings instead
+of pretending every topic is already covered or approved for model training.
+"""
+from __future__ import annotations
+
+import argparse
+import json
+import re
+from collections import defaultdict
+from pathlib import Path
+from typing import Any
+
+STOP = {"and", "or", "the", "of", "for", "to", "with", "in", "on", "a", "an", "from", "by", "when", "where", "how", "use", "using", "support", "systems", "system", "work", "operations"}
+ALIASES = {
+    "DreamAIInfra": {"ai", "artificial-intelligence", "machine-learning", "deep-learning", "llm", "llms", "model", "models", "inference", "training", "gpu", "transformer", "embedding", "agent", "agents", "multimodal"},
+    "DreamAgents": {"agent", "agents", "autonomous", "orchestration", "tool-use", "mcp", "multi-agent"},
+    "DreamCodeLab": {"code", "coding", "programming", "software", "developer", "development", "computer-science", "algorithm", "frontend", "backend", "web", "mobile", "api", "testing"},
+    "DreamData": {"data", "dataset", "datasets", "database", "sql", "analytics", "statistics", "visualization", "warehouse", "etl", "bi"},
+    "DreamCyber": {"cybersecurity", "security", "privacy", "cryptography", "forensics", "penetration-testing", "network"},
+    "DreamEducation": {"education", "learning", "teaching", "curriculum", "assessment", "tutoring", "language-learning"},
+    "DreamScience": {"science", "scientific", "physics", "chemistry", "biology", "genomics", "astronomy", "mathematics", "research"},
+    "DreamHealth": {"health", "healthcare", "medical", "clinical", "mental-health", "nutrition", "public-health", "pharmacy"},
+    "DreamFinance": {"finance", "financial", "accounting", "banking", "insurance", "tax", "budget", "credit"},
+    "DreamRealEstate": {"real-estate", "property", "housing", "construction", "architecture", "appraisal"},
+    "DreamSalesPro": {"sales", "selling", "customer", "crm", "lead", "prospecting", "negotiation", "account-management"},
+    "DreamMarket": {"marketing", "advertising", "seo", "brand", "market-research", "growth"},
+    "DreamBizLaunch": {"business", "entrepreneurship", "startup", "small-business", "management", "strategy", "pricing"},
+    "DreamAffiliate": {"affiliate", "ecommerce", "e-commerce", "marketplace", "subscription", "digital-product"},
+    "DreamContent": {"content", "writing", "journalism", "text", "translation", "summarization", "video", "audio", "image"},
+    "DreamArts": {"art", "arts", "music", "design", "animation", "photography", "creative", "film"},
+    "DreamProduction": {"manufacturing", "production", "industrial", "quality", "supply-chain"},
+    "DreamConstruction": {"construction", "carpentry", "hvac", "plumbing", "electrical", "welding", "building"},
+    "DreamAgriculture": {"agriculture", "farming", "crop", "livestock", "forestry", "food"},
+    "DreamTransport": {"transportation", "logistics", "fleet", "aviation", "automotive", "routing"},
+    "DreamPlanetary": {"climate", "earth-science", "geospatial", "weather", "environment", "oceanography", "geology", "space"},
+    "DreamLegal": {"law", "legal", "compliance", "regulation", "policy"},
+    "DreamAdmin": {"administration", "administrative", "office", "records", "scheduling", "documents"},
+    "DreamAutomation": {"automation", "workflow", "integration", "robotics", "rpa"},
+    "DreamSocial": {"social", "sociology", "psychology", "community", "nonprofit", "homelessness", "veteran", "benefits"},
+    "DreamMilitary": {"military", "veteran", "defense"},
+    "DreamFood": {"food", "nutrition", "culinary", "hospitality"},
+    "DreamPersonalCare": {"fitness", "strength", "exercise", "wellness", "personal-care", "sports"},
+    "DreamTrade": {"trading", "crypto", "cryptocurrency", "investment", "markets"},
+    "DreamDecision": {"decision", "forecasting", "planning", "optimization", "risk", "evaluation"},
+    "DreamGlobal": {"international", "global", "language", "translation", "geography"},
+    "DreamProServices": {"professional-services", "consulting", "freelance", "remote-work", "service-business", "career"},
+    "DreamEmpire": {"portfolio", "enterprise", "leadership", "governance", "executive"},
+    "DreamSaaS": {"saas", "software-as-a-service", "cloud", "platform", "subscription"},
+    "DreamRobotics": {"robotics", "robot", "autonomous-driving", "drones", "embedded-systems"},
+}
+
+def tokens(value: str) -> set[str]:
+    text = re.sub(r"([a-z])([A-Z])", r"\1 \2", value)
+    return {x.lower() for x in re.findall(r"[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*", text) if x.lower() not in STOP and len(x) > 1}
+
+def division_profiles(source: str) -> list[dict[str, Any]]:
+    pattern = re.compile(r"^  ([A-Za-z][A-Za-z0-9]+): \{\n([\s\S]*?)^  \},?$", re.MULTILINE)
+    rows = []
+    for match in pattern.finditer(source):
+        name, body = match.group(1), match.group(2)
+        def scalar(key: str) -> str:
+            found = re.search(rf'^\s*{re.escape(key)}:\s*"((?:[^"\\]|\\.)*)"', body, re.MULTILINE)
+            return bytes(found.group(1), "utf-8").decode("unicode_escape") if found else ""
+        def array(key: str) -> list[str]:
+            found = re.search(rf'^\s*{re.escape(key)}:\s*\[([\s\S]*?)\]', body, re.MULTILINE)
+            return re.findall(r'"((?:[^"\\]|\\.)*)"', found.group(1)) if found else []
+        row = {"division": name, "purpose": scalar("purpose"), "outcome": scalar("outcome"),
+               "boundary": scalar("boundary"), "serves": array("serves"), "focus_areas": array("focusAreas")}
+        if all(row[k] for k in ("purpose", "outcome", "boundary")) and row["focus_areas"]:
+            rows.append(row)
+    if len(rows) != 55 or len({x["division"] for x in rows}) != 55:
+        raise ValueError(f"Expected 55 complete canonical domain profiles; found {len(rows)}")
+    return rows
+
+def score_subject(term: str, profile: dict[str, Any]) -> int:
+    words = tokens(term)
+    body = " ".join([profile["division"], profile["purpose"], profile["outcome"], *profile["focus_areas"], *profile["serves"]])
+    overlap = words & tokens(body)
+    aliases = ALIASES.get(profile["division"], set())
+    alias_hits = words & aliases
+    return len(overlap) + 3 * len(alias_hits)
+
+def suggest_divisions(term: str, profiles: list[dict[str, Any]], limit: int = 4) -> list[dict[str, Any]]:
+    scored = sorted(((score_subject(term, row), row["division"]) for row in profiles), reverse=True)
+    positive = [(score, name) for score, name in scored if score > 0]
+    if not positive:
+        return [{"division": "DreamEducation", "score": 0, "mapping_status": "unclassified_shared_review"},
+                {"division": "CommandCore", "score": 0, "mapping_status": "unclassified_shared_review"}]
+    return [{"division": name, "score": score, "mapping_status": "suggested_requires_owner_review"}
+            for score, name in positive[:limit]]
+
+def build(profiles: list[dict[str, Any]], hf: dict[str, Any], fcc: dict[str, Any],
+          onet: dict[str, Any], taxonomy: dict[str, Any]) -> dict[str, Any]:
+    names = {row["division"] for row in profiles}
+    hf_terms = sorted(set(taxonomy.get("subject_terms", [])) | set(hf.get("discovery", {}).get("hugging_face_subjects", [])))
+    subject_rows = []
+    division_hf: dict[str, list[str]] = defaultdict(list)
+    for term in hf_terms:
+        routes = suggest_divisions(term, profiles)
+        subject_rows.append({"subject": term, "routes": routes, "mapping_status": routes[0]["mapping_status"]})
+        for route in routes:
+            division_hf[route["division"]].append(term)
+
+    fcc_rows = []
+    division_fcc: dict[str, list[str]] = defaultdict(list)
+    for track in fcc.get("specialist_track_details", []):
+        related = [x for x in track.get("related_divisions", []) if x in names]
+        status = "source_declared_related_divisions" if related else "unclassified_shared_review"
+        if not related:
+            related = ["DreamEducation", "CommandCore"]
+        fcc_rows.append({"track_id": track.get("id"), "name": track.get("name"),
+                         "division_ids": related, "mapping_status": status,
+                         "learning_outcomes": track.get("learning_outcomes", []),
+                         "capstone": track.get("capstone"),
+                         "required_before_mastery": track.get("required_before_mastery", [])})
+        for division in related:
+            division_fcc[division].append(str(track.get("id")))
+
+    division_tasks: dict[str, list[str]] = defaultdict(list)
+    task_rows = []
+    occupations = onet.get("occupations", [])
+    for occupation in occupations:
+        code = str(occupation.get("occupation_code", ""))
+        title = str(occupation.get("occupation_title", ""))
+        for task in occupation.get("tasks", []):
+            task_id = str(task.get("task_id", ""))
+            statement = str(task.get("task", ""))
+            routes = suggest_divisions(title + " " + statement, profiles)
+            route_names = [x["division"] for x in routes]
+            status = "suggested_requires_owner_review"
+            if routes[0]["score"] == 0:
+                route_names = ["DreamEducation", "DreamProServices", "CommandCore"]
+                status = "unclassified_shared_review"
+            task_ref = f"{code}:{task_id}"
+            task_rows.append({"task_ref": task_ref, "occupation_code": code, "occupation_title": title,
+                              "task_id": task_id, "task": statement, "division_ids": route_names,
+                              "mapping_status": status})
+            for division in route_names:
+                division_tasks[division].append(task_ref)
+
+    divisions = []
+    for profile in profiles:
+        name = profile["division"]
+        divisions.append({
+            **profile,
+            "curriculum_status": "ready_for_source_guide_assignment_not_proof_of_training",
+            "shared_core": ["learning-to-learn-and-source-literacy", "mathematics-and-data-literacy",
+                            "digital-and-computing-literacy", "communication-and-documentation",
+                            "critical-thinking-and-evidence", "privacy-security-and-safety",
+                            "professional-ethics-and-human-oversight", "project-management-and-quality",
+                            "AI-literacy-and-agent-collaboration", "research-reproducibility-and-citation"],
+            "hugging_face_subjects": sorted(set(division_hf[name])),
+            "freecodecamp_tracks": sorted(set(division_fcc[name])),
+            "onet_task_refs": sorted(set(division_tasks[name])),
+            "daily_target": {"lessons": 5, "order": ["prerequisites", "new_concept", "worked_example",
+                "deliberate_practice", "retrieval_or_capstone"], "only_count_verified_guides_and_recorded_attempts": True},
+            "weekly_review": {"assess_each_eligible_source": True, "include_unseen_transfer": True,
+                "record_score_and_remediation": True, "mastery_requires_independent_capstone": True},
+            "agentic_occupation_playbooks": {"required_sections": 26, "status": "generate_per_occupation_task_and_venture"},
+        })
+
+    return {
+        "schema": "dreamco.buddy_university_learning_map.v1",
+        "status": "generated_crosswalk_suggestions_owner_review_and_source_guides_required",
+        "coverage": {
+            "domain_divisions": len(divisions), "hugging_face_subject_terms": len(hf_terms),
+            "hugging_face_subjects_with_suggested_routes": sum(bool(x["routes"]) for x in subject_rows),
+            "freecodecamp_tracks": len(fcc_rows), "onet_occupations": len(occupations),
+            "onet_task_statements": len(task_rows), "onet_tasks_with_division_routes": sum(bool(x["division_ids"]) for x in task_rows),
+            "divisions_with_hf_subjects": sum(bool(x["hugging_face_subjects"]) for x in divisions),
+            "divisions_with_freecodecamp_tracks": sum(bool(x["freecodecamp_tracks"]) for x in divisions),
+            "divisions_with_onet_tasks": sum(bool(x["onet_task_refs"]) for x in divisions),
+        },
+        "source_inventory": {
+            "hugging_face": {"source": "live Hub model/dataset tags plus configured seeds", "subject_terms": len(hf_terms),
+                             "boundary": "not an exhaustive inventory of every Hub repo, model, dataset, Space or discipline"},
+            "freecodecamp": {"source": "canonical roadmap specialist_track_details", "tracks": len(fcc_rows),
+                             "boundary": "track roadmap; refresh the official curriculum and channel inventory before claiming every lesson/video is ingested"},
+            "onet": {"source": onet.get("source", {}), "occupations": len(occupations), "tasks": len(task_rows),
+                     "boundary": onet.get("inventory", {}).get("coverage_warning", "source coverage not independently established")},
+        },
+        "hugging_face_subject_routes": subject_rows,
+        "freecodecamp_track_routes": fcc_rows,
+        "onet_task_routes": task_rows,
+        "divisions": divisions,
+        "unclassified_subjects": [x for x in subject_rows if x["mapping_status"] == "unclassified_shared_review"],
+        "mapping_policy": {"all_algorithmic_routes_are_suggestions": True, "owner_approval_required_before_domain_specific_promotion": True,
+                           "unknown_topics_stay_in_shared_review_queue": True},
+        "training_policy": {"five_lessons_per_day_target_per_division": True, "weekly_assessment_per_eligible_source": True,
+                            "study_and_retrieval_are_not_weight_training": True, "no_weight_training_without_asset_level_permission": True},
+        "truth_boundary": "This artifact maps source inventories and learning routes. It does not prove a source guide exists, Buddy studied it, Buddy changed model weights, or a division achieved mastery."
+    }
+
+def main() -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--division-source", required=True)
+    parser.add_argument("--huggingface-taxonomy", required=True)
+    parser.add_argument("--bootcamp-config", required=True)
+    parser.add_argument("--freecodecamp-roadmap", required=True)
+    parser.add_argument("--onet-curricula", required=True)
+    parser.add_argument("--out-dir", required=True)
+    args = parser.parse_args()
+    read = lambda value: json.loads(Path(value).read_text(encoding="utf-8"))
+    profiles = division_profiles(Path(args.division_source).read_text(encoding="utf-8"))
+    result = build(profiles, read(args.huggingface_taxonomy), read(args.freecodecamp_roadmap),
+                   read(args.onet_curricula), read(args.bootcamp_config))
+    out = Path(args.out_dir)
+    out.mkdir(parents=True, exist_ok=True)
+    (out / "buddy-university-learning-map.json").write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
+    lines = ["# DreamCo Buddy University learning map", "",
+             f"- Domain divisions: {result['coverage']['domain_divisions']}",
+             f"- Hugging Face subject tags: {result['coverage']['hugging_face_subject_terms']}",
+             f"- freeCodeCamp tracks: {result['coverage']['freecodecamp_tracks']}",
+             f"- O*NET occupations: {result['coverage']['onet_occupations']}",
+             f"- O*NET tasks: {result['coverage']['onet_task_statements']}", "",
+             "Mappings are suggestions pending owner review. Source discovery is not guide creation, study, training or mastery."]
+    (out / "buddy-university-learning-map.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
+    print(json.dumps(result["coverage"], indent=2))
+    return 0
+
+if __name__ == "__main__":
+    raise SystemExit(main())
