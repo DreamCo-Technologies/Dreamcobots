@@ -373,6 +373,12 @@ def _rows(track: dict, data: dict, root: Path = ROOT, *, include_blueprint: bool
                     elif key not in {"match_title_terms", "match_categories"}:
                         overlay[key] = value
             overlay.update(overrides.get(str(row.get("video_id")), {}))
+            if row_categories == {"other_or_unclassified"} and not overlay.get("division_targets"):
+                overlay["division_targets"] = ["DreamEducation", "CommandCore"]
+                overlay["masterbot_targets"] = ["DreamEducation", "CommandCore", "DreamDiscovery"]
+                overlay["capability_tags"] = ["source-classification", "course-taxonomy", "rights-review"]
+                overlay["tool_tags"] = ["video-metadata-catalog", "course-taxonomy", "review-queue"]
+                overlay["agent_tags"] = ["course-curator", "rights-reviewer", "division-router"]
             rows.append({
                 "id": f"fcc-video-{row['video_id']}",
                 "title": row["title"],
