@@ -61,6 +61,9 @@ def classify_requirement(evidence: dict) -> str:
 
 
 def missing_requirement_evidence(evidence: dict) -> list[str]:
+    """Only confirmed requirements create evidence obligations; candidates stay triage-only."""
+    if classify_requirement(evidence) != "CONFIRMED_REQUIREMENT":
+        return []
     return [key for key in ("implementation", "tests", "runtime_routes", "benchmark_evidence") if not evidence.get(key)]
 
 
