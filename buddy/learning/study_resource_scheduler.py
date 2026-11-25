@@ -40,7 +40,10 @@ def priority(resource: Resource, gaps: Iterable[Capability]) -> float:
 def choose_next(resources: Iterable[Resource], gaps: Iterable[Capability], *, recent: set[int] | None = None) -> Resource | None:
     recent = recent or set()
     candidates = [r for r in resources if r.id not in recent]
-    return max(candidates, key=lambda r: priority(r, gaps), default=None)
+    # A caller may supply a generator. Materialize it once so every candidate
+    # is scored against the same capability-gap snapshot.
+    gap_snapshot = tuple(gaps)
+    return max(candidates, key=lambda r: priority(r, gap_snapshot), default=None)
 
 
 def study_plan(resource: Resource, capability: Capability) -> dict:
