@@ -33,6 +33,8 @@ jobs:
         run: python3 tools/build_buddy_public_site.py --check
       - name: Run production contract strict gate
         run: python3 tools/production_readiness_gate.py --strict
+      - name: Fail closed unless production is fully certified
+        run: npm run production:certification
       - name: Upload evidence report
         if: always()
         uses: actions/upload-artifact@v7
