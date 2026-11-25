@@ -198,6 +198,26 @@ def build(profiles: list[dict[str, Any]], hf: dict[str, Any], fcc: dict[str, Any
         for division in related:
             division_fcc_videos[division].append(str(category))
 
+    # Route each known official video by its curated category crosswalk and title.
+    # Every division retains shared-catalog access even when no specialty route is defensible.
+    fcc_video_route_rows = []
+    for video in fcc_videos:
+        categories = video.get("categories") or ["other_or_unclassified"]
+        routed = set()
+        for category in categories:
+            routed.update(FCC_DIVISION_CROSSWALK.get(str(category), []))
+        title_routes = suggest_divisions(str(video.get("title", "")), profiles, limit=4)
+        if not routed:
+            routed.update(x["division"] for x in title_routes if x["score"] > 0)
+        routed = sorted(x for x in routed if x in names)
+        status = "suggested_requires_owner_review" if routed else "unclassified_shared_review"
+        fcc_video_route_rows.append({"video_id": video["video_id"], "title": video.get("title"),
+            "categories": categories, "specialty_division_ids": routed, "mapping_status": status,
+            "rights_status": video.get("rights_status", "review_required"),
+            "learning_status": video.get("learning_status", "not_studied")})
+        for division in routed:
+            division_fcc_videos[division].append(str(video["video_id"]))
+
     division_college: dict[str, list[dict[str, Any]]] = defaultdict(list)
     for domain in college_domains:
         domain_terms = " ".join([domain.get("id", ""), domain.get("name", ""), domain.get("scope", ""), *domain.get("tracks", [])])
@@ -305,7 +325,10 @@ def build(profiles: list[dict[str, Any]], hf: dict[str, Any], fcc: dict[str, Any
                             "AI-literacy-and-agent-collaboration", "research-reproducibility-and-citation"],
             "hugging_face_subjects": sorted(set(division_hf[name])),
             "freecodecamp_tracks": sorted(set(division_fcc[name])),
-            "freecodecamp_video_subject_categories": sorted(set(division_fcc_videos[name])),
+            "freecodecamp_video_subject_categories": sorted(set(division_fcc_videos[name]) & set(video_tracks)),
+            "freecodecamp_specialty_video_ids": sorted(set(division_fcc_videos[name]) & set(fcc_video_ids)),
+            "freecodecamp_shared_catalog_access": True,
+            "freecodecamp_catalog_video_count": len(fcc_videos),
             "freecodecamp_video_ids": sorted(set(division_videos[name])),
             "venture_and_workforce_tracks": sorted(set(division_ventures[name])),
             "college_domains": sorted(division_college[name], key=lambda x: (-x["score"], x["domain_id"] or "")),
@@ -335,6 +358,7 @@ def build(profiles: list[dict[str, Any]], hf: dict[str, Any], fcc: dict[str, Any
             "divisions_with_hf_subjects": sum(bool(x["hugging_face_subjects"]) for x in divisions),
             "divisions_with_freecodecamp_tracks": sum(bool(x["freecodecamp_tracks"]) for x in divisions),
             "divisions_with_freecodecamp_video_categories": sum(bool(x["freecodecamp_video_subject_categories"]) for x in divisions),
+            "divisions_with_freecodecamp_specialty_videos": sum(bool(x["freecodecamp_specialty_video_ids"]) for x in divisions),
             "divisions_with_freecodecamp_channel_videos": sum(bool(x["freecodecamp_video_ids"]) for x in divisions),
             "divisions_with_college_domains": sum(bool(x["college_domains"]) for x in divisions),
             "divisions_with_source_families": sum(bool(x["source_families"]) for x in divisions),
@@ -349,6 +373,8 @@ def build(profiles: list[dict[str, Any]], hf: dict[str, Any], fcc: dict[str, Any
                              "channel_inventory_status": (fcc_catalog or {}).get("inventory_status", "not_supplied"),
                              "channel_inventory": (fcc_catalog or {}).get("inventory", {}),
                              "official_video_inventory_status": fcc.get("scope", {}).get("coverage_status", "not_provided"),
+                             "catalog_inventory_status": fcc_catalog.get("inventory_status", "not_loaded"),
+                             "catalog_video_count": len(fcc_videos), "catalog_expected_entry_count": fcc_inventory.get("expected_entry_count"),
                              "boundary": "track roadmap; reconcile all unique official video IDs and refresh the interactive curriculum before claiming full ingestion"},
             "onet": {"source": onet.get("source", {}), "occupations": len(occupations), "tasks": len(task_rows),
                      "boundary": onet.get("inventory", {}).get("coverage_warning", "source coverage not independently established")},
@@ -358,6 +384,7 @@ def build(profiles: list[dict[str, Any]], hf: dict[str, Any], fcc: dict[str, Any
         "freecodecamp_certification_phases": fcc_phases,
         "freecodecamp_video_subject_categories": video_tracks,
         "freecodecamp_video_category_routes": fcc_video_rows,
+        "freecodecamp_video_routes": fcc_video_route_rows,
         "freecodecamp_channel_video_routes": video_rows,
         "academic_structure": academic_structure,
         "instructional_model": instructional_model,
