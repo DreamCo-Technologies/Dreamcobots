@@ -240,14 +240,25 @@
         "MCP",
         "YAML",
         "Markdown skills",
-        "WhatsApp/Telegram/Discord adapters"
+        "WhatsApp/Telegram/Discord adapters",
+        "OpenClaw",
+        "CommandCore",
+        "GitHub Actions",
+        "Code Trust Gate",
+        "Repository Test Matrix",
+        "isolated-branch-runner"
       ],
       "agent_tags": [
         "buddy-gateway-agent",
         "skill-auditor",
         "connector-setup-agent",
         "memory-curator",
-        "sandbox-guardian"
+        "sandbox-guardian",
+        "task-orchestrator",
+        "code-repair-agent",
+        "test-agent",
+        "review-agent",
+        "approval-agent"
       ],
       "objective": "Study a local autonomous assistant architecture covering gateway setup, onboarding, skills, memory, messaging connectors, health checks, and sandbox security.",
       "implementation_steps": [
@@ -267,7 +278,7 @@
       "practice": "Buddy builds a local gateway prototype with one test channel, one original mock email skill, a memory store, and a Docker-isolated tool runner.",
       "assessment": "Pass gateway health, channel identity, skill manifest validation, memory isolation, Docker sandbox escape tests, secret redaction, and connector revocation tests.",
       "benchmark": "DreamCo OpenClaw-pattern benchmark: setup success, task completion, isolation violations, connector reliability, and recovery.",
-      "buddy_demo": "Demonstrate setup wizard, gateway status, skill installation review, test messaging, persistent memory, sandbox denial, and connector revocation.",
+      "buddy_demo": "Buddy accepts a bounded task, plans it, creates an isolated branch, edits code in a sandbox, runs focused tests, opens a pull request, summarizes evidence, and waits for human approval. It never writes directly to main, exposes secrets, or auto-merges.",
       "rights_mode": "public_metadata_link_only_until_item_level_study_and_derivative_rights_review",
       "content_status": "original_implementation_brief"
     },
@@ -309,7 +320,11 @@
         "pytest",
         "CodeQL",
         "Docker",
-        "OpenTelemetry"
+        "OpenTelemetry",
+        "tools/run_everything_now.py",
+        "Code Trust Gate",
+        "Repository Test Matrix",
+        "Full System Certification"
       ],
       "agent_tags": [
         "ci-failure-diagnoser",
@@ -317,7 +332,12 @@
         "patch-builder",
         "test-runner-agent",
         "independent-code-reviewer",
-        "release-guardian"
+        "release-guardian",
+        "ci-diagnosis-agent",
+        "test-selection-agent",
+        "repair-agent",
+        "rollback-agent",
+        "human-approval-gate"
       ],
       "objective": "Build a governed self-healing pipeline that diagnoses failed checks, proposes minimal repairs, validates them in isolation, and requires policy-compliant review before integration.",
       "implementation_steps": [
@@ -337,7 +357,7 @@
       "practice": "Buddy receives a synthetic failing GitHub Actions run, identifies its root cause, proposes a one-file patch on a new branch, runs targeted tests, and submits a reviewable PR.",
       "assessment": "Pass seeded root-cause cases, least-privilege branch scope, malicious-log prompt injection, secret protection, deterministic tests, independent review, blocked-merge, and rollback tests.",
       "benchmark": "DreamCo Self-Healing CI benchmark: diagnosis accuracy, safe repair rate, regression rate, mean time to repair, false repair rate, and spend per incident.",
-      "buddy_demo": "Demonstrate failed-run intake, evidence extraction, diagnosis, patch branch, test sequence, independent review, and a human-controlled merge decision.",
+      "buddy_demo": "Buddy runs the repository audit, selects the appropriate quick or standard verification plan, reproduces a failure, proposes a minimal repair on an isolated branch, runs mapped regression tests, checks CI evidence, and opens a reviewable PR. Production certification remains separate from quick checks, and no failed or unverified change is auto-merged.",
       "rights_mode": "public_metadata_link_only_until_item_level_study_and_derivative_rights_review",
       "content_status": "original_implementation_brief"
     },
