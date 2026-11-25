@@ -134,7 +134,7 @@ AGENT_CAPABILITY_CATALOG = {
     "field_and_physical_operations": ["scheduling", "dispatch", "routing", "work orders", "asset maintenance", "safety checklists", "IoT/SCADA awareness", "CAD/BIM", "quality inspection"]
 }
 def build(profiles: list[dict[str, Any]], hf: dict[str, Any], fcc: dict[str, Any],
-          onet: dict[str, Any], taxonomy: dict[str, Any], college: dict[str, Any] | None = None) -> dict[str, Any]:
+          onet: dict[str, Any], taxonomy: dict[str, Any], college: dict[str, Any] | None = None,\n          fcc_catalog: dict[str, Any] | None = None) -> dict[str, Any]:
     college = college or {}
     college_domains = college.get("knowledge_domains", college.get("domains", []))
     source_families = college.get("source_families", [])
