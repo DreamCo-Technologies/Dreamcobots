@@ -133,6 +133,11 @@ def route_buddy_learning_query(
     lessons = _course_matches(normalized_query, root, limit)
     seed_matches = library.get("seed_candidate_matches", [])
     if lessons:
+        supporting_guide_count = sum(
+            row["internal_guide"]["status"] == "supporting_guide_available"
+            for row in lessons
+        )
+        missing_supporting_guide_count = len(lessons) - supporting_guide_count
         return {
             "schema": "dreamco.buddy_internal_first_learning_route.v1",
             "query": normalized_query,
@@ -141,11 +146,19 @@ def route_buddy_learning_query(
             "guide_matches": [],
             "guide_documents": [],
             "course_lessons": lessons,
+            "supporting_guide_count": supporting_guide_count,
+            "missing_supporting_guide_count": missing_supporting_guide_count,
             "seed_candidate_matches": seed_matches,
             "knowledge_gap": library.get("knowledge_gap"),
+            "external_discovery_available": missing_supporting_guide_count > 0,
             "external_discovery_performed": False,
             "external_model_routing_performed": False,
             "study_required": True,
+            "next_action": (
+                "Study the repository-local supporting guide and complete the original practice. "
+                "If it does not cover the requested lesson, find an authoritative first-party source, "
+                "verify its release and rights, then draft and review an original guide."
+            ),
             "mastery_awarded": False,
         }
 
