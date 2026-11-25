@@ -26,6 +26,17 @@ TASK_SCHEMA = {
         "allow_external_learning_fallback": {"type": "boolean"},
     },
 }
+LEARNING_ROUTE_SCHEMA = {
+    "type": "object",
+    "required": ["schema", "query", "route", "external_model_routing_performed", "mastery_awarded"],
+    "properties": {
+        "schema": {"const": "dreamco.buddy_internal_first_learning_route.v1"},
+        "query": {"type": "string"},
+        "route": {"enum": ["internal_approved_guide", "internal_bootcamp_lesson", "internal_knowledge_gap"]},
+        "external_model_routing_performed": {"type": "boolean"},
+        "mastery_awarded": {"type": "boolean"},
+    },
+}
 
 
 def guardrail(text: str) -> dict[str, Any]:
@@ -120,6 +131,11 @@ class FleetExecutor:
                 from buddy.learning.buddy_knowledge_router import route_buddy_learning_query
 
                 learning_route = route_buddy_learning_query(learning_query)
+                route_errors = validate(learning_route, LEARNING_ROUTE_SCHEMA)
+                if route_errors:
+                    return self._finish(manifest, task, "error", "none", permission,
+                                        {"input": in_guard}, None,
+                                        {"type": "invalid_learning_route", "message": "; ".join(route_errors[:5])}, stamp)
                 route_kind = learning_route["route"]
                 if route_kind == "internal_approved_guide":
                     status, mode, result = "ok", "internal_knowledge", learning_route
