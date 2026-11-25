@@ -34,7 +34,6 @@ class LearningOrganizationTests(unittest.TestCase):
         result=organize([],["AI"],data)
         self.assertEqual(result["user_data_registry"][0]["owner"],"user")
         self.assertFalse(result["user_data_registry"][0]["training_allowed"])
-        self.assertEqual(result["user_data_registry"][0]["owner"],"user")
         self.assertIn("purpose-specific",result["user_data_registry"][0]["ownership_note"])
         self.assertEqual(result["coverage"]["user_data_assets_registered"],1)
 
