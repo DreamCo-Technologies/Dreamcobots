@@ -120,7 +120,7 @@ def route_buddy_learning_query(
         raise ValueError("limit must be between 1 and 25")
 
     normalized_query = query.strip()
-    library = search_internal_library_knowledge(normalized_query, root=root, limit=limit)
+    library = search_internal_library_knowledge(normalized_query, root=root, limit=100)
     guide_matches = library.get("matches", [])
     seed_matches = library.get("seed_candidate_matches", [])
 
