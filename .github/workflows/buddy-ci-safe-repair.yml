@@ -48,13 +48,13 @@ jobs:
         with:
           python-version: "3.12"
       - name: Install Node for canonical fleet regeneration
-        if: github.event_name == 'workflow_run' && github.event.workflow_run.name == 'Full System Certification'
+        if: github.event_name == 'push' || (github.event_name == 'workflow_run' && github.event.workflow_run.name == 'Full System Certification')
         uses: actions/setup-node@v7
         with:
           node-version: "22"
           cache: npm
       - name: Install locked Node dependencies for fleet regeneration
-        if: github.event_name == 'workflow_run' && github.event.workflow_run.name == 'Full System Certification'
+        if: github.event_name == 'push' || (github.event_name == 'workflow_run' && github.event.workflow_run.name == 'Full System Certification')
         run: npm ci
       - name: Install pinned workflow parser dependency
         run: python -m pip install --disable-pip-version-check "PyYAML==6.0.3"
@@ -129,6 +129,7 @@ jobs:
           python tools/audit_markdown_implementation_gaps.py --check
           python tools/validate_buddy_engineering_capabilities.py
           python tools/validate_dreamco_mastery_registry.py
+          python -m unittest tests.test_buddy_ci_safe_repair_workflow
           python -m unittest tests.test_buddy_safe_repair tests.test_buddy_failure_learning tests.test_buddy_dataset_routing tests.test_division_model_fleet tests.test_dreamco_division_mastery_orchestrator tests.test_buddy_dataset_route_check tests.test_file_prospectus_inventory tests.test_issue_lifecycle tests.test_actions_live_health tests.test_daily_bot_study_scan tests.test_dependency_review_scope tests.test_markdown_implementation_gaps tests.test_markdown_gap_audit_workflow_safety tests.test_freecodecamp_learning_inventory tests.test_buddy_continuous_study_policy tests.test_buddy_universal_library_registry tests.test_division_huggingface_taxonomy_map tests.test_division_resource_readiness
           git diff --check
       - name: Verify canonical fleet catalog
