@@ -279,8 +279,10 @@ def validate(payload: dict[str, Any]) -> None:
             if not foundation or any(not (foundation & set(item.get("categories") or [])) for item in row["items"]):
                 raise ValueError("unresolved domain queues may contain shared foundation lessons only")
         elif row.get("mapping_status") == "proposed_exact_name_match":
-            if not row.get("target_categories") or row.get("queue_status") != "subject_routed":
-                raise ValueError("core domain proposals require an explicit specialist category route")
+            if row.get("target_categories") and row.get("queue_status") != "subject_routed":
+                raise ValueError("mapped core domain proposals must use the specialist route")
+            if not row.get("target_categories") and row.get("queue_status") != "foundation_only_owner_mapping_pending":
+                raise ValueError("core domains without a category profile must remain foundation-only")
         for item in row["items"]:
             if item["assignment_status"] != "queued_not_studied":
                 raise ValueError("queue generation cannot claim study completion")
