@@ -2,9 +2,9 @@ name: One-time Fleet Catalog Refresh
 on:
   pull_request:
     branches: [main]
-    types: [opened]
+    types: [opened, synchronize]
 permissions:
-  contents: write
+  contents: read
 jobs:
   regenerate:
     runs-on: ubuntu-latest
@@ -12,7 +12,8 @@ jobs:
     steps:
       - uses: actions/checkout@v7
         with:
-          ref: ops/generate-fleet-catalog-once
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          ref: ${{ github.event.pull_request.head.ref }}
       - uses: actions/setup-node@v7
         with:
           node-version: 22
@@ -20,17 +21,14 @@ jobs:
       - run: npm ci
       - name: Regenerate canonical fleet catalog artifacts
         run: node --import tsx tools/generate_bot_fleet_catalog.ts
-      - name: Commit generated fleet catalog artifacts to temporary branch
-        run: |
-          set -euo pipefail
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A
-          git diff --cached --check
-          if git diff --cached --quiet; then
-            echo "No generated changes."
-            exit 0
-          fi
-          git diff --cached --stat
-          git commit -m "chore: regenerate canonical fleet catalog"
-          git push origin HEAD:refs/heads/ops/generate-fleet-catalog-once
+      - uses: actions/upload-artifact@v7
+        with:
+          name: canonical-fleet-catalog-generated
+          path: |
+            config/master_bot_registry.json
+            config/generated/bots.catalog.json
+            website/data/bot-fleet-catalog.json
+            website/data/buddy-routing-index.js
+            website/data/bot-fleet/
+            reports/BOT_FLEET_PROSPECTUS.md
+          retention-days: 3
