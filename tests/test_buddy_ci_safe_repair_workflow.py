@@ -22,5 +22,14 @@ class BuddyCISafeRepairWorkflowTests(unittest.TestCase):
         self.assertIn("github.event.workflow_run.name == 'Full System Certification'", generator)
 
 
+    def test_file_prospectus_is_generated_after_all_other_generated_inventory_sources(self):
+        workflow = (ROOT / ".github/workflows/buddy-ci-safe-repair.yml").read_text(encoding="utf-8")
+        fleet_e2e = workflow.index("      - name: Regenerate canonical fleet end-to-end evidence after certification drift")
+        prospectus = workflow.index("      - name: Regenerate file prospectus after all generated source inventories")
+        verify = workflow.index("      - name: Verify repaired indexes and Buddy repair-learning tests")
+        self.assertLess(fleet_e2e, prospectus)
+        self.assertLess(prospectus, verify)
+        self.assertIn("run: python tools/build_file_prospectus.py", workflow[prospectus:verify])
+
 if __name__ == "__main__":
     unittest.main()
