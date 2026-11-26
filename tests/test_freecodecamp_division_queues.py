@@ -16,6 +16,8 @@ def crosswalk_fixture():
     return {"domains": domains}
 
 
+ROOT = Path(__file__).resolve().parents[1]
+
 class FreeCodeCampDomainQueueTests(unittest.TestCase):
     def setUp(self):
         self.catalog = {
@@ -123,7 +125,7 @@ class FreeCodeCampDomainQueueTests(unittest.TestCase):
         }
         with self.assertRaisesRegex(ValueError, "verified complete freeCodeCamp inventory required") as raised:
             build_queues(catalog, self.crosswalk, limit=10, allow_partial=True)
-        self.assertIn("for freeCodeCamp", str(raised.exception))
+        self.assertIn("verified complete freeCodeCamp inventory required", str(raised.exception))
 
 
     def test_every_canonical_domain_has_an_explicit_specialist_category_profile(self):
