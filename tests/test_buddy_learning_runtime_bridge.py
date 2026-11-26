@@ -328,19 +328,19 @@ class RuntimeBridgeTests(unittest.TestCase):
             education_items = [item for item in education["items"] if item["track_id"] == "freecodecamp-metadata-triage"]
             finance_items = [item for item in finance["items"] if item["track_id"] == "freecodecamp-metadata-triage"]
             discovery_items = [item for item in discovery["items"] if item["track_id"] == "freecodecamp-metadata-triage"]
-        self.assertTrue(education_items)
-        self.assertFalse(finance_items)
-        self.assertTrue(discovery_items)
-        item = education_items[0]
-        self.assertEqual(item["content_status"], "metadata_only")
-        self.assertEqual(item["completion_status"], "metadata_only")
-        self.assertFalse(item["study_allowed"])
-        self.assertTrue(item["authoring_required"])
-        self.assertTrue(item["implementation_steps"])
-        self.assertTrue(item["buddy_demo"])
-        self.assertEqual(set(item["learning_modes"]), {
-            "metadata_review", "guided_classification", "rights_check", "human_review"
-        })
+            self.assertTrue(education_items)
+            self.assertFalse(finance_items)
+            self.assertTrue(discovery_items)
+            item = education_items[0]
+            self.assertEqual(item["content_status"], "metadata_only")
+            self.assertEqual(item["completion_status"], "metadata_only")
+            self.assertFalse(item["study_allowed"])
+            self.assertTrue(item["authoring_required"])
+            self.assertTrue(item["implementation_steps"])
+            self.assertTrue(item["buddy_demo"])
+            self.assertEqual(set(item["learning_modes"]), {
+                "metadata_review", "guided_classification", "rights_check", "human_review"
+            })
             source_title = item["title"].split(": ", 1)[1]
             education_metadata = self.bridge.bootcamp_learning_queue(
                 division="DreamEducation", query=source_title, limit=10
