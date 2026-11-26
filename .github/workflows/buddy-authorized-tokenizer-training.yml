@@ -25,7 +25,7 @@ on:
   workflow_dispatch:
     inputs:
       manifest_path:
-        description: "Rights-cleared manifest under data/buddy-authorized-corpora/"
+        description: "Synthetic CI manifest or owner-authorized DreamCo Bootcamp tokenizer manifest under data/buddy-authorized-corpora/"
         required: true
         default: "data/buddy-authorized-corpora/synthetic-ci-manifest.json"
         type: string
@@ -177,6 +177,10 @@ jobs:
 
       - name: Run tokenizer regression tests
         run: python -m unittest discover -s tests -p 'test_buddy_byte_bpe_trainer.py'
+
+      - name: Verify first-party owner authorization when selected
+        if: inputs.manifest_path == 'data/buddy-authorized-corpora/dreamco-bootcamp-core-v1-manifest.json'
+        run: python -m unittest discover -s tests -p 'test_dreamco_bootcamp_tokenizer_manifest.py' -v
 
       - name: Train tokenizer from rights-cleared local corpus
         env:
