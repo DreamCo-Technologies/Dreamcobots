@@ -106,3 +106,19 @@ Retrieval and study permission is separate from model-weight training permission
 ## Weekly coverage report
 
 Publish counts by source family, artifact type, subject, division, task and rights state. Report discovered resources, completed guides, unclassified topics, source revisions, training eligibility, study attempts, benchmark passes, failures, remediation, cost, latency and compute. The report must show missing subjects and source gaps, not hide them. The next curriculum version is a draft until independent validation and governance review pass.
+
+## First-party Bootcamp tokenizer training
+
+The repository owner has authorized a narrow tokenizer-training path for the first-party DreamCo Bootcamp core seed corpus. The authorization is recorded in `governance/training-authorizations/dreamco-bootcamp-core-v1-owner-attestation.json`.
+
+The manifest builder `tools/build_dreamco_bootcamp_tokenizer_manifest.py`:
+- verifies the source is DreamCo-authored and contains no unreviewed external text;
+- uses only the `train` split;
+- excludes validation and test examples from tokenizer training;
+- rejects detected personal information and secret material;
+- records a SHA-256 digest and the owner-authorization reference; and
+- explicitly disallows neural model-weight training and distillation.
+
+The tokenizer smoke workflow trains a tokenizer on the ten current training examples and verifies that no model weights were trained. This is a pipeline-validation milestone, not a production tokenizer or a trained Buddy model. The remaining first-party division datasets stay pending human review, owner assignment and dataset-card approval. FreeCodeCamp videos and other third-party sources are outside this authorization.
+
+To run the owner-authorized tokenizer job manually, select the manifest path `data/buddy-authorized-corpora/dreamco-bootcamp-core-v1-manifest.json` and explicitly confirm the tokenizer run. The workflow generates the manifest from the approved source before training. Do not use the synthetic CI manifest as a substitute for first-party training evidence.
