@@ -45,5 +45,18 @@ class FullSystemCertificationWorkflowOrderTests(unittest.TestCase):
         self.assertIn("if: always()", block)
         self.assertIn("continue-on-error: ${{ github.event_name == 'pull_request' }}", block)
 
+    def test_fleet_catalog_is_refreshed_after_legacy_recovery(self):
+        root = Path(__file__).resolve().parents[1]
+        workflow = (root / ".github/workflows/full-system-certification.yml").read_text(encoding="utf-8")
+        recovery = workflow.index("- name: Recover and unify legacy bot system")
+        refresh = workflow.index("- name: Refresh fleet catalog after legacy bot recovery")
+        fleet_e2e = workflow.index("- name: Regenerate canonical fleet end-to-end evidence")
+        production = workflow.index("- name: Run full production verification")
+        block = workflow[refresh:fleet_e2e]
+        self.assertIn("node --import tsx tools/generate_bot_fleet_catalog.ts", block)
+        self.assertLess(recovery, refresh)
+        self.assertLess(refresh, fleet_e2e)
+        self.assertLess(fleet_e2e, production)
+
 if __name__ == "__main__":
     unittest.main()
