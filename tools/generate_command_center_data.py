@@ -237,17 +237,28 @@ def build_fleet(registry: dict[str, Any]) -> tuple[dict[str, Any], dict[str, Any
         )
         division_bots[division].append(slug)
 
-    known_bot_ids = {str(bot["id"]) for bot in bots}
+    bot_by_id = {str(bot["id"]): bot for bot in bots}
     for profile in fleet_e2e.get("profiles", []):
         slug = str(profile.get("slug", "")).strip()
         division = str(profile.get("division", "unassigned")).strip()
-        if not slug or slug in known_bot_ids:
+        if not slug or not division:
             continue
         declared = int(profile.get("declaredCapabilityCount", 0))
         passed = int(profile.get("capabilityTestsPassed", 0))
         failed = int(profile.get("capabilityTestsFailed", 0))
         verified = profile.get("status") == "sandbox_certified" and failed == 0 and passed == declared
-        bots.append({
+        if slug in bot_by_id:
+            bot = bot_by_id[slug]
+            bot["division_id"] = division.lower().replace(" ", "-")
+            bot["declared_capability_count"] = declared
+            bot["capability_tests_passed"] = passed
+            bot["capability_tests_failed"] = failed
+            if verified:
+                bot["status"] = "sandbox_verified"
+                bot["source_refs"] = sorted(set(bot.get("source_refs", []) + ["website/data/bot-fleet-e2e.json"]))
+                bot["evidence_refs"] = sorted(set(bot.get("evidence_refs", []) + ["website/data/bot-fleet-e2e.json"]))
+            continue
+        bot = {
             "id": slug,
             "name": slug.replace("-", " ").title(),
             "division_id": division.lower().replace(" ", "-"),
@@ -258,10 +269,11 @@ def build_fleet(registry: dict[str, Any]) -> tuple[dict[str, Any], dict[str, Any
             "capability_tests_passed": passed,
             "capability_tests_failed": failed,
             "source_refs": ["website/data/bot-fleet-e2e.json"],
-            "evidence_refs": ["website/data/bot-fleet-e2e.json"],
-        })
+            "evidence_refs": ["website/data/bot-fleet-e2e.json"] if verified else [],
+        }
+        bots.append(bot)
+        bot_by_id[slug] = bot
         division_bots[division].append(slug)
-        known_bot_ids.add(slug)
 
     original_sources = sorted(path.relative_to(ROOT).as_posix() for path in (ROOT / "original-bots").rglob("*") if path.is_file())
     for record in capabilities.values():
