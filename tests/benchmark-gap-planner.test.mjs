@@ -5,7 +5,7 @@ import {execFileSync} from "node:child_process";
 import os from "node:os";
 import path from "node:path";
 
-test("planner creates work for all 65 divisions",()=>{
+test("planner creates work for 65 MasterBots and 55 domain divisions",()=>{
  const dir=fs.mkdtempSync(path.join(os.tmpdir(),"dreamco-gap-"));
  const scores=path.join(dir,"scores.json"),out=path.join(dir,"queue.json");
  fs.writeFileSync(scores,JSON.stringify({results:[{scope:"masterbot",masterbot_id:1,benchmark:"reasoning",score:40,target:80,status:"failed"},{scope:"masterbot",masterbot_id:2,benchmark:"coding",score:90,target:80,status:"pass"}]}));
