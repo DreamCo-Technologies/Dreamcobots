@@ -4,7 +4,7 @@ name: Fleet runtime truth
 # committed baseline (config/bots/fleet-runtime-baseline.json): a bot dropping
 # state, a new broken internal Pages link, manifest drift, or failing runtime
 # tests. Pre-existing debt (SPEC_ONLY bots, failing folder tests) is reported,
-# not blocking. The daily run also executes the full folder audit and the
+# not blocking. Daily runs and targeted PRs execute the full folder audit; the
 # full file-prospectus drift check (PRs only check the files they change).
 # It also fails if any Run with Buddy button lacks a generated prospectus or
 # the Actions health report stops covering every workflow file, if any
@@ -17,6 +17,11 @@ on:
       - "App_bots/**"
       - "website/**"
       - "buddy/**"
+      - "buddy_os/intelligence/**"
+      - "runtime/**"
+      - "tests/shared-repository-controls.test.mjs"
+      - "tests/test_buddy_capability_catalog_batch.py"
+      - "tests/test_compiled_bot_runtime.py"
       - "config/bots/**"
       - "server/seed-bots.ts"
       - "config/generated/bots.catalog.json"
@@ -158,8 +163,7 @@ jobs:
           if-no-files-found: ignore
 
   full-audit:
-    name: Full folder audit (daily, report-only)
-    if: github.event_name != 'pull_request'
+    name: Full folder audit and targeted folder acceptance
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
@@ -172,9 +176,57 @@ jobs:
         with:
           python-version: "3.13"
       - run: npm ci
-      - run: python3 -m pip install --quiet pyyaml pytest
+      - run: python3 -m pip install --quiet pyyaml pytest -r requirements-buddy-learning.txt "soundfile>=0.12,<1" "Pillow>=10,<12"
       - name: Full audit (compile, import, typecheck, folder tests, links)
         run: python3 tools/fleet_runtime_audit.py --check-regressions --summary-json tmp/fleet-summary.json
+      - name: Enforce zero failures in the four audited folder areas
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+
+          status = json.loads(Path("website/data/fleet-runtime-status.json").read_text(encoding="utf-8"))
+          folders = {row["folder"]: row for row in status["code_folders"]}
+          failures = []
+          for name in ("buddy", "buddy_os", "website", "runtime"):
+              row = folders.get(name)
+              if row is None:
+                  failures.append(f"{name}: missing audit result")
+                  continue
+              if row.get("verdict") != "working":
+                  failures.append(f"{name}: verdict={row.get('verdict')}")
+              for key in ("tests", "node_tests"):
+                  result = row.get(key) or {}
+                  if result.get("ran") and (result.get("failed", 0) or result.get("errors", 0) or result.get("cancelled", 0) or result.get("timeout")):
+                      failures.append(f"{name}: {key}={result}")
+              if (row.get("import_probe") or {}).get("failed", 0):
+                  failures.append(f"{name}: import failures={(row.get('import_probe') or {}).get('failures')}")
+              if row.get("site_check_ok") is False or row.get("links_broken", 0):
+                  failures.append(f"{name}: site/link verification failed")
+          if failures:
+              raise SystemExit("Folder acceptance failed:\\n- " + "\\n- ".join(failures))
+          print("Folder acceptance passed: buddy, buddy_os, website, runtime")
+          PY
+      - name: Capture detailed traces for targeted folder failures
+        if: failure()
+        run: |
+          python3 - <<'PY'
+          import json
+          import subprocess
+          import sys
+          from pathlib import Path
+
+          status = json.loads(Path("website/data/fleet-runtime-status.json").read_text(encoding="utf-8"))
+          folders = {row["folder"]: row for row in status["code_folders"]}
+          for name in ("buddy", "buddy_os"):
+              row = folders.get(name, {})
+              tests = row.get("test_files", [])
+              if tests:
+                  print(f"\\n===== {name}: detailed pytest trace =====", flush=True)
+                  subprocess.run([sys.executable, "-m", "pytest", "-vv", "--tb=short", "-p", "no:cacheprovider", *tests], check=False)
+          PY
+          echo "===== Website Node test diagnostics ====="
+          node --import tsx --test tests/*.test.mjs tests/*.test.ts || true
       - name: Upload refreshed report and Pages status
         if: always()
         uses: actions/upload-artifact@v7
