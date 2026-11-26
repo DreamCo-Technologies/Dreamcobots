@@ -321,9 +321,9 @@ class RuntimeBridgeTests(unittest.TestCase):
 
 
     def test_video_catalog_is_filtered_by_division_categories_and_shared_foundation(self):
-        def video(resource_id, title, categories, *, division_targets=()):
+        def video(resource_id, title, categories, *, division_targets=(), track_id="freecodecamp-video-catalog"):
             return CourseLesson(
-                resource_id=resource_id, lesson_id=f"video-{resource_id}", track_id="freecodecamp-video-catalog",
+                resource_id=resource_id, lesson_id=f"video-{resource_id}", track_id=track_id,
                 title=title, category="video", objective="Original metadata-only learning candidate.",
                 practice="Verify source rights before authoring.", assessment="Require an independent project assessment.",
                 benchmark="Task-matched holdout and regression.", source_url="https://www.youtube.com/watch?v=fixture",
@@ -336,7 +336,7 @@ class RuntimeBridgeTests(unittest.TestCase):
             video(1, "Shared Python foundations", ["python_and_automation"]),
             video(2, "Finance database design", ["databases_and_sql"]),
             video(3, "Unrelated CSS animation", ["html_css_and_accessibility"]),
-            video(4, "Explicit finance specialist override", ["html_css_and_accessibility"], division_targets=("DreamFinance",)),
+            video(4, "Explicit finance specialist override", ["html_css_and_accessibility"], division_targets=("DreamFinance",), track_id="freecodecamp-specialist-learning-paths"),
             video(5, "Cybersecurity specialist route", ["cybersecurity_and_privacy"], division_targets=("DreamCyber",)),
             video(6, "Spring Boot Java service", ["java_and_jvm"]),
         ]
