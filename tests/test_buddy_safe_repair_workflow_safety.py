@@ -19,6 +19,8 @@ def test_safe_repair_can_be_dispatched_or_bootstrapped_only_on_main():
     assert "Buddy Open-Source Weekly Bootcamp" in triggers["workflow_run"]["workflows"]
 
     job = workflow["jobs"]["regenerate-and-verify"]
+    checkout = next(step for step in job["steps"] if step.get("uses") == "actions/checkout@v4")
+    assert "if" not in checkout
     assert "github.ref == 'refs/heads/main'" in job["if"]
     assert "github.event_name == 'workflow_dispatch'" in job["if"]
     assert "github.event_name == 'push'" in job["if"]
@@ -42,11 +44,13 @@ def test_safe_repair_uses_convergent_generators_and_only_pushes_a_repair_branch(
 def test_safe_repair_allowlist_includes_public_evidence_and_manifests():
     workflow_text = WORKFLOW_PATH.read_text(encoding="utf-8")
     for path in (
-        "config/bots",
+        "config/bots/bot-manifests.generated.json",
+        "config/bots/division-manifests.generated.json",
         "config/generated/file-prospectus",
         "website/data/run-prospectus.json",
         "website/data/run-prospectus-bots.json",
         "website/data/pages-feature-audit.json",
+        "command-center/data",
         "website/data/command-center",
         "website/data/fleet-runtime-status.json",
         "website/data/command-center",
