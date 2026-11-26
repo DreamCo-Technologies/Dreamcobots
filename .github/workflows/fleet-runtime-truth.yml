@@ -86,13 +86,12 @@ jobs:
         run: python3 tools/fleet_runtime_audit.py --skip-folder-tests
       - name: Refresh dependent repository evidence after fleet status is current
         run: python3 tools/refresh_repository_evidence.py
-      - name: Refresh Actions health and prospectuses after all source changes
-        run: |
-          python3 tools/audit_actions_health.py
-          python3 tools/build_actions_prospectus.py
-          python3 tools/build_file_prospectus.py
       - name: Runtime, generator, auditor and link-check tests
-        run: python3 -m pytest -q -p no:cacheprovider tests/test_fleet_runtime_executor.py tests/test_fleet_runtime_customize.py tests/test_generate_bot_manifests.py tests/test_fleet_runtime_audit.py tests/test_check_website_links.py tests/test_run_prospectus.py tests/test_file_prospectus.py tests/test_fleet_divisions.py tests/test_pages_feature_audit.py tests/test_build_queue.py
+        run: python3 -m pytest -q -p no:cacheprovider tests/test_fleet_runtime_executor.py tests/test_fleet_runtime_customize.py tests/test_generate_bot_manifests.py tests/test_fleet_runtime_audit.py tests/test_check_website_links.py tests/test_fleet_divisions.py tests/test_pages_feature_audit.py tests/test_build_queue.py tests/test_refresh_repository_evidence.py tests/test_deploy_buddy_pages_manual_gate.py tests/test_actions_failure_sweep_safety.py
+      - name: Re-converge generated inventories after the full test suite
+        run: python3 tools/refresh_repository_evidence.py
+      - name: Verify generated prospectus contracts after all test side effects
+        run: python3 -m pytest -q -p no:cacheprovider tests/test_run_prospectus.py tests/test_file_prospectus.py
       - name: Actions workflow count drift (health report must cover every workflow file)
         run: |
           python3 - <<'PY'
@@ -148,6 +147,14 @@ jobs:
           path: |
             tmp/fleet-summary.json
             tmp/links.json
+            config/bots/bot-manifests.generated.json
+            config/bots/division-manifests.generated.json
+            config/generated/file-prospectus/*.json
+            website/data/run-prospectus*.json
+            website/data/actions-health-report.json
+            website/data/pages-feature-audit.json
+            website/data/command-center/*.json
+            reports/**
           if-no-files-found: ignore
 
   full-audit:
