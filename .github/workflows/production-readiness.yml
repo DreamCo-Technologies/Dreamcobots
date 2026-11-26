@@ -3,6 +3,16 @@ name: Production Readiness Evidence
 on:
   push:
     branches: [main]
+    paths:
+      - "governance/**"
+      - "config/production-readiness-contract.json"
+      - "config/full-system-operational-certification.json"
+      - "config/runtime-connection-evidence.json"
+      - "tools/production_readiness_gate.py"
+      - "tools/build_full_system_certification.py"
+      - "tests/test_production_readiness_gate.py"
+      - "tests/test_full_system_operational_certification.py"
+      - ".github/workflows/production-readiness.yml"
   schedule:
     - cron: '17 6 * * *'
   workflow_dispatch:
