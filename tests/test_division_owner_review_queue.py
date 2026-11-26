@@ -222,5 +222,15 @@ class DivisionOwnerReviewQueueTests(unittest.TestCase):
             validate_owner_review_queue(queue)
 
 
+    def test_workflow_preserves_queue_when_github_token_cannot_open_pr(self):
+        workflow = (ROOT / ".github/workflows/division-owner-review-queue.yml").read_text(encoding="utf-8")
+        proposal = workflow.index("      - name: Propose updated review queue")
+        fallback = workflow.index("      - name: Preserve generated review queue when PR creation is policy-blocked")
+        artifact = workflow.index("      - name: Upload generated owner review queue for manual review")
+        self.assertIn("continue-on-error: true", workflow[proposal:fallback])
+        self.assertIn("steps.propose.outcome == 'failure'", workflow[fallback:artifact])
+        self.assertIn("division-owner-review-queue-${{ github.run_id }}", workflow[artifact:])
+        self.assertIn("if-no-files-found: error", workflow[artifact:])
+
 if __name__ == "__main__":
     unittest.main()
