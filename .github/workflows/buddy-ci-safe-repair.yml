@@ -135,7 +135,7 @@ jobs:
         if: github.event_name == 'workflow_run' && github.event.workflow_run.name == 'Full System Certification'
         run: npm run buddy:fleet
       - name: Verify canonical fleet end-to-end evidence
-        if: github.event_name == 'workflow_run' && github.event.workflow_run.name == 'Full System Certification'
+        if: github.event_name == 'push' || (github.event_name == 'workflow_run' && github.event.workflow_run.name == 'Full System Certification')
         run: npm run buddy:fleet:e2e
       - name: Detect allowlisted generated changes
         id: changes
