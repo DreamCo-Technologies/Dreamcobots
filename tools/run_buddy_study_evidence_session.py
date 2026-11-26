@@ -51,6 +51,11 @@ INPUT_PATHS = (
     REGISTRY_PATH, CROSSWALK_PATH, POLICY_PATH, MASTERBOT_PATH, CONTRACT_PATH,
     CURRICULUM_PATH, TRAINER_GUIDE_PATH, STUDY_GUIDE_PATH, MANIFEST_PATH,
     CORPUS_PATH, TRAINER_PATH, SCHEDULER_PATH,
+    ".github/workflows/buddy-study-evidence-session.yml",
+    "tools/run_buddy_study_evidence_session.py",
+    "tests/test_buddy_study_evidence_session.py",
+    "tests/test_buddy_byte_bpe_trainer.py",
+    "tests/test_study_resource_scheduler.py",
 )
 
 # Risk-first shared-foundation order. These are the runnable original lessons
@@ -817,6 +822,8 @@ def run_session(args: argparse.Namespace) -> int:
         source_provenance.append({
             "path": path, "sha256": material["input_hashes"][path],
             "kind": kind, "rights_basis": rights, "used_for_study": used,
+            "used_for_session": True,
+            "extracted_section": "DreamCo-authored learning path onward; link-only reference section excluded" if path == STUDY_GUIDE_PATH else None,
             "external_content_accessed": False,
         })
 
