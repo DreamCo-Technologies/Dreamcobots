@@ -74,6 +74,42 @@ class FreeCodeCampDivisionVideoCoverageAuditTests(unittest.TestCase):
         self.assertEqual(report["specialist_curriculum"]["missing_artifact_slots"], 960)
         self.assertFalse(report["catalog"]["inventory_complete"])
 
+    def test_duplicate_masterbot_ids_cannot_collapse_required_coverage(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            fixture_root(root)
+            registry_path = root / "config/masterbot-65-registry.json"
+            registry = json.loads(registry_path.read_text(encoding="utf-8"))
+            registry["divisions"][-1]["id"] = 1
+            registry_path.write_text(json.dumps(registry), encoding="utf-8")
+            report = audit(root)
+        self.assertIn("canonical_masterbot_ids_missing_or_duplicate", report["blockers"])
+        self.assertEqual(report["specialist_curriculum"]["required_artifact_slots"], 960)
+
+    def test_missing_masterbot_approval_record_remains_pending(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            fixture_root(root)
+            crosswalk_path = root / "config/generated/masterbot-55-domain-crosswalk.json"
+            crosswalk = json.loads(crosswalk_path.read_text(encoding="utf-8"))
+            crosswalk["masterbots"] = crosswalk["masterbots"][:-1]
+            crosswalk_path.write_text(json.dumps(crosswalk), encoding="utf-8")
+            report = audit(root)
+        self.assertEqual(report["division_coverage"]["masterbot_owner_approval_counts"]["pending"], 65)
+        self.assertIn("masterbot_crosswalk_identity_coverage_invalid", report["blockers"])
+
+    def test_missing_routing_override_input_is_a_blocker(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            fixture_root(root)
+            (root / "config/freecodecamp-division-routing-overrides.json").unlink()
+            report = audit(root)
+        self.assertEqual(report["status"], "blocked")
+        self.assertTrue(any(
+            item.startswith("input_read_error:missing_file:config/freecodecamp-division-routing-overrides.json")
+            for item in report["blockers"]
+        ))
+
     def test_unknown_categories_and_duplicate_video_ids_are_blockers(self):
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)
