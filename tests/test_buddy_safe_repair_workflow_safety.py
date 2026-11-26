@@ -28,6 +28,8 @@ def test_safe_repair_can_be_dispatched_or_bootstrapped_only_on_main():
 def test_safe_repair_uses_convergent_generators_and_only_pushes_a_repair_branch():
     workflow_text = WORKFLOW_PATH.read_text(encoding="utf-8")
     assert "python tools/refresh_repository_evidence.py" in workflow_text
+    assert "python tools/generate_command_center_data.py" in workflow_text
+    assert "python tools/generate_command_center_data.py --check" in workflow_text
     assert "python tools/build_actions_prospectus.py --check --check-buttons" in workflow_text
     assert "python tools/build_file_prospectus.py --check" in workflow_text
     assert "REPAIR_BRANCH:" in workflow_text
@@ -47,5 +49,6 @@ def test_safe_repair_allowlist_includes_public_evidence_and_manifests():
         "website/data/pages-feature-audit.json",
         "website/data/command-center",
         "website/data/fleet-runtime-status.json",
+        "website/data/command-center",
     ):
         assert path in workflow_text
