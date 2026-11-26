@@ -22,7 +22,7 @@ REQUIRED_SECTIONS = (
     "summary", "chapter_summaries", "learning_objectives", "key_concepts",
     "terminology", "code_patterns", "worked_examples", "exercises", "projects",
     "common_mistakes", "debugging_playbook", "prerequisites",
-    "division_applications", "knowledge_checks", "answer_key", "references", "review",
+    "division_applications", "knowledge_checks", "answer_key", "references", "review", "capstone",
 )
 
 
@@ -96,6 +96,15 @@ def validate_guide(guide: dict[str, Any], video: dict[str, Any], rights: dict[st
         errors.append("at least three original exercises are required")
     if len(guide.get("knowledge_checks", [])) < 5 or len(guide.get("answer_key", [])) < 5:
         errors.append("at least five knowledge checks and answers are required")
+    if not isinstance(guide.get("projects"), list) or not guide.get("projects"):
+        errors.append("at least one independently testable lab or project is required")
+    capstone = guide.get("capstone") if isinstance(guide.get("capstone"), dict) else {}
+    if len(str(capstone.get("goal", "")).strip()) < 30:
+        errors.append("capstone goal must contain at least 30 characters")
+    if not isinstance(capstone.get("acceptance_tests"), list) or len(capstone.get("acceptance_tests", [])) < 3:
+        errors.append("capstone must include at least three acceptance tests")
+    if not str(capstone.get("evidence_artifact", "")).strip():
+        errors.append("capstone must name its evidence artifact")
     review = guide.get("review") or {}
     if review.get("review_status") not in {"draft", "needs_human_review", "approved", "rejected"}:
         errors.append("review status is missing or invalid")
