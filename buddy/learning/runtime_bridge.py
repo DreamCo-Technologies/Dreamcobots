@@ -311,29 +311,65 @@ class BuddyLearningBridge:
                 if not lesson.masterbot_targets or masterbot in lesson.masterbot_targets
             ]
         if query.strip():
-            terms = {
+            terms = list(dict.fromkeys(
                 token.replace("_", "-")
                 for token in re.findall(r"[a-z0-9][a-z0-9_.+-]*", query.lower())
                 if len(token) > 1
-            }
+            ))
+            query_phrase = " ".join(terms)
 
-            def matches_query(lesson: CourseLesson) -> bool:
-                text = (
-                    f"{lesson.title} {lesson.lesson_id} {lesson.track_id} {lesson.category} "
-                    f"{lesson.objective} {lesson.practice} {lesson.assessment} {lesson.benchmark}"
-                ).lower()
-                tokens = {
+            def tokens_for(value: str) -> set[str]:
+                return {
                     token.replace("_", "-")
-                    for token in re.findall(r"[a-z0-9][a-z0-9_.+-]*", text)
+                    for token in re.findall(r"[a-z0-9][a-z0-9_.+-]*", value.lower())
                 }
-                return any(
-                    term == token
-                    or (min(len(term), len(token)) >= 4 and (term.startswith(token) or token.startswith(term)))
-                    for term in terms
-                    for token in tokens
+
+            def token_matches(term: str, token: str) -> bool:
+                return term == token or (
+                    min(len(term), len(token)) >= 4
+                    and (term.startswith(token) or token.startswith(term))
                 )
 
-            lessons = [lesson for lesson in lessons if matches_query(lesson)]
+            def relevance(lesson: CourseLesson) -> int:
+                title = f"{lesson.title} {lesson.lesson_id}".lower()
+                title_tokens = tokens_for(title)
+                searchable = " ".join((
+                    lesson.title, lesson.lesson_id, lesson.track_id, lesson.category,
+                    lesson.objective, lesson.practice, lesson.assessment, lesson.benchmark,
+                    lesson.source_url, lesson.source_video_id,
+                    " ".join(lesson.division_targets), " ".join(lesson.masterbot_targets),
+                    " ".join(lesson.capability_tags), " ".join(lesson.tool_tags),
+                    " ".join(lesson.agent_tags), " ".join(lesson.implementation_steps),
+                    lesson.buddy_demo,
+                ))
+                search_tokens = tokens_for(searchable)
+                matched_terms = [
+                    term for term in terms
+                    if any(token_matches(term, token) for token in search_tokens)
+                ]
+                if not matched_terms:
+                    return 0
+                title_matches = [
+                    term for term in terms
+                    if any(token_matches(term, token) for token in title_tokens)
+                ]
+                score = len(matched_terms) * 5 + len(title_matches) * 20
+                normalized_title = " ".join(tokens_for(title))
+                if query_phrase and query_phrase in normalized_title:
+                    score += 100
+                if terms and len(matched_terms) == len(terms):
+                    score += 25
+                if lesson.source_video_id and any(token_matches(term, lesson.source_video_id.lower()) for term in terms):
+                    score += 50
+                return score
+
+            ranked = [
+                (score, index, lesson)
+                for index, lesson in enumerate(lessons)
+                if (score := relevance(lesson)) > 0
+            ]
+            ranked.sort(key=lambda item: (-item[0], item[1]))
+            lessons = [lesson for _, _, lesson in ranked]
         items = [{
             "resource_id": lesson.resource_id,
             "lesson_id": lesson.lesson_id,
