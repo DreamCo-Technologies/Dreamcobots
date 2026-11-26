@@ -3624,6 +3624,7 @@
       ],
       "benchmark_commands": [],
       "triggers": [
+        "manual",
         "push",
         "pull request"
       ],
@@ -5042,10 +5043,13 @@
       "purpose": "Operate Division Owner Review Queue as a bounded DreamCo repository workflow",
       "what_happens": [
         "Generate and validate owner review queue",
-        "Propose updated review queue"
+        "Propose updated review queue",
+        "Preserve generated review queue when PR creation is policy-blocked",
+        "Upload generated owner review queue for manual review"
       ],
       "outputs": [
-        "GitHub Actions run log"
+        "GitHub Actions run log",
+        "declared downloadable or deployment artifact"
       ],
       "benchmark_commands": [],
       "triggers": [
@@ -5064,14 +5068,15 @@
         "concurrency_declared": true,
         "job_timeouts_declared": 1,
         "runner_jobs": 1,
-        "artifacts_declared": false
+        "artifacts_declared": true
       },
       "upgrades": [
         "Publish machine-readable evidence for every run.",
         "Keep external writes behind explicit authorization and bounded policy.",
         "Preserve failures and regressions instead of converting unknown states into passes.",
         "upgrade recommendation: actions/checkout@v4 -> v7",
-        "upgrade recommendation: actions/setup-python@v5 -> v7"
+        "upgrade recommendation: actions/setup-python@v5 -> v7",
+        "upgrade recommendation: actions/upload-artifact@v4 -> v6"
       ],
       "possible_duplicate": false,
       "duplicate_candidate_group": null,
@@ -7133,12 +7138,12 @@
       "runtime_status": "unknown_until_run_evidence_loaded",
       "errors": [],
       "warnings": [],
-      "runner_jobs": 2,
+      "runner_jobs": 3,
       "controls": {
         "permissions_declared": true,
         "concurrency_declared": true,
         "job_timeouts_declared": 2,
-        "runner_jobs": 2,
+        "runner_jobs": 3,
         "artifacts_declared": true
       },
       "upgrades": [
@@ -7169,11 +7174,11 @@
         "Run trusted-code static audit",
         "Build maximum sandbox plan",
         "Run business data and trade readiness tests",
+        "Regenerate canonical fleet end-to-end evidence",
         "Re-verify fleet E2E and inherit canonical sandbox evidence",
         "Run speed and accuracy benchmarks",
         "Supply-chain vulnerability gate",
         "Smoke-test built production runtime",
-        "Regenerate canonical fleet end-to-end evidence",
         "Run full production verification",
         "Build full certification receipt",
         "Build live-user readiness",
