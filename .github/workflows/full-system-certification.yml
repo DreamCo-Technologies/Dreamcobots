@@ -126,6 +126,12 @@ jobs:
           python3 tools/build_unified_bot_system.py
           python3 tools/build_runtime_sync_plan.py
 
+      # Legacy recovery can update App_bots after the initial generated-contract
+      # refresh. Rebuild the canonical fleet catalog after those source mutations
+      # so verification never consumes a stale master_bot_registry.json.
+      - name: Refresh fleet catalog after legacy bot recovery
+        run: node --import tsx tools/generate_bot_fleet_catalog.ts
+
       - name: Build work business creative government manufacturing and ontology evidence
         run: |
           python3 tools/build_universal_work_ai_catalog.py || python3 tools/build_universal_work_ai_catalog.py --offline
