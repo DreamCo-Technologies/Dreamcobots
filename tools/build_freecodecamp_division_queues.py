@@ -212,24 +212,28 @@ def build_queues(catalog: dict[str, Any], crosswalk: dict[str, Any], limit: int 
             "queue_count": len(selected),
             "truth_boundary": "Queued metadata is not evidence that the division watched, learned, trained on, or mastered this lesson.",
         })
-    assigned_video_ids = {
-        item["video_id"] for row in rows for item in row["items"]
-    }
     classified_video_ids = {
         video["video_id"] for video in videos
         if set(video.get("categories") or []) and set(video.get("categories") or []) != {"other_or_unclassified"}
     }
-    unrouted_video_ids = sorted(classified_video_ids - assigned_video_ids)
-    if unrouted_video_ids:
-        categories_by_id = {
-            video["video_id"]: sorted(set(video.get("categories") or []))
-            for video in videos if video["video_id"] in set(unrouted_video_ids)
+    # An explicit cap is a deliberate preview. Full classified-video coverage
+    # is required only for the uncapped default queue used by production workflows.
+    if limit is None:
+        assigned_video_ids = {
+            item["video_id"] for row in rows for item in row["items"]
         }
-        samples = {video_id: categories_by_id[video_id] for video_id in unrouted_video_ids[:10]}
-        raise ValueError(
-            f"{len(unrouted_video_ids)} classified videos have no division category route; "
-            f"add reviewed category profiles or explicit triage routes: {samples}"
-        )
+        unrouted_video_ids = sorted(classified_video_ids - assigned_video_ids)
+        if unrouted_video_ids:
+            unrouted_set = set(unrouted_video_ids)
+            categories_by_id = {
+                video["video_id"]: sorted(set(video.get("categories") or []))
+                for video in videos if video["video_id"] in unrouted_set
+            }
+            samples = {video_id: categories_by_id[video_id] for video_id in unrouted_video_ids[:10]}
+            raise ValueError(
+                f"{len(unrouted_video_ids)} classified videos have no division category route; "
+                f"add reviewed category profiles or explicit triage routes: {samples}"
+            )
     unclassified_video_count = sum(
         set(video.get("categories") or []) == {"other_or_unclassified"}
         for video in videos
