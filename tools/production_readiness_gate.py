@@ -227,6 +227,7 @@ def build_area_reports(
     if not isinstance(entries, dict):
         raise ValueError("production-readiness area evidence must contain an areas object")
     reports = []
+    check_cache: dict[tuple[str, str, str | None], bool] = {}
     for area in contract.get("areas", []):
         area_id = area["id"]
         entry = entries.get(area_id)
@@ -268,7 +269,10 @@ def build_area_reports(
                 if not check_id.isdigit():
                     errors.append("check_id must be a GitHub Actions run or check-run ID")
                     continue
-                if not verify_check(repository, check_id, current_sha, token):
+                cache_key = (repository, check_id, token)
+                if cache_key not in check_cache:
+                    check_cache[cache_key] = verify_check(repository, check_id, current_sha, token)
+                if not check_cache[cache_key]:
                     errors.append("linked GitHub check is not successful on the current revision")
                     continue
                 verified_refs.append(ref)
