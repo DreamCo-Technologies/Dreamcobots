@@ -139,13 +139,22 @@ class FreeCodeCampDomainQueueTests(unittest.TestCase):
         catalog = json.loads((ROOT / "buddy/bootcamp/sources/freecodecamp/catalog.json").read_text(encoding="utf-8"))
         result = build_queues(catalog, crosswalk, limit=10, allow_partial=True)
         validate(result)
-        self.assertTrue(all(row["target_categories"] for row in result["domains"]))
-        self.assertTrue(all(row["queue_status"] == "subject_routed" for row in result["domains"]))
-        for row in result["domains"]:
+        core = [row for row in result["domains"] if row["mapping_status"] == "proposed_exact_name_match"]
+        unresolved = [row for row in result["domains"] if row["mapping_status"] == "unresolved"]
+        self.assertEqual(len(core), 45)
+        self.assertEqual(len(unresolved), 10)
+        self.assertTrue(all(row["target_categories"] for row in core))
+        self.assertTrue(all(row["queue_status"] == "subject_routed" for row in core))
+        for row in core:
             self.assertTrue(
                 any(set(item["categories"]) & set(row["target_categories"]) for item in row["items"]),
                 row["domain_name"],
             )
+        self.assertTrue(all(not row["target_categories"] for row in unresolved))
+        self.assertTrue(all(row["queue_status"] == "foundation_only_owner_mapping_pending" for row in unresolved))
+        for row in unresolved:
+            foundation = set(row["shared_foundation_categories"])
+            self.assertTrue(all(foundation.intersection(item["categories"]) for item in row["items"]), row["domain_name"])
 
 
 if __name__ == "__main__":
