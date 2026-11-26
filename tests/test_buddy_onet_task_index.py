@@ -34,6 +34,21 @@ class OnetTaskIndexTests(unittest.TestCase):
         self.assertEqual(result["source"]["sha256"], __import__("hashlib").sha256(raw).hexdigest())
         self.assertTrue(result["task_guide_policy"]["each_task_requires_original_workflow_and_practice"])
 
+    def test_official_onetsoc_code_field_is_preserved(self):
+        rows = [{
+            "onetsoc_code": "15-1252.00",
+            "title": "Software Developers",
+            "task_id": 123,
+            "task": "Analyze user needs.",
+            "task_type": "Core",
+        }]
+        result = build_task_index(
+            rows, version="31.0", source_url="https://www.onetcenter.org/example.json",
+            source_bytes=b"official fixture", curriculum=self.curriculum, minimum_task_count=1,
+        )
+        self.assertEqual(result["inventory"]["task_statement_count"], 1)
+        self.assertEqual(result["tasks"][0]["occupation_code"], "15-1252.00")
+
     def test_duplicate_and_missing_ids_fail_closed(self):
         rows = [
             {"O*NET-SOC Code": "15-1252.00", "Task ID": "123", "Task": "Analyze needs."},
