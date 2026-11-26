@@ -26,7 +26,7 @@ class RecordReviewResult:
 
 
 class SRSStore:
-    SCHEMA_VERSION = 1
+    SCHEMA_VERSION = 2
 
     def __init__(self, path: str | Path) -> None:
         self.path = str(path)
@@ -116,7 +116,13 @@ class SRSStore:
                     CREATE TRIGGER srs_mastery_evidence_no_delete
                     BEFORE DELETE ON srs_mastery_evidence
                     BEGIN SELECT RAISE(ABORT, 'mastery evidence is append-only'); END;
-                    PRAGMA user_version=1;
+                    PRAGMA user_version=2;
+                """)
+            elif version == 1:
+                conn.executescript("""
+                    ALTER TABLE srs_review_events ADD COLUMN desired_retention REAL;
+                    ALTER TABLE srs_review_events ADD COLUMN scheduler_config_json TEXT NOT NULL DEFAULT '{}';
+                    PRAGMA user_version=2;
                 """)
             elif version != self.SCHEMA_VERSION:
                 raise RuntimeError(f"no migration path from database schema {version}")
