@@ -2,13 +2,13 @@ name: One-time Fleet Catalog Refresh
 on:
   pull_request:
     branches: [main]
-    types: [opened, synchronize, reopened]
+    types: [opened]
 permissions:
   contents: write
 jobs:
   regenerate:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v7
         with:
@@ -19,18 +19,16 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - name: Reset to current temporary branch head
-        run: |
-          git fetch origin ops/generate-fleet-catalog-once
-          git reset --hard origin/ops/generate-fleet-catalog-once
       - name: Regenerate canonical fleet catalog artifacts
         run: node --import tsx tools/generate_bot_fleet_catalog.ts
       - uses: actions/setup-python@v7
         with:
           python-version: "3.11"
-      - name: Synchronize current checked-in FreeCodeCamp count manifests
+      - name: Synchronize checked-in FreeCodeCamp learning counts
         run: python tools/sync_freecodecamp_learning_inventory.py
-      - name: Commit generated catalog and inventory manifests to temporary branch
+      - name: Commit generated artifacts to temporary branch
+        env:
+          BRANCH_NAME: ${{ github.event.pull_request.head.ref }}
         run: |
           set -euo pipefail
           git config user.name "github-actions[bot]"
@@ -39,21 +37,8 @@ jobs:
           git diff --cached --check
           if git diff --cached --quiet; then
             echo "Generated artifacts are already current."
-          else
-            git diff --cached --stat
-            git commit -m "chore: regenerate fleet and learning catalog artifacts"
-            git push origin HEAD:refs/heads/ops/generate-fleet-catalog-once
+            exit 0
           fi
-      - uses: actions/upload-artifact@v7
-        with:
-          name: canonical-fleet-catalog-generated
-          path: |
-            config/master_bot_registry.json
-            config/generated/bots.catalog.json
-            website/data/bot-fleet-catalog.json
-            website/data/buddy-routing-index.js
-            website/data/bot-fleet/
-            reports/BOT_FLEET_PROSPECTUS.md
-            config/freecodecamp-complete-learning-path.json
-            config/buddy-continuous-study-policy.json
-          retention-days: 3
+          git diff --cached --stat
+          git commit -m "chore: regenerate canonical fleet and learning artifacts"
+          git push origin "HEAD:refs/heads/$BRANCH_NAME"
