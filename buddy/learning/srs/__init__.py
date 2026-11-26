@@ -13,19 +13,23 @@ from .leitner import DEFAULT_INTERVALS, LeitnerCard, due_leitner_cards, review_l
 from .sm2 import Card, ReviewLog, review, due_cards, catalog_spaced_repetition_check
 from .store import IdempotencyConflictError, RecordReviewResult, SRSStore
 
-_FSRS_EXPORTS = {"FSRSAdapter", "FSRSConfig", "FSRSReviewResult", "FSRS_SCHEDULER_VERSION"}
+_FSRS_EXPORTS = {"FSRSAdapter", "FSRSConfig", "FSRSReviewResult", "FSRS_SCHEDULER_VERSION", "BuddySRSService"}
 
 
 def __getattr__(name: str):
     if name in _FSRS_EXPORTS:
-        from . import fsrs as fsrs_module
+        if name == "BuddySRSService":
+            from .service import BuddySRSService
+            return BuddySRSService
+        from importlib import import_module
+        fsrs_module = import_module(f"{__name__}.fsrs")
         return getattr(fsrs_module, name)
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 
 
 __all__ = [
     "DEFAULT_ADAPTIVE_SCHEDULER",
-    "FSRSAdapter", "FSRSConfig", "FSRSReviewResult", "FSRS_SCHEDULER_VERSION",
+    "FSRSAdapter", "FSRSConfig", "FSRSReviewResult", "FSRS_SCHEDULER_VERSION", "BuddySRSService",
     "AnkiClassicCard", "AnkiClassicConfig", "AnkiClassicScheduler",
     "Card", "ReviewLog", "review", "due_cards", "catalog_spaced_repetition_check",
     "DEFAULT_INTERVALS", "LeitnerCard", "review_leitner", "due_leitner_cards",
