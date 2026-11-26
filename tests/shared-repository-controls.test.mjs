@@ -11,7 +11,14 @@ function browserDocument() {
     currentScript: null,
     getElementById: () => null,
     addEventListener() {},
-    createElement: tagName => ({ tagName, dataset: {} }),
+    createElement: tagName => ({
+      tagName,
+      dataset: {},
+      children: [],
+      setAttribute() {},
+      appendChild(node) { this.children.push(node); },
+      classList: { toggle() {}, remove() {} },
+    }),
     querySelector(selector) {
       if (selector === 'script[data-repository-actions]') {
         return appended.find(node => node.dataset.repositoryActions);
@@ -22,6 +29,7 @@ function browserDocument() {
       return null;
     },
     head: { appendChild: node => appended.push(node) },
+    body: { prepend() {} },
   };
   return { document, appended };
 }
