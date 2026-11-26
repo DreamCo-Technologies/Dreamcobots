@@ -64,6 +64,8 @@ class SRSStore:
                         resulting_state_json TEXT NOT NULL,
                         predicted_retrievability REAL,
                         actual_recall INTEGER NOT NULL CHECK (actual_recall IN (0, 1)),
+                        desired_retention REAL,
+                        scheduler_config_json TEXT NOT NULL DEFAULT '{}',
                         parameter_set_id TEXT,
                         provenance_json TEXT NOT NULL,
                         payload_hash TEXT NOT NULL,
@@ -199,6 +201,7 @@ class SRSStore:
                 event["event_id"], event["learner_id"], event["deck_id"], event["item_id"],
                 division_json, event["scheduler_name"], event["scheduler_version"], event["rating"],
                 reviewed, due, prior_json, state_json, predicted, int(event["actual_recall"]),
+                event.get("desired_retention"), self._canonical(event.get("scheduler_config") or {}),
                 event.get("parameter_set_id"), provenance_json, payload_hash, now,
             ))
             if replay_required:
@@ -273,6 +276,60 @@ class SRSStore:
             item.pop("division_ids_json", None)
             items.append(item)
         return items
+
+
+    def get_review_event(self, event_id: str) -> dict[str, Any] | None:
+        with self._connect() as conn:
+            row = conn.execute(
+                "SELECT * FROM srs_review_events WHERE event_id=?", (event_id,)
+            ).fetchone()
+        return dict(row) if row else None
+
+    def commit_replayed_state(
+        self,
+        *,
+        learner_id: str,
+        deck_id: str,
+        item_id: str,
+        state: dict[str, Any],
+        due_at_utc: str,
+        latest_event_id: str,
+        division_ids: list[str],
+        scheduler_name: str,
+        scheduler_version: str,
+        desired_retention: float | None,
+        parameter_set_id: str | None,
+    ) -> None:
+        """Commit a deterministic replay only if it includes the latest stored event."""
+        events = self.list_review_events(learner_id, deck_id, item_id)
+        if not events or events[-1]["event_id"] != latest_event_id:
+            raise ValueError("replay is stale; review history changed during rebuild")
+        due = self._utc_string(due_at_utc)
+        latest = events[-1]
+        state_json = self._canonical(state)
+        divisions_json = self._canonical(sorted(set(division_ids)))
+        with self._connect() as conn:
+            conn.execute("BEGIN IMMEDIATE")
+            current_latest = conn.execute(
+                "SELECT event_id FROM srs_review_events WHERE learner_id=? AND deck_id=? AND item_id=? ORDER BY reviewed_at_utc DESC, event_id DESC LIMIT 1",
+                (learner_id, deck_id, item_id),
+            ).fetchone()
+            if not current_latest or current_latest["event_id"] != latest_event_id:
+                conn.rollback()
+                raise ValueError("replay is stale; review history changed during rebuild")
+            conn.execute("""
+                UPDATE srs_card_states SET
+                    division_ids_json=?, scheduler_name=?, scheduler_version=?,
+                    state_json=?, due_at_utc=?, last_reviewed_at_utc=?,
+                    desired_retention=?, parameter_set_id=?, latest_event_id=?,
+                    replay_required=0
+                WHERE learner_id=? AND deck_id=? AND item_id=?
+            """, (
+                divisions_json, scheduler_name, scheduler_version, state_json, due,
+                latest["reviewed_at_utc"], desired_retention, parameter_set_id,
+                latest_event_id, learner_id, deck_id, item_id,
+            ))
+            conn.commit()
 
     def record_mastery_evidence(self, evidence: dict[str, Any]) -> str:
         required = ("evidence_id", "learner_id", "deck_id", "item_id", "division_ids",
