@@ -58,5 +58,19 @@ class FullSystemCertificationWorkflowOrderTests(unittest.TestCase):
         self.assertLess(refresh, fleet_e2e)
         self.assertLess(fleet_e2e, production)
 
+
+    def test_change_impact_policy_changes_trigger_full_certification(self):
+        root = Path(__file__).resolve().parents[1]
+        workflow = (root / ".github/workflows/full-system-certification.yml").read_text(encoding="utf-8")
+        pull_request_paths = workflow.split("  pull_request:", 1)[1].split("  workflow_dispatch:", 1)[0]
+        push_paths = workflow.split("  push:", 1)[1].split("\npermissions:", 1)[0]
+        required = (
+            "config/change-impact-test-policy.json",
+            "tests/test_change_impact_test_policy.py",
+        )
+        for path in required:
+            self.assertIn(f'"{path}"', pull_request_paths)
+            self.assertIn(f'"{path}"', push_paths)
+
 if __name__ == "__main__":
     unittest.main()
