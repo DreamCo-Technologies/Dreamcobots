@@ -55,6 +55,7 @@ class CIWorkflowFanoutPolicyTests(unittest.TestCase):
             self.assertNotIn(broad, block)
         self.assertIn("config/full-system-operational-certification.json", block)
         self.assertIn("tools/build_full_system_certification.py", block)
+        self.assertNotIn(".github/workflows/full-system-certification.yml", block)
 
     def test_site_deployment_does_not_run_for_arbitrary_test_or_tool_changes(self):
         block = trigger_block("deploy-buddy-pages.yml")
@@ -62,6 +63,13 @@ class CIWorkflowFanoutPolicyTests(unittest.TestCase):
             self.assertNotIn(broad, block)
         self.assertIn('"website/**"', block)
         self.assertIn('"command-center/**"', block)
+
+    def test_command_center_contract_is_scoped_to_command_center_sources(self):
+        block = trigger_block("command-center-index.yml")
+        self.assertIn("command-center/data/**", block)
+        self.assertIn("tools/generate_command_center_data.py", block)
+        self.assertNotIn('"config/**"', block)
+        self.assertNotIn('".github/workflows/**"', block)
 
     def test_production_readiness_runs_on_governance_changes_not_every_push(self):
         block = trigger_block("production-readiness.yml")
