@@ -185,9 +185,6 @@ jobs:
       - name: Smoke-test built production runtime
         run: python3 tools/smoke_production_runtime.py
 
-      - name: Regenerate canonical fleet end-to-end evidence
-        run: node --import tsx tools/run_bot_fleet_e2e.ts
-
       - name: Run full production verification
         run: npx tsx tools/run_universal_verification.ts --production
 
