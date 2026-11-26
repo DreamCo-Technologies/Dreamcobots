@@ -17,6 +17,7 @@ def test_safe_repair_can_be_dispatched_or_bootstrapped_only_on_main():
     assert ".github/workflows/buddy-ci-safe-repair.yml" in triggers["push"]["paths"]
     assert "Buddy Bootcamp Curriculum" in triggers["workflow_run"]["workflows"]
     assert "Buddy Open-Source Weekly Bootcamp" in triggers["workflow_run"]["workflows"]
+    assert "Buddy Bootcamp Curriculum" in triggers["workflow_run"]["workflows"]
     assert "Full System Certification" in triggers["workflow_run"]["workflows"]
 
     job = workflow["jobs"]["regenerate-and-verify"]
