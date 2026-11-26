@@ -345,6 +345,36 @@ class RuntimeBridgeTests(unittest.TestCase):
         self.assertEqual(ids, {"fixture-1", "fixture-2", "fixture-4"})
         self.assertTrue(all(item["video_categories"] for item in result["items"]))
 
+
+    def test_learning_queue_paginates_without_dropping_later_lessons(self):
+        lessons = [
+            CourseLesson(
+                resource_id=index, lesson_id=f"pagination-{index}", track_id="shared-fixture",
+                title=f"Shared curriculum lesson {index}", category="foundation",
+                objective="Study and practice a foundational skill.", practice="Complete a guided exercise.",
+                assessment="Pass the independent check.", benchmark="Regression benchmark.",
+                source_url="https://example.org/lesson", guide_path="fixture", rights_mode="original",
+                delivery="original", content_status="authored",
+            )
+            for index in range(205)
+        ]
+        with patch("buddy.learning.runtime_bridge.resources_for_division", return_value=[]), \
+             patch("buddy.learning.runtime_bridge.load_course_lessons", return_value=lessons):
+            first = self.bridge.bootcamp_learning_queue(division="DreamFinance", limit=100, offset=0)
+            second = self.bridge.bootcamp_learning_queue(division="DreamFinance", limit=100, offset=100)
+            third = self.bridge.bootcamp_learning_queue(division="DreamFinance", limit=100, offset=200)
+        self.assertEqual(first["total_count"], 205)
+        self.assertEqual(first["returned_count"], 100)
+        self.assertTrue(first["has_more"])
+        self.assertEqual(first["next_offset"], 100)
+        self.assertEqual(second["offset"], 100)
+        self.assertEqual(second["next_offset"], 200)
+        self.assertEqual(third["returned_count"], 5)
+        self.assertFalse(third["has_more"])
+        ids = [item["lesson_id"] for page in (first, second, third) for item in page["items"]]
+        self.assertEqual(len(ids), 205)
+        self.assertEqual(len(set(ids)), 205)
+
     def test_unclassified_video_triage_is_visible_only_to_review_lanes(self):
         # This policy test must remain valid when the live catalog is fully classified.
         source_video_id = "synthetic-unclassified-video"
