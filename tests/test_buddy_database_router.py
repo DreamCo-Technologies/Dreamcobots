@@ -13,7 +13,15 @@ from buddy.datasets.database_router import (
 def source(source_id="source-a", **overrides):
     value = {
         "source_id": source_id,
+        "provider": "synthetic-test-provider",
         "engine": "postgresql",
+        "environment": "test",
+        "owner": "test-fixture",
+        "purpose": "synthetic routing policy fixture",
+        "schema_version": "test-v1",
+        "retention": "ephemeral test data only",
+        "credential_status": "no credentials stored",
+        "source_code": "tests/test_buddy_database_router.py",
         "lifecycle_state": "TESTED",
         "connector_status": "CONNECTED",
         "health": "HEALTHY",
@@ -30,6 +38,22 @@ def source(source_id="source-a", **overrides):
         "supports_idempotency": False,
         "transaction_support": False,
         "write_approval_refs": [],
+        "backup_restore_status": "NOT_VERIFIED",
+        "backup_restore_evidence_refs": [],
+        "replication_status": "NOT_VERIFIED",
+        "replication_evidence_refs": [],
+        "connection_pooling_status": "NOT_VERIFIED",
+        "connection_pooling_evidence_refs": [],
+        "encryption_at_rest_status": "NOT_VERIFIED",
+        "encryption_at_rest_evidence_refs": [],
+        "encryption_in_transit_status": "NOT_VERIFIED",
+        "encryption_in_transit_evidence_refs": [],
+        "observability_status": "NOT_VERIFIED",
+        "observability_evidence_refs": [],
+        "disaster_recovery_status": "NOT_VERIFIED",
+        "disaster_recovery_evidence_refs": [],
+        "residency_status": "NOT_VERIFIED",
+        "residency_evidence_refs": [],
     }
     value.update(overrides)
     return value
@@ -152,6 +176,38 @@ class BuddyDatabaseRouterTests(unittest.TestCase):
         unsafe["connection_string"] = "postgres://not-a-real-secret"
         with self.assertRaises(DatabaseRouteError):
             validate_source_registry([unsafe])
+
+    def test_verified_operational_status_requires_evidence_reference(self):
+        unproven = source("unproven", encryption_at_rest_status="VERIFIED")
+        with self.assertRaisesRegex(DatabaseRouteError, "requires at least one evidence reference"):
+            validate_source_registry([unproven])
+
+    def test_production_source_requires_all_operational_controls_and_evidence(self):
+        production = source("production", lifecycle_state="PRODUCTION")
+        with self.assertRaisesRegex(DatabaseRouteError, "production source requires verified controls"):
+            validate_source_registry([production])
+
+        verified = source(
+            "verified-production",
+            lifecycle_state="PRODUCTION",
+            backup_restore_status="VERIFIED",
+            backup_restore_evidence_refs=["evidence:backup-restore"],
+            replication_status="VERIFIED",
+            replication_evidence_refs=["evidence:replication"],
+            connection_pooling_status="VERIFIED",
+            connection_pooling_evidence_refs=["evidence:pooling"],
+            encryption_at_rest_status="VERIFIED",
+            encryption_at_rest_evidence_refs=["evidence:encryption-at-rest"],
+            encryption_in_transit_status="VERIFIED",
+            encryption_in_transit_evidence_refs=["evidence:encryption-in-transit"],
+            observability_status="VERIFIED",
+            observability_evidence_refs=["evidence:observability"],
+            disaster_recovery_status="VERIFIED",
+            disaster_recovery_evidence_refs=["evidence:disaster-recovery"],
+            residency_status="VERIFIED",
+            residency_evidence_refs=["evidence:residency"],
+        )
+        validate_source_registry([verified])
 
     def test_registry_file_is_valid_json_and_documents_lifecycle(self):
         path = Path(__file__).resolve().parents[1] / "config" / "buddy-database-source-registry.json"
