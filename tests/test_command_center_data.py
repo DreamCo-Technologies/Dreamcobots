@@ -44,6 +44,10 @@ class CommandCenterDataTests(unittest.TestCase):
     def test_every_certified_fleet_division_has_a_prospectus(self):
         evidence = json.loads((ROOT / "website/data/bot-fleet-e2e.json").read_text(encoding="utf-8"))
         divisions = self.payloads["divisions.json"]
+        bots = self.payloads["bots.json"]
+        self.assertEqual(bots["summary"]["registered_bots"], evidence["summary"]["profilesTested"])
+        self.assertEqual(bots["summary"]["declared_capability_tests"], evidence["summary"]["declaredCapabilitiesTested"])
+        self.assertEqual({row["id"] for row in bots["items"]}, {profile["slug"] for profile in evidence["profiles"]})
         self.assertEqual(divisions["summary"]["registered_divisions"], evidence["summary"]["divisionsTested"])
         by_name = {row["name"]: row for row in divisions["items"]}
         self.assertEqual(set(by_name), {row["division"] for row in evidence["divisions"]})
