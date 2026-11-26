@@ -55,7 +55,7 @@ def candidate_path_templates(text: str) -> set[str]:
         token for token in _candidate_tokens(text)
         if any(marker in token for marker in ("<", ">", "{", "}", "*"))
         and "/" in token
-        and Path(token).suffix.lower() in PATH_SUFFIXES
+        and Path(token.rstrip("}])>,;")).suffix.lower() in PATH_SUFFIXES
     }
 
 
