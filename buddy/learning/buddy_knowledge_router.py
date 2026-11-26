@@ -69,7 +69,10 @@ def _course_matches(query: str, root: Path, limit: int) -> list[dict[str, Any]]:
         overlap = query_tokens & _tokens(searchable)
         if not overlap:
             continue
-        track_overlap = query_tokens & _tokens(lesson.track_id)
+        track_text = lesson.track_id.replace("-", " ").replace("_", " ")
+        if lesson.track_id == "huggingface-full":
+            track_text += " hugging face"
+        track_overlap = query_tokens & _tokens(track_text)
         track_score = round(len(track_overlap) / max(len(query_tokens), 1), 4)
         matches.append({
             "lesson_id": lesson.lesson_id,
