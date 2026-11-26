@@ -73,7 +73,7 @@ class FreeCodeCampDomainQueueTests(unittest.TestCase):
         catalog = dict(self.catalog)
         catalog["inventory_status"] = "partial"
         catalog["inventory"] = {**self.catalog["inventory"], "complete": False}
-        with self.assertRaisesRegex(ValueError, "verified complete freeCodeCamp inventory"):
+        with self.assertRaisesRegex(ValueError, "verified complete freeCodeCamp inventory required"):
             build_queues(catalog, self.crosswalk, limit=10)
 
     def test_no_queue_item_is_authorized_for_training_or_media_ingestion(self):
@@ -121,7 +121,7 @@ class FreeCodeCampDomainQueueTests(unittest.TestCase):
             "complete": False,
             "observed_entry_count": 2,
         }
-        with self.assertRaisesRegex(ValueError, "verified complete inventory") as raised:
+        with self.assertRaisesRegex(ValueError, "verified complete freeCodeCamp inventory required") as raised:
             build_queues(catalog, self.crosswalk, limit=10, allow_partial=True)
         self.assertIn("for freeCodeCamp", str(raised.exception))
 
