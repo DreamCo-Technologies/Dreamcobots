@@ -96,7 +96,7 @@ test("generated Buddy routing index matches canonical and supplemental fleet sou
   const source = readFileSync(join(root, "website", "data", "buddy-routing-index.js"), "utf8");
   const marker = "window.BUDDY_ROUTING_INDEX=";
   assert.ok(source.startsWith(marker), "routing index must use the documented browser global");
-  const payload = source.slice(marker.length).trim().replace(/;\\s*$/, "");
+  const payload = source.slice(marker.length).trim().replace(/;$/, "");
   const routing = JSON.parse(payload) as {
     summary: { profiles: number; canonical_profiles: number; supplemental_profiles: number; divisions: number };
     bots: Array<[string, ...unknown[]]>;
