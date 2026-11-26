@@ -1,76 +1,128 @@
-# DreamCo PR Reconciliation Ledger — 2026-11-26
+# DreamCo Production Readiness & PR Reconciliation Ledger — 2026-11-26
 
 **Repository:** `DreamCo-Technologies/Dreamcobots`  
-**Baseline:** `main` at `ae2da856d7cb25994c1e43d3abc5b59ee204a3f0`  
-**Active repair PR:** [#18524](https://github.com/DreamCo-Technologies/Dreamcobots/pull/18524)  
-**Latest inspected PR #18524 head:** `027e0422c1d18ae03244b32cff37c851008b5a5b`  
-**Status:** In progress. This ledger records inspected facts and dispositions; it is not a production certification.
+**Current inspected main baseline:** `a43ec860ec24690e271baef688cc35a4963b13f8`  
+**Active benchmark repair PR:** [#18532](https://github.com/DreamCo-Technologies/Dreamcobots/pull/18532)  
+**Snapshot PR #18532 head at ledger update:** `1f8a60727490f52e9bdcf9d0cd87c54152a44126`  
+**Status:** Active repairs continue. This ledger is not a production certification.
 
-## Evidence rules
+## Evidence and change-control rules
 
-- A workflow is passing only when the exact head's GitHub check run is completed with conclusion `success`.
-- A queued, pending, skipped, neutral, or in-progress check is not a passing check.
-- A division is certified only by relevant division-level tests and current runtime evidence.
-- Generated inventory files are derived outputs. Regenerate them from canonical sources; do not merge stale snapshots as if they were authoritative.
-- Do not merge or deploy based solely on broad repository write authorization.
-- Do not expose secrets or start paid compute without explicit approval.
+- A check is passing only when the exact commit's GitHub check run is completed with conclusion `success`.
+- Queued, pending, skipped, neutral, cancelled, and in-progress checks are not passing evidence.
+- A merged PR is not automatically a validated PR. Preserve exact-head and merge-commit evidence separately.
+- A division or bot is certified only by relevant current tests and runtime evidence.
+- Generated inventory files are derived outputs. Regenerate them from canonical sources; do not merge stale snapshots as authoritative.
+- Never expose secrets or trigger paid model training/compute without explicit approval.
+- Do not transfer domain-division evidence into MasterBot mastery or ownership without a separately approved mapping and scope-specific evidence.
+- No PR is merged or deployed solely because repository write permission was granted.
+
+## Live merge-safety finding
+
+GitHub records show PRs #18524 and #18527 were merged by the repository-owner account while their exact-head check suites still contained queued, in-progress, cancelled, or failed checks. This does not prove an administrator bypass; the integration cannot read branch protection/rulesets because the endpoint returns HTTP 403 (`Resource not accessible by integration`). Branch protection therefore remains unverified.
+
+**Required owner-side action:** inspect repository Settings → Rulesets / Branch protection and require the actual certification checks (Fleet Runtime Truth, Code Trust Gate, Repository Test Matrix, CodeQL, Dependency Review, Command Center contracts, and the relevant domain-specific tests) before merge. Do not treat the merge button being available as proof that those checks passed.
 
 ## Active repair ledger
 
 | ID | Finding / root cause | Repair / disposition | Evidence | State |
 |---|---|---|---|---|
-| CI-001 | Fleet Runtime Truth regenerated mutually dependent file and Actions prospectuses in a one-way sequence; test setup also regenerated tracked bot manifests and could invalidate downstream evidence. | Added bounded two-generator fixed-point convergence; made bot-manifest tests read-only; split pre/post-test evidence generation and verification. | On prior exact head `596ed518d01a8f13bcdfbbfa9bc8ef5ec79be3d3`, Fleet Runtime Truth run `45741963058` completed successfully; all 26 gate steps completed successfully. The new head requires fresh checks. | Fixed; revalidation pending |
-| CI-002 | New evidence-refresh test was not listed in Fleet Runtime Truth path filters; test-only changes could miss the intended gate. | Added explicit path entries for `tests/test_refresh_repository_evidence.py` and the Pages manual-gate test. | Workflow diff on current #18524 head `027e0422c1d18ae03244b32cff37c851008b5a5b`; new checks queued at last inspection. | Fixed; revalidation pending |
-| DEPLOY-001 | Buddy Pages deployment condition allowed any main-branch push to enter the deploy job. | Ported the manual-dispatch-only deploy condition and added a regression test to #18524. | Current branch workflow condition is `github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'`; regression test checks both predicates. | Fixed; revalidation pending |
-| REG-001 | It was unclear whether the Problem Registry trigger update was included in #18524. | Verified the update is inherited from merged PR #18523, not a changed file in #18524. | PR #18523 merged at `ae2da856d7cb25994c1e43d3abc5b59ee204a3f0`; `.github/workflows/problem-registry.yml` has identical blob SHA `6a885becdd3ad5176019c30efd16cf5a86a2acfe` on `main` and the #18524 branch. | Verified |
-| PR-001 | Several open PRs are substantially behind current main and diverged; merging them unchanged risks reintroducing stale generated data or conflicts. | Port unique source changes onto a fresh main-based branch after per-file review; regenerate generated outputs; keep original PRs open until their unique value is preserved. | Exact compare against main SHA `ae2da856...` recorded below. | Open |
+| CI-001 | Fleet Runtime Truth generated mutually dependent file and Actions prospectuses in a one-way sequence; test setup also regenerated tracked bot manifests and could invalidate downstream evidence. | Bounded fixed-point convergence, read-only bot-manifest tests, and pre/post-test evidence refresh were merged in #18524. | Prior head `596ed518...` passed Fleet Runtime Truth (run `45741963058`, 26 gate steps). Later exact head `ec67f5ba...` was merged while most checks were still queued; merge commit `ec89bf44...` had many checks cancelled or in progress. | Code merged; exact merge certification incomplete |
+| CI-002 | Evidence-refresh test was missing from Fleet Runtime Truth path filters. | Added explicit path coverage for the evidence-refresh and deployment-gate regression tests. | Included in #18524 merge commit `ec89bf44...`. | Merged; verify current main checks |
+| CI-003 | Actions Failure Sweep could run on non-main pushes, overlap itself, file issues for PR failures, and recreate issues after closure. | Restricted push to main; added main-only job guard and concurrency; exclude PR/self failures; deduplicate against open and closed issues; added tests. | Included in #18524 branch/merge. Exact-head tests were queued at merge time; current-main validation still required. | Merged; validation pending |
+| DEPLOY-001 | Buddy Pages deployment could run on an ordinary main push. | Require explicit `workflow_dispatch` on `main`; retain the Frontier Claim Trust preflight. | Included in #18524 merge commit. | Merged; verify on current main |
+| REG-001 | It was unclear whether the Problem Registry trigger fix was part of #18524. | Verified it was inherited from merged #18523. | PR #18523 merge commit `ae2da856...`; Problem Registry workflow blob SHA `6a885bec...` was identical on main and #18524 branch. | Verified |
+| BUDDY-001 | Current main checked exact unverified seed candidates before approved internal guides, contrary to the router's documented precedence. | #18527 moved approved-guide short-circuit ahead of candidate discovery while retaining current main's full-catalog candidate resolver; added a regression test. | PR #18527 head `f11222fc...`: Buddy Learning Regression passed; CodeQL and Repository Test Matrix passed. Fleet Runtime Truth failed on unrelated prospectus drift; Buddy Bootcamp Curriculum failed on a queue-error assertion. | Code merged; downstream failures tracked separately |
+| BOOT-001 | Queue builder error text and tests disagreed when a partial FreeCodeCamp catalog was rejected. | New current-main PR #18534 aligns the builder message and all matching assertions; fail-closed behavior remains. | PR #18529 was closed unmerged; #18534 is the current repair. Exact-head checks are pending. | Open PR #18534 |
+| BENCH-001 | Daily benchmark runner emits 55 domain-division names, while gap planner expected numeric IDs 1–65. The planner discarded domain rows and queued all MasterBots as unmeasured. | PR #18532 adds canonical domain IDs, separate 55-domain and 65-MasterBot queues, explicit scope propagation, and plan-only naming. | Current main base `a43ec860...`; PR #18532 head `1f8a6072...`; checks queued at last inspection. | Open PR #18532 |
+| BENCH-002 | Domain benchmark evidence could be incorrectly interpreted as MasterBot mastery through proposed name mappings. | PR #18532 deliberately keeps domain evidence separate; proposed crosswalk mappings do not create MasterBot ownership or mastery. | Crosswalk contains 65 MasterBots, 55 domain divisions, 45 proposed exact-name matches, 10 unresolved domains, and 20 unresolved MasterBots. | Open PR #18532 |
+| BOOT-002 | O*NET JSON uses `onetsoc_code`; parser did not recognize the snake-case field and produced zero task rows. A knowledge-gap test expected a non-canonical path. | Fixes and regression tests are committed on #18519's stale branch: recognize `onetsoc_code`; assert `.dreamco/library-knowledge-gaps.jsonl`; remove deploy workflow from Frontier Claim Trust Gate path filters. | #18519 remains stale and no fresh end-to-end run has verified these changes. | Port/revalidate on current main |
+| TRADING-001 | Paper broker, bars, and backtest settings accepted NaN/infinity values that could poison cash/equity calculations. | Finite-number validation and regression tests added to #18506's paper-only trading module. | #18506 has no fresh exact-head end-to-end check evidence; the branch remains stale. | Port/revalidate before merge |
+| PR-001 | Multiple open PRs diverged from current main and share generated or workflow files. | Port source changes onto current main after per-file review; regenerate generated outputs; do not merge stale branches wholesale. | Reconciliation table below. | Open |
 
 ## Pull-request reconciliation
 
-| PR | Current state | Branch freshness vs inspected main | Unique value / overlap | Disposition |
-|---|---|---|---|---|
-| #18524 | Open | 21 commits ahead, 0 behind | Fleet evidence fixed-point repair; now also includes manual Buddy Pages deploy gate and tests. | Primary active CI repair. Do not merge until all exact-head checks finish and are reviewed. |
-| #18523 | Closed, merged | Its merge commit is the inspected main SHA | Removes recursive `workflow_run` completion fan-out from Actions Command Center, Buddy Continuous Repair, Greenkeeper workflows, Issue Intelligence, and Problem Registry. | Integrated. No duplicate PR needed. |
-| #18508 | Open | 8 ahead, 78 behind; diverged | Fleet E2E evidence prerequisites for full certification; touches certification workflow, change-impact policy, tests, and fleet E2E runner. | Rebase/port source changes; rerun certification tests on current main. |
-| #18507 | Open | 4 ahead, 78 behind; diverged | Run Everything prerequisite ordering and tests; shares `config/change-impact-test-policy.json` with #18508. | Rebase/port separately; reconcile shared policy file and test ownership before combining. |
-| #18506 | Open | 96 ahead, 78 behind; diverged | FreeCodeCamp specialist routing, course registry/runtime bridge, division queue taxonomy, paper-trading sandbox, and curriculum workflow changes. | High-value but large; review in logical slices. Overlaps #18519 in Bootcamp curriculum and division-queue files. |
-| #16912 | Open | 8 ahead, 2,850 behind; diverged | Buddy dataset-profile builder, schema, docs, tests, and Bootcamp UI. | Do not merge stale branch. Port source implementation after schema/API compatibility review; regenerate derived outputs. |
-| #16913 | Open | 24 ahead, 2,850 behind; diverged | Five-minute read-only repository health audit and trust-gate workflow/tests. | Port and review workflow load/trigger policy; do not reintroduce excessive scheduled CI without cost review. |
-| #18237 | Open, draft | 5 ahead, 1,659 behind; diverged | Buddy Bootcamp, distillation, and model-purpose standards; contains generated dataset routes and prospectus artifacts. | Preserve source docs and policy changes; regenerate generated data on current main. |
-| #18211 | Open | 32 ahead, 1,661 behind; diverged | Historical reconciliation ledger and large generated evidence snapshot; shares generated artifacts with #18237. | Extract useful ledger/source docs; regenerate generated artifacts; do not merge snapshot wholesale. |
-| #18519 | Open | 24 ahead, 31 behind; diverged | FreeCodeCamp learning-inventory synchronization, internal-first Buddy knowledge router, division routing, manual Pages deploy gate, and evidence-refresh changes. | Its manual deploy gate and regression test have been ported into #18524. Remaining Bootcamp/router/inventory work must be reconciled with #18506 before porting. Do not merge this branch unchanged. |
+| PR | Live state | Unique value / overlap | Disposition |
+|---|---|---|---|
+| #18524 | Closed, merged 2026-11-26; merge commit `ec89bf44...` | Fleet evidence convergence, read-only generator tests, manual Pages gate, evidence artifact publication, failure-sweep hardening. | Integrated, but merged while many exact-head checks were queued/cancelled. Verify current-main checks; do not call it fully certified yet. |
+| #18527 | Closed, merged 2026-11-26; merge commit `e26b9eb8...` | Approved-guide precedence in Buddy learning router. | Integrated. Buddy Learning Regression passed, but Fleet Runtime Truth and Buddy Bootcamp Curriculum failed on the PR head; the two root causes are tracked in CI-001 and BOOT-001. |
+| #18523 | Closed, merged 2026-11-26; merge commit `ae2da856...` | Removes recursive `workflow_run` completion fan-out from selected automation workflows. | Integrated. Its Fleet Runtime Truth failure was exactly two prospectus drift tests; #18524 addresses this. |
+| #18532 | Open, current-main-based | Separates 65 MasterBots from 55 domain divisions in the benchmark evidence and planning pipeline. | Active benchmark repair. Exact-head checks must pass before merge. |
+| #18534 | Open, current-main-based | Aligns FreeCodeCamp incomplete-inventory error contract and tests. | Active small CI repair. Exact-head checks must pass before merge. |
+| #18531 | Open, stale (41 commits behind when inspected) | Earlier benchmark-scope implementation, superseded by #18532 based on current main. | Do not merge; retain only as historical work until #18532 validates. |
+| #18519 | Open, stale/diverged | 55-domain category map, FreeCodeCamp learning inventory, O*NET pipeline, internal-first learning router, manual Pages gate. | Do not merge unchanged. Its router replacement drops current main's full-catalog `_exact_seed_candidate_ids` resolver; preserve current main's resolver when porting guide precedence. O*NET and gap-path fixes still need fresh validation. |
+| #18506 | Open, stale/diverged | Per-video curated implementation briefs, 13 course tracks, runtime bridge, paper-trading sandbox. Overlaps #18519 in curriculum routing and queue files. | Port in slices. Keep paper trading explicitly local/paper-only; finite-input safety fixes are unverified. |
+| #18508 | Open, stale/diverged | Fleet E2E evidence prerequisites and certification workflow. | Historical head had four failures: React 19 candidate route, two prospectus drift tests, and downstream CommandCore state. Rebase after #18524/#18527/#18534 and rerun exact-head checks. |
+| #18507 | Open, stale/diverged | Run Everything prerequisite ordering; shares `config/change-impact-test-policy.json` with #18508. | Reconcile shared policy separately; rebase and rerun. |
+| #16912 | Open, very stale | Buddy dataset-profile builder, schema, docs, tests, Bootcamp UI. | Port source implementation after schema/API review; regenerate outputs. |
+| #16913 | Open, very stale | Five-minute read-only repository audit and trust-gate workflow/tests. | Review workflow load/trigger policy; port selectively. |
+| #18237 | Open, draft, very stale | Bootcamp, distillation and model-purpose standards; generated dataset routes. | Preserve source docs/policy; regenerate generated data. |
+| #18211 | Open, very stale | Historical ledger and generated evidence snapshots; overlaps #18237. | Extract source docs and useful ledger history; do not merge generated snapshots wholesale. |
 
-## Verified #18524 checks
+## Bootcamp and FreeCodeCamp completeness
 
-### Prior head `596ed518d01a8f13bcdfbbfa9bc8ef5ec79be3d3`
+Inspected branch data showed:
 
-- Fleet Runtime Truth run `45741963058`: completed, success; all 26 gate steps completed successfully.
-- Code Trust Gate run `45741963244`: completed, success.
-- Repository Test Matrix run `45741963278`: completed, success.
-- DreamCo Core Health run `45741963339`: completed, success.
-- Actions Health run `45741963204`: completed, success.
-- CodeQL Security Scan run `45741963224`: completed, success.
-- Dependency Review run `45741963107`: completed, success.
-- Keep Green run `45741963136`: completed, success.
-- Command Center Data Contract run `45741963171`: completed, success.
-- Cloudflare Workers Builds check for this SHA: completed, success. This is a build check only; it does not establish deployment isolation or production readiness.
-- Parallel Benchmark Gap Builders run `45741963134`: still queued/in progress at last inspection; it was not green.
+- FreeCodeCamp catalog snapshot: 1,740 videos, `inventory_status=partial`.
+- Curated original implementation briefs: 9 entries covering 10 divisions.
+- Course-track registry: 13 tracks.
+- Domain default category map on #18519: 55 keys, matching the 55-domain crosswalk; all mapped categories existed in the inspected catalog.
+- The nine curated briefs have the required fields and no duplicate video IDs.
+- This is not complete original summarization of every FreeCodeCamp video, nor proof that every division has a working, mastered learning queue.
+- Rights policy remains metadata/link-only and review-required; transcript/media ingestion is not authorized by these queue records.
 
-### Current head `027e0422c1d18ae03244b32cff37c851008b5a5b`
+## Benchmark pipeline contract
 
-A fresh check suite was created after the deploy-gate and path-filter changes. At last inspection its checks were queued or pending, including Fleet Runtime Truth, Code Trust Gate, Repository Test Matrix, CodeQL, Command Center, and Parallel Benchmark Gap Builders. CodeRabbit reported a review-capacity limit (neutral), not a code approval. Do not carry forward the prior SHA's green results as current-head evidence.
+The current runner benchmarks the 55 domain divisions from the success-program catalog. The separate registry contains 65 MasterBots. The crosswalk is not a 1:1 approved ownership map.
+
+PR #18532 therefore:
+- Maps each domain result to a canonical `domain_id`.
+- Keeps `masterbot_id=null` for domain-scoped evidence.
+- Builds 55 domain-division queue items separately from 65 MasterBot items.
+- Leaves MasterBots unmeasured until a dedicated MasterBot-scoped runner emits evidence.
+- Preserves `scope`, `domain_id`, and `masterbot_id` through the training queue and plan artifact.
+- Labels the downstream workflow as a plan, not model training.
+
+The current executor reports `executed=0`. There is no verified MasterBot training runner, model-weight update, distillation execution, or paid compute in this pipeline.
+
+## Historical exact-head CI findings
+
+### PR #18523 head `6ac415e0...`
+
+- Fleet Runtime Truth run `45738924108`: failed.
+- Exact failures: `tests/test_run_prospectus.py::test_outputs_current_and_every_button_has_a_prospectus` and `tests/test_file_prospectus.py::test_committed_index_is_current`.
+- Root cause: Actions prospectus and 13 file-prospectus shards were stale when tests ran.
+- #18524 introduced bounded convergence and post-test evidence refresh to address this.
+
+### PR #18527 head `f11222fc...`
+
+- Buddy Learning Regression: success.
+- CodeQL, Repository Test Matrix, Code Trust Gate, and Dependency Review: success.
+- Fleet Runtime Truth: failure on the same two prospectus drift tests.
+- Buddy Bootcamp Curriculum: failure on the FreeCodeCamp incomplete-inventory error-message assertion.
+- One benchmark lane was still in progress at merge time.
+- #18534 addresses the error-message mismatch; #18524 addresses prospectus convergence.
+
+### PR #18524 merged head `ec67f5ba...`
+
+- Buddy quick verification and manifest: success.
+- Workers Builds: success.
+- Readiness: success.
+- Many exact-head checks were still queued at merge time; merge-commit checks included cancelled or in-progress jobs.
+- Do not claim full exact-head CI certification from the prior head's successful Fleet Runtime Truth run.
 
 ## Next execution order
 
-1. Finish current #18524 exact-head checks. Inspect failed job logs; repair root causes before rerunning. Re-fetch the head SHA before any further branch write.
-2. Validate the manual deploy gate test and fixed-point convergence tests in the new CI run. Confirm no test mutates tracked generated artifacts.
-3. Reconcile #18519 and #18506 by source file, preserving unique router/inventory/queue changes and resolving overlapping curriculum/workflow edits.
-4. Port #18508 and #18507 onto current main independently; reconcile their shared change-impact policy before combining.
-5. Port #16912 and #16913 source implementations; do not carry old generated snapshots or stale workflow assumptions.
-6. Extract useful source docs and standards from #18237 and #18211; regenerate all derived JSON/HTML reports from current canonical inputs.
-7. Continue Command Center contracts, secrets/permissions/dependency review, division runtime validation, Bootcamp course quality, Buddy dataset profiling/training governance, and end-to-end certification.
-8. Publish a new evidence snapshot only after its source checks finish. Record every failed check, root cause, patch SHA, and passing rerun.
+1. Finish #18532 exact-head tests; inspect all failed job logs and fix the benchmark scope contract before merge.
+2. Finish #18534 exact-head tests; confirm the current-main FreeCodeCamp queue assertion passes.
+3. Re-fetch current main and all PR heads before each write. Do not merge #18531 or the stale #18519/#18506 branches wholesale.
+4. Reconcile #18519's 55-domain map, O*NET parser, learning-inventory workflows, and internal-first router onto current main while preserving the full-catalog exact-candidate resolver.
+5. Port #18506's curated course briefs, track registry, runtime bridge, and paper-trading safety fixes in logical slices; add daily-loss, max-drawdown, exposure, and kill-switch controls before describing trading as production-ready.
+6. Rebase #18508 and #18507 onto current main; reconcile their shared change-impact policy and rerun fleet certification.
+7. Port #16912/#16913 and #18237/#18211 source implementations selectively; regenerate all derived JSON/HTML artifacts from canonical sources.
+8. Continue Command Center data contracts, secrets/permissions/dependency review, division runtime certification, dataset profiling, governed learning, distillation, and end-to-end certification.
+9. Update this ledger with exact commit SHAs, job IDs, root causes, and passing reruns. Do not mark a workstream complete without current evidence.
 
 ## Explicit non-claims
 
-This ledger does not certify every division, every bot, every integration, model-weight training, transcript ingestion rights, production deployment, or overall production readiness. Those require their own current tests, runtime evidence, permission checks, and release gates.
+This ledger does not certify every division, every bot, every integration, full per-video Bootcamp summaries, model-weight training, distillation execution, transcript ingestion rights, Cloudflare deployment isolation, production deployment, or overall production readiness. Each requires its own current tests, runtime evidence, permission review, and release gates.
