@@ -66,8 +66,24 @@ class PaperBrokerTests(unittest.TestCase):
 
 
 
-    def test_freecodecamp_trading_path_uses_the_paper_only_demo(self):
-        root = Path(__file__).resolve().parents[1]
+
+    def test_non_finite_broker_inputs_are_rejected(self):
+        for invalid in (float("nan"), float("inf"), float("-inf")):
+            with self.subTest(value=invalid):
+                with self.assertRaisesRegex(ValueError, "finite"):
+                    PaperBroker(initial_cash=invalid)
+                with self.assertRaisesRegex(ValueError, "finite"):
+                    PaperBroker(max_order_notional=invalid)
+                broker = PaperBroker()
+                with self.assertRaisesRegex(ValueError, "finite"):
+                    broker.submit_market_order("XYZ", "buy", invalid, 100, "t1")
+                with self.assertRaisesRegex(ValueError, "finite"):
+                    broker.submit_market_order("XYZ", "buy", 1, invalid, "t1")
+                broker.submit_market_order("XYZ", "buy", 1, 100, "t1")
+                with self.assertRaisesRegex(ValueError, "finite"):
+                    broker.equity({"XYZ": invalid})
+
+    def test_freecodecamp_trading_path_uses_the_paper_only_demo(self):        root = Path(__file__).resolve().parents[1]
         config = json.loads(
             (root / "config/freecodecamp-division-routing-overrides.json").read_text(encoding="utf-8")
         )
@@ -154,8 +170,22 @@ class BacktestTests(unittest.TestCase):
         self.assertGreaterEqual(result.fill_count, 3)
         self.assertEqual(result.ending_cash, result.ending_equity)
 
-    def test_backtest_rejects_mixed_symbols_and_bad_signals(self):
-        bars = synthetic_bars(12)
+
+    def test_non_finite_market_data_and_configuration_are_rejected(self):
+        for invalid in (float("nan"), float("inf"), float("-inf")):
+            with self.subTest(value=invalid):
+                with self.assertRaisesRegex(ValueError, "finite"):
+                    Bar("t1", "XYZ", invalid, 101, 99, 100, 10)
+                with self.assertRaisesRegex(ValueError, "finite"):
+                    Bar("t1", "XYZ", 100, 101, 99, 100, invalid)
+                with self.assertRaisesRegex(ValueError, "finite"):
+                    BacktestConfig(initial_cash=invalid)
+                with self.assertRaisesRegex(ValueError, "finite"):
+                    BacktestConfig(max_position_notional=invalid)
+        with self.assertRaisesRegex(ValueError, "notional risk limits"):
+            BacktestConfig(max_order_notional=0)
+
+    def test_backtest_rejects_mixed_symbols_and_bad_signals(self):        bars = synthetic_bars(12)
         mixed = [*bars[:-1], Bar("last", "OTHER", 100, 101, 99, 100, 100)]
         with self.assertRaisesRegex(ValueError, "one symbol"):
             run_backtest(mixed)
