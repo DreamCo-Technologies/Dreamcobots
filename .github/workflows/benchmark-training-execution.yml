@@ -1,4 +1,4 @@
-name: Benchmark Training Execution
+name: Benchmark Training Plan (No Runner)
 on:
   workflow_dispatch:
   workflow_run:
@@ -22,15 +22,15 @@ jobs:
           pattern: benchmark-training-queue-*
           path: training-evidence
           merge-multiple: true
-      - name: Execute declared training actions
+      - name: Create a plan for declared training actions (no runner available)
         run: |
           test -f training-evidence/benchmark-training-queue.json
           python3 tools/execute_benchmark_training_queue.py \
             --queue training-evidence/benchmark-training-queue.json \
-            --out training-evidence/benchmark-training-execution.json \
+            --out training-evidence/benchmark-training-plan.json \
             --limit 20
       - uses: actions/upload-artifact@v7
         with:
-          name: benchmark-training-execution-${{ github.run_id }}
+          name: benchmark-training-plan-${{ github.run_id }}
           path: training-evidence/benchmark-training-execution.json
           retention-days: 14
