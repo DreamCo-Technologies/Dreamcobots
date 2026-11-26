@@ -19,7 +19,7 @@ This is an inventory snapshot, not a production certification.
 | Unclassified video rows | 519 | These need a human-reviewed subject classification queue, not automatic assignment |
 | Video subject taxonomy | 22 categories | Supports multi-label routing across domains |
 | Specialist course artifacts | 0 rows | 960 specialist module slots are still unfilled (120 targets × 8 modules) |
-| Open pull requests | 68 | Must be reviewed and reconciled; old base SHAs are not evidence of merge readiness |
+| Open pull requests | 69 (68 pre-existing plus this audit PR) | Must be reviewed and reconciled; old base SHAs are not evidence of merge readiness |
 | Open issues | 98 | Includes repeated CI incident issues that need root-cause deduplication |
 
 The ten domain configuration files missing from the 55-domain crosswalk are:
@@ -227,6 +227,7 @@ These open repository issues already record concrete acceptance gaps and should 
 - [#18630 — folder audit failures](https://github.com/DreamCo-Technologies/Dreamcobots/issues/18630): recorded buddy, buddy_os, website, and runtime test/import failures; money_os untested; marketplace has no tests; systems is a placeholder; test isolation writes into the checkout.
 - [#18631 — Actions runtime health](https://github.com/DreamCo-Technologies/Dreamcobots/issues/18631): 198 workflows were statically valid in the recorded report, but runtime status was unknown for all 198.
 - [#18632 — per-bot benchmark/evidence](https://github.com/DreamCo-Technologies/Dreamcobots/issues/18632): recorded 1,232 offline-tested profiles, zero connected/verified/production, and missing per-bot benchmark/evidence receipts.
+- [Deploy Buddy Website — run 45852593894](https://github.com/DreamCo-Technologies/Dreamcobots/actions/runs/45852593894): failed the deployment preflight because the generated production-evidence ledger was stale after upstream artifacts were refreshed. PR #18653 adds a deterministic ledger regeneration step before the check.
 
 The current open PR #18638 is not mergeable against the current main snapshot. Rebase or rebuild it from the current main commit, rerun the full required checks, and merge only after the folder audit and deployment evidence pass.
 
