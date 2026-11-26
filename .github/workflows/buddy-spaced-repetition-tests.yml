@@ -1,0 +1,37 @@
+name: Buddy Spaced Repetition Tests
+
+on:
+  pull_request:
+    paths:
+      - 'buddy/learning/srs/**'
+      - 'tests/test_buddy_srs_*.py'
+      - 'docs/learning/BUDDY_ADAPTIVE_SPACED_REPETITION.md'
+      - '.github/workflows/buddy-spaced-repetition-tests.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'buddy/learning/srs/**'
+      - 'tests/test_buddy_srs_*.py'
+      - 'docs/learning/BUDDY_ADAPTIVE_SPACED_REPETITION.md'
+      - '.github/workflows/buddy-spaced-repetition-tests.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: buddy-spaced-repetition-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  spaced-repetition:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install learning test dependencies
+        run: python -m pip install --upgrade pip pytest
+      - name: Test SM-2 and Leitner schedulers
+        run: python -m pytest -q -p no:cacheprovider tests/test_buddy_srs_sm2.py tests/test_buddy_srs_leitner.py
