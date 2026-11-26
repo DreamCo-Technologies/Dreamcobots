@@ -33,3 +33,14 @@ def test_safe_repair_reconciles_dashboard_and_pages_deployment_failures():
     repair = (ROOT / ".github" / "workflows" / "buddy-ci-safe-repair.yml").read_text(encoding="utf-8")
     assert "DreamCo Live Dashboard" in repair
     assert "Deploy Buddy Website" in repair
+
+def test_all_modified_action_workflows_parse_as_yaml():
+    paths = [
+        ".github/workflows/actions-failure-watch.yml",
+        ".github/workflows/buddy-ci-safe-repair.yml",
+        ".github/workflows/fleet-runtime-truth.yml",
+        ".github/workflows/dreamco-live-dashboard.yml",
+        ".github/workflows/deploy-buddy-pages.yml",
+    ]
+    for relative in paths:
+        yaml.load((ROOT / relative).read_text(encoding="utf-8"), Loader=yaml.BaseLoader)
