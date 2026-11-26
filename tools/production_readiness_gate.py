@@ -384,12 +384,14 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--strict", action="store_true", help="Fail on critical unknowns or release-blocking runtime failures (code gate).")
     parser.add_argument("--certification", action="store_true", help="Fail unless every area is evidence-verified and all runtime/external configuration gates pass.")
+    parser.add_argument("--evidence-manifest", help="Use a revision-bound evidence manifest generated for this exact commit.")
     args = parser.parse_args()
     contract=json.loads(CONTRACT.read_text())
     current_sha = git_sha()
     repository = os.getenv("GITHUB_REPOSITORY", "DreamCo-Technologies/Dreamcobots")
     token = os.getenv("GITHUB_TOKEN") or os.getenv("GH_TOKEN")
-    evidence_manifest = json.loads(AREA_EVIDENCE.read_text()) if AREA_EVIDENCE.exists() else {
+    evidence_path = Path(args.evidence_manifest or os.getenv("DREAMCO_PRODUCTION_EVIDENCE_MANIFEST", str(AREA_EVIDENCE)))
+    evidence_manifest = json.loads(evidence_path.read_text()) if evidence_path.exists() else {
         "schema": AREA_EVIDENCE_SCHEMA, "areas": {}
     }
     reports = build_area_reports(contract, evidence_manifest, current_sha, repository, token)
