@@ -17,6 +17,8 @@ This is an inventory snapshot, not a production certification.
 | Division category profiles | 55 profiles | All 55 domains have curated learning-category profiles |
 | freeCodeCamp video catalog | 1,740 rows | Catalog status is `partial`; upstream expected count is not proven |
 | Unclassified video rows | 519 | These need a human-reviewed subject classification queue, not automatic assignment |
+| Curated video-specific routing overrides | 9 records | These cover 10 domain targets and 13 MasterBot targets; they are not full-channel coverage |
+| Guide authorization | 0 of 1,740 | The latest guide builder reports all 1,740 records pending/blocked; no transcripts downloaded and no model training started |
 | Video subject taxonomy | 22 categories | Supports multi-label routing across domains |
 | Specialist course artifacts | 0 rows | 960 specialist module slots are still unfilled (120 targets × 8 modules) |
 | Open pull requests | 69 (68 pre-existing plus this audit PR) | Must be reviewed and reconciled; old base SHAs are not evidence of merge readiness |
@@ -128,6 +130,8 @@ The existing `config/freecodecamp-division-category-profiles.json` is the author
 - Other or unclassified
 
 The 519 currently unclassified rows must be triaged into this taxonomy by reviewing descriptions and official linked resources. Do not mass-assign all of them to a division based on generic keywords. The current generic triage route is a holding lane, not the final division map.
+
+The current snapshot therefore has 1,740 metadata records, 519 unclassified (29.8%), and only nine video-specific curated overrides. The current study-guide builder correctly keeps all 1,740 records pending or blocked until item-level authorization and guide review are recorded. This is a queue, not completed learning.
 
 ## 5. Finish the specialist curriculum for every division
 
