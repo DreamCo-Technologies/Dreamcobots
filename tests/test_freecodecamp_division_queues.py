@@ -132,7 +132,7 @@ class FreeCodeCampDomainQueueTests(unittest.TestCase):
             "observed_entry_count": 2,
         }
         with self.assertRaisesRegex(ValueError, "verified complete freeCodeCamp inventory required") as raised:
-            build_queues(catalog, self.crosswalk, limit=10, allow_partial=True)
+            build_queues(catalog, self.crosswalk, allow_partial=True)
         self.assertIn("verified complete freeCodeCamp inventory required", str(raised.exception))
 
 
