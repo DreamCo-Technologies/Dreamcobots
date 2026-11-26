@@ -201,8 +201,9 @@ class SRSStore:
                     event_id, learner_id, deck_id, item_id, division_ids_json,
                     scheduler_name, scheduler_version, rating, reviewed_at_utc, due_at_utc,
                     prior_state_json, resulting_state_json, predicted_retrievability,
-                    actual_recall, parameter_set_id, provenance_json, payload_hash, created_at_utc
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    actual_recall, desired_retention, scheduler_config_json,
+                    parameter_set_id, provenance_json, payload_hash, created_at_utc
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """, (
                 event["event_id"], event["learner_id"], event["deck_id"], event["item_id"],
                 division_json, event["scheduler_name"], event["scheduler_version"], event["rating"],

@@ -1,9 +1,11 @@
 """Integration tests: task runner -> private learning -> coaching -> SOP -> dashboard."""
 import tempfile
 import unittest
+from unittest.mock import patch
 from pathlib import Path
 
 from buddy.learning.runtime_bridge import BuddyLearningBridge, PrivateLearningStore
+from buddy.learning.course_track_registry import CourseLesson
 from dreamco_platform.automation.task_runner import BuddyTaskRunner
 
 
@@ -286,47 +288,75 @@ class RuntimeBridgeTests(unittest.TestCase):
 
 
     def test_unclassified_video_triage_is_visible_only_to_review_lanes(self):
-        education = self.bridge.bootcamp_learning_queue(
-            division="DreamEducation", query="classification review", limit=10
+        # This policy test must remain valid when the live catalog is fully classified.
+        source_video_id = "synthetic-unclassified-video"
+        source_title = "Synthetic classification review video"
+        catalog_video = CourseLesson(
+            resource_id=1, lesson_id="synthetic-video", track_id="freecodecamp-video-catalog",
+            title=source_title, category="video", objective="classification review",
+            practice="Create an original practice brief.", assessment="Verify classification.",
+            benchmark="Independent classification check.", source_url="https://www.freecodecamp.org/",
+            guide_path="metadata-only", rights_mode="metadata_only", delivery="metadata_only",
+            content_status="metadata_only", division_targets=("DreamEducation",),
+            masterbot_targets=("DreamDiscovery",), learning_modes=("metadata_review",),
+            source_video_id=source_video_id,
         )
-        finance = self.bridge.bootcamp_learning_queue(
-            division="DreamFinance", query="classification review", limit=10
+        triage_video = CourseLesson(
+            resource_id=2, lesson_id="synthetic-triage", track_id="freecodecamp-metadata-triage",
+            title=f"Metadata triage: {source_title}", category="video", objective="classification review",
+            practice="Classify metadata and check rights before authoring.",
+            assessment="A human reviewer verifies classification and rights.",
+            benchmark="Independent metadata review.", source_url="https://www.freecodecamp.org/",
+            guide_path="metadata-only", rights_mode="metadata_only", delivery="metadata_only",
+            content_status="metadata_only", division_targets=("DreamEducation",),
+            masterbot_targets=("DreamDiscovery",),
+            learning_modes=("metadata_review", "guided_classification", "rights_check", "human_review"),
+            implementation_steps=("Inspect title and description.", "Verify rights.", "Request human review."),
+            buddy_demo="Show a metadata-only classification walkthrough.",
+            source_video_id=source_video_id,
         )
-        discovery = self.bridge.bootcamp_learning_queue(
-            masterbot="DreamDiscovery", query="classification review", limit=10
-        )
-        education_items = [item for item in education["items"] if item["track_id"] == "freecodecamp-metadata-triage"]
-        finance_items = [item for item in finance["items"] if item["track_id"] == "freecodecamp-metadata-triage"]
-        discovery_items = [item for item in discovery["items"] if item["track_id"] == "freecodecamp-metadata-triage"]
-        self.assertTrue(education_items)
-        self.assertFalse(finance_items)
-        self.assertTrue(discovery_items)
-        item = education_items[0]
-        self.assertEqual(item["content_status"], "metadata_only")
-        self.assertEqual(item["completion_status"], "metadata_only")
-        self.assertFalse(item["study_allowed"])
-        self.assertTrue(item["authoring_required"])
-        self.assertTrue(item["implementation_steps"])
-        self.assertTrue(item["buddy_demo"])
-        self.assertEqual(set(item["learning_modes"]), {
-            "metadata_review", "guided_classification", "rights_check", "human_review"
-        })
-        source_title = item["title"].split(": ", 1)[1]
-        education_metadata = self.bridge.bootcamp_learning_queue(
-            division="DreamEducation", query=source_title, limit=10
-        )
-        finance_metadata = self.bridge.bootcamp_learning_queue(
-            division="DreamFinance", query=source_title, limit=10
-        )
-        self.assertTrue(any(
-            row["track_id"] == "freecodecamp-video-catalog"
-            and row["source_video_id"] == item["source_video_id"]
-            for row in education_metadata["items"]
-        ))
-        self.assertFalse(any(
-            row.get("source_video_id") == item["source_video_id"]
-            for row in finance_metadata["items"]
-        ))
+        with patch("buddy.learning.runtime_bridge.load_course_lessons", return_value=[catalog_video, triage_video]):
+            education = self.bridge.bootcamp_learning_queue(
+                division="DreamEducation", query="classification review", limit=10
+            )
+            finance = self.bridge.bootcamp_learning_queue(
+                division="DreamFinance", query="classification review", limit=10
+            )
+            discovery = self.bridge.bootcamp_learning_queue(
+                masterbot="DreamDiscovery", query="classification review", limit=10
+            )
+            education_items = [item for item in education["items"] if item["track_id"] == "freecodecamp-metadata-triage"]
+            finance_items = [item for item in finance["items"] if item["track_id"] == "freecodecamp-metadata-triage"]
+            discovery_items = [item for item in discovery["items"] if item["track_id"] == "freecodecamp-metadata-triage"]
+            self.assertTrue(education_items)
+            self.assertFalse(finance_items)
+            self.assertTrue(discovery_items)
+            item = education_items[0]
+            self.assertEqual(item["content_status"], "metadata_only")
+            self.assertEqual(item["completion_status"], "metadata_only")
+            self.assertFalse(item["study_allowed"])
+            self.assertTrue(item["authoring_required"])
+            self.assertTrue(item["implementation_steps"])
+            self.assertTrue(item["buddy_demo"])
+            self.assertEqual(set(item["learning_modes"]), {
+                "metadata_review", "guided_classification", "rights_check", "human_review"
+            })
+            source_title = item["title"].split(": ", 1)[1]
+            education_metadata = self.bridge.bootcamp_learning_queue(
+                division="DreamEducation", query=source_title, limit=10
+            )
+            finance_metadata = self.bridge.bootcamp_learning_queue(
+                division="DreamFinance", query=source_title, limit=10
+            )
+            self.assertTrue(any(
+                row["track_id"] == "freecodecamp-video-catalog"
+                and row["source_video_id"] == item["source_video_id"]
+                for row in education_metadata["items"]
+            ))
+            self.assertFalse(any(
+                row.get("source_video_id") == item["source_video_id"]
+                for row in finance_metadata["items"]
+            ))
 
 if __name__ == "__main__":
     unittest.main()

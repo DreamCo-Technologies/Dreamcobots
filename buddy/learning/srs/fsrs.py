@@ -98,9 +98,9 @@ class FSRSAdapter:
         self.config = config or FSRSConfig()
         scheduler_kwargs = {
             "desired_retention": self.config.desired_retention,
-            maximum_interval=self.config.maximum_interval_days,
-            learning_steps=[timedelta(seconds=value) for value in self.config.learning_steps_seconds],
-            relearning_steps=[timedelta(seconds=value) for value in self.config.relearning_steps_seconds],
+            "maximum_interval": self.config.maximum_interval_days,
+            "learning_steps": [timedelta(seconds=value) for value in self.config.learning_steps_seconds],
+            "relearning_steps": [timedelta(seconds=value) for value in self.config.relearning_steps_seconds],
             "enable_fuzzing": self.config.enable_fuzzing,
         }
         if self.config.parameters is not None:

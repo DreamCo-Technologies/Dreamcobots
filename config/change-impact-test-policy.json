@@ -482,6 +482,23 @@
         "tests/test_buddy_learning_runtime_bridge.py",
         "tests/test_freecodecamp_specialist_routing.py"
       ]
+    },
+    {
+      "sources": [
+        "buddy/learning/srs/fsrs.py",
+        "buddy/learning/srs/anki_classic.py",
+        "buddy/learning/srs/store.py",
+        "buddy/learning/srs/service.py",
+        "shared/schema.ts",
+        "migrations/0001_learning_srs.sql"
+      ],
+      "tests": [
+        "tests/test_buddy_srs_fsrs.py",
+        "tests/test_buddy_srs_anki_classic.py",
+        "tests/test_buddy_srs_store.py",
+        "tests/test_buddy_srs_service.py"
+      ],
+      "reason": "Shared FSRS scheduling, legacy compatibility, offline event persistence and mastery separation"
     }
   ],
   "evidence_rules": {

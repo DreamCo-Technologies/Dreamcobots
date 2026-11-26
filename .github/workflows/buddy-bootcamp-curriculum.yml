@@ -274,6 +274,8 @@ jobs:
         run: |
           if [ -f buddy/bootcamp/sources/freecodecamp/catalog.json ]; then
             python tools/sync_freecodecamp_catalog.py --check
+          python tools/sync_freecodecamp_learning_inventory.py
+          python tools/sync_freecodecamp_learning_inventory.py --check
           else
             echo "No committed catalog yet; first discovery will create it."
           fi
