@@ -1,0 +1,2006 @@
+{
+  "schema": "dreamco.freecodecamp_specialist_learning_overrides.v1",
+  "version": "1.0.0",
+  "purpose": "Curated, first-party DreamCo learning overlays for public freeCodeCamp video metadata. Overrides survive catalog refreshes and define education routing, original practice, capability/tool/agent links, and reproducible Buddy demonstrations.",
+  "truth_boundary": [
+    "A catalog row is not a studied lesson, transcript, permission grant, model-training dataset, or mastery result.",
+    "These are original DreamCo implementation briefs based on public course descriptions and chapter outlines; do not reproduce third-party course transcripts or protected course materials.",
+    "Division targets route learning resources only. They do not grant runtime permissions, financial authority, or production access.",
+    "Model weight training requires separately verified source rights, approved datasets, reproducible runs, checkpoint hashes, and holdout/regression evidence."
+  ],
+  "entries": [
+    {
+      "video_id": "zH2Mg782XhA",
+      "title": "Python Algorithmic Trading with SnapTrade, Massive, Alpaca",
+      "division_targets": [
+        "DreamFinance"
+      ],
+      "masterbot_targets": [
+        "DreamFinance",
+        "DreamTrade"
+      ],
+      "capability_tags": [
+        "market-data-ingestion",
+        "momentum-factor-research",
+        "signal-generation",
+        "portfolio-risk",
+        "backtesting",
+        "paper-trading",
+        "brokerage-adapter",
+        "trading-observability"
+      ],
+      "tool_tags": [
+        "Python",
+        "Django",
+        "pandas",
+        "Massive market data",
+        "SnapTrade",
+        "Alpaca paper trading",
+        "PostgreSQL"
+      ],
+      "agent_tags": [
+        "market-data-engineer",
+        "quant-research-agent",
+        "strategy-backtester",
+        "portfolio-risk-guardian",
+        "paper-trading-operator",
+        "trade-audit-agent"
+      ],
+      "objective": "Build a reproducible, risk-controlled momentum research and paper-trading system. The course describes a 12-month lookback that excludes the most recent month, a Django application, Massive market data, SnapTrade brokerage connectivity, and Alpaca execution.",
+      "implementation_steps": [
+        "Define the strategy hypothesis, asset universe, benchmark, evaluation period, and explicit non-goals.",
+        "Create a Django project with versioned instruments, bars, corporate actions, strategy configurations, signals, orders, fills, and audit records.",
+        "Build a Massive market-data adapter with pagination, rate limits, source timestamps, adjusted-price handling, and immutable raw snapshots.",
+        "Validate missing bars, duplicate timestamps, symbol changes, splits, dividends, survivorship bias, and look-ahead leakage.",
+        "Calculate momentum over the prior 12 months while excluding the most recent month; pin the exact formula and trading calendar.",
+        "Rank the eligible universe and generate deterministic buy/sell candidates with explainable factor inputs.",
+        "Backtest using point-in-time data, realistic transaction costs, spread, slippage, market impact assumptions, and out-of-sample periods.",
+        "Add portfolio constraints: per-position limits, concentration limits, max drawdown stop, daily loss limit, exposure caps, and a global kill switch.",
+        "Record every signal, decision, rejected order, simulated fill, and metric with reproducible strategy/data versions.",
+        "Connect SnapTrade only for approved account discovery/read-only context; keep broker credentials in the secret manager.",
+        "Route orders exclusively to Alpaca paper trading; verify order state transitions, retries, idempotency, and cancel behavior.",
+        "Run walk-forward validation, stress tests, transaction-cost sensitivity, and a paper-trading soak before any production review.",
+        "Create Django apps and relational models for symbols, OHLCV bars, portfolios, strategy runs, signals, orders, and fills.",
+        "Build Django admin views and validation for market data and strategy configuration.",
+        "Design a Massive market-data adapter with rate limits, retries, provenance, and secrets stored only in an approved secret manager.",
+        "Add SnapTrade read-only account and holdings access; keep trading permissions disabled in the learning environment.",
+        "Implement a 12-month momentum score across a 50-symbol universe and test look-ahead bias, survivorship bias, missing data, and transaction costs.",
+        "Connect Alpaca only through its paper-trading environment after explicit sandbox verification; do not add a live-order endpoint.",
+        "Build a Django dashboard for portfolio state, signals, backtest results, and audit history.",
+        "Backfill approved historical data and run out-of-sample and walk-forward tests before requesting human review."
+      ],
+      "practice": "Buddy builds a synthetic-data momentum research lab, replays historical fixtures, compares baseline and candidate strategies, and emits a paper-trading report with risk limits and an audit trail.",
+      "assessment": "Pass deterministic strategy unit tests, leakage checks, cost/slippage sensitivity, walk-forward holdout, risk-limit enforcement, duplicate-order/idempotency tests, and a paper-only integration test. No live order is permitted.",
+      "benchmark": "DreamFinance momentum strategy benchmark: net-of-cost return, volatility, max drawdown, turnover, exposure, signal stability, and reproducibility; never rank by gross return alone.",
+      "buddy_demo": "Buddy runs `python -m buddy.trading.demo` on deterministic synthetic data, explains each signal and next-bar fill, inspects fees/slippage and drawdown, demonstrates risk-limit rejection, and saves the reproducible paper-only report. It can teach the planned Django/Massive/SnapTrade/Alpaca-paper phases, but those external integrations are not claimed as implemented. No live broker, credentials, or orders are available.",
+      "rights_mode": "public_metadata_link_only_until_item_level_study_and_derivative_rights_review",
+      "content_status": "original_implementation_brief"
+    },
+    {
+      "video_id": "iqRcGCah0Kw",
+      "title": "System Design for AI Agents – Building a Multi-Agent PR Reviewer",
+      "division_targets": [
+        "DreamAgents",
+        "CommandCore",
+        "DreamCodeLab",
+        "DreamProServices",
+        "DreamScience",
+        "DreamCyber"
+      ],
+      "masterbot_targets": [
+        "DreamAgents",
+        "CommandCore",
+        "DreamCodeLab",
+        "DreamQuality",
+        "DreamBenchmark",
+        "DreamCyber"
+      ],
+      "capability_tags": [
+        "multi-agent-review",
+        "pr-risk-classification",
+        "security-review",
+        "test-review",
+        "documentation-review",
+        "confidence-scoring",
+        "review-memory",
+        "independent-verification"
+      ],
+      "tool_tags": [
+        "GitHub API",
+        "GitHub Actions",
+        "LangGraph",
+        "Temporal",
+        "PostgreSQL",
+        "pytest",
+        "CodeQL",
+        "DreamCo PR Review Guardian",
+        "Code Trust Gate",
+        "change-impact-test-policy",
+        "Repository Test Matrix"
+      ],
+      "agent_tags": [
+        "pr-orchestrator",
+        "security-review-agent",
+        "code-quality-review-agent",
+        "test-coverage-review-agent",
+        "documentation-review-agent",
+        "independent-verifier",
+        "human-approval-gate",
+        "diff-classifier-agent",
+        "test-impact-agent",
+        "review-synthesizer"
+      ],
+      "objective": "Design a fault-tolerant multi-agent pull-request reviewer that applies senior-engineer judgment through explicit review dimensions, auditable findings, confidence, and independent verification.",
+      "implementation_steps": [
+        "Map the existing human PR-review process into triggers, inputs, outputs, risk tiers, and approval boundaries.",
+        "Define failure modes including hallucinated findings, missed defects, tool timeouts, partial agent results, prompt injection, and unavailable model providers.",
+        "Create four specialist review perspectives: security, code quality, tests, and documentation/maintainability.",
+        "Implement a fan-out/fan-in orchestration pattern with bounded concurrency, timeouts, retries, cancellation, and partial-result handling.",
+        "Define structured finding records with file/line, evidence, severity, confidence, reproducibility, and remediation guidance.",
+        "Design durable state and memory schemas for PR identity, commit SHA, findings, reviewer decisions, and prior resolved regressions.",
+        "Compare LangGraph state-machine orchestration with Temporal durable workflows; choose based on replay, retries, persistence, and operations needs.",
+        "Run each specialist against the exact immutable PR head SHA and collect tool/version provenance.",
+        "Require an independent verifier to challenge findings and test the proposed fixes against the original request.",
+        "Deduplicate findings, suppress unsupported claims, and distinguish blocking defects from suggestions.",
+        "Publish a concise review report with confidence and evidence; request human approval for changes and all merge decisions.",
+        "Evaluate on seeded defect suites and historical PRs with precision, recall, false-positive rate, escaped-defect rate, latency, and cost."
+      ],
+      "practice": "Buddy reviews a deliberately seeded test PR using separate security, quality, test, and documentation agents, then has an independent verifier challenge each finding.",
+      "assessment": "Pass seeded defect detection, false-positive controls, malicious PR-content isolation, timeout/partial-agent recovery, exact-commit anchoring, evidence validation, and human-approval tests. Auto-merge remains disabled.",
+      "benchmark": "DreamCo PR Guardian benchmark: precision/recall by severity, false-positive rate, verified-fix rate, regression escape rate, review latency, and per-review cost.",
+      "buddy_demo": "Buddy invokes the DreamCo PR Review Guardian workflow, classifies the diff, maps changed files through config/change-impact-test-policy.json, runs the focused tests and Repository Test Matrix, checks security and dependency risks, summarizes evidence and unresolved risks, and requests human approval. It never auto-merges or approves its own changes.",
+      "rights_mode": "public_metadata_link_only_until_item_level_study_and_derivative_rights_review",
+      "content_status": "original_implementation_brief"
+    },
+    {
+      "video_id": "AZDSpS5v57w",
+      "title": "AI Agents For Beginners – OpenClaw Case Study",
+      "division_targets": [
+        "DreamAgents",
+        "CommandCore",
+        "DreamAIInfra",
+        "DreamIntegrations",
+        "DreamCyber"
+      ],
+      "masterbot_targets": [
+        "DreamAgents",
+        "CommandCore",
+        "DreamAIInfra",
+        "DreamIntegration",
+        "DreamCyber"
+      ],
+      "capability_tags": [
+        "agent-orchestration",
+        "tool-calling",
+        "memory-management",
+        "guardrails",
+        "human-in-the-loop",
+        "sandbox-execution",
+        "agent-evaluation"
+      ],
+      "tool_tags": [
+        "Python",
+        "LLM APIs",
+        "MCP",
+        "Docker",
+        "JSON Schema",
+        "SQLite",
+        "PostgreSQL"
+      ],
+      "agent_tags": [
+        "buddy-orchestrator",
+        "research-agent",
+        "memory-agent",
+        "coding-agent",
+        "policy-guardian",
+        "tool-executor"
+      ],
+      "objective": "Teach the foundations of LLM agents, the distinction between workflows and autonomous loops, structured tool use, memory, guardrails, approvals, and sandboxed execution.",
+      "implementation_steps": [
+        "Explain tokens, context windows, model outputs, sampling, and common hallucination/failure modes.",
+        "Contrast deterministic workflows with agents that choose the next action based on state and tool results.",
+        "Build a minimal agent loop with explicit state, bounded steps, and a stop condition.",
+        "Define tool contracts with JSON schemas, input validation, output validation, and permission scopes.",
+        "Add specialist agents for orchestration, research, memory, and code/automation with explicit responsibilities.",
+        "Persist sessions and memory with provenance, retention, tenant isolation, and deletion controls.",
+        "Add structured output validation, input/output guardrails, policy checks, and tool allowlists.",
+        "Run risky tools inside isolated sandboxes with resource limits and no ambient host credentials.",
+        "Add human approval for external side effects, spending, account changes, publishing, and production deployments.",
+        "Build evaluations for tool correctness, task completion, recovery, safety violations, latency, and cost.",
+        "Study OpenClaw's architecture as a case study and map transferable patterns to Buddy without importing unreviewed skills."
+      ],
+      "practice": "Buddy builds a local task agent that can read a fixture, call an allowlisted calculator/search mock, retain session memory, and ask approval before a simulated side effect.",
+      "assessment": "Pass tool-schema validation, prompt-injection resistance, memory isolation, sandbox boundary, step-limit, approval-gate, and reproducibility tests.",
+      "benchmark": "DreamAgents foundational agent benchmark: task success, tool-call validity, recovery, policy violations, and cost per completed task.",
+      "buddy_demo": "Demonstrate workflow-vs-agent comparison, four specialist roles, persistent memory, a tool call, sandbox rejection, and approval pause/resume.",
+      "rights_mode": "public_metadata_link_only_until_item_level_study_and_derivative_rights_review",
+      "content_status": "original_implementation_brief"
+    },
+    {
+      "video_id": "n1sfrc-RjyM",
+      "title": "OpenClaw Full Tutorial for Beginners",
+      "division_targets": [
+        "DreamAgents",
+        "CommandCore",
+        "DreamIntegrations",
+        "DreamCyber",
+        "DreamAIInfra"
+      ],
+      "masterbot_targets": [
+        "DreamAgents",
+        "CommandCore",
+        "DreamIntegration",
+        "DreamCyber",
+        "DreamAIInfra"
+      ],
+      "capability_tags": [
+        "gateway-control-plane",
+        "agent-workspaces",
+        "persistent-memory",
+        "skill-lifecycle",
+        "messaging-connectors",
+        "sandboxing",
+        "security-audits"
+      ],
+      "tool_tags": [
+        "OpenClaw concepts",
+        "Docker",
+        "MCP",
+        "YAML",
+        "Markdown skills",
+        "WhatsApp/Telegram/Discord adapters",
+        "OpenClaw",
+        "CommandCore",
+        "GitHub Actions",
+        "Code Trust Gate",
+        "Repository Test Matrix",
+        "isolated-branch-runner"
+      ],
+      "agent_tags": [
+        "buddy-gateway-agent",
+        "skill-auditor",
+        "connector-setup-agent",
+        "memory-curator",
+        "sandbox-guardian",
+        "task-orchestrator",
+        "code-repair-agent",
+        "test-agent",
+        "review-agent",
+        "approval-agent"
+      ],
+      "objective": "Study a local autonomous assistant architecture covering gateway setup, onboarding, skills, memory, messaging connectors, health checks, and sandbox security.",
+      "implementation_steps": [
+        "Understand the gateway as the control plane for sessions, tools, events, and channel connections.",
+        "Document prerequisites, installation options, supported model providers, and environment configuration.",
+        "Create an isolated local workspace and initialize the assistant through a guided onboarding flow.",
+        "Configure model access, local state, session persistence, and remote-access boundaries.",
+        "Run health checks and security audits before connecting any external channel.",
+        "Inspect workspace and memory files; define safe persistence, provenance, and retention behavior.",
+        "Implement skill manifests in YAML/Markdown with explicit tools, scopes, dependencies, and risk levels.",
+        "Connect a messaging adapter in a test workspace and validate sender identity, pairing, and permission checks.",
+        "Build a small original email skill using a mock inbox and explicit send approval.",
+        "Configure multi-agent roles and session switching without sharing private memory across users.",
+        "Run tools inside Docker sandbox modes and test filesystem, network, process, and credential restrictions.",
+        "Add skill review, version pinning, revocation, audit logs, and rollback for every third-party capability."
+      ],
+      "practice": "Buddy builds a local gateway prototype with one test channel, one original mock email skill, a memory store, and a Docker-isolated tool runner.",
+      "assessment": "Pass gateway health, channel identity, skill manifest validation, memory isolation, Docker sandbox escape tests, secret redaction, and connector revocation tests.",
+      "benchmark": "DreamCo OpenClaw-pattern benchmark: setup success, task completion, isolation violations, connector reliability, and recovery.",
+      "buddy_demo": "Buddy accepts a bounded task, plans it, creates an isolated branch, edits code in a sandbox, runs focused tests, opens a pull request, summarizes evidence, and waits for human approval. It never writes directly to main, exposes secrets, or auto-merges.",
+      "rights_mode": "public_metadata_link_only_until_item_level_study_and_derivative_rights_review",
+      "content_status": "original_implementation_brief"
+    },
+    {
+      "video_id": "vj68el9hRvU",
+      "title": "Build a Self-Healing CI/CD Pipeline with AI",
+      "division_targets": [
+        "DreamAIInfra",
+        "DreamOps",
+        "DreamProServices",
+        "DreamCodeLab",
+        "DreamCyber",
+        "DreamAgents",
+        "CommandCore"
+      ],
+      "masterbot_targets": [
+        "DreamAIInfra",
+        "DreamOperations",
+        "DreamQuality",
+        "DreamCodeLab",
+        "DreamSecurity",
+        "DreamAgents",
+        "CommandCore"
+      ],
+      "capability_tags": [
+        "ci-failure-detection",
+        "log-triage",
+        "root-cause-analysis",
+        "patch-proposal",
+        "targeted-regression",
+        "independent-review",
+        "rollback",
+        "pipeline-observability"
+      ],
+      "tool_tags": [
+        "GitHub Actions",
+        "GitHub API",
+        "Python",
+        "pytest",
+        "CodeQL",
+        "Docker",
+        "OpenTelemetry",
+        "tools/run_everything_now.py",
+        "Code Trust Gate",
+        "Repository Test Matrix",
+        "Full System Certification"
+      ],
+      "agent_tags": [
+        "ci-failure-diagnoser",
+        "root-cause-agent",
+        "patch-builder",
+        "test-runner-agent",
+        "independent-code-reviewer",
+        "release-guardian",
+        "ci-diagnosis-agent",
+        "test-selection-agent",
+        "repair-agent",
+        "rollback-agent",
+        "human-approval-gate"
+      ],
+      "objective": "Build a governed self-healing pipeline that diagnoses failed checks, proposes minimal repairs, validates them in isolation, and requires policy-compliant review before integration.",
+      "implementation_steps": [
+        "Collect workflow, job, step, commit, branch, and test-artifact evidence for each failed run.",
+        "Classify failures into source defects, test defects, dependency drift, infrastructure outages, permissions, secrets, flaky tests, and external-service failures.",
+        "Correlate failures with recent commits and prior incidents without assuming temporal correlation proves causation.",
+        "Generate a root-cause hypothesis with exact log evidence and confidence; request more evidence when uncertain.",
+        "Create a minimal repair branch from the exact failing commit and restrict writable paths by policy.",
+        "Apply a patch proposal in an isolated workspace with no production credentials or unrestricted network access.",
+        "Run the smallest relevant test first, then unit, integration, security, contract, and regression suites.",
+        "Have an independent reviewer compare the patch with the original task and challenge the test coverage.",
+        "Require human approval for protected files, secrets, workflow permissions, production deployment, and merges.",
+        "Merge only after required checks and branch protection pass; otherwise preserve the failure and publish a blocked report.",
+        "Support rollback, incident linking, and post-repair regression tests.",
+        "Track time-to-detect, time-to-diagnose, time-to-repair, false repair rate, recurrence rate, and compute cost."
+      ],
+      "practice": "Buddy receives a synthetic failing GitHub Actions run, identifies its root cause, proposes a one-file patch on a new branch, runs targeted tests, and submits a reviewable PR.",
+      "assessment": "Pass seeded root-cause cases, least-privilege branch scope, malicious-log prompt injection, secret protection, deterministic tests, independent review, blocked-merge, and rollback tests.",
+      "benchmark": "DreamCo Self-Healing CI benchmark: diagnosis accuracy, safe repair rate, regression rate, mean time to repair, false repair rate, and spend per incident.",
+      "buddy_demo": "Buddy runs the repository audit, selects the appropriate quick or standard verification plan, reproduces a failure, proposes a minimal repair on an isolated branch, runs mapped regression tests, checks CI evidence, and opens a reviewable PR. Production certification remains separate from quick checks, and no failed or unverified change is auto-merged.",
+      "rights_mode": "public_metadata_link_only_until_item_level_study_and_derivative_rights_review",
+      "content_status": "original_implementation_brief"
+    },
+    {
+      "video_id": "gp5H0Vw39yw",
+      "title": "Learn TypeScript - Full Course for Beginners",
+      "division_targets": [
+        "DreamCodeLab",
+        "DreamAIInfra",
+        "DreamAgents",
+        "DreamIntegrations",
+        "DreamProServices",
+        "DreamOps"
+      ],
+      "masterbot_targets": [
+        "DreamCodeLab",
+        "DreamAIInfra",
+        "DreamAgents",
+        "DreamIntegration",
+        "DreamProduct",
+        "DreamOperations"
+      ],
+      "capability_tags": [
+        "typescript-fundamentals",
+        "type-modeling",
+        "api-contracts",
+        "runtime-validation",
+        "async-programming",
+        "testing"
+      ],
+      "tool_tags": [
+        "TypeScript",
+        "Node.js",
+        "tsc",
+        "ESLint",
+        "Vitest",
+        "Zod"
+      ],
+      "agent_tags": [
+        "typescript-engineer",
+        "api-contract-auditor",
+        "test-author-agent"
+      ],
+      "objective": "Build strong TypeScript foundations for safe application code, typed APIs, agent tools, and shared platform contracts.",
+      "implementation_steps": [
+        "Configure a strict TypeScript project and understand compiler options.",
+        "Practice primitive, union, literal, array, tuple, enum, and object types.",
+        "Model interfaces, type aliases, generics, narrowing, and discriminated unions.",
+        "Type functions, async code, errors, and module boundaries.",
+        "Validate untrusted runtime input with schemas instead of trusting TypeScript types alone.",
+        "Write unit and contract tests and integrate type-checking into CI."
+      ],
+      "practice": "Convert one small DreamCo JavaScript utility into strict TypeScript and expose a validated typed API.",
+      "assessment": "Pass strict compilation, runtime schema validation, negative type tests, unit tests, and API contract checks.",
+      "benchmark": "DreamCo TypeScript foundations benchmark: type safety, runtime validation, test coverage, and maintainability.",
+      "buddy_demo": "Demonstrate type inference, discriminated unions, generic helpers, runtime validation, and CI type-check failure handling.",
+      "rights_mode": "public_metadata_link_only_until_item_level_study_and_derivative_rights_review",
+      "content_status": "original_implementation_brief"
+    },
+    {
+      "video_id": "JHEB7RhJG1Y",
+      "title": "Practical TypeScript – Course for Beginners",
+      "division_targets": [
+        "DreamCodeLab",
+        "DreamAIInfra",
+        "DreamAgents",
+        "DreamIntegrations",
+        "DreamProServices",
+        "DreamOps"
+      ],
+      "masterbot_targets": [
+        "DreamCodeLab",
+        "DreamAIInfra",
+        "DreamAgents",
+        "DreamIntegration",
+        "DreamProduct",
+        "DreamOperations"
+      ],
+      "capability_tags": [
+        "typescript-application-design",
+        "typed-data-models",
+        "modular-code",
+        "testable-architecture"
+      ],
+      "tool_tags": [
+        "TypeScript",
+        "Node.js",
+        "Vitest",
+        "ESLint"
+      ],
+      "agent_tags": [
+        "typescript-engineer",
+        "refactoring-agent",
+        "test-author-agent"
+      ],
+      "objective": "Apply TypeScript to realistic modular programs and maintainable application code.",
+      "implementation_steps": [
+        "Set up the compiler and project structure.",
+        "Design typed data models and module interfaces.",
+        "Implement functions and classes with explicit contracts.",
+        "Handle nullable values and unknown external input safely.",
+        "Refactor duplicated logic into reusable typed modules.",
+        "Test behavior and enforce type checks in CI."
+      ],
+      "practice": "Build a typed division capability registry with validation and tests.",
+      "assessment": "Pass compile, schema, behavior, regression, and maintainability checks.",
+      "benchmark": "DreamCo practical TypeScript project benchmark.",
+      "buddy_demo": "Demonstrate typed registry loading, invalid record rejection, and test-driven refactoring.",
+      "rights_mode": "public_metadata_link_only_until_item_level_study_and_derivative_rights_review",
+      "content_status": "original_implementation_brief"
+    },
+    {
+      "video_id": "bYgphDEWwvs",
+      "title": "TypeScript in Express – TypeScript Tutorial",
+      "division_targets": [
+        "DreamCodeLab",
+        "DreamAIInfra",
+        "DreamAgents",
+        "DreamIntegrations",
+        "DreamOps"
+      ],
+      "masterbot_targets": [
+        "DreamCodeLab",
+        "DreamAIInfra",
+        "DreamAgents",
+        "DreamIntegration",
+        "DreamOperations"
+      ],
+      "capability_tags": [
+        "typed-rest-api",
+        "middleware-contracts",
+        "request-validation",
+        "api-security",
+        "integration-testing"
+      ],
+      "tool_tags": [
+        "TypeScript",
+        "Express",
+        "Node.js",
+        "Zod",
+        "Vitest",
+        "Supertest"
+      ],
+      "agent_tags": [
+        "api-engineer-agent",
+        "typescript-engineer",
+        "api-security-reviewer"
+      ],
+      "objective": "Build typed Express services with validated request boundaries, middleware contracts, and integration tests.",
+      "implementation_steps": [
+        "Initialize an Express TypeScript service with strict compiler settings.",
+        "Define typed request, response, and domain contracts.",
+        "Implement middleware for authentication, validation, errors, and request IDs.",
+        "Validate all external input at runtime.",
+        "Separate routes, services, repositories, and adapters.",
+        "Add integration tests for success, invalid input, authorization, and failures.",
+        "Document OpenAPI contracts and enforce them in CI."
+      ],
+      "practice": "Create a typed Buddy tool API with a read-only endpoint and a permission-gated mock action.",
+      "assessment": "Pass type checks, runtime validation, auth tests, error contract tests, and OpenAPI parity.",
+      "benchmark": "DreamCo typed API contract benchmark.",
+      "buddy_demo": "Demonstrate a typed route, middleware chain, schema rejection, and integration-test output.",
+      "rights_mode": "public_metadata_link_only_until_item_level_study_and_derivative_rights_review",
+      "content_status": "original_implementation_brief"
+    },
+    {
+      "video_id": "aJP1AbZSqz8",
+      "title": "TypeScript in React – Full Tutorial",
+      "division_targets": [
+        "DreamCodeLab",
+        "DreamProServices",
+        "DreamAIInfra",
+        "DreamIntegrations"
+      ],
+      "masterbot_targets": [
+        "DreamCodeLab",
+        "DreamProduct",
+        "DreamAIInfra",
+        "DreamIntegration"
+      ],
+      "capability_tags": [
+        "react-typescript",
+        "component-contracts",
+        "typed-state",
+        "accessible-ui-testing"
+      ],
+      "tool_tags": [
+        "TypeScript",
+        "React",
+        "Vite",
+        "Vitest",
+        "Testing Library"
+      ],
+      "agent_tags": [
+        "frontend-engineer-agent",
+        "accessibility-reviewer",
+        "ui-test-agent"
+      ],
+      "objective": "Build accessible React interfaces with explicit component props, typed state, reusable hooks, and UI tests.",
+      "implementation_steps": [
+        "Configure React with strict TypeScript.",
+        "Type component props, events, children, and reusable components.",
+        "Model API data and loading/error states with discriminated unions.",
+        "Build typed hooks and context boundaries.",
+        "Add accessible interaction patterns and semantic markup.",
+        "Test components and user journeys with Testing Library.",
+        "Enforce type, lint, accessibility, and test gates in CI."
+      ],
+      "practice": "Build a typed DreamCo division health dashboard component with loading, error, and empty states.",
+      "assessment": "Pass strict type checking, component tests, keyboard accessibility, and visual-state coverage.",
+      "benchmark": "DreamCo React TypeScript UI benchmark.",
+      "buddy_demo": "Demonstrate typed props, safe async state, accessible controls, and UI test failure diagnosis.",
+      "rights_mode": "public_metadata_link_only_until_item_level_study_and_derivative_rights_review",
+      "content_status": "original_implementation_brief"
+    }
+  ],
+  "routing_rules": [
+    {
+      "id": "fcc-category-mathematics_and_statistics",
+      "match_categories": [
+        "mathematics_and_statistics"
+      ],
+      "match_title_terms": [],
+      "objective": "Create an original DreamCo learning path for Mathematics and statistics: Derive a mathematical result, validate it with simulation, and quantify uncertainty and error.",
+      "practice": "Use authorized course material or official documentation to build a runnable mathematics and statistics example. Keep the source video metadata-only until item-level rights are verified.",
+      "assessment": "Demonstrate the implementation, explain the underlying concepts, pass an unseen task and regression tests, and obtain reviewer approval before marking the guide authored.",
+      "benchmark": "Mathematics and statistics benchmark: correctness, reproducibility, safety, performance where relevant, and an independently reviewed unseen task.",
+      "division_targets": [
+        "DreamScience",
+        "DreamFinance",
+        "DreamAIInfra"
+      ],
+      "masterbot_targets": [
+        "DreamScience",
+        "DreamFinance",
+        "DreamResearch",
+        "DreamBenchmark"
+      ],
+      "capability_tags": [
+        "probability",
+        "statistics",
+        "linear-algebra",
+        "optimization",
+        "uncertainty"
+      ],
+      "tool_tags": [
+        "Python",
+        "NumPy",
+        "SciPy",
+        "Jupyter",
+        "simulation"
+      ],
+      "agent_tags": [
+        "math-tutor",
+        "quant-analyst",
+        "evaluation-agent"
+      ],
+      "implementation_steps": [
+        "Verify the exact mathematics and statistics topic, prerequisites, source URL, and item-level study rights.",
+        "Gather authorized learning material and official references; do not treat the video title or metadata as lesson content.",
+        "Break the topic into concepts, APIs, constraints, failure modes, and measurable learning outcomes.",
+        "Build a minimal runnable mathematics and statistics example in an isolated repository or sandbox.",
+        "Extend the example into a realistic DreamCo workflow owned by the target division.",
+        "Add unit, integration, negative-case, and regression tests appropriate to the topic.",
+        "Run the exercise with synthetic or approved data and capture reproducible logs, versions, and provenance.",
+        "Evaluate correctness, safety, accessibility or performance as relevant, and complete an unseen assessment.",
+        "Document the tools, capabilities, agent roles, limitations, and remediation steps.",
+        "Submit the guide and evidence for human review; keep it in authoring backlog until approval."
+      ],
+      "buddy_demo": "Buddy explains mathematics and statistics concepts, builds the sandbox example, runs the tests, demonstrates a failure and repair, scores the assessment, and requests human review."
+    },
+    {
+      "id": "fcc-category-linux_networking_and_it",
+      "match_categories": [
+        "linux_networking_and_it"
+      ],
+      "match_title_terms": [],
+      "objective": "Create an original DreamCo learning path for Linux, networking, and IT: Operate a Linux service, diagnose network behavior, and prove recovery from a controlled failure.",
+      "practice": "Use authorized course material or official documentation to build a runnable linux, networking, and it example. Keep the source video metadata-only until item-level rights are verified.",
+      "assessment": "Demonstrate the implementation, explain the underlying concepts, pass an unseen task and regression tests, and obtain reviewer approval before marking the guide authored.",
+      "benchmark": "Linux, networking, and IT benchmark: correctness, reproducibility, safety, performance where relevant, and an independently reviewed unseen task.",
+      "division_targets": [
+        "DreamOps",
+        "DreamCyber",
+        "DreamAIInfra"
+      ],
+      "masterbot_targets": [
+        "DreamOperations",
+        "DreamSecurity",
+        "DreamAIInfra"
+      ],
+      "capability_tags": [
+        "linux",
+        "networking",
+        "systems-admin",
+        "observability",
+        "backup-recovery"
+      ],
+      "tool_tags": [
+        "bash",
+        "systemd",
+        "ssh",
+        "tcpdump",
+        "journalctl"
+      ],
+      "agent_tags": [
+        "sysadmin-agent",
+        "network-diagnostics-agent",
+        "incident-agent"
+      ],
+      "implementation_steps": [
+        "Verify the exact linux, networking, and it topic, prerequisites, source URL, and item-level study rights.",
+        "Gather authorized learning material and official references; do not treat the video title or metadata as lesson content.",
+        "Break the topic into concepts, APIs, constraints, failure modes, and measurable learning outcomes.",
+        "Build a minimal runnable linux, networking, and it example in an isolated repository or sandbox.",
+        "Extend the example into a realistic DreamCo workflow owned by the target division.",
+        "Add unit, integration, negative-case, and regression tests appropriate to the topic.",
+        "Run the exercise with synthetic or approved data and capture reproducible logs, versions, and provenance.",
+        "Evaluate correctness, safety, accessibility or performance as relevant, and complete an unseen assessment.",
+        "Document the tools, capabilities, agent roles, limitations, and remediation steps.",
+        "Submit the guide and evidence for human review; keep it in authoring backlog until approval."
+      ],
+      "buddy_demo": "Buddy explains linux, networking, and it concepts, builds the sandbox example, runs the tests, demonstrates a failure and repair, scores the assessment, and requests human review."
+    },
+    {
+      "id": "fcc-category-cybersecurity_and_privacy",
+      "match_categories": [
+        "cybersecurity_and_privacy"
+      ],
+      "match_title_terms": [],
+      "objective": "Create an original DreamCo learning path for Cybersecurity and privacy: Threat-model a feature, implement least-privilege controls, and test negative security cases.",
+      "practice": "Use authorized course material or official documentation to build a runnable cybersecurity and privacy example. Keep the source video metadata-only until item-level rights are verified.",
+      "assessment": "Demonstrate the implementation, explain the underlying concepts, pass an unseen task and regression tests, and obtain reviewer approval before marking the guide authored.",
+      "benchmark": "Cybersecurity and privacy benchmark: correctness, reproducibility, safety, performance where relevant, and an independently reviewed unseen task.",
+      "division_targets": [
+        "DreamCyber",
+        "DreamAIInfra",
+        "DreamOps"
+      ],
+      "masterbot_targets": [
+        "DreamCyber",
+        "DreamSecurity",
+        "DreamOperations",
+        "CommandCore"
+      ],
+      "capability_tags": [
+        "threat-modeling",
+        "least-privilege",
+        "secrets",
+        "secure-coding",
+        "incident-response"
+      ],
+      "tool_tags": [
+        "SAST",
+        "dependency-scanner",
+        "secret-scanner",
+        "audit-logs",
+        "sandbox"
+      ],
+      "agent_tags": [
+        "security-analyst",
+        "threat-modeler",
+        "incident-responder"
+      ],
+      "implementation_steps": [
+        "Verify the exact cybersecurity and privacy topic, prerequisites, source URL, and item-level study rights.",
+        "Gather authorized learning material and official references; do not treat the video title or metadata as lesson content.",
+        "Break the topic into concepts, APIs, constraints, failure modes, and measurable learning outcomes.",
+        "Build a minimal runnable cybersecurity and privacy example in an isolated repository or sandbox.",
+        "Extend the example into a realistic DreamCo workflow owned by the target division.",
+        "Add unit, integration, negative-case, and regression tests appropriate to the topic.",
+        "Run the exercise with synthetic or approved data and capture reproducible logs, versions, and provenance.",
+        "Evaluate correctness, safety, accessibility or performance as relevant, and complete an unseen assessment.",
+        "Document the tools, capabilities, agent roles, limitations, and remediation steps.",
+        "Submit the guide and evidence for human review; keep it in authoring backlog until approval."
+      ],
+      "buddy_demo": "Buddy explains cybersecurity and privacy concepts, builds the sandbox example, runs the tests, demonstrates a failure and repair, scores the assessment, and requests human review."
+    },
+    {
+      "id": "fcc-category-c_cpp_and_systems",
+      "match_categories": [
+        "c_cpp_and_systems"
+      ],
+      "match_title_terms": [],
+      "objective": "Create an original DreamCo learning path for C, C++, and systems programming: Build a small systems component and validate memory safety, concurrency, and performance.",
+      "practice": "Use authorized course material or official documentation to build a runnable c, c++, and systems programming example. Keep the source video metadata-only until item-level rights are verified.",
+      "assessment": "Demonstrate the implementation, explain the underlying concepts, pass an unseen task and regression tests, and obtain reviewer approval before marking the guide authored.",
+      "benchmark": "C, C++, and systems programming benchmark: correctness, reproducibility, safety, performance where relevant, and an independently reviewed unseen task.",
+      "division_targets": [
+        "DreamAIInfra",
+        "DreamCodeLab",
+        "DreamOps",
+        "DreamCyber"
+      ],
+      "masterbot_targets": [
+        "DreamAIInfra",
+        "DreamCodeLab",
+        "DreamOperations",
+        "DreamSecurity"
+      ],
+      "capability_tags": [
+        "memory-safety",
+        "concurrency",
+        "systems-programming",
+        "performance"
+      ],
+      "tool_tags": [
+        "C",
+        "C++",
+        "sanitizers",
+        "gdb",
+        "perf"
+      ],
+      "agent_tags": [
+        "systems-engineer",
+        "security-reviewer",
+        "performance-engineer"
+      ],
+      "implementation_steps": [
+        "Verify the exact c, c++, and systems programming topic, prerequisites, source URL, and item-level study rights.",
+        "Gather authorized learning material and official references; do not treat the video title or metadata as lesson content.",
+        "Break the topic into concepts, APIs, constraints, failure modes, and measurable learning outcomes.",
+        "Build a minimal runnable c, c++, and systems programming example in an isolated repository or sandbox.",
+        "Extend the example into a realistic DreamCo workflow owned by the target division.",
+        "Add unit, integration, negative-case, and regression tests appropriate to the topic.",
+        "Run the exercise with synthetic or approved data and capture reproducible logs, versions, and provenance.",
+        "Evaluate correctness, safety, accessibility or performance as relevant, and complete an unseen assessment.",
+        "Document the tools, capabilities, agent roles, limitations, and remediation steps.",
+        "Submit the guide and evidence for human review; keep it in authoring backlog until approval."
+      ],
+      "buddy_demo": "Buddy explains c, c++, and systems programming concepts, builds the sandbox example, runs the tests, demonstrates a failure and repair, scores the assessment, and requests human review."
+    },
+    {
+      "id": "fcc-category-software_architecture_and_testing",
+      "match_categories": [
+        "software_architecture_and_testing"
+      ],
+      "match_title_terms": [],
+      "objective": "Create an original DreamCo learning path for Software architecture and testing: Design a modular service, record architecture decisions, and verify behavior through layered tests.",
+      "practice": "Use authorized course material or official documentation to build a runnable software architecture and testing example. Keep the source video metadata-only until item-level rights are verified.",
+      "assessment": "Demonstrate the implementation, explain the underlying concepts, pass an unseen task and regression tests, and obtain reviewer approval before marking the guide authored.",
+      "benchmark": "Software architecture and testing benchmark: correctness, reproducibility, safety, performance where relevant, and an independently reviewed unseen task.",
+      "division_targets": [
+        "DreamCodeLab",
+        "DreamOps",
+        "CommandCore"
+      ],
+      "masterbot_targets": [
+        "DreamCodeLab",
+        "DreamQuality",
+        "DreamOperations",
+        "CommandCore",
+        "DreamBenchmark"
+      ],
+      "capability_tags": [
+        "architecture",
+        "testing",
+        "ci",
+        "reliability",
+        "design-review"
+      ],
+      "tool_tags": [
+        "pytest",
+        "Jest",
+        "Playwright",
+        "GitHub Actions",
+        "architecture-records"
+      ],
+      "agent_tags": [
+        "architect-agent",
+        "test-engineer",
+        "ci-agent",
+        "reviewer"
+      ],
+      "implementation_steps": [
+        "Verify the exact software architecture and testing topic, prerequisites, source URL, and item-level study rights.",
+        "Gather authorized learning material and official references; do not treat the video title or metadata as lesson content.",
+        "Break the topic into concepts, APIs, constraints, failure modes, and measurable learning outcomes.",
+        "Build a minimal runnable software architecture and testing example in an isolated repository or sandbox.",
+        "Extend the example into a realistic DreamCo workflow owned by the target division.",
+        "Add unit, integration, negative-case, and regression tests appropriate to the topic.",
+        "Run the exercise with synthetic or approved data and capture reproducible logs, versions, and provenance.",
+        "Evaluate correctness, safety, accessibility or performance as relevant, and complete an unseen assessment.",
+        "Document the tools, capabilities, agent roles, limitations, and remediation steps.",
+        "Submit the guide and evidence for human review; keep it in authoring backlog until approval."
+      ],
+      "buddy_demo": "Buddy explains software architecture and testing concepts, builds the sandbox example, runs the tests, demonstrates a failure and repair, scores the assessment, and requests human review."
+    },
+    {
+      "id": "fcc-category-data_science_and_visualization",
+      "match_categories": [
+        "data_science_and_visualization"
+      ],
+      "match_title_terms": [],
+      "objective": "Create an original DreamCo learning path for Data science and visualization: Create a reproducible analysis from clean data through evaluation and a decision-ready visualization.",
+      "practice": "Use authorized course material or official documentation to build a runnable data science and visualization example. Keep the source video metadata-only until item-level rights are verified.",
+      "assessment": "Demonstrate the implementation, explain the underlying concepts, pass an unseen task and regression tests, and obtain reviewer approval before marking the guide authored.",
+      "benchmark": "Data science and visualization benchmark: correctness, reproducibility, safety, performance where relevant, and an independently reviewed unseen task.",
+      "division_targets": [
+        "DreamScience",
+        "DreamData",
+        "DreamAIInfra"
+      ],
+      "masterbot_targets": [
+        "DreamScience",
+        "DreamData",
+        "DreamAIInfra",
+        "DreamBenchmark"
+      ],
+      "capability_tags": [
+        "data-cleaning",
+        "eda",
+        "feature-engineering",
+        "statistics",
+        "visualization"
+      ],
+      "tool_tags": [
+        "pandas",
+        "NumPy",
+        "scikit-learn",
+        "matplotlib",
+        "Jupyter"
+      ],
+      "agent_tags": [
+        "data-scientist",
+        "statistician",
+        "visualization-agent"
+      ],
+      "implementation_steps": [
+        "Verify the exact data science and visualization topic, prerequisites, source URL, and item-level study rights.",
+        "Gather authorized learning material and official references; do not treat the video title or metadata as lesson content.",
+        "Break the topic into concepts, APIs, constraints, failure modes, and measurable learning outcomes.",
+        "Build a minimal runnable data science and visualization example in an isolated repository or sandbox.",
+        "Extend the example into a realistic DreamCo workflow owned by the target division.",
+        "Add unit, integration, negative-case, and regression tests appropriate to the topic.",
+        "Run the exercise with synthetic or approved data and capture reproducible logs, versions, and provenance.",
+        "Evaluate correctness, safety, accessibility or performance as relevant, and complete an unseen assessment.",
+        "Document the tools, capabilities, agent roles, limitations, and remediation steps.",
+        "Submit the guide and evidence for human review; keep it in authoring backlog until approval."
+      ],
+      "buddy_demo": "Buddy explains data science and visualization concepts, builds the sandbox example, runs the tests, demonstrates a failure and repair, scores the assessment, and requests human review."
+    },
+    {
+      "id": "fcc-category-generative_ai_and_llms",
+      "match_categories": [
+        "generative_ai_and_llms"
+      ],
+      "match_title_terms": [],
+      "objective": "Create an original DreamCo learning path for Generative AI and LLMs: Build an evaluated LLM workflow with retrieval or tools, safety boundaries, and measurable quality.",
+      "practice": "Use authorized course material or official documentation to build a runnable generative ai and llms example. Keep the source video metadata-only until item-level rights are verified.",
+      "assessment": "Demonstrate the implementation, explain the underlying concepts, pass an unseen task and regression tests, and obtain reviewer approval before marking the guide authored.",
+      "benchmark": "Generative AI and LLMs benchmark: correctness, reproducibility, safety, performance where relevant, and an independently reviewed unseen task.",
+      "division_targets": [
+        "DreamAIInfra",
+        "DreamAgents",
+        "DreamScience",
+        "DreamCodeLab"
+      ],
+      "masterbot_targets": [
+        "DreamAIInfra",
+        "DreamAgents",
+        "DreamResearch",
+        "DreamKnowledge",
+        "DreamSecurity"
+      ],
+      "capability_tags": [
+        "llms",
+        "rag",
+        "tool-calling",
+        "evaluation",
+        "guardrails"
+      ],
+      "tool_tags": [
+        "Transformers",
+        "vLLM",
+        "pgvector",
+        "eval-harness",
+        "prompt-tests"
+      ],
+      "agent_tags": [
+        "model-evaluator",
+        "rag-engineer",
+        "agent-builder",
+        "safety-reviewer"
+      ],
+      "implementation_steps": [
+        "Verify the exact generative ai and llms topic, prerequisites, source URL, and item-level study rights.",
+        "Gather authorized learning material and official references; do not treat the video title or metadata as lesson content.",
+        "Break the topic into concepts, APIs, constraints, failure modes, and measurable learning outcomes.",
+        "Build a minimal runnable generative ai and llms example in an isolated repository or sandbox.",
+        "Extend the example into a realistic DreamCo workflow owned by the target division.",
+        "Add unit, integration, negative-case, and regression tests appropriate to the topic.",
+        "Run the exercise with synthetic or approved data and capture reproducible logs, versions, and provenance.",
+        "Evaluate correctness, safety, accessibility or performance as relevant, and complete an unseen assessment.",
+        "Document the tools, capabilities, agent roles, limitations, and remediation steps.",
+        "Submit the guide and evidence for human review; keep it in authoring backlog until approval."
+      ],
+      "buddy_demo": "Buddy explains generative ai and llms concepts, builds the sandbox example, runs the tests, demonstrates a failure and repair, scores the assessment, and requests human review."
+    },
+    {
+      "id": "fcc-category-game_development",
+      "match_categories": [
+        "game_development"
+      ],
+      "match_title_terms": [],
+      "objective": "Create an original DreamCo learning path for Game development: Build a playable game mechanic and verify state transitions, input, performance, and deterministic tests.",
+      "practice": "Use authorized course material or official documentation to build a runnable game development example. Keep the source video metadata-only until item-level rights are verified.",
+      "assessment": "Demonstrate the implementation, explain the underlying concepts, pass an unseen task and regression tests, and obtain reviewer approval before marking the guide authored.",
+      "benchmark": "Game development benchmark: correctness, reproducibility, safety, performance where relevant, and an independently reviewed unseen task.",
+      "division_targets": [
+        "GameTitan",
+        "DreamCodeLab",
+        "DreamArts"
+      ],
+      "masterbot_targets": [
+        "GameTitan",
+        "DreamCodeLab",
+        "DreamArts",
+        "DreamProduct"
+      ],
+      "capability_tags": [
+        "game-loop",
+        "scene-graph",
+        "physics",
+        "input-systems",
+        "performance"
+      ],
+      "tool_tags": [
+        "Godot",
+        "Unity",
+        "Unreal",
+        "profiling",
+        "asset-pipeline"
+      ],
+      "agent_tags": [
+        "gameplay-engineer",
+        "systems-designer",
+        "qa-agent"
+      ],
+      "implementation_steps": [
+        "Verify the exact game development topic, prerequisites, source URL, and item-level study rights.",
+        "Gather authorized learning material and official references; do not treat the video title or metadata as lesson content.",
+        "Break the topic into concepts, APIs, constraints, failure modes, and measurable learning outcomes.",
+        "Build a minimal runnable game development example in an isolated repository or sandbox.",
+        "Extend the example into a realistic DreamCo workflow owned by the target division.",
+        "Add unit, integration, negative-case, and regression tests appropriate to the topic.",
+        "Run the exercise with synthetic or approved data and capture reproducible logs, versions, and provenance.",
+        "Evaluate correctness, safety, accessibility or performance as relevant, and complete an unseen assessment.",
+        "Document the tools, capabilities, agent roles, limitations, and remediation steps.",
+        "Submit the guide and evidence for human review; keep it in authoring backlog until approval."
+      ],
+      "buddy_demo": "Buddy explains game development concepts, builds the sandbox example, runs the tests, demonstrates a failure and repair, scores the assessment, and requests human review."
+    },
+    {
+      "id": "fcc-category-mobile_and_cross_platform",
+      "match_categories": [
+        "mobile_and_cross_platform"
+      ],
+      "match_title_terms": [],
+      "objective": "Create an original DreamCo learning path for Mobile and cross-platform: Build a cross-platform mobile feature and test lifecycle, offline behavior, permissions, and accessibility.",
+      "practice": "Use authorized course material or official documentation to build a runnable mobile and cross-platform example. Keep the source video metadata-only until item-level rights are verified.",
+      "assessment": "Demonstrate the implementation, explain the underlying concepts, pass an unseen task and regression tests, and obtain reviewer approval before marking the guide authored.",
+      "benchmark": "Mobile and cross-platform benchmark: correctness, reproducibility, safety, performance where relevant, and an independently reviewed unseen task.",
+      "division_targets": [
+        "DreamCodeLab",
+        "DreamContent",
+        "DreamOps"
+      ],
+      "masterbot_targets": [
+        "DreamCodeLab",
+        "DreamProduct",
+        "DreamQuality",
+        "DreamOperations"
+      ],
+      "capability_tags": [
+        "mobile-architecture",
+        "app-lifecycle",
+        "offline-first",
+        "device-accessibility"
+      ],
+      "tool_tags": [
+        "React Native",
+        "Flutter",
+        "Detox",
+        "device-simulator",
+        "Playwright"
+      ],
+      "agent_tags": [
+        "mobile-engineer",
+        "qa-agent",
+        "accessibility-reviewer"
+      ],
+      "implementation_steps": [
+        "Verify the exact mobile and cross-platform topic, prerequisites, source URL, and item-level study rights.",
+        "Gather authorized learning material and official references; do not treat the video title or metadata as lesson content.",
+        "Break the topic into concepts, APIs, constraints, failure modes, and measurable learning outcomes.",
+        "Build a minimal runnable mobile and cross-platform example in an isolated repository or sandbox.",
+        "Extend the example into a realistic DreamCo workflow owned by the target division.",
+        "Add unit, integration, negative-case, and regression tests appropriate to the topic.",
+        "Run the exercise with synthetic or approved data and capture reproducible logs, versions, and provenance.",
+        "Evaluate correctness, safety, accessibility or performance as relevant, and complete an unseen assessment.",
+        "Document the tools, capabilities, agent roles, limitations, and remediation steps.",
+        "Submit the guide and evidence for human review; keep it in authoring backlog until approval."
+      ],
+      "buddy_demo": "Buddy explains mobile and cross-platform concepts, builds the sandbox example, runs the tests, demonstrates a failure and repair, scores the assessment, and requests human review."
+    },
+    {
+      "id": "fcc-category-databases_and_sql",
+      "match_categories": [
+        "databases_and_sql"
+      ],
+      "match_title_terms": [],
+      "objective": "Create an original DreamCo learning path for Databases and SQL: Design a normalized schema, write safe queries, optimize a query plan, and validate data quality.",
+      "practice": "Use authorized course material or official documentation to build a runnable databases and sql example. Keep the source video metadata-only until item-level rights are verified.",
+      "assessment": "Demonstrate the implementation, explain the underlying concepts, pass an unseen task and regression tests, and obtain reviewer approval before marking the guide authored.",
+      "benchmark": "Databases and SQL benchmark: correctness, reproducibility, safety, performance where relevant, and an independently reviewed unseen task.",
+      "division_targets": [
+        "DreamData",
+        "DreamAIInfra",
+        "DreamCodeLab"
+      ],
+      "masterbot_targets": [
+        "DreamData",
+        "DreamAIInfra",
+        "DreamCodeLab",
+        "DreamOperations"
+      ],
+      "capability_tags": [
+        "sql",
+        "schema-design",
+        "query-optimization",
+        "data-quality",
+        "transactions"
+      ],
+      "tool_tags": [
+        "PostgreSQL",
+        "SQLite",
+        "dbt",
+        "EXPLAIN",
+        "SQLFluff"
+      ],
+      "agent_tags": [
+        "data-engineer",
+        "sql-reviewer",
+        "data-quality-agent"
+      ],
+      "implementation_steps": [
+        "Verify the exact databases and sql topic, prerequisites, source URL, and item-level study rights.",
+        "Gather authorized learning material and official references; do not treat the video title or metadata as lesson content.",
+        "Break the topic into concepts, APIs, constraints, failure modes, and measurable learning outcomes.",
+        "Build a minimal runnable databases and sql example in an isolated repository or sandbox.",
+        "Extend the example into a realistic DreamCo workflow owned by the target division.",
+        "Add unit, integration, negative-case, and regression tests appropriate to the topic.",
+        "Run the exercise with synthetic or approved data and capture reproducible logs, versions, and provenance.",
+        "Evaluate correctness, safety, accessibility or performance as relevant, and complete an unseen assessment.",
+        "Document the tools, capabilities, agent roles, limitations, and remediation steps.",
+        "Submit the guide and evidence for human review; keep it in authoring backlog until approval."
+      ],
+      "buddy_demo": "Buddy explains databases and sql concepts, builds the sandbox example, runs the tests, demonstrates a failure and repair, scores the assessment, and requests human review."
+    },
+    {
+      "id": "fcc-category-career_and_interview_skills",
+      "match_categories": [
+        "career_and_interview_skills"
+      ],
+      "match_title_terms": [],
+      "objective": "Create an original DreamCo learning path for Career and interview skills: Turn a technical skill into a demonstrable portfolio artifact, interview story, and evidence-backed career plan.",
+      "practice": "Use authorized course material or official documentation to build a runnable career and interview skills example. Keep the source video metadata-only until item-level rights are verified.",
+      "assessment": "Demonstrate the implementation, explain the underlying concepts, pass an unseen task and regression tests, and obtain reviewer approval before marking the guide authored.",
+      "benchmark": "Career and interview skills benchmark: correctness, reproducibility, safety, performance where relevant, and an independently reviewed unseen task.",
+      "division_targets": [
+        "DreamEducation",
+        "DreamProServices",
+        "DreamSalesPro"
+      ],
+      "masterbot_targets": [
+        "DreamEducation",
+        "DreamProServices",
+        "DreamHuman",
+        "DreamDiscovery"
+      ],
+      "capability_tags": [
+        "career-planning",
+        "interview-practice",
+        "portfolio",
+        "communication"
+      ],
+      "tool_tags": [
+        "resume-builder",
+        "mock-interview",
+        "portfolio-review",
+        "STAR-rubric"
+      ],
+      "agent_tags": [
+        "career-coach",
+        "interviewer-agent",
+        "portfolio-reviewer"
+      ],
+      "implementation_steps": [
+        "Verify the exact career and interview skills topic, prerequisites, source URL, and item-level study rights.",
+        "Gather authorized learning material and official references; do not treat the video title or metadata as lesson content.",
+        "Break the topic into concepts, APIs, constraints, failure modes, and measurable learning outcomes.",
+        "Build a minimal runnable career and interview skills example in an isolated repository or sandbox.",
+        "Extend the example into a realistic DreamCo workflow owned by the target division.",
+        "Add unit, integration, negative-case, and regression tests appropriate to the topic.",
+        "Run the exercise with synthetic or approved data and capture reproducible logs, versions, and provenance.",
+        "Evaluate correctness, safety, accessibility or performance as relevant, and complete an unseen assessment.",
+        "Document the tools, capabilities, agent roles, limitations, and remediation steps.",
+        "Submit the guide and evidence for human review; keep it in authoring backlog until approval."
+      ],
+      "buddy_demo": "Buddy explains career and interview skills concepts, builds the sandbox example, runs the tests, demonstrates a failure and repair, scores the assessment, and requests human review."
+    },
+    {
+      "id": "fcc-category-computer_science_and_fundamentals",
+      "match_categories": [
+        "computer_science_and_fundamentals"
+      ],
+      "match_title_terms": [],
+      "objective": "Create an original DreamCo learning path for Computer science fundamentals: Implement and explain an algorithm with correctness reasoning, complexity analysis, and edge-case tests.",
+      "practice": "Use authorized course material or official documentation to build a runnable computer science fundamentals example. Keep the source video metadata-only until item-level rights are verified.",
+      "assessment": "Demonstrate the implementation, explain the underlying concepts, pass an unseen task and regression tests, and obtain reviewer approval before marking the guide authored.",
+      "benchmark": "Computer science fundamentals benchmark: correctness, reproducibility, safety, performance where relevant, and an independently reviewed unseen task.",
+      "division_targets": [
+        "DreamScience",
+        "DreamCodeLab",
+        "DreamEducation"
+      ],
+      "masterbot_targets": [
+        "DreamScience",
+        "DreamCodeLab",
+        "DreamEducation",
+        "DreamKnowledge"
+      ],
+      "capability_tags": [
+        "algorithms",
+        "data-structures",
+        "complexity-analysis",
+        "correctness"
+      ],
+      "tool_tags": [
+        "Python",
+        "Jupyter",
+        "pytest",
+        "algorithm-visualizer"
+      ],
+      "agent_tags": [
+        "algorithms-tutor",
+        "code-reviewer",
+        "assessment-agent"
+      ],
+      "implementation_steps": [
+        "Verify the exact computer science fundamentals topic, prerequisites, source URL, and item-level study rights.",
+        "Gather authorized learning material and official references; do not treat the video title or metadata as lesson content.",
+        "Break the topic into concepts, APIs, constraints, failure modes, and measurable learning outcomes.",
+        "Build a minimal runnable computer science fundamentals example in an isolated repository or sandbox.",
+        "Extend the example into a realistic DreamCo workflow owned by the target division.",
+        "Add unit, integration, negative-case, and regression tests appropriate to the topic.",
+        "Run the exercise with synthetic or approved data and capture reproducible logs, versions, and provenance.",
+        "Evaluate correctness, safety, accessibility or performance as relevant, and complete an unseen assessment.",
+        "Document the tools, capabilities, agent roles, limitations, and remediation steps.",
+        "Submit the guide and evidence for human review; keep it in authoring backlog until approval."
+      ],
+      "buddy_demo": "Buddy explains computer science fundamentals concepts, builds the sandbox example, runs the tests, demonstrates a failure and repair, scores the assessment, and requests human review."
+    },
+    {
+      "id": "fcc-category-html_css_and_accessibility",
+      "match_categories": [
+        "html_css_and_accessibility"
+      ],
+      "match_title_terms": [],
+      "objective": "Create an original DreamCo learning path for HTML, CSS, and accessibility: Build a semantic, responsive page and verify keyboard, screen-reader, and WCAG behavior.",
+      "practice": "Use authorized course material or official documentation to build a runnable html, css, and accessibility example. Keep the source video metadata-only until item-level rights are verified.",
+      "assessment": "Demonstrate the implementation, explain the underlying concepts, pass an unseen task and regression tests, and obtain reviewer approval before marking the guide authored.",
+      "benchmark": "HTML, CSS, and accessibility benchmark: correctness, reproducibility, safety, performance where relevant, and an independently reviewed unseen task.",
+      "division_targets": [
+        "DreamCodeLab",
+        "DreamContent",
+        "DreamEducation"
+      ],
+      "masterbot_targets": [
+        "DreamCodeLab",
+        "DreamProduct",
+        "DreamContent",
+        "DreamQuality"
+      ],
+      "capability_tags": [
+        "semantic-html",
+        "responsive-design",
+        "wcag",
+        "keyboard-navigation"
+      ],
+      "tool_tags": [
+        "HTML",
+        "CSS",
+        "Lighthouse",
+        "axe",
+        "Playwright"
+      ],
+      "agent_tags": [
+        "frontend-engineer",
+        "accessibility-reviewer",
+        "design-systems-agent"
+      ],
+      "implementation_steps": [
+        "Verify the exact html, css, and accessibility topic, prerequisites, source URL, and item-level study rights.",
+        "Gather authorized learning material and official references; do not treat the video title or metadata as lesson content.",
+        "Break the topic into concepts, APIs, constraints, failure modes, and measurable learning outcomes.",
+        "Build a minimal runnable html, css, and accessibility example in an isolated repository or sandbox.",
+        "Extend the example into a realistic DreamCo workflow owned by the target division.",
+        "Add unit, integration, negative-case, and regression tests appropriate to the topic.",
+        "Run the exercise with synthetic or approved data and capture reproducible logs, versions, and provenance.",
+        "Evaluate correctness, safety, accessibility or performance as relevant, and complete an unseen assessment.",
+        "Document the tools, capabilities, agent roles, limitations, and remediation steps.",
+        "Submit the guide and evidence for human review; keep it in authoring backlog until approval."
+      ],
+      "buddy_demo": "Buddy explains html, css, and accessibility concepts, builds the sandbox example, runs the tests, demonstrates a failure and repair, scores the assessment, and requests human review."
+    },
+    {
+      "id": "fcc-category-python_and_automation",
+      "match_categories": [
+        "python_and_automation"
+      ],
+      "match_title_terms": [],
+      "objective": "Create an original DreamCo learning path for Python and automation: Build a repeatable Python automation with safe inputs, idempotent behavior, tests, and useful logs.",
+      "practice": "Use authorized course material or official documentation to build a runnable python and automation example. Keep the source video metadata-only until item-level rights are verified.",
+      "assessment": "Demonstrate the implementation, explain the underlying concepts, pass an unseen task and regression tests, and obtain reviewer approval before marking the guide authored.",
+      "benchmark": "Python and automation benchmark: correctness, reproducibility, safety, performance where relevant, and an independently reviewed unseen task.",
+      "division_targets": [
+        "DreamCodeLab",
+        "DreamAutomation",
+        "DreamAIInfra"
+      ],
+      "masterbot_targets": [
+        "DreamCodeLab",
+        "DreamAutomation",
+        "DreamAIInfra",
+        "DreamOperations"
+      ],
+      "capability_tags": [
+        "python",
+        "automation",
+        "cli-design",
+        "idempotency",
+        "workflow-orchestration"
+      ],
+      "tool_tags": [
+        "Python",
+        "pytest",
+        "GitHub Actions",
+        "SQLite",
+        "Typer"
+      ],
+      "agent_tags": [
+        "automation-engineer",
+        "test-engineer",
+        "ops-agent"
+      ],
+      "implementation_steps": [
+        "Verify the exact python and automation topic, prerequisites, source URL, and item-level study rights.",
+        "Gather authorized learning material and official references; do not treat the video title or metadata as lesson content.",
+        "Break the topic into concepts, APIs, constraints, failure modes, and measurable learning outcomes.",
+        "Build a minimal runnable python and automation example in an isolated repository or sandbox.",
+        "Extend the example into a realistic DreamCo workflow owned by the target division.",
+        "Add unit, integration, negative-case, and regression tests appropriate to the topic.",
+        "Run the exercise with synthetic or approved data and capture reproducible logs, versions, and provenance.",
+        "Evaluate correctness, safety, accessibility or performance as relevant, and complete an unseen assessment.",
+        "Document the tools, capabilities, agent roles, limitations, and remediation steps.",
+        "Submit the guide and evidence for human review; keep it in authoring backlog until approval."
+      ],
+      "buddy_demo": "Buddy explains python and automation concepts, builds the sandbox example, runs the tests, demonstrates a failure and repair, scores the assessment, and requests human review."
+    },
+    {
+      "id": "fcc-category-backend_and_apis",
+      "match_categories": [
+        "backend_and_apis"
+      ],
+      "match_title_terms": [],
+      "objective": "Create an original DreamCo learning path for Backend and APIs: Build a secure API with documented contracts, authorization, rate limits, and observable failures.",
+      "practice": "Use authorized course material or official documentation to build a runnable backend and apis example. Keep the source video metadata-only until item-level rights are verified.",
+      "assessment": "Demonstrate the implementation, explain the underlying concepts, pass an unseen task and regression tests, and obtain reviewer approval before marking the guide authored.",
+      "benchmark": "Backend and APIs benchmark: correctness, reproducibility, safety, performance where relevant, and an independently reviewed unseen task.",
+      "division_targets": [
+        "DreamCodeLab",
+        "DreamAIInfra",
+        "DreamOps",
+        "DreamCyber"
+      ],
+      "masterbot_targets": [
+        "DreamCodeLab",
+        "DreamAIInfra",
+        "DreamOperations",
+        "DreamSecurity",
+        "CommandCore"
+      ],
+      "capability_tags": [
+        "api-design",
+        "authentication",
+        "rate-limiting",
+        "observability",
+        "contract-testing"
+      ],
+      "tool_tags": [
+        "FastAPI",
+        "Express",
+        "OpenAPI",
+        "Postman",
+        "pytest"
+      ],
+      "agent_tags": [
+        "backend-engineer",
+        "security-reviewer",
+        "api-test-agent"
+      ],
+      "implementation_steps": [
+        "Verify the exact backend and apis topic, prerequisites, source URL, and item-level study rights.",
+        "Gather authorized learning material and official references; do not treat the video title or metadata as lesson content.",
+        "Break the topic into concepts, APIs, constraints, failure modes, and measurable learning outcomes.",
+        "Build a minimal runnable backend and apis example in an isolated repository or sandbox.",
+        "Extend the example into a realistic DreamCo workflow owned by the target division.",
+        "Add unit, integration, negative-case, and regression tests appropriate to the topic.",
+        "Run the exercise with synthetic or approved data and capture reproducible logs, versions, and provenance.",
+        "Evaluate correctness, safety, accessibility or performance as relevant, and complete an unseen assessment.",
+        "Document the tools, capabilities, agent roles, limitations, and remediation steps.",
+        "Submit the guide and evidence for human review; keep it in authoring backlog until approval."
+      ],
+      "buddy_demo": "Buddy explains backend and apis concepts, builds the sandbox example, runs the tests, demonstrates a failure and repair, scores the assessment, and requests human review."
+    },
+    {
+      "id": "fcc-category-frontend_and_ui_frameworks",
+      "match_categories": [
+        "frontend_and_ui_frameworks"
+      ],
+      "match_title_terms": [],
+      "objective": "Create an original DreamCo learning path for Frontend and UI frameworks: Build an accessible, responsive interface with reusable components and tested user flows.",
+      "practice": "Use authorized course material or official documentation to build a runnable frontend and ui frameworks example. Keep the source video metadata-only until item-level rights are verified.",
+      "assessment": "Demonstrate the implementation, explain the underlying concepts, pass an unseen task and regression tests, and obtain reviewer approval before marking the guide authored.",
+      "benchmark": "Frontend and UI frameworks benchmark: correctness, reproducibility, safety, performance where relevant, and an independently reviewed unseen task.",
+      "division_targets": [
+        "DreamCodeLab",
+        "DreamContent",
+        "DreamArts"
+      ],
+      "masterbot_targets": [
+        "DreamCodeLab",
+        "DreamProduct",
+        "DreamContent",
+        "DreamQuality"
+      ],
+      "capability_tags": [
+        "component-design",
+        "state-management",
+        "responsive-ui",
+        "accessibility"
+      ],
+      "tool_tags": [
+        "React",
+        "Vue",
+        "Svelte",
+        "Playwright",
+        "Storybook"
+      ],
+      "agent_tags": [
+        "ui-architect",
+        "frontend-engineer",
+        "accessibility-reviewer"
+      ],
+      "implementation_steps": [
+        "Verify the exact frontend and ui frameworks topic, prerequisites, source URL, and item-level study rights.",
+        "Gather authorized learning material and official references; do not treat the video title or metadata as lesson content.",
+        "Break the topic into concepts, APIs, constraints, failure modes, and measurable learning outcomes.",
+        "Build a minimal runnable frontend and ui frameworks example in an isolated repository or sandbox.",
+        "Extend the example into a realistic DreamCo workflow owned by the target division.",
+        "Add unit, integration, negative-case, and regression tests appropriate to the topic.",
+        "Run the exercise with synthetic or approved data and capture reproducible logs, versions, and provenance.",
+        "Evaluate correctness, safety, accessibility or performance as relevant, and complete an unseen assessment.",
+        "Document the tools, capabilities, agent roles, limitations, and remediation steps.",
+        "Submit the guide and evidence for human review; keep it in authoring backlog until approval."
+      ],
+      "buddy_demo": "Buddy explains frontend and ui frameworks concepts, builds the sandbox example, runs the tests, demonstrates a failure and repair, scores the assessment, and requests human review."
+    },
+    {
+      "id": "fcc-category-java_and_jvm",
+      "match_categories": [
+        "java_and_jvm"
+      ],
+      "match_title_terms": [],
+      "objective": "Create an original DreamCo learning path for Java and JVM: Build a maintainable JVM service, test its contracts, and measure its runtime behavior.",
+      "practice": "Use authorized course material or official documentation to build a runnable java and jvm example. Keep the source video metadata-only until item-level rights are verified.",
+      "assessment": "Demonstrate the implementation, explain the underlying concepts, pass an unseen task and regression tests, and obtain reviewer approval before marking the guide authored.",
+      "benchmark": "Java and JVM benchmark: correctness, reproducibility, safety, performance where relevant, and an independently reviewed unseen task.",
+      "division_targets": [
+        "DreamCodeLab",
+        "DreamAIInfra",
+        "DreamOps"
+      ],
+      "masterbot_targets": [
+        "DreamCodeLab",
+        "DreamAIInfra",
+        "DreamQuality",
+        "DreamOperations"
+      ],
+      "capability_tags": [
+        "java",
+        "jvm",
+        "service-design",
+        "concurrency",
+        "performance"
+      ],
+      "tool_tags": [
+        "Java",
+        "Gradle",
+        "Maven",
+        "JUnit",
+        "JFR"
+      ],
+      "agent_tags": [
+        "backend-engineer",
+        "performance-engineer",
+        "test-engineer"
+      ],
+      "implementation_steps": [
+        "Verify the exact java and jvm topic, prerequisites, source URL, and item-level study rights.",
+        "Gather authorized learning material and official references; do not treat the video title or metadata as lesson content.",
+        "Break the topic into concepts, APIs, constraints, failure modes, and measurable learning outcomes.",
+        "Build a minimal runnable java and jvm example in an isolated repository or sandbox.",
+        "Extend the example into a realistic DreamCo workflow owned by the target division.",
+        "Add unit, integration, negative-case, and regression tests appropriate to the topic.",
+        "Run the exercise with synthetic or approved data and capture reproducible logs, versions, and provenance.",
+        "Evaluate correctness, safety, accessibility or performance as relevant, and complete an unseen assessment.",
+        "Document the tools, capabilities, agent roles, limitations, and remediation steps.",
+        "Submit the guide and evidence for human review; keep it in authoring backlog until approval."
+      ],
+      "buddy_demo": "Buddy explains java and jvm concepts, builds the sandbox example, runs the tests, demonstrates a failure and repair, scores the assessment, and requests human review."
+    },
+    {
+      "id": "fcc-category-javascript_and_typescript",
+      "match_categories": [
+        "javascript_and_typescript"
+      ],
+      "match_title_terms": [],
+      "objective": "Create an original DreamCo learning path for JavaScript and TypeScript: Build a typed, testable JavaScript/TypeScript feature with a real API boundary and accessible UI.",
+      "practice": "Use authorized course material or official documentation to build a runnable javascript and typescript example. Keep the source video metadata-only until item-level rights are verified.",
+      "assessment": "Demonstrate the implementation, explain the underlying concepts, pass an unseen task and regression tests, and obtain reviewer approval before marking the guide authored.",
+      "benchmark": "JavaScript and TypeScript benchmark: correctness, reproducibility, safety, performance where relevant, and an independently reviewed unseen task.",
+      "division_targets": [
+        "DreamCodeLab",
+        "DreamEducation",
+        "DreamAIInfra"
+      ],
+      "masterbot_targets": [
+        "DreamCodeLab",
+        "DreamProduct",
+        "DreamQuality",
+        "DreamEducation"
+      ],
+      "capability_tags": [
+        "typed-interfaces",
+        "web-platform",
+        "async-programming",
+        "testable-code"
+      ],
+      "tool_tags": [
+        "TypeScript",
+        "JavaScript",
+        "Node.js",
+        "Vite",
+        "Jest"
+      ],
+      "agent_tags": [
+        "frontend-engineer",
+        "api-integrator",
+        "test-engineer"
+      ],
+      "implementation_steps": [
+        "Verify the exact javascript and typescript topic, prerequisites, source URL, and item-level study rights.",
+        "Gather authorized learning material and official references; do not treat the video title or metadata as lesson content.",
+        "Break the topic into concepts, APIs, constraints, failure modes, and measurable learning outcomes.",
+        "Build a minimal runnable javascript and typescript example in an isolated repository or sandbox.",
+        "Extend the example into a realistic DreamCo workflow owned by the target division.",
+        "Add unit, integration, negative-case, and regression tests appropriate to the topic.",
+        "Run the exercise with synthetic or approved data and capture reproducible logs, versions, and provenance.",
+        "Evaluate correctness, safety, accessibility or performance as relevant, and complete an unseen assessment.",
+        "Document the tools, capabilities, agent roles, limitations, and remediation steps.",
+        "Submit the guide and evidence for human review; keep it in authoring backlog until approval."
+      ],
+      "buddy_demo": "Buddy explains javascript and typescript concepts, builds the sandbox example, runs the tests, demonstrates a failure and repair, scores the assessment, and requests human review."
+    },
+    {
+      "id": "typescript-course-routing",
+      "match_title_terms": [
+        "typescript",
+        "type script"
+      ],
+      "division_targets": [
+        "DreamCodeLab",
+        "DreamAIInfra",
+        "DreamAgents",
+        "DreamIntegrations",
+        "DreamProServices",
+        "DreamOps",
+        "DreamEducation"
+      ],
+      "masterbot_targets": [
+        "DreamCodeLab",
+        "DreamAIInfra",
+        "DreamAgents",
+        "DreamIntegration",
+        "DreamProduct",
+        "DreamOperations",
+        "DreamEducation",
+        "DreamQuality"
+      ],
+      "capability_tags": [
+        "typescript",
+        "typed-api-contracts",
+        "runtime-validation",
+        "testable-software"
+      ],
+      "tool_tags": [
+        "TypeScript",
+        "Node.js",
+        "tsc",
+        "ESLint",
+        "Vitest",
+        "Zod"
+      ],
+      "agent_tags": [
+        "typescript-engineer",
+        "api-contract-auditor",
+        "test-author-agent"
+      ],
+      "objective": "Study the linked TypeScript course as a versioned learning resource, then apply the concepts to a typed DreamCo component or service.",
+      "practice": "Build an original TypeScript artifact, validate external input at runtime, add tests, and integrate type-checking into CI.",
+      "assessment": "Pass strict compiler checks, runtime validation, negative tests, and the relevant application contract suite.",
+      "benchmark": "DreamCo TypeScript capability benchmark.",
+      "content_status": "original_implementation_brief",
+      "implementation_steps": [
+        "Create a strict TypeScript project and enable noImplicitAny, strictNullChecks, and noUncheckedIndexedAccess where compatible.",
+        "Model application data with primitives, unions, literal types, interfaces, type aliases, generics, and discriminated unions.",
+        "Use narrowing and exhaustive checks to make state transitions explicit.",
+        "Type asynchronous functions, errors, modules, and API contracts.",
+        "Validate all untrusted runtime data with Zod or equivalent schemas; compile-time types do not validate network input.",
+        "Build a reusable typed module or UI/API component with isolated dependencies.",
+        "Add unit, integration, negative-type, and contract tests.",
+        "Run type checking, linting, and tests as required CI gates."
+      ],
+      "buddy_demo": "Build a typed DreamCo agent-tool contract with validated inputs, typed results, a simulated API failure, and CI type-checking."
+    },
+    {
+      "id": "algorithmic-trading-routing",
+      "match_title_terms": [
+        "algorithmic trading",
+        "quant strategies",
+        "trading using python"
+      ],
+      "division_targets": [
+        "DreamFinance"
+      ],
+      "masterbot_targets": [
+        "DreamFinance",
+        "DreamTrade"
+      ],
+      "capability_tags": [
+        "quantitative-research",
+        "backtesting",
+        "risk-management"
+      ],
+      "tool_tags": [
+        "Python",
+        "pandas",
+        "market-data-adapters"
+      ],
+      "agent_tags": [
+        "quant-research-agent",
+        "strategy-backtester",
+        "portfolio-risk-guardian"
+      ],
+      "objective": "Study quantitative strategy research and build a paper-only, risk-controlled implementation.",
+      "practice": "Use synthetic or approved historical data, avoid look-ahead leakage, include transaction costs, and run out-of-sample tests.",
+      "assessment": "Pass reproducibility, leakage, slippage, risk-limit, and holdout checks; never submit live orders.",
+      "benchmark": "DreamFinance quantitative strategy benchmark.",
+      "content_status": "original_implementation_brief",
+      "implementation_steps": [
+        "Define a testable strategy hypothesis, market universe, benchmark, and time horizon.",
+        "Load approved historical or synthetic market data with timestamps and provenance.",
+        "Clean and validate prices, calendars, corporate actions, gaps, and duplicate observations.",
+        "Prevent look-ahead and survivorship bias by using point-in-time data and time-based splits.",
+        "Implement a simple baseline signal before adding more complex factors or machine learning.",
+        "Backtest with commissions, spread, slippage, liquidity, and realistic execution assumptions.",
+        "Evaluate out-of-sample and walk-forward performance, drawdown, volatility, turnover, and exposure.",
+        "Add risk caps, position sizing, loss limits, idempotency, audit logs, and a kill switch.",
+        "Run paper trading only and compare expected versus simulated fills.",
+        "Require a separate risk and compliance review before any live-trading design is even considered."
+      ],
+      "buddy_demo": "Build a synthetic or approved-data strategy notebook, run a cost-aware backtest, and show a risk-limited paper order with no live brokerage actions."
+    },
+    {
+      "id": "agentic-ai-routing",
+      "match_title_terms": [
+        "agentic ai",
+        "ai agents",
+        "coding agent",
+        "multi-agent",
+        "openclaw"
+      ],
+      "division_targets": [
+        "DreamAgents",
+        "CommandCore",
+        "DreamAIInfra",
+        "DreamIntegrations",
+        "DreamCyber"
+      ],
+      "masterbot_targets": [
+        "DreamAgents",
+        "CommandCore",
+        "DreamAIInfra",
+        "DreamIntegration",
+        "DreamCyber",
+        "DreamResearch"
+      ],
+      "capability_tags": [
+        "agent-orchestration",
+        "tool-calling",
+        "memory",
+        "guardrails",
+        "human-approval"
+      ],
+      "tool_tags": [
+        "MCP",
+        "Docker",
+        "JSON Schema",
+        "GitHub API"
+      ],
+      "agent_tags": [
+        "buddy-orchestrator",
+        "research-agent",
+        "memory-agent",
+        "coding-agent",
+        "policy-guardian"
+      ],
+      "objective": "Study agent architecture, tool use, memory, security, orchestration, and supervised task execution.",
+      "practice": "Build an original bounded agent using mock tools, persistent session state, and explicit approval gates.",
+      "assessment": "Pass tool contracts, sandbox, memory isolation, prompt-injection, and human-approval tests.",
+      "benchmark": "DreamAgents capability and safety benchmark.",
+      "content_status": "original_implementation_brief",
+      "implementation_steps": [
+        "Distinguish a deterministic workflow from an agent loop and define when autonomy is useful.",
+        "Define the task, stop condition, step budget, success rubric, and prohibited actions.",
+        "Select a model and record provider, model version, latency, cost, and limitations.",
+        "Define specialist roles and their narrow responsibilities.",
+        "Specify tools with typed schemas, least-privilege scopes, validation, and timeouts.",
+        "Implement state transitions, retries, idempotency, and durable checkpoints.",
+        "Add short-term context and long-term memory with provenance, retention, and tenant isolation.",
+        "Add prompt-injection defenses, tool allowlists, sandboxing, and human approval for external side effects.",
+        "Evaluate on representative and adversarial tasks with reproducible fixtures.",
+        "Run independent review and regression tests before releasing the agent."
+      ],
+      "buddy_demo": "Demonstrate Buddy coordinating research, coding, memory, and policy agents with mock tools, durable state, sandbox limits, and an approval pause.",
+      "match_categories": [
+        "ai_agents_and_mcp"
+      ]
+    },
+    {
+      "id": "machine-learning-routing",
+      "match_title_terms": [
+        "machine learning",
+        "deep learning",
+        "mlops",
+        "neural network",
+        "pytorch",
+        "scikit-learn"
+      ],
+      "division_targets": [
+        "DreamAIInfra",
+        "DreamScience",
+        "DreamData",
+        "DreamOps"
+      ],
+      "masterbot_targets": [
+        "DreamAIInfra",
+        "DreamScience",
+        "DreamData",
+        "DreamResearch",
+        "DreamBenchmark",
+        "DreamEvolution",
+        "DreamOperations"
+      ],
+      "capability_tags": [
+        "data-validation",
+        "model-training",
+        "evaluation",
+        "experiment-tracking",
+        "model-registry",
+        "drift-monitoring"
+      ],
+      "tool_tags": [
+        "Python",
+        "scikit-learn",
+        "PyTorch",
+        "MLflow",
+        "Feast",
+        "Great Expectations",
+        "Evidently",
+        "Docker"
+      ],
+      "agent_tags": [
+        "ml-engineer-agent",
+        "dataset-quality-agent",
+        "model-evaluator",
+        "mlops-release-guardian"
+      ],
+      "objective": "Study machine learning foundations and production ML engineering with reproducible data, experiments, evaluation, and deployment.",
+      "practice": "Build a baseline model, validate data, track experiments, register versions, monitor drift, and deploy only through a tested staging pipeline.",
+      "assessment": "Pass data-quality, train/serve consistency, holdout, model registry, drift alert, rollback, and regression checks.",
+      "benchmark": "DreamAIInfra ML lifecycle benchmark.",
+      "content_status": "original_implementation_brief",
+      "implementation_steps": [
+        "Define the prediction or decision problem, intended users, target variable, baseline, and evaluation metric.",
+        "Record dataset provenance, collection rights, privacy limits, and permitted uses before ingestion.",
+        "Profile data quality, missingness, duplicates, label quality, class balance, and temporal structure.",
+        "Split train, validation, and holdout data before fitting preprocessing to prevent leakage.",
+        "Build a simple baseline and compare candidate models with reproducible configurations.",
+        "Use cross-validation and bounded hyperparameter search without touching the final holdout.",
+        "Evaluate task-appropriate metrics, calibration, robustness, subgroup performance, and failure cases.",
+        "Log data fingerprints, code commit, parameters, metrics, and artifacts in MLflow or an equivalent tracker.",
+        "Register immutable model versions with model cards, provenance, and approval state.",
+        "Serve predictions through a validated API with consistent training/serving features.",
+        "Monitor input drift, prediction drift, delayed labels, and performance decay.",
+        "Release gradually with canary checks, rollback, and a documented retraining trigger."
+      ],
+      "buddy_demo": "Train a small synthetic-data classifier, validate the dataset, log an experiment, register a version, serve it through a local API, and demonstrate drift alerts and rollback.",
+      "match_categories": [
+        "machine_learning_and_deep_learning"
+      ]
+    },
+    {
+      "id": "self-healing-cicd-routing",
+      "match_title_terms": [
+        "self-healing ci",
+        "ci/cd",
+        "continuous integration",
+        "continuous delivery",
+        "devops pipeline"
+      ],
+      "division_targets": [
+        "DreamAIInfra",
+        "DreamOps",
+        "DreamProServices",
+        "DreamCodeLab",
+        "DreamCyber",
+        "DreamAgents",
+        "CommandCore"
+      ],
+      "masterbot_targets": [
+        "DreamAIInfra",
+        "DreamOperations",
+        "DreamQuality",
+        "DreamCodeLab",
+        "DreamSecurity",
+        "DreamAgents",
+        "CommandCore"
+      ],
+      "capability_tags": [
+        "ci-reliability",
+        "failure-diagnosis",
+        "safe-code-repair",
+        "test-automation",
+        "rollback"
+      ],
+      "tool_tags": [
+        "GitHub Actions",
+        "Python",
+        "pytest",
+        "CodeQL",
+        "Docker"
+      ],
+      "agent_tags": [
+        "ci-failure-diagnoser",
+        "patch-builder",
+        "test-runner-agent",
+        "independent-code-reviewer",
+        "release-guardian"
+      ],
+      "objective": "Study automated CI/CD, root-cause analysis, safe repair proposals, and governed deployment.",
+      "practice": "Reproduce a seeded failure, collect logs, propose a minimal patch, run targeted tests, and require independent review.",
+      "assessment": "Pass least-privilege, secret-safety, regression, approval, and rollback tests.",
+      "benchmark": "DreamCo self-healing CI/CD benchmark.",
+      "content_status": "original_implementation_brief",
+      "implementation_steps": [
+        "Collect exact workflow, job, step, commit, and artifact evidence from a failed run.",
+        "Classify the failure as code, test, dependency, infrastructure, permissions, secret, flaky test, or external service.",
+        "Generate a root-cause hypothesis with quoted evidence and confidence; do not guess from the workflow name.",
+        "Create a repair branch from the exact failing commit and constrain writable paths.",
+        "Apply a minimal patch in an isolated workspace without production credentials.",
+        "Run focused tests, then the relevant integration, security, contract, and regression suites.",
+        "Use an independent reviewer to challenge the diagnosis and verify that tests cover the original failure.",
+        "Require human approval for workflow permissions, secrets, protected files, deployment, and merge.",
+        "Merge only when branch protection and required checks pass; otherwise preserve a blocked state.",
+        "Record repair provenance, rollback instructions, recurrence, time-to-diagnose, time-to-repair, and false-repair rate."
+      ],
+      "buddy_demo": "Inject a synthetic CI failure, have Buddy diagnose it from logs, patch a branch, run regression tests, obtain independent review, and stop before a human-controlled merge.",
+      "match_categories": [
+        "cloud_devops_and_ci_cd"
+      ]
+    },
+    {
+      "id": "mlops-course-routing",
+      "match_title_terms": [
+        "mlops",
+        "mlflow",
+        "model registry",
+        "feature store",
+        "model monitoring",
+        "production grade ml",
+        "machine learning platform"
+      ],
+      "division_targets": [
+        "DreamAIInfra",
+        "DreamData",
+        "DreamOps",
+        "DreamScience"
+      ],
+      "masterbot_targets": [
+        "DreamAIInfra",
+        "DreamData",
+        "DreamOperations",
+        "DreamResearch",
+        "DreamBenchmark",
+        "DreamEvolution"
+      ],
+      "capability_tags": [
+        "mlops",
+        "experiment-tracking",
+        "model-registry",
+        "feature-store",
+        "data-validation",
+        "drift-monitoring",
+        "model-deployment",
+        "rollback"
+      ],
+      "tool_tags": [
+        "MLflow",
+        "Feast",
+        "FastAPI",
+        "Great Expectations",
+        "Evidently",
+        "Docker",
+        "GitHub Actions",
+        "DVC"
+      ],
+      "agent_tags": [
+        "ml-platform-engineer",
+        "data-quality-agent",
+        "model-registry-guardian",
+        "drift-monitor-agent",
+        "ml-release-guardian"
+      ],
+      "objective": "Study the engineering needed to move machine-learning models from experiments into reproducible, monitored, versioned services.",
+      "practice": "Build a local ML platform that validates data, tracks experiments, registers model versions, serves predictions, monitors drift, and rolls back safely.",
+      "assessment": "Pass data validation, reproducibility, model registry, feature consistency, drift detection, deployment, canary, and rollback checks.",
+      "benchmark": "DreamAIInfra MLOps lifecycle benchmark.",
+      "implementation_steps": [
+        "Build a reproducible baseline training pipeline and freeze data, code, and environment versions.",
+        "Track experiments, parameters, metrics, and artifacts in MLflow.",
+        "Register model versions and define promotion aliases such as candidate, champion, and rollback.",
+        "Use a feature store or shared feature definitions to prevent training-serving skew.",
+        "Validate raw and transformed data with explicit schemas and expectations.",
+        "Serve the registered model behind FastAPI with authentication and runtime input validation.",
+        "Containerize the service and pin dependencies for reproducible environments.",
+        "Add CI tests for data contracts, model quality, API behavior, and package security.",
+        "Monitor drift and model decay using delayed labels and alert thresholds.",
+        "Deploy to staging, canary a release, inspect metrics, and roll back on regressions."
+      ],
+      "buddy_demo": "Buddy trains and tracks a small model locally, registers a candidate, serves it through FastAPI, triggers a synthetic drift alert, and rolls back to the previous model.",
+      "content_status": "original_implementation_brief"
+    },
+    {
+      "id": "machine-learning-from-scratch-routing",
+      "match_title_terms": [
+        "no black box",
+        "without libraries",
+        "from scratch",
+        "neural networks without",
+        "build neural network from scratch"
+      ],
+      "division_targets": [
+        "DreamAIInfra",
+        "DreamScience",
+        "DreamData"
+      ],
+      "masterbot_targets": [
+        "DreamAIInfra",
+        "DreamScience",
+        "DreamData",
+        "DreamResearch",
+        "DreamEducation"
+      ],
+      "capability_tags": [
+        "linear-algebra-for-ml",
+        "gradient-descent",
+        "loss-functions",
+        "neural-network-fundamentals",
+        "backpropagation",
+        "numerical-stability"
+      ],
+      "tool_tags": [
+        "Python",
+        "NumPy",
+        "Matplotlib",
+        "Jupyter",
+        "scikit-learn reference implementation"
+      ],
+      "agent_tags": [
+        "ml-foundations-tutor",
+        "math-explainer-agent",
+        "algorithm-verification-agent"
+      ],
+      "objective": "Understand machine-learning algorithms from first principles by implementing their mathematics and comparing results against trusted reference implementations.",
+      "practice": "Implement a small algorithm without ML frameworks, test it on synthetic data, and compare its output with a reference library.",
+      "assessment": "Pass derivation checks, numerical tests, gradient checks, edge cases, and reference-output comparisons.",
+      "benchmark": "DreamAIInfra from-scratch ML benchmark.",
+      "implementation_steps": [
+        "Review vectors, matrices, dot products, derivatives, probability, and optimization concepts used by the target algorithm.",
+        "Define the model inputs, outputs, parameters, and assumptions mathematically.",
+        "Implement a loss or objective function and verify it on hand-calculated examples.",
+        "Implement gradient descent with finite-value checks and convergence diagnostics.",
+        "Build a simple linear or logistic regression implementation and test it on synthetic fixtures.",
+        "Implement a nearest-neighbor or clustering baseline and compare behavior on edge cases.",
+        "Build a small neural network with explicit forward propagation and backpropagation.",
+        "Run numerical gradient checks and detect exploding, vanishing, or non-finite gradients.",
+        "Compare the implementation against a trusted reference library on identical fixtures.",
+        "Explain the algorithm, its assumptions, failure modes, and computational complexity."
+      ],
+      "buddy_demo": "Buddy derives a loss function, implements gradient descent and a small neural network using NumPy primitives, runs gradient checks, and compares results with PyTorch or scikit-learn.",
+      "content_status": "original_implementation_brief"
+    }
+  ]
+}
