@@ -44,7 +44,7 @@ def build_execution_plan(queue_doc: dict, limit: int = 20) -> dict:
             "started_at": time.time(),
         })
     return {
-        "schema": "dreamco.benchmark_training_execution.v2",
+        "schema": "dreamco.benchmark_training_plan.v1",
         "runs": runs,
         "executed": 0,
         "planned": sum(row["status"] == "planned" for row in runs),
