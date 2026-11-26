@@ -24,6 +24,7 @@ on:
       - "tests/test_compiled_bot_runtime.py"
       - "tests/test_actions_failure_watch_workflow_safety.py"
       - "tests/test_command_center_data.py"
+      - "tests/test_buddy_division_gaps.py"
       - "tests/specialist-prospectus-page.test.mjs"
       - "tests/supplemental-fleet.test.ts"
       - "tests/benchmark-gap-planner.test.mjs"
@@ -194,6 +195,8 @@ jobs:
           npx tsx tools/generate_dreamco_search_index.ts
           python3 tools/build_buddy_learning_os_connection_graph.py
           python3 tools/generate_command_center_data.py
+      - name: Verify canonical division gap inventory
+        run: python3 -m pytest -q tests/test_buddy_division_gaps.py
       - name: Verify generated Command Center coverage for every bot and division
         run: python3 -m pytest -q tests/test_command_center_data.py
       - name: Full audit (compile, import, typecheck, folder tests, links)
