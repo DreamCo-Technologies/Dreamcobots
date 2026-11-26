@@ -39,7 +39,7 @@ def test_converter_preserves_domain_scope_without_inventing_masterbot_ownership(
     assert converted["results"][0]["domain_id"] == "domain-0"
 
 
-def test_converter_rejects_unknown_duplicate_or_missing_domain_rows():
+def test_converter_rejects_unknown_and_duplicate_but_keeps_missing_rows_unmeasured():
     _, crosswalk, source = fixtures()
     unknown = {**source, "divisionResults": [*source["divisionResults"][:-1], {
         **source["divisionResults"][-1], "division": "UnknownDivision"
@@ -58,12 +58,12 @@ def test_converter_rejects_unknown_duplicate_or_missing_domain_rows():
     else:
         raise AssertionError("duplicate domain result was accepted")
     missing = {**source, "divisionResults": source["divisionResults"][:-1], "divisions": 54}
-    try:
-        convert(missing, crosswalk)
-    except ValueError as exc:
-        assert "missing canonical domain" in str(exc)
-    else:
-        raise AssertionError("missing domain result was accepted")
+    partial = convert(missing, crosswalk)
+    assert partial["domain_division_count"] == 55
+    assert partial["measured_domain_division_count"] == 54
+    assert partial["unmeasured_domain_divisions"] == ["Domain54"]
+    assert len(partial["results"]) == 54
+    assert partial["masterbot_evidence_count"] == 0
 
 
 def test_planner_builds_separate_65_masterbot_and_55_domain_queues():
