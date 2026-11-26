@@ -36,11 +36,15 @@ class FiveHundredModelWorkflowScopeTests(unittest.TestCase):
         self.assertIn("cancel-in-progress: true", text)
         self.assertIn("timeout-minutes: 60", text)
 
-    def test_missing_career_pathways_source_data_is_reported_as_skipped_not_passed(self):
+    def test_contract_only_matrix_does_not_run_unavailable_career_pathways_suite(self):
         text = WORKFLOW.read_text(encoding="utf-8")
-        self.assertIn("study_packs/career_pathways/raw/task_statements.csv", text)
-        self.assertIn("SKIPPED: study_packs/career_pathways/tests", text)
-        self.assertIn("--ignore=study_packs/career_pathways/tests", text)
+        # The 500-model workflow validates contracts and evidence readiness only.
+        # It does not run the study-pack test suite or claim missing source data passed.
+        self.assertNotIn("study_packs/career_pathways/raw/task_statements.csv", text)
+        self.assertNotIn("study_packs/career_pathways/tests", text)
+        self.assertNotIn("python3 -m pytest -q", text)
+        self.assertIn("BLOCKED_RUNNER_NOT_IMPLEMENTED", text)
+        self.assertIn("all matrix rows remain unverified", text)
 
     def test_laptop_test_key_is_not_key_shaped(self):
         text = LAPTOP_RUNNER.read_text(encoding="utf-8")
