@@ -80,3 +80,13 @@ def test_same_timestamp_offline_events_use_event_id_tie_break(tmp_path):
     assert result.replay_required is True
     state = store.get_card_state("learner-1", "bootcamp", "python-functions")
     assert state["latest_event_id"] == "z-event"
+
+
+def test_replay_required_is_exposed_as_a_real_boolean(tmp_path):
+    store = SRSStore(tmp_path / "srs.db")
+    store.record_review(event("later", T0 + timedelta(days=2), T0 + timedelta(days=5)))
+    store.record_review(event("earlier", T0 + timedelta(days=1), T0 + timedelta(days=3)))
+    state = store.get_card_state("learner-1", "bootcamp", "python-functions")
+    assert state["replay_required"] is True
+    due = store.due_items("learner-1", (T0 + timedelta(days=10)).isoformat())
+    assert due == []
