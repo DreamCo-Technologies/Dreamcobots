@@ -114,9 +114,11 @@ jobs:
           python tools/audit_markdown_implementation_gaps.py --check
           python tools/validate_buddy_engineering_capabilities.py
           python tools/validate_dreamco_mastery_registry.py
-          if [ "$GITHUB_EVENT_NAME" = "workflow_run" ] && [ "$WORKFLOW_NAME" = "Full System Certification" ]; then npm run buddy:fleet; fi
           python -m unittest tests.test_buddy_safe_repair tests.test_buddy_failure_learning tests.test_buddy_dataset_routing tests.test_division_model_fleet tests.test_dreamco_division_mastery_orchestrator tests.test_buddy_dataset_route_check tests.test_file_prospectus_inventory tests.test_issue_lifecycle tests.test_actions_live_health tests.test_daily_bot_study_scan tests.test_dependency_review_scope tests.test_markdown_implementation_gaps tests.test_markdown_gap_audit_workflow_safety
           git diff --check
+      - name: Verify canonical fleet catalog
+        if: github.event_name == 'workflow_run' && github.event.workflow_run.name == 'Full System Certification'
+        run: npm run buddy:fleet
       - name: Detect allowlisted generated changes
         id: changes
         shell: bash
