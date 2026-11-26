@@ -66,9 +66,9 @@ def build_gap_queue(scores: dict, registry: dict, crosswalk: dict) -> dict:
                 "score": None,
                 "target": None,
                 "evidence_count": 0,
-                "priority": 0,
+                "priority": 4,
                 "action": "RUN_BENCHMARKS",
-                "reason": "no MasterBot-scoped benchmark evidence; domain evidence is not transferable",
+                "reason": "no MasterBot-scoped benchmark evidence; awaiting a dedicated MasterBot runner",
             })
         else:
             for row in rows:
