@@ -1,6 +1,11 @@
 name: Buddy CI Safe Generated-Artifact Repair
 
 on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/buddy-ci-safe-repair.yml"
   workflow_run:
     workflows:
       - "Repository Test Matrix"
@@ -9,6 +14,8 @@ on:
       - "Buddy Fleet Execution Map"
       - "Actions Health"
       - "Superbot Repository Inventory"
+      - "Buddy Bootcamp Curriculum"
+      - "Buddy Open-Source Weekly Bootcamp"
     types: [completed]
     branches: [main]
 
@@ -17,12 +24,12 @@ permissions:
   contents: write
 
 concurrency:
-  group: buddy-ci-safe-repair-${{ github.event.workflow_run.id }}
+  group: buddy-ci-safe-repair-${{ github.event.workflow_run.id || github.run_id }}
   cancel-in-progress: false
 
 jobs:
   regenerate-and-verify:
-    if: github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'failure' && github.event.workflow_run.head_branch == 'main'
+    if: github.repository == 'DreamCo-Technologies/Dreamcobots' && github.ref == 'refs/heads/main' && (github.event_name == 'workflow_dispatch' || github.event_name == 'push' || (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'failure' && github.event.workflow_run.head_branch == 'main'))
     runs-on: ubuntu-latest
     timeout-minutes: 25
     steps:
@@ -75,9 +82,7 @@ jobs:
           python tools/build_pages_connection_index.py
           python tools/generate_bot_manifests.py
           python tools/fleet_runtime_audit.py --skip-folder-tests
-          python tools/audit_actions_health.py
-          python tools/build_actions_prospectus.py
-          python tools/build_file_prospectus.py
+          python tools/refresh_repository_evidence.py
           python tools/audit_markdown_implementation_gaps.py --write
       - name: Verify repaired indexes and Buddy repair-learning tests
         run: |
@@ -87,9 +92,10 @@ jobs:
           python tools/generate_division_model_manifest.py --check
           python -m unittest tests.test_division_model_manifest
           python tools/build_pages_connection_index.py --check
-          python tools/build_actions_prospectus.py --check
-          python tools/build_file_prospectus.py --check
           python tools/generate_bot_manifests.py --check
+          python tools/audit_pages_features.py --check --check-regressions
+          python tools/build_actions_prospectus.py --check --check-buttons
+          python tools/build_file_prospectus.py --check
           python tools/audit_markdown_implementation_gaps.py --check
           python tools/validate_buddy_engineering_capabilities.py
           python tools/validate_dreamco_mastery_registry.py
@@ -100,7 +106,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          for path in artifacts/buddy-dataset-hub/dataset-routes.json artifacts/division-model-fleet config/generated/file-prospectus config/bots config/generated/markdown-implementation-gap-audit.json website/data/markdown-implementation-gap-audit.json reports/MARKDOWN_IMPLEMENTATION_GAP_AUDIT.md config/buddy/run-with-buddy.generated.json config/generated/actions-prospectus.json website/data/actions-health-report.json website/data/actions-prospectus.json website/data/run-prospectus.json website/data/run-prospectus-bots.json website/data/pages-connection-index.json; do
+          for path in artifacts/buddy-dataset-hub/dataset-routes.json artifacts/division-model-fleet config/generated/file-prospectus config/bots config/generated/markdown-implementation-gap-audit.json website/data/markdown-implementation-gap-audit.json reports/MARKDOWN_IMPLEMENTATION_GAP_AUDIT.md config/buddy/run-with-buddy.generated.json config/generated/actions-prospectus.json config/generated/actions-health-report.json website/data/actions-health-report.json website/data/actions-prospectus.json website/data/run-prospectus.json website/data/run-prospectus-bots.json website/data/pages-connection-index.json website/data/pages-feature-audit.json reports/PAGES_FEATURE_AUDIT.md website/data/command-center website/data/fleet-runtime-status.json website/data/bot-fleet-e2e.json; do
             if [ -e "$path" ]; then git add -A -- "$path"; fi
           done
           if git diff --cached --quiet; then
@@ -114,7 +120,7 @@ jobs:
         if: steps.changes.outputs.changed == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
-          REPAIR_BRANCH: ${{ format('buddy/ci-repair-{0}', github.event.workflow_run.id) }}
+          REPAIR_BRANCH: ${{ format('buddy/ci-repair-{0}', github.event.workflow_run.id || github.run_id) }}
         shell: bash
         run: |
           set -euo pipefail
