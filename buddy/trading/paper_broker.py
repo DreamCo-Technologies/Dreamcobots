@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+import math
 
 
 LIVE_TRADING_ENABLED = False
@@ -39,6 +40,18 @@ class PaperBroker:
         max_position_notional: float = 5_000.0,
         allow_short: bool = False,
     ) -> None:
+        try:
+            initial_cash = float(initial_cash)
+            fee_bps = float(fee_bps)
+            slippage_bps = float(slippage_bps)
+            max_order_notional = float(max_order_notional)
+            max_position_notional = float(max_position_notional)
+        except (TypeError, ValueError, OverflowError):
+            raise ValueError("broker settings must be finite numbers") from None
+        if not all(math.isfinite(value) for value in (
+            initial_cash, fee_bps, slippage_bps, max_order_notional, max_position_notional
+        )):
+            raise ValueError("broker settings must be finite numbers")
         if initial_cash <= 0:
             raise ValueError("initial_cash must be positive")
         if fee_bps < 0 or not 0 <= slippage_bps < 10_000:
@@ -66,8 +79,16 @@ class PaperBroker:
         """Fill a simulated market order immediately at reference plus/minus slippage."""
         symbol = str(symbol).strip().upper()
         side = str(side).strip().lower()
-        quantity = float(quantity)
-        reference_price = float(reference_price)
+        try:
+            quantity = float(quantity)
+            reference_price = float(reference_price)
+        except (TypeError, ValueError, OverflowError):
+            raise ValueError("quantity and reference_price must be finite numbers") from None
+        if not math.isfinite(quantity) or not math.isfinite(reference_price):
+            raise ValueError("quantity and reference_price must be finite numbers")
+        timestamp = str(timestamp).strip()
+        if not timestamp:
+            raise ValueError("timestamp is required")
         if not symbol:
             raise ValueError("symbol is required")
         if side not in {"buy", "sell"}:
@@ -111,7 +132,7 @@ class PaperBroker:
             reference_price=reference_price,
             execution_price=execution_price,
             fee=fee,
-            timestamp=str(timestamp),
+            timestamp=timestamp,
         )
         self.fills.append(fill)
         return fill
@@ -124,8 +145,8 @@ class PaperBroker:
             if symbol not in marks:
                 raise ValueError(f"missing mark price for {symbol}")
             price = float(marks[symbol])
-            if price <= 0:
-                raise ValueError("mark prices must be positive")
+            if not math.isfinite(price) or price <= 0:
+                raise ValueError("mark prices must be finite and positive")
             value += quantity * price
         return value
 
