@@ -330,7 +330,12 @@ def build_fleet(registry: dict[str, Any]) -> tuple[dict[str, Any], dict[str, Any
     capability_payload = artifact(
         "dreamco.command_center.capabilities.v1",
         [REGISTRY],
-        summary={"unique_capabilities": len(capability_rows), "bot_capability_edges": sum(len(row["capability_ids"]) for row in bots)},
+        summary={
+            "unique_capabilities": len(capability_rows),
+            "bot_capability_edges": sum(len(row["capability_ids"]) for row in bots),
+            "declared_capability_tests": int(fleet_e2e.get("summary", {}).get("declaredCapabilitiesTested", 0)),
+            "supplemental_declared_capability_tests": max(0, int(fleet_e2e.get("summary", {}).get("declaredCapabilitiesTested", 0)) - sum(len(row["capability_ids"]) for row in bots)),
+        },
         items=capability_rows,
     )
     return bot_payload, division_payload, capability_payload
