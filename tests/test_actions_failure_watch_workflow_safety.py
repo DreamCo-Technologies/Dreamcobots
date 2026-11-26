@@ -28,3 +28,8 @@ def test_failure_watch_downloads_failed_job_logs_and_does_not_file_issues():
     assert "actions/jobs/$job_id/logs" in workflow
     assert "failure-evidence/job-logs/$job_id.zip" in workflow
     assert "Issue filing is disabled" in workflow
+
+def test_safe_repair_reconciles_dashboard_and_pages_deployment_failures():
+    repair = (ROOT / ".github" / "workflows" / "buddy-ci-safe-repair.yml").read_text(encoding="utf-8")
+    assert "DreamCo Live Dashboard" in repair
+    assert "Deploy Buddy Website" in repair
