@@ -58,6 +58,9 @@ on:
       - "buddy/bootcamp/sources/TRANSCRIPT_EVALUATION.md"
       - "config/buddy-tolkien-study-track.json"
       - "config/buddy-course-track-registry.json"
+      - "config/freecodecamp-division-routing-overrides.json"
+      - "tests/test_freecodecamp_specialist_routing.py"
+      - ".github/workflows/freecodecamp-study-guide-pipeline.yml"
       - "tools/sync_freecodecamp_learning_inventory.py"
       - "tests/test_freecodecamp_learning_inventory.py"
       - ".github/workflows/freecodecamp-catalog-refresh.yml"
@@ -293,6 +296,8 @@ jobs:
           python -m unittest discover -s tests -p 'test_buddy_tokenizer_training_curriculum.py' -v
           python -m unittest discover -s tests -p 'test_buddy_25m_cpu_llm_course.py' -v
           python -m unittest discover -s tests -p 'test_buddy_course_track_registry.py' -v
+          python -m unittest discover -s tests -p 'test_buddy_learning_runtime_bridge.py' -v
+          python -m unittest discover -s tests -p 'test_freecodecamp_specialist_routing.py' -v
           python -m unittest discover -s tests -p 'test_buddy_universal_library_registry.py' -v
           python -m unittest discover -s tests -p 'test_buddy_internal_first_learning_router.py' -v
           python -m unittest discover -s tests -p 'test_buddy_fleet_internal_bootcamp_routing.py' -v
