@@ -11,6 +11,7 @@ def test_strict_claim_gate_is_scoped_to_public_claim_surfaces():
     data = yaml.load(WORKFLOW.read_text(encoding="utf-8"), Loader=yaml.BaseLoader)
     pull_paths = data["on"]["pull_request"]["paths"]
     push_paths = data["on"]["push"]["paths"]
+    assert ".github/workflows/frontier-claim-trust-gate.yml" not in push_paths
 
     for paths in (pull_paths, push_paths):
         assert "website/**" not in paths
