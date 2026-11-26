@@ -2,22 +2,31 @@ name: Full System Certification
 
 on:
   pull_request:
+    branches: [main]
     paths:
-      - "tools/build_unified_bot_system.py"
-      - "tests/test_unified_bot_cohorts.py"
-      - "buddy/learning/model_foundry.py"
-      - "tools/train_buddy_division_model.py"
-      - "tests/test_model_foundry.py"
-      - "tests/test_train_buddy_division_model_cli.py"
+      - "server/**"
+      - "shared/**"
+      - "client/**"
+      - "buddy/**"
+      - "buddy_os/**"
+      - "bots/**"
+      - "App_bots/**"
+      - "original-bots/**"
+      - "config/full-system-operational-certification.json"
+      - "config/runtime-connection-evidence.json"
+      - "config/authorized-training-datasets/manifest.json"
       - "config/buddy-25m-cpu-architecture-profile.json"
       - "config/buddy-small-cpu-architecture-profile.json"
-      - "config/authorized-training-datasets/manifest.json"
       - "tools/build_full_system_certification.py"
-      - "tests/test_full_system_operational_certification.py"
-      - "config/full-system-operational-certification.json"
       - "tools/build_work_platform_benchmarks.py"
       - "tools/audit_runtime_connections.py"
-      - "config/runtime-connection-evidence.json"
+      - "tools/train_buddy_division_model.py"
+      - "tests/test_full_system_operational_certification.py"
+      - "tests/test_model_foundry.py"
+      - "tests/test_train_buddy_division_model_cli.py"
+      - "package.json"
+      - "package-lock.json"
+      - ".github/agents/**"
   workflow_dispatch:
   schedule:
     - cron: "41 9 * * *"
