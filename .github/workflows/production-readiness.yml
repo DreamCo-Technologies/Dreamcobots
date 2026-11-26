@@ -16,6 +16,7 @@ on:
       - "tools/build_production_readiness_evidence_manifest.py"
       - "config/production-readiness-evidence-map.json"
       - "tests/test_production_readiness_evidence_manifest.py"
+      - "tests/test_production_readiness_workflow.py"
   pull_request:
     paths:
       - "governance/**"
@@ -28,6 +29,9 @@ on:
       - "tests/test_full_system_operational_certification.py"
       - ".github/workflows/production-readiness.yml"
       - "tests/test_production_readiness_workflow.py"
+      - "tests/test_production_readiness_evidence_manifest.py"
+      - "config/production-readiness-evidence-map.json"
+      - "tools/build_production_readiness_evidence_manifest.py"
   schedule:
     - cron: '17 6 * * *'
   workflow_dispatch:
