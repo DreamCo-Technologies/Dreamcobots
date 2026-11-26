@@ -1,0 +1,23 @@
+{
+  "schema":"dreamco.buddy_active_recall_evidence.v1",
+  "assessment_id":"buddy-tokenizer-active-recall-2026-11-26",
+  "lesson_ids":["tok-01","tok-02","tok-03","tok-04","tok-05","tok-06","tok-11","tok-12"],
+  "learner_identity":"ChatGPT study proxy orchestrating the Buddy study run",
+  "buddy_model_inference_executed":false,
+  "scoring_method":"self-check against explicit two-point rubric after first-party source study; not independent Buddy inference",
+  "score":16,
+  "max_score":16,
+  "percent":100.0,
+  "pass_threshold_percent":80.0,
+  "passed":true,
+  "questions":[
+    {"id":"AR-01","question":"List the major text-to-token stages and identify which stages the current byte-BPE trainer actually implements.","answer":"A general pipeline is raw text, explicit normalization, pre-tokenization, segmentation, vocabulary lookup/IDs, and decoding. The current trainer starts from UTF-8 bytes, learns deterministic BPE merges, and encodes/decodes; it does not implement normalization, offset mapping, a pre-tokenizer, or a separate numeric ID map.","score":2,"max_score":2,"rubric":["pipeline stages","current implementation boundaries"]},
+    {"id":"AR-02","question":"Why can a byte-level vocabulary represent every valid UTF-8 string without an unknown token?","answer":"The base vocabulary contains all 256 possible byte values. Every valid UTF-8 string is a sequence of those bytes; learned merges only concatenate byte sequences, so decode can reconstruct the original bytes and UTF-8 text.","score":2,"max_score":2,"rubric":["256 byte base vocabulary","lossless concatenation/decode"]},
+    {"id":"AR-03","question":"Explain deterministic BPE training in this implementation.","answer":"Count adjacent byte-token pairs across training sequences, select the pair with the greatest frequency, break equal-frequency ties lexicographically, merge occurrences left-to-right, record the merge, and repeat until the target vocabulary size or no pair occurs at least twice.","score":2,"max_score":2,"rubric":["pair counts and max frequency","deterministic tie break and merge"]},
+    {"id":"AR-04","question":"Why must normalization be explicit and non-destructive by default?","answer":"NFC/NFKC can change code-point sequences and compatibility characters. If offsets or exact source fidelity matter, silently normalizing can make output differ from input. Preserve original text or record an explicit reversible transformation and offset mapping; this trainer currently performs no normalization.","score":2,"max_score":2,"rubric":["normalization can alter text","preserve/record transformation and offsets"]},
+    {"id":"AR-05","question":"What corpus checks are required before this trainer accepts a source?","answer":"A local path inside the authorized corpus directory, unique source ID, explicit rights and training permission, privacy review, non-sensitive status, non-holdout status, allowed source type, non-empty rights evidence reference, matching SHA-256, and valid UTF-8.","score":2,"max_score":2,"rubric":["rights/privacy/split gate","path/hash/encoding/provenance gate"]},
+    {"id":"AR-06","question":"Why is the held-out set excluded from vocabulary construction and training?","answer":"It must measure generalization on data not used to fit merges or make vocabulary decisions. Including it leaks evaluation information and makes the score optimistic; holdout is used only after the tokenizer is fixed.","score":2,"max_score":2,"rubric":["independent generalization estimate","no fitting or model selection leakage"]},
+    {"id":"AR-07","question":"Name useful tokenizer evaluation metrics beyond vocabulary size.","answer":"Exact round-trip rate, byte coverage, unknown-token rate, tokens per word/fertility, bytes per token/compression, sequence-length expansion, special-token atomicity, offset accuracy, language/script/code coverage, and reproducibility.","score":2,"max_score":2,"rubric":["correctness/coverage","efficiency/fairness/reproducibility"]},
+    {"id":"AR-08","question":"What does this successful tokenizer run prove, and what does it not prove?","answer":"It proves a deterministic tokenizer artifact was built from the rights-cleared synthetic CI corpus and passed the recorded local tests. It does not prove any neural model weights were trained, Buddy learned from model inference, the tokenizer is production-ready, or a division mastered the full 12-lesson course.","score":2,"max_score":2,"rubric":["bounded tokenizer claim","explicit non-claims"]}
+  ]
+}
