@@ -114,6 +114,8 @@ class FSRSAdapter:
         when = _utc(reviewed_at)
         if review_duration_ms is not None and review_duration_ms < 0:
             raise ValueError("review_duration_ms cannot be negative")
+        if isinstance(rating, bool):
+            raise ValueError("rating must be 1..4")
         if isinstance(rating, str):
             try:
                 parsed_rating = _RATING_NAMES[rating.strip().lower()]
