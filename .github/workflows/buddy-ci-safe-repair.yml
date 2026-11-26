@@ -98,7 +98,6 @@ jobs:
           python tools/fleet_runtime_audit.py --skip-folder-tests
           python tools/refresh_repository_evidence.py
           python tools/generate_command_center_data.py
-          python tools/audit_markdown_implementation_gaps.py --write
           python tools/sync_freecodecamp_learning_inventory.py
           python tools/build_division_huggingface_taxonomy_map.py
           python tools/build_division_resource_readiness_map.py
@@ -108,6 +107,8 @@ jobs:
       - name: Regenerate canonical fleet end-to-end evidence after certification drift
         if: github.event_name == 'push' || (github.event_name == 'workflow_run' && github.event.workflow_run.name == 'Full System Certification')
         run: node --import tsx tools/run_bot_fleet_e2e.ts
+      - name: Refresh Markdown implementation gap evidence after generated sources
+        run: python tools/audit_markdown_implementation_gaps.py --write
       - name: Regenerate file prospectus after all generated source inventories
         run: python tools/build_file_prospectus.py
       - name: Verify repaired indexes and Buddy repair-learning tests
