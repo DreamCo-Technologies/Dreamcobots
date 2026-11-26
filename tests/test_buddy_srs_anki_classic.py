@@ -55,3 +55,9 @@ def test_original_card_is_immutable_and_invalid_inputs_fail():
         scheduler.review(original, 5, T0)
     with pytest.raises(ValueError, match="minimum ease"):
         AnkiClassicConfig(starting_ease=1.0)
+
+
+def test_new_cards_use_configured_starting_ease():
+    scheduler = AnkiClassicScheduler(AnkiClassicConfig(starting_ease=2.8))
+    result = scheduler.review(AnkiClassicCard("new"), "Good", T0)
+    assert result.resulting_state["ease_factor"] == 2.8
