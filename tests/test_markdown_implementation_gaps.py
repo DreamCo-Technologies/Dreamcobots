@@ -5,7 +5,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from tools.audit_markdown_implementation_gaps import analyze_document, candidate_paths, render_report, tracked_markdown
+from tools.audit_markdown_implementation_gaps import analyze_document, candidate_external_paths, candidate_paths, candidate_path_templates, render_report, tracked_markdown
 
 ROOT = Path(__file__).resolve().parents[1]
 POLICY = json.loads((ROOT / "config/buddy/markdown-implementation-gap-policy.json").read_text(encoding="utf-8"))
@@ -45,6 +45,25 @@ class MarkdownImplementationGapTests(unittest.TestCase):
         row = analyze_document("README.md", "We have 1,051 bots across 45 divisions.", POLICY, ROOT)
         self.assertTrue(row["count_claim_review_required"])
         self.assertGreaterEqual(len(row["numeric_inventory_claims"]), 2)
+
+
+    def test_path_templates_and_machine_local_paths_are_not_broken_repo_references(self):
+        text = (
+            "See `data/evidence/<asset_id>/<run>.json`, "
+            "`benchmarks/america_gov/{sandbox.py,test_sandbox.py,catalog.json}`, "
+            "and `/home/box/roadmap/_crons.json`."
+        )
+        templates = candidate_path_templates(text)
+        external = candidate_external_paths(text)
+        self.assertIn("data/evidence/<asset_id>/<run>.json", templates)
+        self.assertIn("benchmarks/america_gov/{sandbox.py,test_sandbox.py,catalog.json}", templates)
+        self.assertEqual(external, {"/home/box/roadmap/_crons.json"})
+        self.assertEqual(candidate_paths(text), set())
+        with tempfile.TemporaryDirectory() as temp:
+            row = analyze_document("docs/template.md", text, POLICY, Path(temp))
+            self.assertEqual(row["missing_paths"], [])
+            self.assertEqual(set(row["path_templates"]), templates)
+            self.assertEqual(set(row["external_paths"]), external)
 
     def test_generated_report_strips_trailing_whitespace(self):
         data = {
