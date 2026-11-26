@@ -31,5 +31,18 @@ class ProductionReadinessWorkflowTests(unittest.TestCase):
         self.assertIn("--wait-seconds 600", workflow[resolver:inventory])
         self.assertIn("DREAMCO_PRODUCTION_EVIDENCE_MANIFEST=", workflow[resolver:inventory])
 
+    def test_evidence_resolver_files_trigger_push_and_pull_request_inventory(self):
+        workflow = (ROOT / ".github/workflows/production-readiness.yml").read_text(encoding="utf-8")
+        push = workflow[workflow.index("  push:"):workflow.index("  pull_request:")]
+        pull_request = workflow[workflow.index("  pull_request:"):workflow.index("  schedule:")]
+        for path in (
+            "tools/build_production_readiness_evidence_manifest.py",
+            "config/production-readiness-evidence-map.json",
+            "tests/test_production_readiness_evidence_manifest.py",
+            "tests/test_production_readiness_workflow.py",
+        ):
+            self.assertIn(path, push)
+            self.assertIn(path, pull_request)
+
 if __name__ == "__main__":
     unittest.main()
