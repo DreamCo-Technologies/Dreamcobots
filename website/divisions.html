@@ -1,19 +1,62 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Divisions</title><link rel="stylesheet" href="styles.css"/>
-<style>body{padding:16px}.card{background:#15191f;border:1px solid #303741;border-radius:12px;padding:12px;margin:8px 0}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:8px}
-.ok{color:#69e8bf}</style></head><body>
-<div id="nav-placeholder"></div><script src="nav.js"></script>
-<main>
-<h1>Divisions</h1>
-<p class="ok">GitHub Pages serves this. Your device stores local state.</p>
-<p id="sum">Loading.</p>
-<div id="list" class="grid"></div>
-</main>
-<script>
-fetch("data/divisions-live.json").then(r=>r.json()).then(d=>{
-  document.getElementById("sum").textContent = d.count+" divisions. Host: "+d.host+". Outside builder: "+d.outside_builder+".";
-  document.getElementById("list").innerHTML = d.items.map(i=>`<div class="card"><strong>${i.name}</strong><p>${i.bots} bots</p><p><a href="${i.fleet}">Fleet file</a></p></div>`).join("");
-});
-</script></body></html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Explore DreamCo's specialist divisions, inspect their evidence-backed rosters, and prepare governed tasks with Buddy.">
+  <title>DreamCo Divisions</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .divisions-page{max-width:1200px;margin:0 auto;padding:24px 16px}
+    .division-toolbar{display:grid;grid-template-columns:minmax(220px,1fr) auto;gap:12px;align-items:end;margin:20px 0}
+    .division-toolbar label{display:block;font-weight:600;margin-bottom:6px}
+    .division-toolbar input{width:100%;min-height:44px;padding:10px 12px;border:1px solid var(--border,#3b4652);border-radius:8px;background:var(--surface,#15191f);color:inherit}
+    .division-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));gap:14px}
+    .division-card{min-width:0;padding:16px;border:1px solid var(--border,#3b4652);border-radius:12px;background:var(--surface,#15191f)}
+    .division-card h2{margin:8px 0}
+    .division-status{font-size:.85rem;color:var(--muted,#aab4bf)}
+    .division-metrics,.division-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+    .division-runtime{margin-top:12px}
+    .division-dialog{width:min(760px,calc(100vw - 24px));max-height:85vh;overflow:auto;border:1px solid var(--border,#3b4652);border-radius:14px;background:var(--surface,#15191f);color:inherit;padding:20px}
+    .division-dialog::backdrop{background:rgba(0,0,0,.68)}
+    .division-dialog-header{display:flex;justify-content:flex-end;margin-bottom:12px}
+    .division-roster{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:8px}
+    .division-roster a{overflow-wrap:anywhere}
+    #division-dialog-content form{display:grid;gap:10px;margin-top:16px}
+    #division-dialog-content input,#division-dialog-content textarea,#division-dialog-content select{width:100%;min-height:42px;padding:10px;border:1px solid var(--border,#3b4652);border-radius:8px;background:var(--surface,#15191f);color:inherit}
+    #division-dialog-content textarea{min-height:110px}
+    @media(max-width:600px){.division-toolbar{grid-template-columns:1fr}.divisions-page{padding:16px 12px}}
+  </style>
+</head>
+<body>
+  <div id="nav-placeholder"></div>
+  <script src="nav.js"></script>
+  <main class="divisions-page">
+    <header>
+      <p class="eyebrow">DreamCo specialist network</p>
+      <h1>Explore every division</h1>
+      <p id="division-summary" aria-live="polite">Loading division and fleet evidence…</p>
+    </header>
+    <section class="division-toolbar" aria-label="Division search">
+      <div>
+        <label for="division-search">Find a division or capability</label>
+        <input id="division-search" type="search" placeholder="Search divisions, specialists, or capabilities" autocomplete="off">
+      </div>
+      <p id="division-count" aria-live="polite">Loading divisions…</p>
+    </section>
+    <section id="divisions-grid" class="division-grid" aria-label="Specialist divisions" aria-live="polite">
+      <p>Loading division prospectuses…</p>
+    </section>
+  </main>
+  <dialog id="division-dialog" class="division-dialog" aria-labelledby="division-dialog-title">
+    <div class="division-dialog-header">
+      <button id="close-division-dialog" class="btn btn-outline" type="button">Close</button>
+    </div>
+    <div id="division-dialog-content">
+      <h2 id="division-dialog-title">Division prospectus</h2>
+    </div>
+  </dialog>
+  <script src="buddy-run.js"></script>
+  <script src="divisions.js"></script>
+</body>
+</html>
