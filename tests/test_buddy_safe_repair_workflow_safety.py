@@ -47,6 +47,7 @@ def test_safe_repair_allowlist_includes_public_evidence_and_manifests():
         "website/data/run-prospectus.json",
         "website/data/run-prospectus-bots.json",
         "website/data/pages-feature-audit.json",
+        "command-center/data",
         "website/data/command-center",
         "website/data/fleet-runtime-status.json",
         "website/data/command-center",
