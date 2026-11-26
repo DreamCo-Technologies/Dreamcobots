@@ -31,9 +31,13 @@ class ProductionReadinessEvidenceManifestTests(unittest.TestCase):
         names = {name for items in evidence_map["areas"].values() for item in items for name in item.get("check_names", [])}
         runs = [{"id": index + 1, "name": name, "head_sha": "a" * 40, "status": "completed", "conclusion": "success"} for index, name in enumerate(sorted(names))]
         manifest = build_manifest(evidence_map, "a" * 40, runs, ROOT)
+        contract = json.loads((ROOT / "config/production-readiness-contract.json").read_text(encoding="utf-8"))
+        self.assertEqual(set(manifest["areas"]), {area["id"] for area in contract["areas"]})
         self.assertEqual(manifest["areas"]["buddy_orchestration"]["status"], "VERIFIED")
         for area in ("benchmark_framework", "security", "deployment", "observability"):
             self.assertEqual(manifest["areas"][area]["status"], "PARTIAL", area)
             self.assertTrue(manifest["areas"][area]["resolution_errors"], area)
+        for area in ("capability_genome", "model_research", "teacher_model", "experiment_engine", "ablation", "distillation", "free_first", "resource_optimization", "regression", "actions", "daily_scan", "source_ingestion", "superbot", "cost_accounting"):
+            self.assertEqual(manifest["areas"][area]["status"], "UNVERIFIED", area)
 
 if __name__ == '__main__': unittest.main()
