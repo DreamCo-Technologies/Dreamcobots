@@ -1,5 +1,5 @@
 import unittest
-from tools.build_freecodecamp_division_queues import build_queues, validate
+from tools.build_freecodecamp_division_queues import DOMAIN_CATEGORY_MAP, ROOT, build_queues, validate
 
 
 def crosswalk_fixture():
@@ -124,6 +124,21 @@ class FreeCodeCampDomainQueueTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "verified complete inventory") as raised:
             build_queues(catalog, self.crosswalk, limit=10, allow_partial=True)
         self.assertIn("for freeCodeCamp", str(raised.exception))
+
+    def test_every_canonical_domain_has_an_explicit_specialist_category_profile(self):
+        from pathlib import Path
+        import json
+
+        crosswalk = json.loads((ROOT / "config/generated/masterbot-55-domain-crosswalk.json").read_text(encoding="utf-8"))
+        domain_ids = {row["domain_id"] for row in crosswalk["domains"]}
+        self.assertEqual(domain_ids, set(DOMAIN_CATEGORY_MAP))
+        all_categories = sorted({category for values in DOMAIN_CATEGORY_MAP.values() for category in values})
+        catalog = dict(self.catalog)
+        catalog["categories"] = [{"id": category} for category in all_categories]
+        result = build_queues(catalog, crosswalk, limit=10)
+        validate(result)
+        self.assertTrue(all(row["target_categories"] for row in result["domains"]))
+        self.assertTrue(all(row["queue_status"] == "subject_routed" for row in result["domains"]))
 
 
 if __name__ == "__main__":
