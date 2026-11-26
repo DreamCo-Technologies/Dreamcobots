@@ -197,15 +197,19 @@ Continue full forensic review from the newest unreviewed PRs, prioritizing #1820
 - The weekly transcript report artifact on PR #18216 is `BLOCKED`: transcript_count=0, evaluated_count=0, due_count=0, coverage=null, reason=`approved_transcript_manifest_missing`.
 - The Markdown audit check fails because three generated evidence files are stale against the new Markdown docs; see the PR #18216 blocker record. No merge is permitted until current-head checks and the audit evidence are reconciled.
 
-## Current metadata refresh — 2026-11-26
+## Current metadata refresh — 2026-11-26 (reconciled to main)
 
-- Baseline: `main` at `c1abafe8991e175df9330502ac9381652246675b`.
+- Current main baseline: `35cc82fe518b9a993b2ceb9e1df5de1b5532b6ee`.
 - Complete paginated PR metadata inventory: **1070 records**, **11 non-empty pages**, page 12 empty.
-- Current state counts: **68 open**, **1002 closed**, **711 merged**, **291 closed-unmerged**.
-- Machine-readable snapshot: [2026-11-26 PR inventory](pr-inventory-snapshots/2026-11-26.json).
-- This refresh is metadata-only. It does not mark PRs fully forensically reviewed; each PR still requires current-head diff, commits, comments, review threads, linked issues, exact-SHA checks/logs, and integration disposition.
-- Current Markdown inventory: **1762 .md/.mdx files** across **18 deterministic batches** of 100; manifest: [2026-11-26 Markdown inventory](markdown-inventory/2026-11-26.json). This is a path/blob inventory, not a content review.
-- The prior generated Markdown audit reported 1760 scanned at 2026-11-26T13:27:50Z; the current tree contains 1762, a difference of 2. Re-run the content audit on this exact baseline before claiming complete coverage.
-- Focused current PR observations: #18651 is open at head `ee60b6cc8b63c3b6ac7f1a9291f4b99aa1bc3872` with no submitted reviews or inline review threads; CodeRabbit left only a rate-limit notice, and CodeQL was still in progress at inspection. #18638 is open and reported non-mergeable at head `1703c208907b3561bfd9d0cb0d8c7edc44ed70aa`; its base SHA is stale relative to this main baseline and it requires rebase/current-head verification before integration.
+- State counts: **68 open**, **1002 closed**, **711 merged**, **291 closed-unmerged**.
+- Snapshot: [2026-11-26 PR inventory](pr-inventory-snapshots/2026-11-26.json). Metadata-only; full forensic review of every PR remains outstanding.
+- Full tracked Markdown inventory: **1763 .md/.mdx files** in **18 deterministic batches**. Manifest: [2026-11-26 Markdown inventory](markdown-inventory/2026-11-26.json).
+- Automated Markdown audit [run #45849379387](https://github.com/DreamCo-Technologies/Dreamcobots/actions/runs/45849379387) succeeded on this main commit at 2026-11-26T15:28:15Z: 12460 actionable claim lines; 93 documents with missing paths; 42 path templates across 25 documents; 111 machine-local paths across 7 documents; 1661 documents without implementation references; 83 without test references; 432 count claims requiring review across 130 documents.
+- The automated audit covers all 1,762 Markdown files but does not perform complete semantic requirement extraction or prove runtime correctness. Semantic review remains pending for all files.
+- PR #18651 merged at 2026-11-26T15:28:01Z: head `ee60b6cc8b63c3b6ac7f1a9291f4b99aa1bc3872`, merge commit `35cc82fe518b9a993b2ceb9e1df5de1b5532b6ee`. Its exact-head checks completed 11 success / 1 skipped; no submitted review approval was recorded and CodeRabbit was rate-limited. Study evidence: 55/55 shared-foundation activities, 0 division failures, 55 specialist mappings pending owner review, 512-token tokenizer / 256 merges, 14/14 tokenizer holdout cases, 11 tests passed, active recall blocked, no neural model-weight training.
+- PR #18636 merged at 2026-11-26T14:53:26Z with merge commit `1d11d343e04775b06279fd3b82da2caca0c0b714`. Its 16 exact-head workflow runs included 15 success and one failed `Fleet runtime truth` run #45841286885. The failure artifact recorded buddy partial (684 passed, 1 failed, 2 errors), buddy_os partial (109 passed, 1 failed), server partial (215 passed, 2 failed), website partial (207 passed, 7 failed), and runtime working (1 passed). The failing folder gate has not been rerun on current main in the evidence inspected here.
+- PR #18638 remains open at head `1703c208907b3561bfd9d0cb0d8c7edc44ed70aa`, base SHA `71bfdd2826a83c6691f06a0c2676c64f3260e38e`, 22 files / 57 commits, non-mergeable, no submitted reviews or inline threads, and no PR-triggered workflow runs found at that head. Classify as NEEDS_REBASE / NEEDS_FIXES; do not integrate until current-main targeted acceptance passes.
+- PR #18652 (this inventory PR) is a draft with 3 files, 11 checks completed (10 success, 1 skipped), and `mergeable=true`; current base is main `35cc82fe...`, branch head `cc819d15...`. It remains unmerged and awaits owner/reviewer review.
+- Main commit `35cc82fe...` had 17 associated runs: 10 success and 7 skipped. GitHub Pages deployment run #45849377200 succeeded; the live URL was not independently fetched. A Cloudflare Workers comment on PR #18636 reported a production deployment for commit `cc936965`; its branch/production isolation needs review.
 
-These inventories are audit inputs only. They do not certify production readiness, live Pages health, model-weight training, or successful integration.
+These inventories and workflow results are audit evidence, not a production-readiness certification. No production deploy, model-weight training, credential change, or live database write was performed by this run.
