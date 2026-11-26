@@ -13,7 +13,7 @@ const worker = readFileSync('website/service-worker.js', 'utf8');
 
 test('every registered bot has a prospectus and shares the local specialist questionnaire', () => {
   assert.equal(fleet.summary.profiles, 1120);
-  assert.equal(fleet.summary.divisions, 56);
+  assert.equal(fleet.divisions.length + fleet.supplemental_divisions.length, 56);
   assert.equal(fleet.summary.canonical_profiles, 1051);
   assert.equal(fleet.summary.supplemental_profiles, 69);
   assert.equal(fleet.bots.length, 1120);
