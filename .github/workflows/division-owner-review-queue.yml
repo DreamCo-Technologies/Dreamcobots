@@ -5,6 +5,7 @@ on:
     paths:
       - ".github/workflows/division-owner-review-queue.yml"
       - "tools/build_division_owner_review_queue.py"
+      - "tests/test_division_owner_review_queue.py"
       - "config/generated/division-resource-readiness-map.json"
       - "config/generated/division-reconciliation.json"
       - "config/division-reconciliation-policy.json"
@@ -61,6 +62,9 @@ jobs:
       - name: Preserve generated review queue when PR creation is policy-blocked
         if: github.event_name != 'pull_request' && steps.propose.outcome == 'failure'
         run: |
+          # create-pull-request may reset its worktree after a permission-denied response.
+          # Rebuild the deterministic queue so the fallback artifact is guaranteed to exist.
+          python tools/build_division_owner_review_queue.py
           echo "::warning::The repository policy rejected pull-request creation with GITHUB_TOKEN. The generated review queue is preserved as an artifact for manual review; no owner approval is inferred."
           echo "The generated division-owner-review-queue.json is available in the workflow artifact because this repository does not permit Actions to create pull requests with GITHUB_TOKEN." >> "$GITHUB_STEP_SUMMARY"
       - name: Upload generated owner review queue for manual review

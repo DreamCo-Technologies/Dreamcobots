@@ -229,6 +229,7 @@ class DivisionOwnerReviewQueueTests(unittest.TestCase):
         artifact = workflow.index("      - name: Upload generated owner review queue for manual review")
         self.assertIn("continue-on-error: true", workflow[proposal:fallback])
         self.assertIn("steps.propose.outcome == 'failure'", workflow[fallback:artifact])
+        self.assertIn("python tools/build_division_owner_review_queue.py", workflow[fallback:artifact])
         self.assertIn("division-owner-review-queue-${{ github.run_id }}", workflow[artifact:])
         self.assertIn("if-no-files-found: error", workflow[artifact:])
 
