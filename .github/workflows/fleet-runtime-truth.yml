@@ -22,6 +22,14 @@ on:
       - "tests/shared-repository-controls.test.mjs"
       - "tests/test_buddy_capability_catalog_batch.py"
       - "tests/test_compiled_bot_runtime.py"
+      - "tests/test_command_center_data.py"
+      - "tests/specialist-prospectus-page.test.mjs"
+      - "tests/supplemental-fleet.test.ts"
+      - "tests/benchmark-gap-planner.test.mjs"
+      - "tools/generate_command_center_data.py"
+      - "tools/build_buddy_learning_os_connection_graph.py"
+      - "tools/generate_dreamco_search_index.ts"
+      - "tools/generate_bot_fleet_catalog.ts"
       - "config/bots/**"
       - "server/seed-bots.ts"
       - "config/generated/bots.catalog.json"
@@ -176,7 +184,13 @@ jobs:
         with:
           python-version: "3.13"
       - run: npm ci
-      - run: python3 -m pip install --quiet pyyaml pytest -r requirements-buddy-learning.txt "soundfile>=0.12,<1" "Pillow>=10,<12"
+      - run: python3 -m pip install --quiet pyyaml pytest -r requirements-buddy-learning.txt "soundfile>=0.12,<1" "Pillow>=10,<12" "scipy>=1.11,<2"
+      - name: Regenerate canonical evidence before folder acceptance
+        run: |
+          npx tsx tools/generate_bot_fleet_catalog.ts
+          npx tsx tools/generate_dreamco_search_index.ts
+          python3 tools/build_buddy_learning_os_connection_graph.py
+          python3 tools/generate_command_center_data.py
       - name: Full audit (compile, import, typecheck, folder tests, links)
         run: python3 tools/fleet_runtime_audit.py --check-regressions --summary-json tmp/fleet-summary.json
       - name: Enforce zero failures in the four audited folder areas
@@ -235,5 +249,14 @@ jobs:
           path: |
             reports/FLEET_RUNTIME_AUDIT.md
             website/data/fleet-runtime-status.json
+            website/data/bot-fleet-catalog.json
+            website/data/buddy-routing-index.js
+            website/data/dreamco-search-index.js
+            config/generated/dreamco-search-index.json
+            reports/DREAMCO_SEARCH_INDEX.md
+            config/generated/buddy-learning-os-connections.json
+            website/data/buddy-learning-os-connections.json
+            command-center/data/divisions.json
+            website/data/command-center/divisions.json
             tmp/fleet-summary.json
           if-no-files-found: ignore
