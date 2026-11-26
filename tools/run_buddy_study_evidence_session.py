@@ -447,17 +447,30 @@ def run_tokenizer_cli(root: Path, output_dir: Path, vocab_size: int) -> tuple[di
     }
 
 
-def run_worked_exercises(material: dict[str, Any], tokenizer: dict[str, Any], vocab_size: int) -> dict[str, Any]:
+def worked_bpe_pair_example() -> dict[str, Any]:
     sample = b"abababab"
     pair_counts = Counter(zip(sample, sample[1:]))
     first_pair, first_frequency = sorted(pair_counts.items(), key=lambda row: (-row[1], row[0]))[0]
     worked_bpe = train_byte_bpe([sample], 257)
     first_merge = worked_bpe["merges"][0]
-    bpe_passed = (
-        first_pair == (b"a", b"b") and first_frequency == 4
+    passed = (
+        first_pair == (ord("a"), ord("b")) and first_frequency == 4
         and first_merge["left_hex"] == "61" and first_merge["right_hex"] == "62"
         and first_merge["frequency"] == 4
     )
+    return {
+        "sample": sample.decode("ascii"),
+        "pair_counts": {chr(left) + chr(right): count for (left, right), count in pair_counts.items()},
+        "selected_pair": chr(first_pair[0]) + chr(first_pair[1]),
+        "selected_frequency": first_frequency,
+        "first_trainer_merge": first_merge,
+        "passed": passed,
+    }
+
+
+def run_worked_exercises(material: dict[str, Any], tokenizer: dict[str, Any], vocab_size: int) -> dict[str, Any]:
+    bpe_exercise = worked_bpe_pair_example()
+    bpe_passed = bpe_exercise["passed"]
     normalization_source = "Cafe\u0301 ﬁ"
     nfc = unicodedata.normalize("NFC", normalization_source)
     nfkc = unicodedata.normalize("NFKC", normalization_source)
@@ -491,14 +504,7 @@ def run_worked_exercises(material: dict[str, Any], tokenizer: dict[str, Any], vo
         })
     return {
         "status": "passed" if bpe_passed and normalization_passed and role_passed and compatibility_passed else "failed",
-        "bpe_merge_frequency": {
-            "sample": sample.decode("ascii"),
-            "pair_counts": {left.decode("ascii") + right.decode("ascii"): count for (left, right), count in pair_counts.items()},
-            "selected_pair": first_pair[0].decode("ascii") + first_pair[1].decode("ascii"),
-            "selected_frequency": first_frequency,
-            "first_trainer_merge": first_merge,
-            "passed": bpe_passed,
-        },
+        "bpe_merge_frequency": bpe_exercise,
         "unicode_normalization": {
             "source": normalization_source,
             "nfc": nfc,
@@ -712,12 +718,15 @@ def run_session(args: argparse.Namespace) -> int:
     if tokenizer:
         try:
             exercises = run_worked_exercises(material, tokenizer, args.vocab_size)
+        except Exception as exc:
+            failures.append({"stage": "worked_exercises", "reason": str(exc)})
+        try:
             heldout = run_heldout_assessment(
                 root, material["manifest"], tokenizer, tokenizer_hash,
                 {str(row["id"]) for row in divisions},
             )
         except Exception as exc:
-            failures.append({"stage": "worked_or_heldout_assessment", "reason": str(exc)})
+            failures.append({"stage": "heldout_assessment", "reason": str(exc)})
 
     if active_recall["status"] != "completed":
         failures.append({"stage": "active_recall", "reason": "one or more recall items missed required concepts"})
