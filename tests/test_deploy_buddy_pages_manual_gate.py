@@ -22,6 +22,6 @@ def test_pages_preflight_refreshes_production_evidence_before_check():
     build_steps = workflow["jobs"]["build"]["steps"]
     preflight = next(step for step in build_steps if step.get("name") == "Run deployment preflight")
     commands = preflight["run"].splitlines()
-    generate = commands.index("python3 tools/generate_production_evidence_ledger.py")
     check = commands.index("python3 tools/generate_production_evidence_ledger.py --check")
-    assert generate < check
+    generate = commands.index("python3 tools/generate_production_evidence_ledger.py")
+    assert check < generate
