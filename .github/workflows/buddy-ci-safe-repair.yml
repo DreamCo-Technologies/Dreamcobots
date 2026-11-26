@@ -98,6 +98,7 @@ jobs:
           python tools/audit_markdown_implementation_gaps.py --write
           python tools/sync_freecodecamp_learning_inventory.py
           python tools/build_division_huggingface_taxonomy_map.py
+          python tools/build_division_resource_readiness_map.py
           python tools/build_file_prospectus.py
       - name: Regenerate canonical bot fleet catalog after certification drift
         if: github.event_name == 'workflow_run' && github.event.workflow_run.name == 'Full System Certification'
@@ -116,12 +117,13 @@ jobs:
           python tools/build_file_prospectus.py --check
           python tools/sync_freecodecamp_learning_inventory.py --check
           python tools/build_division_huggingface_taxonomy_map.py --check
+          python tools/build_division_resource_readiness_map.py --check
           python tools/generate_command_center_data.py --check
           python -m unittest tests.test_command_center_data
           python tools/audit_markdown_implementation_gaps.py --check
           python tools/validate_buddy_engineering_capabilities.py
           python tools/validate_dreamco_mastery_registry.py
-          python -m unittest tests.test_buddy_safe_repair tests.test_buddy_failure_learning tests.test_buddy_dataset_routing tests.test_division_model_fleet tests.test_dreamco_division_mastery_orchestrator tests.test_buddy_dataset_route_check tests.test_file_prospectus_inventory tests.test_issue_lifecycle tests.test_actions_live_health tests.test_daily_bot_study_scan tests.test_dependency_review_scope tests.test_markdown_implementation_gaps tests.test_markdown_gap_audit_workflow_safety tests.test_freecodecamp_learning_inventory tests.test_buddy_continuous_study_policy tests.test_buddy_universal_library_registry tests.test_division_huggingface_taxonomy_map
+          python -m unittest tests.test_buddy_safe_repair tests.test_buddy_failure_learning tests.test_buddy_dataset_routing tests.test_division_model_fleet tests.test_dreamco_division_mastery_orchestrator tests.test_buddy_dataset_route_check tests.test_file_prospectus_inventory tests.test_issue_lifecycle tests.test_actions_live_health tests.test_daily_bot_study_scan tests.test_dependency_review_scope tests.test_markdown_implementation_gaps tests.test_markdown_gap_audit_workflow_safety tests.test_freecodecamp_learning_inventory tests.test_buddy_continuous_study_policy tests.test_buddy_universal_library_registry tests.test_division_huggingface_taxonomy_map tests.test_division_resource_readiness
           git diff --check
       - name: Verify canonical fleet catalog
         if: github.event_name == 'workflow_run' && github.event.workflow_run.name == 'Full System Certification'
@@ -131,7 +133,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          for path in artifacts/buddy-dataset-hub/dataset-routes.json artifacts/division-model-fleet config/generated/file-prospectus config/bots/bot-manifests.generated.json config/bots/division-manifests.generated.json config/generated/markdown-implementation-gap-audit.json website/data/markdown-implementation-gap-audit.json reports/MARKDOWN_IMPLEMENTATION_GAP_AUDIT.md config/buddy/run-with-buddy.generated.json config/generated/actions-prospectus.json config/generated/actions-health-report.json website/data/actions-health-report.json website/data/actions-prospectus.json website/data/run-prospectus.json website/data/run-prospectus-bots.json website/data/pages-connection-index.json website/data/pages-feature-audit.json reports/PAGES_FEATURE_AUDIT.md command-center/data website/data/command-center website/data/fleet-runtime-status.json website/data/bot-fleet-e2e.json config/master_bot_registry.json config/generated/bots.catalog.json website/data/bot-fleet-catalog.json website/data/buddy-routing-index.js website/data/bot-fleet reports/BOT_FLEET_PROSPECTUS.md config/freecodecamp-complete-learning-path.json config/buddy-continuous-study-policy.json config/generated/division-huggingface-taxonomy-map.json; do
+          for path in artifacts/buddy-dataset-hub/dataset-routes.json artifacts/division-model-fleet config/generated/file-prospectus config/bots/bot-manifests.generated.json config/bots/division-manifests.generated.json config/generated/markdown-implementation-gap-audit.json website/data/markdown-implementation-gap-audit.json reports/MARKDOWN_IMPLEMENTATION_GAP_AUDIT.md config/buddy/run-with-buddy.generated.json config/generated/actions-prospectus.json config/generated/actions-health-report.json website/data/actions-health-report.json website/data/actions-prospectus.json website/data/run-prospectus.json website/data/run-prospectus-bots.json website/data/pages-connection-index.json website/data/pages-feature-audit.json reports/PAGES_FEATURE_AUDIT.md command-center/data website/data/command-center website/data/fleet-runtime-status.json website/data/bot-fleet-e2e.json config/master_bot_registry.json config/generated/bots.catalog.json website/data/bot-fleet-catalog.json website/data/buddy-routing-index.js website/data/bot-fleet reports/BOT_FLEET_PROSPECTUS.md config/freecodecamp-complete-learning-path.json config/buddy-continuous-study-policy.json config/generated/division-huggingface-taxonomy-map.json config/generated/division-resource-readiness-map.json; do
             if [ -e "$path" ]; then git add -A -- "$path"; fi
           done
           if git diff --cached --quiet; then
