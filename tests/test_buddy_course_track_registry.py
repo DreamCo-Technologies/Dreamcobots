@@ -99,6 +99,22 @@ class BuddyCourseTrackRegistryTests(unittest.TestCase):
             with self.subTest(masterbot=row["name"]):
                 self.assertEqual(len(resources_for_masterbot(row["name"])), expected)
 
+
+    def test_onet_worker_requirement_subjects_have_search_aliases(self):
+        lessons = [lesson for lesson in load_course_lessons() if lesson.track_id == "onet"]
+        matches = [lesson for lesson in lessons if "worker requirements" in lesson.capability_tags]
+        self.assertTrue(matches)
+        self.assertTrue(any("education" in lesson.title.casefold() for lesson in matches))
+        self.assertTrue(any("licensing" in lesson.title.casefold() for lesson in matches))
+
+
+    def test_freecodecamp_video_categories_are_preserved_in_runtime_lessons(self):
+        lessons = load_course_lessons()
+        videos = [lesson for lesson in lessons if lesson.track_id == "freecodecamp-video-catalog" and lesson.source_video_id]
+        self.assertTrue(videos)
+        self.assertTrue(all(lesson.video_categories for lesson in videos))
+        self.assertTrue(any("python_and_automation" in lesson.video_categories for lesson in videos))
+
     def test_huggingface_full_map_includes_all_official_courses_and_ecosystem_modules(self):
         from pathlib import Path
         import json

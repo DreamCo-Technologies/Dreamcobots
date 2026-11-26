@@ -47,6 +47,7 @@ class CourseLesson:
     implementation_steps: tuple[str, ...] = ()
     buddy_demo: str = ""
     source_video_id: str = ""
+    video_categories: tuple[str, ...] = ()
 
 
 def _read(path: Path) -> dict:
@@ -287,14 +288,24 @@ def _rows(track: dict, data: dict, root: Path = ROOT, *, include_blueprint: bool
             for row in data.get("modules", [])
         ]
     if parser == "onet":
-        rows = [
-            {"id": row["id"], "title": row["name"],
-             "objective": f"Understand the O*NET subject {row['name']} and apply its occupational evidence without inferring qualification or authority.",
-             "practice": "Build an original subject guide, connect relevant tasks and tools, and classify AI/human responsibilities.",
-             "assessment": "Pass a source-grounded subject assessment and task-specific suitability review.",
-             "content_status": "authoring_backlog"}
-            for row in data.get("subject_inventory", [])
-        ]
+        rows = []
+        for row in data.get("subject_inventory", []):
+            name = str(row.get("name", ""))
+            normalized_name = name.casefold()
+            worker_requirement_tags = (
+                ["worker requirements", "education training experience", "licensing entry requirements"]
+                if any(term in normalized_name for term in ("education", "training and experience", "licensing", "entry requirements"))
+                else []
+            )
+            rows.append({
+                "id": row["id"],
+                "title": name,
+                "objective": f"Understand the O*NET subject {name} and apply its occupational evidence without inferring qualification or authority.",
+                "practice": "Build an original subject guide, connect relevant tasks and tools, and classify AI/human responsibilities.",
+                "assessment": "Pass a source-grounded subject assessment and task-specific suitability review.",
+                "content_status": "authoring_backlog",
+                "capability_tags": worker_requirement_tags,
+            })
         task_index_path = track.get("task_index_path")
         task_index_file = root / task_index_path if task_index_path else None
         if task_index_file and task_index_file.is_file():
@@ -389,6 +400,7 @@ def _rows(track: dict, data: dict, root: Path = ROOT, *, include_blueprint: bool
                 "benchmark": (overlay.get("benchmark") if include_blueprint else None) or "FreeCodeCamp metadata inventory integrity checks; no study or mastery claim.",
                 "source_url": row["url"],
                 "source_video_id": str(row["video_id"]),
+                "video_categories": sorted(row_categories),
                 "content_status": "metadata_only",
                 "division_targets": overlay.get("division_targets", []),
                 "masterbot_targets": overlay.get("masterbot_targets", []),
@@ -633,6 +645,7 @@ def load_course_lessons(root: Path = ROOT) -> list[CourseLesson]:
                 implementation_steps=tuple(str(value) for value in row.get("implementation_steps", [])),
                 buddy_demo=str(row.get("buddy_demo", "")),
                 source_video_id=str(row.get("source_video_id", "")),
+                video_categories=tuple(str(value) for value in row.get("video_categories", [])),
             ))
     return lessons
 
