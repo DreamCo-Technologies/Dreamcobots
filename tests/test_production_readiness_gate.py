@@ -181,5 +181,53 @@ class ProductionCertificationTruthTests(unittest.TestCase):
             self.assertEqual(reports[0]["status"], "verified")
             self.assertEqual(calls, ["123"])
 
+    def test_live_environment_requires_non_secret_api_base_url(self):
+        from tools.production_readiness_gate import probe_live_environment
+        result = probe_live_environment(None)
+        self.assertEqual(result["status"], "external_config_required")
+        self.assertIn("DREAMCO_PRODUCTION_API_BASE_URL", result["missing_required"])
+
+    def test_live_environment_passes_only_when_health_reports_all_configuration_flags(self):
+        from tools.production_readiness_gate import probe_live_environment
+        class Response:
+            def __enter__(self):
+                return self
+            def __exit__(self, *args):
+                return False
+            def read(self):
+                return json.dumps({
+                    "ok": True,
+                    "databaseConfigured": True,
+                    "stripeConfigured": True,
+                    "stripeWebhookConfigured": True,
+                    "openaiConfigured": True,
+                    "configurationReady": True,
+                }).encode("utf-8")
+        result = probe_live_environment("https://api.example.test", opener=lambda request, timeout: Response())
+        self.assertEqual(result["status"], "pass")
+        self.assertEqual(result["evidence"], ["https://api.example.test/api/health"])
+
+    def test_live_environment_reports_missing_host_configuration_without_reading_secrets(self):
+        from tools.production_readiness_gate import probe_live_environment
+        class Response:
+            def __enter__(self):
+                return self
+            def __exit__(self, *args):
+                return False
+            def read(self):
+                return json.dumps({"ok": True, "databaseConfigured": True}).encode("utf-8")
+        result = probe_live_environment("https://api.example.test", opener=lambda request, timeout: Response())
+        self.assertEqual(result["status"], "external_config_required")
+        self.assertIn("stripeConfigured", result["missing_required"])
+        self.assertIn("openaiConfigured", result["missing_required"])
+
+    def test_live_environment_fails_closed_when_health_endpoint_is_unreachable(self):
+        from tools.production_readiness_gate import probe_live_environment
+        def unreachable(request, timeout):
+            raise OSError("unreachable")
+        result = probe_live_environment("https://api.example.test", opener=unreachable)
+        self.assertEqual(result["status"], "fail")
+        self.assertTrue(result["release_blocker"])
+
 if __name__ == "__main__":
     unittest.main()
