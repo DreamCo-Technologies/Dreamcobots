@@ -22,8 +22,9 @@ ROOT = Path(__file__).resolve().parents[2]
 
 
 def _tokens(value: str) -> set[str]:
+    normalized = value.lower().replace("huggingface", "hugging face")
     return {
-        token for token in re.findall(r"[a-z0-9][a-z0-9_.+-]*", value.lower())
+        token for token in re.findall(r"[a-z0-9][a-z0-9_.+-]*", normalized)
         if len(token) > 1 and any(char.isalpha() for char in token)
     }
 
@@ -56,6 +57,29 @@ def _supporting_guide(path: str, root: Path) -> dict[str, Any]:
         "guide_role": "supporting_reference_not_a_lesson_specific_completion_or_mastery_claim",
         "lesson_specific_guide_complete": False,
     }
+
+
+def _exact_seed_candidate_ids(query: str, root: Path) -> set[str]:
+    """Resolve exact candidate names from the complete local seed catalog.
+
+    Search indexes are intentionally bounded and relevance-ranked; an exact
+    name must not disappear merely because broader candidates outrank it.
+    Candidate discovery remains unverified and never grants execution rights.
+    """
+    curriculum_path = root / "config/buddy-universal-library-curriculum.json"
+    curriculum = json.loads(curriculum_path.read_text(encoding="utf-8")) if curriculum_path.is_file() else {}
+    seed_path = root / curriculum.get("seed_catalog", "data/buddy-library-seed-catalog.json")
+    if not seed_path.is_file():
+        return set()
+    catalog = json.loads(seed_path.read_text(encoding="utf-8"))
+    return {
+        f"candidate-discovery-{row.get('id')}"
+        for row in catalog.get("candidates", [])
+        if row.get("status") == "seed_candidate_unverified"
+        and str(row.get("name", "")).strip().casefold() == query.strip().casefold()
+        and row.get("id")
+    }
+
 
 
 def _course_matches(query: str, root: Path, limit: int) -> list[dict[str, Any]]:
@@ -147,12 +171,7 @@ def route_buddy_learning_query(
 
     # Exact seed candidates must be resolved against the full internal lesson
     # catalog, not hidden by the normal result limit.
-    exact_candidate_ids = {
-        f"candidate-discovery-{row.get('candidate_id')}"
-        for row in seed_matches
-        if row.get("status") == "seed_candidate_unverified"
-        and str(row.get("name", "")).strip().casefold() == normalized_query.casefold()
-    }
+    exact_candidate_ids = _exact_seed_candidate_ids(normalized_query, root)
     if exact_candidate_ids:
         all_lessons = _course_matches(
             normalized_query, root, limit=len(_cached_course_lessons(root.resolve()))
