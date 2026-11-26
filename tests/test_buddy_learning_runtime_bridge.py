@@ -287,6 +287,37 @@ class RuntimeBridgeTests(unittest.TestCase):
         self.assertEqual(path["completion_status"], "authoring_backlog")
 
 
+
+    def test_query_ranks_exact_specialist_title_before_broad_shared_matches(self):
+        def lesson(resource_id, title, objective, *, division_targets=()):
+            return CourseLesson(
+                resource_id=resource_id, lesson_id=f"fixture-{resource_id}", track_id="fixture-track",
+                title=title, category="finance", objective=objective,
+                practice="Build a safe, deterministic practice project.",
+                assessment="Verify the result with independent tests.",
+                benchmark="Task-matched holdout and regression.",
+                source_url="https://example.org/course", guide_path="fixture",
+                rights_mode="metadata_only", delivery="metadata_only",
+                content_status="metadata_only", division_targets=tuple(division_targets),
+            )
+
+        broad_matches = [
+            lesson(i, f"General finance topic {i}", "Discuss trading operations and portfolio vocabulary.")
+            for i in range(1, 13)
+        ]
+        exact_match = lesson(
+            99, "Algorithmic Trading with Risk Controls",
+            "Build and verify an algorithmic trading research sandbox.",
+            division_targets=("DreamFinance",),
+        )
+        with patch("buddy.learning.runtime_bridge.resources_for_division", return_value=[]), \
+             patch("buddy.learning.runtime_bridge.load_course_lessons", return_value=broad_matches + [exact_match]):
+            result = self.bridge.bootcamp_learning_queue(
+                division="DreamFinance", query="algorithmic trading", limit=1
+            )
+        self.assertEqual(result["returned_count"], 1)
+        self.assertEqual(result["items"][0]["title"], "Algorithmic Trading with Risk Controls")
+
     def test_unclassified_video_triage_is_visible_only_to_review_lanes(self):
         # This policy test must remain valid when the live catalog is fully classified.
         source_video_id = "synthetic-unclassified-video"
