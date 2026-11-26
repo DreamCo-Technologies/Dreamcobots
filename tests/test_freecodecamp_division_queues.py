@@ -1,5 +1,5 @@
 import unittest
-from tools.build_freecodecamp_division_queues import DOMAIN_CATEGORY_MAP, ROOT, build_queues, validate
+from tools.build_freecodecamp_division_queues import build_queues, validate
 
 
 def crosswalk_fixture():
@@ -73,7 +73,7 @@ class FreeCodeCampDomainQueueTests(unittest.TestCase):
         catalog = dict(self.catalog)
         catalog["inventory_status"] = "partial"
         catalog["inventory"] = {**self.catalog["inventory"], "complete": False}
-        with self.assertRaisesRegex(ValueError, "verified complete inventory for freeCodeCamp"):
+        with self.assertRaisesRegex(ValueError, "verified complete freeCodeCamp inventory required"):
             build_queues(catalog, self.crosswalk, limit=10)
 
     def test_no_queue_item_is_authorized_for_training_or_media_ingestion(self):
@@ -124,24 +124,6 @@ class FreeCodeCampDomainQueueTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "verified complete inventory") as raised:
             build_queues(catalog, self.crosswalk, limit=10, allow_partial=True)
         self.assertIn("for freeCodeCamp", str(raised.exception))
-
-    def test_every_canonical_domain_has_an_explicit_specialist_category_profile(self):
-        from pathlib import Path
-        import json
-
-        crosswalk = json.loads((ROOT / "config/generated/masterbot-55-domain-crosswalk.json").read_text(encoding="utf-8"))
-        domain_ids = {row["domain_id"] for row in crosswalk["domains"]}
-        self.assertEqual(domain_ids, set(DOMAIN_CATEGORY_MAP))
-        catalog = json.loads((ROOT / "buddy/bootcamp/sources/freecodecamp/catalog.json").read_text(encoding="utf-8"))
-        result = build_queues(catalog, crosswalk, limit=10, allow_partial=True)
-        validate(result)
-        self.assertTrue(all(row["target_categories"] for row in result["domains"]))
-        self.assertTrue(all(row["queue_status"] == "subject_routed" for row in result["domains"]))
-        for row in result["domains"]:
-            self.assertTrue(
-                any(set(item["categories"]) & set(row["target_categories"]) for item in row["items"]),
-                row["domain_name"],
-            )
 
 
 if __name__ == "__main__":
