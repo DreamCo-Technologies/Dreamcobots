@@ -1,6 +1,7 @@
 name: Buddy Spaced Repetition Tests
 
 on:
+  workflow_dispatch:
   pull_request:
     paths:
       - 'buddy/learning/srs/**'
@@ -14,6 +15,9 @@ on:
     branches: [main]
     paths:
       - 'buddy/learning/srs/**'
+      - 'requirements-buddy-learning.txt'
+      - 'shared/schema.ts'
+      - 'migrations/**'
       - 'tests/test_buddy_srs_*.py'
       - 'docs/learning/BUDDY_ADAPTIVE_SPACED_REPETITION.md'
       - '.github/workflows/buddy-spaced-repetition-tests.yml'
@@ -37,4 +41,4 @@ jobs:
       - name: Install pinned SRS dependencies
         run: python -m pip install --disable-pip-version-check "fsrs==6.3.3" pytest
       - name: Test FSRS-6, Anki Classic profile, SM-2, Leitner and persistence
-        run: python -m pytest -q -p no:cacheprovider tests/test_buddy_srs_sm2.py tests/test_buddy_srs_leitner.py tests/test_buddy_srs_fsrs.py tests/test_buddy_srs_anki_classic.py tests/test_buddy_srs_store.py tests/test_buddy_srs_service.py
+        run: python -m pytest -q -p no:cacheprovider tests/test_buddy_srs_sm2.py tests/test_buddy_srs_leitner.py tests/test_buddy_srs_fsrs.py tests/test_buddy_srs_anki_classic.py tests/test_buddy_srs_store.py tests/test_buddy_srs_service.py tests/test_buddy_srs_workflow.py
