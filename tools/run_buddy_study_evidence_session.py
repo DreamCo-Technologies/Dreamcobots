@@ -719,6 +719,15 @@ def run_session(args: argparse.Namespace) -> int:
         except Exception as exc:
             failures.append({"stage": "worked_or_heldout_assessment", "reason": str(exc)})
 
+    if active_recall["status"] != "completed":
+        failures.append({"stage": "active_recall", "reason": "one or more recall items missed required concepts"})
+    if tokenizer_cli.get("status") != "passed" and not any(row["stage"] == "tokenizer_training" for row in failures):
+        failures.append({"stage": "tokenizer_training", "reason": tokenizer_cli.get("status", "not completed")})
+    if exercises.get("status") != "passed":
+        failures.append({"stage": "worked_exercises", "reason": exercises.get("status", "not completed")})
+    if heldout.get("status") != "passed":
+        failures.append({"stage": "heldout_assessment", "reason": heldout.get("status", "not completed")})
+
     global_status = "passed" if (
         test_results["status"] == "passed" and active_recall["status"] == "completed"
         and len(glossary) >= 8 and tokenizer_cli.get("status") == "passed"
@@ -880,6 +889,13 @@ def run_session(args: argparse.Namespace) -> int:
         "evidence_sha256": sha256_file(output_dir / "study-session-evidence.json"),
     }
     write_json(output_dir / "checksums.json", checksums)
+    print((output_dir / "session-report.md").read_text(encoding="utf-8"))
+    print(json.dumps({
+        "global_status": global_status,
+        "failures": failures,
+        "evidence_path": str(output_dir / "study-session-evidence.json"),
+        "checksums_path": str(output_dir / "checksums.json"),
+    }, indent=2, ensure_ascii=False))
     return 0 if global_status == "passed" and not failures else 1
 
 
