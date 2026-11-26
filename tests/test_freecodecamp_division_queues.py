@@ -153,6 +153,20 @@ class FreeCodeCampDomainQueueTests(unittest.TestCase):
             actual = {item["video_id"] for item in domain["items"]}
             self.assertEqual(actual, expected, domain["domain_name"])
 
+
+    def test_every_classified_video_is_assigned_to_at_least_one_domain_queue(self):
+        import json
+        catalog = json.loads((ROOT / "buddy/bootcamp/sources/freecodecamp/catalog.json").read_text(encoding="utf-8"))
+        crosswalk = json.loads((ROOT / "config/generated/masterbot-55-domain-crosswalk.json").read_text(encoding="utf-8"))
+        result = build_queues(catalog, crosswalk, allow_partial=True)
+        assigned = {item["video_id"] for domain in result["domains"] for item in domain["items"]}
+        classified = {
+            video["video_id"] for video in catalog["videos"]
+            if set(video.get("categories") or []) != {"other_or_unclassified"}
+        }
+        self.assertEqual(assigned, classified)
+        self.assertEqual(len(classified), len(catalog["videos"]) - 568)
+
     def test_every_canonical_domain_has_an_explicit_specialist_category_profile(self):
         from pathlib import Path
         import json
