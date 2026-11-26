@@ -1,17 +1,17 @@
 # Markdown-to-Implementation Gap Audit
 
-Generated: 2026-11-26T07:21:25Z
+Generated: 2026-11-26T09:09:11Z
 
 This is a live inventory of Git-tracked Markdown requirements and their linked repository paths. Counts are computed from the current Git tree; no document, claim, or reference count is a fixed ceiling.
 
 ## Current derived summary
 
-- Markdown documents scanned: 1759
-- Actionable claim lines detected: 12444
+- Markdown documents scanned: 1760
+- Actionable claim lines detected: 12454
 - Documents with missing path references: 93
 - Path-template references (not concrete repository paths): 42 across 25 documents
 - Machine-local absolute paths (not repository paths): 111 across 7 documents
-- Documents without implementation references: 1658
+- Documents without implementation references: 1659
 - Documents with implementation references but no test references: 83
 - Documents with inventory count claims: 129
 - Inventory count claims requiring review: 431
@@ -17338,6 +17338,18 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Next action: Repair or explicitly supersede the missing repository path references.
 - Execution verified: No; run-specific evidence is required.
 
+### docs/DREAMTRADE_PAPER_TRADING_SANDBOX.md
+
+- Status: implementation_reference_missing
+- Actionable claim lines: 9
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Execution verified: No; run-specific evidence is required.
+
 ### docs/ENGINEERING_CONVENTIONS.md
 
 - Status: implementation_reference_missing
@@ -17857,7 +17869,7 @@ These are candidate count claims, not automatically incorrect values. Convert li
 ### docs/PRODUCTION_READINESS_MASTER_PLAN.md
 
 - Status: implementation_reference_missing
-- Actionable claim lines: 2
+- Actionable claim lines: 3
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
