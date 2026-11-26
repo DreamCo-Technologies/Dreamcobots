@@ -1148,8 +1148,13 @@
   "youtube_video_inventory": {
     "catalog_path": "buddy/bootcamp/sources/freecodecamp/catalog.json",
     "observed_video_count": 1740,
+    "expected_entry_count": null,
     "inventory_complete": false,
+    "inventory_status": "partial",
+    "enumerator": "yt-dlp",
+    "enumerator_version": "not-recorded-legacy-snapshot",
     "completeness_basis": "Legacy snapshot did not persist yt-dlp playlist_count or enumerator version; retained as partial until a verified resync.",
-    "refresh_requirement": "Refresh the official uploads playlist using the configured YouTube Data API integration; persist expected playlist count, enumerator version and source digest. Do not claim full archive coverage until expected count equals unique parsed IDs."
+    "verified_at": "2026-11-24T13:24:35.748879+00:00",
+    "refresh_requirement": "Require playlist_count to match every unique parsed video ID; preserve partial status when count or enumerator evidence is missing."
   }
 }
