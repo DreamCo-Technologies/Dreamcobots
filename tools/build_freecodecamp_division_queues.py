@@ -14,6 +14,7 @@ from typing import Any
 ROOT = Path(__file__).resolve().parents[1]
 CATALOG = ROOT / "buddy/bootcamp/sources/freecodecamp/catalog.json"
 CROSSWALK = ROOT / "config/generated/masterbot-55-domain-crosswalk.json"
+APPROVALS = ROOT / "config/review/freecodecamp-supplemental-domain-learning-approval.json"
 OUTPUT = ROOT / "config/generated/freecodecamp-division-learning-queues.json"
 FOUNDATION = {
     "computer_science_and_fundamentals",
@@ -138,6 +139,44 @@ def _division_categories(name: str, subject_terms: list[str], known: set[str], d
             selected.add(category_id)
     return selected, bool(selected)
 
+
+def _approved_supplemental_learning_routes(known: set[str], domains: list[dict[str, Any]]) -> dict[str, set[str]]:
+    """Load owner-approved learning categories without approving MasterBot ownership."""
+    if not APPROVALS.is_file():
+        raise ValueError("supplemental learning-route approval manifest is required")
+    document = json.loads(APPROVALS.read_text(encoding="utf-8"))
+    if document.get("schema") != "dreamco.freecodecamp_supplemental_learning_approval.v1":
+        raise ValueError("unsupported supplemental learning-route approval schema")
+    if document.get("approval_scope") != "freecodecamp_learning_categories_only":
+        raise ValueError("supplemental approval must be limited to learning categories")
+    domain_by_id = {str(row.get("domain_id")): row for row in domains}
+    approved: dict[str, set[str]] = {}
+    for entry in document.get("approved_routes", []):
+        domain_id = str(entry.get("domain_id", ""))
+        if not domain_id or domain_id in approved:
+            raise ValueError("supplemental learning approval IDs must be unique and non-empty")
+        domain = domain_by_id.get(domain_id)
+        if domain is None:
+            # Small synthetic fixtures intentionally omit the canonical supplemental rows.
+            continue
+        if domain.get("mapping_status") != "unresolved" or domain.get("masterbot_id") is not None:
+            raise ValueError(f"learning-only approval cannot alter MasterBot ownership: {domain_id}")
+        if entry.get("owner_approved") is not True or entry.get("approved_by") != "repository_owner":
+            raise ValueError(f"explicit repository-owner approval is required: {domain_id}")
+        if not str(entry.get("approval_reference", "")).strip():
+            raise ValueError(f"approval reference is required: {domain_id}")
+        categories = set(entry.get("categories", []))
+        canonical = DOMAIN_CATEGORY_MAP.get(domain_id, set()) & known
+        if not canonical or categories != canonical:
+            raise ValueError(f"approved learning categories must match the curated domain profile: {domain_id}")
+        approved[domain_id] = categories
+    canonical_domain_ids = set(DOMAIN_CATEGORY_MAP)
+    if set(domain_by_id) == canonical_domain_ids:
+        unresolved_ids = {key for key, row in domain_by_id.items() if row.get("mapping_status") == "unresolved"}
+        if set(approved) != unresolved_ids:
+            raise ValueError("every unresolved canonical domain needs an explicit learning-only approval")
+    return approved
+
 def build_queues(catalog: dict[str, Any], crosswalk: dict[str, Any], limit: int = 30, *, allow_partial: bool = False) -> dict[str, Any]:
     if catalog.get("schema") != "dreamco.freecodecamp_catalog.v1":
         raise ValueError("unsupported freeCodeCamp catalog schema")
@@ -175,16 +214,20 @@ def build_queues(catalog: dict[str, Any], crosswalk: dict[str, Any], limit: int 
     if len(mapped) != 45 or len(unassigned) != 10:
         raise ValueError("crosswalk must preserve 45 core domains and 10 supplemental profiles")
     known = {row["id"] for row in categories}
+    approved_supplemental = _approved_supplemental_learning_routes(known, domains)
     rows = []
     for domain in sorted(domains, key=lambda row: row["domain_id"]):
         domain_id = domain["domain_id"]
         name = domain["domain_name"]
         subject_terms = [name, name.replace("Dream", "")]
         targeted, has_mapping = _division_categories(name, subject_terms, known, domain_id)
-        # Explicit category profiles are curriculum metadata, not owner approval.
-        # Keep the ten unresolved supplemental domains foundation-only until review.
+        # Category-level learning approval is separate from MasterBot ownership.
+        # The ten supplemental domains may receive subject lessons while their
+        # MasterBot ownership remains unresolved and unassigned.
+        learning_only_approval = domain_id in approved_supplemental
         if domain.get("mapping_status") != "proposed_exact_name_match":
-            targeted, has_mapping = set(), False
+            targeted = approved_supplemental.get(domain_id, set())
+            has_mapping = bool(targeted)
         required = FOUNDATION | targeted
         scored = []
         for video in videos:
@@ -205,7 +248,9 @@ def build_queues(catalog: dict[str, Any], crosswalk: dict[str, Any], limit: int 
             "masterbot_id": domain.get("masterbot_id"),
             "mapping_status": domain.get("mapping_status"),
             "owner_review_required": domain.get("review_required", True),
-            "queue_status": "subject_routed" if has_mapping else "foundation_only_owner_mapping_pending",
+            "learning_route_status": "owner_approved_learning_only" if learning_only_approval else ("owner_mapping_pending" if domain.get("mapping_status") == "unresolved" else "proposed_subject_categories"),
+            "masterbot_ownership_status": "unresolved" if domain.get("mapping_status") == "unresolved" else "proposed_exact_name_match",
+            "queue_status": ("subject_routed_learning_only_owner_mapping_pending" if learning_only_approval else "subject_routed" if has_mapping else "foundation_only_owner_mapping_pending"),
             "target_categories": sorted(targeted),
             "shared_foundation_categories": sorted(FOUNDATION & known),
             "items": [{
@@ -273,11 +318,19 @@ def validate(payload: dict[str, Any]) -> None:
         if row["queue_count"] != len(row["items"]):
             raise ValueError("queue_count does not match item count")
         if row.get("mapping_status") == "unresolved":
-            if row.get("target_categories") or row.get("queue_status") != "foundation_only_owner_mapping_pending":
-                raise ValueError("unresolved domains must remain foundation-only until owner review")
-            foundation = set(row.get("shared_foundation_categories") or [])
-            if not foundation or any(not (foundation & set(item.get("categories") or [])) for item in row["items"]):
-                raise ValueError("unresolved domain queues may contain shared foundation lessons only")
+            if row.get("masterbot_id") is not None or row.get("masterbot_ownership_status") != "unresolved":
+                raise ValueError("learning-route approval cannot assign unresolved MasterBot ownership")
+            if row.get("target_categories"):
+                if row.get("learning_route_status") != "owner_approved_learning_only" or row.get("queue_status") != "subject_routed_learning_only_owner_mapping_pending":
+                    raise ValueError("supplemental specialist routes require explicit learning-only owner approval")
+                if not any(set(row["target_categories"]) & set(item.get("categories") or []) for item in row["items"]):
+                    raise ValueError("owner-approved supplemental route has no matching observed video")
+            else:
+                if row.get("queue_status") != "foundation_only_owner_mapping_pending":
+                    raise ValueError("unapproved supplemental domains must remain foundation-only")
+                foundation = set(row.get("shared_foundation_categories") or [])
+                if not foundation or any(not (foundation & set(item.get("categories") or [])) for item in row["items"]):
+                    raise ValueError("unapproved supplemental queues may contain shared foundation lessons only")
         elif row.get("mapping_status") == "proposed_exact_name_match":
             if row.get("target_categories") and row.get("queue_status") != "subject_routed":
                 raise ValueError("mapped core domain proposals must use the specialist route")
