@@ -256,6 +256,8 @@ def main() -> int:
         "video_rows": report["catalog"]["video_rows"],
         "unclassified_video_count": report["catalog"]["unclassified_video_count"],
         "division_config_counts": report["division_coverage"]["division_config_counts"],
+        "missing_division_config_ids": [row["domain_id"] for row in report["division_coverage"]["configs"] if row["status"] == "missing"],
+        "incomplete_division_config_ids": [row["domain_id"] for row in report["division_coverage"]["configs"] if row["status"] == "incomplete"],
         "required_artifact_slots": report["specialist_curriculum"]["required_artifact_slots"],
         "missing_artifact_slots": report["specialist_curriculum"]["missing_artifact_slots"],
         "blockers": report["blockers"],
