@@ -110,3 +110,11 @@ This ledger does not certify every division, every bot, every integration, model
 3. Reconcile the 45/10 division queue policy against the current canonical 55-domain map without discarding existing mainline coverage.
 4. Continue the remaining #18508/#18507 certification-prerequisite work, then review the stale dataset-profile and trust-gate PRs against current main.
 5. Keep Buddy Bootcamp, division routing, model-training governance, and full-system certification evidence separate. A workflow being queued, a curriculum being routed, or a training plan being generated is not proof of runtime mastery or production readiness.
+
+
+### CI queue and long-running workflow correction — 2026-11-26 03:25 UTC
+- The current-main push produced 64 workflow runs. Most completed; a small number remained queued/in progress, so the overall system was not globally frozen.
+- The DreamCo 500-Model Benchmark System had remained in its dependency-install step for more than 20 minutes. That workflow installed PyTorch, safetensors, NumPy, media packages, and then ran repository-wide `pytest -q`, even though its stated work is model inventory, prospectus generation, and benchmark-contract validation; it does not execute model weights or paid provider calls.
+- PR #18539 now removes the heavyweight Buddy training runtime from that contract-only workflow and replaces repository-wide pytest with a focused set of benchmark, learning-progress, and prospectus regression tests. The Repository Test Matrix remains responsible for broad repository coverage.
+- PR #18538 also extends safe repair to regenerate the stale file prospectus shard before checking it, and retains full certification verification logs as artifacts.
+- The full-system certification's 3 governed-test failures still need their individual names/stack traces. The updated artifact upload in #18538 retains `tmp/dreamco-verification/*.log` for the next exact-head run; do not infer which tests failed from the truncated 4,000-character summary.
