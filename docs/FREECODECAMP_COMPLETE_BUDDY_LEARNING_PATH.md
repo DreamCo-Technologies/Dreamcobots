@@ -179,3 +179,29 @@ Run the focused FreeCodeCamp tests first, then the relevant Buddy Bootcamp workf
 ### Completion definition
 
 This setup is complete only when the refreshed inventory is independently count-verified; every discovered video has a durable catalog/queue record; each guide counted as complete has authorized source evidence, all required sections and human approval; Buddy's practice/evaluation runs are persisted and reproducible; and the relevant CI checks pass. Until then, report exact counts and blocked states rather than calling the entire FreeCodeCamp library complete.
+
+## Canonical division routing contract
+
+The division queue builder uses an explicit subject-category profile for each of the 55 canonical domain divisions. The profile is a learning taxonomy only: it does not assign MasterBot ownership, grant production permissions, establish source rights, or award mastery. The separate 55-domain / 65-MasterBot crosswalk remains authoritative for ownership, and unresolved supplemental mappings remain unresolved until reviewed.
+
+For each division, queue generation must:
+- retain the shared foundation curriculum;
+- include at least one lesson whose catalog category matches that division's explicit specialist profile;
+- retain the official source URL and metadata provenance;
+- preserve rights state and incomplete-inventory status;
+- label queued work as not studied and not mastered; and
+- fail closed when the source inventory is incomplete unless the caller explicitly requests a provisional queue.
+
+The canonical profile implementation is `tools/build_freecodecamp_division_queues.py`. Its coverage regression is `tests/test_freecodecamp_division_queues.py`; the current crosswalk source is `config/generated/masterbot-55-domain-crosswalk.json`. Run the focused regression with:
+
+```bash
+python -m pytest -q tests/test_freecodecamp_division_queues.py
+```
+
+A successful routing test proves that the queue is categorized and populated. It does not prove that Buddy studied the video, that a guide was authored, or that a division has mastered the subject.
+
+## Training readiness boundary
+
+The curriculum, queues, tokenizer lessons and CPU-first model course are preparation artifacts. They do not mean that Buddy has trained model weights. The model manifest must contain a measured checkpoint, tokenizer/version, dataset lineage, license and rights evidence, reproducible training recipe, evaluation results, and approval before a model can be promoted. Public video metadata is not transcript permission; study, derivative-summary, evaluation and model-training permissions remain separate gates.
+
+Do not generate timestamps, detailed video summaries, code demonstrations or quiz answers from a title or metadata row. If the transcript and derivative-summary permissions are not recorded, leave the detailed guide pending and link to the official source.
