@@ -67,8 +67,12 @@ class FreeCodeCampDomainQueueTests(unittest.TestCase):
             target = set(row["target_categories"])
             self.assertTrue(any(target.intersection(item["categories"]) for item in row["items"]), row["domain_name"])
         self.assertEqual(len(unresolved), 10)
+        self.assertTrue(all(row["queue_count"] > 0 for row in result["domains"]))
         self.assertTrue(all(not row["target_categories"] for row in unresolved))
         self.assertTrue(all(row["queue_status"] == "foundation_only_owner_mapping_pending" for row in unresolved))
+        for row in unresolved:
+            foundation = set(row["shared_foundation_categories"])
+            self.assertTrue(all(foundation.intersection(item["categories"]) for item in row["items"]), row["domain_name"])
 
     def test_domain_hints_route_specialist_content(self):
         result = build_queues(self.catalog, self.crosswalk, limit=10)
