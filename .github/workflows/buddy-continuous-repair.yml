@@ -5,16 +5,6 @@ on:
   schedule:
     # Continuous health/repair sweep, hourly throughout the day.
     - cron: "17 * * * *"
-  workflow_run:
-    workflows:
-      - Actions Health
-      - Keep Green
-      - Repository Test Matrix
-      - Fleet runtime truth
-      - Buddy Learning Regression
-      - Buddy Failure Learning Regression
-    types: [completed]
-    branches: [main]
 
 permissions:
   contents: read
@@ -22,13 +12,12 @@ permissions:
   actions: read
 
 concurrency:
-  group: buddy-continuous-repair-${{ github.event.workflow_run.id || github.run_id }}
+  group: buddy-continuous-repair-${{ github.run_id }}
   cancel-in-progress: false
 
 jobs:
   safe-repair:
     name: Diagnose, safely repair, and verify
-    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'failure'
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
