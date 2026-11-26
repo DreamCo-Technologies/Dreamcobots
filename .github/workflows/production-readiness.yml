@@ -1,7 +1,9 @@
 name: Production Readiness Evidence
 
 on:
-  push:
+  push:      - "server/index.ts"
+      - "server/openaiConfig.ts"
+
     branches: [main]
     paths:
       - "governance/**"
@@ -17,7 +19,9 @@ on:
       - "config/production-readiness-evidence-map.json"
       - "tests/test_production_readiness_evidence_manifest.py"
       - "tests/test_production_readiness_workflow.py"
-  pull_request:
+  pull_request:      - "server/index.ts"
+      - "server/openaiConfig.ts"
+
     paths:
       - "governance/**"
       - "config/production-readiness-contract.json"
