@@ -623,6 +623,8 @@ export const learningReviewHistory = pgTable("learning_review_history", {
   resultingState: jsonb("resulting_state").notNull(),
   predictedRetrievability: doublePrecision("predicted_retrievability"),
   actualRecall: boolean("actual_recall").notNull(),
+  desiredRetention: doublePrecision("desired_retention"),
+  schedulerConfig: jsonb("scheduler_config").notNull().default(sql`'{}'::jsonb`),
   parameterSetId: text("parameter_set_id"),
   provenance: jsonb("provenance").notNull().default(sql`'{}'::jsonb`),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
