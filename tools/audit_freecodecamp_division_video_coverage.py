@@ -70,6 +70,18 @@ def audit(root: Path = ROOT) -> dict[str, Any]:
 
     domains = crosswalk.get("domains") if isinstance(crosswalk.get("domains"), list) else []
     bot_rows = masterbots.get("divisions") if isinstance(masterbots.get("divisions"), list) else []
+    bot_id_values = [row.get("id") for row in bot_rows if isinstance(row, dict)]
+    valid_bot_ids = [
+        value for value in bot_id_values
+        if isinstance(value, int) and not isinstance(value, bool) and value > 0
+    ]
+    bot_ids = [str(value) for value in valid_bot_ids]
+    bot_ids_valid = (
+        len(bot_rows) == 65
+        and len(bot_id_values) == len(bot_rows)
+        and len(valid_bot_ids) == len(bot_rows)
+        and len(set(valid_bot_ids)) == 65
+    )
     domain_categories = profiles.get("domain_categories") if isinstance(profiles.get("domain_categories"), dict) else {}
     domain_ids = [str(row.get("domain_id", "")) for row in domains if isinstance(row, dict)]
     profile_ids = set(domain_categories)
@@ -120,9 +132,38 @@ def audit(root: Path = ROOT) -> dict[str, Any]:
         "approved" if row.get("owner_approval") is True else "pending"
         for row in domains if isinstance(row, dict)
     )
+    crosswalk_masterbot_rows = (
+        crosswalk.get("masterbots") if isinstance(crosswalk.get("masterbots"), list) else []
+    )
+    approvals_by_masterbot_id: dict[int, list[bool]] = {}
+    for row in crosswalk_masterbot_rows:
+        if not isinstance(row, dict):
+            continue
+        masterbot_id = row.get("masterbot_id")
+        if isinstance(masterbot_id, int) and not isinstance(masterbot_id, bool):
+            approvals_by_masterbot_id.setdefault(masterbot_id, []).append(
+                row.get("owner_approval") is True
+            )
+    # Count every canonical registry identity. Missing, duplicate, or non-True
+    # approval records remain pending; absent rows can never disappear from totals.
     masterbot_approval_counts = Counter(
-        "approved" if row.get("owner_approval") is True else "pending"
-        for row in crosswalk.get("masterbots", []) if isinstance(row, dict)
+        "approved"
+        if len(approvals_by_masterbot_id.get(masterbot_id, [])) == 1
+        and approvals_by_masterbot_id[masterbot_id][0] is True
+        else "pending"
+        for masterbot_id in valid_bot_ids
+    )
+    crosswalk_masterbot_ids = [
+        row.get("masterbot_id")
+        for row in crosswalk_masterbot_rows
+        if isinstance(row, dict)
+    ]
+    crosswalk_masterbot_ids_valid = (
+        len(crosswalk_masterbot_rows) == 65
+        and len(crosswalk_masterbot_ids) == 65
+        and all(isinstance(value, int) and not isinstance(value, bool) for value in crosswalk_masterbot_ids)
+        and len(set(crosswalk_masterbot_ids)) == 65
+        and set(crosswalk_masterbot_ids) == set(valid_bot_ids)
     )
     override_entries = overrides.get("entries") if isinstance(overrides.get("entries"), list) else []
     artifact_rows = artifacts.get("artifacts") if isinstance(artifacts.get("artifacts"), list) else []
@@ -137,7 +178,7 @@ def audit(root: Path = ROOT) -> dict[str, Any]:
         (kind, target_id, module)
         for kind, ids in (
             ("division", domain_ids),
-            ("masterbot", [str(row.get("id")) for row in bot_rows if isinstance(row, dict)]),
+            ("masterbot", bot_ids),
         )
         for target_id in ids for module in MODULES
     }
@@ -154,6 +195,11 @@ def audit(root: Path = ROOT) -> dict[str, Any]:
         and not duplicate_ids and missing_video_ids == 0
     )
     blockers: list[str] = []
+    blockers.extend(f"input_read_error:{error}" for error in errors)
+    if not bot_ids_valid:
+        blockers.append("canonical_masterbot_ids_missing_or_duplicate")
+    if not crosswalk_masterbot_ids_valid:
+        blockers.append("masterbot_crosswalk_identity_coverage_invalid")
     if not inventory_complete:
         blockers.append("freecodecamp_video_inventory_not_proven_complete")
     if len(domain_ids) != 55:
