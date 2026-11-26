@@ -383,7 +383,7 @@ def write_markdown(report: dict) -> None:
         "",
         "| Check | Status | Evidence |",
         "|---|---:|---|",
-    ]
+    ])
     for check in report["runtime_checks"]:
         evidence = ", ".join(f"`{item}`" for item in check.get("evidence", [])) or "runtime env"
         lines.append(f"| {check['label']} | `{check['status']}` | {evidence} |")
