@@ -58,6 +58,8 @@ Apply this instructional pattern to DreamCo. Do not copy freeCodeCamp's lesson t
 Official references:
 - Curriculum and contribution guidance: https://contribute.freecodecamp.org/how-to-work-on-coding-challenges/
 - Main curriculum monorepo: https://github.com/freeCodeCamp/freeCodeCamp
+- Current certification and project progression: https://github.com/freeCodeCamp/freeCodeCamp/blob/main/README.md
+- Curriculum block metadata and block types: https://github.com/freeCodeCamp/curriculum-db/blob/main/docs/GOALS.md
 - Curriculum structure: https://github.com/freeCodeCamp/freeCodeCamp/blob/main/curriculum/structure/curriculum.json
 - Demonstration/certification projects: https://github.com/freeCodeCamp/demo-projects
 - Curriculum metadata API (early alpha): https://github.com/freeCodeCamp/curriculum-db
