@@ -256,11 +256,6 @@ class BuddyLearningBridge:
                     f"{lesson.title} {lesson.category} {lesson.objective}".lower()
                 ))
             ]
-        total_count = len(lessons)
-        page_lessons = lessons[offset:offset + limit]
-        next_offset = offset + len(page_lessons)
-        if next_offset >= total_count:
-            next_offset = None
         items = [{
             "resource_id": lesson.resource_id,
             "lesson_id": lesson.lesson_id,
@@ -273,7 +268,6 @@ class BuddyLearningBridge:
             "benchmark": lesson.benchmark,
             "source_url": lesson.source_url,
             "source_video_id": lesson.source_video_id,
-            "video_categories": list(lesson.video_categories),
             "guide_path": lesson.guide_path,
             "division_targets": list(lesson.division_targets),
             "masterbot_targets": list(lesson.masterbot_targets),
@@ -295,16 +289,12 @@ class BuddyLearningBridge:
             "mastery_awarded": False,
             "model_weight_training_authorized": False,
             "paid_compute_authorized": False,
-        } for lesson in page_lessons]
+        } for lesson in lessons[:limit]]
         return {
             "schema": "dreamco.buddy_library_learning_queue.v1",
             **owner,
             "query": query,
-            "available_count": total_count,
-            "total_count": total_count,
-            "offset": offset,
-            "next_offset": next_offset,
-            "has_more": next_offset is not None,
+            "available_count": len(lessons),
             "returned_count": len(items),
             "items": items,
             "external_model_call_performed": False,
