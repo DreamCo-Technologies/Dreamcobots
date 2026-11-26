@@ -44,5 +44,11 @@ class ProductionReadinessWorkflowTests(unittest.TestCase):
             self.assertIn(path, push)
             self.assertIn(path, pull_request)
 
+    def test_live_api_base_url_is_a_non_secret_workflow_variable(self):
+        workflow = (ROOT / ".github/workflows/production-readiness.yml").read_text(encoding="utf-8")
+        self.assertIn("DREAMCO_PRODUCTION_API_BASE_URL: ${{ vars.DREAMCO_PRODUCTION_API_BASE_URL }}", workflow)
+        self.assertIn('      - "server/index.ts"', workflow)
+        self.assertIn('      - "server/openaiConfig.ts"', workflow)
+
 if __name__ == "__main__":
     unittest.main()
