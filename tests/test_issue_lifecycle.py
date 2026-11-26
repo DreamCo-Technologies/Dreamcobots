@@ -63,19 +63,22 @@ class IssueLifecycleTests(unittest.TestCase):
         self.assertIn('availability: "unavailable"', source)
         self.assertIn("Job metadata unavailable:", source)
 
-    def test_workflow_run_handlers_use_per_event_concurrency_keys(self):
+    def test_high_volume_automation_does_not_fan_out_on_workflow_completion(self):
         paths = [
-            ".github/workflows/actions-failure-watch.yml",
-            ".github/workflows/issue-intelligence.yml",
-            ".github/workflows/buddy-continuous-repair.yml",
-            ".github/workflows/greenkeeper-root-cause.yml",
+            ".github/workflows/actions-command-center.yml",
+            ".github/workflows/problem-registry.yml",
             ".github/workflows/greenkeeper-orchestrator.yml",
+            ".github/workflows/greenkeeper-root-cause.yml",
+            ".github/workflows/buddy-continuous-repair.yml",
         ]
         for relative in paths:
             with self.subTest(workflow=relative):
                 source = (ROOT / relative).read_text(encoding="utf-8")
-                self.assertIn("${{ github.event.workflow_run.id || github.run_id }}", source)
-                self.assertIn("cancel-in-progress: false", source)
+                self.assertNotRegex(source, r"(?m)^  workflow_run:")
+                self.assertIn("workflow_dispatch:", source)
+        triage = (ROOT / ".github/workflows/issue-intelligence.yml").read_text(encoding="utf-8")
+        self.assertNotRegex(triage, r"(?m)^  workflow_run:")
+        self.assertIn("description: Failed GitHub Actions run ID to triage", triage)
 
     def test_continuous_repair_is_artifact_only_and_never_writes_branches(self):
         source = (ROOT / ".github/workflows/buddy-continuous-repair.yml").read_text(encoding="utf-8")
