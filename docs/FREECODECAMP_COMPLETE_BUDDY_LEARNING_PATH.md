@@ -197,3 +197,14 @@ The nine curated briefs include original implementation work for agentic AI, alg
 Unclassified records are assigned to DreamEducation and CommandCore for metadata triage, with DreamDiscovery as the review lane. They are not assigned to a guessed technical division and remain metadata-only until a human approves the topic, owner, and source rights.
 
 A successful metadata refresh does not grant transcript, derivative-summary, or training rights. The weekly public-inventory workflow uses metadata enumeration only, uploads the verified catalog and per-video authoring queue as review artifacts, and does not download video media or transcripts, call external models, commit generated data, or run training.
+
+## Specialist routing and authoring status (2026-11-26 snapshot)
+
+The current checked-in 1,740-record catalog snapshot routes 1,232 records into specialist authoring paths and 508 into metadata-only classification triage. Nine specialist records have curated original DreamCo implementation briefs. The remaining 1,223 specialist records are explicit authoring-backlog tasks, not completed summaries or study-ready lessons. The numbers are derived from this snapshot and must be refreshed with the source catalog.
+
+The 55-domain crosswalk currently contains 45 core proposed mappings and 10 supplemental unresolved profiles. The 45 core domains receive best-fit subject-category queues with at least one matching catalog item; the 10 unresolved profiles receive foundation-only queues until their owner mapping is approved. All mappings retain their owner-review status. Every queue item remains `queued_not_studied`, rights-review-required, and ineligible for transcript ingestion or training.
+
+## O*NET occupational task integration
+
+The official O*NET 31.0 task-statement JSON export contains 18,838 task rows across 923 unique occupation codes. The ingestion builders recognize the official `row` collection and `onetsoc_code` field, preserve source task IDs, and create occupation/task indexes plus original authoring briefs. Task briefs are authoring candidates, not completed lessons or evidence of occupational competence. Validation and test splits remain excluded from tokenizer training and all mastery claims require separate practical assessment, holdout, and regression evidence.
+
