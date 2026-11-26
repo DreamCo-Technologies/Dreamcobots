@@ -202,7 +202,7 @@ A successful metadata refresh does not grant transcript, derivative-summary, or 
 
 The current checked-in 1,740-record catalog snapshot routes 1,232 records into specialist authoring paths and 508 into metadata-only classification triage. Nine specialist records have curated original DreamCo implementation briefs. The remaining 1,223 specialist records are explicit authoring-backlog tasks, not completed summaries or study-ready lessons. The numbers are derived from this snapshot and must be refreshed with the source catalog.
 
-The 55-domain crosswalk currently contains 45 core proposed mappings and 10 supplemental unresolved profiles. The 45 core domains receive best-fit subject-category queues with at least one matching catalog item; the 10 unresolved profiles receive foundation-only queues until their owner mapping is approved. All mappings retain their owner-review status. Every queue item remains `queued_not_studied`, rights-review-required, and ineligible for transcript ingestion or training.
+The 55-domain crosswalk currently contains 45 core proposed MasterBot mappings and 10 supplemental unresolved MasterBot ownership profiles. The repository owner has separately approved learning-only subject-category routes for all ten supplemental profiles, using their existing curated domain category profiles. Those ten domains receive relevant video metadata queues while retaining null MasterBot IDs and unresolved MasterBot ownership; no privileged runtime authority is implied. All 55 queues retain their owner-review and rights boundaries. Every queue item remains `queued_not_studied`, rights-review-required, and ineligible for transcript ingestion or model training.
 
 ## O*NET occupational task integration
 
