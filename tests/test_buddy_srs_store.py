@@ -69,3 +69,14 @@ def test_mastery_evidence_is_separate_from_recall_events(tmp_path):
     assert store.record_mastery_evidence(evidence) == "duplicate"
     assert len(store.list_review_events("learner-1", "bootcamp", "python-functions")) == 1
     assert len(store.list_mastery_evidence("learner-1", "bootcamp", "python-functions")) == 1
+
+
+def test_same_timestamp_offline_events_use_event_id_tie_break(tmp_path):
+    store = SRSStore(tmp_path / "srs.db")
+    later_id = event("z-event", T0, T0 + timedelta(days=2))
+    earlier_id = event("a-event", T0, T0 + timedelta(days=1))
+    assert store.record_review(later_id).state_updated is True
+    result = store.record_review(earlier_id)
+    assert result.replay_required is True
+    state = store.get_card_state("learner-1", "bootcamp", "python-functions")
+    assert state["latest_event_id"] == "z-event"
