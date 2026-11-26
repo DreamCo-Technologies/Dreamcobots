@@ -120,6 +120,10 @@ def audit(root: Path = ROOT) -> dict[str, Any]:
         "approved" if row.get("owner_approval") is True else "pending"
         for row in domains if isinstance(row, dict)
     )
+    masterbot_approval_counts = Counter(
+        "approved" if row.get("owner_approval") is True else "pending"
+        for row in crosswalk.get("masterbots", []) if isinstance(row, dict)
+    )
     override_entries = overrides.get("entries") if isinstance(overrides.get("entries"), list) else []
     artifact_rows = artifacts.get("artifacts") if isinstance(artifacts.get("artifacts"), list) else []
     expected_targets = len(domains) + len(bot_rows)
@@ -177,7 +181,11 @@ def audit(root: Path = ROOT) -> dict[str, Any]:
     if duplicate_artifact_count:
         blockers.append(f"duplicate_specialist_course_artifacts:{duplicate_artifact_count}")
     if approval_counts["pending"]:
-        blockers.append(f"division_masterbot_owner_approvals_pending:{approval_counts['pending']}")
+        blockers.append(f"division_owner_approvals_pending:{approval_counts['pending']}")
+    if masterbot_approval_counts["pending"]:
+        blockers.append(f"masterbot_owner_approvals_pending:{masterbot_approval_counts['pending']}")
+    if catalog.get("video_count") != len(videos):
+        blockers.append("declared_video_count_mismatch")
 
     return {
         "schema": "dreamco.freecodecamp_division_video_coverage_audit.v1",
@@ -185,6 +193,7 @@ def audit(root: Path = ROOT) -> dict[str, Any]:
         "catalog": {
             "inventory_status": catalog.get("inventory_status"),
             "generated_at": catalog.get("generated_at"),
+            "declared_video_count": catalog.get("video_count"),
             "video_rows": len(videos),
             "category_count": len(category_ids),
             "unclassified_video_count": len(unclassified_ids),
@@ -204,6 +213,7 @@ def audit(root: Path = ROOT) -> dict[str, Any]:
             "category_profile_count": len(profile_ids),
             "division_config_counts": dict(config_counts),
             "owner_approval_counts": dict(approval_counts),
+            "masterbot_owner_approval_counts": dict(masterbot_approval_counts),
             "configs": config_rows,
         },
         "masterbot_coverage": {
