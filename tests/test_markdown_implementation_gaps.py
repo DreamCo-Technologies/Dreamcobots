@@ -65,6 +65,19 @@ class MarkdownImplementationGapTests(unittest.TestCase):
             self.assertEqual(set(row["path_templates"]), templates)
             self.assertEqual(set(row["external_paths"]), external)
 
+
+    def test_dot_prefixed_github_workflow_paths_remain_repository_paths(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            workflow = root / ".github/workflows/pages.yml"
+            workflow.parent.mkdir(parents=True)
+            workflow.write_text("name: Pages", encoding="utf-8")
+            text = "See `.github/workflows/pages.yml` for the publishing workflow."
+            self.assertEqual(candidate_paths(text), {".github/workflows/pages.yml"})
+            row = analyze_document("docs/pages.md", text, POLICY, root)
+            self.assertEqual(row["referenced_paths"], [".github/workflows/pages.yml"])
+            self.assertEqual(row["missing_paths"], [])
+
     def test_generated_report_strips_trailing_whitespace(self):
         data = {
             "generated_at": "2026-11-24T00:00:00Z",
