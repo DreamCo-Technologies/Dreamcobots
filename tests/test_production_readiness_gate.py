@@ -230,7 +230,7 @@ class ProductionCertificationTruthTests(unittest.TestCase):
         self.assertTrue(result["release_blocker"])
 
     def test_api_health_route_exposes_boolean_configuration_state_only(self):
-        source = (ROOT / "server/index.ts").read_text(encoding="utf-8")
+        source = (Path(__file__).resolve().parents[1] / "server/index.ts").read_text(encoding="utf-8")
         for flag in (
             "databaseConfigured",
             "stripeConfigured",
