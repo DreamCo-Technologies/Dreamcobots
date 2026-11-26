@@ -256,6 +256,11 @@ class BuddyLearningBridge:
                     f"{lesson.title} {lesson.category} {lesson.objective}".lower()
                 ))
             ]
+        total_count = len(lessons)
+        page_lessons = lessons[offset:offset + limit]
+        next_offset = offset + len(page_lessons)
+        if next_offset >= total_count:
+            next_offset = None
         items = [{
             "resource_id": lesson.resource_id,
             "lesson_id": lesson.lesson_id,
@@ -290,12 +295,16 @@ class BuddyLearningBridge:
             "mastery_awarded": False,
             "model_weight_training_authorized": False,
             "paid_compute_authorized": False,
-        } for lesson in lessons[:limit]]
+        } for lesson in page_lessons]
         return {
             "schema": "dreamco.buddy_library_learning_queue.v1",
             **owner,
             "query": query,
-            "available_count": len(lessons),
+            "available_count": total_count,
+            "total_count": total_count,
+            "offset": offset,
+            "next_offset": next_offset,
+            "has_more": next_offset is not None,
             "returned_count": len(items),
             "items": items,
             "external_model_call_performed": False,
@@ -303,12 +312,14 @@ class BuddyLearningBridge:
 
     def bootcamp_learning_queue(self, *, division: str | None = None,
                                 masterbot: str | None = None, query: str = "",
-                                limit: int = 50) -> dict[str, Any]:
+                                limit: int = 50, offset: int = 0) -> dict[str, Any]:
         """Return all shared Bootcamp course tracks for one canonical division or MasterBot lane."""
         if bool(division) == bool(masterbot):
             raise ValueError("provide exactly one canonical division or MasterBot lane")
         if not isinstance(limit, int) or isinstance(limit, bool) or limit < 1 or limit > 100:
             raise ValueError("limit must be an integer between 1 and 100")
+        if not isinstance(offset, int) or isinstance(offset, bool) or offset < 0:
+            raise ValueError("offset must be a non-negative integer")
         if not isinstance(query, str) or len(query) > 1000:
             raise ValueError("query must be a string of at most 1000 characters")
         if division:
@@ -426,6 +437,7 @@ class BuddyLearningBridge:
             "benchmark": lesson.benchmark,
             "source_url": lesson.source_url,
             "source_video_id": lesson.source_video_id,
+            "video_categories": list(lesson.video_categories),
             "guide_path": lesson.guide_path,
             "division_targets": list(lesson.division_targets),
             "masterbot_targets": list(lesson.masterbot_targets),
