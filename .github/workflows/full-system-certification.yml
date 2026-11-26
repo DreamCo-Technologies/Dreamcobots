@@ -170,6 +170,9 @@ jobs:
       # regenerated it, producing a deterministic stale-report failure.
       - name: Re-verify fleet E2E and inherit canonical sandbox evidence
         run: |
+          # The package script is a read-only --check. Regenerate the report,
+          # browser index, and capability shards before asking it to verify them.
+          node --import tsx tools/run_bot_fleet_e2e.ts
           npm run buddy:fleet:e2e
           python3 tools/audit_maximum_sandbox_runtime.py
 
