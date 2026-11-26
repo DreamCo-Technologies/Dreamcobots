@@ -1,20 +1,20 @@
 # Markdown-to-Implementation Gap Audit
 
-Generated: 2026-11-26T13:27:50Z
+Generated: 2026-11-26T19:19:09Z
 
 This is a live inventory of Git-tracked Markdown requirements and their linked repository paths. Counts are computed from the current Git tree; no document, claim, or reference count is a fixed ceiling.
 
 ## Current derived summary
 
-- Markdown documents scanned: 1760
-- Actionable claim lines detected: 12455
-- Documents with missing path references: 93
+- Markdown documents scanned: 1763
+- Actionable claim lines detected: 12498
+- Documents with missing path references: 94
 - Path-template references (not concrete repository paths): 42 across 25 documents
 - Machine-local absolute paths (not repository paths): 111 across 7 documents
-- Documents without implementation references: 1659
+- Documents without implementation references: 1662
 - Documents with implementation references but no test references: 83
-- Documents with inventory count claims: 129
-- Inventory count claims requiring review: 431
+- Documents with inventory count claims: 131
+- Inventory count claims requiring review: 437
 
 ## Fixed-count claims requiring review
 
@@ -108,7 +108,7 @@ This is a live inventory of Git-tracked Markdown requirements and their linked r
 - docs/BUDDY_BOOTCAMP_65_DIVISION_CURRICULUM.md:11 — - 12 dataset discovery dimensions and 9 model discovery dimensions.
 - docs/BUDDY_BOOTCAMP_AND_TRUST_FRAMEWORK.md:45 — The 500 model slots form a diverse review team rather than a single unquestioning agent. Roles include monitoring, training, evaluation, building, security, alignment, research, product, documentation, and red-team review.
 - docs/BUDDY_BOOTCAMP_FREE_RESOURCE_MAP.md:139 — Buddy's current 12-course Hugging Face Learn inventory is tracked in `config/buddy-huggingface-full-learning-map.json` and is linked from the shared course scheduler. It covers LLMs, context engineering, robotics, compact post-training, agents, Deep RL, computer vision, audio, op
-- docs/BUDDY_BYTE_BPE_TRAINER.md:7 — Prepare a manifest that points only to local files under `data/buddy-authorized-corpora/`. Each entry must include a verified SHA-256, source type, rights evidence, explicit model-training permission, privacy review, and a declaration that the corpus is neither sensitive nor hold
+- docs/BUDDY_BYTE_BPE_TRAINER.md:14 — For any other corpus, prepare a manifest that points only to local files under data/buddy-authorized-corpora/. Each entry must include a verified SHA-256, source type, rights evidence, explicit tokenizer-training permission, privacy review, and a declaration that the corpus is ne
 - docs/BUDDY_DIVISION_MASTERBOT_LEARNING_PATHS.md:3 — This manifest derives 55 division profiles from `shared/division-production-contract.ts` and 65 MasterBot identities from `config/masterbot-65-registry.json`. Both receive the same seven-stage ordered learning path, with division-specific mission, outcome, boundary, and focus are
 - docs/BUDDY_FREECODECAMP_22_CATEGORY_STUDY_GUIDES.md:1 — # FreeCodeCamp 22-category study guide drafts
 - docs/BUDDY_GITHUB_COMPETITOR_MASTER_PLAN.md:171 — This repository already contains substantial infrastructure for the direction, including Buddy success/governance systems, benchmark tracking, model progress tooling, local repository integration, self-repair tooling, and dedicated Buddy pages. The generated success program curre
@@ -213,6 +213,10 @@ This is a live inventory of Git-tracked Markdown requirements and their linked r
 - docs/benchmarks/BENCHMARKS_801_1000.md:196 — - **992 tool-selection benchmark** — selecting the best tool.
 - docs/benchmarks/BENCHMARKS_801_1000.md:198 — - **994 model-routing benchmark** — selecting the model for the task.
 - docs/bootcamp/DIVISION_MASTERBOT_COVERAGE_AUDIT.md:6 — - exactly 55 division foundation assignments and 65 MasterBot foundation assignments;
+- docs/bootcamp/FREECODECAMP_DREAMCO_ALIGNMENT_PLAN.md:22 — | Video subject taxonomy | 22 categories | Supports multi-label routing across domains |
+- docs/bootcamp/FREECODECAMP_DREAMCO_ALIGNMENT_PLAN.md:84 — Use the existing 22-category taxonomy and the 55 curated domain-category profiles as the first routing layer. Use the video title and public description only as discovery metadata. Do not treat title matching as proof that a video teaches every skill in a target division.
+- docs/bootcamp/FREECODECAMP_DREAMCO_ALIGNMENT_PLAN.md:99 — The existing `config/freecodecamp-division-category-profiles.json` is the authoritative first-pass mapping from each domain to the relevant categories. The 22 categories are:
+- docs/bootcamp/FREECODECAMP_DREAMCO_ALIGNMENT_PLAN.md:224 — - [#18631 — Actions runtime health](https://github.com/DreamCo-Technologies/Dreamcobots/issues/18631): 198 workflows were statically valid in the recorded report, but runtime status was unknown for all 198.
 - docs/dreamco-lite/DREAMCO_LITE_MVP.md:9 — - **2 bots**
 - docs/dreampayments_benchmark.md:12 — ## 30 capability scorecard
 - docs/engineering/DREAMCO_ENTERPRISE_REPAIR_PLAN_2026-11-25.md:11 — - Canonical business-domain crosswalk: 45 divisions.
@@ -232,6 +236,7 @@ This is a live inventory of Git-tracked Markdown requirements and their linked r
 - docs/engineering/PR_RECONCILIATION_LEDGER.md:182 — ### 2026-11-24 targeted duplicate reconciliation — PR #18212 and PR #18214
 - docs/engineering/PR_RECONCILIATION_LEDGER.md:185 — - The 100 resource records (IDs 1101–1200) are identical across both branches. The 727 unique dataset candidates and 1,783 route rows are also identical by candidate ID; PR #18214 replaces the ambiguous `catalog_train_flag` with `source_catalog_train_hint` and explicitly sets `tr
 - docs/engineering/PR_RECONCILIATION_LEDGER.md:190 — ### 2026-11-24 clean-base Bootcamp port — PR #18207 to PR #18216
+- docs/engineering/PR_RECONCILIATION_LEDGER.md:209 — - PR #18651 merged at 2026-11-26T15:28:01Z: head `ee60b6cc8b63c3b6ac7f1a9291f4b99aa1bc3872`, merge commit `35cc82fe518b9a993b2ceb9e1df5de1b5532b6ee`. Its exact-head checks completed 11 success / 1 skipped; no submitted review approval was recorded and CodeRabbit was rate-limited.
 - docs/engineering/PR_RECONCILIATION_LEDGER_2026-11-26.md:69 — 5. Port #16912 and #16913 source implementations; do not carry old generated snapshots or stale workflow assumptions.
 - docs/engineering/PR_RECONCILIATION_LEDGER_2026-11-26.md:110 — 3. Reconcile the 45/10 division queue policy against the current canonical 55-domain map without discarding existing mainline coverage.
 - docs/engineering/PR_RECONCILIATION_LEDGER_2026-11-26.md:116 — - The current-main push produced 64 workflow runs. Most completed; a small number remained queued/in progress, so the overall system was not globally frozen.
@@ -387,6 +392,7 @@ This is a live inventory of Git-tracked Markdown requirements and their linked r
 - reports/branch-health-daily.md:112 — - #14849 fix(ci): regenerate pages feature audit for 223 pages (was 205) — `needs_human`: Conflicts. Conflict team may update-from-main or open a resolution PR.
 - reports/branch-health-daily.md:115 — - #8925 Pages mirrors: Goals, desks, sources, learn, devices, OS — `needs_human`: Conflicts. Conflict team may update-from-main or open a resolution PR.
 - reports/branch-health-daily.md:116 — - #14397 pages: link eight orphaned product pages in nav and sitemap — `needs_human`: Conflicts. Conflict team may update-from-main or open a resolution PR.
+- reports/buddy-study-evidence/2026-11-26/session-45846724922/session-report.md:21 — - Active-recall subactivity blocked: 55 divisions
 - study_packs/career_pathways/README.md:10 — - `practice_tasks_authored.json`: 162 practice tasks for the 27 authored majors. Each cites an O*NET 31.0 Task ID and O*NET-SOC code and has an original-wording paraphrase of the task's intent, an occupation-specific scenario prompt, a 3-criterion rubric for that scenario, and a
 - study_packs/career_pathways/README.md:35 — - Practice tasks reference an O*NET 31.0 Task ID and O*NET-SOC code. O*NET task text is not reproduced: tests check that no run of 5 or more words from any O*NET 31.0 task statement, Job Zone reference text, or occupation description appears in the authored fields or in the plan
 - study_packs/career_pathways/README.md:35 — - Practice tasks reference an O*NET 31.0 Task ID and O*NET-SOC code. O*NET task text is not reproduced: tests check that no run of 5 or more words from any O*NET 31.0 task statement, Job Zone reference text, or occupation description appears in the authored fields or in the plan
@@ -15829,7 +15835,7 @@ These are candidate count claims, not automatically incorrect values. Convert li
 ### docs/BUDDY_DATABASE_ROUTING_CONTRACT.md
 
 - Status: implementation_reference_missing
-- Actionable claim lines: 2
+- Actionable claim lines: 4
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
@@ -18502,6 +18508,18 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
+### docs/bootcamp/FREECODECAMP_DREAMCO_ALIGNMENT_PLAN.md
+
+- Status: implementation_reference_missing
+- Actionable claim lines: 30
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Execution verified: No; run-specific evidence is required.
+
 ### docs/bootcamp/FREECODECAMP_STUDY_GUIDE_REVIEW_POLICY.md
 
 - Status: implementation_reference_missing
@@ -18817,7 +18835,7 @@ These are candidate count claims, not automatically incorrect values. Convert li
 ### docs/engineering/DREAMCO_PROJECT_CHAT_CORPUS.md
 
 - Status: test_reference_missing
-- Actionable claim lines: 26
+- Actionable claim lines: 31
 - Implementation paths: buddy/datasets/database_router.py, buddy/datasets/hub.py, buddy/datasets/postgres_catalog.py, tools/build_daily_lesson_plan.py, website/data/markdown-implementation-gap-audit.json
 - Test paths: None detected
 - Missing paths: None detected
@@ -18828,14 +18846,14 @@ These are candidate count claims, not automatically incorrect values. Convert li
 
 ### docs/engineering/PR_RECONCILIATION_LEDGER.md
 
-- Status: implementation_and_test_paths_referenced_not_verified
-- Actionable claim lines: 26
+- Status: broken_path_references
+- Actionable claim lines: 29
 - Implementation paths: buddy/bootcamp/training_methods_hub.py, tools/audit_markdown_implementation_gaps.py, tools/build_dreamco_training_factory.py, website/data/bot-calculators.json, website/data/bot-fleet-catalog.json, website/data/buddy-technology-radar.json, website/data/command-center/capabilities.json, website/data/dreamco-search-index.js
 - Test paths: tests/test_buddy_resource_registry.py, tests/test_buddy_training_methods_hub.py
-- Missing paths: None detected
+- Missing paths: markdown-inventory/2026-11-26.json, pr-inventory-snapshots/2026-11-26.json
 - Path templates: None detected
 - Machine-local paths: None detected
-- Next action: Run the linked tests and attach CI, benchmark, regression, and runtime evidence before promotion.
+- Next action: Repair or explicitly supersede the missing repository path references.
 - Execution verified: No; run-specific evidence is required.
 
 ### docs/engineering/PR_RECONCILIATION_LEDGER_2026-11-26.md
@@ -20570,6 +20588,30 @@ These are candidate count claims, not automatically incorrect values. Convert li
 
 - Status: implementation_reference_missing
 - Actionable claim lines: 4
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Execution verified: No; run-specific evidence is required.
+
+### reports/buddy-study-evidence/2026-11-26/session-45842272031/session-report.md
+
+- Status: implementation_reference_missing
+- Actionable claim lines: 3
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Execution verified: No; run-specific evidence is required.
+
+### reports/buddy-study-evidence/2026-11-26/session-45846724922/session-report.md
+
+- Status: reference_only
+- Actionable claim lines: 0
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
