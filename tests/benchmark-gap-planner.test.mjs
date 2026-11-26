@@ -11,7 +11,8 @@ test("planner creates work for 65 MasterBots and 55 domain divisions",()=>{
  fs.writeFileSync(scores,JSON.stringify({results:[{scope:"masterbot",masterbot_id:1,benchmark:"reasoning",score:40,target:80,status:"failed"},{scope:"masterbot",masterbot_id:2,benchmark:"coding",score:90,target:80,status:"pass"}]}));
  execFileSync("python3",["tools/benchmark_gap_planner.py","--scores",scores,"--out",out]);
  const q=JSON.parse(fs.readFileSync(out,"utf8"));
- assert.equal(q.masterbot_count,65);\n assert.equal(q.domain_division_count,55);
+ assert.equal(q.masterbot_count,65);
+ assert.equal(q.domain_division_count,55);
  assert.ok(q.queue.some(x=>x.masterbot_id===1&&x.action==="CLOSE_GAPS"));
  assert.ok(q.queue.some(x=>x.masterbot_id===3&&x.action==="RUN_BENCHMARKS"));
 });
