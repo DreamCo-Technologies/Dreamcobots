@@ -240,5 +240,13 @@ class ProductionCertificationTruthTests(unittest.TestCase):
         ):
             self.assertIn(flag, source)
 
+    def test_live_environment_rejects_http_and_embedded_credentials(self):
+        from tools.production_readiness_gate import probe_live_environment
+        http_result = probe_live_environment("http://api.example.test")
+        credential_result = probe_live_environment("https://user:password@api.example.test")
+        self.assertEqual(http_result["status"], "fail")
+        self.assertEqual(credential_result["status"], "fail")
+        self.assertEqual(credential_result["evidence"], [])
+
 if __name__ == "__main__":
     unittest.main()
