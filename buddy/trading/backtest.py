@@ -30,6 +30,8 @@ class Bar:
             raise ValueError("OHLCV values must be finite numbers") from None
         if not all(math.isfinite(value) for value in values):
             raise ValueError("OHLCV values must be finite numbers")
+        for field, value in zip(("open", "high", "low", "close", "volume"), values):
+            object.__setattr__(self, field, value)
         if min(values[:4]) <= 0:
             raise ValueError("OHLC prices must be positive")
         if self.high < max(self.open, self.close, self.low):
@@ -60,6 +62,11 @@ class BacktestConfig:
             raise ValueError("backtest configuration values must be finite numbers") from None
         if not all(math.isfinite(value) for value in values):
             raise ValueError("backtest configuration values must be finite numbers")
+        for field, value in zip((
+            "initial_cash", "allocation_fraction", "fee_bps", "slippage_bps",
+            "max_order_notional", "max_position_notional",
+        ), values):
+            object.__setattr__(self, field, value)
         if self.initial_cash <= 0:
             raise ValueError("initial_cash must be positive")
         if not 0 < self.allocation_fraction <= 1:
