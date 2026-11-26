@@ -13,8 +13,7 @@ This is an inventory snapshot, not a production certification.
 | Repository tree | 6,338 paths | Large enough to require generated inventories and ownership, not manual spot checks alone |
 | MasterBot registry | 65 lanes | Canonical MasterBot target set |
 | Domain crosswalk | 55 domains | 45 proposed exact-name matches and 10 unresolved domain mappings; owner approval remains separate |
-| Division JSON files | 45 paths | Ten crosswalk domains have no `config/divisions/<domain>.json` file |
-| Empty division JSON | `dreamcodelab.json` | A path exists but has no content |
+| Division JSON files | 45 paths | 44 pass the required structural checks, 1 is incomplete, and 10 crosswalk domains have no file |
 | Division category profiles | 55 profiles | All 55 domains have curated learning-category profiles |
 | freeCodeCamp video catalog | 1,740 rows | Catalog status is `partial`; upstream expected count is not proven |
 | Unclassified video rows | 519 | These need a human-reviewed subject classification queue, not automatic assignment |
