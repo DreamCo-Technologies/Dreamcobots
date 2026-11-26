@@ -102,13 +102,14 @@ jobs:
           python tools/sync_freecodecamp_learning_inventory.py
           python tools/build_division_huggingface_taxonomy_map.py
           python tools/build_division_resource_readiness_map.py
-          python tools/build_file_prospectus.py
       - name: Regenerate canonical bot fleet catalog after certification drift
         if: github.event_name == 'workflow_run' && github.event.workflow_run.name == 'Full System Certification'
         run: node --import tsx tools/generate_bot_fleet_catalog.ts
       - name: Regenerate canonical fleet end-to-end evidence after certification drift
         if: github.event_name == 'push' || (github.event_name == 'workflow_run' && github.event.workflow_run.name == 'Full System Certification')
         run: node --import tsx tools/run_bot_fleet_e2e.ts
+      - name: Regenerate file prospectus after all generated source inventories
+        run: python tools/build_file_prospectus.py
       - name: Verify repaired indexes and Buddy repair-learning tests
         run: |
           set -euo pipefail
