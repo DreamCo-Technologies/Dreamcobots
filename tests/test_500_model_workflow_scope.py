@@ -25,10 +25,14 @@ class FiveHundredModelWorkflowScopeTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             build_status("unapproved")
 
-    def test_benchmark_workflow_does_not_install_unrelated_media_stack(self):
+    def test_contract_only_matrix_does_not_install_training_runtime_or_run_full_repo_pytest(self):
         text = WORKFLOW.read_text(encoding="utf-8")
         self.assertNotIn("requirements-media.txt", text)
-        self.assertIn("requirements-buddy-learning.txt", text)
+        self.assertNotIn("requirements-buddy-learning.txt", text)
+        self.assertNotIn("torch", text.lower())
+        self.assertNotIn("python3 -m pytest -q", text)
+        self.assertIn("tests.test_500_model_prospectus_matrix", text)
+        self.assertIn("tests.test_benchmark_scope_contract", text)
 
     def test_missing_career_pathways_source_data_is_reported_as_skipped_not_passed(self):
         text = WORKFLOW.read_text(encoding="utf-8")
