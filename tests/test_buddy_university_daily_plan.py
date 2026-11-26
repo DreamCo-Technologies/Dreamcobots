@@ -80,6 +80,14 @@ class BuddyUniversityDailyPlanTests(unittest.TestCase):
         self.assertFalse(ai["slots"][0]["weight_training_eligible"])
         self.assertTrue(plan["progress_policy"]["weight_training_requires_explicit_per_asset_permission"])
 
+
+    def test_weekly_workflow_sets_repository_root_pythonpath_for_daily_plan(self):
+        workflow = Path(__file__).resolve().parents[1] / ".github/workflows/buddy-open-source-weekly-bootcamp.yml"
+        lines = workflow.read_text(encoding="utf-8").splitlines()
+        start = lines.index("      - name: Build five-lesson-per-division Buddy University daily plan")
+        step = "\\n".join(lines[start:start + 8])
+        self.assertIn("PYTHONPATH: \${{ github.workspace }}", step)
+
     def test_unknown_division_or_incomplete_organization_fails_closed(self):
         payload = json.loads(self.organization.read_text(encoding="utf-8"))
         payload["division_curricula"].pop()
