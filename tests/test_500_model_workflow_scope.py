@@ -33,6 +33,8 @@ class FiveHundredModelWorkflowScopeTests(unittest.TestCase):
         self.assertNotIn("python3 -m pytest -q", text)
         self.assertIn("tests.test_500_model_prospectus_matrix", text)
         self.assertIn("tests.test_benchmark_scope_contract", text)
+        self.assertIn("cancel-in-progress: true", text)
+        self.assertIn("timeout-minutes: 60", text)
 
     def test_missing_career_pathways_source_data_is_reported_as_skipped_not_passed(self):
         text = WORKFLOW.read_text(encoding="utf-8")
