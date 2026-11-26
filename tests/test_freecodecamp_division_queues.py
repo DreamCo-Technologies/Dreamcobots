@@ -51,8 +51,9 @@ class FreeCodeCampDomainQueueTests(unittest.TestCase):
         self.assertEqual(len({x["domain_id"] for x in result["domains"]}), 55)
         self.assertEqual(sum(x["mapping_status"] == "proposed_exact_name_match" for x in result["domains"]), 45)
         self.assertEqual(sum(x["mapping_status"] == "unresolved" for x in result["domains"]), 10)
-        self.assertEqual(sum(x["queue_status"] == "subject_routed" for x in result["domains"]), 45)
-        self.assertEqual(sum(x["queue_status"] == "foundation_only_owner_mapping_pending" for x in result["domains"]), 10)
+        # Only the three fixture domains with explicit category signals are specialist-routed.
+        self.assertEqual(sum(x["queue_status"] == "subject_routed" for x in result["domains"]), 3)
+        self.assertEqual(sum(x["queue_status"] == "foundation_only_owner_mapping_pending" for x in result["domains"]), 52)
 
     def test_domain_hints_route_specialist_content(self):
         result = build_queues(self.catalog, self.crosswalk, limit=10)
