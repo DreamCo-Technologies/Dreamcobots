@@ -99,6 +99,14 @@ class BuddyCourseTrackRegistryTests(unittest.TestCase):
             with self.subTest(masterbot=row["name"]):
                 self.assertEqual(len(resources_for_masterbot(row["name"])), expected)
 
+
+    def test_onet_worker_requirement_subjects_have_search_aliases(self):
+        lessons = [lesson for lesson in load_course_lessons() if lesson.track_id == "onet"]
+        matches = [lesson for lesson in lessons if "worker requirements" in lesson.capability_tags]
+        self.assertTrue(matches)
+        self.assertTrue(any("education" in lesson.title.casefold() for lesson in matches))
+        self.assertTrue(any("licensing" in lesson.title.casefold() for lesson in matches))
+
     def test_huggingface_full_map_includes_all_official_courses_and_ecosystem_modules(self):
         from pathlib import Path
         import json
