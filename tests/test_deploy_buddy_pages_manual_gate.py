@@ -16,3 +16,12 @@ def test_github_pages_deploy_requires_manual_dispatch_on_main():
         "tools/check_frontier_claim_trust_gates.py" in str(step.get("run", ""))
         for step in build_steps
     )
+
+def test_pages_preflight_refreshes_production_evidence_before_check():
+    workflow = yaml.safe_load((ROOT / ".github/workflows/deploy-buddy-pages.yml").read_text(encoding="utf-8"))
+    build_steps = workflow["jobs"]["build"]["steps"]
+    preflight = next(step for step in build_steps if step.get("name") == "Run deployment preflight")
+    commands = preflight["run"].splitlines()
+    generate = commands.index("python3 tools/generate_production_evidence_ledger.py")
+    check = commands.index("python3 tools/generate_production_evidence_ledger.py --check")
+    assert generate < check
