@@ -72,7 +72,7 @@ class FreeCodeCampSpecialistRoutingTests(unittest.TestCase):
         self.assertTrue(all(not row.guide_path for row in specialist))
         # Authoring work is not study-ready curriculum and cannot award mastery.
         self.assertFalse(any(
-            resource.name == row.title
+            resource.title == row.title
             for resource in resources_for_division("DreamFinance")
             for row in specialist
         ))
@@ -91,12 +91,12 @@ class FreeCodeCampSpecialistRoutingTests(unittest.TestCase):
             "metadata_review", "guided_classification", "rights_check", "human_review"
         } for row in triage))
         self.assertFalse(any(
-            resource.name == row.title
+            resource.title == row.title
             for resource in resources_for_division("DreamEducation")
             for row in triage
         ))
         self.assertFalse(any(
-            resource.name == row.title
+            resource.title == row.title
             for resource in resources_for_masterbot("DreamDiscovery")
             for row in triage
         ))
