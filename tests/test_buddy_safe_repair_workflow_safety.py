@@ -16,6 +16,7 @@ def test_safe_repair_can_be_dispatched_or_bootstrapped_only_on_main():
     assert triggers["push"]["branches"] == ["main"]
     assert ".github/workflows/buddy-ci-safe-repair.yml" in triggers["push"]["paths"]
     assert "Buddy Bootcamp Curriculum" in triggers["workflow_run"]["workflows"]
+    assert "Buddy Sandbox Bootcamp" in triggers["workflow_run"]["workflows"]
     assert "Buddy Open-Source Weekly Bootcamp" in triggers["workflow_run"]["workflows"]
     assert "Buddy Bootcamp Curriculum" in triggers["workflow_run"]["workflows"]
     assert "Full System Certification" in triggers["workflow_run"]["workflows"]
@@ -40,6 +41,8 @@ def test_safe_repair_uses_convergent_generators_and_only_pushes_a_repair_branch(
     assert "python tools/build_file_prospectus.py --check" in workflow_text
     assert "python tools/sync_freecodecamp_learning_inventory.py" in workflow_text
     assert "python tools/sync_freecodecamp_learning_inventory.py --check" in workflow_text
+    assert "python tools/build_division_huggingface_taxonomy_map.py" in workflow_text
+    assert "python tools/build_division_huggingface_taxonomy_map.py --check" in workflow_text
     assert "tests.test_freecodecamp_learning_inventory" in workflow_text
     assert "tests.test_buddy_continuous_study_policy" in workflow_text
     assert "python tools/build_file_prospectus.py" in workflow_text
@@ -69,6 +72,7 @@ def test_safe_repair_allowlist_includes_public_evidence_and_manifests():
         "reports/BOT_FLEET_PROSPECTUS.md",
         "config/freecodecamp-complete-learning-path.json",
         "config/buddy-continuous-study-policy.json",
+        "config/generated/division-huggingface-taxonomy-map.json",
         "website/data/fleet-runtime-status.json",
         "website/data/command-center",
     ):
