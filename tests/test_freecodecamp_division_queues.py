@@ -132,13 +132,16 @@ class FreeCodeCampDomainQueueTests(unittest.TestCase):
         crosswalk = json.loads((ROOT / "config/generated/masterbot-55-domain-crosswalk.json").read_text(encoding="utf-8"))
         domain_ids = {row["domain_id"] for row in crosswalk["domains"]}
         self.assertEqual(domain_ids, set(DOMAIN_CATEGORY_MAP))
-        all_categories = sorted({category for values in DOMAIN_CATEGORY_MAP.values() for category in values})
-        catalog = dict(self.catalog)
-        catalog["categories"] = [{"id": category} for category in all_categories]
-        result = build_queues(catalog, crosswalk, limit=10)
+        catalog = json.loads((ROOT / "buddy/bootcamp/sources/freecodecamp/catalog.json").read_text(encoding="utf-8"))
+        result = build_queues(catalog, crosswalk, limit=10, allow_partial=True)
         validate(result)
         self.assertTrue(all(row["target_categories"] for row in result["domains"]))
         self.assertTrue(all(row["queue_status"] == "subject_routed" for row in result["domains"]))
+        for row in result["domains"]:
+            self.assertTrue(
+                any(set(item["categories"]) & set(row["target_categories"]) for item in row["items"]),
+                row["domain_name"],
+            )
 
 
 if __name__ == "__main__":
