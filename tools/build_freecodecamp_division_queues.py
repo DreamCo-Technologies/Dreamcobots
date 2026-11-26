@@ -177,7 +177,7 @@ def _approved_supplemental_learning_routes(known: set[str], domains: list[dict[s
             raise ValueError("every unresolved canonical domain needs an explicit learning-only approval")
     return approved
 
-def build_queues(catalog: dict[str, Any], crosswalk: dict[str, Any], limit: int = 30, *, allow_partial: bool = False) -> dict[str, Any]:
+def build_queues(catalog: dict[str, Any], crosswalk: dict[str, Any], limit: int | None = None, *, allow_partial: bool = False) -> dict[str, Any]:
     if catalog.get("schema") != "dreamco.freecodecamp_catalog.v1":
         raise ValueError("unsupported freeCodeCamp catalog schema")
     videos = catalog.get("videos")
@@ -241,7 +241,7 @@ def build_queues(catalog: dict[str, Any], crosswalk: dict[str, Any], limit: int 
             score = (len(specialty) * 10) + len(overlap)
             scored.append((score, video))
         scored.sort(key=lambda item: (-item[0], item[1].get("upload_date") or "", item[1]["video_id"]))
-        selected = scored[:limit]
+        selected = scored if limit is None else scored[:limit]
         rows.append({
             "domain_id": domain_id,
             "domain_name": name,
@@ -347,12 +347,12 @@ def validate(payload: dict[str, Any]) -> None:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--check", action="store_true")
-    parser.add_argument("--limit", type=int, default=30)
+    parser.add_argument("--limit", type=int, default=None, help="Optional per-division cap; default queues every relevant observed video.")
     parser.add_argument("--allow-partial", action="store_true", help="Build a provisional queue from observed entries only; never claim full archive coverage.")
     parser.add_argument("--out", type=Path, default=OUTPUT)
     args = parser.parse_args()
-    if not 1 <= args.limit <= 100:
-        raise SystemExit("--limit must be between 1 and 100")
+    if args.limit is not None and args.limit < 1:
+        raise SystemExit("--limit must be a positive integer when supplied")
     catalog = json.loads(CATALOG.read_text(encoding="utf-8"))
     crosswalk = json.loads(CROSSWALK.read_text(encoding="utf-8"))
     payload = build_queues(catalog, crosswalk, args.limit, allow_partial=args.allow_partial)
