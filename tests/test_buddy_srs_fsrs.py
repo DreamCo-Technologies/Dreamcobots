@@ -68,3 +68,10 @@ def test_fsrs_config_rejects_invalid_retention_and_steps():
         FSRSConfig(desired_retention=1.0)
     with pytest.raises(ValueError, match="strictly increasing"):
         FSRSConfig(learning_steps_seconds=(60, 60))
+
+
+def test_fsrs_rejects_boolean_rating_values():
+    with pytest.raises(ValueError, match="1..4"):
+        FSRSAdapter().review(
+            learner_id="l", deck_id="d", item_id="i", rating=True, reviewed_at=T0,
+        )
