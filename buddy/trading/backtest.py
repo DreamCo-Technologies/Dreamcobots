@@ -3,9 +3,10 @@
 from __future__ import annotations
 
 from dataclasses import asdict, dataclass
+import math
 from statistics import mean
 
-from .paper_broker import PaperBroker
+from .paper_broker import PaperBroker, RiskLimitError
 
 
 @dataclass(frozen=True)
@@ -21,13 +22,21 @@ class Bar:
     def __post_init__(self) -> None:
         if not self.timestamp or not self.symbol.strip():
             raise ValueError("bar timestamp and symbol are required")
-        if min(self.open, self.high, self.low, self.close) <= 0:
+        try:
+            values = tuple(float(value) for value in (
+                self.open, self.high, self.low, self.close, self.volume
+            ))
+        except (TypeError, ValueError, OverflowError):
+            raise ValueError("OHLCV values must be finite numbers") from None
+        if not all(math.isfinite(value) for value in values):
+            raise ValueError("OHLCV values must be finite numbers")
+        if min(values[:4]) <= 0:
             raise ValueError("OHLC prices must be positive")
         if self.high < max(self.open, self.close, self.low):
             raise ValueError("bar high is inconsistent")
         if self.low > min(self.open, self.close, self.high):
             raise ValueError("bar low is inconsistent")
-        if self.volume < 0:
+        if values[4] < 0:
             raise ValueError("volume cannot be negative")
 
 
@@ -42,12 +51,23 @@ class BacktestConfig:
     liquidate_at_end: bool = True
 
     def __post_init__(self) -> None:
+        try:
+            values = tuple(float(value) for value in (
+                self.initial_cash, self.allocation_fraction, self.fee_bps,
+                self.slippage_bps, self.max_order_notional, self.max_position_notional,
+            ))
+        except (TypeError, ValueError, OverflowError):
+            raise ValueError("backtest configuration values must be finite numbers") from None
+        if not all(math.isfinite(value) for value in values):
+            raise ValueError("backtest configuration values must be finite numbers")
         if self.initial_cash <= 0:
             raise ValueError("initial_cash must be positive")
         if not 0 < self.allocation_fraction <= 1:
             raise ValueError("allocation_fraction must be in (0, 1]")
         if self.fee_bps < 0 or not 0 <= self.slippage_bps < 10_000:
             raise ValueError("fees must be non-negative and slippage must be in [0, 10000) bps")
+        if self.max_order_notional <= 0 or self.max_position_notional <= 0:
+            raise ValueError("notional risk limits must be positive")
 
 
 @dataclass(frozen=True)
@@ -154,8 +174,8 @@ def run_backtest(
             if quantity > 0:
                 try:
                     broker.submit_market_order(symbol, "buy", quantity, bar.open, bar.timestamp)
-                except ValueError:
-                    # A risk-rejected order is recorded as no trade, never bypassed.
+                except RiskLimitError:
+                    # A risk rejection leaves the portfolio unchanged; never bypass it.
                     pass
         elif desired_position == 0 and current_quantity > 0:
             _sell_in_chunks(broker, symbol, current_quantity, bar.open, bar.timestamp)
