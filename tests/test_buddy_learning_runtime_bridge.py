@@ -337,12 +337,13 @@ class RuntimeBridgeTests(unittest.TestCase):
             video(3, "Unrelated CSS animation", ["html_css_and_accessibility"]),
             video(4, "Explicit finance specialist override", ["html_css_and_accessibility"], division_targets=("DreamFinance",)),
             video(5, "Cybersecurity specialist route", ["cybersecurity_and_privacy"], division_targets=("DreamCyber",)),
+            video(6, "Spring Boot Java service", ["java_and_jvm"]),
         ]
         with patch("buddy.learning.runtime_bridge.resources_for_division", return_value=[]), \
              patch("buddy.learning.runtime_bridge.load_course_lessons", return_value=lessons):
             result = self.bridge.bootcamp_learning_queue(division="DreamFinance", limit=100)
         ids = {item["source_video_id"] for item in result["items"]}
-        self.assertEqual(ids, {"fixture-1", "fixture-2", "fixture-4"})
+        self.assertEqual(ids, {"fixture-1", "fixture-2", "fixture-4", "fixture-6"})
         self.assertTrue(all(item["video_categories"] for item in result["items"]))
 
 
