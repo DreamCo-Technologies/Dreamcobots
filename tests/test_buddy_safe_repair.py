@@ -7,6 +7,10 @@ class BuddySafeRepairTests(unittest.TestCase):
   result=subprocess.run([sys.executable,"-m","tools.buddy_safe_repair","--help"],cwd=root,text=True,capture_output=True,check=False)
   self.assertEqual(result.returncode,0,result.stderr)
   self.assertIn("--observation",result.stdout)
+ def test_safe_repair_summary_uses_printf_without_shell_command_substitution(self):
+  workflow=(Path(__file__).resolve().parents[1]/".github/workflows/buddy-ci-safe-repair.yml").read_text(encoding="utf-8")
+  self.assertIn("printf 'Verified generated repairs are available on [%s]",workflow)
+  self.assertNotIn("echo \"Verified generated repairs are available on [`$REPAIR_BRANCH`]",workflow)
  def test_safe_repair_branch_name_avoids_directory_file_namespace_conflicts(self):
   workflow=(Path(__file__).resolve().parents[1]/".github/workflows/buddy-ci-safe-repair.yml").read_text(encoding="utf-8")
   self.assertIn("REPAIR_BRANCH: ${{ format('buddy-ci-repair-{0}', github.event.workflow_run.id || github.run_id) }}",workflow)

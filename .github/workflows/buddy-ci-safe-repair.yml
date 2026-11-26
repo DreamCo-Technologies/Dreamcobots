@@ -163,8 +163,8 @@ jobs:
           git commit -m "chore(ci): apply verified allowlisted DreamCo repair"
           AUTH="$(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w0)"
           git -c core.hooksPath=/dev/null -c http.extraheader="AUTHORIZATION: basic $AUTH" push "https://github.com/$GITHUB_REPOSITORY.git" "HEAD:refs/heads/$REPAIR_BRANCH"
-          echo "Verified generated repairs are available on [`$REPAIR_BRANCH`](https://github.com/$GITHUB_REPOSITORY/tree/$REPAIR_BRANCH)." >> "$GITHUB_STEP_SUMMARY"
-          echo "The repository blocks GITHUB_TOKEN pull-request creation; open a review PR from this branch." >> "$GITHUB_STEP_SUMMARY"
+          printf 'Verified generated repairs are available on [%s](https://github.com/%s/tree/%s).\n' "$REPAIR_BRANCH" "$GITHUB_REPOSITORY" "$REPAIR_BRANCH" >> "$GITHUB_STEP_SUMMARY"
+          printf '%s\n' "The repository blocks GITHUB_TOKEN pull-request creation; open a review PR from this branch." >> "$GITHUB_STEP_SUMMARY"
       - name: Preserve repair evidence
         if: always()
         uses: actions/upload-artifact@v4
