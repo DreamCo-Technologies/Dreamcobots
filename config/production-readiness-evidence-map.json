@@ -16,7 +16,13 @@
         ]
       },
       {
-        "path": "config/buddy/resource-registry.json",
+        "path": "website/data/buddy-routing-index.js",
+        "check_names": [
+          "governed-local-tests"
+        ]
+      },
+      {
+        "path": "tests/supplemental-fleet.test.ts",
         "check_names": [
           "governed-local-tests"
         ]
@@ -37,6 +43,12 @@
       },
       {
         "path": "config/benchmark-gap-closure-playbook.json",
+        "check_names": [
+          "governed-local-tests"
+        ]
+      },
+      {
+        "path": "artifacts/benchmark-reproducibility/latest-run.json",
         "check_names": [
           "governed-local-tests"
         ]
@@ -66,6 +78,12 @@
         "check_names": [
           "CodeQL (javascript-typescript)"
         ]
+      },
+      {
+        "path": "reports/license-provenance-audit.json",
+        "check_names": [
+          "trusted-code"
+        ]
       }
     ],
     "deployment": [
@@ -92,6 +110,12 @@
         "check_names": [
           "governed-local-tests"
         ]
+      },
+      {
+        "path": "artifacts/production-readiness/live-api-health.json",
+        "check_names": [
+          "deploy"
+        ]
       }
     ],
     "observability": [
@@ -111,6 +135,12 @@
         "path": "tools/production_readiness_gate.py",
         "check_names": [
           "audit"
+        ]
+      },
+      {
+        "path": "artifacts/observability/benchmark-agent-traces.json",
+        "check_names": [
+          "build"
         ]
       }
     ]
