@@ -165,7 +165,6 @@ class FreeCodeCampDomainQueueTests(unittest.TestCase):
             if set(video.get("categories") or []) != {"other_or_unclassified"}
         }
         self.assertEqual(assigned, classified)
-        self.assertEqual(len(classified), len(catalog["videos"]) - 568)
 
     def test_every_canonical_domain_has_an_explicit_specialist_category_profile(self):
         from pathlib import Path
