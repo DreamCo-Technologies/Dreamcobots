@@ -6,12 +6,12 @@ This report executes every registered bot through the repository-controlled Budd
 
 | Gate | Result |
 |---|---:|
-| Profiles tested | 1,101 |
-| Sandbox certified | 1,101 |
+| Profiles tested | 1,120 |
+| Sandbox certified | 1,120 |
 | Failed | 0 |
-| Divisions tested | 55 |
-| Declared capabilities tested | 8,460 |
-| Capability contracts passed | 8,460 |
+| Divisions tested | 56 |
+| Declared capabilities tested | 8,555 |
+| Capability contracts passed | 8,555 |
 | Capability contracts failed | 0 |
 | Every declared capability tested | Yes |
 | Repository-controlled flow complete | Yes |
@@ -26,6 +26,7 @@ Live external provider calls are not simulated as successful. They require an au
 | Division | Profiles | Passed | Failed | Capability tests | Capability passed | Capability failed |
 |---|---:|---:|---:|---:|---:|---:|
 | CommandCore | 13 | 13 | 0 | 104 | 104 | 0 |
+| Dream3D | 19 | 19 | 0 | 95 | 95 | 0 |
 | DreamAdmin | 21 | 21 | 0 | 168 | 168 | 0 |
 | DreamAffiliate | 5 | 5 | 0 | 5 | 5 | 0 |
 | DreamAgency | 5 | 5 | 0 | 5 | 5 | 0 |
