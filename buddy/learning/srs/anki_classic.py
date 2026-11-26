@@ -108,7 +108,7 @@ class AnkiClassicScheduler:
         state = card.state
         step = card.step_index
         interval = card.interval_days
-        ease = card.ease_factor
+        ease = cfg.starting_ease if state == "new" else card.ease_factor
         lapses = card.lapses
         reps = card.repetitions + 1
 
