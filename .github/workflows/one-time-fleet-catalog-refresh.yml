@@ -19,6 +19,10 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      - name: Reset to current temporary branch head
+        run: |
+          git fetch origin ops/generate-fleet-catalog-once
+          git reset --hard origin/ops/generate-fleet-catalog-once
       - name: Regenerate canonical fleet catalog artifacts
         run: node --import tsx tools/generate_bot_fleet_catalog.ts
       - uses: actions/setup-python@v7
@@ -26,6 +30,20 @@ jobs:
           python-version: "3.11"
       - name: Synchronize current checked-in FreeCodeCamp count manifests
         run: python tools/sync_freecodecamp_learning_inventory.py
+      - name: Commit generated catalog and inventory manifests to temporary branch
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git diff --cached --check
+          if git diff --cached --quiet; then
+            echo "Generated artifacts are already current."
+          else
+            git diff --cached --stat
+            git commit -m "chore: regenerate fleet and learning catalog artifacts"
+            git push origin HEAD:refs/heads/ops/generate-fleet-catalog-once
+          fi
       - uses: actions/upload-artifact@v7
         with:
           name: canonical-fleet-catalog-generated
