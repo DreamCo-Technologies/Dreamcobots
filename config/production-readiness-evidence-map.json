@@ -1,0 +1,118 @@
+{
+  "schema": "dreamco.production_readiness_evidence_map.v1",
+  "description": "Curated source and test paths mapped to successful exact-revision checks. CI resolves check-run IDs at runtime; no commit SHA or run ID is hardcoded.",
+  "areas": {
+    "buddy_orchestration": [
+      {
+        "path": "buddy/learning/buddy_knowledge_router.py",
+        "check_names": [
+          "trusted-code"
+        ]
+      },
+      {
+        "path": "tests/test_buddy_knowledge_router.py",
+        "check_names": [
+          "governed-local-tests"
+        ]
+      },
+      {
+        "path": "config/buddy/resource-registry.json",
+        "check_names": [
+          "governed-local-tests"
+        ]
+      }
+    ],
+    "benchmark_framework": [
+      {
+        "path": "tools/benchmark_gap_planner.py",
+        "check_names": [
+          "trusted-code"
+        ]
+      },
+      {
+        "path": "tests/test_benchmark_scope_contract.py",
+        "check_names": [
+          "governed-local-tests"
+        ]
+      },
+      {
+        "path": "config/benchmark-gap-closure-playbook.json",
+        "check_names": [
+          "governed-local-tests"
+        ]
+      }
+    ],
+    "security": [
+      {
+        "path": "SECURITY.md",
+        "check_names": [
+          "trusted-code"
+        ]
+      },
+      {
+        "path": "tests/test_actions_failure_sweep_safety.py",
+        "check_names": [
+          "governed-local-tests"
+        ]
+      },
+      {
+        "path": "tests/test_dependency_review_scope.py",
+        "check_names": [
+          "governed-local-tests"
+        ]
+      },
+      {
+        "path": "package-lock.json",
+        "check_names": [
+          "CodeQL (javascript-typescript)"
+        ]
+      }
+    ],
+    "deployment": [
+      {
+        "path": "server/index.ts",
+        "check_names": [
+          "build"
+        ]
+      },
+      {
+        "path": "vercel.json",
+        "check_names": [
+          "deploy"
+        ]
+      },
+      {
+        "path": "docs/PRODUCTION_READINESS_MASTER_PLAN.md",
+        "check_names": [
+          "build"
+        ]
+      },
+      {
+        "path": "tests/test_deploy_buddy_pages_manual_gate.py",
+        "check_names": [
+          "governed-local-tests"
+        ]
+      }
+    ],
+    "observability": [
+      {
+        "path": "server/observability.ts",
+        "check_names": [
+          "build"
+        ]
+      },
+      {
+        "path": "tests/test_actions_live_health.py",
+        "check_names": [
+          "governed-local-tests"
+        ]
+      },
+      {
+        "path": "tools/production_readiness_gate.py",
+        "check_names": [
+          "audit"
+        ]
+      }
+    ]
+  }
+}

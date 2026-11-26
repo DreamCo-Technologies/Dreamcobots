@@ -22,5 +22,14 @@ class ProductionReadinessWorkflowTests(unittest.TestCase):
         self.assertIn("npm run production:certification", strict)
 
 
+    def test_non_pr_runs_resolve_revision_bound_evidence_before_inventory(self):
+        workflow = (ROOT / ".github/workflows/production-readiness.yml").read_text(encoding="utf-8")
+        resolver = workflow.index("      - name: Build revision-bound production evidence manifest")
+        inventory = workflow.index("      - name: Run evidence inventory")
+        self.assertLess(resolver, inventory)
+        self.assertIn("if: github.event_name != 'pull_request'", workflow[resolver:inventory])
+        self.assertIn("--wait-seconds 600", workflow[resolver:inventory])
+        self.assertIn("DREAMCO_PRODUCTION_EVIDENCE_MANIFEST=", workflow[resolver:inventory])
+
 if __name__ == "__main__":
     unittest.main()
