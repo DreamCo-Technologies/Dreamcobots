@@ -30,8 +30,9 @@ class SRSStore:
 
     def __init__(self, path: str | Path) -> None:
         self.path = str(path)
-        if self.path != ":memory:":
-            Path(self.path).parent.mkdir(parents=True, exist_ok=True)
+        if self.path == ":memory:":
+            raise ValueError("SRSStore requires a file-backed database for durable offline sync")
+        Path(self.path).parent.mkdir(parents=True, exist_ok=True)
         self._migrate()
 
     def _connect(self) -> sqlite3.Connection:
@@ -141,7 +142,7 @@ class SRSStore:
         for key in ("event_id", "learner_id", "deck_id", "item_id", "scheduler_name", "scheduler_version"):
             if not isinstance(event[key], str) or not event[key].strip():
                 raise ValueError(f"{key} is required")
-        if isinstance(event["rating"], bool) or event["rating"] not in (1, 2, 3, 4):
+        if isinstance(event["rating"], bool) or not isinstance(event["rating"], int) or event["rating"] not in (1, 2, 3, 4):
             raise ValueError("rating must be 1..4")
         if not isinstance(event["division_ids"], list) or any(not isinstance(x, str) or not x for x in event["division_ids"]):
             raise ValueError("division_ids must be a list of non-empty strings")
@@ -150,6 +151,11 @@ class SRSStore:
 
         reviewed = self._utc_string(event["reviewed_at_utc"])
         due = self._utc_string(event["due_at_utc"])
+        if due < reviewed:
+            raise ValueError("due_at_utc cannot be earlier than reviewed_at_utc")
+        retention = event.get("desired_retention")
+        if retention is not None and not 0.7 < float(retention) < 0.97:
+            raise ValueError("desired_retention must be between 0.70 and 0.97")
         payload = dict(event)
         payload["reviewed_at_utc"] = reviewed
         payload["due_at_utc"] = due
@@ -176,10 +182,10 @@ class SRSStore:
                 return RecordReviewResult("duplicate", False, False)
 
             current = conn.execute(
-                "SELECT last_reviewed_at_utc FROM srs_card_states WHERE learner_id=? AND deck_id=? AND item_id=?",
+                "SELECT last_reviewed_at_utc, latest_event_id FROM srs_card_states WHERE learner_id=? AND deck_id=? AND item_id=?",
                 (event["learner_id"], event["deck_id"], event["item_id"]),
             ).fetchone()
-            replay_required = bool(current and reviewed < current["last_reviewed_at_utc"])
+            replay_required = bool(current and (reviewed, event["event_id"]) < (current["last_reviewed_at_utc"], current["latest_event_id"]))
             conn.execute("""
                 INSERT INTO srs_review_events (
                     event_id, learner_id, deck_id, item_id, division_ids_json,
@@ -272,6 +278,11 @@ class SRSStore:
         missing = [key for key in required if key not in evidence]
         if missing:
             raise ValueError(f"missing mastery evidence fields: {', '.join(missing)}")
+        for key in ("evidence_id", "learner_id", "deck_id", "item_id", "benchmark_id"):
+            if not isinstance(evidence[key], str) or not evidence[key].strip():
+                raise ValueError(f"{key} is required")
+        if not isinstance(evidence["division_ids"], list) or any(not isinstance(x, str) or not x for x in evidence["division_ids"]):
+            raise ValueError("division_ids must be a list of non-empty strings")
         if not isinstance(evidence["passed"], bool):
             raise ValueError("passed must be boolean")
         verified = self._utc_string(evidence["verified_at_utc"])
