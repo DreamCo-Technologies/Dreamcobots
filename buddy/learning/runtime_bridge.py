@@ -415,6 +415,11 @@ class BuddyLearningBridge:
             ]
             ranked.sort(key=lambda item: (-item[0], item[1]))
             lessons = [lesson for _, _, lesson in ranked]
+        total_count = len(lessons)
+        page_lessons = lessons[offset:offset + limit]
+        next_offset = offset + len(page_lessons)
+        if next_offset >= total_count:
+            next_offset = None
         items = [{
             "resource_id": lesson.resource_id,
             "lesson_id": lesson.lesson_id,
@@ -449,7 +454,7 @@ class BuddyLearningBridge:
             "mastery_awarded": False,
             "model_weight_training_authorized": False,
             "paid_compute_authorized": False,
-        } for lesson in lessons[:limit]]
+        } for lesson in page_lessons]
         return {
             "schema": "dreamco.buddy_bootcamp_learning_queue.v1",
             **owner,
@@ -458,7 +463,11 @@ class BuddyLearningBridge:
             "catalog_lesson_count": len(catalog_lessons),
             "study_ready_count": sum(lesson.content_status == "authored" for lesson in lessons),
             "authoring_backlog_count": sum(lesson.content_status != "authored" for lesson in lessons),
-            "available_count": len(lessons),
+            "available_count": total_count,
+            "total_count": total_count,
+            "offset": offset,
+            "next_offset": next_offset,
+            "has_more": next_offset is not None,
             "returned_count": len(items),
             "track_ids": sorted({lesson.track_id for lesson in lessons}),
             "items": items,
