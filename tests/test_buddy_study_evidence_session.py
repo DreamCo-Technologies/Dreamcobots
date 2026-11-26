@@ -9,6 +9,7 @@ from tools.run_buddy_study_evidence_session import (
     select_priority_lessons,
     validate_division_packet,
     validate_role_markers,
+    worked_bpe_pair_example,
 )
 
 
@@ -77,6 +78,13 @@ export const Profiles = {
             validate_role_markers(
                 "<|system|>s<|user|>u<|assistant|>a<|tool|>t<|root|>"
             )
+
+    def test_worked_bpe_example_uses_byte_pair_counts_and_checks_first_merge(self):
+        result = worked_bpe_pair_example()
+        self.assertTrue(result["passed"])
+        self.assertEqual(result["selected_pair"], "ab")
+        self.assertEqual(result["selected_frequency"], 4)
+        self.assertEqual(result["first_trainer_merge"]["token_hex"], "6162")
 
     def test_tokenizer_checkpoint_mismatch_is_rejected(self):
         self.assertTrue(check_compatibility("a" * 64, "a" * 64))
