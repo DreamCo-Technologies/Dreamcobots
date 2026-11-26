@@ -14,6 +14,17 @@ on:
       - "original-bots/**"
       - "config/full-system-operational-certification.json"
       - "config/runtime-connection-evidence.json"
+      - "config/generated/division-huggingface-taxonomy-map.json"
+      - "config/generated/division-resource-readiness-map.json"
+      - "config/review/masterbot-domain-owner-review.json"
+      - "tools/build_division_huggingface_taxonomy_map.py"
+      - "tools/build_division_resource_readiness_map.py"
+      - "tools/run_bot_fleet_e2e.ts"
+      - "reports/BOT_FLEET_E2E.md"
+      - "website/data/bot-fleet-e2e.json"
+      - "website/data/buddy-capability-certifications.js"
+      - "website/data/bot-capability-tests/**"
+      - "config/review/division-owner-conversation-approval.json"
       - "config/authorized-training-datasets/manifest.json"
       - "config/buddy-25m-cpu-architecture-profile.json"
       - "config/buddy-small-cpu-architecture-profile.json"
@@ -24,6 +35,7 @@ on:
       - "tests/test_full_system_operational_certification.py"
       - "tests/test_model_foundry.py"
       - "tests/test_train_buddy_division_model_cli.py"
+      - "tests/test_full_system_certification_workflow_order.py"
       - "package.json"
       - "package-lock.json"
       - ".github/agents/**"
@@ -57,6 +69,12 @@ on:
       - "package-lock.json"
       - ".github/agents/**"
       - ".github/workflows/full-system-certification.yml"
+      - "config/generated/division-huggingface-taxonomy-map.json"
+      - "config/generated/division-resource-readiness-map.json"
+      - "config/review/masterbot-domain-owner-review.json"
+      - "tools/build_division_huggingface_taxonomy_map.py"
+      - "tools/build_division_resource_readiness_map.py"
+      - "config/review/division-owner-conversation-approval.json"
 
 permissions:
   contents: read
@@ -97,7 +115,7 @@ jobs:
 
       - name: Validate certification policies
         run: |
-          python3 -m unittest tests.test_full_system_operational_certification tests.test_trusted_code_delivery tests.test_change_impact_test_policy tests.test_recovery_ontology_workforce_runtime tests.test_unified_bot_cohorts tests.test_model_foundry tests.test_train_buddy_division_model_cli
+          python3 -m unittest tests.test_full_system_operational_certification tests.test_trusted_code_delivery tests.test_change_impact_test_policy tests.test_recovery_ontology_workforce_runtime tests.test_unified_bot_cohorts tests.test_model_foundry tests.test_train_buddy_division_model_cli tests.test_full_system_certification_workflow_order
           node --import tsx --test tests/server-health-runtime-policy.test.ts
 
       - name: Recover and unify legacy bot system
@@ -147,9 +165,9 @@ jobs:
           python3 tools/build_manufacturer_marketplace_catalog.py
           node --import tsx --test tests/business-data-trade-readiness.test.ts
 
-      - name: Run full production verification
-        run: npx tsx tools/run_universal_verification.ts --production
-
+      # Generate every evidence artifact before verification consumes it.
+      # The previous order verified BOT_FLEET_E2E.md before the fleet runner
+      # regenerated it, producing a deterministic stale-report failure.
       - name: Re-verify fleet E2E and inherit canonical sandbox evidence
         run: |
           npm run buddy:fleet:e2e
@@ -163,6 +181,12 @@ jobs:
 
       - name: Smoke-test built production runtime
         run: python3 tools/smoke_production_runtime.py
+
+      - name: Regenerate canonical fleet end-to-end evidence
+        run: node --import tsx tools/run_bot_fleet_e2e.ts
+
+      - name: Run full production verification
+        run: npx tsx tools/run_universal_verification.ts --production
 
       - name: Build full certification receipt
         if: always()
@@ -242,5 +266,9 @@ jobs:
             reports/FULL_SYSTEM_OPERATIONAL_CERTIFICATION.md
             reports/REPOSITORY_SYSTEM_CONNECTIONS.md
             reports/PARALLEL_BENCHMARK_GAP_REGISTRY.md
+            reports/BOT_FLEET_E2E.md
+            website/data/bot-fleet-e2e.json
+            website/data/buddy-capability-certifications.js
+            website/data/bot-capability-tests/
           if-no-files-found: warn
           retention-days: 21
