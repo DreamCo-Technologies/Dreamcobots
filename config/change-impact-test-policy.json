@@ -473,7 +473,8 @@
       "tests": [
         "tests/test_buddy_course_track_registry.py",
         "tests/test_buddy_learning_runtime_bridge.py",
-        "tests/test_freecodecamp_specialist_routing.py"
+        "tests/test_freecodecamp_specialist_routing.py",
+        "tests/test_freecodecamp_division_queues.py"
       ]
     },
     {
@@ -541,8 +542,7 @@
     {
       "sources": [
         "tools/build_freecodecamp_division_queues.py",
-        "config/review/freecodecamp-supplemental-domain-learning-approval.json",
-        "config/freecodecamp-division-category-profiles.json"
+        "config/review/freecodecamp-supplemental-domain-learning-approval.json"
       ],
       "tests": [
         "tests/test_freecodecamp_division_queues.py"
@@ -559,6 +559,15 @@
         "tests/test_freecodecamp_study_guides.py"
       ],
       "reason": "Rights-gated FreeCodeCamp video study-guide completeness, original exercises, independent projects and capstone acceptance evidence."
+    },
+    {
+      "sources": [
+        ".github/workflows/buddy-fleet-health.yml"
+      ],
+      "tests": [
+        "tests/test_buddy_fleet_health_workflow.py"
+      ],
+      "reason": "Fleet health must refresh its deterministic E2E report before the strict generated-evidence check."
     }
   ],
   "evidence_rules": {
