@@ -208,3 +208,8 @@ The 55-domain crosswalk currently contains 45 core proposed MasterBot mappings a
 
 The official O*NET 31.0 task-statement JSON export contains 18,838 task rows across 923 unique occupation codes. The ingestion builders recognize the official `row` collection and `onetsoc_code` field, preserve source task IDs, and create occupation/task indexes plus original authoring briefs. Task briefs are authoring candidates, not completed lessons or evidence of occupational competence. Validation and test splits remain excluded from tokenizer training and all mastery claims require separate practical assessment, holdout, and regression evidence.
 
+
+
+### FreeCodeCamp-style lesson completion contract
+
+Every source-aligned guide must preserve the learning sequence used by the current FreeCodeCamp curriculum: **theory** becomes the original explanation and worked examples; **workshops** become guided exercises; **labs** become independently testable projects; **review pages** become concept reviews and debugging playbooks; **quizzes** become knowledge checks with answer keys; and **certification projects** become capstones with at least three acceptance tests and a named evidence artifact. A video metadata row alone cannot satisfy any completion stage.
