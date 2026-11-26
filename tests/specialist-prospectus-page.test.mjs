@@ -43,6 +43,14 @@ test('every generated division gets a prospectus, roster, and questionnaire', ()
   assert.deepEqual(divisions.items.map((division) => division.name).sort(), fleetE2E.divisions.map((division) => division.division).sort());
   assert.ok(divisions.items.every((division) => division.bot_ids.length > 0 && division.evidence_refs.length > 0));
   assert.match(divisionsHtml, /id="division-summary"/);
+  assert.match(divisionsHtml, /id="division-search"/);
+  assert.match(divisionsHtml, /id="division-count"/);
+  assert.match(divisionsHtml, /id="divisions-grid"/);
+  assert.match(divisionsHtml, /id="division-dialog"/);
+  assert.match(divisionsHtml, /id="close-division-dialog"/);
+  assert.match(divisionsHtml, /href="buddy-run.css"/);
+  assert.match(divisionsHtml, /src="buddy-run.js"/);
+  assert.match(divisionsHtml, /src="divisions.js\\?v=2"/);
   assert.match(divisionsSource, /prospectus and local questionnaire for every division/);
   assert.match(divisionsSource, /data-division-prospectus/);
   assert.match(divisionsSource, /id="division-questionnaire"/);
