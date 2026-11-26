@@ -353,7 +353,12 @@ class BuddyLearningBridge:
                     term for term in terms
                     if any(token_matches(term, token) for token in title_tokens)
                 ]
-                score = len(matched_terms) * 5 + len(title_matches) * 20
+                tag_tokens = tokens_for(" ".join(lesson.capability_tags))
+                tag_matches = [
+                    term for term in terms
+                    if any(token_matches(term, token) for token in tag_tokens)
+                ]
+                score = len(matched_terms) * 5 + len(title_matches) * 20 + len(tag_matches) * 15
                 normalized_title = " ".join(
                     token.replace("_", "-")
                     for token in re.findall(r"[a-z0-9][a-z0-9_.+-]*", title.lower())
