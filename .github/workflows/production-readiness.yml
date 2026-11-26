@@ -56,7 +56,7 @@ jobs:
         with:
           python-version: '3.12'
       - name: Test production certification truth rules and workflow safety
-        run: python3 -m unittest tests.test_production_readiness_gate tests.test_production_readiness_workflow -v
+        run: python3 -m unittest tests.test_production_readiness_gate tests.test_production_readiness_workflow tests.test_production_readiness_evidence_manifest -v
       - name: Build revision-bound production evidence manifest
         if: github.event_name != 'pull_request'
         run: |
