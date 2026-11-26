@@ -223,6 +223,11 @@ class BuddyLearningBridge:
         lessons = [
             lesson for lesson in load_course_lessons()
             if lesson.track_id == "universal-software-libraries"
+            and (
+                (not lesson.division_targets or division in lesson.division_targets)
+                if division else
+                (not lesson.masterbot_targets or masterbot in lesson.masterbot_targets)
+            )
         ]
         if query.strip():
             terms = {token for token in re.findall(r"[a-z0-9]+", query.lower()) if len(token) > 1}
