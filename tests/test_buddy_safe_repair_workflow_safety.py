@@ -19,6 +19,8 @@ def test_safe_repair_can_be_dispatched_or_bootstrapped_only_on_main():
     assert "Buddy Open-Source Weekly Bootcamp" in triggers["workflow_run"]["workflows"]
 
     job = workflow["jobs"]["regenerate-and-verify"]
+    checkout = next(step for step in job["steps"] if step.get("uses") == "actions/checkout@v4")
+    assert "if" not in checkout
     assert "github.ref == 'refs/heads/main'" in job["if"]
     assert "github.event_name == 'workflow_dispatch'" in job["if"]
     assert "github.event_name == 'push'" in job["if"]
