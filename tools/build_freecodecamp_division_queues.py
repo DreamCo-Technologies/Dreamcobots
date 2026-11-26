@@ -181,6 +181,10 @@ def build_queues(catalog: dict[str, Any], crosswalk: dict[str, Any], limit: int 
         name = domain["domain_name"]
         subject_terms = [name, name.replace("Dream", "")]
         targeted, has_mapping = _division_categories(name, subject_terms, known, domain_id)
+        # Explicit category profiles are curriculum metadata, not owner approval.
+        # Keep the ten unresolved supplemental domains foundation-only until review.
+        if domain.get("mapping_status") != "proposed_exact_name_match":
+            targeted, has_mapping = set(), False
         required = FOUNDATION | targeted
         scored = []
         for video in videos:
