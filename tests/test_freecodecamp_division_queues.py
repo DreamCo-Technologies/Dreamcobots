@@ -136,6 +136,23 @@ class FreeCodeCampDomainQueueTests(unittest.TestCase):
         self.assertIn("verified complete freeCodeCamp inventory required", str(raised.exception))
 
 
+
+    def test_default_queue_includes_every_relevant_observed_video_for_all_55_domains(self):
+        import json
+        catalog = json.loads((ROOT / "buddy/bootcamp/sources/freecodecamp/catalog.json").read_text(encoding="utf-8"))
+        crosswalk = json.loads((ROOT / "config/generated/masterbot-55-domain-crosswalk.json").read_text(encoding="utf-8"))
+        result = build_queues(catalog, crosswalk, allow_partial=True)
+        validate(result)
+        self.assertIsNone(result["queue_limit_per_domain"])
+        for domain in result["domains"]:
+            required = set(FOUNDATION) | set(domain["target_categories"])
+            expected = {
+                video["video_id"] for video in catalog["videos"]
+                if set(video.get("categories") or []) & required
+            }
+            actual = {item["video_id"] for item in domain["items"]}
+            self.assertEqual(actual, expected, domain["domain_name"])
+
     def test_every_canonical_domain_has_an_explicit_specialist_category_profile(self):
         from pathlib import Path
         import json
