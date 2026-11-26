@@ -167,8 +167,10 @@ class SRSStore:
         prior_json = self._canonical(event["prior_state"])
         provenance_json = self._canonical(event.get("provenance") or {})
         predicted = event.get("predicted_retrievability")
-        if predicted is not None and not 0 <= float(predicted) <= 1:
-            raise ValueError("predicted_retrievability must be between 0 and 1")
+        if predicted is not None:
+            predicted = float(predicted)
+            if not 0 <= predicted <= 1:
+                raise ValueError("predicted_retrievability must be between 0 and 1")
 
         with self._connect() as conn:
             conn.execute("BEGIN IMMEDIATE")
