@@ -186,6 +186,8 @@ jobs:
           python-version: "3.13"
       - run: npm ci
       - run: python3 -m pip install --quiet pyyaml pytest -r requirements-buddy-learning.txt "soundfile>=0.12,<1" "Pillow>=10,<12" "scipy>=1.11,<2"
+      - name: Verify all-run Actions Failure Watch contract
+        run: python3 -m pytest -q tests/test_actions_failure_watch_workflow_safety.py
       - name: Regenerate canonical evidence before folder acceptance
         run: |
           npx tsx tools/generate_bot_fleet_catalog.ts
