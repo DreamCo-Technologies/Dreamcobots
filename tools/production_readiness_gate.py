@@ -50,6 +50,70 @@ def package_json() -> dict:
         return {}
     return json.loads(package_path.read_text())
 
+def probe_live_environment(base_url: str | None, opener=None) -> dict:
+    """Probe the real API health endpoint without exposing production secrets to CI."""
+    if not base_url:
+        return {
+            "status": "external_config_required",
+            "evidence": [],
+            "release_blocker": False,
+            "missing_required": ["DREAMCO_PRODUCTION_API_BASE_URL"],
+            "note": "Set the non-secret API base URL as a repository variable; production credentials stay on the deployment host.",
+        }
+    if not base_url.startswith("https://"):
+        return {
+            "status": "fail",
+            "evidence": [base_url],
+            "release_blocker": True,
+            "note": "Production API health probes must use HTTPS.",
+        }
+
+    health_url = f"{base_url.rstrip('/')}/api/health"
+    request = urllib.request.Request(
+        health_url,
+        headers={
+            "Accept": "application/json",
+            "User-Agent": "DreamCo-Production-Readiness/1.0",
+        },
+    )
+    open_url = opener or urllib.request.urlopen
+    try:
+        with open_url(request, timeout=10) as response:
+            payload = json.loads(response.read().decode("utf-8"))
+    except Exception as exc:
+        return {
+            "status": "fail",
+            "evidence": [health_url],
+            "release_blocker": True,
+            "error_type": type(exc).__name__,
+            "note": "The configured production API health endpoint could not be reached.",
+        }
+
+    if payload.get("ok") is not True:
+        return {
+            "status": "fail",
+            "evidence": [health_url],
+            "release_blocker": True,
+            "note": "The production API health endpoint did not report a healthy process.",
+        }
+
+    required_flags = (
+        "databaseConfigured",
+        "stripeConfigured",
+        "stripeWebhookConfigured",
+        "openaiConfigured",
+        "configurationReady",
+    )
+    missing_flags = [flag for flag in required_flags if payload.get(flag) is not True]
+    return {
+        "status": "external_config_required" if missing_flags else "pass",
+        "evidence": [health_url],
+        "release_blocker": False,
+        "missing_required": missing_flags,
+        "note": "Only boolean configuration state is read; no secret values are sent to CI.",
+    }
+
+
 def check_runtime_contracts() -> list[dict]:
     env_example = read(".env.example")
     gitignore = read(".gitignore")
@@ -151,30 +215,10 @@ def check_runtime_contracts() -> list[dict]:
         },
     ]
 
-    environment_required = [
-        "DATABASE_URL",
-        "STRIPE_WEBHOOK_SECRET",
-    ]
-    environment_any_of = {
-        "stripe_secret_key": ["STRIPE_SECRET_KEY", "STRIPE_LIVE_SECRET_KEY"],
-        "stripe_publishable_key": ["STRIPE_PUBLISHABLE_KEY", "STRIPE_LIVE_PK"],
-        "openai_key": ["AI_INTEGRATIONS_OPENAI_API_KEY", "OPENAI_API_KEY", "OPENAI_ADMIN_KEY"],
-    }
-    missing_required = [name for name in environment_required if not os.environ.get(name)]
-    missing_any_of = {
-        key: options
-        for key, options in environment_any_of.items()
-        if not any(os.environ.get(option) for option in options)
-    }
     checks.append({
         "id": "live_environment_configured",
-        "label": "Current runner has live production environment variables",
-        "status": "pass" if not missing_required and not missing_any_of else "external_config_required",
-        "evidence": [],
-        "release_blocker": False,
-        "missing_required": missing_required,
-        "missing_any_of": missing_any_of,
-        "note": "CI and local scans do not prove customer readiness until deployment secrets are configured in the production host.",
+        "label": "Live production API health confirms database, Stripe, webhook, and OpenAI configuration",
+        **probe_live_environment(os.getenv("DREAMCO_PRODUCTION_API_BASE_URL")),
     })
     return checks
 
