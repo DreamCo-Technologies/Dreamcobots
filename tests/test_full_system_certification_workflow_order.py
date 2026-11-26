@@ -63,7 +63,7 @@ class FullSystemCertificationWorkflowOrderTests(unittest.TestCase):
         root = Path(__file__).resolve().parents[1]
         workflow = (root / ".github/workflows/full-system-certification.yml").read_text(encoding="utf-8")
         pull_request_paths = workflow.split("  pull_request:", 1)[1].split("  workflow_dispatch:", 1)[0]
-        push_paths = workflow.split("  push:", 1)[1].split("\\npermissions:", 1)[0]
+        push_paths = workflow.split("  push:", 1)[1].split("\npermissions:", 1)[0]
         required = (
             "config/change-impact-test-policy.json",
             "tests/test_change_impact_test_policy.py",
