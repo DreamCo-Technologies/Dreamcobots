@@ -10,3 +10,8 @@ def test_github_pages_deploy_requires_manual_dispatch_on_main():
     condition = workflow["jobs"]["deploy"]["if"]
     assert "github.event_name == 'workflow_dispatch'" in condition
     assert "github.ref == 'refs/heads/main'" in condition
+
+    frontier_workflow = (ROOT / ".github/workflows/frontier-claim-trust-gate.yml").read_text(encoding="utf-8")
+    assert ".github/workflows/deploy-buddy-pages.yml" not in frontier_workflow
+    build_steps = workflow["jobs"]["build"]["steps"]
+    assert any("tools/check_frontier_claim_trust_gates.py" in str(step.get("run", "")) for step in build_steps)
