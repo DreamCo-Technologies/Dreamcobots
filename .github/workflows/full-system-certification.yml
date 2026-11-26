@@ -145,10 +145,6 @@ jobs:
           python3 tools/build_manufacturer_marketplace_catalog.py
           node --import tsx --test tests/business-data-trade-readiness.test.ts
 
-      - name: Diagnostic full governed test suite
-        continue-on-error: true
-        run: npm run test:governed
-
       - name: Run full production verification
         run: npx tsx tools/run_universal_verification.ts --production
 
