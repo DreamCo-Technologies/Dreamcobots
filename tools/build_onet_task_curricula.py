@@ -106,7 +106,7 @@ def build(rows: list[dict[str, str]], version: str) -> dict[str, Any]:
     )
     seen_tasks: set[tuple[str, str]] = set()
     for row in rows:
-        code = pick(row, "O*NET-SOC Code", "O*NET SOC Code", "occupation code")
+        code = pick(row, "O*NET-SOC Code", "O*NET SOC Code", "onetsoc_code", "occupation code")
         task_id = pick(row, "Task ID", "task id", "id")
         title = pick(row, "Task", "Task Statement", "task statement", "title")
         if not code or not task_id or not title or (code, task_id) in seen_tasks:
