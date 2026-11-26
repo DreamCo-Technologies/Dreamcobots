@@ -411,7 +411,7 @@ def run_existing_trainer_tests(root: Path) -> dict[str, Any]:
         try:
             result = subprocess.run(command, cwd=root, capture_output=True, text=True, timeout=180, check=False)
             output = (result.stdout or "") + (result.stderr or "")
-            match = re.search(r"Ran\\s+(\\d+)\\s+tests?", output)
+            match = re.search(r"Ran\s+(\d+)\s+tests?", output)
             suite_result = {
                 "suite": suite_name,
                 "command": command,
