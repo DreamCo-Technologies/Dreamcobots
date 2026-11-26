@@ -196,3 +196,16 @@ Continue full forensic review from the newest unreviewed PRs, prioritizing #1820
 - PR #18216 remains draft. Its current-head checks are in progress; the initial focused Bootcamp run found 8/8 catalog tests and 7/7 queue tests passing, plus 13/14 route tests passing. The one failure was a test-fixture omission (`video_count`); it was fixed in head commit `028f3d0c3138e66a9cd54280cc81ba1b7c463083`. Re-run evidence is pending.
 - The weekly transcript report artifact on PR #18216 is `BLOCKED`: transcript_count=0, evaluated_count=0, due_count=0, coverage=null, reason=`approved_transcript_manifest_missing`.
 - The Markdown audit check fails because three generated evidence files are stale against the new Markdown docs; see the PR #18216 blocker record. No merge is permitted until current-head checks and the audit evidence are reconciled.
+
+## Current metadata refresh — 2026-11-26
+
+- Baseline: `main` at `c1abafe8991e175df9330502ac9381652246675b`.
+- Complete paginated PR metadata inventory: **1070 records**, **11 non-empty pages**, page 12 empty.
+- Current state counts: **68 open**, **1002 closed**, **711 merged**, **291 closed-unmerged**.
+- Machine-readable snapshot: [2026-11-26 PR inventory](pr-inventory-snapshots/2026-11-26.json).
+- This refresh is metadata-only. It does not mark PRs fully forensically reviewed; each PR still requires current-head diff, commits, comments, review threads, linked issues, exact-SHA checks/logs, and integration disposition.
+- Current Markdown inventory: **1762 .md/.mdx files** across **18 deterministic batches** of 100; manifest: [2026-11-26 Markdown inventory](markdown-inventory/2026-11-26.json). This is a path/blob inventory, not a content review.
+- The prior generated Markdown audit reported 1760 scanned at 2026-11-26T13:27:50Z; the current tree contains 1762, a difference of 2. Re-run the content audit on this exact baseline before claiming complete coverage.
+- Focused current PR observations: #18651 is open at head `ee60b6cc8b63c3b6ac7f1a9291f4b99aa1bc3872` with no submitted reviews or inline review threads; CodeRabbit left only a rate-limit notice, and CodeQL was still in progress at inspection. #18638 is open and reported non-mergeable at head `1703c208907b3561bfd9d0cb0d8c7edc44ed70aa`; its base SHA is stale relative to this main baseline and it requires rebase/current-head verification before integration.
+
+These inventories are audit inputs only. They do not certify production readiness, live Pages health, model-weight training, or successful integration.
