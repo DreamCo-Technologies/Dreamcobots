@@ -266,6 +266,10 @@ jobs:
           fi
       - name: Discover freeCodeCamp channel videos and categorize
         run: python tools/sync_freecodecamp_catalog.py
+      - name: Synchronize derived learning inventory counts
+        run: |
+          python tools/sync_freecodecamp_learning_inventory.py
+          python tools/sync_freecodecamp_learning_inventory.py --check
       - name: Validate freeCodeCamp catalog and tests
         run: |
           python tools/sync_freecodecamp_catalog.py --check
