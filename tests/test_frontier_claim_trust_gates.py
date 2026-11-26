@@ -169,5 +169,25 @@ class FrontierClaimTrustGatesTest(unittest.TestCase):
             self.assertFalse(result["gates"]["sandbox_soak"])
 
 
+    def test_generated_status_and_catalog_data_do_not_trigger_strict_frontier_claim_gate(self) -> None:
+        workflow = Path(__file__).resolve().parents[1] / ".github" / "workflows" / "frontier-claim-trust-gate.yml"
+        text = workflow.read_text(encoding="utf-8")
+        self.assertNotIn('website/data/*status*', text)
+        self.assertNotIn('website/data/*benchmark*', text)
+        self.assertNotIn('website/data/*model*', text)
+        self.assertIn('website/data/*frontier*', text)
+        self.assertIn('website/data/*claim*', text)
+
+
+    def test_strict_frontier_certification_runs_only_for_actual_claim_surface_changes(self) -> None:
+        workflow = Path(__file__).resolve().parents[1] / ".github" / "workflows" / "frontier-claim-trust-gate.yml"
+        text = workflow.read_text(encoding="utf-8")
+        self.assertIn("claim-surface-scope:", text)
+        self.assertIn("needs: [claim-surface-scope]", text)
+        self.assertIn("if: needs.claim-surface-scope.outputs.required == 'true'", text)
+        self.assertIn("website/data/*frontier*", text)
+        self.assertIn("website/data/*claim*", text)
+
+
 if __name__ == "__main__":
     unittest.main()
