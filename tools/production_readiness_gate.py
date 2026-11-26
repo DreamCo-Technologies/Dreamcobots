@@ -60,15 +60,25 @@ def probe_live_environment(base_url: str | None, opener=None) -> dict:
             "missing_required": ["DREAMCO_PRODUCTION_API_BASE_URL"],
             "note": "Set the non-secret API base URL as a repository variable; production credentials stay on the deployment host.",
         }
-    if not base_url.startswith("https://"):
+    parsed_url = urllib.parse.urlsplit(base_url)
+    if (
+        parsed_url.scheme != "https"
+        or not parsed_url.netloc
+        or parsed_url.username
+        or parsed_url.password
+        or parsed_url.query
+        or parsed_url.fragment
+    ):
         return {
             "status": "fail",
-            "evidence": [base_url],
+            "evidence": [],
             "release_blocker": True,
-            "note": "Production API health probes must use HTTPS.",
+            "note": "Production API health probes require a clean HTTPS base URL without embedded credentials, query, or fragment.",
         }
 
-    health_url = f"{base_url.rstrip('/')}/api/health"
+    base_path = parsed_url.path.rstrip("/")
+    health_path = f"{base_path}/health" if base_path.endswith("/api") else f"{base_path}/api/health"
+    health_url = urllib.parse.urlunsplit(("https", parsed_url.netloc, health_path, "", ""))
     request = urllib.request.Request(
         health_url,
         headers={
@@ -87,6 +97,14 @@ def probe_live_environment(base_url: str | None, opener=None) -> dict:
             "release_blocker": True,
             "error_type": type(exc).__name__,
             "note": "The configured production API health endpoint could not be reached.",
+        }
+
+    if not isinstance(payload, dict):
+        return {
+            "status": "fail",
+            "evidence": [health_url],
+            "release_blocker": True,
+            "note": "The production API health endpoint returned a non-object JSON payload.",
         }
 
     if payload.get("ok") is not True:
