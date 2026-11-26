@@ -77,50 +77,37 @@ HOLDOUT_TEXTS = (
 RECALL_ITEMS = (
     {
         "question": "What does deterministic byte-level BPE learn?",
-        "response": "It counts adjacent byte pairs, repeatedly merges the most frequent pair deterministically, and records the merge sequence.",
+        "reference_answer": "It counts adjacent byte pairs, repeatedly merges the most frequent pair deterministically, and records the merge sequence.",
         "required": ["adjacent byte pairs", "most frequent pair", "deterministically"],
     },
     {
         "question": "Why can byte-level encoding preserve valid Unicode text?",
-        "response": "It represents the UTF-8 byte sequence, so valid Unicode text can be encoded and decoded without loss when the byte sequence is preserved.",
+        "reference_answer": "It represents the UTF-8 byte sequence, so valid Unicode text can be encoded and decoded without loss when the byte sequence is preserved.",
         "required": ["utf-8", "byte sequence", "without loss"],
     },
     {
         "question": "Which manifest checks must pass before corpus training?",
-        "response": "The manifest requires rights_verified, model_training_permission, and privacy_reviewed to be true, with holdout false and sensitive false.",
+        "reference_answer": "The manifest requires rights_verified, model_training_permission, and privacy_reviewed to be true, with holdout false and sensitive false.",
         "required": ["rights_verified", "model_training_permission", "privacy_reviewed", "holdout false", "sensitive false"],
     },
     {
         "question": "How must a held-out set be treated?",
-        "response": "A held-out set is separate evaluation data and is not used for training, vocabulary construction, or model selection.",
+        "reference_answer": "A held-out set is separate evaluation data and is not used for training, vocabulary construction, or model selection.",
         "required": ["held-out", "not used for training", "vocabulary construction", "model selection"],
     },
     {
         "question": "What is the difference between tokenizer and model-weight training?",
-        "response": "Tokenizer training creates a tokenizer artifact; it does not train neural model weights or create a model checkpoint.",
+        "reference_answer": "Tokenizer training creates a tokenizer artifact; it does not train neural model weights or create a model checkpoint.",
         "required": ["tokenizer artifact", "does not train", "model weights", "checkpoint"],
     },
     {
         "question": "What evidence belongs in a tokenizer release record?",
-        "response": "A release record includes the source hash, corpus provenance, artifact hash, compatibility tests, and rollback metadata.",
+        "reference_answer": "A release record includes the source hash, corpus provenance, artifact hash, compatibility tests, and rollback metadata.",
         "required": ["source hash", "provenance", "artifact hash", "rollback"],
     },
 )
 
-GLOSSARY_CANDIDATES = (
-    ("tokenizer", "A component that converts text into tokens."),
-    ("byte-level BPE", "A byte-based subword method that repeatedly merges frequent adjacent byte pairs."),
-    ("vocabulary", "The set of token byte sequences available to an encoder."),
-    ("merge", "A deterministic operation that combines two adjacent symbols into one token."),
-    ("UTF-8", "The byte encoding used to represent Unicode text."),
-    ("normalization", "A defined text transformation that may change code points and offsets."),
-    ("round-trip", "The property that decoding encoded text reproduces the original text exactly."),
-    ("holdout", "Evaluation-only data excluded from fitting, vocabulary construction, and model selection."),
-    ("provenance", "Recorded source identity, path, version or revision, content hash, and rights evidence."),
-    ("model weights", "The learned neural-network parameters; they are not updated by tokenizer training."),
-    ("special tokens", "Reserved markers such as message roles or tool boundaries that must remain atomic."),
-    ("byte coverage", "The ability to represent the input byte sequence, which does not by itself guarantee semantic quality."),
-)
+
 
 
 def sha256_bytes(value: bytes) -> str:
@@ -133,6 +120,38 @@ def canonical_json(value: Any) -> bytes:
 
 def read_json(root: Path, relative: str) -> dict[str, Any]:
     return json.loads((root / relative).read_text(encoding="utf-8"))
+
+
+def load_recall_response_payload(root: Path, response_path: Path) -> dict[str, Any]:
+    """Load learner-authored responses without accepting paths outside the repository."""
+    root_resolved = root.resolve()
+    candidate = response_path if response_path.is_absolute() else root_resolved / response_path
+    resolved = candidate.resolve()
+    try:
+        relative_path = resolved.relative_to(root_resolved)
+    except ValueError as exc:
+        raise PermissionError("active-recall response file must remain inside the repository") from exc
+    if not resolved.is_file():
+        raise FileNotFoundError(f"active-recall response file does not exist: {relative_path}")
+    payload = json.loads(resolved.read_text(encoding="utf-8"))
+    if payload.get("schema") != "dreamco.buddy_active_recall_responses.v1":
+        raise ValueError("unsupported active-recall response schema")
+    learner_id = payload.get("learner_id")
+    responses = payload.get("responses")
+    if not isinstance(learner_id, str) or not learner_id.strip():
+        raise ValueError("active-recall response payload requires a non-empty learner_id")
+    if (
+        not isinstance(responses, list)
+        or len(responses) != len(RECALL_ITEMS)
+        or any(not isinstance(response, str) or not response.strip() for response in responses)
+    ):
+        raise ValueError(f"active-recall response payload requires exactly {len(RECALL_ITEMS)} non-empty responses")
+    return {
+        "learner_id": learner_id.strip(),
+        "responses": [response.strip() for response in responses],
+        "path": relative_path.as_posix(),
+        "sha256": sha256_file(resolved),
+    }
 
 
 def parse_division_profiles(contract_text: str, names: list[str]) -> dict[str, dict[str, Any]]:
@@ -303,16 +322,54 @@ def select_priority_lessons(curriculum: dict[str, Any], limit: int = 5) -> list[
     return selected
 
 
-def score_active_recall() -> dict[str, Any]:
+def score_active_recall(
+    responses: list[str] | None = None,
+    learner_id: str | None = None,
+) -> dict[str, Any]:
+    """Score supplied learner answers; never score a reference answer as recall."""
+    if responses is None:
+        return {
+            "assessment_id": "buddy-tokenizer-active-recall-v2",
+            "status": "blocked_no_learner_responses",
+            "learner_id": None,
+            "response_mode": "no_learner_response_supplied",
+            "independent_model_inference": False,
+            "scoring_method": "required_concept_presence",
+            "items": [
+                {
+                    "question_id": f"recall-{index:02d}",
+                    "question": item["question"],
+                    "learner_response": None,
+                    "required_concepts": item["required"],
+                    "matched_concepts": [],
+                    "missing_concepts": item["required"],
+                    "passed": False,
+                    "score": None,
+                    "status": "not_attempted",
+                }
+                for index, item in enumerate(RECALL_ITEMS, start=1)
+            ],
+            "items_passed": 0,
+            "items_total": len(RECALL_ITEMS),
+            "score": None,
+            "blocker": "No learner responses were supplied; reference answers are not learner responses.",
+        }
+    if not isinstance(responses, list) or len(responses) != len(RECALL_ITEMS):
+        raise ValueError(f"active recall requires exactly {len(RECALL_ITEMS)} learner responses")
+    if not isinstance(learner_id, str) or not learner_id.strip():
+        raise ValueError("active recall requires a non-empty learner_id")
+    if any(not isinstance(response, str) or not response.strip() for response in responses):
+        raise ValueError("active recall responses must be non-empty strings")
+
     items = []
-    for index, item in enumerate(RECALL_ITEMS, start=1):
-        answer = item["response"].lower()
-        matched = [term for term in item["required"] if term.lower() in answer]
-        missing = [term for term in item["required"] if term.lower() not in answer]
+    for index, (item, learner_response) in enumerate(zip(RECALL_ITEMS, responses), start=1):
+        answer = learner_response.casefold()
+        matched = [term for term in item["required"] if term.casefold() in answer]
+        missing = [term for term in item["required"] if term.casefold() not in answer]
         items.append({
             "question_id": f"recall-{index:02d}",
             "question": item["question"],
-            "learner_response": item["response"],
+            "learner_response": learner_response.strip(),
             "required_concepts": item["required"],
             "matched_concepts": matched,
             "missing_concepts": missing,
@@ -321,10 +378,10 @@ def score_active_recall() -> dict[str, Any]:
         })
     passed = sum(1 for item in items if item["passed"])
     return {
-        "assessment_id": "buddy-tokenizer-active-recall-v1",
+        "assessment_id": "buddy-tokenizer-active-recall-v2",
         "status": "completed" if passed == len(items) else "needs_remediation",
-        "learner": "Buddy deterministic study harness",
-        "response_mode": "first_party_reference_answer_fixture",
+        "learner_id": learner_id.strip(),
+        "response_mode": "supplied_learner_response",
         "independent_model_inference": False,
         "scoring_method": "required_concept_presence",
         "items": items,
@@ -335,17 +392,43 @@ def score_active_recall() -> dict[str, Any]:
 
 
 def extract_glossary(source_texts: dict[str, str]) -> list[dict[str, Any]]:
-    glossary = []
-    for term, definition in GLOSSARY_CANDIDATES:
-        source_refs = [path for path, text in source_texts.items() if term.casefold() in text.casefold()]
-        if source_refs:
-            glossary.append({
-                "term": term,
-                "original_definition": definition,
-                "source_refs": source_refs,
-                "source_basis": "first_party_dreamco_material_or_approved_synthetic_ci_fixture",
-            })
-    return glossary
+    """Extract authored Markdown definitions from approved DreamCo and synthetic sources."""
+    definition_line = re.compile(
+        r"^\s*[-*]\s+\*\*(?P<term>[^*]+?)(?::)?\*\*:?\s*(?P<definition>\S.*)$"
+    )
+    extracted: dict[str, dict[str, Any]] = {}
+    for path, source_text in source_texts.items():
+        if not (path.startswith("docs/") or path.startswith("data/buddy-authorized-corpora/")):
+            continue
+        for line_number, line in enumerate(source_text.splitlines(), start=1):
+            match = definition_line.match(line)
+            if not match:
+                continue
+            term = match.group("term").strip().rstrip(":").strip()
+            definition = match.group("definition").strip()
+            if not term or not definition:
+                continue
+            key = term.casefold()
+            source_ref = {"path": path, "line": line_number}
+            if key in extracted:
+                entry = extracted[key]
+                entry["source_refs"].append(source_ref)
+                if definition != entry["definition"] and definition not in entry["definition_variants"]:
+                    entry["definition_variants"].append(definition)
+            else:
+                extracted[key] = {
+                    "term": term,
+                    "definition": definition,
+                    "definition_variants": [],
+                    "source_refs": [source_ref],
+                    "extraction_method": "markdown_bold_definition_line",
+                    "source_basis": (
+                        "first_party_dreamco_instruction"
+                        if path.startswith("docs/")
+                        else "approved_synthetic_ci_fixture"
+                    ),
+                }
+    return [extracted[key] for key in sorted(extracted)]
 
 
 def check_compatibility(tokenizer_hash: str, checkpoint_tokenizer_hash: str) -> bool:
@@ -627,7 +710,10 @@ def run_heldout_assessment(
 def build_division_results(
     canonical: dict[str, Any], selected_lessons: list[dict[str, Any]],
     material: dict[str, Any], commit_sha: str, global_activity_status: str,
+    blocked_activities: list[str] | None = None,
 ) -> list[dict[str, Any]]:
+    blocked_activities = list(blocked_activities or [])
+    activity_passed = global_activity_status in {"passed", "passed_with_blockers"}
     known_ids = {str(row["id"]) for row in canonical["divisions"]}
     results = []
     for index, division in enumerate(canonical["divisions"]):
@@ -652,19 +738,21 @@ def build_division_results(
         }
         packet["output_hash"] = sha256_bytes(canonical_json(packet))
         packet_passed = validate_division_packet(packet, known_ids, material["corpus_sha256"])
-        completed = packet_passed and global_activity_status == "passed"
+        completed = packet_passed and activity_passed
         results.append({
             "division_id": division_id, "division_name": name, "domain_tier": division.get("domain_tier"),
             "attempted": True,
             "activity_status": "completed_shared_foundation" if completed else "failed",
+            "blocked_subactivities": blocked_activities,
             "lesson_results": [
                 {
                     "lesson_id": lesson["lesson_id"], "title": lesson["title"],
                     "priority_rank": lesson["priority_rank"],
                     "scheduler_priority_score": lesson["scheduler_priority_score"],
                     "priority_reason": lesson["priority_reason"],
-                    "activity_status": "completed" if global_activity_status == "passed" else "failed",
+                    "activity_status": "completed" if activity_passed else "failed",
                     "shared_activity_reused": True, "domain_application_focus": focus_area,
+                    "blocked_subactivities": blocked_activities,
                 }
                 for lesson in selected_lessons
             ],
@@ -705,6 +793,9 @@ def run_session(args: argparse.Namespace) -> int:
     now_local = now_utc.astimezone(ZoneInfo("America/Chicago"))
 
     material = load_first_party_material(root)
+    recall_payload = load_recall_response_payload(root, args.recall_responses) if args.recall_responses else None
+    if recall_payload:
+        material["input_hashes"][recall_payload["path"]] = recall_payload["sha256"]
     canonical = load_canonical_context(root)
     selected = select_priority_lessons(material["curriculum"], args.lesson_limit)
     if args.max_divisions < 1 or args.max_divisions > 55:
@@ -719,7 +810,10 @@ def run_session(args: argparse.Namespace) -> int:
     if test_results["status"] != "passed":
         failures.append({"stage": "existing_trainer_tests", "reason": test_results["output_tail"]})
 
-    active_recall = score_active_recall()
+    active_recall = (
+        score_active_recall(recall_payload["responses"], recall_payload["learner_id"])
+        if recall_payload else score_active_recall()
+    )
     glossary = extract_glossary(material["glossary_sources"])
     if len(glossary) < 8:
         failures.append({"stage": "glossary_extraction", "reason": f"only {len(glossary)} first-party terms were found"})
@@ -752,8 +846,8 @@ def run_session(args: argparse.Namespace) -> int:
         except Exception as exc:
             failures.append({"stage": "heldout_assessment", "reason": str(exc)})
 
-    if active_recall["status"] != "completed":
-        failures.append({"stage": "active_recall", "reason": "one or more recall items missed required concepts"})
+    if active_recall["status"] == "needs_remediation":
+        failures.append({"stage": "active_recall", "reason": "one or more supplied learner responses missed required concepts"})
     if tokenizer_cli.get("status") != "passed" and not any(row["stage"] == "tokenizer_training" for row in failures):
         failures.append({"stage": "tokenizer_training", "reason": tokenizer_cli.get("status", "not completed")})
     if exercises.get("status") != "passed":
@@ -761,12 +855,21 @@ def run_session(args: argparse.Namespace) -> int:
     if heldout.get("status") != "passed":
         failures.append({"stage": "heldout_assessment", "reason": heldout.get("status", "not completed")})
 
-    global_status = "passed" if (
-        test_results["status"] == "passed" and active_recall["status"] == "completed"
-        and len(glossary) >= 8 and tokenizer_cli.get("status") == "passed"
-        and exercises.get("status") == "passed" and heldout.get("status") == "passed"
-    ) else "failed"
-    division_results = build_division_results(canonical, selected, material, commit_sha, global_status)
+    runnable_checks_passed = (
+        test_results["status"] == "passed" and len(glossary) >= 8
+        and tokenizer_cli.get("status") == "passed" and exercises.get("status") == "passed"
+        and heldout.get("status") == "passed"
+    )
+    if runnable_checks_passed and active_recall["status"] == "completed":
+        global_status = "passed"
+    elif runnable_checks_passed and active_recall["status"] == "blocked_no_learner_responses":
+        global_status = "passed_with_blockers"
+    else:
+        global_status = "failed"
+    blocked_activities = ["active_recall"] if active_recall["status"] == "blocked_no_learner_responses" else []
+    division_results = build_division_results(
+        canonical, selected, material, commit_sha, global_status, blocked_activities
+    )
     completed = sum(1 for row in division_results if row["activity_status"] == "completed_shared_foundation")
     failed = len(division_results) - completed
     mapping_pending = sum(1 for row in division_results if row["specialist_mapping"]["owner_review_required"])
@@ -778,6 +881,7 @@ def run_session(args: argparse.Namespace) -> int:
         "completed_shared_foundation_count": completed,
         "failed_count": failed,
         "specialist_mapping_pending_owner_review_count": mapping_pending,
+        "blocked_subactivity_ids": blocked_activities,
         "results": division_results,
     }
     write_json(output_dir / "division-results.json", division_output)
@@ -826,18 +930,32 @@ def run_session(args: argparse.Namespace) -> int:
             "extracted_section": "DreamCo-authored learning path onward; link-only reference section excluded" if path == STUDY_GUIDE_PATH else None,
             "external_content_accessed": False,
         })
+    if recall_payload:
+        source_provenance.append({
+            "path": recall_payload["path"],
+            "sha256": recall_payload["sha256"],
+            "kind": "learner_supplied_active_recall_response",
+            "rights_basis": "learner_authored_response_payload",
+            "used_for_study": False,
+            "used_for_session": True,
+            "extracted_section": None,
+            "external_content_accessed": False,
+        })
 
     blockers = [
         "No external videos, transcripts, or third-party documentation were accessed; item-level rights were not verified in this run.",
         "The 45 proposed exact-name and 10 unresolved specialist mappings remain pending owner review; no specialist owner was assigned.",
         "No neural model-weight training or distillation was performed or authorized.",
         "This is a shared-foundation session, not completion of each division's specialist curriculum or mastery gate.",
-        "The learner harness uses fixed first-party reference-answer fixtures; no independent Buddy model inference was invoked.",
     ]
+    if active_recall["status"] == "blocked_no_learner_responses":
+        blockers.append(
+            "Active recall is blocked: no learner response file or Buddy inference result was supplied; reference answers are not counted as learning."
+        )
     evidence = {
         "schema": "dreamco.buddy_study_session_evidence.v1",
         "session_id": f"buddy-study-{run_id}-{now_utc.strftime('%Y%m%dT%H%M%SZ')}",
-        "status": "completed_with_boundaries" if global_status == "passed" else "partial_failure",
+        "status": "completed_with_boundaries" if global_status in {"passed", "passed_with_blockers"} else "partial_failure",
         "created_at_utc": now_utc.isoformat(), "created_at_local": now_local.isoformat(),
         "commit_sha": commit_sha, "workflow_run_id": run_id, "workflow_run_url": run_url,
         "artifact_name": f"buddy-study-evidence-{run_id}",
@@ -852,6 +970,8 @@ def run_session(args: argparse.Namespace) -> int:
             "external_sources_used": [], "external_material_accessed": False,
             "paid_compute_used": False, "secrets_accessed": False,
             "model_weight_training_executed": False,
+            "active_recall_status": active_recall["status"],
+            "blocked_activity_ids": blocked_activities,
         },
         "source_provenance": source_provenance,
         "input_hashes": material["input_hashes"],
@@ -880,6 +1000,11 @@ def run_session(args: argparse.Namespace) -> int:
         name: sha256_file(output_dir / name) for name in output_names if (output_dir / name).is_file()
     }
 
+    active_recall_summary = (
+        f"BLOCKED (no learner responses supplied; {active_recall['items_total']} questions not scored)"
+        if active_recall["status"] == "blocked_no_learner_responses"
+        else f"{active_recall['score']}% ({active_recall['items_passed']}/{active_recall['items_total']})"
+    )
     report = [
         "# Buddy Study Evidence Session", "",
         f"- Status: {evidence['status']}",
@@ -891,7 +1016,7 @@ def run_session(args: argparse.Namespace) -> int:
         f"- Specialist mappings awaiting owner review: {mapping_pending}",
         f"- Shared platform MasterBots: {canonical['platform_masterbot_count']} of {canonical['masterbot_count']} lanes",
         f"- Selected lessons per division: {len(selected)}",
-        f"- Active recall: {active_recall['score']}% ({active_recall['items_passed']}/{active_recall['items_total']})",
+        f"- Active recall: {active_recall_summary}",
         f"- Held-out assessment: {heldout.get('score', 0)}% ({heldout.get('cases_passed', 0)}/{heldout.get('cases_total', 0)})",
         f"- Glossary terms extracted: {len(glossary)}",
         f"- Tokenizer: {tokenizer_summary['status']}; vocabulary {tokenizer_summary.get('actual_vocab_size')}; SHA-256 {tokenizer_hash}",
@@ -931,7 +1056,7 @@ def run_session(args: argparse.Namespace) -> int:
         "evidence_path": str(output_dir / "study-session-evidence.json"),
         "checksums_path": str(output_dir / "checksums.json"),
     }, indent=2, ensure_ascii=False))
-    return 0 if global_status == "passed" and not failures else 1
+    return 0 if global_status in {"passed", "passed_with_blockers"} and not failures else 1
 
 
 def main() -> int:
@@ -942,6 +1067,10 @@ def main() -> int:
     parser.add_argument("--max-divisions", type=int, default=55)
     parser.add_argument("--lesson-limit", type=int, default=5)
     parser.add_argument("--vocab-size", type=int, default=512)
+    parser.add_argument(
+        "--recall-responses", type=Path, default=None,
+        help="repository-local JSON file with learner_id and six responses; omitted means recall is blocked",
+    )
     args = parser.parse_args()
     if args.lesson_limit < 1 or args.lesson_limit > len(LESSON_PRIORITY):
         parser.error(f"--lesson-limit must be between 1 and {len(LESSON_PRIORITY)}")
