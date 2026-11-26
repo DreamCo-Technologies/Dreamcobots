@@ -27,6 +27,22 @@ class BuddyCourseTrackRegistryTests(unittest.TestCase):
         fcc = load("config/freecodecamp-complete-learning-path.json")
         hf_full = load("config/buddy-huggingface-full-learning-map.json")
         fcc_catalog = load("buddy/bootcamp/sources/freecodecamp/catalog.json")
+        fcc_routing = load("config/freecodecamp-division-routing-overrides.json")
+        specialist_video_ids = {str(row.get("video_id")) for row in fcc_routing.get("entries", [])}
+        for video in fcc_catalog["videos"]:
+            searchable = f"{video.get('title', '')} {video.get('description', '')}".casefold()
+            categories = {str(value).casefold() for value in video.get("categories", [])}
+            if any(
+                any(str(term).casefold() in searchable for term in rule.get("match_title_terms", []))
+                or bool(categories.intersection(str(value).casefold() for value in rule.get("match_categories", [])))
+                for rule in fcc_routing.get("routing_rules", [])
+            ):
+                specialist_video_ids.add(str(video["video_id"]))
+        triage_video_ids = {
+            str(video["video_id"]) for video in fcc_catalog["videos"]
+            if {str(value).casefold() for value in video.get("categories", [])} == {"other_or_unclassified"}
+            and str(video["video_id"]) not in specialist_video_ids
+        }
         library_ecosystems = load("config/library_ecosystems.json")
         library_seed_catalog = load("data/buddy-library-seed-catalog.json")
         workforce = load("config/buddy-workforce-entrepreneurship-bootcamp.json")
@@ -47,7 +63,7 @@ class BuddyCourseTrackRegistryTests(unittest.TestCase):
             + len(fcc["official_platform_inventory"]["curriculum_primitives"]) + 1
             + len(fcc["study_sequence"]) + len(fcc["video_learning_tracks"])
             + len(hf_full["official_courses"]) + len(hf_full["ecosystem_modules"])
-            + len(fcc_catalog["videos"])
+            + len(fcc_catalog["videos"]) + len(specialist_video_ids) + len(triage_video_ids)
             + len(library_ecosystems["ecosystems"])
             + len(library_seed_catalog["candidates"])
             + sum(len(path["subjects"]) for path in workforce["training_paths"])
@@ -60,7 +76,7 @@ class BuddyCourseTrackRegistryTests(unittest.TestCase):
         self.assertTrue(any(lesson.lesson_id == "fcc-primitive-workshops" for lesson in fcc_lessons))
         self.assertEqual(len({lesson.resource_id for lesson in lessons}), len(lessons))
         self.assertEqual(len({(lesson.track_id, lesson.lesson_id) for lesson in lessons}), len(lessons))
-        expected = {"tolkien", "tokenizer", "cpu-first-llm", "onet", "hugging-face", "freecodecamp", "huggingface-full", "freecodecamp-video-catalog", "universal-software-libraries", "workforce-entrepreneurship", "benchmark-guides"}
+        expected = {"tolkien", "tokenizer", "cpu-first-llm", "onet", "hugging-face", "freecodecamp", "huggingface-full", "freecodecamp-video-catalog", "freecodecamp-specialist-learning-paths", "freecodecamp-metadata-triage", "universal-software-libraries", "workforce-entrepreneurship", "benchmark-guides"}
         self.assertEqual({lesson.track_id for lesson in lessons}, expected)
 
     def test_every_canonical_division_receives_the_shared_course_queue(self):
