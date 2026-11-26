@@ -32,6 +32,7 @@ on:
 permissions:
   contents: read
   actions: read
+  checks: read
 
 concurrency:
   group: production-readiness-${{ github.ref }}
@@ -53,6 +54,11 @@ jobs:
           python-version: '3.12'
       - name: Test production certification truth rules and workflow safety
         run: python3 -m unittest tests.test_production_readiness_gate tests.test_production_readiness_workflow -v
+      - name: Build revision-bound production evidence manifest
+        if: github.event_name != 'pull_request'
+        run: |
+          python3 tools/build_production_readiness_evidence_manifest.py --output "$RUNNER_TEMP/production-readiness-area-evidence.json" --wait-seconds 600
+          echo "DREAMCO_PRODUCTION_EVIDENCE_MANIFEST=$RUNNER_TEMP/production-readiness-area-evidence.json" >> "$GITHUB_ENV"
       - name: Run evidence inventory
         run: python3 tools/production_readiness_gate.py | tee production-readiness-report.txt
       - name: Run static site preflight
