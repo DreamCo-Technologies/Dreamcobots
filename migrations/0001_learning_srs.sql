@@ -26,6 +26,10 @@ CREATE TABLE IF NOT EXISTS learning_review_history (
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   CONSTRAINT learning_review_history_event_id_uq UNIQUE (event_id)
 );
+ALTER TABLE learning_review_history
+  ADD COLUMN IF NOT EXISTS desired_retention DOUBLE PRECISION;
+ALTER TABLE learning_review_history
+  ADD COLUMN IF NOT EXISTS scheduler_config JSONB NOT NULL DEFAULT '{}'::jsonb;
 CREATE INDEX IF NOT EXISTS learning_review_history_learner_item_time_idx
   ON learning_review_history (learner_id, deck_id, item_id, reviewed_at, event_id);
 
