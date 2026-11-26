@@ -104,14 +104,14 @@ class ProductionCertificationTruthTests(unittest.TestCase):
                 contract, stale, sha, "DreamCo-Technologies/Dreamcobots", "token",
                 root=root, verify_check=verifier,
             )
-            self.assertEqual(reports[0]["status"], "partial")
+            self.assertEqual(reports[0]["status"], "unknown")
             self.assertTrue(any("SHA" in item for item in reports[0]["evidence_errors"]))
             failed = lambda *args: False
             reports = build_area_reports(
                 contract, manifest, sha, "DreamCo-Technologies/Dreamcobots", "token",
                 root=root, verify_check=failed,
             )
-            self.assertEqual(reports[0]["status"], "partial")
+            self.assertEqual(reports[0]["status"], "unknown")
             self.assertTrue(any("successful" in item for item in reports[0]["evidence_errors"]))
 
     def test_file_discovery_alone_never_marks_an_area_verified(self):
