@@ -84,7 +84,7 @@ class FreeCodeCampDomainQueueTests(unittest.TestCase):
         catalog["inventory_status"] = "partial"
         catalog["inventory"] = {**self.catalog["inventory"], "complete": False}
         with self.assertRaisesRegex(ValueError, "verified complete freeCodeCamp inventory required"):
-            build_queues(catalog, self.crosswalk, limit=10)
+            build_queues(catalog, self.crosswalk)
 
     def test_no_queue_item_is_authorized_for_training_or_media_ingestion(self):
         result = build_queues(self.catalog, self.crosswalk, limit=10)
