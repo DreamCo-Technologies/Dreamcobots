@@ -25,6 +25,7 @@ class FSRSConfig:
     learning_steps_seconds: tuple[int, ...] = (60, 600)
     relearning_steps_seconds: tuple[int, ...] = (600,)
     enable_fuzzing: bool = False
+    parameters: tuple[float, ...] | None = None
 
     def __post_init__(self) -> None:
         if not 0.7 < self.desired_retention < 0.97:
@@ -60,6 +61,7 @@ class FSRSReviewResult:
     prior_state: dict[str, Any]
     resulting_state: dict[str, Any]
     review_log: dict[str, Any]
+    scheduler_config: dict[str, Any]
 
 
 def _utc(value: datetime) -> datetime:
@@ -83,13 +85,16 @@ class FSRSAdapter:
 
     def __init__(self, config: FSRSConfig | None = None) -> None:
         self.config = config or FSRSConfig()
-        self.scheduler = Scheduler(
-            desired_retention=self.config.desired_retention,
+        scheduler_kwargs = {
+            "desired_retention": self.config.desired_retention,
             maximum_interval=self.config.maximum_interval_days,
             learning_steps=[timedelta(seconds=value) for value in self.config.learning_steps_seconds],
             relearning_steps=[timedelta(seconds=value) for value in self.config.relearning_steps_seconds],
-            enable_fuzzing=self.config.enable_fuzzing,
-        )
+            "enable_fuzzing": self.config.enable_fuzzing,
+        }
+        if self.config.parameters is not None:
+            scheduler_kwargs["parameters"] = self.config.parameters
+        self.scheduler = Scheduler(**scheduler_kwargs)
         canonical = json.dumps(self.scheduler.to_dict(), sort_keys=True, separators=(",", ":"))
         self.parameter_set_id = hashlib.sha256(canonical.encode()).hexdigest()[:20]
 
@@ -156,4 +161,5 @@ class FSRSAdapter:
             prior_state=prior_state,
             resulting_state=updated.to_dict(),
             review_log=log.to_dict(),
+            scheduler_config=self.scheduler.to_dict(),
         )
