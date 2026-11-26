@@ -157,11 +157,15 @@ class FreeCodeCampDomainQueueTests(unittest.TestCase):
                 any(set(item["categories"]) & set(row["target_categories"]) for item in row["items"]),
                 row["domain_name"],
             )
-        self.assertTrue(all(not row["target_categories"] for row in unresolved))
-        self.assertTrue(all(row["queue_status"] == "foundation_only_owner_mapping_pending" for row in unresolved))
-        for row in unresolved:
-            foundation = set(row["shared_foundation_categories"])
-            self.assertTrue(all(foundation.intersection(item["categories"]) for item in row["items"]), row["domain_name"])
+        self.assertTrue(all(row["target_categories"] for row in unresolved))
+        self.assertTrue(all(row["queue_status"] == "subject_routed_learning_only_owner_mapping_pending" for row in unresolved))
+        self.assertTrue(all(row["learning_route_status"] == "owner_approved_learning_only" for row in unresolved))
+        self.assertTrue(all(row["masterbot_id"] is None and row["masterbot_ownership_status"] == "unresolved" for row in unresolved))
+        for row in core + unresolved:
+            self.assertTrue(
+                any(set(item["categories"]) & set(row["target_categories"]) for item in row["items"]),
+                row["domain_name"],
+            )
 
 
 if __name__ == "__main__":
