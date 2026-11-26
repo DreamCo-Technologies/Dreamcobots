@@ -179,3 +179,21 @@ Run the focused FreeCodeCamp tests first, then the relevant Buddy Bootcamp workf
 ### Completion definition
 
 This setup is complete only when the refreshed inventory is independently count-verified; every discovered video has a durable catalog/queue record; each guide counted as complete has authorized source evidence, all required sections and human approval; Buddy's practice/evaluation runs are persisted and reproducible; and the relevant CI checks pass. Until then, report exact counts and blocked states rather than calling the entire FreeCodeCamp library complete.
+
+## Specialist division routing and Buddy demonstrations
+
+The public FreeCodeCamp video catalog, metadata routing, original DreamCo briefs, and study-ready lessons are separate states:
+
+- `freecodecamp-video-catalog` stores public metadata only. A title, URL, category, or routing tag is not a transcript, completed lesson, or permission to create a derivative summary.
+- `freecodecamp-specialist-learning-paths` contains 1,232 specialist-routed authoring work items. Nine video IDs have curated original DreamCo implementation briefs; the other 1,223 are generic authoring backlog tasks, not completed summaries or verified video lessons.
+- `freecodecamp-metadata-triage` contains 508 unclassified records assigned to DreamEducation/CommandCore and the DreamDiscovery review lane. These remain metadata-only.
+- The runtime queue filters specialist resources by canonical division and MasterBot targets so they do not leak into unrelated learning queues.
+- All metadata, briefs, authoring tasks, and triage items remain non-study-ready. Buddy must not mark them studied or mastered until item-level rights, original guide content, exercises, assessments, holdout/regression evidence, and human review exist.
+
+The current snapshot has 1,740 public video metadata records and remains marked **partial**. Metadata routing covers 1,232 specialist records and 508 triage records; this is complete routing coverage for the observed snapshot, not complete per-video summarization. The category rules route JavaScript/TypeScript, Java/JVM, frontend/UI, backend/APIs, Python/automation, HTML/CSS/accessibility, computer science, careers/interviews, databases/SQL, mobile, games, generative AI/LLMs, data science, software architecture/testing, C/C++ systems, cybersecurity/privacy, Linux/networking/IT, mathematics/statistics, machine learning, AI agents/MCP, and cloud DevOps/CI/CD.
+
+The nine curated briefs include original implementation work for agentic AI, algorithmic trading (paper-only), PR review, OpenClaw-style automation, self-healing CI/CD, TypeScript, ML foundations, MLOps, and neural networks. The remaining specialist items receive generic rights-gated authoring steps only; those steps are a process scaffold, not a summary of the linked video.
+
+Unclassified records are assigned to DreamEducation and CommandCore for metadata triage, with DreamDiscovery as the review lane. They are not assigned to a guessed technical division and remain metadata-only until a human approves the topic, owner, and source rights.
+
+A successful metadata refresh does not grant transcript, derivative-summary, or training rights. The weekly public-inventory workflow uses metadata enumeration only, uploads the verified catalog and per-video authoring queue as review artifacts, and does not download video media or transcripts, call external models, commit generated data, or run training.
