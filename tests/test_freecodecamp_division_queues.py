@@ -63,6 +63,9 @@ class FreeCodeCampDomainQueueTests(unittest.TestCase):
         self.assertEqual(len(core), 45)
         self.assertTrue(all(row["target_categories"] for row in core))
         self.assertTrue(all(row["queue_status"] == "subject_routed" for row in core))
+        for row in core:
+            target = set(row["target_categories"])
+            self.assertTrue(any(target.intersection(item["categories"]) for item in row["items"]), row["domain_name"])
         self.assertEqual(len(unresolved), 10)
         self.assertTrue(all(not row["target_categories"] for row in unresolved))
         self.assertTrue(all(row["queue_status"] == "foundation_only_owner_mapping_pending" for row in unresolved))
