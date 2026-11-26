@@ -354,7 +354,10 @@ class BuddyLearningBridge:
                     if any(token_matches(term, token) for token in title_tokens)
                 ]
                 score = len(matched_terms) * 5 + len(title_matches) * 20
-                normalized_title = " ".join(tokens_for(title))
+                normalized_title = " ".join(
+                    token.replace("_", "-")
+                    for token in re.findall(r"[a-z0-9][a-z0-9_.+-]*", title.lower())
+                )
                 if query_phrase and query_phrase in normalized_title:
                     score += 100
                 if terms and len(matched_terms) == len(terms):
