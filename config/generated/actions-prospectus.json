@@ -2076,6 +2076,8 @@
         "Regenerate allowlisted deterministic indexes",
         "Regenerate canonical bot fleet catalog after certification drift",
         "Regenerate canonical fleet end-to-end evidence after certification drift",
+        "Regenerate Markdown implementation-gap audit after source inventories",
+        "Regenerate file prospectus after all generated source inventories",
         "Verify repaired indexes and Buddy repair-learning tests",
         "Verify canonical fleet catalog",
         "Verify canonical fleet end-to-end evidence",
@@ -2662,8 +2664,10 @@
       "goal": "repository health",
       "purpose": "Keep the repository inspectable and maintainable",
       "what_happens": [
+        "Validate fleet health workflow contract",
         "Validate fleet catalog",
         "Validate fleet quality contracts",
+        "Regenerate deterministic fleet E2E evidence",
         "Execute bounded fleet E2E checks",
         "Verify routing/runtime contracts"
       ],
@@ -3624,6 +3628,7 @@
       ],
       "benchmark_commands": [],
       "triggers": [
+        "manual",
         "push",
         "pull request"
       ],
@@ -5042,10 +5047,14 @@
       "purpose": "Operate Division Owner Review Queue as a bounded DreamCo repository workflow",
       "what_happens": [
         "Generate and validate owner review queue",
-        "Propose updated review queue"
+        "Snapshot generated queue before PR proposal",
+        "Propose updated review queue",
+        "Preserve generated review queue when PR creation is policy-blocked",
+        "Upload generated owner review queue for manual review"
       ],
       "outputs": [
-        "GitHub Actions run log"
+        "GitHub Actions run log",
+        "declared downloadable or deployment artifact"
       ],
       "benchmark_commands": [],
       "triggers": [
@@ -5064,14 +5073,15 @@
         "concurrency_declared": true,
         "job_timeouts_declared": 1,
         "runner_jobs": 1,
-        "artifacts_declared": false
+        "artifacts_declared": true
       },
       "upgrades": [
         "Publish machine-readable evidence for every run.",
         "Keep external writes behind explicit authorization and bounded policy.",
         "Preserve failures and regressions instead of converting unknown states into passes.",
         "upgrade recommendation: actions/checkout@v4 -> v7",
-        "upgrade recommendation: actions/setup-python@v5 -> v7"
+        "upgrade recommendation: actions/setup-python@v5 -> v7",
+        "upgrade recommendation: actions/upload-artifact@v4 -> v6"
       ],
       "possible_duplicate": false,
       "duplicate_candidate_group": null,
@@ -7133,12 +7143,12 @@
       "runtime_status": "unknown_until_run_evidence_loaded",
       "errors": [],
       "warnings": [],
-      "runner_jobs": 2,
+      "runner_jobs": 3,
       "controls": {
         "permissions_declared": true,
         "concurrency_declared": true,
         "job_timeouts_declared": 2,
-        "runner_jobs": 2,
+        "runner_jobs": 3,
         "artifacts_declared": true
       },
       "upgrades": [
@@ -7163,17 +7173,18 @@
         "Refresh generated verification contracts",
         "Validate certification policies",
         "Recover and unify legacy bot system",
+        "Refresh fleet catalog after legacy bot recovery",
         "Build work business creative government manufacturing and ontology evidence",
         "Refresh internal and external connection truth",
         "Account for every bot division category and specialist agent",
         "Run trusted-code static audit",
         "Build maximum sandbox plan",
         "Run business data and trade readiness tests",
+        "Regenerate canonical fleet end-to-end evidence",
         "Re-verify fleet E2E and inherit canonical sandbox evidence",
         "Run speed and accuracy benchmarks",
         "Supply-chain vulnerability gate",
         "Smoke-test built production runtime",
-        "Regenerate canonical fleet end-to-end evidence",
         "Run full production verification",
         "Build full certification receipt",
         "Build live-user readiness",
@@ -8682,11 +8693,13 @@
       "what_happens": [
         "Checkout",
         "Set up Python",
-        "Test production certification truth rules",
+        "Test production certification truth rules and workflow safety",
+        "Build revision-bound production evidence manifest",
         "Run evidence inventory",
         "Run static site preflight",
         "Run production contract strict gate",
         "Fail closed unless production is fully certified",
+        "Explain report-only pull request result",
         "Upload evidence report"
       ],
       "outputs": [
@@ -8697,6 +8710,7 @@
       "triggers": [
         "manual",
         "push",
+        "pull request",
         "schedule"
       ],
       "github_url": "https://github.com/DreamCo-Technologies/Dreamcobots/actions/workflows/production-readiness.yml",
@@ -9184,6 +9198,7 @@
       "purpose": "Operate Run Everything Now as a bounded DreamCo repository workflow",
       "what_happens": [
         "Install dependencies",
+        "Validate Run Everything mode dependency plans",
         "Refresh generated verification contracts",
         "Verify architecture and benchmark policies",
         "Build O*NET work and AI specialist catalog",
