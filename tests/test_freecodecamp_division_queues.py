@@ -141,7 +141,7 @@ class FreeCodeCampDomainQueueTests(unittest.TestCase):
         }
         with self.assertRaisesRegex(ValueError, "verified complete freeCodeCamp inventory required") as raised:
             build_queues(catalog, self.crosswalk, limit=10, allow_partial=True)
-        self.assertIn("for freeCodeCamp", str(raised.exception))
+        self.assertIn("provisional queue", str(raised.exception))
 
 
 if __name__ == "__main__":
