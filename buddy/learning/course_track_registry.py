@@ -287,14 +287,24 @@ def _rows(track: dict, data: dict, root: Path = ROOT, *, include_blueprint: bool
             for row in data.get("modules", [])
         ]
     if parser == "onet":
-        rows = [
-            {"id": row["id"], "title": row["name"],
-             "objective": f"Understand the O*NET subject {row['name']} and apply its occupational evidence without inferring qualification or authority.",
-             "practice": "Build an original subject guide, connect relevant tasks and tools, and classify AI/human responsibilities.",
-             "assessment": "Pass a source-grounded subject assessment and task-specific suitability review.",
-             "content_status": "authoring_backlog"}
-            for row in data.get("subject_inventory", [])
-        ]
+        rows = []
+        for row in data.get("subject_inventory", []):
+            name = str(row.get("name", ""))
+            normalized_name = name.casefold()
+            worker_requirement_tags = (
+                ["worker requirements", "education training experience", "licensing entry requirements"]
+                if any(term in normalized_name for term in ("education", "training and experience", "licensing", "entry requirements"))
+                else []
+            )
+            rows.append({
+                "id": row["id"],
+                "title": name,
+                "objective": f"Understand the O*NET subject {name} and apply its occupational evidence without inferring qualification or authority.",
+                "practice": "Build an original subject guide, connect relevant tasks and tools, and classify AI/human responsibilities.",
+                "assessment": "Pass a source-grounded subject assessment and task-specific suitability review.",
+                "content_status": "authoring_backlog",
+                "capability_tags": worker_requirement_tags,
+            })
         task_index_path = track.get("task_index_path")
         task_index_file = root / task_index_path if task_index_path else None
         if task_index_file and task_index_file.is_file():
