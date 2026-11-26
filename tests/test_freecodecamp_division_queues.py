@@ -1,4 +1,5 @@
 import unittest
+from pathlib import Path
 from tools.build_freecodecamp_division_queues import DOMAIN_CATEGORY_MAP, build_queues, validate
 
 
@@ -50,6 +51,9 @@ class FreeCodeCampDomainQueueTests(unittest.TestCase):
         self.assertEqual(len({x["domain_id"] for x in result["domains"]}), 55)
         self.assertEqual(sum(x["mapping_status"] == "proposed_exact_name_match" for x in result["domains"]), 45)
         self.assertEqual(sum(x["mapping_status"] == "unresolved" for x in result["domains"]), 10)
+        # Only the three fixture domains with explicit category signals are specialist-routed.
+        self.assertEqual(sum(x["queue_status"] == "subject_routed" for x in result["domains"]), 3)
+        self.assertEqual(sum(x["queue_status"] == "foundation_only_owner_mapping_pending" for x in result["domains"]), 52)
 
     def test_domain_hints_route_specialist_content(self):
         result = build_queues(self.catalog, self.crosswalk, limit=10)
@@ -63,6 +67,10 @@ class FreeCodeCampDomainQueueTests(unittest.TestCase):
         self.assertEqual(food["mapping_status"], "unresolved")
         self.assertIsNone(food["masterbot_id"])
         self.assertTrue(food["owner_review_required"])
+        self.assertEqual(food["queue_status"], "foundation_only_owner_mapping_pending")
+        self.assertEqual(food["target_categories"], [])
+        foundation = set(food["shared_foundation_categories"])
+        self.assertTrue(all(foundation.intersection(item["categories"]) for item in food["items"]))
         self.assertTrue(all(x["assignment_status"] == "queued_not_studied" for x in food["items"]))
 
     def test_camel_case_domain_name_routes_real_estate_specialty(self):
@@ -138,13 +146,22 @@ class FreeCodeCampDomainQueueTests(unittest.TestCase):
         catalog = json.loads((ROOT / "buddy/bootcamp/sources/freecodecamp/catalog.json").read_text(encoding="utf-8"))
         result = build_queues(catalog, crosswalk, limit=10, allow_partial=True)
         validate(result)
-        self.assertTrue(all(row["target_categories"] for row in result["domains"]))
-        self.assertTrue(all(row["queue_status"] == "subject_routed" for row in result["domains"]))
-        for row in result["domains"]:
+        core = [row for row in result["domains"] if row["mapping_status"] == "proposed_exact_name_match"]
+        unresolved = [row for row in result["domains"] if row["mapping_status"] == "unresolved"]
+        self.assertEqual(len(core), 45)
+        self.assertEqual(len(unresolved), 10)
+        self.assertTrue(all(row["target_categories"] for row in core))
+        self.assertTrue(all(row["queue_status"] == "subject_routed" for row in core))
+        for row in core:
             self.assertTrue(
                 any(set(item["categories"]) & set(row["target_categories"]) for item in row["items"]),
                 row["domain_name"],
             )
+        self.assertTrue(all(not row["target_categories"] for row in unresolved))
+        self.assertTrue(all(row["queue_status"] == "foundation_only_owner_mapping_pending" for row in unresolved))
+        for row in unresolved:
+            foundation = set(row["shared_foundation_categories"])
+            self.assertTrue(all(foundation.intersection(item["categories"]) for item in row["items"]), row["domain_name"])
 
 
 if __name__ == "__main__":

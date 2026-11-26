@@ -223,6 +223,11 @@ class BuddyLearningBridge:
         lessons = [
             lesson for lesson in load_course_lessons()
             if lesson.track_id == "universal-software-libraries"
+            and (
+                (not lesson.division_targets or division in lesson.division_targets)
+                if division else
+                (not lesson.masterbot_targets or masterbot in lesson.masterbot_targets)
+            )
         ]
         if query.strip():
             terms = {token for token in re.findall(r"[a-z0-9]+", query.lower()) if len(token) > 1}
@@ -244,7 +249,16 @@ class BuddyLearningBridge:
             "assessment": lesson.assessment,
             "benchmark": lesson.benchmark,
             "source_url": lesson.source_url,
+            "source_video_id": lesson.source_video_id,
             "guide_path": lesson.guide_path,
+            "division_targets": list(lesson.division_targets),
+            "masterbot_targets": list(lesson.masterbot_targets),
+            "capability_tags": list(lesson.capability_tags),
+            "tool_tags": list(lesson.tool_tags),
+            "agent_tags": list(lesson.agent_tags),
+            "learning_modes": list(lesson.learning_modes),
+            "implementation_steps": list(lesson.implementation_steps),
+            "buddy_demo": lesson.buddy_demo,
             "rights_mode": lesson.rights_mode,
             "content_status": lesson.content_status,
             "completion_status": (
@@ -253,7 +267,7 @@ class BuddyLearningBridge:
                 else "authoring_backlog"
             ),
             "study_allowed": lesson.content_status == "authored",
-            "authoring_required": lesson.content_status in {"authoring_backlog", "metadata_only"},
+            "authoring_required": lesson.content_status in {"authoring_backlog", "metadata_only", "original_implementation_brief"},
             "mastery_awarded": False,
             "model_weight_training_authorized": False,
             "paid_compute_authorized": False,
@@ -286,7 +300,16 @@ class BuddyLearningBridge:
             owner = {"masterbot": masterbot}
 
         catalog_lessons = load_course_lessons()
-        lessons = list(catalog_lessons)
+        if division:
+            lessons = [
+                lesson for lesson in catalog_lessons
+                if not lesson.division_targets or division in lesson.division_targets
+            ]
+        else:
+            lessons = [
+                lesson for lesson in catalog_lessons
+                if not lesson.masterbot_targets or masterbot in lesson.masterbot_targets
+            ]
         if query.strip():
             terms = {
                 token.replace("_", "-")
@@ -322,7 +345,16 @@ class BuddyLearningBridge:
             "assessment": lesson.assessment,
             "benchmark": lesson.benchmark,
             "source_url": lesson.source_url,
+            "source_video_id": lesson.source_video_id,
             "guide_path": lesson.guide_path,
+            "division_targets": list(lesson.division_targets),
+            "masterbot_targets": list(lesson.masterbot_targets),
+            "capability_tags": list(lesson.capability_tags),
+            "tool_tags": list(lesson.tool_tags),
+            "agent_tags": list(lesson.agent_tags),
+            "learning_modes": list(lesson.learning_modes),
+            "implementation_steps": list(lesson.implementation_steps),
+            "buddy_demo": lesson.buddy_demo,
             "rights_mode": lesson.rights_mode,
             "content_status": lesson.content_status,
             "completion_status": (
@@ -331,7 +363,7 @@ class BuddyLearningBridge:
                 else "authoring_backlog"
             ),
             "study_allowed": lesson.content_status == "authored",
-            "authoring_required": lesson.content_status in {"authoring_backlog", "metadata_only"},
+            "authoring_required": lesson.content_status in {"authoring_backlog", "metadata_only", "original_implementation_brief"},
             "mastery_awarded": False,
             "model_weight_training_authorized": False,
             "paid_compute_authorized": False,
@@ -340,7 +372,7 @@ class BuddyLearningBridge:
             "schema": "dreamco.buddy_bootcamp_learning_queue.v1",
             **owner,
             "query": query,
-            "scope": "shared_foundation_all_55_canonical_divisions_and_65_masterbot_lanes",
+            "scope": "shared_foundation_plus_specialist_division_and_masterbot_learning_routes",
             "catalog_lesson_count": len(catalog_lessons),
             "study_ready_count": sum(lesson.content_status == "authored" for lesson in lessons),
             "authoring_backlog_count": sum(lesson.content_status != "authored" for lesson in lessons),

@@ -236,7 +236,7 @@ class RuntimeBridgeTests(unittest.TestCase):
         self.assertTrue(all(item["completion_status"] in {"queued_not_studied", "metadata_only", "authoring_backlog"} for item in queue["items"]))
         self.assertTrue(all(item["mastery_awarded"] is False for item in queue["items"]))
         self.assertTrue(all(item["study_allowed"] is (item["content_status"] == "authored") for item in queue["items"]))
-        self.assertTrue(all(item["authoring_required"] is (item["content_status"] in {"metadata_only", "authoring_backlog"}) for item in queue["items"]))
+        self.assertTrue(all(item["authoring_required"] is (item["content_status"] in {"metadata_only", "authoring_backlog", "original_implementation_brief"}) for item in queue["items"]))
         self.assertTrue(all(item["mastery_awarded"] is False for item in queue["items"]))
         self.assertFalse(queue["external_discovery_performed"])
         self.assertFalse(queue["external_model_call_performed"])
@@ -259,6 +259,74 @@ class RuntimeBridgeTests(unittest.TestCase):
             self.bridge.bootcamp_learning_queue(division="DreamCodeLab", limit=101)
         with self.assertRaises(ValueError):
             self.bridge.bootcamp_learning_queue(division="DreamCodeLab", query="x" * 1001)
+
+
+    def test_specialist_learning_paths_are_scoped_and_demonstrable(self):
+        finance = self.bridge.bootcamp_learning_queue(
+            division="DreamFinance", query="algorithmic trading", limit=10
+        )
+        agents = self.bridge.bootcamp_learning_queue(
+            division="DreamAgents", query="algorithmic trading", limit=10
+        )
+        trade = self.bridge.bootcamp_learning_queue(
+            masterbot="DreamTrade", query="algorithmic trading", limit=10
+        )
+        finance_items = [item for item in finance["items"] if item.get("source_video_id") == "zH2Mg782XhA"]
+        agent_items = [item for item in agents["items"] if item.get("source_video_id") == "zH2Mg782XhA"]
+        trade_items = [item for item in trade["items"] if item.get("source_video_id") == "zH2Mg782XhA"]
+        self.assertTrue(any(item["track_id"] == "freecodecamp-specialist-learning-paths" for item in finance_items))
+        self.assertFalse(agent_items)
+        self.assertTrue(any(item["track_id"] == "freecodecamp-specialist-learning-paths" for item in trade_items))
+        path = next(item for item in finance_items if item["track_id"] == "freecodecamp-specialist-learning-paths")
+        self.assertGreaterEqual(len(path["implementation_steps"]), 10)
+        self.assertTrue(path["buddy_demo"])
+        self.assertFalse(path["study_allowed"])
+        self.assertTrue(path["authoring_required"])
+        self.assertEqual(path["completion_status"], "authoring_backlog")
+
+
+    def test_unclassified_video_triage_is_visible_only_to_review_lanes(self):
+        education = self.bridge.bootcamp_learning_queue(
+            division="DreamEducation", query="classification review", limit=10
+        )
+        finance = self.bridge.bootcamp_learning_queue(
+            division="DreamFinance", query="classification review", limit=10
+        )
+        discovery = self.bridge.bootcamp_learning_queue(
+            masterbot="DreamDiscovery", query="classification review", limit=10
+        )
+        education_items = [item for item in education["items"] if item["track_id"] == "freecodecamp-metadata-triage"]
+        finance_items = [item for item in finance["items"] if item["track_id"] == "freecodecamp-metadata-triage"]
+        discovery_items = [item for item in discovery["items"] if item["track_id"] == "freecodecamp-metadata-triage"]
+        self.assertTrue(education_items)
+        self.assertFalse(finance_items)
+        self.assertTrue(discovery_items)
+        item = education_items[0]
+        self.assertEqual(item["content_status"], "metadata_only")
+        self.assertEqual(item["completion_status"], "metadata_only")
+        self.assertFalse(item["study_allowed"])
+        self.assertTrue(item["authoring_required"])
+        self.assertTrue(item["implementation_steps"])
+        self.assertTrue(item["buddy_demo"])
+        self.assertEqual(set(item["learning_modes"]), {
+            "metadata_review", "guided_classification", "rights_check", "human_review"
+        })
+        source_title = item["title"].split(": ", 1)[1]
+        education_metadata = self.bridge.bootcamp_learning_queue(
+            division="DreamEducation", query=source_title, limit=10
+        )
+        finance_metadata = self.bridge.bootcamp_learning_queue(
+            division="DreamFinance", query=source_title, limit=10
+        )
+        self.assertTrue(any(
+            row["track_id"] == "freecodecamp-video-catalog"
+            and row["source_video_id"] == item["source_video_id"]
+            for row in education_metadata["items"]
+        ))
+        self.assertFalse(any(
+            row.get("source_video_id") == item["source_video_id"]
+            for row in finance_metadata["items"]
+        ))
 
 if __name__ == "__main__":
     unittest.main()

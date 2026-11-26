@@ -59,6 +59,9 @@ on:
       - "buddy/bootcamp/sources/TRANSCRIPT_EVALUATION.md"
       - "config/buddy-tolkien-study-track.json"
       - "config/buddy-course-track-registry.json"
+      - "config/freecodecamp-division-routing-overrides.json"
+      - "tests/test_freecodecamp_specialist_routing.py"
+      - ".github/workflows/freecodecamp-study-guide-pipeline.yml"
       - "tools/sync_freecodecamp_learning_inventory.py"
       - "tests/test_freecodecamp_learning_inventory.py"
       - ".github/workflows/freecodecamp-catalog-refresh.yml"
@@ -74,8 +77,12 @@ on:
       - "buddy/learning/buddy_knowledge_router.py"
       - "buddy/learning/runtime_bridge.py"
       - "tests/test_buddy_learning_runtime_bridge.py"
+      - "tests/test_buddy_knowledge_router.py"
       - "tools/build_onet_task_index.py"
+      - "tools/build_onet_task_curricula.py"
       - "tests/test_buddy_onet_task_index.py"
+      - "tests/test_onet_task_curricula.py"
+      - "tests/fixtures/onet-task-statements-official-shape.json"
       - ".github/workflows/buddy-onet-task-index-refresh.yml"
       - "data/onet/**"
       - "buddy/fleet_runtime/router.py"
@@ -186,8 +193,12 @@ on:
       - "buddy/learning/buddy_knowledge_router.py"
       - "buddy/learning/runtime_bridge.py"
       - "tests/test_buddy_learning_runtime_bridge.py"
+      - "tests/test_buddy_knowledge_router.py"
       - "tools/build_onet_task_index.py"
+      - "tools/build_onet_task_curricula.py"
       - "tests/test_buddy_onet_task_index.py"
+      - "tests/test_onet_task_curricula.py"
+      - "tests/fixtures/onet-task-statements-official-shape.json"
       - ".github/workflows/buddy-onet-task-index-refresh.yml"
       - "data/onet/**"
       - "buddy/fleet_runtime/router.py"
@@ -298,16 +309,21 @@ jobs:
           python -m unittest discover -s tests -p 'test_buddy_course_track_registry.py' -v
           python -m unittest discover -s tests -p 'test_buddy_universal_library_registry.py' -v
           python -m unittest discover -s tests -p 'test_buddy_internal_first_learning_router.py' -v
+          python -m unittest discover -s tests -p 'test_buddy_knowledge_router.py' -v
+          python -m unittest discover -s tests -p 'test_buddy_onet_task_index.py' -v
+          python -m unittest discover -s tests -p 'test_onet_task_curricula.py' -v
           python -m unittest discover -s tests -p 'test_buddy_fleet_internal_bootcamp_routing.py' -v
           python -m unittest discover -s tests -p 'test_fleet_runtime_executor.py' -v
           python tools/generate_bot_manifests.py --check
           python -m unittest discover -s tests -p 'test_buddy_library_registry_discovery.py' -v
           python -m unittest discover -s tests -p 'test_freecodecamp_learning_inventory.py' -v
+          python -m unittest discover -s tests -p 'test_freecodecamp_specialist_routing.py' -v
           python -m unittest discover -s tests -p 'test_buddy_library_guide_draft.py' -v
           python tools/build_buddy_library_seed_catalog.py --check
           python -m unittest discover -s tests -p 'test_buddy_library_seed_catalog.py' -v
           python -m unittest discover -s tests -p 'test_buddy_universal_library_curriculum.py' -v
           python -m unittest discover -s tests -p 'test_freecodecamp_learning_inventory.py' -v
+          python -m unittest discover -s tests -p 'test_freecodecamp_specialist_routing.py' -v
           python -m unittest discover -s tests -p 'test_buddy_library_guide_draft.py' -v
           python tools/build_buddy_library_seed_catalog.py --check
           python -m unittest discover -s tests -p 'test_buddy_library_seed_catalog.py' -v
@@ -332,11 +348,15 @@ jobs:
           python -m unittest discover -s tests -p 'test_buddy_course_track_registry.py' -v
           python -m unittest discover -s tests -p 'test_buddy_universal_library_registry.py' -v
           python -m unittest discover -s tests -p 'test_buddy_internal_first_learning_router.py' -v
+          python -m unittest discover -s tests -p 'test_buddy_knowledge_router.py' -v
+          python -m unittest discover -s tests -p 'test_buddy_onet_task_index.py' -v
+          python -m unittest discover -s tests -p 'test_onet_task_curricula.py' -v
           python -m unittest discover -s tests -p 'test_buddy_fleet_internal_bootcamp_routing.py' -v
           python -m unittest discover -s tests -p 'test_fleet_runtime_executor.py' -v
           python tools/generate_bot_manifests.py --check
           python -m unittest discover -s tests -p 'test_buddy_library_registry_discovery.py' -v
           python -m unittest discover -s tests -p 'test_freecodecamp_learning_inventory.py' -v
+          python -m unittest discover -s tests -p 'test_freecodecamp_specialist_routing.py' -v
           python -m unittest discover -s tests -p 'test_buddy_library_guide_draft.py' -v
           python tools/build_buddy_library_seed_catalog.py --check
           python -m unittest discover -s tests -p 'test_buddy_library_seed_catalog.py' -v
