@@ -24,4 +24,16 @@ class ProductionReadinessEvidenceManifestTests(unittest.TestCase):
             manifest = build_manifest(mapping,'a'*40,[],Path(temp))
             self.assertEqual(manifest['areas']['security']['status'],'UNVERIFIED'); self.assertEqual(len(manifest['areas']['security']['resolution_errors']),2)
 
+    def test_critical_area_map_does_not_overclaim_missing_production_evidence(self):
+        import json
+        from tools.build_production_readiness_evidence_manifest import MAP, ROOT
+        evidence_map = json.loads(MAP.read_text(encoding="utf-8"))
+        names = {name for items in evidence_map["areas"].values() for item in items for name in item.get("check_names", [])}
+        runs = [{"id": index + 1, "name": name, "head_sha": "a" * 40, "status": "completed", "conclusion": "success"} for index, name in enumerate(sorted(names))]
+        manifest = build_manifest(evidence_map, "a" * 40, runs, ROOT)
+        self.assertEqual(manifest["areas"]["buddy_orchestration"]["status"], "VERIFIED")
+        for area in ("benchmark_framework", "security", "deployment", "observability"):
+            self.assertEqual(manifest["areas"][area]["status"], "PARTIAL", area)
+            self.assertTrue(manifest["areas"][area]["resolution_errors"], area)
+
 if __name__ == '__main__': unittest.main()
