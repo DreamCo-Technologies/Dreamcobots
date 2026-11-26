@@ -253,6 +253,7 @@ class SRSStore:
         result = dict(row)
         result["division_ids"] = json.loads(result.pop("division_ids_json"))
         result["state"] = json.loads(result.pop("state_json"))
+        result["replay_required"] = bool(result["replay_required"])
         return result
 
     def list_review_events(self, learner_id: str, deck_id: str, item_id: str) -> list[dict[str, Any]]:
@@ -280,6 +281,7 @@ class SRSStore:
             item = dict(row)
             item["division_ids"] = divisions
             item["state"] = json.loads(item.pop("state_json"))
+            item["replay_required"] = bool(item["replay_required"])
             item.pop("division_ids_json", None)
             items.append(item)
         return items
