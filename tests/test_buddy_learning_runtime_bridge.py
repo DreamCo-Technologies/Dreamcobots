@@ -318,6 +318,33 @@ class RuntimeBridgeTests(unittest.TestCase):
         self.assertEqual(result["returned_count"], 1)
         self.assertEqual(result["items"][0]["title"], "Algorithmic Trading with Risk Controls")
 
+
+    def test_video_catalog_is_filtered_by_division_categories_and_shared_foundation(self):
+        def video(resource_id, title, categories, *, division_targets=()):
+            return CourseLesson(
+                resource_id=resource_id, lesson_id=f"video-{resource_id}", track_id="freecodecamp-video-catalog",
+                title=title, category="video", objective="Original metadata-only learning candidate.",
+                practice="Verify source rights before authoring.", assessment="Require an independent project assessment.",
+                benchmark="Task-matched holdout and regression.", source_url="https://www.youtube.com/watch?v=fixture",
+                guide_path="metadata-only", rights_mode="metadata_only", delivery="metadata_only",
+                content_status="metadata_only", division_targets=tuple(division_targets),
+                source_video_id=f"fixture-{resource_id}", video_categories=tuple(categories),
+            )
+
+        lessons = [
+            video(1, "Shared Python foundations", ["python_and_automation"]),
+            video(2, "Finance database design", ["databases_and_sql"]),
+            video(3, "Unrelated CSS animation", ["html_css_and_accessibility"]),
+            video(4, "Explicit finance specialist override", ["html_css_and_accessibility"], division_targets=("DreamFinance",)),
+            video(5, "Cybersecurity specialist route", ["cybersecurity_and_privacy"], division_targets=("DreamCyber",)),
+        ]
+        with patch("buddy.learning.runtime_bridge.resources_for_division", return_value=[]), \
+             patch("buddy.learning.runtime_bridge.load_course_lessons", return_value=lessons):
+            result = self.bridge.bootcamp_learning_queue(division="DreamFinance", limit=100)
+        ids = {item["source_video_id"] for item in result["items"]}
+        self.assertEqual(ids, {"fixture-1", "fixture-2", "fixture-4"})
+        self.assertTrue(all(item["video_categories"] for item in result["items"]))
+
     def test_unclassified_video_triage_is_visible_only_to_review_lanes(self):
         # This policy test must remain valid when the live catalog is fully classified.
         source_video_id = "synthetic-unclassified-video"
