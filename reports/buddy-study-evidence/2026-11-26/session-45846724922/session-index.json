@@ -1,0 +1,869 @@
+{
+  "schema": "dreamco.study_session_index.v1",
+  "session_id": "buddy-study-45846724922-20261126T151234Z",
+  "status": "completed_with_boundaries",
+  "created_at_utc": "2026-11-26T15:12:34.221241+00:00",
+  "created_at_local": "2026-11-26T09:12:34.221241-06:00",
+  "executed_commit_sha": "bd3a788c5fd246dd6d757e7f994ee5138a2c9027",
+  "pr_head_sha_at_execution": "86151797d967ae2b7633117b09094c2ab6150cd7",
+  "base_sha": "c1abafe8991e175df9330502ac9381652246675b",
+  "pull_request_url": "https://github.com/DreamCo-Technologies/Dreamcobots/pull/18651",
+  "workflow_run_id": 45846724922,
+  "workflow_run_url": "https://github.com/DreamCo-Technologies/Dreamcobots/actions/runs/45846724922",
+  "artifact_id": 15131217738,
+  "artifact_url": "https://github.com/DreamCo-Technologies/Dreamcobots/actions/runs/45846724922/artifacts/15131217738",
+  "artifact_name": "buddy-study-evidence-45846724922",
+  "artifact_zip_sha256": "250b310ad70137ce12ae189ddfdd957e8339aa452d8946ae0796d3ae69b1a43e",
+  "artifact_retention_days": 30,
+  "evidence_sha256": "a6da8dd9184d9f7aa6c9ef3d583d3a4728d62f2718ab6a266d6857f73e250186",
+  "checksums_verified": true,
+  "checksums_verified_file_count": 11,
+  "source_provenance_count": 17,
+  "input_hashes": {
+    "config/generated/division-reconciliation.json": "d99f7ec286308647fecfe756c219722395426d939babfbff5e5c39c059275de6",
+    "config/generated/masterbot-55-domain-crosswalk.json": "abfec3ce198451b3b74a63b2e3367d5fff57b33801eb1694900a35a10717bc9d",
+    "config/division-reconciliation-policy.json": "91c2904a0c6d49341a5af617244aea06296692066690eaf3af8e8c54420c07c9",
+    "config/masterbot-65-registry.json": "fb70cc627ec320c0c1e1f76708d8419a141f0583ef9d8a51f35569eb74b907ca",
+    "shared/division-production-contract.ts": "2bc16200e8b0805af09e55edfa6dcc0f0a78704b991e725c3798f1a0d9243fc5",
+    "config/buddy-tokenizer-training-curriculum.json": "35ae19c16c68f75fce5e3de3f6b9aafc23844d8d014763370ab1420ad44a48cb",
+    "docs/BUDDY_BYTE_BPE_TRAINER.md": "9b3b2a74e3e515d84e796ca9faa87f2f0252ea6b8dd9caead66823472affae89",
+    "docs/BUDDY_TOKENIZER_TRAINING_STUDY_GUIDE.md": "031c92452652a02ad23fe88a79c5a64eb845a77156173fdfff290a5b9e66ecad",
+    "data/buddy-authorized-corpora/synthetic-ci-manifest.json": "753baa52be7b8636670283550ff8f28c190159b1825327711f7835c72af8ceff",
+    "data/buddy-authorized-corpora/synthetic-ci-corpus.txt": "8a81744f145294343b3091292d6f4a11d2a05e317cf8ee15a6825129ebaf278e",
+    "buddy/learning/byte_bpe_trainer.py": "4065bd0304824b819dad6a455bc408b9cb3b446ae4458e204cfba02dcd58c657",
+    "buddy/learning/study_resource_scheduler.py": "f5cb37ffd3ada6597f5c025a19d7c621db6e15c265efbeb1c6d011bf1b101a33",
+    ".github/workflows/buddy-study-evidence-session.yml": "c8ed4f092569615b42016c096a28a512cc5ef0bb5a506c04ce42e2b67cf1786a",
+    "tools/run_buddy_study_evidence_session.py": "e008597be10c75e48b4dc3beb38af286db986e9eb6f06ea81a2bcf89f4fa8f5a",
+    "tests/test_buddy_study_evidence_session.py": "3a3caa55a7d7956147c8d0ace175568b947318c9a27fcdaa805e58ef1ab0284f",
+    "tests/test_buddy_byte_bpe_trainer.py": "43c6efde1aa9656038dc19e63759ff4a6e0817a7b8e596d235c29dcd3239696e",
+    "tests/test_study_resource_scheduler.py": "d91ec12b3b6b54a9ca0763abe96fdca16977406fe0c00a80c2de8ef23f48c241"
+  },
+  "output_hashes": {
+    "tokenizer.json": "7bbce2f0fe513893d94dd285b7f89898e1db9f6046c8c0068edf79be9700d809",
+    "glossary.json": "49f5461d36ffacfa1a51ae435a7593203b4ec71b10126d8c1676ea77e10b40bf",
+    "division-results.json": "cfef6a05bb2b1b5b24681b842a56662bfd0b0519b57b72798d64992251d5a8eb",
+    "active-recall.json": "78a4eac60f02bbff758a0ba81918188e87fea3583b1499093a52ef5b7499852c",
+    "worked-exercises.json": "0ea889bd2247990a2a20e612ddc08341932932f38c1d3750803a9ed59da9f453",
+    "heldout-assessment.json": "b383d156d71b886f42b710c90b688f6a41a527905df5c03f32a62eaa979f84c9",
+    "test-results.json": "64b2d70c7b160b19426081cfb17cdc92af773a6bb7f349b251f62ad5dd377832",
+    "tokenizer-training.json": "63308f5b5ba75493ca6f43b4050f5b8786265e2ee46a30f4c28e9906471fe67b",
+    "sandbox-results.json": "e59ebd1bae5d4026de8f3b318df43e03727c6a622be25125ac87982ba3e8447c"
+  },
+  "division_summary": {
+    "canonical_domain_divisions": 55,
+    "attempted": 55,
+    "completed_shared_foundation": 55,
+    "failed": 0,
+    "whole_divisions_blocked": 0,
+    "blocked_subactivity_ids": [
+      "active_recall"
+    ],
+    "divisions_with_blocked_active_recall": 55,
+    "specialist_mappings_pending_owner_review": 55,
+    "proposed_exact_name_matches": 45,
+    "unresolved_mappings": 10,
+    "shared_platform_masterbots": 20,
+    "total_masterbot_lanes": 65,
+    "mastery_awarded": 0
+  },
+  "selected_lessons": [
+    {
+      "lesson_id": "tok-06",
+      "title": "Corpus quality and rights",
+      "priority": 1,
+      "priority_reason": "Rights and provenance gates are safety-critical."
+    },
+    {
+      "lesson_id": "tok-01",
+      "title": "Text-to-token pipeline",
+      "priority": 2,
+      "priority_reason": "Establish the text-to-token round-trip foundation."
+    },
+    {
+      "lesson_id": "tok-04",
+      "title": "Byte-level coverage",
+      "priority": 3,
+      "priority_reason": "Prove lossless UTF-8 handling on unseen scripts."
+    },
+    {
+      "lesson_id": "tok-11",
+      "title": "Evaluation and fairness",
+      "priority": 4,
+      "priority_reason": "Keep evaluation separate from tokenizer fitting."
+    },
+    {
+      "lesson_id": "tok-12",
+      "title": "Release and operations",
+      "priority": 5,
+      "priority_reason": "Preserve hashes, provenance, and rollback metadata."
+    }
+  ],
+  "divisions": [
+    {
+      "division_id": "commandcore",
+      "division_name": "CommandCore",
+      "activity_status": "completed_shared_foundation",
+      "blocked_subactivities": [
+        "active_recall"
+      ],
+      "specialist_mapping_status": "proposed_exact_name_match",
+      "mastery_awarded": false,
+      "output_hash": "b41c36fbe1bce17bd46f1dc3fc951e047ebbdbf940ebe862c19d5bdad6ff345d"
+    },
+    {
+      "division_id": "dreamaiinfra",
+      "division_name": "DreamAIInfra",
+      "activity_status": "completed_shared_foundation",
+      "blocked_subactivities": [
+        "active_recall"
+      ],
+      "specialist_mapping_status": "proposed_exact_name_match",
+      "mastery_awarded": false,
+      "output_hash": "6e8c9df20053968e3462067695fb9608fe024c63cccba651e0d9dfb271b7f845"
+    },
+    {
+      "division_id": "dreamadmin",
+      "division_name": "DreamAdmin",
+      "activity_status": "completed_shared_foundation",
+      "blocked_subactivities": [
+        "active_recall"
+      ],
+      "specialist_mapping_status": "proposed_exact_name_match",
+      "mastery_awarded": false,
+      "output_hash": "c4105bf4d267862fe62cdd382257a0a92b79fd15af9f5e5f579bef24a0f1c431"
+    },
+    {
+      "division_id": "dreamagents",
+      "division_name": "DreamAgents",
+      "activity_status": "completed_shared_foundation",
+      "blocked_subactivities": [
+        "active_recall"
+      ],
+      "specialist_mapping_status": "proposed_exact_name_match",
+      "mastery_awarded": false,
+      "output_hash": "b1a4690184992d5fad7ea701a4afbf7be58727f948ee61c84aab51e016d3f87f"
+    },
+    {
+      "division_id": "dreamagriculture",
+      "division_name": "DreamAgriculture",
+      "activity_status": "completed_shared_foundation",
+      "blocked_subactivities": [
+        "active_recall"
+      ],
+      "specialist_mapping_status": "proposed_exact_name_match",
+      "mastery_awarded": false,
+      "output_hash": "49f18f9ac7aba03508e9471641d9c3cce026c18faabb47df62e647cb981dc053"
+    },
+    {
+      "division_id": "dreamarts",
+      "division_name": "DreamArts",
+      "activity_status": "completed_shared_foundation",
+      "blocked_subactivities": [
+        "active_recall"
+      ],
+      "specialist_mapping_status": "proposed_exact_name_match",
+      "mastery_awarded": false,
+      "output_hash": "8375a79b28785e83e1acf3b452eda6f5925d6ee5a64fd88004c2b381dbd5c25d"
+    },
+    {
+      "division_id": "dreamautomation",
+      "division_name": "DreamAutomation",
+      "activity_status": "completed_shared_foundation",
+      "blocked_subactivities": [
+        "active_recall"
+      ],
+      "specialist_mapping_status": "proposed_exact_name_match",
+      "mastery_awarded": false,
+      "output_hash": "227d2511f10bbf896795d2587d530a2bda21a06c7eb0acb8084b2625a0bafd51"
+    },
+    {
+      "division_id": "dreambizlaunch",
+      "division_name": "DreamBizLaunch",
+      "activity_status": "completed_shared_foundation",
+      "blocked_subactivities": [
+        "active_recall"
+      ],
+      "specialist_mapping_status": "proposed_exact_name_match",
+      "mastery_awarded": false,
+      "output_hash": "40e2fc4b84880b66508b6a90e336b12ed993ea67f534ca9f08697bac8502554c"
+    },
+    {
+      "division_id": "dreamcodelab",
+      "division_name": "DreamCodeLab",
+      "activity_status": "completed_shared_foundation",
+      "blocked_subactivities": [
+        "active_recall"
+      ],
+      "specialist_mapping_status": "proposed_exact_name_match",
+      "mastery_awarded": false,
+      "output_hash": "1d94a22840c13205fb67dec6a42b2155fbe310dfa8de14de56c65ebeb5f3b516"
+    },
+    {
+      "division_id": "dreamconstruction",
+      "division_name": "DreamConstruction",
+      "activity_status": "completed_shared_foundation",
+      "blocked_subactivities": [
+        "active_recall"
+      ],
+      "specialist_mapping_status": "proposed_exact_name_match",
+      "mastery_awarded": false,
+      "output_hash": "ea213b93cdac6cb36d90a3efa598f26a506e3d2b5275ac3012786fbb8a2ed420"
+    },
+    {
+      "division_id": "dreamcontent",
+      "division_name": "DreamContent",
+      "activity_status": "completed_shared_foundation",
+      "blocked_subactivities": [
+        "active_recall"
+      ],
+      "specialist_mapping_status": "proposed_exact_name_match",
+      "mastery_awarded": false,
+      "output_hash": "e723c3f375df2789c9e6f8c52c42e7c1010ef5c74a37e3c5b5c6f632a64db3eb"
+    },
+    {
+      "division_id": "dreamcrypto",
+      "division_name": "DreamCrypto",
+      "activity_status": "completed_shared_foundation",
+      "blocked_subactivities": [
+        "active_recall"
+      ],
+      "specialist_mapping_status": "proposed_exact_name_match",
+      "mastery_awarded": false,
+      "output_hash": "edc293d1df5f5d57f1c4c942ee1588585a6c61006882107337d1492ac952a667"
+    },
+    {
+      "division_id": "dreamcustintel",
+      "division_name": "DreamCustIntel",
+      "activity_status": "completed_shared_foundation",
+      "blocked_subactivities": [
+        "active_recall"
+      ],
+      "specialist_mapping_status": "proposed_exact_name_match",
+      "mastery_awarded": false,
+      "output_hash": "365b68e49aa0c82ee34198fd66b437622e221a1b8f73214e61f6bfabcb20a37f"
+    },
+    {
+      "division_id": "dreamcyber",
+      "division_name": "DreamCyber",
+      "activity_status": "completed_shared_foundation",
+      "blocked_subactivities": [
+        "active_recall"
+      ],
+      "specialist_mapping_status": "proposed_exact_name_match",
+      "mastery_awarded": false,
+      "output_hash": "f0900baeadccad97c754f162f945497cc735f470202729bab2b74ac13af8e055"
+    },
+    {
+      "division_id": "dreamdata",
+      "division_name": "DreamData",
+      "activity_status": "completed_shared_foundation",
+      "blocked_subactivities": [
+        "active_recall"
+      ],
+      "specialist_mapping_status": "proposed_exact_name_match",
+      "mastery_awarded": false,
+      "output_hash": "c69d665ea0f4269a54c0c4fb878cc14905502f7f76382523c319058cbc17c0a9"
+    },
+    {
+      "division_id": "dreamdecision",
+      "division_name": "DreamDecision",
+      "activity_status": "completed_shared_foundation",
+      "blocked_subactivities": [
+        "active_recall"
+      ],
+      "specialist_mapping_status": "proposed_exact_name_match",
+      "mastery_awarded": false,
+      "output_hash": "d54aefba1714ac2e1f236f71e5a06c18f2b382ee07b60bd02e76d229ce452e38"
+    },
+    {
+      "division_id": "dreameducation",
+      "division_name": "DreamEducation",
+      "activity_status": "completed_shared_foundation",
+      "blocked_subactivities": [
+        "active_recall"
+      ],
+      "specialist_mapping_status": "proposed_exact_name_match",
+      "mastery_awarded": false,
+      "output_hash": "8f0bfa7462abd0f0eb4708f31c5275de1f3409456b5688ed864dc70507dbbf0c"
+    },
+    {
+      "division_id": "dreamempire",
+      "division_name": "DreamEmpire",
+      "activity_status": "completed_shared_foundation",
+      "blocked_subactivities": [
+        "active_recall"
+      ],
+      "specialist_mapping_status": "proposed_exact_name_match",
+      "mastery_awarded": false,
+      "output_hash": "c0aaa776f43b94f8935a755fd883960867ac3a7f7f8db0f98b2e7ae90bfec64b"
+    },
+    {
+      "division_id": "dreamentfinance",
+      "division_name": "DreamEntFinance",
+      "activity_status": "completed_shared_foundation",
+      "blocked_subactivities": [
+        "active_recall"
+      ],
+      "specialist_mapping_status": "proposed_exact_name_match",
+      "mastery_awarded": false,
+      "output_hash": "20d934be459d48103d4deed785cf7202f229f95a00202a617e03a190f1f6dfb0"
+    },
+    {
+      "division_id": "dreamfinance",
+      "division_name": "DreamFinance",
+      "activity_status": "completed_shared_foundation",
+      "blocked_subactivities": [
+        "active_recall"
+      ],
+      "specialist_mapping_status": "proposed_exact_name_match",
+      "mastery_awarded": false,
+      "output_hash": "6d3a4bce6d713d994af83c5b022ac4655155fde6a0a12cac7884bae337d7b749"
+    },
+    {
+      "division_id": "dreamflow",
+      "division_name": "DreamFlow",
+      "activity_status": "completed_shared_foundation",
+      "blocked_subactivities": [
+        "active_recall"
+      ],
+      "specialist_mapping_status": "proposed_exact_name_match",
+      "mastery_awarded": false,
+      "output_hash": "72b8207150fadec58bd90ceaed2b2ff706dd108f1f776cc38d5db75c13fa788b"
+    },
+    {
+      "division_id": "dreamfood",
+      "division_name": "DreamFood",
+      "activity_status": "completed_shared_foundation",
+      "blocked_subactivities": [
+        "active_recall"
+      ],
+      "specialist_mapping_status": "proposed_exact_name_match",
+      "mastery_awarded": false,
+      "output_hash": "833c8d933b38580b0159433ed9ceeca0f213d40327f9b4b1b7c1f2d86822c6a9"
+    },
+    {
+      "division_id": "dreamglobal",
+      "division_name": "DreamGlobal",
+      "activity_status": "completed_shared_foundation",
+      "blocked_subactivities": [
+        "active_recall"
+      ],
+      "specialist_mapping_status": "proposed_exact_name_match",
+      "mastery_awarded": false,
+      "output_hash": "35fb0cb826b378140ef8eeb2a3ea6a65de814abb238e946abdd57e479046e693"
+    },
+    {
+      "division_id": "dreamhealth",
+      "division_name": "DreamHealth",
+      "activity_status": "completed_shared_foundation",
+      "blocked_subactivities": [
+        "active_recall"
+      ],
+      "specialist_mapping_status": "proposed_exact_name_match",
+      "mastery_awarded": false,
+      "output_hash": "70b5e7ce917d2b55b6a90bccab0ebffa337e1967959b54c428c4412e555031dd"
+    },
+    {
+      "division_id": "dreaminfluence",
+      "division_name": "DreamInfluence",
+      "activity_status": "completed_shared_foundation",
+      "blocked_subactivities": [
+        "active_recall"
+      ],
+      "specialist_mapping_status": "proposed_exact_name_match",
+      "mastery_awarded": false,
+      "output_hash": "95896375afcf2d5d823fb90a1f2755ca9c763a59e0399516c1b9266e0c61664b"
+    },
+    {
+      "division_id": "dreamlegal",
+      "division_name": "DreamLegal",
+      "activity_status": "completed_shared_foundation",
+      "blocked_subactivities": [
+        "active_recall"
+      ],
+      "specialist_mapping_status": "proposed_exact_name_match",
+      "mastery_awarded": false,
+      "output_hash": "4eb6f555c0848a80a1dfd93adb61d349a3b47fdb1fdda215b657c2f74702fbf7"
+    },
+    {
+      "division_id": "dreamloans",
+      "division_name": "DreamLoans",
+      "activity_status": "completed_shared_foundation",
+      "blocked_subactivities": [
+        "active_recall"
+      ],
+      "specialist_mapping_status": "proposed_exact_name_match",
+      "mastery_awarded": false,
+      "output_hash": "41652541a59e00723eaf0c7798e9b5fdbfacf7f13819feb1759a5dd15788d3d5"
+    },
+    {
+      "division_id": "dreammaintenance",
+      "division_name": "DreamMaintenance",
+      "activity_status": "completed_shared_foundation",
+      "blocked_subactivities": [
+        "active_recall"
+      ],
+      "specialist_mapping_status": "proposed_exact_name_match",
+      "mastery_awarded": false,
+      "output_hash": "0f209165d55b4aad236b5405a95533d21b20cc6f7b815187c7e96fd044ed97c8"
+    },
+    {
+      "division_id": "dreammarket",
+      "division_name": "DreamMarket",
+      "activity_status": "completed_shared_foundation",
+      "blocked_subactivities": [
+        "active_recall"
+      ],
+      "specialist_mapping_status": "proposed_exact_name_match",
+      "mastery_awarded": false,
+      "output_hash": "ebcc00a19a910d311891304615b4af060c7644f2ef882215a0fc35021d2c8285"
+    },
+    {
+      "division_id": "dreammilitary",
+      "division_name": "DreamMilitary",
+      "activity_status": "completed_shared_foundation",
+      "blocked_subactivities": [
+        "active_recall"
+      ],
+      "specialist_mapping_status": "proposed_exact_name_match",
+      "mastery_awarded": false,
+      "output_hash": "9dcee26bb202d25d8638f5f01cddbcdfe95bc55e5a44e4fb3c06699688f4d740"
+    },
+    {
+      "division_id": "dreamops",
+      "division_name": "DreamOps",
+      "activity_status": "completed_shared_foundation",
+      "blocked_subactivities": [
+        "active_recall"
+      ],
+      "specialist_mapping_status": "proposed_exact_name_match",
+      "mastery_awarded": false,
+      "output_hash": "93afd99fcb6d9f52173b3405145dc86e33551d28c24b178def8ea111cb78dbfa"
+    },
+    {
+      "division_id": "dreampayments",
+      "division_name": "DreamPayments",
+      "activity_status": "completed_shared_foundation",
+      "blocked_subactivities": [
+        "active_recall"
+      ],
+      "specialist_mapping_status": "proposed_exact_name_match",
+      "mastery_awarded": false,
+      "output_hash": "74a50ca76f6f1c74ad32652a1963b4c1a979bba9f36d7e7e458826fd7d5ab1be"
+    },
+    {
+      "division_id": "dreampersonalcare",
+      "division_name": "DreamPersonalCare",
+      "activity_status": "completed_shared_foundation",
+      "blocked_subactivities": [
+        "active_recall"
+      ],
+      "specialist_mapping_status": "proposed_exact_name_match",
+      "mastery_awarded": false,
+      "output_hash": "37e332ae98428d8294f4c46374469cb54c37e492b46275dd7ca8cea18a973ae6"
+    },
+    {
+      "division_id": "dreamplanetary",
+      "division_name": "DreamPlanetary",
+      "activity_status": "completed_shared_foundation",
+      "blocked_subactivities": [
+        "active_recall"
+      ],
+      "specialist_mapping_status": "proposed_exact_name_match",
+      "mastery_awarded": false,
+      "output_hash": "0bdf107d136620ed4a55fa41df7ac0717beb559a8428ce332091ecf067bbb1f6"
+    },
+    {
+      "division_id": "dreamproservices",
+      "division_name": "DreamProServices",
+      "activity_status": "completed_shared_foundation",
+      "blocked_subactivities": [
+        "active_recall"
+      ],
+      "specialist_mapping_status": "proposed_exact_name_match",
+      "mastery_awarded": false,
+      "output_hash": "4593cd2e4bdc25accfdc063427541fb2aa76d83a3567e2274e691beb9c04e9e0"
+    },
+    {
+      "division_id": "dreamproduction",
+      "division_name": "DreamProduction",
+      "activity_status": "completed_shared_foundation",
+      "blocked_subactivities": [
+        "active_recall"
+      ],
+      "specialist_mapping_status": "proposed_exact_name_match",
+      "mastery_awarded": false,
+      "output_hash": "f3aa3341396ece64689c46dd312b683c482dcadd5214f4e8fffeec212a19eed7"
+    },
+    {
+      "division_id": "dreamprotection",
+      "division_name": "DreamProtection",
+      "activity_status": "completed_shared_foundation",
+      "blocked_subactivities": [
+        "active_recall"
+      ],
+      "specialist_mapping_status": "proposed_exact_name_match",
+      "mastery_awarded": false,
+      "output_hash": "38a811c968b471404f42571eaa3b10f8c71820aef4899fd7e502d68b43d2974e"
+    },
+    {
+      "division_id": "dreamrealestate",
+      "division_name": "DreamRealEstate",
+      "activity_status": "completed_shared_foundation",
+      "blocked_subactivities": [
+        "active_recall"
+      ],
+      "specialist_mapping_status": "proposed_exact_name_match",
+      "mastery_awarded": false,
+      "output_hash": "fcf5a006bbf066ed38b0d7ae637351e20d6b70f85e10b63f10604e958a88f265"
+    },
+    {
+      "division_id": "dreamretail",
+      "division_name": "DreamRetail",
+      "activity_status": "completed_shared_foundation",
+      "blocked_subactivities": [
+        "active_recall"
+      ],
+      "specialist_mapping_status": "proposed_exact_name_match",
+      "mastery_awarded": false,
+      "output_hash": "97244e78daba7e3f887586c28556c42554baa6c423730bf67b7ea3752002eccd"
+    },
+    {
+      "division_id": "dreamsalespro",
+      "division_name": "DreamSalesPro",
+      "activity_status": "completed_shared_foundation",
+      "blocked_subactivities": [
+        "active_recall"
+      ],
+      "specialist_mapping_status": "proposed_exact_name_match",
+      "mastery_awarded": false,
+      "output_hash": "cac3a50188a452fb0c53866d15a88bd59db66fb798eec5beffa2cc5b3bf4aaf9"
+    },
+    {
+      "division_id": "dreamscience",
+      "division_name": "DreamScience",
+      "activity_status": "completed_shared_foundation",
+      "blocked_subactivities": [
+        "active_recall"
+      ],
+      "specialist_mapping_status": "proposed_exact_name_match",
+      "mastery_awarded": false,
+      "output_hash": "b51a22646ce20dd75bec26d1a86a4da57004c403e494f709e02e7500a5fa44da"
+    },
+    {
+      "division_id": "dreamsocial",
+      "division_name": "DreamSocial",
+      "activity_status": "completed_shared_foundation",
+      "blocked_subactivities": [
+        "active_recall"
+      ],
+      "specialist_mapping_status": "proposed_exact_name_match",
+      "mastery_awarded": false,
+      "output_hash": "b33ca1f8cb2b015402534921213237ed983d5e5634859a8cb4f5c8412131660a"
+    },
+    {
+      "division_id": "dreamtrade",
+      "division_name": "DreamTrade",
+      "activity_status": "completed_shared_foundation",
+      "blocked_subactivities": [
+        "active_recall"
+      ],
+      "specialist_mapping_status": "proposed_exact_name_match",
+      "mastery_awarded": false,
+      "output_hash": "13c79bc7c37a69244cc76a4982d9772f7e8d404335997d3f37fc57f406b09f2c"
+    },
+    {
+      "division_id": "dreamtransport",
+      "division_name": "DreamTransport",
+      "activity_status": "completed_shared_foundation",
+      "blocked_subactivities": [
+        "active_recall"
+      ],
+      "specialist_mapping_status": "proposed_exact_name_match",
+      "mastery_awarded": false,
+      "output_hash": "78239b6e3163ed9af33c1a062b95ec74bb67fa0ded7a07f050f4a79a941a67e2"
+    },
+    {
+      "division_id": "gametitan",
+      "division_name": "GameTitan",
+      "activity_status": "completed_shared_foundation",
+      "blocked_subactivities": [
+        "active_recall"
+      ],
+      "specialist_mapping_status": "proposed_exact_name_match",
+      "mastery_awarded": false,
+      "output_hash": "21ee987bf28b0a9365c1970552e510a27de542ac5f8322a69977cb3329844126"
+    },
+    {
+      "division_id": "dreamaffiliate",
+      "division_name": "DreamAffiliate",
+      "activity_status": "completed_shared_foundation",
+      "blocked_subactivities": [
+        "active_recall"
+      ],
+      "specialist_mapping_status": "unresolved",
+      "mastery_awarded": false,
+      "output_hash": "b457e65950d2eaf63aedf2fe263a09a888d9e976a0c5b96ea6f87f6ee3b0dfbe"
+    },
+    {
+      "division_id": "dreamagency",
+      "division_name": "DreamAgency",
+      "activity_status": "completed_shared_foundation",
+      "blocked_subactivities": [
+        "active_recall"
+      ],
+      "specialist_mapping_status": "unresolved",
+      "mastery_awarded": false,
+      "output_hash": "d0448376a848d8e2f268561c054dde84a78074405d5eb017d02ea283b6c36ebe"
+    },
+    {
+      "division_id": "dreamfoundry",
+      "division_name": "DreamFoundry",
+      "activity_status": "completed_shared_foundation",
+      "blocked_subactivities": [
+        "active_recall"
+      ],
+      "specialist_mapping_status": "unresolved",
+      "mastery_awarded": false,
+      "output_hash": "4703c43c2d91c1f1b1ab6fb712b96771d0ffb5392659c80ccbdd44000fd7c8d6"
+    },
+    {
+      "division_id": "dreamfranchise",
+      "division_name": "DreamFranchise",
+      "activity_status": "completed_shared_foundation",
+      "blocked_subactivities": [
+        "active_recall"
+      ],
+      "specialist_mapping_status": "unresolved",
+      "mastery_awarded": false,
+      "output_hash": "6444115ec8750f91d06e41abe8c34ecd22146bc32a911e6c589b234c81d63e53"
+    },
+    {
+      "division_id": "dreamintegrations",
+      "division_name": "DreamIntegrations",
+      "activity_status": "completed_shared_foundation",
+      "blocked_subactivities": [
+        "active_recall"
+      ],
+      "specialist_mapping_status": "unresolved",
+      "mastery_awarded": false,
+      "output_hash": "9d3b76999486a26e44c0657aa75ae49d92b45c10bfc5f75541011d2c2d4950c0"
+    },
+    {
+      "division_id": "dreamlicensing",
+      "division_name": "DreamLicensing",
+      "activity_status": "completed_shared_foundation",
+      "blocked_subactivities": [
+        "active_recall"
+      ],
+      "specialist_mapping_status": "unresolved",
+      "mastery_awarded": false,
+      "output_hash": "13b41dc518a81b2832044c9c1c57a3baeffbf5ce67dbb12b64b6f6088d70f87b"
+    },
+    {
+      "division_id": "dreamrobotics",
+      "division_name": "DreamRobotics",
+      "activity_status": "completed_shared_foundation",
+      "blocked_subactivities": [
+        "active_recall"
+      ],
+      "specialist_mapping_status": "unresolved",
+      "mastery_awarded": false,
+      "output_hash": "b93a4b1b8951468ee4f4d5926583c66aec4e746270d65bc26bc46273ee02fa5f"
+    },
+    {
+      "division_id": "dreamsaas",
+      "division_name": "DreamSaaS",
+      "activity_status": "completed_shared_foundation",
+      "blocked_subactivities": [
+        "active_recall"
+      ],
+      "specialist_mapping_status": "unresolved",
+      "mastery_awarded": false,
+      "output_hash": "81fb92fafa6e951ccf7ec8867c9e2cd504bc6515939ede9ad4b337d0d4880331"
+    },
+    {
+      "division_id": "dreamstreaming",
+      "division_name": "DreamStreaming",
+      "activity_status": "completed_shared_foundation",
+      "blocked_subactivities": [
+        "active_recall"
+      ],
+      "specialist_mapping_status": "unresolved",
+      "mastery_awarded": false,
+      "output_hash": "7c91aa063b74e052bf6a360947a3fe0b031cfaa86ab319dc17b9a845e913c79b"
+    },
+    {
+      "division_id": "dreamtravel",
+      "division_name": "DreamTravel",
+      "activity_status": "completed_shared_foundation",
+      "blocked_subactivities": [
+        "active_recall"
+      ],
+      "specialist_mapping_status": "unresolved",
+      "mastery_awarded": false,
+      "output_hash": "ff57036da13e9fe3242a70c6a2eb70248a069e349261a4e76fb8991ccf23bcb3"
+    }
+  ],
+  "division_output_hashes": {
+    "commandcore": "b41c36fbe1bce17bd46f1dc3fc951e047ebbdbf940ebe862c19d5bdad6ff345d",
+    "dreamaiinfra": "6e8c9df20053968e3462067695fb9608fe024c63cccba651e0d9dfb271b7f845",
+    "dreamadmin": "c4105bf4d267862fe62cdd382257a0a92b79fd15af9f5e5f579bef24a0f1c431",
+    "dreamagents": "b1a4690184992d5fad7ea701a4afbf7be58727f948ee61c84aab51e016d3f87f",
+    "dreamagriculture": "49f18f9ac7aba03508e9471641d9c3cce026c18faabb47df62e647cb981dc053",
+    "dreamarts": "8375a79b28785e83e1acf3b452eda6f5925d6ee5a64fd88004c2b381dbd5c25d",
+    "dreamautomation": "227d2511f10bbf896795d2587d530a2bda21a06c7eb0acb8084b2625a0bafd51",
+    "dreambizlaunch": "40e2fc4b84880b66508b6a90e336b12ed993ea67f534ca9f08697bac8502554c",
+    "dreamcodelab": "1d94a22840c13205fb67dec6a42b2155fbe310dfa8de14de56c65ebeb5f3b516",
+    "dreamconstruction": "ea213b93cdac6cb36d90a3efa598f26a506e3d2b5275ac3012786fbb8a2ed420",
+    "dreamcontent": "e723c3f375df2789c9e6f8c52c42e7c1010ef5c74a37e3c5b5c6f632a64db3eb",
+    "dreamcrypto": "edc293d1df5f5d57f1c4c942ee1588585a6c61006882107337d1492ac952a667",
+    "dreamcustintel": "365b68e49aa0c82ee34198fd66b437622e221a1b8f73214e61f6bfabcb20a37f",
+    "dreamcyber": "f0900baeadccad97c754f162f945497cc735f470202729bab2b74ac13af8e055",
+    "dreamdata": "c69d665ea0f4269a54c0c4fb878cc14905502f7f76382523c319058cbc17c0a9",
+    "dreamdecision": "d54aefba1714ac2e1f236f71e5a06c18f2b382ee07b60bd02e76d229ce452e38",
+    "dreameducation": "8f0bfa7462abd0f0eb4708f31c5275de1f3409456b5688ed864dc70507dbbf0c",
+    "dreamempire": "c0aaa776f43b94f8935a755fd883960867ac3a7f7f8db0f98b2e7ae90bfec64b",
+    "dreamentfinance": "20d934be459d48103d4deed785cf7202f229f95a00202a617e03a190f1f6dfb0",
+    "dreamfinance": "6d3a4bce6d713d994af83c5b022ac4655155fde6a0a12cac7884bae337d7b749",
+    "dreamflow": "72b8207150fadec58bd90ceaed2b2ff706dd108f1f776cc38d5db75c13fa788b",
+    "dreamfood": "833c8d933b38580b0159433ed9ceeca0f213d40327f9b4b1b7c1f2d86822c6a9",
+    "dreamglobal": "35fb0cb826b378140ef8eeb2a3ea6a65de814abb238e946abdd57e479046e693",
+    "dreamhealth": "70b5e7ce917d2b55b6a90bccab0ebffa337e1967959b54c428c4412e555031dd",
+    "dreaminfluence": "95896375afcf2d5d823fb90a1f2755ca9c763a59e0399516c1b9266e0c61664b",
+    "dreamlegal": "4eb6f555c0848a80a1dfd93adb61d349a3b47fdb1fdda215b657c2f74702fbf7",
+    "dreamloans": "41652541a59e00723eaf0c7798e9b5fdbfacf7f13819feb1759a5dd15788d3d5",
+    "dreammaintenance": "0f209165d55b4aad236b5405a95533d21b20cc6f7b815187c7e96fd044ed97c8",
+    "dreammarket": "ebcc00a19a910d311891304615b4af060c7644f2ef882215a0fc35021d2c8285",
+    "dreammilitary": "9dcee26bb202d25d8638f5f01cddbcdfe95bc55e5a44e4fb3c06699688f4d740",
+    "dreamops": "93afd99fcb6d9f52173b3405145dc86e33551d28c24b178def8ea111cb78dbfa",
+    "dreampayments": "74a50ca76f6f1c74ad32652a1963b4c1a979bba9f36d7e7e458826fd7d5ab1be",
+    "dreampersonalcare": "37e332ae98428d8294f4c46374469cb54c37e492b46275dd7ca8cea18a973ae6",
+    "dreamplanetary": "0bdf107d136620ed4a55fa41df7ac0717beb559a8428ce332091ecf067bbb1f6",
+    "dreamproservices": "4593cd2e4bdc25accfdc063427541fb2aa76d83a3567e2274e691beb9c04e9e0",
+    "dreamproduction": "f3aa3341396ece64689c46dd312b683c482dcadd5214f4e8fffeec212a19eed7",
+    "dreamprotection": "38a811c968b471404f42571eaa3b10f8c71820aef4899fd7e502d68b43d2974e",
+    "dreamrealestate": "fcf5a006bbf066ed38b0d7ae637351e20d6b70f85e10b63f10604e958a88f265",
+    "dreamretail": "97244e78daba7e3f887586c28556c42554baa6c423730bf67b7ea3752002eccd",
+    "dreamsalespro": "cac3a50188a452fb0c53866d15a88bd59db66fb798eec5beffa2cc5b3bf4aaf9",
+    "dreamscience": "b51a22646ce20dd75bec26d1a86a4da57004c403e494f709e02e7500a5fa44da",
+    "dreamsocial": "b33ca1f8cb2b015402534921213237ed983d5e5634859a8cb4f5c8412131660a",
+    "dreamtrade": "13c79bc7c37a69244cc76a4982d9772f7e8d404335997d3f37fc57f406b09f2c",
+    "dreamtransport": "78239b6e3163ed9af33c1a062b95ec74bb67fa0ded7a07f050f4a79a941a67e2",
+    "gametitan": "21ee987bf28b0a9365c1970552e510a27de542ac5f8322a69977cb3329844126",
+    "dreamaffiliate": "b457e65950d2eaf63aedf2fe263a09a888d9e976a0c5b96ea6f87f6ee3b0dfbe",
+    "dreamagency": "d0448376a848d8e2f268561c054dde84a78074405d5eb017d02ea283b6c36ebe",
+    "dreamfoundry": "4703c43c2d91c1f1b1ab6fb712b96771d0ffb5392659c80ccbdd44000fd7c8d6",
+    "dreamfranchise": "6444115ec8750f91d06e41abe8c34ecd22146bc32a911e6c589b234c81d63e53",
+    "dreamintegrations": "9d3b76999486a26e44c0657aa75ae49d92b45c10bfc5f75541011d2c2d4950c0",
+    "dreamlicensing": "13b41dc518a81b2832044c9c1c57a3baeffbf5ce67dbb12b64b6f6088d70f87b",
+    "dreamrobotics": "b93a4b1b8951468ee4f4d5926583c66aec4e746270d65bc26bc46273ee02fa5f",
+    "dreamsaas": "81fb92fafa6e951ccf7ec8867c9e2cd504bc6515939ede9ad4b337d0d4880331",
+    "dreamstreaming": "7c91aa063b74e052bf6a360947a3fe0b031cfaa86ab319dc17b9a845e913c79b",
+    "dreamtravel": "ff57036da13e9fe3242a70c6a2eb70248a069e349261a4e76fb8991ccf23bcb3"
+  },
+  "activities": {
+    "active_recall": {
+      "status": "blocked_no_learner_responses",
+      "items_total": 6,
+      "items_passed": 0,
+      "score": null,
+      "reason": "No Buddy inference result or learner response file was supplied; fixed reference answers are not counted as learning."
+    },
+    "glossary": {
+      "status": "passed",
+      "terms_extracted": 8,
+      "source": "docs/BUDDY_TOKENIZER_TRAINING_STUDY_GUIDE.md",
+      "method": "Markdown definition-line extraction",
+      "terms": [
+        "BPE",
+        "Byte-level tokenization",
+        "Normalization",
+        "Pre-tokenization",
+        "Special tokens",
+        "Tokenizer/model coupling",
+        "Unigram",
+        "WordPiece"
+      ]
+    },
+    "worked_exercises": {
+      "status": "passed",
+      "bpe_pair": "ab",
+      "selected_frequency": 4,
+      "unicode_normalization": "NFC/NFKC verified",
+      "role_markers": [
+        "system",
+        "user",
+        "assistant",
+        "tool"
+      ],
+      "compatibility": "synthetic tokenizer/checkpoint hash match; no real model checkpoint"
+    },
+    "tokenizer_training": {
+      "status": "passed",
+      "source_id": "dreamco-synthetic-tokenizer-ci-v1",
+      "vocab_size": 512,
+      "merge_count": 256,
+      "corpus_sha256": "8a81744f145294343b3091292d6f4a11d2a05e317cf8ee15a6825129ebaf278e",
+      "manifest_sha256": "753baa52be7b8636670283550ff8f28c190159b1825327711f7835c72af8ceff",
+      "tokenizer_sha256": "7bbce2f0fe513893d94dd285b7f89898e1db9f6046c8c0068edf79be9700d809",
+      "production_training_allowed": false,
+      "model_weight_training_executed": false
+    },
+    "heldout_assessment": {
+      "status": "passed",
+      "cases_passed": 14,
+      "cases_total": 14,
+      "score": 100,
+      "holdout_used_for_training": false
+    },
+    "tests": {
+      "study_harness": {
+        "status": "passed",
+        "tests": 15
+      },
+      "trainer_and_scheduler": {
+        "status": "passed",
+        "tests": 11
+      },
+      "repository_test_matrix": "passed",
+      "core_health": "passed",
+      "code_trust": "passed",
+      "codeql_python": "passed",
+      "codeql_javascript_typescript": "passed",
+      "dependency_review": "passed",
+      "pr_manifest": "passed",
+      "pr_safety_guardian": "passed",
+      "coderabbit": "neutral_rate_limit",
+      "merge_job": "skipped"
+    }
+  },
+  "rights_and_safety": {
+    "first_party_material_used": [
+      "docs/BUDDY_BYTE_BPE_TRAINER.md",
+      "docs/BUDDY_TOKENIZER_TRAINING_STUDY_GUIDE.md",
+      "config/buddy-tokenizer-training-curriculum.json"
+    ],
+    "synthetic_material_used": [
+      "data/buddy-authorized-corpora/synthetic-ci-manifest.json",
+      "data/buddy-authorized-corpora/synthetic-ci-corpus.txt"
+    ],
+    "external_sources_used": [],
+    "external_material_accessed": false,
+    "item_level_external_rights_verified": false,
+    "network_access_by_study_script": false,
+    "paid_compute_used": false,
+    "secrets_accessed": false,
+    "model_weight_training_executed": false,
+    "model_weight_training_authorized": false,
+    "model_checkpoint_sha256": null
+  },
+  "blockers": [
+    "No external videos, transcripts, or third-party documentation were accessed; item-level rights were not verified in this run.",
+    "The 45 proposed exact-name and 10 unresolved specialist mappings remain pending owner review; no specialist owner was assigned.",
+    "No neural model-weight training or distillation was performed or authorized.",
+    "This is a shared-foundation session, not completion of each division's specialist curriculum or mastery gate.",
+    "Active recall is blocked: no learner response file or Buddy inference result was supplied; reference answers are not counted as learning."
+  ],
+  "failures": []
+}
