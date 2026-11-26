@@ -37,6 +37,7 @@ def test_safe_repair_uses_convergent_generators_and_only_pushes_a_repair_branch(
     assert "npm run buddy:fleet" in workflow_text
     assert "python tools/build_actions_prospectus.py --check --check-buttons" in workflow_text
     assert "python tools/build_file_prospectus.py --check" in workflow_text
+    assert "python tools/build_file_prospectus.py" in workflow_text
     assert "REPAIR_BRANCH:" in workflow_text
     assert "github.event.workflow_run.id || github.run_id" in workflow_text
     assert 'git switch -c "$REPAIR_BRANCH"' in workflow_text
