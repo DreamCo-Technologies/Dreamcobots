@@ -36,14 +36,25 @@ async function initStripe() {
 }
 
 app.get('/api/health', (_req, res) => {
+  const stripeConfigured = Boolean(process.env.STRIPE_SECRET_KEY || process.env.STRIPE_LIVE_SECRET_KEY);
+  const stripeWebhookConfigured = Boolean(process.env.STRIPE_WEBHOOK_SECRET);
+  const databaseConfigured = Boolean(process.env.DATABASE_URL);
+  const openaiConfigured = Boolean(
+    process.env.AI_INTEGRATIONS_OPENAI_API_KEY ||
+    process.env.OPENAI_API_KEY ||
+    process.env.OPENAI_ADMIN_KEY
+  );
   res.status(200).json({
     ok: true,
     service: 'dreamco-buddy',
     environment: process.env.NODE_ENV || 'development',
     uptimeSeconds: Math.floor((Date.now() - processStartedAt) / 1000),
-    stripeConfigured: Boolean(process.env.STRIPE_SECRET_KEY || process.env.STRIPE_LIVE_SECRET_KEY),
-    databaseConfigured: Boolean(process.env.DATABASE_URL),
-    runtimeMode: process.env.DATABASE_URL ? 'full' : 'health-only',
+    stripeConfigured,
+    stripeWebhookConfigured,
+    databaseConfigured,
+    openaiConfigured,
+    configurationReady: stripeConfigured && stripeWebhookConfigured && databaseConfigured && openaiConfigured,
+    runtimeMode: databaseConfigured ? 'full' : 'health-only',
     timestamp: new Date().toISOString(),
   });
 });
