@@ -17,9 +17,9 @@ def convert(source: dict, crosswalk: dict) -> dict:
     unknown = sorted(name for name in names if name not in by_name)
     if unknown:
         raise ValueError(f"benchmark results contain unknown domain divisions: {unknown}")
+    # Missing domain rows are unmeasured, not fabricated failures. The gap
+    # planner has the canonical crosswalk and will queue each missing domain.
     missing = sorted(set(by_name) - set(names))
-    if missing:
-        raise ValueError(f"benchmark results are missing canonical domain divisions: {missing}")
     if source.get("divisions") is not None and int(source["divisions"]) != len(rows):
         raise ValueError("benchmark division count does not match result rows")
 
@@ -46,10 +46,12 @@ def convert(source: dict, crosswalk: dict) -> dict:
     return {
         "schema": "dreamco.benchmark_scores.v2",
         "scope": "domain_divisions",
-        "domain_division_count": len(results),
+        "domain_division_count": len(domains),
+        "measured_domain_division_count": len(results),
+        "unmeasured_domain_divisions": missing,
         "masterbot_evidence_count": 0,
         "results": results,
-        "policy": "domain evidence is not MasterBot mastery or ownership approval",
+        "policy": "missing domain rows remain unmeasured and are queued; domain evidence is not MasterBot mastery or ownership approval",
     }
 
 
