@@ -43,6 +43,8 @@ def test_safe_repair_uses_convergent_generators_and_only_pushes_a_repair_branch(
     assert "python tools/sync_freecodecamp_learning_inventory.py --check" in workflow_text
     assert "python tools/build_division_huggingface_taxonomy_map.py" in workflow_text
     assert "python tools/build_division_huggingface_taxonomy_map.py --check" in workflow_text
+    assert "python tools/build_division_resource_readiness_map.py" in workflow_text
+    assert "python tools/build_division_resource_readiness_map.py --check" in workflow_text
     assert "tests.test_freecodecamp_learning_inventory" in workflow_text
     assert "tests.test_buddy_continuous_study_policy" in workflow_text
     assert "python tools/build_file_prospectus.py" in workflow_text
@@ -73,6 +75,7 @@ def test_safe_repair_allowlist_includes_public_evidence_and_manifests():
         "config/freecodecamp-complete-learning-path.json",
         "config/buddy-continuous-study-policy.json",
         "config/generated/division-huggingface-taxonomy-map.json",
+        "config/generated/division-resource-readiness-map.json",
         "website/data/fleet-runtime-status.json",
         "website/data/command-center",
     ):
