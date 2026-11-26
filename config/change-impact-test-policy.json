@@ -467,7 +467,8 @@
         "buddy/learning/course_track_registry.py",
         "buddy/learning/runtime_bridge.py",
         "config/buddy-course-track-registry.json",
-        "config/freecodecamp-division-routing-overrides.json"
+        "config/freecodecamp-division-routing-overrides.json",
+        "config/freecodecamp-division-category-profiles.json"
       ],
       "tests": [
         "tests/test_buddy_course_track_registry.py",
@@ -536,6 +537,28 @@
         "tests/test_production_readiness_gate.py",
         "tests/test_production_readiness_workflow.py"
       ]
+    },
+    {
+      "sources": [
+        "tools/build_freecodecamp_division_queues.py",
+        "config/review/freecodecamp-supplemental-domain-learning-approval.json",
+        "config/freecodecamp-division-category-profiles.json"
+      ],
+      "tests": [
+        "tests/test_freecodecamp_division_queues.py"
+      ],
+      "reason": "Owner-approved FreeCodeCamp subject-learning routes for all 55 domain divisions; MasterBot ownership remains separately governed."
+    },
+    {
+      "sources": [
+        "tools/build_freecodecamp_study_guides.py",
+        "config/freecodecamp-detailed-video-study-guide.schema.json",
+        "config/authorized-transcripts/manifest.json"
+      ],
+      "tests": [
+        "tests/test_freecodecamp_study_guides.py"
+      ],
+      "reason": "Rights-gated FreeCodeCamp video study-guide completeness, original exercises, independent projects and capstone acceptance evidence."
     }
   ],
   "evidence_rules": {

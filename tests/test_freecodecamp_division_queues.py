@@ -1,6 +1,6 @@
 import unittest
 from pathlib import Path
-from tools.build_freecodecamp_division_queues import DOMAIN_CATEGORY_MAP, build_queues, validate
+from tools.build_freecodecamp_division_queues import DOMAIN_CATEGORY_MAP, FOUNDATION, build_queues, validate
 
 
 def crosswalk_fixture():
@@ -84,7 +84,7 @@ class FreeCodeCampDomainQueueTests(unittest.TestCase):
         catalog["inventory_status"] = "partial"
         catalog["inventory"] = {**self.catalog["inventory"], "complete": False}
         with self.assertRaisesRegex(ValueError, "verified complete freeCodeCamp inventory required"):
-            build_queues(catalog, self.crosswalk, limit=10)
+            build_queues(catalog, self.crosswalk)
 
     def test_no_queue_item_is_authorized_for_training_or_media_ingestion(self):
         result = build_queues(self.catalog, self.crosswalk, limit=10)
@@ -132,9 +132,48 @@ class FreeCodeCampDomainQueueTests(unittest.TestCase):
             "observed_entry_count": 2,
         }
         with self.assertRaisesRegex(ValueError, "verified complete freeCodeCamp inventory required") as raised:
-            build_queues(catalog, self.crosswalk, limit=10, allow_partial=True)
+            build_queues(catalog, self.crosswalk, allow_partial=True)
         self.assertIn("verified complete freeCodeCamp inventory required", str(raised.exception))
 
+
+
+    def test_default_queue_includes_every_relevant_observed_video_for_all_55_domains(self):
+        import json
+        catalog = json.loads((ROOT / "buddy/bootcamp/sources/freecodecamp/catalog.json").read_text(encoding="utf-8"))
+        crosswalk = json.loads((ROOT / "config/generated/masterbot-55-domain-crosswalk.json").read_text(encoding="utf-8"))
+        result = build_queues(catalog, crosswalk, allow_partial=True)
+        validate(result)
+        self.assertIsNone(result["queue_limit_per_domain"])
+        for domain in result["domains"]:
+            required = set(FOUNDATION) | set(domain["target_categories"])
+            expected = {
+                video["video_id"] for video in catalog["videos"]
+                if set(video.get("categories") or []) & required
+            }
+            actual = {item["video_id"] for item in domain["items"]}
+            self.assertEqual(actual, expected, domain["domain_name"])
+
+
+
+    def test_rejects_classified_video_without_any_domain_category_route(self):
+        import copy
+        catalog = copy.deepcopy(self.catalog)
+        catalog["categories"].append({"id": "new_unmapped_category", "name": "New Unmapped Category"})
+        catalog["videos"][0]["categories"] = ["new_unmapped_category"]
+        with self.assertRaisesRegex(ValueError, "classified videos have no division category route"):
+            build_queues(catalog, self.crosswalk)
+
+    def test_every_classified_video_is_assigned_to_at_least_one_domain_queue(self):
+        import json
+        catalog = json.loads((ROOT / "buddy/bootcamp/sources/freecodecamp/catalog.json").read_text(encoding="utf-8"))
+        crosswalk = json.loads((ROOT / "config/generated/masterbot-55-domain-crosswalk.json").read_text(encoding="utf-8"))
+        result = build_queues(catalog, crosswalk, allow_partial=True)
+        assigned = {item["video_id"] for domain in result["domains"] for item in domain["items"]}
+        classified = {
+            video["video_id"] for video in catalog["videos"]
+            if set(video.get("categories") or []) != {"other_or_unclassified"}
+        }
+        self.assertEqual(assigned, classified)
 
     def test_every_canonical_domain_has_an_explicit_specialist_category_profile(self):
         from pathlib import Path
@@ -157,11 +196,15 @@ class FreeCodeCampDomainQueueTests(unittest.TestCase):
                 any(set(item["categories"]) & set(row["target_categories"]) for item in row["items"]),
                 row["domain_name"],
             )
-        self.assertTrue(all(not row["target_categories"] for row in unresolved))
-        self.assertTrue(all(row["queue_status"] == "foundation_only_owner_mapping_pending" for row in unresolved))
-        for row in unresolved:
-            foundation = set(row["shared_foundation_categories"])
-            self.assertTrue(all(foundation.intersection(item["categories"]) for item in row["items"]), row["domain_name"])
+        self.assertTrue(all(row["target_categories"] for row in unresolved))
+        self.assertTrue(all(row["queue_status"] == "subject_routed_learning_only_owner_mapping_pending" for row in unresolved))
+        self.assertTrue(all(row["learning_route_status"] == "owner_approved_learning_only" for row in unresolved))
+        self.assertTrue(all(row["masterbot_id"] is None and row["masterbot_ownership_status"] == "unresolved" for row in unresolved))
+        for row in core + unresolved:
+            self.assertTrue(
+                any(set(item["categories"]) & set(row["target_categories"]) for item in row["items"]),
+                row["domain_name"],
+            )
 
 
 if __name__ == "__main__":

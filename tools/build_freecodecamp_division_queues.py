@@ -14,17 +14,18 @@ from typing import Any
 ROOT = Path(__file__).resolve().parents[1]
 CATALOG = ROOT / "buddy/bootcamp/sources/freecodecamp/catalog.json"
 CROSSWALK = ROOT / "config/generated/masterbot-55-domain-crosswalk.json"
+APPROVALS = ROOT / "config/review/freecodecamp-supplemental-domain-learning-approval.json"
 OUTPUT = ROOT / "config/generated/freecodecamp-division-learning-queues.json"
-FOUNDATION = {
-    "computer_science_and_fundamentals",
-    "python_and_automation",
-    "databases_and_sql",
-    "software_architecture_and_testing",
-    "cybersecurity_and_privacy",
-    "generative_ai_and_llms",
-    "ai_agents_and_mcp",
-    "cloud_devops_and_ci_cd",
+PROFILE_PATH = ROOT / "config/freecodecamp-division-category-profiles.json"
+_PROFILE = json.loads(PROFILE_PATH.read_text(encoding="utf-8"))
+if _PROFILE.get("schema") != "dreamco.freecodecamp_division_category_profiles.v1":
+    raise ValueError("unsupported FreeCodeCamp division category profile schema")
+FOUNDATION = set(_PROFILE.get("shared_foundation_categories", []))
+DOMAIN_CATEGORY_MAP: dict[str, set[str]] = {
+    str(domain_id): set(categories)
+    for domain_id, categories in _PROFILE.get("domain_categories", {}).items()
 }
+
 ALIASES = {
     "finance": {"databases_and_sql", "data_science_and_visualization", "mathematics_and_statistics", "generative_ai_and_llms"},
     "real estate": {"databases_and_sql", "data_science_and_visualization", "software_architecture_and_testing", "generative_ai_and_llms"},
@@ -55,63 +56,6 @@ ALIASES = {
     "mobile": {"mobile_and_cross_platform", "javascript_and_typescript", "software_architecture_and_testing"},
     "web": {"html_css_and_accessibility", "javascript_and_typescript", "frontend_and_ui_frameworks", "backend_and_apis"},
 }
-DOMAIN_CATEGORY_MAP: dict[str, set[str]] = {
-    "commandcore": {"computer_science_and_fundamentals", "software_architecture_and_testing", "python_and_automation", "ai_agents_and_mcp", "cloud_devops_and_ci_cd"},
-    "dreamaiinfra": {"machine_learning_and_deep_learning", "generative_ai_and_llms", "ai_agents_and_mcp", "python_and_automation", "cloud_devops_and_ci_cd"},
-    "dreamadmin": {"python_and_automation", "databases_and_sql", "cloud_devops_and_ci_cd", "software_architecture_and_testing"},
-    "dreamagents": {"ai_agents_and_mcp", "generative_ai_and_llms", "backend_and_apis", "python_and_automation", "software_architecture_and_testing"},
-    "dreamagriculture": {"data_science_and_visualization", "machine_learning_and_deep_learning", "python_and_automation", "mathematics_and_statistics"},
-    "dreamarts": {"html_css_and_accessibility", "frontend_and_ui_frameworks", "javascript_and_typescript", "game_development"},
-    "dreamautomation": {"python_and_automation", "ai_agents_and_mcp", "backend_and_apis", "cloud_devops_and_ci_cd"},
-    "dreambizlaunch": {"career_and_interview_skills", "data_science_and_visualization", "backend_and_apis", "software_architecture_and_testing"},
-    "dreamcodelab": {"computer_science_and_fundamentals", "html_css_and_accessibility", "javascript_and_typescript", "python_and_automation", "backend_and_apis", "software_architecture_and_testing"},
-    "dreamconstruction": {"data_science_and_visualization", "python_and_automation", "software_architecture_and_testing", "cloud_devops_and_ci_cd"},
-    "dreamcontent": {"html_css_and_accessibility", "javascript_and_typescript", "frontend_and_ui_frameworks", "data_science_and_visualization"},
-    "dreamcrypto": {"databases_and_sql", "cybersecurity_and_privacy", "mathematics_and_statistics", "backend_and_apis"},
-    "dreamcustintel": {"data_science_and_visualization", "databases_and_sql", "machine_learning_and_deep_learning", "python_and_automation"},
-    "dreamcyber": {"cybersecurity_and_privacy", "linux_networking_and_it", "c_cpp_and_systems", "backend_and_apis"},
-    "dreamdata": {"databases_and_sql", "data_science_and_visualization", "machine_learning_and_deep_learning", "python_and_automation", "mathematics_and_statistics"},
-    "dreamdecision": {"mathematics_and_statistics", "data_science_and_visualization", "machine_learning_and_deep_learning", "software_architecture_and_testing"},
-    "dreameducation": {"computer_science_and_fundamentals", "python_and_automation", "frontend_and_ui_frameworks", "generative_ai_and_llms"},
-    "dreamempire": {"computer_science_and_fundamentals", "data_science_and_visualization", "ai_agents_and_mcp", "software_architecture_and_testing"},
-    "dreamentfinance": {"databases_and_sql", "data_science_and_visualization", "mathematics_and_statistics", "python_and_automation"},
-    "dreamfinance": {"databases_and_sql", "data_science_and_visualization", "mathematics_and_statistics", "python_and_automation"},
-    "dreamflow": {"python_and_automation", "backend_and_apis", "cloud_devops_and_ci_cd", "ai_agents_and_mcp"},
-    "dreamfood": {"data_science_and_visualization", "databases_and_sql", "python_and_automation", "backend_and_apis"},
-    "dreamglobal": {"software_architecture_and_testing", "databases_and_sql", "cloud_devops_and_ci_cd", "data_science_and_visualization"},
-    "dreamhealth": {"data_science_and_visualization", "databases_and_sql", "cybersecurity_and_privacy", "machine_learning_and_deep_learning"},
-    "dreaminfluence": {"html_css_and_accessibility", "frontend_and_ui_frameworks", "javascript_and_typescript", "data_science_and_visualization"},
-    "dreamlegal": {"cybersecurity_and_privacy", "databases_and_sql", "generative_ai_and_llms", "software_architecture_and_testing"},
-    "dreamloans": {"databases_and_sql", "data_science_and_visualization", "mathematics_and_statistics", "backend_and_apis"},
-    "dreammaintenance": {"python_and_automation", "cloud_devops_and_ci_cd", "c_cpp_and_systems", "data_science_and_visualization"},
-    "dreammarket": {"data_science_and_visualization", "databases_and_sql", "frontend_and_ui_frameworks", "backend_and_apis"},
-    "dreammilitary": {"cybersecurity_and_privacy", "linux_networking_and_it", "c_cpp_and_systems", "mathematics_and_statistics"},
-    "dreamops": {"python_and_automation", "cloud_devops_and_ci_cd", "databases_and_sql", "software_architecture_and_testing"},
-    "dreampayments": {"backend_and_apis", "databases_and_sql", "cybersecurity_and_privacy", "software_architecture_and_testing"},
-    "dreampersonalcare": {"mobile_and_cross_platform", "frontend_and_ui_frameworks", "cybersecurity_and_privacy", "data_science_and_visualization"},
-    "dreamplanetary": {"data_science_and_visualization", "machine_learning_and_deep_learning", "mathematics_and_statistics", "python_and_automation"},
-    "dreamproservices": {"career_and_interview_skills", "backend_and_apis", "python_and_automation", "software_architecture_and_testing"},
-    "dreamproduction": {"python_and_automation", "cloud_devops_and_ci_cd", "c_cpp_and_systems", "software_architecture_and_testing"},
-    "dreamprotection": {"cybersecurity_and_privacy", "linux_networking_and_it", "c_cpp_and_systems", "backend_and_apis"},
-    "dreamrealestate": {"databases_and_sql", "data_science_and_visualization", "backend_and_apis", "python_and_automation"},
-    "dreamretail": {"data_science_and_visualization", "databases_and_sql", "frontend_and_ui_frameworks", "mobile_and_cross_platform"},
-    "dreamsalespro": {"data_science_and_visualization", "career_and_interview_skills", "backend_and_apis", "python_and_automation"},
-    "dreamscience": {"data_science_and_visualization", "machine_learning_and_deep_learning", "mathematics_and_statistics", "python_and_automation"},
-    "dreamsocial": {"frontend_and_ui_frameworks", "javascript_and_typescript", "databases_and_sql", "cybersecurity_and_privacy"},
-    "dreamtrade": {"databases_and_sql", "mathematics_and_statistics", "backend_and_apis", "cybersecurity_and_privacy"},
-    "dreamtransport": {"data_science_and_visualization", "backend_and_apis", "cloud_devops_and_ci_cd", "python_and_automation"},
-    "gametitan": {"game_development", "c_cpp_and_systems", "mathematics_and_statistics", "software_architecture_and_testing"},
-    "dreamaffiliate": {"data_science_and_visualization", "html_css_and_accessibility", "javascript_and_typescript", "backend_and_apis"},
-    "dreamagency": {"career_and_interview_skills", "data_science_and_visualization", "frontend_and_ui_frameworks", "backend_and_apis"},
-    "dreamfoundry": {"computer_science_and_fundamentals", "software_architecture_and_testing", "backend_and_apis", "cloud_devops_and_ci_cd"},
-    "dreamfranchise": {"career_and_interview_skills", "data_science_and_visualization", "backend_and_apis", "python_and_automation"},
-    "dreamintegrations": {"backend_and_apis", "ai_agents_and_mcp", "cloud_devops_and_ci_cd", "cybersecurity_and_privacy"},
-    "dreamlicensing": {"cybersecurity_and_privacy", "databases_and_sql", "software_architecture_and_testing", "career_and_interview_skills"},
-    "dreamrobotics": {"c_cpp_and_systems", "python_and_automation", "machine_learning_and_deep_learning", "mathematics_and_statistics"},
-    "dreamsaas": {"frontend_and_ui_frameworks", "backend_and_apis", "databases_and_sql", "cloud_devops_and_ci_cd", "software_architecture_and_testing"},
-    "dreamstreaming": {"backend_and_apis", "cloud_devops_and_ci_cd", "javascript_and_typescript", "linux_networking_and_it"},
-    "dreamtravel": {"data_science_and_visualization", "backend_and_apis", "mobile_and_cross_platform", "cloud_devops_and_ci_cd"},
-}
 
 def _slug(text: str) -> str:
     return re.sub(r"[^a-z0-9]+", "-", text.casefold()).strip("-")
@@ -138,7 +82,45 @@ def _division_categories(name: str, subject_terms: list[str], known: set[str], d
             selected.add(category_id)
     return selected, bool(selected)
 
-def build_queues(catalog: dict[str, Any], crosswalk: dict[str, Any], limit: int = 30, *, allow_partial: bool = False) -> dict[str, Any]:
+
+def _approved_supplemental_learning_routes(known: set[str], domains: list[dict[str, Any]]) -> dict[str, set[str]]:
+    """Load owner-approved learning categories without approving MasterBot ownership."""
+    if not APPROVALS.is_file():
+        raise ValueError("supplemental learning-route approval manifest is required")
+    document = json.loads(APPROVALS.read_text(encoding="utf-8"))
+    if document.get("schema") != "dreamco.freecodecamp_supplemental_learning_approval.v1":
+        raise ValueError("unsupported supplemental learning-route approval schema")
+    if document.get("approval_scope") != "freecodecamp_learning_categories_only":
+        raise ValueError("supplemental approval must be limited to learning categories")
+    domain_by_id = {str(row.get("domain_id")): row for row in domains}
+    approved: dict[str, set[str]] = {}
+    for entry in document.get("approved_routes", []):
+        domain_id = str(entry.get("domain_id", ""))
+        if not domain_id or domain_id in approved:
+            raise ValueError("supplemental learning approval IDs must be unique and non-empty")
+        domain = domain_by_id.get(domain_id)
+        if domain is None:
+            # Small synthetic fixtures intentionally omit the canonical supplemental rows.
+            continue
+        if domain.get("mapping_status") != "unresolved" or domain.get("masterbot_id") is not None:
+            raise ValueError(f"learning-only approval cannot alter MasterBot ownership: {domain_id}")
+        if entry.get("owner_approved") is not True or entry.get("approved_by") != "repository_owner":
+            raise ValueError(f"explicit repository-owner approval is required: {domain_id}")
+        if not str(entry.get("approval_reference", "")).strip():
+            raise ValueError(f"approval reference is required: {domain_id}")
+        categories = set(entry.get("categories", []))
+        canonical = DOMAIN_CATEGORY_MAP.get(domain_id, set()) & known
+        if not canonical or categories != canonical:
+            raise ValueError(f"approved learning categories must match the curated domain profile: {domain_id}")
+        approved[domain_id] = categories
+    canonical_domain_ids = set(DOMAIN_CATEGORY_MAP)
+    if set(domain_by_id) == canonical_domain_ids:
+        unresolved_ids = {key for key, row in domain_by_id.items() if row.get("mapping_status") == "unresolved"}
+        if set(approved) != unresolved_ids:
+            raise ValueError("every unresolved canonical domain needs an explicit learning-only approval")
+    return approved
+
+def build_queues(catalog: dict[str, Any], crosswalk: dict[str, Any], limit: int | None = None, *, allow_partial: bool = False) -> dict[str, Any]:
     if catalog.get("schema") != "dreamco.freecodecamp_catalog.v1":
         raise ValueError("unsupported freeCodeCamp catalog schema")
     videos = catalog.get("videos")
@@ -175,16 +157,20 @@ def build_queues(catalog: dict[str, Any], crosswalk: dict[str, Any], limit: int 
     if len(mapped) != 45 or len(unassigned) != 10:
         raise ValueError("crosswalk must preserve 45 core domains and 10 supplemental profiles")
     known = {row["id"] for row in categories}
+    approved_supplemental = _approved_supplemental_learning_routes(known, domains)
     rows = []
     for domain in sorted(domains, key=lambda row: row["domain_id"]):
         domain_id = domain["domain_id"]
         name = domain["domain_name"]
         subject_terms = [name, name.replace("Dream", "")]
         targeted, has_mapping = _division_categories(name, subject_terms, known, domain_id)
-        # Explicit category profiles are curriculum metadata, not owner approval.
-        # Keep the ten unresolved supplemental domains foundation-only until review.
+        # Category-level learning approval is separate from MasterBot ownership.
+        # The ten supplemental domains may receive subject lessons while their
+        # MasterBot ownership remains unresolved and unassigned.
+        learning_only_approval = domain_id in approved_supplemental
         if domain.get("mapping_status") != "proposed_exact_name_match":
-            targeted, has_mapping = set(), False
+            targeted = approved_supplemental.get(domain_id, set())
+            has_mapping = bool(targeted)
         required = FOUNDATION | targeted
         scored = []
         for video in videos:
@@ -198,14 +184,16 @@ def build_queues(catalog: dict[str, Any], crosswalk: dict[str, Any], limit: int 
             score = (len(specialty) * 10) + len(overlap)
             scored.append((score, video))
         scored.sort(key=lambda item: (-item[0], item[1].get("upload_date") or "", item[1]["video_id"]))
-        selected = scored[:limit]
+        selected = scored if limit is None else scored[:limit]
         rows.append({
             "domain_id": domain_id,
             "domain_name": name,
             "masterbot_id": domain.get("masterbot_id"),
             "mapping_status": domain.get("mapping_status"),
             "owner_review_required": domain.get("review_required", True),
-            "queue_status": "subject_routed" if has_mapping else "foundation_only_owner_mapping_pending",
+            "learning_route_status": "owner_approved_learning_only" if learning_only_approval else ("owner_mapping_pending" if domain.get("mapping_status") == "unresolved" else "proposed_subject_categories"),
+            "masterbot_ownership_status": "unresolved" if domain.get("mapping_status") == "unresolved" else "proposed_exact_name_match",
+            "queue_status": ("subject_routed_learning_only_owner_mapping_pending" if learning_only_approval else "subject_routed" if has_mapping else "foundation_only_owner_mapping_pending"),
             "target_categories": sorted(targeted),
             "shared_foundation_categories": sorted(FOUNDATION & known),
             "items": [{
@@ -224,6 +212,32 @@ def build_queues(catalog: dict[str, Any], crosswalk: dict[str, Any], limit: int 
             "queue_count": len(selected),
             "truth_boundary": "Queued metadata is not evidence that the division watched, learned, trained on, or mastered this lesson.",
         })
+    classified_video_ids = {
+        video["video_id"] for video in videos
+        if set(video.get("categories") or []) and set(video.get("categories") or []) != {"other_or_unclassified"}
+    }
+    # An explicit cap is a deliberate preview. Full classified-video coverage
+    # is required only for the uncapped default queue used by production workflows.
+    if limit is None:
+        assigned_video_ids = {
+            item["video_id"] for row in rows for item in row["items"]
+        }
+        unrouted_video_ids = sorted(classified_video_ids - assigned_video_ids)
+        if unrouted_video_ids:
+            unrouted_set = set(unrouted_video_ids)
+            categories_by_id = {
+                video["video_id"]: sorted(set(video.get("categories") or []))
+                for video in videos if video["video_id"] in unrouted_set
+            }
+            samples = {video_id: categories_by_id[video_id] for video_id in unrouted_video_ids[:10]}
+            raise ValueError(
+                f"{len(unrouted_video_ids)} classified videos have no division category route; "
+                f"add reviewed category profiles or explicit triage routes: {samples}"
+            )
+    unclassified_video_count = sum(
+        set(video.get("categories") or []) == {"other_or_unclassified"}
+        for video in videos
+    )
     return {
         "schema": "dreamco.freecodecamp_division_learning_queues.v1",
         "source_catalog_generated_at": catalog.get("generated_at"),
@@ -233,6 +247,8 @@ def build_queues(catalog: dict[str, Any], crosswalk: dict[str, Any], limit: int 
         "coverage_warning": None if complete_inventory else "Only observed catalog entries are queued. The full historical freeCodeCamp video archive is not verified; do not claim complete source coverage.",
         "domain_count": len(rows),
         "catalog_video_count": len(videos),
+        "classified_video_count": len(classified_video_ids),
+        "unclassified_video_count": unclassified_video_count,
         "queue_limit_per_domain": limit,
         "rights_policy": catalog["rights_policy"],
         "domains": rows,
@@ -273,11 +289,19 @@ def validate(payload: dict[str, Any]) -> None:
         if row["queue_count"] != len(row["items"]):
             raise ValueError("queue_count does not match item count")
         if row.get("mapping_status") == "unresolved":
-            if row.get("target_categories") or row.get("queue_status") != "foundation_only_owner_mapping_pending":
-                raise ValueError("unresolved domains must remain foundation-only until owner review")
-            foundation = set(row.get("shared_foundation_categories") or [])
-            if not foundation or any(not (foundation & set(item.get("categories") or [])) for item in row["items"]):
-                raise ValueError("unresolved domain queues may contain shared foundation lessons only")
+            if row.get("masterbot_id") is not None or row.get("masterbot_ownership_status") != "unresolved":
+                raise ValueError("learning-route approval cannot assign unresolved MasterBot ownership")
+            if row.get("target_categories"):
+                if row.get("learning_route_status") != "owner_approved_learning_only" or row.get("queue_status") != "subject_routed_learning_only_owner_mapping_pending":
+                    raise ValueError("supplemental specialist routes require explicit learning-only owner approval")
+                if not any(set(row["target_categories"]) & set(item.get("categories") or []) for item in row["items"]):
+                    raise ValueError("owner-approved supplemental route has no matching observed video")
+            else:
+                if row.get("queue_status") != "foundation_only_owner_mapping_pending":
+                    raise ValueError("unapproved supplemental domains must remain foundation-only")
+                foundation = set(row.get("shared_foundation_categories") or [])
+                if not foundation or any(not (foundation & set(item.get("categories") or [])) for item in row["items"]):
+                    raise ValueError("unapproved supplemental queues may contain shared foundation lessons only")
         elif row.get("mapping_status") == "proposed_exact_name_match":
             if row.get("target_categories") and row.get("queue_status") != "subject_routed":
                 raise ValueError("mapped core domain proposals must use the specialist route")
@@ -294,12 +318,12 @@ def validate(payload: dict[str, Any]) -> None:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--check", action="store_true")
-    parser.add_argument("--limit", type=int, default=30)
+    parser.add_argument("--limit", type=int, default=None, help="Optional per-division cap; default queues every relevant observed video.")
     parser.add_argument("--allow-partial", action="store_true", help="Build a provisional queue from observed entries only; never claim full archive coverage.")
     parser.add_argument("--out", type=Path, default=OUTPUT)
     args = parser.parse_args()
-    if not 1 <= args.limit <= 100:
-        raise SystemExit("--limit must be between 1 and 100")
+    if args.limit is not None and args.limit < 1:
+        raise SystemExit("--limit must be a positive integer when supplied")
     catalog = json.loads(CATALOG.read_text(encoding="utf-8"))
     crosswalk = json.loads(CROSSWALK.read_text(encoding="utf-8"))
     payload = build_queues(catalog, crosswalk, args.limit, allow_partial=args.allow_partial)
@@ -315,8 +339,11 @@ def main() -> int:
         args.out.write_text(rendered, encoding="utf-8")
     print(json.dumps({"ok": True, "queue_mode": payload["queue_mode"], "domains": 55, "catalog_videos": len(catalog["videos"]),
                       "queued_items": sum(row["queue_count"] for row in payload["domains"]),
-                      "subject_routed": sum(row["queue_status"] == "subject_routed" for row in payload["domains"]),
-                      "foundation_only": sum(row["queue_status"] != "subject_routed" for row in payload["domains"])}, indent=2))
+                      "classified_videos": payload["classified_video_count"],
+                      "unclassified_triage_videos": payload["unclassified_video_count"],
+                      "subject_routed": sum(bool(row["target_categories"]) for row in payload["domains"]),
+                      "learning_only_owner_mapping_pending": sum(row["queue_status"] == "subject_routed_learning_only_owner_mapping_pending" for row in payload["domains"]),
+                      "foundation_only": sum(not row["target_categories"] for row in payload["domains"])}, indent=2))
     return 0
 
 if __name__ == "__main__":
