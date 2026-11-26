@@ -3,6 +3,20 @@ name: Production Readiness Evidence
 on:
   push:
     branches: [main]
+  pull_request:
+    paths:
+      - "buddy/**"
+      - "buddy_os/**"
+      - "config/**"
+      - "governance/**"
+      - "tools/**"
+      - "tests/**"
+      - "server/**"
+      - "client/**"
+      - "shared/**"
+      - "package.json"
+      - "package-lock.json"
+      - ".github/workflows/production-readiness.yml"
   schedule:
     - cron: '17 6 * * *'
   workflow_dispatch:
@@ -36,9 +50,17 @@ jobs:
       - name: Run static site preflight
         run: python3 tools/build_buddy_public_site.py --check
       - name: Run production contract strict gate
+        if: github.event_name != 'pull_request'
         run: python3 tools/production_readiness_gate.py --strict
       - name: Fail closed unless production is fully certified
+        if: github.event_name != 'pull_request'
         run: npm run production:certification
+      - name: Explain report-only pull request result
+        if: github.event_name == 'pull_request'
+        run: |
+          echo "This pull request receives a current, read-only production-readiness inventory."
+          echo "Strict production certification remains fail-closed and is not run from a pull request."
+          echo "An uploaded report is evidence inventory, not a production-ready certification."
       - name: Upload evidence report
         if: always()
         uses: actions/upload-artifact@v7
