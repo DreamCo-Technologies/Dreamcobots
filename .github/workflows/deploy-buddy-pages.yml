@@ -267,7 +267,9 @@ jobs:
         with:
           path: public_site
   deploy:
-    if: github.ref == 'refs/heads/main'
+    # Main-branch pushes build and validate the site, but deployment is manual-only.
+    # This prevents an ordinary PR merge from publishing without an explicit dispatch.
+    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'
     needs: build
     runs-on: ubuntu-latest
     timeout-minutes: 20
