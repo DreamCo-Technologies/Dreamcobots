@@ -50,7 +50,7 @@ test('every generated division gets a prospectus, roster, and questionnaire', ()
   assert.match(divisionsHtml, /id="close-division-dialog"/);
   assert.match(divisionsHtml, /href="buddy-run.css"/);
   assert.match(divisionsHtml, /src="buddy-run.js"/);
-  assert.match(divisionsHtml, /src="divisions.js\\?v=2"/);
+  assert.match(divisionsHtml, /src="divisions\.js\?v=2"/);
   assert.match(divisionsSource, /prospectus and local questionnaire for every division/);
   assert.match(divisionsSource, /data-division-prospectus/);
   assert.match(divisionsSource, /id="division-questionnaire"/);
