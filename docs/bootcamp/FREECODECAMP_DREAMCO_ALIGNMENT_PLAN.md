@@ -84,7 +84,7 @@ Each repository record should retain: owner/name, URL, description, language, to
 
 Use the official YouTube Data API for an auditable full-channel inventory. The current catalog workflow uses metadata enumeration, but the committed snapshot is partial and the repository policy says a recent-upload RSS feed is not a full archive. Reconcile playlist totals, unique video IDs, unavailable/deleted entries, and pagination before marking the inventory complete. Do not infer completeness from the number of rows returned by one scrape.
 
-The repository organization page lists hundreds of public repositories. Enumerate the complete public repository set by API pagination; classify all of them, then prioritize the repositories that contain curriculum, example projects, test tooling, design/UI, documentation, classroom, and infrastructure. Do not assume every repository is relevant to every DreamCo division.
+The repository organization page listed 242 public repositories in the research snapshot. Enumerate the complete public repository set by API pagination; classify all of them, then prioritize the repositories that contain curriculum, example projects, test tooling, design/UI, documentation, classroom, and infrastructure. Do not assume every repository is relevant to every DreamCo division or hard-code the count as permanent.
 
 ## 4. Route every video to the correct division
 
