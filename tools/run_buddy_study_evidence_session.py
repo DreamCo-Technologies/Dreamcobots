@@ -400,21 +400,40 @@ def expect_blocked(case_id: str, expected: type[BaseException], operation: Calla
 
 
 def run_existing_trainer_tests(root: Path) -> dict[str, Any]:
-    command = [sys.executable, "-m", "unittest", "discover", "-s", "tests", "-p", "test_buddy_byte_bpe_trainer.py", "-v"]
-    try:
-        result = subprocess.run(command, cwd=root, capture_output=True, text=True, timeout=180, check=False)
-        output = (result.stdout or "") + (result.stderr or "")
-        match = re.search(r"Ran\s+(\d+)\s+tests?", output)
-        return {
-            "command": command,
-            "exit_code": result.returncode,
-            "status": "passed" if result.returncode == 0 and "OK" in output else "failed",
-            "tests_run": int(match.group(1)) if match else None,
-            "output_tail": output[-5000:],
-        }
-    except subprocess.TimeoutExpired as exc:
-        return {"command": command, "exit_code": None, "status": "timeout", "tests_run": None, "output_tail": str(exc)}
-
+    suites = (
+        ("byte_bpe_trainer", "test_buddy_byte_bpe_trainer.py"),
+        ("study_resource_scheduler", "test_study_resource_scheduler.py"),
+    )
+    results = []
+    combined_output = []
+    for suite_name, pattern in suites:
+        command = [sys.executable, "-m", "unittest", "discover", "-s", "tests", "-p", pattern, "-v"]
+        try:
+            result = subprocess.run(command, cwd=root, capture_output=True, text=True, timeout=180, check=False)
+            output = (result.stdout or "") + (result.stderr or "")
+            match = re.search(r"Ran\\s+(\\d+)\\s+tests?", output)
+            suite_result = {
+                "suite": suite_name,
+                "command": command,
+                "exit_code": result.returncode,
+                "status": "passed" if result.returncode == 0 and "OK" in output else "failed",
+                "tests_run": int(match.group(1)) if match else None,
+                "output_tail": output[-3000:],
+            }
+        except subprocess.TimeoutExpired as exc:
+            suite_result = {
+                "suite": suite_name, "command": command, "exit_code": None,
+                "status": "timeout", "tests_run": None, "output_tail": str(exc),
+            }
+        results.append(suite_result)
+        combined_output.append(suite_result["output_tail"])
+    counts = [row["tests_run"] for row in results if row["tests_run"] is not None]
+    return {
+        "status": "passed" if all(row["status"] == "passed" for row in results) else "failed",
+        "tests_run": sum(counts),
+        "suites": results,
+        "output_tail": "\\n".join(combined_output)[-5000:],
+    }
 
 def run_tokenizer_cli(root: Path, output_dir: Path, vocab_size: int) -> tuple[dict[str, Any], dict[str, Any]]:
     output_path = output_dir / "tokenizer.json"
