@@ -100,9 +100,11 @@ if (checkOnly) {
   divisionShards.forEach((shard) => writeFileSync(shard.path, shard.content));
 }
 
-const canonicalDivisionCoverage = report.summary.divisionsTested === 55 &&
-  report.divisions.length === 55 &&
-  new Set(report.divisions.map((division) => division.division)).size === 55;
+const canonicalDivisionCoverage = report.summary.divisionsTested === 56 &&
+  report.divisions.length === 56 &&
+  new Set(report.divisions.map((division) => division.division)).size === 56 &&
+  report.divisions.some((division) => division.division === "CommandCore") &&
+  report.divisions.filter((division) => division.division !== "CommandCore").length === 55;
 
 if (
   !writeOnly &&
