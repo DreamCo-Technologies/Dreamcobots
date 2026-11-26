@@ -47,6 +47,7 @@ class CourseLesson:
     implementation_steps: tuple[str, ...] = ()
     buddy_demo: str = ""
     source_video_id: str = ""
+    video_categories: tuple[str, ...] = ()
 
 
 def _read(path: Path) -> dict:
@@ -399,6 +400,7 @@ def _rows(track: dict, data: dict, root: Path = ROOT, *, include_blueprint: bool
                 "benchmark": (overlay.get("benchmark") if include_blueprint else None) or "FreeCodeCamp metadata inventory integrity checks; no study or mastery claim.",
                 "source_url": row["url"],
                 "source_video_id": str(row["video_id"]),
+                "video_categories": sorted(row_categories),
                 "content_status": "metadata_only",
                 "division_targets": overlay.get("division_targets", []),
                 "masterbot_targets": overlay.get("masterbot_targets", []),
@@ -643,6 +645,7 @@ def load_course_lessons(root: Path = ROOT) -> list[CourseLesson]:
                 implementation_steps=tuple(str(value) for value in row.get("implementation_steps", [])),
                 buddy_demo=str(row.get("buddy_demo", "")),
                 source_video_id=str(row.get("source_video_id", "")),
+                video_categories=tuple(str(value) for value in row.get("video_categories", [])),
             ))
     return lessons
 
