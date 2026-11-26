@@ -43,7 +43,9 @@ jobs:
           python tools/build_division_owner_review_queue.py --check
           python -m unittest discover -s tests -p 'test_division_owner_review_queue.py' -v
       - name: Propose updated review queue
+        id: propose
         if: github.event_name != 'pull_request'
+        continue-on-error: true
         uses: peter-evans/create-pull-request@v7
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -56,3 +58,16 @@ jobs:
           body: |
             Generated from the current division resource readiness map and division reconciliation.
             Shared platform roles are not assigned a primary domain. Supplemental collaborator links remain proposed and unapproved.
+      - name: Preserve generated review queue when PR creation is policy-blocked
+        if: github.event_name != 'pull_request' && steps.propose.outcome == 'failure'
+        run: |
+          echo "::warning::The repository policy rejected pull-request creation with GITHUB_TOKEN. The generated review queue is preserved as an artifact for manual review; no owner approval is inferred."
+          echo "The generated division-owner-review-queue.json is available in the workflow artifact because this repository does not permit Actions to create pull requests with GITHUB_TOKEN." >> "$GITHUB_STEP_SUMMARY"
+      - name: Upload generated owner review queue for manual review
+        if: github.event_name != 'pull_request' && steps.propose.outcome == 'failure'
+        uses: actions/upload-artifact@v4
+        with:
+          name: division-owner-review-queue-${{ github.run_id }}
+          path: config/generated/division-owner-review-queue.json
+          if-no-files-found: error
+          retention-days: 30
