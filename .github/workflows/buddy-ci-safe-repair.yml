@@ -83,6 +83,7 @@ jobs:
           python tools/generate_bot_manifests.py
           python tools/fleet_runtime_audit.py --skip-folder-tests
           python tools/refresh_repository_evidence.py
+          python tools/generate_command_center_data.py
           python tools/audit_markdown_implementation_gaps.py --write
       - name: Verify repaired indexes and Buddy repair-learning tests
         run: |
@@ -96,6 +97,8 @@ jobs:
           python tools/audit_pages_features.py --check --check-regressions
           python tools/build_actions_prospectus.py --check --check-buttons
           python tools/build_file_prospectus.py --check
+          python tools/generate_command_center_data.py --check
+          python -m unittest tests.test_command_center_data
           python tools/audit_markdown_implementation_gaps.py --check
           python tools/validate_buddy_engineering_capabilities.py
           python tools/validate_dreamco_mastery_registry.py
