@@ -27,6 +27,17 @@ class FSRSConfig:
     enable_fuzzing: bool = False
     parameters: tuple[float, ...] | None = None
 
+    @classmethod
+    def from_scheduler_dict(cls, value: dict[str, Any]) -> "FSRSConfig":
+        return cls(
+            desired_retention=float(value["desired_retention"]),
+            maximum_interval_days=int(value["maximum_interval"]),
+            learning_steps_seconds=tuple(int(x) for x in value["learning_steps"]),
+            relearning_steps_seconds=tuple(int(x) for x in value["relearning_steps"]),
+            enable_fuzzing=bool(value["enable_fuzzing"]),
+            parameters=tuple(float(x) for x in value["parameters"]),
+        )
+
     def __post_init__(self) -> None:
         if not 0.7 < self.desired_retention < 0.97:
             raise ValueError("desired_retention must be between 0.70 and 0.97")
