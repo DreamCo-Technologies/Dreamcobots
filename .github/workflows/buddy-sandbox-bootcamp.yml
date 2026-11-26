@@ -139,6 +139,8 @@ jobs:
         run: |
           python tools/build_division_huggingface_taxonomy_map.py --check
           python -m unittest tests.test_division_huggingface_taxonomy_map
+      - name: Regenerate all 65 division resource bundles
+        run: python tools/build_division_resource_readiness_map.py
       - name: Validate all 65 division resource bundles
         run: |
           python tools/build_division_resource_readiness_map.py --check
@@ -208,6 +210,14 @@ jobs:
         with:
           name: buddy-huggingface-taxonomy-map-${{ github.run_id }}
           path: config/generated/division-huggingface-taxonomy-map.json
+          if-no-files-found: warn
+          retention-days: 90
+      - name: Preserve generated division resource readiness map
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: buddy-division-resource-readiness-map-${{ github.run_id }}
+          path: config/generated/division-resource-readiness-map.json
           if-no-files-found: warn
           retention-days: 90
       - name: Preserve tiny GPT baseline evidence
