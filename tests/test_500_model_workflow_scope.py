@@ -1,4 +1,5 @@
 from pathlib import Path
+import re
 import unittest
 from tools.run_500_model_benchmarks import build_status
 
@@ -45,6 +46,14 @@ class FiveHundredModelWorkflowScopeTests(unittest.TestCase):
         self.assertNotIn("python3 -m pytest -q", text)
         self.assertIn("BLOCKED_RUNNER_NOT_IMPLEMENTED", text)
         self.assertIn("all matrix rows remain unverified", text)
+
+    def test_public_secret_scanner_uses_prefix_boundaries(self):
+        pattern = re.compile(r"(?i)(?<![A-Za-z0-9])(sk-[A-Za-z0-9_-]{16,}|ghp_[A-Za-z0-9_]{20,}|github_pat_[A-Za-z0-9_]{20,}|BEGIN (RSA|OPENSSH|EC|DSA) PRIVATE KEY)")
+        self.assertIsNone(pattern.search("task-" + "x" * 24))
+        self.assertIsNone(pattern.search("risk-" + "x" * 24))
+        self.assertIsNotNone(pattern.search(" " + "sk-" + "x" * 24))
+        workflow = WORKFLOW.read_text(encoding="utf-8")
+        self.assertIn("(?<![A-Za-z0-9])", workflow)
 
     def test_laptop_test_key_is_not_key_shaped(self):
         text = LAPTOP_RUNNER.read_text(encoding="utf-8")
