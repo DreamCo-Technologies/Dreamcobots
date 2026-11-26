@@ -272,6 +272,15 @@ def validate(payload: dict[str, Any]) -> None:
     for row in rows:
         if row["queue_count"] != len(row["items"]):
             raise ValueError("queue_count does not match item count")
+        if row.get("mapping_status") == "unresolved":
+            if row.get("target_categories") or row.get("queue_status") != "foundation_only_owner_mapping_pending":
+                raise ValueError("unresolved domains must remain foundation-only until owner review")
+            foundation = set(row.get("shared_foundation_categories") or [])
+            if not foundation or any(not (foundation & set(item.get("categories") or [])) for item in row["items"]):
+                raise ValueError("unresolved domain queues may contain shared foundation lessons only")
+        elif row.get("mapping_status") == "proposed_exact_name_match":
+            if not row.get("target_categories") or row.get("queue_status") != "subject_routed":
+                raise ValueError("core domain proposals require an explicit specialist category route")
         for item in row["items"]:
             if item["assignment_status"] != "queued_not_studied":
                 raise ValueError("queue generation cannot claim study completion")
