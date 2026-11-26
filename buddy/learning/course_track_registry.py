@@ -38,6 +38,15 @@ class CourseLesson:
     rights_mode: str
     delivery: str
     content_status: str = "authored"
+    division_targets: tuple[str, ...] = ()
+    masterbot_targets: tuple[str, ...] = ()
+    capability_tags: tuple[str, ...] = ()
+    tool_tags: tuple[str, ...] = ()
+    agent_tags: tuple[str, ...] = ()
+    learning_modes: tuple[str, ...] = ()
+    implementation_steps: tuple[str, ...] = ()
+    buddy_demo: str = ""
+    source_video_id: str = ""
 
 
 def _read(path: Path) -> dict:
@@ -49,7 +58,7 @@ def _stable_id(track_id: str, lesson_id: str) -> int:
     return (int.from_bytes(digest[:8], "big") & 0x7FFFFFFFFFFFFFFF) or 1
 
 
-def _rows(track: dict, data: dict, root: Path = ROOT) -> list[dict]:
+def _rows(track: dict, data: dict, root: Path = ROOT, *, include_blueprint: bool = False) -> list[dict]:
     parser = track["parser"]
     if parser == "universal_library_curriculum":
         ecosystem_data = _read(root / "config/library_ecosystems.json")
@@ -340,19 +349,170 @@ def _rows(track: dict, data: dict, root: Path = ROOT) -> list[dict]:
             raise ValueError("freeCodeCamp video catalog count does not match its video rows")
         if int(inventory.get("observed_entry_count", -1)) != len(videos):
             raise ValueError("freeCodeCamp observed inventory count does not match video rows")
-        return [
-            {
+        routing_path = root / "config/freecodecamp-division-routing-overrides.json"
+        routing = _read(routing_path) if routing_path.is_file() else {}
+        if routing.get("schema") not in {None, "dreamco.freecodecamp_specialist_learning_overrides.v1"}:
+            raise ValueError("unsupported freeCodeCamp specialist routing override schema")
+        overrides = {str(item.get("video_id")): item for item in routing.get("entries", [])}
+        rules = routing.get("routing_rules", [])
+        rows = []
+        for row in videos:
+            searchable = f"{row.get('title', '')} {row.get('description', '')}".casefold()
+            row_categories = {str(value).casefold() for value in row.get("categories", [])}
+            matched_rules = [
+                candidate for candidate in rules
+                if (
+                    any(str(term).casefold() in searchable for term in candidate.get("match_title_terms", []))
+                    or bool(row_categories.intersection(str(value).casefold() for value in candidate.get("match_categories", [])))
+                )
+            ]
+            overlay: dict[str, Any] = {}
+            for candidate in matched_rules:
+                for key, value in candidate.items():
+                    if key in {"division_targets", "masterbot_targets", "capability_tags", "tool_tags", "agent_tags"}:
+                        overlay[key] = list(dict.fromkeys([*overlay.get(key, []), *value]))
+                    elif key not in {"match_title_terms", "match_categories"}:
+                        overlay[key] = value
+            overlay.update(overrides.get(str(row.get("video_id")), {}))
+            if row_categories == {"other_or_unclassified"} and not overlay.get("division_targets"):
+                overlay["division_targets"] = ["DreamEducation", "CommandCore"]
+                overlay["masterbot_targets"] = ["DreamEducation", "CommandCore", "DreamDiscovery"]
+                overlay["capability_tags"] = ["source-classification", "course-taxonomy", "rights-review"]
+                overlay["tool_tags"] = ["video-metadata-catalog", "course-taxonomy", "review-queue"]
+                overlay["agent_tags"] = ["course-curator", "rights-reviewer", "division-router"]
+            rows.append({
                 "id": f"fcc-video-{row['video_id']}",
                 "title": row["title"],
-                "objective": row.get("description") or "Study the video only after an authorized transcript or equivalent source is available; title and metadata are not lesson content.",
-                "practice": "Locate item-level study, derivative-summary and evaluation permissions; if authorized, create an original timestamped guide with exercises and answer key. Otherwise remain metadata-only.",
-                "assessment": "Do not mark studied or mastered from a title, video URL or metadata row. Require a rights-cleared source, detailed guide, original exercise and independent assessment.",
-                "benchmark": "FreeCodeCamp detailed video study-guide acceptance suite.",
+                "objective": (overlay.get("objective") if include_blueprint else None) or row.get("description") or "Metadata-only reference; a title and public video URL are not course content.",
+                "practice": (overlay.get("practice") if include_blueprint else None) or "Verify item-level study, summary and evaluation permissions before authoring a lesson.",
+                "assessment": (overlay.get("assessment") if include_blueprint else None) or "Do not mark studied or mastered from public metadata; require an authorized source and independent assessment.",
+                "benchmark": (overlay.get("benchmark") if include_blueprint else None) or "FreeCodeCamp metadata inventory integrity checks; no study or mastery claim.",
                 "source_url": row["url"],
+                "source_video_id": str(row["video_id"]),
                 "content_status": "metadata_only",
-            }
-            for row in videos
-        ]
+                "division_targets": overlay.get("division_targets", []),
+                "masterbot_targets": overlay.get("masterbot_targets", []),
+                "capability_tags": overlay.get("capability_tags", []),
+                "tool_tags": overlay.get("tool_tags", []),
+                "agent_tags": overlay.get("agent_tags", []),
+                "implementation_steps": overlay.get("implementation_steps", []) if include_blueprint else [],
+                "buddy_demo": overlay.get("buddy_demo", "") if include_blueprint else "",
+                "rights_mode": "metadata_only_until_item_level_permissions",
+            })
+        return rows
+    if parser == "freecodecamp_specialist_learning_paths":
+        metadata_rows = _rows({"parser": "freecodecamp_video_catalog"}, data, root, include_blueprint=True)
+        overrides = _read(root / "config/freecodecamp-division-routing-overrides.json")
+        curated_ids = {str(item.get("video_id")) for item in overrides.get("entries", [])}
+        rows = []
+        for row in metadata_rows:
+            # Unclassified records belong to the dedicated rights/classification triage lane.
+            if "source-classification" in row.get("capability_tags", []):
+                continue
+            implementation_steps = list(row.get("implementation_steps") or [])
+            buddy_demo = str(row.get("buddy_demo") or "")
+            curated = str(row.get("source_video_id")) in curated_ids
+            if not curated:
+                implementation_steps = [
+                    "Verify the source-video ID, public URL, title, channel, category tags, and catalog provenance.",
+                    "Confirm separate item-level permission for study, transcript use, derivative summaries, and evaluation; block unknown rights.",
+                    "Obtain an authorized transcript or equivalent source. If none is available, retain metadata-only status and do not infer lesson content.",
+                    "Write an original chapter-by-chapter explanation, learning objectives, prerequisites, glossary, and verified examples from the authorized source.",
+                    "Create at least three original exercises, a practical project, test plan, and independent knowledge assessment.",
+                    "Map the verified concepts to the canonical division and MasterBot targets; record uncertainty and request human review.",
+                    "Run sandbox exercises, task-matched benchmarks, unseen holdout, and regression checks before study-ready status.",
+                    "Record source hashes, rights evidence, reviewer approval, and the exact guide revision before enabling study."
+                ]
+                buddy_demo = (
+                    "Buddy demonstrates the rights-gated authoring workflow: verify the source, separate known metadata from unknown lesson content, "
+                    "draft an original guide only from authorized material, create exercises and assessments, and request review without claiming "
+                    "to have watched or learned the video."
+                )
+                row["objective"] = (
+                    "Create a complete original DreamCo study guide for this specialist-routed source after item-level study, derivative-summary, "
+                    "and evaluation permissions are verified. Public metadata alone is not lesson content."
+                )
+                row["practice"] = (
+                    "Follow the rights-gated authoring steps, build original examples and projects from the authorized source, and keep the item "
+                    "in the authoring backlog until a reviewer approves the guide."
+                )
+                row["assessment"] = (
+                    "Require source and rights provenance, chapter-level coverage, original exercises, project tests, independent holdout, "
+                    "regression evidence, and human review; never award mastery from metadata."
+                )
+                row["benchmark"] = "Original specialist study-guide acceptance, rights, holdout, and regression suite."
+            rows.append({
+                **row,
+                "id": f"fcc-specialist-path-{row['source_video_id']}",
+                "title": (
+                    f"DreamCo implementation path: {row['title']}" if curated
+                    else f"DreamCo original guide authoring task: {row['title']}"
+                ),
+                "content_status": "original_implementation_brief" if curated else "authoring_backlog",
+                "rights_mode": (
+                    "original_dreamco_learning_path_video_metadata_reference_only" if curated
+                    else "metadata_only_until_item_level_permissions"
+                ),
+                "implementation_steps": implementation_steps,
+                "buddy_demo": buddy_demo,
+                "learning_modes": list(row.get("learning_modes") or [
+                    "plain_language_explanation", "visual_concept_map", "worked_example",
+                    "interactive_sandbox", "guided_pair_programming", "flashcards",
+                    "retrieval_quiz", "spaced_repetition", "voice_walkthrough",
+                    "code_review", "scenario_simulation", "portfolio_capstone",
+                    "guided_authoring", "independent_assessment", "human_review"
+                ]),
+            })
+        return rows
+    if parser == "freecodecamp_metadata_triage":
+        metadata_rows = _rows({"parser": "freecodecamp_video_catalog"}, data, root)
+        source_by_id = {
+            str(video["video_id"]): video for video in data.get("videos", [])
+        }
+        routing = _read(root / "config/freecodecamp-division-routing-overrides.json")
+        explicit_ids = {str(item.get("video_id")) for item in routing.get("entries", [])}
+        rules = routing.get("routing_rules", [])
+        rows = []
+        for row in metadata_rows:
+            source = source_by_id.get(row["source_video_id"], {})
+            categories = {str(value).casefold() for value in source.get("categories", [])}
+            searchable = f"{source.get('title', '')} {source.get('description', '')}".casefold()
+            has_specialist_route = row["source_video_id"] in explicit_ids or any(
+                any(str(term).casefold() in searchable for term in rule.get("match_title_terms", []))
+                or bool(categories.intersection(str(value).casefold() for value in rule.get("match_categories", [])))
+                for rule in rules
+            )
+            if categories != {"other_or_unclassified"} or has_specialist_route:
+                continue
+            rows.append({
+                **row,
+                "id": f"fcc-metadata-triage-{row['source_video_id']}",
+                "title": f"FreeCodeCamp classification review: {row['title']}",
+                "objective": "Classify this source safely from public metadata and route it for human review; do not infer lesson content from the title or URL.",
+                "practice": "Inspect the public title, channel, description, date, and category labels. Seek authorized source material before writing any lesson or summary.",
+                "assessment": "The item remains metadata-only until its subject, canonical division, source rights, and an original guide are independently reviewed.",
+                "benchmark": "Every unclassified record has an explicit triage owner, a provenance trail, and a reviewed routing decision or remains unclassified.",
+                "content_status": "metadata_only",
+                "rights_mode": "metadata_only_until_item_level_permissions",
+                "division_targets": ["DreamEducation", "CommandCore"],
+                "masterbot_targets": ["DreamEducation", "CommandCore", "DreamDiscovery"],
+                "capability_tags": ["source-classification", "course-taxonomy", "rights-review", "division-routing"],
+                "tool_tags": ["video-metadata-catalog", "course-taxonomy", "review-queue"],
+                "learning_modes": ["metadata_review", "guided_classification", "rights_check", "human_review"],
+                "agent_tags": ["course-curator", "rights-reviewer", "division-router"],
+                "implementation_steps": [
+                    "Confirm the source-video ID, public URL, channel, title, description, and catalog provenance.",
+                    "Review available category labels and identify what is known versus unknown from metadata alone.",
+                    "Search for an authorized transcript, official documentation, or permissioned source before making content claims.",
+                    "Draft candidate subject tags and division/MasterBot owners with confidence and supporting evidence.",
+                    "Check the proposed owners against the canonical 55-domain crosswalk and 65-MasterBot registry.",
+                    "Request human approval for the classification and any proposed specialist route.",
+                    "If authorized learning material exists, create a separate original DreamCo guide with exercises and assessments.",
+                    "Keep the record metadata-only until rights, guide quality, and routing approval are recorded."
+                ],
+                "buddy_demo": "Buddy demonstrates metadata triage, separates known facts from assumptions, proposes a canonical owner, checks source rights, and requests human approval without claiming to teach the video."
+            })
+        return rows
     if parser == "huggingface_learning_map":
         courses = [
             {"id": row["id"], "title": row["title"], "objective": row["topics"],
@@ -423,6 +583,8 @@ def load_course_lessons(root: Path = ROOT) -> list[CourseLesson]:
     masterbots = _read(root / "config/masterbot-65-registry.json")
     if len(crosswalk.get("domains", [])) != 55 or len(masterbots.get("divisions", [])) != 65:
         raise ValueError("course-track routing requires the canonical 55-domain and 65-MasterBot registries")
+    allowed_domains = {str(row.get("domain_name")) for row in crosswalk.get("domains", [])}
+    allowed_masterbots = {str(row.get("name")) for row in masterbots.get("divisions", [])}
     lessons: list[CourseLesson] = []
     seen: set[str] = set()
     resource_ids: set[int] = set()
@@ -441,6 +603,12 @@ def load_course_lessons(root: Path = ROOT) -> list[CourseLesson]:
             if rid in resource_ids:
                 raise ValueError("stable course resource ID collision")
             resource_ids.add(rid)
+            division_targets = tuple(str(value) for value in row.get("division_targets", []))
+            masterbot_targets = tuple(str(value) for value in row.get("masterbot_targets", []))
+            if not set(division_targets).issubset(allowed_domains):
+                raise ValueError(f"course {key} references unknown canonical divisions: {sorted(set(division_targets) - allowed_domains)}")
+            if not set(masterbot_targets).issubset(allowed_masterbots):
+                raise ValueError(f"course {key} references unknown MasterBot lanes: {sorted(set(masterbot_targets) - allowed_masterbots)}")
             lessons.append(CourseLesson(
                 resource_id=rid,
                 lesson_id=lesson_id,
@@ -456,6 +624,15 @@ def load_course_lessons(root: Path = ROOT) -> list[CourseLesson]:
                 rights_mode=str(row.get("rights_mode") or track["rights"]),
                 delivery=track["delivery"],
                 content_status=str(row.get("content_status", "authored")),
+                division_targets=division_targets,
+                masterbot_targets=masterbot_targets,
+                capability_tags=tuple(str(value) for value in row.get("capability_tags", [])),
+                tool_tags=tuple(str(value) for value in row.get("tool_tags", [])),
+                agent_tags=tuple(str(value) for value in row.get("agent_tags", [])),
+                learning_modes=tuple(str(value) for value in row.get("learning_modes", [])),
+                implementation_steps=tuple(str(value) for value in row.get("implementation_steps", [])),
+                buddy_demo=str(row.get("buddy_demo", "")),
+                source_video_id=str(row.get("source_video_id", "")),
             ))
     return lessons
 
@@ -470,7 +647,9 @@ def resources_for_division(division: str, root: Path = ROOT) -> list[Resource]:
         Resource(id=lesson.resource_id, name=lesson.title, category=lesson.category, url=lesson.source_url,
                  methods=("study_original_dreamco_guide", "practice_in_sandbox", "complete_assessment",
                           "run_independent_benchmark", "record_evidence"))
-        for lesson in load_course_lessons(root) if lesson.content_status == "authored"
+        for lesson in load_course_lessons(root)
+        if lesson.content_status == "authored"
+        and (not lesson.division_targets or division in lesson.division_targets)
     ]
 
 
@@ -484,7 +663,9 @@ def resources_for_masterbot(masterbot: str, root: Path = ROOT) -> list[Resource]
         Resource(id=lesson.resource_id, name=lesson.title, category=lesson.category, url=lesson.source_url,
                  methods=("study_original_dreamco_guide", "practice_in_sandbox", "complete_assessment",
                           "run_independent_benchmark", "record_evidence"))
-        for lesson in load_course_lessons(root) if lesson.content_status == "authored"
+        for lesson in load_course_lessons(root)
+        if lesson.content_status == "authored"
+        and (not lesson.masterbot_targets or masterbot in lesson.masterbot_targets)
     ]
 
 
@@ -513,6 +694,15 @@ def plan_next_for_division(
         "benchmark": lesson.benchmark,
         "guide_path": lesson.guide_path,
         "rights_mode": lesson.rights_mode,
+        "division_targets": list(lesson.division_targets),
+        "masterbot_targets": list(lesson.masterbot_targets),
+        "capability_tags": list(lesson.capability_tags),
+        "tool_tags": list(lesson.tool_tags),
+        "agent_tags": list(lesson.agent_tags),
+        "learning_modes": list(lesson.learning_modes),
+        "implementation_steps": list(lesson.implementation_steps),
+        "buddy_demo": lesson.buddy_demo,
+        "source_video_id": lesson.source_video_id,
         "completion_status": "queued_not_studied",
         "mastery_awarded": False,
         "model_weight_training_authorized": False,
