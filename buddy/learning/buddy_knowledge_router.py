@@ -22,8 +22,9 @@ ROOT = Path(__file__).resolve().parents[2]
 
 
 def _tokens(value: str) -> set[str]:
+    normalized = value.lower().replace("huggingface", "hugging face")
     return {
-        token for token in re.findall(r"[a-z0-9][a-z0-9_.+-]*", value.lower())
+        token for token in re.findall(r"[a-z0-9][a-z0-9_.+-]*", normalized)
         if len(token) > 1 and any(char.isalpha() for char in token)
     }
 
@@ -58,6 +59,28 @@ def _supporting_guide(path: str, root: Path) -> dict[str, Any]:
     }
 
 
+def _exact_seed_candidate_ids(query: str, root: Path) -> set[str]:
+    """Resolve exact candidate names from the complete local seed catalog.
+
+    Search indexes are intentionally bounded and relevance-ranked; an exact
+    name must not disappear merely because broader candidates outrank it.
+    Candidate discovery remains unverified and never grants execution rights.
+    """
+    curriculum_path = root / "config/buddy-universal-library-curriculum.json"
+    curriculum = json.loads(curriculum_path.read_text(encoding="utf-8")) if curriculum_path.is_file() else {}
+    seed_path = root / curriculum.get("seed_catalog", "data/buddy-library-seed-catalog.json")
+    if not seed_path.is_file():
+        return set()
+    catalog = json.loads(seed_path.read_text(encoding="utf-8"))
+    return {
+        f"candidate-discovery-{row.get('id')}"
+        for row in catalog.get("candidates", [])
+        if row.get("status") == "seed_candidate_unverified"
+        and str(row.get("name", "")).strip().casefold() == query.strip().casefold()
+        and row.get("id")
+    }
+
+
 def _course_matches(query: str, root: Path, limit: int) -> list[dict[str, Any]]:
     query_tokens = _tokens(query)
     matches: list[dict[str, Any]] = []
@@ -69,6 +92,8 @@ def _course_matches(query: str, root: Path, limit: int) -> list[dict[str, Any]]:
         overlap = query_tokens & _tokens(searchable)
         if not overlap:
             continue
+        track_overlap = query_tokens & _tokens(lesson.track_id)
+        track_score = round(len(track_overlap) / max(len(query_tokens), 1), 4)
         matches.append({
             "lesson_id": lesson.lesson_id,
             "track_id": lesson.track_id,
@@ -82,10 +107,11 @@ def _course_matches(query: str, root: Path, limit: int) -> list[dict[str, Any]]:
             "internal_guide": _supporting_guide(lesson.guide_path, root),
             "rights_mode": lesson.rights_mode,
             "score": round(len(overlap) / max(len(query_tokens), 1), 4),
+            "track_match_score": track_score,
             "completion_status": "queued_not_studied",
             "mastery_awarded": False,
         })
-    matches.sort(key=lambda row: (-row["score"], row["track_id"], row["lesson_id"]))
+    matches.sort(key=lambda row: (-row["track_match_score"], -row["score"], row["track_id"], row["lesson_id"]))
     return matches[:limit]
 
 
@@ -112,19 +138,14 @@ def route_buddy_learning_query(
     library = search_internal_library_knowledge(normalized_query, root=root, limit=limit)
     guide_matches = library.get("matches", [])
     seed_matches = library.get("seed_candidate_matches", [])
-    lessons = _course_matches(normalized_query, root, limit)
 
-    # An exact query for an unverified seed candidate should route to its
-    # explicit discovery-and-verification lesson, not a broader guide that
-    # happens to share one token (for example, "React 19" vs. generic React).
-    exact_candidate_ids = {
-        f"candidate-discovery-{row.get('candidate_id')}"
-        for row in seed_matches
-        if row.get("status") == "seed_candidate_unverified"
-        and str(row.get("name", "")).strip().casefold() == normalized_query.casefold()
-    }
+    # Approved, reviewed guides take precedence over discovery candidates.
+    # Resolve exact names from the full seed catalog, not the bounded search
+    # result. This prevents common terms from crowding out a precise match.
+    exact_candidate_ids = _exact_seed_candidate_ids(normalized_query, root)
     exact_candidate_lessons = [
-        row for row in lessons if row["lesson_id"] in exact_candidate_ids
+        row for row in _course_matches(normalized_query, root, 10_000)
+        if row["lesson_id"] in exact_candidate_ids
     ]
     if exact_candidate_lessons:
         supporting_guide_count = sum(
@@ -143,7 +164,8 @@ def route_buddy_learning_query(
             "missing_supporting_guide_count": len(exact_candidate_lessons) - supporting_guide_count,
             "seed_candidate_matches": seed_matches,
             "knowledge_gap": library.get("knowledge_gap"),
-            "external_discovery_available": True,
+            "external_discovery_available": False,
+            "external_discovery_requires_explicit_opt_in": True,
             "external_discovery_performed": False,
             "external_model_routing_performed": False,
             "study_required": True,
@@ -174,6 +196,7 @@ def route_buddy_learning_query(
             "mastery_awarded": False,
         }
 
+    lessons = _course_matches(normalized_query, root, limit)
     if lessons:
         supporting_guide_count = sum(
             row["internal_guide"]["status"] == "supporting_guide_available"
@@ -192,14 +215,15 @@ def route_buddy_learning_query(
             "missing_supporting_guide_count": missing_supporting_guide_count,
             "seed_candidate_matches": seed_matches,
             "knowledge_gap": library.get("knowledge_gap"),
-            "external_discovery_available": missing_supporting_guide_count > 0,
+            "external_discovery_available": False,
+            "external_discovery_requires_explicit_opt_in": supporting_guide_count == 0,
             "external_discovery_performed": False,
             "external_model_routing_performed": False,
             "study_required": True,
             "next_action": (
                 "Study the repository-local supporting guide and complete the original practice. "
-                "If it does not cover the requested lesson, find an authoritative first-party source, "
-                "verify its release and rights, then draft and review an original guide."
+                "If it does not cover the requested lesson, ask the user before external research; "
+                "then verify a first-party source, release and rights before drafting an original guide."
             ),
             "mastery_awarded": False,
         }
@@ -230,6 +254,7 @@ def route_buddy_learning_query(
         "external_discovery_available": True,
         "external_discovery_performed": False,
         "external_model_routing_performed": False,
-        "next_action": "Find first-party sources, verify version and rights, draft an original guide, then review and assess it.",
+        "external_discovery_requires_explicit_opt_in": True,
+        "next_action": "Ask the user before external research; then verify first-party sources, version and rights, draft an original guide, and review and assess it.",
         "mastery_awarded": False,
     }
