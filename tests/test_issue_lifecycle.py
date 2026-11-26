@@ -74,10 +74,10 @@ class IssueLifecycleTests(unittest.TestCase):
         for relative in paths:
             with self.subTest(workflow=relative):
                 source = (ROOT / relative).read_text(encoding="utf-8")
-                self.assertNotRegex("\\n  workflow_run:", r"(?m)^  workflow_run:")
+                self.assertNotRegex(source, r"(?m)^  workflow_run:")
                 self.assertIn("workflow_dispatch:", source)
         triage = (ROOT / ".github/workflows/issue-intelligence.yml").read_text(encoding="utf-8")
-        self.assertNotRegex("\\n  workflow_run:", r"(?m)^  workflow_run:")
+        self.assertNotRegex(triage, r"(?m)^  workflow_run:")
         self.assertIn("description: Failed GitHub Actions run ID to triage", triage)
 
     def test_continuous_repair_is_artifact_only_and_never_writes_branches(self):
