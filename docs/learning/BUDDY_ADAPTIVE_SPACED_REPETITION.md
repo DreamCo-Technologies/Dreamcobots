@@ -1,78 +1,80 @@
 # Buddy Adaptive Spaced Repetition
 
-**Status:** implementation in progress. Leitner and SM-2 are implemented locally;
-FSRS is the target default but is not yet integrated or certified by this change.
+**Status:** FSRS-6 adapter, configurable Anki Classic-style profile, Leitner,
+SM-2, and append-only SQLite local/offline storage are implemented. PostgreSQL
+schema and a SQL migration are included. API/UI integration, Anki release-level
+parity fixtures, production migration execution, and learner-data benchmarking
+remain acceptance gates; this is not yet certified production-ready.
 
-## Product decision
+## Scheduler policy
 
-Buddy exposes one shared review-history and scheduling contract across Buddy
-Bootcamp, all divisions, and future learning surfaces. Scheduler choice is
-versioned per learner/deck so existing schedules can be migrated without
-silently changing due dates.
-
-| Scheduler | Intended role | Behavior |
+| Scheduler | Role | Implementation status |
 |---|---|---|
-| FSRS | Default for new adaptive decks after validated integration | Model-based difficulty, stability and retrievability; configurable desired retention |
-| Leitner | Beginner/classroom mode | Correct answers advance boxes; incorrect answers return to box 1 |
-| SM-2 | Legacy compatibility and transparent baseline | Per-card ease, interval and repetition state |
-| Anki classic | Compatibility profile | SM-2-family scheduling with configurable learning/relearning steps and graduating intervals |
+| FSRS-6 | Default adaptive scheduler for new decks | Integrated through pinned official `fsrs==6.3.3`; fuzzing is disabled by default for deterministic replay |
+| Leitner | Beginner/classroom mode | Implemented; correct advances a box and incorrect returns to box 1 |
+| SM-2 | Legacy scheduler compatibility and transparent baseline | Implemented and retained |
+| Anki Classic-style | Legacy ease/interval and learning/relearning-step profile | Implemented as a configurable compatibility profile; not claimed to be byte-for-byte parity with a specific Anki release |
 
-Do not label Anki classic as identical to pure SM-2. Do not claim a fixed review
-reduction percentage or universal superiority without a reproducible benchmark
-on the same review history and retention target.
+The FSRS adapter uses the official Open Spaced Repetition Python implementation,
+with the scheduler's JSON serialization for card state and review logs. Its
+default desired retention is 0.90 and is configurable per deck. FSRS fuzzing is
+off by default so identical event histories and parameter sets replay
+deterministically.
 
 ## Shared data contract
 
-Every review event must preserve:
+Every review event preserves:
 - stable learner, deck, item and division identifiers;
 - UTC review timestamp and client event/idempotency identifier;
 - scheduler name and semantic version;
 - rating, prior state, resulting state, due date and interval;
 - desired retention and parameter-set identifier where applicable;
-- predicted retrievability (when supported), actual recall outcome and provenance.
+- predicted retrievability, actual recall outcome and provenance.
 
-Review history is append-only. Corrections are compensating events, not edits to
-past evidence. Offline clients queue events and synchronize idempotently; the
-server is authoritative for conflict resolution and final due dates.
+The stable learner/deck/item key is shared across divisions. A review in one
+division can therefore update the same learner memory used by another division,
+while division IDs remain attached for routing and reporting.
 
-## Persistence model
+## Persistence and offline sync
 
-The production schema should provide the following logical entities:
-- `learning_items`: canonical reviewable concepts and content version;
-- `learner_memory`: learner/item scheduler state;
-- `review_history`: immutable event ledger;
-- `learning_schedules`: scheduler version, due date and retention target;
-- `mastery_records`: benchmark-backed mastery, kept separate from recall;
-- `fsrs_parameters`: optimized, versioned parameters with provenance;
-- `learning_recommendations`: explainable next actions.
+The local SQLite store applies a versioned schema migration and provides:
+- append-only review history with database-enforced update/delete prevention;
+- idempotent event ingestion by event ID and payload hash;
+- conflict rejection when an event ID is reused with different content;
+- deterministic ordering and a replay-required marker for out-of-order offline events;
+- current card state and due-item lookup across division memberships;
+- a separate append-only mastery-evidence ledger.
 
-Use transactional updates for event insertion and state advancement. Enforce
-unique idempotency keys and learner/item/scheduler constraints. Store timestamps
-in UTC and render them in the learner's locale.
+PostgreSQL table definitions are in `shared/schema.ts`; the corresponding
+idempotent SQL migration is `migrations/0001_learning_srs.sql`. Applying that
+migration to a production database is a deployment operation and is not
+performed by CI.
 
-## FSRS integration gate
+## Recall is not mastery
 
-Use a maintained, version-pinned open-source FSRS implementation; do not
-reimplement the FSRS equations from memory. Before enabling it by default:
-1. Confirm the selected library API and supported scheduler/model version.
-2. Add a thin Buddy adapter with explicit serialization and migration tests.
-3. Test Again/Hard/Good/Easy ratings, learning/relearning steps, timezone and
-   daylight-saving boundaries, long intervals, invalid history and replay.
-4. Verify deterministic replay for a fixed event stream and parameter set.
-5. Optimize only from a learner's eligible review history; retain parameter
-   provenance and fall back safely when history is insufficient.
-6. Make desired retention visible and configurable, with a documented default.
-7. Benchmark FSRS and SM-2 on identical held-out review histories at matched
-   retention targets; publish review load, retention, calibration and confidence
-   intervals rather than unsupported universal percentages.
+A correct recall event updates the scheduler and records actual recall. It does
+**not** award curriculum mastery or certification. Mastery must be written as a
+separate benchmark-backed evidence record with its own provenance and review
+criteria.
+
+## FSRS optimization gate
+
+Use FSRS-6 scheduling now with the library's published default parameters.
+Personalized optimization is intentionally not run on synthetic or insufficient
+history. Before enabling optimized parameters:
+1. collect eligible, consented learner review histories;
+2. retain parameter provenance and optimizer/library version;
+3. split training and held-out histories to avoid leakage;
+4. benchmark FSRS and SM-2 on identical held-out histories at matched retention;
+5. report review load, retention, calibration and confidence intervals.
 
 ## Cross-division and operational acceptance
 
-- All divisions call the shared scheduler contract; no division forks the math.
-- Recall success is not equivalent to curriculum mastery or certification.
-- Keep short-term learning/relearning steps separate from long-term scheduling.
-- Record run ID, code revision, scheduler version, parameter version and
-  predicted-versus-observed outcomes for every evaluation.
-- Include migration, rollback, duplicate-event, offline-sync and concurrency tests.
-- Do not claim production readiness until database migrations, API integration,
-  UI settings, telemetry, security review and exact-head CI all pass.
+- All divisions use this shared package; no division forks scheduler math.
+- Offline clients queue events with stable idempotency IDs; server-side replay is
+  required when older events arrive after newer events.
+- Short-term learning/relearning steps remain separate from long-term review.
+- Time is stored in UTC and rendered in the learner's locale.
+- Database API routes, authentication/authorization, UI settings, telemetry,
+  concurrency/load tests, Anki version-specific parity fixtures and production
+  migration execution remain required before production certification.

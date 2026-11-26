@@ -7,6 +7,9 @@ import {
   boolean,
   timestamp,
   jsonb,
+  doublePrecision,
+  index,
+  uniqueIndex,
 } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
@@ -600,3 +603,78 @@ export interface BotActivityResponse {
   totalConversations: number;
   bots: BotActivityItem[];
 }
+
+
+// Shared Buddy spaced-repetition persistence. Review history and mastery
+// evidence are separate ledgers: recall never silently grants mastery.
+export const learningReviewHistory = pgTable("learning_review_history", {
+  id: serial("id").primaryKey(),
+  eventId: text("event_id").notNull(),
+  learnerId: text("learner_id").notNull(),
+  deckId: text("deck_id").notNull(),
+  itemId: text("item_id").notNull(),
+  divisionIds: jsonb("division_ids").notNull().default(sql`'[]'::jsonb`),
+  schedulerName: text("scheduler_name").notNull(),
+  schedulerVersion: text("scheduler_version").notNull(),
+  rating: integer("rating").notNull(),
+  reviewedAt: timestamp("reviewed_at", { withTimezone: true }).notNull(),
+  dueAt: timestamp("due_at", { withTimezone: true }).notNull(),
+  priorState: jsonb("prior_state").notNull(),
+  resultingState: jsonb("resulting_state").notNull(),
+  predictedRetrievability: doublePrecision("predicted_retrievability"),
+  actualRecall: boolean("actual_recall").notNull(),
+  desiredRetention: doublePrecision("desired_retention"),
+  schedulerConfig: jsonb("scheduler_config").notNull().default(sql`'{}'::jsonb`),
+  parameterSetId: text("parameter_set_id"),
+  provenance: jsonb("provenance").notNull().default(sql`'{}'::jsonb`),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+}, (table) => ({
+  eventIdUnique: uniqueIndex("learning_review_history_event_id_uq").on(table.eventId),
+  learnerItemTimeIdx: index("learning_review_history_learner_item_time_idx").on(
+    table.learnerId, table.deckId, table.itemId, table.reviewedAt,
+  ),
+}));
+
+export const learningCardStates = pgTable("learning_card_states", {
+  id: serial("id").primaryKey(),
+  learnerId: text("learner_id").notNull(),
+  deckId: text("deck_id").notNull(),
+  itemId: text("item_id").notNull(),
+  divisionIds: jsonb("division_ids").notNull().default(sql`'[]'::jsonb`),
+  schedulerName: text("scheduler_name").notNull(),
+  schedulerVersion: text("scheduler_version").notNull(),
+  state: jsonb("state").notNull(),
+  dueAt: timestamp("due_at", { withTimezone: true }).notNull(),
+  lastReviewedAt: timestamp("last_reviewed_at", { withTimezone: true }).notNull(),
+  desiredRetention: doublePrecision("desired_retention"),
+  parameterSetId: text("parameter_set_id"),
+  latestEventId: text("latest_event_id").notNull(),
+  replayRequired: boolean("replay_required").notNull().default(false),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
+}, (table) => ({
+  learnerDeckItemUnique: uniqueIndex("learning_card_states_learner_deck_item_uq").on(
+    table.learnerId, table.deckId, table.itemId,
+  ),
+  learnerDueIdx: index("learning_card_states_learner_due_idx").on(table.learnerId, table.dueAt),
+}));
+
+export const learningMasteryEvidence = pgTable("learning_mastery_evidence", {
+  id: serial("id").primaryKey(),
+  evidenceId: text("evidence_id").notNull(),
+  learnerId: text("learner_id").notNull(),
+  deckId: text("deck_id").notNull(),
+  itemId: text("item_id").notNull(),
+  divisionIds: jsonb("division_ids").notNull().default(sql`'[]'::jsonb`),
+  benchmarkId: text("benchmark_id").notNull(),
+  passed: boolean("passed").notNull(),
+  score: doublePrecision("score"),
+  verifiedAt: timestamp("verified_at", { withTimezone: true }).notNull(),
+  evidence: jsonb("evidence").notNull().default(sql`'{}'::jsonb`),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+}, (table) => ({
+  evidenceIdUnique: uniqueIndex("learning_mastery_evidence_evidence_id_uq").on(table.evidenceId),
+  learnerItemIdx: index("learning_mastery_evidence_learner_item_idx").on(
+    table.learnerId, table.deckId, table.itemId,
+  ),
+}));
