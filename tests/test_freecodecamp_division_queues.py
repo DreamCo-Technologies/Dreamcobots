@@ -154,6 +154,15 @@ class FreeCodeCampDomainQueueTests(unittest.TestCase):
             self.assertEqual(actual, expected, domain["domain_name"])
 
 
+
+    def test_rejects_classified_video_without_any_domain_category_route(self):
+        import copy
+        catalog = copy.deepcopy(self.catalog)
+        catalog["categories"].append({"id": "new_unmapped_category", "name": "New Unmapped Category"})
+        catalog["videos"][0]["categories"] = ["new_unmapped_category"]
+        with self.assertRaisesRegex(ValueError, "classified videos have no division category route"):
+            build_queues(catalog, self.crosswalk, limit=10)
+
     def test_every_classified_video_is_assigned_to_at_least_one_domain_queue(self):
         import json
         catalog = json.loads((ROOT / "buddy/bootcamp/sources/freecodecamp/catalog.json").read_text(encoding="utf-8"))
