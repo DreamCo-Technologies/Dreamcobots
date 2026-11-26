@@ -4,7 +4,9 @@ on:
     paths:
       - "buddy/learning/byte_bpe_trainer.py"
       - "schemas/authorized-tokenizer-corpus-manifest.schema.json"
+      - "data/buddy-authorized-corpora/**"
       - "tests/test_buddy_byte_bpe_trainer.py"
+      - "tests/test_buddy_byte_bpe_workflow_scope.py"
       - ".github/workflows/buddy-byte-bpe-trainer.yml"
   workflow_dispatch:
 permissions:
@@ -21,4 +23,4 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-      - run: python -m unittest tests.test_buddy_byte_bpe_trainer
+      - run: python -m unittest tests.test_buddy_byte_bpe_trainer tests.test_buddy_byte_bpe_workflow_scope
