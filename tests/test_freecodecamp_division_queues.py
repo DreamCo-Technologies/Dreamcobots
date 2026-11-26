@@ -1,6 +1,6 @@
 import unittest
 from pathlib import Path
-from tools.build_freecodecamp_division_queues import DOMAIN_CATEGORY_MAP, build_queues, validate
+from tools.build_freecodecamp_division_queues import DOMAIN_CATEGORY_MAP, FOUNDATION, build_queues, validate
 
 
 def crosswalk_fixture():
