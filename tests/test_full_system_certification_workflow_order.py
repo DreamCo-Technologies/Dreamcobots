@@ -36,5 +36,14 @@ class FullSystemCertificationWorkflowOrderTests(unittest.TestCase):
         self.assertLess(generator_step, fleet_check_step)
         self.assertLess(fleet_check_command, production_step)
 
+    def test_pr_receipt_is_report_only_while_main_certification_stays_strict(self):
+        root = Path(__file__).resolve().parents[1]
+        workflow = (root / ".github/workflows/full-system-certification.yml").read_text(encoding="utf-8")
+        step = workflow.index("- name: Build full certification receipt")
+        summary = workflow.index("- name: Build live-user readiness", step)
+        block = workflow[step:summary]
+        self.assertIn("if: always()", block)
+        self.assertIn("continue-on-error: ${{ github.event_name == 'pull_request' }}", block)
+
 if __name__ == "__main__":
     unittest.main()
