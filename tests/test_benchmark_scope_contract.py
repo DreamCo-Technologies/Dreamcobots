@@ -104,9 +104,9 @@ def test_training_queue_and_executor_preserve_scope_and_execute_nothing():
     gap_queue = build_gap_queue(convert(source, crosswalk), registry, crosswalk)
     training = build_training_queue(gap_queue)
     assert training["scope_counts"] == {"masterbot": 65, "domain_division": 55}
-    plan = build_execution_plan(training, limit=10)
+    plan = build_execution_plan(training, limit=80)
     assert plan["executed"] == 0
-    assert plan["planned"] == 10
+    assert plan["planned"] == 80
     assert all(row["scope"] in {"masterbot", "domain_division"} for row in plan["runs"])
     assert all(row["masterbot_id"] is not None for row in plan["runs"] if row["scope"] == "masterbot")
     assert all(row["domain_id"] for row in plan["runs"] if row["scope"] == "domain_division")
