@@ -1,6 +1,8 @@
 from __future__ import annotations
 
+import json
 import unittest
+from pathlib import Path
 from pathlib import Path
 import subprocess
 import sys
@@ -22,7 +24,8 @@ class FreeCodeCampLearningInventoryTests(unittest.TestCase):
             learning["youtube_video_inventory"]["observed_video_count"],
             learning["youtube_video_inventory"]["expected_entry_count"] or learning["youtube_video_inventory"]["observed_video_count"],
         )
-        self.assertEqual(policy["study_assets"]["course_track_count"], 11)
+        registry = json.loads((Path(__file__).resolve().parents[1] / "config/buddy-course-track-registry.json").read_text(encoding="utf-8"))
+        self.assertEqual(policy["study_assets"]["course_track_count"], len(registry["tracks"]))
         self.assertGreater(policy["study_assets"]["course_lesson_count"], learning["youtube_video_inventory"]["observed_video_count"])
         self.assertIn(learning["youtube_video_inventory"]["inventory_status"], {"complete", "partial"})
 
