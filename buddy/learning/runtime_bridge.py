@@ -328,17 +328,19 @@ class BuddyLearningBridge:
             allowed_video_categories = shared_categories | domain_categories
 
             def belongs_to_division(lesson: CourseLesson) -> bool:
-                # Explicit curated routing is authoritative. Otherwise, video
-                # metadata is shared only when its categories match the domain's
-                # subject profile or the shared foundation.
+                # The general catalog is category-routed to every relevant
+                # division; its explicit targets are discovery hints, not
+                # exclusive ownership. Curated specialist briefs remain scoped
+                # to their explicit division targets.
+                if lesson.track_id == "freecodecamp-video-catalog" and lesson.video_categories:
+                    return bool(set(lesson.video_categories) & allowed_video_categories)
+                if lesson.track_id == "freecodecamp-specialist-learning-paths":
+                    if lesson.division_targets:
+                        return division in lesson.division_targets
+                    if lesson.video_categories:
+                        return bool(set(lesson.video_categories) & allowed_video_categories)
                 if lesson.division_targets:
                     return division in lesson.division_targets
-                if (
-                    lesson.source_video_id
-                    and lesson.track_id in {"freecodecamp-video-catalog", "freecodecamp-specialist-learning-paths"}
-                    and lesson.video_categories
-                ):
-                    return bool(set(lesson.video_categories) & allowed_video_categories)
                 return True
 
             lessons = [lesson for lesson in catalog_lessons if belongs_to_division(lesson)]
