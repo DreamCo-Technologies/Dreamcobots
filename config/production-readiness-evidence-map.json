@@ -16,7 +16,13 @@
         ]
       },
       {
-        "path": "config/buddy/resource-registry.json",
+        "path": "website/data/buddy-routing-index.js",
+        "check_names": [
+          "governed-local-tests"
+        ]
+      },
+      {
+        "path": "tests/supplemental-fleet.test.ts",
         "check_names": [
           "governed-local-tests"
         ]
@@ -37,6 +43,18 @@
       },
       {
         "path": "config/benchmark-gap-closure-playbook.json",
+        "check_names": [
+          "governed-local-tests"
+        ]
+      },
+      {
+        "path": "artifacts/benchmark-reproducibility/latest-run.json",
+        "check_names": [
+          "governed-local-tests"
+        ]
+      },
+      {
+        "path": "config/benchmark-result-schema.json",
         "check_names": [
           "governed-local-tests"
         ]
@@ -66,13 +84,19 @@
         "check_names": [
           "CodeQL (javascript-typescript)"
         ]
+      },
+      {
+        "path": "reports/license-provenance-audit.json",
+        "check_names": [
+          "trusted-code"
+        ]
       }
     ],
     "deployment": [
       {
         "path": "server/index.ts",
         "check_names": [
-          "build"
+          "trusted-code"
         ]
       },
       {
@@ -84,7 +108,7 @@
       {
         "path": "docs/PRODUCTION_READINESS_MASTER_PLAN.md",
         "check_names": [
-          "build"
+          "trusted-code"
         ]
       },
       {
@@ -92,13 +116,25 @@
         "check_names": [
           "governed-local-tests"
         ]
+      },
+      {
+        "path": "artifacts/production-readiness/live-api-health.json",
+        "check_names": [
+          "deploy"
+        ]
+      },
+      {
+        "path": "artifacts/production-readiness/rollback-drill.json",
+        "check_names": [
+          "deploy"
+        ]
       }
     ],
     "observability": [
       {
         "path": "server/observability.ts",
         "check_names": [
-          "build"
+          "trusted-code"
         ]
       },
       {
@@ -108,9 +144,289 @@
         ]
       },
       {
-        "path": "tools/production_readiness_gate.py",
+        "path": "tests/test_production_readiness_gate.py",
         "check_names": [
-          "audit"
+          "governed-local-tests"
+        ]
+      },
+      {
+        "path": "artifacts/observability/benchmark-agent-traces.json",
+        "check_names": [
+          "build"
+        ]
+      }
+    ],
+    "capability_genome": [
+      {
+        "path": "artifacts/capability-genome/validated-capability-inventory.json",
+        "check_names": [
+          "governed-local-tests"
+        ]
+      },
+      {
+        "path": "artifacts/capability-genome/integration-test-evidence.json",
+        "check_names": [
+          "governed-local-tests"
+        ]
+      }
+    ],
+    "model_research": [
+      {
+        "path": "artifacts/model-research/model-registry-provenance.json",
+        "check_names": [
+          "governed-local-tests"
+        ]
+      },
+      {
+        "path": "artifacts/model-research/official-source-provenance.json",
+        "check_names": [
+          "governed-local-tests"
+        ]
+      },
+      {
+        "path": "artifacts/model-research/execution-adapter-evidence.json",
+        "check_names": [
+          "governed-local-tests"
+        ]
+      }
+    ],
+    "teacher_model": [
+      {
+        "path": "artifacts/teacher-model/benchmark-contract.json",
+        "check_names": [
+          "governed-local-tests"
+        ]
+      },
+      {
+        "path": "artifacts/teacher-model/baseline-benchmark.json",
+        "check_names": [
+          "governed-local-tests"
+        ]
+      },
+      {
+        "path": "artifacts/teacher-model/repeat-run-evidence.json",
+        "check_names": [
+          "governed-local-tests"
+        ]
+      }
+    ],
+    "experiment_engine": [
+      {
+        "path": "artifacts/experiment-engine/lifecycle-evidence.json",
+        "check_names": [
+          "governed-local-tests"
+        ]
+      },
+      {
+        "path": "artifacts/experiment-engine/isolated-execution.json",
+        "check_names": [
+          "governed-local-tests"
+        ]
+      },
+      {
+        "path": "artifacts/experiment-engine/result-persistence.json",
+        "check_names": [
+          "governed-local-tests"
+        ]
+      }
+    ],
+    "ablation": [
+      {
+        "path": "artifacts/ablation/experiment-matrix.json",
+        "check_names": [
+          "governed-local-tests"
+        ]
+      },
+      {
+        "path": "artifacts/ablation/controlled-fixtures.json",
+        "check_names": [
+          "governed-local-tests"
+        ]
+      },
+      {
+        "path": "artifacts/ablation/automated-results.json",
+        "check_names": [
+          "governed-local-tests"
+        ]
+      }
+    ],
+    "distillation": [
+      {
+        "path": "artifacts/distillation/teacher-student-contract.json",
+        "check_names": [
+          "governed-local-tests"
+        ]
+      },
+      {
+        "path": "artifacts/distillation/quality-floor.json",
+        "check_names": [
+          "governed-local-tests"
+        ]
+      },
+      {
+        "path": "artifacts/distillation/rollback-evidence.json",
+        "check_names": [
+          "governed-local-tests"
+        ]
+      }
+    ],
+    "free_first": [
+      {
+        "path": "artifacts/free-first/resource-policy.json",
+        "check_names": [
+          "governed-local-tests"
+        ]
+      },
+      {
+        "path": "artifacts/free-first/budget-enforcement.json",
+        "check_names": [
+          "governed-local-tests"
+        ]
+      },
+      {
+        "path": "artifacts/free-first/fallback-tests.json",
+        "check_names": [
+          "governed-local-tests"
+        ]
+      }
+    ],
+    "resource_optimization": [
+      {
+        "path": "artifacts/resource-optimization/hardware-profiles.json",
+        "check_names": [
+          "governed-local-tests"
+        ]
+      },
+      {
+        "path": "artifacts/resource-optimization/resource-measurements.json",
+        "check_names": [
+          "governed-local-tests"
+        ]
+      },
+      {
+        "path": "artifacts/resource-optimization/regression-thresholds.json",
+        "check_names": [
+          "governed-local-tests"
+        ]
+      }
+    ],
+    "regression": [
+      {
+        "path": "artifacts/regression/suite-manifest.json",
+        "check_names": [
+          "governed-local-tests"
+        ]
+      },
+      {
+        "path": "artifacts/regression/failure-fixtures.json",
+        "check_names": [
+          "governed-local-tests"
+        ]
+      },
+      {
+        "path": "artifacts/regression/release-gate-evidence.json",
+        "check_names": [
+          "governed-local-tests"
+        ]
+      }
+    ],
+    "actions": [
+      {
+        "path": "artifacts/actions/stable-action-ids.json",
+        "check_names": [
+          "governed-local-tests"
+        ]
+      },
+      {
+        "path": "artifacts/actions/ui-test-evidence.json",
+        "check_names": [
+          "governed-local-tests"
+        ]
+      },
+      {
+        "path": "artifacts/actions/source-to-ui-trace.json",
+        "check_names": [
+          "governed-local-tests"
+        ]
+      }
+    ],
+    "daily_scan": [
+      {
+        "path": "artifacts/daily-scan/scheduled-run-evidence.json",
+        "check_names": [
+          "governed-local-tests"
+        ]
+      },
+      {
+        "path": "artifacts/daily-scan/scan-output.json",
+        "check_names": [
+          "governed-local-tests"
+        ]
+      },
+      {
+        "path": "artifacts/daily-scan/actions-ingestion.json",
+        "check_names": [
+          "governed-local-tests"
+        ]
+      }
+    ],
+    "source_ingestion": [
+      {
+        "path": "artifacts/source-ingestion/source-provenance.json",
+        "check_names": [
+          "governed-local-tests"
+        ]
+      },
+      {
+        "path": "artifacts/source-ingestion/freshness-report.json",
+        "check_names": [
+          "governed-local-tests"
+        ]
+      },
+      {
+        "path": "artifacts/source-ingestion/refresh-failure-recovery.json",
+        "check_names": [
+          "governed-local-tests"
+        ]
+      }
+    ],
+    "superbot": [
+      {
+        "path": "artifacts/superbot/module-registry.json",
+        "check_names": [
+          "governed-local-tests"
+        ]
+      },
+      {
+        "path": "artifacts/superbot/routing-evidence.json",
+        "check_names": [
+          "governed-local-tests"
+        ]
+      },
+      {
+        "path": "artifacts/superbot/conflict-serialization.json",
+        "check_names": [
+          "governed-local-tests"
+        ]
+      }
+    ],
+    "cost_accounting": [
+      {
+        "path": "artifacts/cost-accounting/usage-ledger.json",
+        "check_names": [
+          "governed-local-tests"
+        ]
+      },
+      {
+        "path": "artifacts/cost-accounting/provider-model-attribution.json",
+        "check_names": [
+          "governed-local-tests"
+        ]
+      },
+      {
+        "path": "artifacts/cost-accounting/budget-reconciliation.json",
+        "check_names": [
+          "governed-local-tests"
         ]
       }
     ]
