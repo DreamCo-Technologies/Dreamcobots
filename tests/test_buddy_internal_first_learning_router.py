@@ -66,7 +66,7 @@ class BuddyInternalFirstLearningRouterTests(unittest.TestCase):
             self.assertTrue(result["external_discovery_available"])
             self.assertFalse(result["external_discovery_performed"])
             self.assertFalse(result["external_model_routing_performed"])
-            self.assertFalse((root / "data/buddy-library-knowledge-gaps.jsonl").exists())
+            self.assertFalse((root / ".dreamco/library-knowledge-gaps.jsonl").exists())
 
     def test_numeric_only_reference_does_not_match_unrelated_approved_guides(self):
         result = route_buddy_learning_query("qzxv 9481", root=ROOT)
@@ -83,6 +83,7 @@ class BuddyInternalFirstLearningRouterTests(unittest.TestCase):
             }), patch("buddy.learning.buddy_knowledge_router._course_matches", return_value=[]):
                 result = route_buddy_learning_query("unmapped capability zqv 9842", root=root, record_gap=True)
             self.assertEqual(result["gap_event"]["status"], "open")
+            self.assertEqual(result["gap_event"]["query"], "[redacted]")
             self.assertFalse(result["gap_event"]["external_routing_performed"])
             self.assertTrue((root / "data/buddy-library-knowledge-gaps.jsonl").is_file())
 
