@@ -301,6 +301,8 @@ jobs:
             --out-dir "$RUNNER_TEMP/buddy-bootcamp-weekly/learning-organization"
 
       - name: Build five-lesson-per-division Buddy University daily plan
+        env:
+          PYTHONPATH: ${{ github.workspace }}
         run: |
           python tools/build_buddy_university_daily_plan.py \
             --university-map "$RUNNER_TEMP/buddy-bootcamp-weekly/university/buddy-university-learning-map.json" \
