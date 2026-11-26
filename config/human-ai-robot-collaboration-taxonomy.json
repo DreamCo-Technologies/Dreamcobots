@@ -1,0 +1,320 @@
+{
+  "schema": "dreamco.human_ai_robot_collaboration_taxonomy.v1",
+  "version": "1.0.0",
+  "status": "framework_defined_task_level_evidence_pending",
+  "purpose": "Map work tasks to human, AI, robotic, and combined execution roles so Buddy can recommend the safest and most effective collaboration for each user's goal.",
+  "source_scope": {
+    "occupational_reference": "O*NET Database 31.0",
+    "occupational_reference_release_date": "2026-08",
+    "official_source": "https://www.onetcenter.org/database.html",
+    "content_model": "https://www.onetcenter.org/content.html",
+    "attribution": "Credit the O*NET 31.0 Database and the U.S. Department of Labor, Employment and Training Administration; link to CC BY 4.0 and indicate changes.",
+    "license": "CC BY 4.0, subject to separately licensed elements",
+    "limitation": "The occupational reference describes human work, worker requirements, tasks, and contexts. It does not itself establish AI or robot capability, nor prove that any person is qualified."
+  },
+  "allocation_agents": [
+    {
+      "id": "human",
+      "name": "Human",
+      "scope": "A person performing, supervising, deciding, creating, caring, or taking accountable action.",
+      "strengths": [
+        "embodied perception and dexterity in unstructured real environments",
+        "empathy, trust-building, care, and nuanced interpersonal relationships",
+        "contextual judgment where values, ambiguity, and consequences matter",
+        "accountability, consent, and legally assigned professional authority when qualified",
+        "adaptation to novel physical situations using lived experience"
+      ],
+      "constraints": [
+        "fatigue, limited attention, memory and throughput",
+        "risk of injury and exposure to hazards",
+        "availability, cost, and variation in training or experience"
+      ]
+    },
+    {
+      "id": "ai",
+      "name": "AI software",
+      "scope": "A digital model or agent operating through authorized software, data, and tools.",
+      "strengths": [
+        "high-volume information retrieval, synthesis, translation, and drafting",
+        "rapid pattern analysis across large digital datasets",
+        "repeatable calculations, code assistance, simulation, and optimization",
+        "continuous digital monitoring and workflow orchestration when connected",
+        "scalable personalization and explanation across knowledge levels"
+      ],
+      "constraints": [
+        "may be wrong, outdated, biased, or overconfident",
+        "cannot independently establish truth, consent, legal authority, or professional licensure",
+        "cannot physically manipulate the world without connected actuators and verified systems",
+        "depends on data quality, tool access, permissions, and security boundaries"
+      ]
+    },
+    {
+      "id": "robot",
+      "name": "Physical robot or automated machine",
+      "scope": "A physical system with sensors, actuators, control software, and a defined operating environment.",
+      "strengths": [
+        "repeatable physical movement and manipulation within validated tolerances",
+        "continuous operation in suitable environments",
+        "measured force, positioning, inspection, and material handling",
+        "performing hazardous, dirty, heavy, or ergonomically harmful operations when specifically engineered and certified"
+      ],
+      "constraints": [
+        "limited by hardware, payload, reach, battery, sensing, calibration, and environment",
+        "weak generalization outside validated conditions",
+        "physical safety, maintenance, and emergency-stop requirements",
+        "does not independently supply human empathy, moral accountability, or professional authorization"
+      ]
+    },
+    {
+      "id": "human_ai",
+      "name": "Human + AI",
+      "scope": "A person directs and verifies AI-assisted digital work.",
+      "strengths": [
+        "human intent and judgment combined with AI speed and breadth",
+        "faster research, drafting, analysis, planning, coding, and decision support",
+        "human review of uncertainty, exceptions, and consequential outcomes"
+      ],
+      "constraints": [
+        "requires clear responsibility, source checking, privacy controls, and review effort"
+      ]
+    },
+    {
+      "id": "human_robot",
+      "name": "Human + robot",
+      "scope": "A person works alongside or supervises a physical robotic system.",
+      "strengths": [
+        "human adaptation and situational awareness combined with machine precision, strength, or endurance",
+        "shared physical workflows with human intervention for exceptions"
+      ],
+      "constraints": [
+        "requires task-specific safety engineering, training, separation or collaboration controls, and emergency procedures"
+      ]
+    },
+    {
+      "id": "ai_robot",
+      "name": "AI + robot",
+      "scope": "AI planning or perception is connected to robotic hardware.",
+      "strengths": [
+        "digital perception and planning connected to physical sensing and action",
+        "automated inspection, logistics, manipulation, and adaptive physical workflows in validated environments"
+      ],
+      "constraints": [
+        "requires verified sensors, actuators, control limits, fail-safe behavior, and environment-specific testing"
+      ]
+    },
+    {
+      "id": "human_ai_robot",
+      "name": "Human + AI + robot",
+      "scope": "A person retains direction and accountability while AI supports perception/planning and robots perform validated physical actions.",
+      "strengths": [
+        "combines human judgment, digital intelligence, and physical execution",
+        "supports complex workflows with explicit human checkpoints and exception handling"
+      ],
+      "constraints": [
+        "highest integration complexity; safety case, security, audit trail, and fallback operation required"
+      ]
+    }
+  ],
+  "task_dimensions": [
+    "task_outcome_and_acceptance_criteria",
+    "physical_vs_digital",
+    "environment_predictability",
+    "uncertainty_and_novelty",
+    "social_emotional_interaction",
+    "ethical_or_value_judgment",
+    "legal_or_professional_authority",
+    "physical_force_and_dexterity",
+    "sensory_requirements",
+    "precision_and_repeatability",
+    "information_volume_and_complexity",
+    "latency_and_throughput",
+    "hazard_exposure",
+    "failure_severity_and_reversibility",
+    "privacy_and_data_sensitivity",
+    "accessibility_and_user_preference",
+    "required_credentials_and_supervision",
+    "available_tools_hardware_and_connectivity",
+    "cost_energy_and_maintenance",
+    "evidence_quality_and_freshness"
+  ],
+  "suitability_classes": [
+    {
+      "id": "human_led",
+      "meaning": "Human performs the core task; AI or robot may provide bounded assistance.",
+      "default_control": "human_accountable"
+    },
+    {
+      "id": "ai_assisted",
+      "meaning": "AI prepares or analyzes work; a human verifies before consequential use.",
+      "default_control": "human_review_before_external_or_high_impact_action"
+    },
+    {
+      "id": "digital_automation",
+      "meaning": "Software may execute a bounded digital workflow with explicit permissions, tests, logs, and rollback.",
+      "default_control": "least_privilege_and_audited"
+    },
+    {
+      "id": "robot_assisted",
+      "meaning": "A robot performs a validated physical subtask with human supervision and safety controls.",
+      "default_control": "task_specific_safety_case"
+    },
+    {
+      "id": "human_ai_team",
+      "meaning": "Human and AI divide the work according to strengths, with clear handoffs.",
+      "default_control": "human_owns_decisions_and_exceptions"
+    },
+    {
+      "id": "human_robot_team",
+      "meaning": "Human and robot share a physical workflow under engineered safety controls.",
+      "default_control": "human_supervision_and_emergency_stop"
+    },
+    {
+      "id": "human_ai_robot_team",
+      "meaning": "Human, AI, and robot coordinate a multi-stage workflow with explicit responsibility and safe fallback.",
+      "default_control": "human_accountable_end_to_end"
+    },
+    {
+      "id": "restricted_or_qualified_only",
+      "meaning": "Only appropriately qualified and authorized people may perform or sign off the task; AI/robot use is limited to permitted support.",
+      "default_control": "credential_and_jurisdiction_check"
+    },
+    {
+      "id": "not_assessed",
+      "meaning": "Evidence is insufficient to recommend autonomous execution.",
+      "default_control": "block_autonomous_execution"
+    }
+  ],
+  "allocation_rules": [
+    "Classify the requested task, not an entire occupation, before selecting an executor.",
+    "Break occupations into task steps and assign different roles to different steps where appropriate.",
+    "Use AI for digital work only when data, model, tools, and permissions are adequate and validated.",
+    "Use robots only when the exact hardware, payload, sensors, workspace, operating conditions, and safety controls are verified.",
+    "Keep humans responsible for consent, values, high-impact decisions, exceptions, and legally required professional judgment.",
+    "Require qualified human review for regulated, safety-critical, medical, legal, financial, employment, or other high-impact tasks as applicable.",
+    "If evidence, credentials, hardware, permissions, or environmental conditions are unknown, choose not_assessed or human_led.",
+    "Never infer an individual's ability, disability, personality, employability, or qualification from occupational averages.",
+    "Ask the user about goals, preferred level of automation, accessibility needs, budget, privacy, and desired human involvement when these affect the allocation.",
+    "Re-evaluate the allocation when tools, models, hardware, regulations, data, or task conditions change."
+  ],
+  "capability_evidence": {
+    "ai": [
+      "model_and_version",
+      "tool_permissions",
+      "held_out_task_benchmark",
+      "accuracy_and_error_analysis",
+      "latency_and_cost",
+      "privacy_and_security_review",
+      "human_intervention_rate"
+    ],
+    "robot": [
+      "hardware_model_and_firmware",
+      "sensor_and_actuator_inventory",
+      "workspace_and_operating_envelope",
+      "repeatability_and_precision_tests",
+      "payload_and_environment_limits",
+      "hazard_analysis_and_safety_validation",
+      "emergency_stop_and_recovery_tests"
+    ],
+    "human": [
+      "self_reported_or_verified_training_relevant_to_task",
+      "credentials_when_required",
+      "task_specific_experience_evidence_when voluntarily supplied",
+      "accessibility_and_accommodation_preferences"
+    ],
+    "team": [
+      "handoff_test",
+      "end_to_end_acceptance_test",
+      "exception_and_fallback_test",
+      "responsibility_matrix",
+      "audit_log",
+      "user_acceptance"
+    ]
+  },
+  "task_record_required_fields": [
+    "task_id",
+    "occupation_code",
+    "occupation_title",
+    "source_release",
+    "source_task_id",
+    "task_statement",
+    "task_context",
+    "task_dimensions",
+    "candidate_roles",
+    "recommended_allocation",
+    "why_this_allocation",
+    "human_responsibility",
+    "ai_model_and_evidence",
+    "robot_hardware_and_evidence",
+    "required_credentials",
+    "safety_controls",
+    "privacy_controls",
+    "fallback_plan",
+    "acceptance_tests",
+    "confidence",
+    "unknowns",
+    "review_status",
+    "last_verified_at"
+  ],
+  "initial_task_examples": [
+    {
+      "task": "Research and summarize technical documentation",
+      "likely_allocation": "human_ai",
+      "ai_role": "retrieve, compare, summarize, cite",
+      "human_role": "set question, verify critical claims and decide",
+      "robot_role": "not_applicable",
+      "evidence_needed": "citation accuracy and held-out research benchmark"
+    },
+    {
+      "task": "Inspect a hazardous industrial area",
+      "likely_allocation": "human_ai_robot",
+      "ai_role": "analyze sensor/video feeds and flag anomalies",
+      "human_role": "set safety plan and approve response",
+      "robot_role": "enter and collect sensor readings if the platform is certified for the environment",
+      "evidence_needed": "environment-specific safety case, sensor validation, detection performance, emergency recovery"
+    },
+    {
+      "task": "Provide emotional support to a distressed person",
+      "likely_allocation": "human_led",
+      "ai_role": "offer optional information and help locate support",
+      "human_role": "provide empathy, relationship, judgment, and escalation",
+      "robot_role": "not_assessed_or_optional_accessibility_support",
+      "evidence_needed": "safeguarding, consent, escalation, and human oversight"
+    },
+    {
+      "task": "Prepare a software change",
+      "likely_allocation": "human_ai",
+      "ai_role": "draft code, tests, and review findings in a sandbox",
+      "human_role": "define requirements, review diff, approve merge and release",
+      "robot_role": "not_applicable",
+      "evidence_needed": "tests, security checks, regression suite, reviewer acceptance"
+    },
+    {
+      "task": "Move standardized materials in a mapped warehouse",
+      "likely_allocation": "human_robot_or_ai_robot",
+      "ai_role": "schedule routes and detect exceptions",
+      "human_role": "supervise, handle exceptions, and maintain safety",
+      "robot_role": "transport materials within validated payload and navigation limits",
+      "evidence_needed": "route success, collision avoidance, payload limits, uptime, emergency stop"
+    }
+  ],
+  "coverage_policy": {
+    "occupation_and_task_mapping": "Every task statement in the verified source release must receive a task record or an explicit exclusion/review reason.",
+    "no_occupation_wide_claims": true,
+    "no_unverified_autonomy": true,
+    "unknown_capability_defaults_to": "not_assessed",
+    "open_vocabulary": true,
+    "generated_task_variants_must_be_labeled_synthetic": true
+  },
+  "completion_gates": [
+    "official_source_release_and_all_file_hashes_recorded",
+    "all_source_files_in_release_inventory_accounted_for",
+    "all_occupations_and_task_statements_mapped_or_exclusion_reason_recorded",
+    "human_ai_robot_allocation_has_evidence_or_not_assessed_status",
+    "rights_and_attribution_review_passed",
+    "task_specific_safety_and_credential_review_passed",
+    "original_guides_and_practice_authored",
+    "held_out_assessments_and_regression_tests_passed",
+    "human_review_completed_before_publication"
+  ],
+  "truth_boundary": "This is a decision framework and initial illustrative examples, not a completed scan of every occupation or task, not proof that AI or robots can perform the tasks, and not a qualification or certification."
+}
