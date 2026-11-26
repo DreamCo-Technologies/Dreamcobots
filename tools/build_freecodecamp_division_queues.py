@@ -368,8 +368,9 @@ def main() -> int:
         args.out.write_text(rendered, encoding="utf-8")
     print(json.dumps({"ok": True, "queue_mode": payload["queue_mode"], "domains": 55, "catalog_videos": len(catalog["videos"]),
                       "queued_items": sum(row["queue_count"] for row in payload["domains"]),
-                      "subject_routed": sum(row["queue_status"] == "subject_routed" for row in payload["domains"]),
-                      "foundation_only": sum(row["queue_status"] != "subject_routed" for row in payload["domains"])}, indent=2))
+                      "subject_routed": sum(bool(row["target_categories"]) for row in payload["domains"]),
+                      "learning_only_owner_mapping_pending": sum(row["queue_status"] == "subject_routed_learning_only_owner_mapping_pending" for row in payload["domains"]),
+                      "foundation_only": sum(not row["target_categories"] for row in payload["domains"])}, indent=2))
     return 0
 
 if __name__ == "__main__":
