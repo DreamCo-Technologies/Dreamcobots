@@ -13,6 +13,18 @@ on:
       - "tests/test_production_readiness_gate.py"
       - "tests/test_full_system_operational_certification.py"
       - ".github/workflows/production-readiness.yml"
+  pull_request:
+    paths:
+      - "governance/**"
+      - "config/production-readiness-contract.json"
+      - "config/full-system-operational-certification.json"
+      - "config/runtime-connection-evidence.json"
+      - "tools/production_readiness_gate.py"
+      - "tools/build_full_system_certification.py"
+      - "tests/test_production_readiness_gate.py"
+      - "tests/test_full_system_operational_certification.py"
+      - ".github/workflows/production-readiness.yml"
+      - "tests/test_production_readiness_workflow.py"
   schedule:
     - cron: '17 6 * * *'
   workflow_dispatch:
@@ -39,16 +51,24 @@ jobs:
         uses: actions/setup-python@v7
         with:
           python-version: '3.12'
-      - name: Test production certification truth rules
-        run: python3 -m unittest tests.test_production_readiness_gate -v
+      - name: Test production certification truth rules and workflow safety
+        run: python3 -m unittest tests.test_production_readiness_gate tests.test_production_readiness_workflow -v
       - name: Run evidence inventory
         run: python3 tools/production_readiness_gate.py | tee production-readiness-report.txt
       - name: Run static site preflight
         run: python3 tools/build_buddy_public_site.py --check
       - name: Run production contract strict gate
+        if: github.event_name != 'pull_request'
         run: python3 tools/production_readiness_gate.py --strict
       - name: Fail closed unless production is fully certified
+        if: github.event_name != 'pull_request'
         run: npm run production:certification
+      - name: Explain report-only pull request result
+        if: github.event_name == 'pull_request'
+        run: |
+          echo "This pull request receives a current, read-only production-readiness inventory."
+          echo "Strict production certification remains fail-closed and is not run from a pull request."
+          echo "An uploaded report is evidence inventory, not a production-ready certification."
       - name: Upload evidence report
         if: always()
         uses: actions/upload-artifact@v7
