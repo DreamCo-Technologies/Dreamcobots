@@ -102,6 +102,7 @@ jobs:
           REQUESTED_MODE: ${{ github.event.inputs.mode || 'standard' }}
         run: |
           python3 tools/run_500_model_benchmarks.py --mode "$REQUESTED_MODE"
+          echo "BLOCKED_RUNNER_NOT_IMPLEMENTED: all matrix rows remain unverified."
           echo "The execution gate records the current blocker. No model calls or training are started until an evidence-producing runner is implemented."
       - name: Build complete model × benchmark-suite prospectus matrix
         if: always()
