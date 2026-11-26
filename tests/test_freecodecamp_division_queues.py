@@ -51,6 +51,8 @@ class FreeCodeCampDomainQueueTests(unittest.TestCase):
         self.assertEqual(len({x["domain_id"] for x in result["domains"]}), 55)
         self.assertEqual(sum(x["mapping_status"] == "proposed_exact_name_match" for x in result["domains"]), 45)
         self.assertEqual(sum(x["mapping_status"] == "unresolved" for x in result["domains"]), 10)
+        self.assertEqual(sum(x["queue_status"] == "subject_routed" for x in result["domains"]), 45)
+        self.assertEqual(sum(x["queue_status"] == "foundation_only_owner_mapping_pending" for x in result["domains"]), 10)
 
     def test_domain_hints_route_specialist_content(self):
         result = build_queues(self.catalog, self.crosswalk, limit=10)
@@ -64,6 +66,10 @@ class FreeCodeCampDomainQueueTests(unittest.TestCase):
         self.assertEqual(food["mapping_status"], "unresolved")
         self.assertIsNone(food["masterbot_id"])
         self.assertTrue(food["owner_review_required"])
+        self.assertEqual(food["queue_status"], "foundation_only_owner_mapping_pending")
+        self.assertEqual(food["target_categories"], [])
+        foundation = set(food["shared_foundation_categories"])
+        self.assertTrue(all(foundation.intersection(item["categories"]) for item in food["items"]))
         self.assertTrue(all(x["assignment_status"] == "queued_not_studied" for x in food["items"]))
 
     def test_camel_case_domain_name_routes_real_estate_specialty(self):
