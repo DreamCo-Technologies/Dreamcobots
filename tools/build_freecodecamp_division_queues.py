@@ -55,77 +55,10 @@ ALIASES = {
     "mobile": {"mobile_and_cross_platform", "javascript_and_typescript", "software_architecture_and_testing"},
     "web": {"html_css_and_accessibility", "javascript_and_typescript", "frontend_and_ui_frameworks", "backend_and_apis"},
 }
-# Curated FreeCodeCamp taxonomy routing for every canonical domain division.
-# This maps learning subjects, not bot ownership, production permissions, or mastery.
-# The 55-domain / 65-MasterBot ownership crosswalk remains separately review-gated.
-DOMAIN_CATEGORY_MAP: dict[str, set[str]] = {
-    "commandcore": {"computer_science_and_fundamentals", "software_architecture_and_testing", "python_and_automation", "ai_agents_and_mcp", "cloud_devops_and_ci_cd"},
-    "dreamaiinfra": {"machine_learning_and_deep_learning", "generative_ai_and_llms", "ai_agents_and_mcp", "python_and_automation", "cloud_devops_and_ci_cd"},
-    "dreamadmin": {"python_and_automation", "databases_and_sql", "cloud_devops_and_ci_cd", "software_architecture_and_testing"},
-    "dreamagents": {"ai_agents_and_mcp", "generative_ai_and_llms", "backend_and_apis", "python_and_automation", "software_architecture_and_testing"},
-    "dreamagriculture": {"data_science_and_visualization", "machine_learning_and_deep_learning", "python_and_automation", "mathematics_and_statistics"},
-    "dreamarts": {"html_css_and_accessibility", "frontend_and_ui_frameworks", "javascript_and_typescript", "game_development"},
-    "dreamautomation": {"python_and_automation", "ai_agents_and_mcp", "backend_and_apis", "cloud_devops_and_ci_cd"},
-    "dreambizlaunch": {"career_and_interview_skills", "data_science_and_visualization", "backend_and_apis", "software_architecture_and_testing"},
-    "dreamcodelab": {"computer_science_and_fundamentals", "html_css_and_accessibility", "javascript_and_typescript", "python_and_automation", "backend_and_apis", "software_architecture_and_testing"},
-    "dreamconstruction": {"data_science_and_visualization", "python_and_automation", "software_architecture_and_testing", "cloud_devops_and_ci_cd"},
-    "dreamcontent": {"html_css_and_accessibility", "javascript_and_typescript", "frontend_and_ui_frameworks", "data_science_and_visualization"},
-    "dreamcrypto": {"databases_and_sql", "cybersecurity_and_privacy", "mathematics_and_statistics", "backend_and_apis"},
-    "dreamcustintel": {"data_science_and_visualization", "databases_and_sql", "machine_learning_and_deep_learning", "python_and_automation"},
-    "dreamcyber": {"cybersecurity_and_privacy", "linux_networking_and_it", "c_cpp_and_systems", "backend_and_apis"},
-    "dreamdata": {"databases_and_sql", "data_science_and_visualization", "machine_learning_and_deep_learning", "python_and_automation", "mathematics_and_statistics"},
-    "dreamdecision": {"mathematics_and_statistics", "data_science_and_visualization", "machine_learning_and_deep_learning", "software_architecture_and_testing"},
-    "dreameducation": {"computer_science_and_fundamentals", "python_and_automation", "frontend_and_ui_frameworks", "generative_ai_and_llms"},
-    "dreamempire": {"computer_science_and_fundamentals", "data_science_and_visualization", "ai_agents_and_mcp", "software_architecture_and_testing"},
-    "dreamentfinance": {"databases_and_sql", "data_science_and_visualization", "mathematics_and_statistics", "python_and_automation"},
-    "dreamfinance": {"databases_and_sql", "data_science_and_visualization", "mathematics_and_statistics", "python_and_automation"},
-    "dreamflow": {"python_and_automation", "backend_and_apis", "cloud_devops_and_ci_cd", "ai_agents_and_mcp"},
-    "dreamfood": {"data_science_and_visualization", "databases_and_sql", "python_and_automation", "backend_and_apis"},
-    "dreamglobal": {"software_architecture_and_testing", "databases_and_sql", "cloud_devops_and_ci_cd", "data_science_and_visualization"},
-    "dreamhealth": {"data_science_and_visualization", "databases_and_sql", "cybersecurity_and_privacy", "machine_learning_and_deep_learning"},
-    "dreaminfluence": {"html_css_and_accessibility", "frontend_and_ui_frameworks", "javascript_and_typescript", "data_science_and_visualization"},
-    "dreamlegal": {"cybersecurity_and_privacy", "databases_and_sql", "generative_ai_and_llms", "software_architecture_and_testing"},
-    "dreamloans": {"databases_and_sql", "data_science_and_visualization", "mathematics_and_statistics", "backend_and_apis"},
-    "dreammaintenance": {"python_and_automation", "cloud_devops_and_ci_cd", "c_cpp_and_systems", "data_science_and_visualization"},
-    "dreammarket": {"data_science_and_visualization", "databases_and_sql", "frontend_and_ui_frameworks", "backend_and_apis"},
-    "dreammilitary": {"cybersecurity_and_privacy", "linux_networking_and_it", "c_cpp_and_systems", "mathematics_and_statistics"},
-    "dreamops": {"python_and_automation", "cloud_devops_and_ci_cd", "databases_and_sql", "software_architecture_and_testing"},
-    "dreampayments": {"backend_and_apis", "databases_and_sql", "cybersecurity_and_privacy", "software_architecture_and_testing"},
-    "dreampersonalcare": {"mobile_and_cross_platform", "frontend_and_ui_frameworks", "cybersecurity_and_privacy", "data_science_and_visualization"},
-    "dreamplanetary": {"data_science_and_visualization", "machine_learning_and_deep_learning", "mathematics_and_statistics", "python_and_automation"},
-    "dreamproservices": {"career_and_interview_skills", "backend_and_apis", "python_and_automation", "software_architecture_and_testing"},
-    "dreamproduction": {"python_and_automation", "cloud_devops_and_ci_cd", "c_cpp_and_systems", "software_architecture_and_testing"},
-    "dreamprotection": {"cybersecurity_and_privacy", "linux_networking_and_it", "c_cpp_and_systems", "backend_and_apis"},
-    "dreamrealestate": {"databases_and_sql", "data_science_and_visualization", "backend_and_apis", "python_and_automation"},
-    "dreamretail": {"data_science_and_visualization", "databases_and_sql", "frontend_and_ui_frameworks", "mobile_and_cross_platform"},
-    "dreamsalespro": {"data_science_and_visualization", "career_and_interview_skills", "backend_and_apis", "python_and_automation"},
-    "dreamscience": {"data_science_and_visualization", "machine_learning_and_deep_learning", "mathematics_and_statistics", "python_and_automation"},
-    "dreamsocial": {"frontend_and_ui_frameworks", "javascript_and_typescript", "databases_and_sql", "cybersecurity_and_privacy"},
-    "dreamtrade": {"databases_and_sql", "mathematics_and_statistics", "backend_and_apis", "cybersecurity_and_privacy"},
-    "dreamtransport": {"data_science_and_visualization", "backend_and_apis", "cloud_devops_and_ci_cd", "python_and_automation"},
-    "gametitan": {"game_development", "c_cpp_and_systems", "mathematics_and_statistics", "software_architecture_and_testing"},
-    "dreamaffiliate": {"data_science_and_visualization", "html_css_and_accessibility", "javascript_and_typescript", "backend_and_apis"},
-    "dreamagency": {"career_and_interview_skills", "data_science_and_visualization", "frontend_and_ui_frameworks", "backend_and_apis"},
-    "dreamfoundry": {"computer_science_and_fundamentals", "software_architecture_and_testing", "backend_and_apis", "cloud_devops_and_ci_cd"},
-    "dreamfranchise": {"career_and_interview_skills", "data_science_and_visualization", "backend_and_apis", "python_and_automation"},
-    "dreamintegrations": {"backend_and_apis", "ai_agents_and_mcp", "cloud_devops_and_ci_cd", "cybersecurity_and_privacy"},
-    "dreamlicensing": {"cybersecurity_and_privacy", "databases_and_sql", "software_architecture_and_testing", "career_and_interview_skills"},
-    "dreamrobotics": {"c_cpp_and_systems", "python_and_automation", "machine_learning_and_deep_learning", "mathematics_and_statistics"},
-    "dreamsaas": {"frontend_and_ui_frameworks", "backend_and_apis", "databases_and_sql", "cloud_devops_and_ci_cd", "software_architecture_and_testing"},
-    "dreamstreaming": {"backend_and_apis", "cloud_devops_and_ci_cd", "javascript_and_typescript", "linux_networking_and_it"},
-    "dreamtravel": {"data_science_and_visualization", "backend_and_apis", "mobile_and_cross_platform", "cloud_devops_and_ci_cd"},
-}
-
 def _slug(text: str) -> str:
     return re.sub(r"[^a-z0-9]+", "-", text.casefold()).strip("-")
 
-def _division_categories(name: str, subject_terms: list[str], known: set[str], domain_id: str | None = None) -> tuple[set[str], bool]:
-    # Explicit canonical profiles win over name heuristics. This is curriculum
-    # categorization only; MasterBot ownership approval remains separate.
-    explicit = DOMAIN_CATEGORY_MAP.get(domain_id or "")
-    if explicit is not None:
-        selected = explicit & known
-        return selected, bool(selected)
+def _division_categories(name: str, subject_terms: list[str], known: set[str]) -> tuple[set[str], bool]:
     raw = " ".join([name, *subject_terms])
     raw = re.sub(r"(?<=[a-z0-9])(?=[A-Z])", " ", raw)
     raw = re.sub(r"(?<=[A-Z])(?=[A-Z][a-z])", " ", raw)
@@ -167,7 +100,7 @@ def build_queues(catalog: dict[str, Any], crosswalk: dict[str, Any], limit: int 
         and inventory.get("duplicate_video_id_count") == 0
     )
     if not complete_inventory and not provisional_inventory:
-        raise ValueError("verified complete inventory for freeCodeCamp required, or pass allow_partial=True for a clearly provisional queue with verified observed-row integrity")
+        raise ValueError("verified complete freeCodeCamp inventory required, or pass allow_partial=True for a clearly provisional queue with verified observed-row integrity")
     if not isinstance(domains, list) or len(domains) != 55:
         raise ValueError("canonical 55-domain crosswalk required")
     domain_ids = [row.get("domain_id") for row in domains]
@@ -183,7 +116,7 @@ def build_queues(catalog: dict[str, Any], crosswalk: dict[str, Any], limit: int 
         domain_id = domain["domain_id"]
         name = domain["domain_name"]
         subject_terms = [name, name.replace("Dream", "")]
-        targeted, has_mapping = _division_categories(name, subject_terms, known, domain_id)
+        targeted, has_mapping = _division_categories(name, subject_terms, known)
         required = FOUNDATION | targeted
         scored = []
         for video in videos:
