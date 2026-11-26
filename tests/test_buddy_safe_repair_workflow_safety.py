@@ -17,6 +17,7 @@ def test_safe_repair_can_be_dispatched_or_bootstrapped_only_on_main():
     assert ".github/workflows/buddy-ci-safe-repair.yml" in triggers["push"]["paths"]
     assert "Buddy Bootcamp Curriculum" in triggers["workflow_run"]["workflows"]
     assert "Buddy Open-Source Weekly Bootcamp" in triggers["workflow_run"]["workflows"]
+    assert "Full System Certification" in triggers["workflow_run"]["workflows"]
 
     job = workflow["jobs"]["regenerate-and-verify"]
     checkout = next(step for step in job["steps"] if step.get("uses") == "actions/checkout@v4")
@@ -32,6 +33,8 @@ def test_safe_repair_uses_convergent_generators_and_only_pushes_a_repair_branch(
     assert "python tools/refresh_repository_evidence.py" in workflow_text
     assert "python tools/generate_command_center_data.py" in workflow_text
     assert "python tools/generate_command_center_data.py --check" in workflow_text
+    assert "node --import tsx tools/generate_bot_fleet_catalog.ts" in workflow_text
+    assert "npm run buddy:fleet" in workflow_text
     assert "python tools/build_actions_prospectus.py --check --check-buttons" in workflow_text
     assert "python tools/build_file_prospectus.py --check" in workflow_text
     assert "REPAIR_BRANCH:" in workflow_text
@@ -52,6 +55,12 @@ def test_safe_repair_allowlist_includes_public_evidence_and_manifests():
         "website/data/pages-feature-audit.json",
         "command-center/data",
         "website/data/command-center",
+        "config/master_bot_registry.json",
+        "config/generated/bots.catalog.json",
+        "website/data/bot-fleet-catalog.json",
+        "website/data/buddy-routing-index.js",
+        "website/data/bot-fleet",
+        "reports/BOT_FLEET_PROSPECTUS.md",
         "website/data/fleet-runtime-status.json",
         "website/data/command-center",
     ):
