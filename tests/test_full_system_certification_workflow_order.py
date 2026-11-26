@@ -18,9 +18,9 @@ class FullSystemCertificationWorkflowOrderTests(unittest.TestCase):
     def test_fleet_e2e_generation_precedes_fleet_report_verification(self):
         root = Path(__file__).resolve().parents[1]
         workflow = (root / ".github/workflows/full-system-certification.yml").read_text(encoding="utf-8")
-        self.assertEqual(workflow.count("node --import tsx tools/run_bot_fleet_e2e.ts"), 1)
+        self.assertEqual(workflow.count("node --import tsx tools/run_bot_fleet_e2e.ts\\n"), 1)
         self.assertLess(
-            workflow.index("node --import tsx tools/run_bot_fleet_e2e.ts"),
+            workflow.index("node --import tsx tools/run_bot_fleet_e2e.ts\\n"),
             workflow.index("npm run buddy:fleet:e2e"),
         )
         self.assertLess(
