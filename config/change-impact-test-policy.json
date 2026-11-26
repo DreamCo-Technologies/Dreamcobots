@@ -326,15 +326,6 @@
     },
     {
       "sources": [
-        "website/data/buddy-routing-index.js",
-        "website/data/buddy-capability-certifications.js"
-      ],
-      "tests": [
-        "tests/supplemental-fleet.test.ts"
-      ]
-    },
-    {
-      "sources": [
         "website/models.js"
       ],
       "tests": [
@@ -499,6 +490,17 @@
         "tests/test_buddy_srs_service.py"
       ],
       "reason": "Shared FSRS scheduling, legacy compatibility, offline event persistence and mastery separation"
+    },
+    {
+      "sources": [
+        "website/data/buddy-routing-index.js",
+        "website/data/buddy-capability-certifications.js"
+      ],
+      "tests": [
+        "tests/supplemental-fleet.test.ts",
+        "tests/bot-fleet-catalog.test.ts"
+      ],
+      "reason": "Validate generated Buddy routing and capability indexes against canonical and supplemental fleet sources"
     }
   ],
   "evidence_rules": {

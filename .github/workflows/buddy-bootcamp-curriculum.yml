@@ -284,6 +284,10 @@ jobs:
       - name: Validate freeCodeCamp catalog and tests
         run: |
           python tools/sync_freecodecamp_catalog.py --check
+          # The catalog refresh above can change the lesson inventory. Rebuild
+          # its derived policy/path manifests before count-sensitive tests.
+          python tools/sync_freecodecamp_learning_inventory.py
+          python tools/sync_freecodecamp_learning_inventory.py --check
           python -m unittest discover -s tests -p 'test_freecodecamp_catalog.py' -v
           python -m py_compile tools/catalog_freecodecamp_youtube.py
           python -m unittest discover -s tests -p 'test_freecodecamp_youtube_catalog.py' -v
@@ -355,7 +359,6 @@ jobs:
           python -m unittest discover -s tests -p 'test_onet_task_curricula.py' -v
           python -m unittest discover -s tests -p 'test_buddy_fleet_internal_bootcamp_routing.py' -v
           python -m unittest discover -s tests -p 'test_fleet_runtime_executor.py' -v
-          python tools/generate_bot_manifests.py --check
           python -m unittest discover -s tests -p 'test_buddy_library_registry_discovery.py' -v
           python -m unittest discover -s tests -p 'test_freecodecamp_learning_inventory.py' -v
           python -m unittest discover -s tests -p 'test_freecodecamp_specialist_routing.py' -v
