@@ -32,19 +32,47 @@ def tracked_markdown(root: Path = ROOT) -> list[Path]:
     return sorted(root / line for line in result.stdout.splitlines() if line and line not in excluded_paths and not excluded.intersection(Path(line).parts))
 
 
-def candidate_paths(text: str) -> set[str]:
+def _candidate_tokens(text: str) -> set[str]:
     candidates = set(re.findall(r"`([^`]+)`", text))
-    candidates.update(re.findall(r"\]\(([^)]+)\)", text))
-    output = set()
+    candidates.update(re.findall(r"](([^)]+))", text))
+    tokens = set()
     for value in candidates:
         parts = value.strip().split()
         if not parts:
             continue
-        token = parts[0].strip(".,;:()[]{}<>")
+        token = parts[0].strip(".,;:()[]")
         if token.startswith("./"):
             token = token[2:]
         if token.startswith(("https://", "http://", "mailto:", "#")):
             continue
+        tokens.add(token)
+    return tokens
+
+
+def candidate_path_templates(text: str) -> set[str]:
+    """Return path patterns that intentionally contain placeholders or globs."""
+    return {
+        token for token in _candidate_tokens(text)
+        if any(marker in token for marker in ("<", ">", "{", "}", "*"))
+    }
+
+
+def candidate_external_paths(text: str) -> set[str]:
+    """Return machine-local absolute paths, not repository-relative references."""
+    roots = ("/home/", "/workspace/", "/mnt/", "/tmp/", "/Users/", "/root/")
+    return {token for token in _candidate_tokens(text) if token.startswith(roots)}
+
+
+def candidate_paths(text: str) -> set[str]:
+    """Return concrete repository-relative paths, excluding templates and local paths."""
+    output = set()
+    templates = candidate_path_templates(text)
+    external = candidate_external_paths(text)
+    for token in _candidate_tokens(text):
+        if token in templates or token in external:
+            continue
+        if token.startswith("/"):
+            token = token.lstrip("/")
         suffix = Path(token).suffix.lower()
         if suffix not in PATH_SUFFIXES:
             continue
@@ -81,6 +109,8 @@ def inventory_count_claims(text: str, policy: dict[str, Any]) -> list[dict[str, 
 
 def analyze_document(relative: str, text: str, policy: dict[str, Any], root: Path = ROOT) -> dict[str, Any]:
     refs = sorted(candidate_paths(text))
+    path_templates = sorted(candidate_path_templates(text))
+    external_paths = sorted(candidate_external_paths(text))
     existing = [path for path in refs if (root / path).is_file()]
     missing = [path for path in refs if not (root / path).is_file()]
     buckets: dict[str, list[str]] = {key: [] for key in policy["path_roots"]}
@@ -115,6 +145,8 @@ def analyze_document(relative: str, text: str, policy: dict[str, Any], root: Pat
         "count_claim_review_required": bool(count_claims),
         "referenced_paths": existing,
         "missing_paths": missing,
+        "path_templates": path_templates,
+        "external_paths": external_paths,
         "implementation_paths": sorted(buckets["implementation"]),
         "test_paths": sorted(buckets["tests"]),
         "workflow_paths": sorted(buckets["workflows"]),
@@ -143,6 +175,10 @@ def build(root: Path = ROOT) -> dict[str, Any]:
         "numeric_inventory_claim_count": sum(len(row["numeric_inventory_claims"]) for row in documents),
         "gap_status_counts": dict(sorted(counts.items())),
         "documents_with_missing_paths": sum(bool(row["missing_paths"]) for row in documents),
+        "documents_with_path_templates": sum(bool(row["path_templates"]) for row in documents),
+        "path_template_reference_count": sum(len(row["path_templates"]) for row in documents),
+        "documents_with_external_paths": sum(bool(row["external_paths"]) for row in documents),
+        "external_path_reference_count": sum(len(row["external_paths"]) for row in documents),
         "documents_without_implementation_references": sum(not row["implementation_paths"] for row in documents),
         "documents_without_test_references": sum(bool(row["implementation_paths"]) and not row["test_paths"] for row in documents),
         "documents": documents,
@@ -163,6 +199,8 @@ def render_report(data: dict[str, Any]) -> str:
         f"- Markdown documents scanned: {data['document_count']}",
         f"- Actionable claim lines detected: {data['actionable_claim_lines']}",
         f"- Documents with missing path references: {data['documents_with_missing_paths']}",
+        f"- Path-template references (not concrete repository paths): {data.get('path_template_reference_count', 0)} across {data.get('documents_with_path_templates', 0)} documents",
+        f"- Machine-local absolute paths (not repository paths): {data.get('external_path_reference_count', 0)} across {data.get('documents_with_external_paths', 0)} documents",
         f"- Documents without implementation references: {data['documents_without_implementation_references']}",
         f"- Documents with implementation references but no test references: {data['documents_without_test_references']}",
         f"- Documents with inventory count claims: {data['documents_with_count_claims']}",
@@ -185,6 +223,8 @@ def render_report(data: dict[str, Any]) -> str:
         implementation = ", ".join(row.get("implementation_paths", [])) or "None detected"
         tests = ", ".join(row.get("test_paths", [])) or "None detected"
         missing = ", ".join(row.get("missing_paths", [])) or "None detected"
+        templates = ", ".join(row.get("path_templates", [])) or "None detected"
+        external = ", ".join(row.get("external_paths", [])) or "None detected"
         lines.extend([
             f"### {row['path']}",
             "",
@@ -193,6 +233,8 @@ def render_report(data: dict[str, Any]) -> str:
             f"- Implementation paths: {implementation}",
             f"- Test paths: {tests}",
             f"- Missing paths: {missing}",
+            f"- Path templates: {templates}",
+            f"- Machine-local paths: {external}",
             f"- Next action: {row['next_action']}",
             "- Execution verified: No; run-specific evidence is required.",
             "",
