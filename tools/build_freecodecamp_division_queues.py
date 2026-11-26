@@ -54,6 +54,28 @@ ALIASES = {
     "robot": {"c_cpp_and_systems", "python_and_automation", "machine_learning_and_deep_learning"},
     "mobile": {"mobile_and_cross_platform", "javascript_and_typescript", "software_architecture_and_testing"},
     "web": {"html_css_and_accessibility", "javascript_and_typescript", "frontend_and_ui_frameworks", "backend_and_apis"},
+    # Explicit best-fit cross-disciplinary profiles for the remaining core domains.
+    "command core": {"backend_and_apis", "software_architecture_and_testing", "cloud_devops_and_ci_cd", "ai_agents_and_mcp"},
+    "arts": {"html_css_and_accessibility", "frontend_and_ui_frameworks", "javascript_and_typescript", "game_development"},
+    "biz launch": {"career_and_interview_skills", "databases_and_sql", "data_science_and_visualization", "python_and_automation", "generative_ai_and_llms"},
+    "cust intel": {"data_science_and_visualization", "databases_and_sql", "backend_and_apis", "generative_ai_and_llms"},
+    "decision": {"mathematics_and_statistics", "data_science_and_visualization", "machine_learning_and_deep_learning", "databases_and_sql"},
+    "empire": {"career_and_interview_skills", "data_science_and_visualization", "databases_and_sql", "cloud_devops_and_ci_cd", "software_architecture_and_testing"},
+    "flow": {"python_and_automation", "ai_agents_and_mcp", "backend_and_apis", "cloud_devops_and_ci_cd"},
+    "global": {"data_science_and_visualization", "backend_and_apis", "cloud_devops_and_ci_cd", "cybersecurity_and_privacy"},
+    "influence": {"html_css_and_accessibility", "frontend_and_ui_frameworks", "data_science_and_visualization", "generative_ai_and_llms"},
+    "loans": {"mathematics_and_statistics", "databases_and_sql", "data_science_and_visualization", "cybersecurity_and_privacy", "backend_and_apis"},
+    "maintenance": {"python_and_automation", "cloud_devops_and_ci_cd", "backend_and_apis", "c_cpp_and_systems"},
+    "military": {"cybersecurity_and_privacy", "linux_networking_and_it", "c_cpp_and_systems", "data_science_and_visualization"},
+    "ops": {"cloud_devops_and_ci_cd", "python_and_automation", "databases_and_sql", "backend_and_apis", "software_architecture_and_testing"},
+    "personal care": {"data_science_and_visualization", "cybersecurity_and_privacy", "databases_and_sql", "generative_ai_and_llms"},
+    "planetary": {"data_science_and_visualization", "machine_learning_and_deep_learning", "mathematics_and_statistics", "python_and_automation", "c_cpp_and_systems"},
+    "pro services": {"career_and_interview_skills", "data_science_and_visualization", "databases_and_sql", "python_and_automation", "generative_ai_and_llms"},
+    "production": {"cloud_devops_and_ci_cd", "backend_and_apis", "python_and_automation", "databases_and_sql", "software_architecture_and_testing"},
+    "protection": {"cybersecurity_and_privacy", "linux_networking_and_it", "c_cpp_and_systems", "software_architecture_and_testing"},
+    "retail": {"databases_and_sql", "data_science_and_visualization", "backend_and_apis", "generative_ai_and_llms"},
+    "social": {"html_css_and_accessibility", "javascript_and_typescript", "frontend_and_ui_frameworks", "data_science_and_visualization", "generative_ai_and_llms"},
+    "trade": {"mathematics_and_statistics", "databases_and_sql", "data_science_and_visualization", "backend_and_apis", "cybersecurity_and_privacy"},
 }
 def _slug(text: str) -> str:
     return re.sub(r"[^a-z0-9]+", "-", text.casefold()).strip("-")
@@ -117,6 +139,10 @@ def build_queues(catalog: dict[str, Any], crosswalk: dict[str, Any], limit: int 
         name = domain["domain_name"]
         subject_terms = [name, name.replace("Dream", "")]
         targeted, has_mapping = _division_categories(name, subject_terms, known)
+        # Unresolved supplemental profiles must remain foundation-only until
+        # their owner mapping is approved; name similarity cannot promote them.
+        if domain.get("mapping_status") != "proposed_exact_name_match":
+            targeted, has_mapping = set(), False
         required = FOUNDATION | targeted
         scored = []
         for video in videos:
