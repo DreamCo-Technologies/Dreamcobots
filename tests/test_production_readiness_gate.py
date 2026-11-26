@@ -229,5 +229,16 @@ class ProductionCertificationTruthTests(unittest.TestCase):
         self.assertEqual(result["status"], "fail")
         self.assertTrue(result["release_blocker"])
 
+    def test_api_health_route_exposes_boolean_configuration_state_only(self):
+        source = (ROOT / "server/index.ts").read_text(encoding="utf-8")
+        for flag in (
+            "databaseConfigured",
+            "stripeConfigured",
+            "stripeWebhookConfigured",
+            "openaiConfigured",
+            "configurationReady",
+        ):
+            self.assertIn(flag, source)
+
 if __name__ == "__main__":
     unittest.main()
