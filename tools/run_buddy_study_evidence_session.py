@@ -525,7 +525,7 @@ def run_heldout_assessment(
         if probe in corpus_text:
             raise ValueError("held-out probe contaminated the training corpus")
     unicode_probe = HOLDOUT_TEXTS[0]
-    unicode_passed = decode(encode(unicode_probe, tokenizer), tokenizer) == unicode_probe
+    unicode_passed = decode(encode(unicode_probe, tokenizer)) == unicode_probe
     cases.append({
         "case_id": "heldout-unicode-roundtrip",
         "passed": unicode_passed,
