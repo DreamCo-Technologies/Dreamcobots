@@ -139,6 +139,26 @@ def route_buddy_learning_query(
     guide_matches = library.get("matches", [])
     seed_matches = library.get("seed_candidate_matches", [])
 
+    if guide_matches:
+        guide_documents = []
+        for match in guide_matches:
+            guide_path = root / str(match["guide_path"])
+            guide_documents.append(json.loads(guide_path.read_text(encoding="utf-8")))
+        return {
+            "schema": "dreamco.buddy_internal_first_learning_route.v1",
+            "query": normalized_query,
+            "route": "internal_approved_guide",
+            "answer_source": "dreamco_approved_library_guides",
+            "guide_matches": guide_matches,
+            "guide_documents": guide_documents,
+            "course_lessons": [],
+            "knowledge_gap": None,
+            "external_discovery_performed": False,
+            "external_model_routing_performed": False,
+            "mastery_awarded": False,
+        }
+
+
     # Approved, reviewed guides take precedence over discovery candidates.
     # Resolve exact names from the full seed catalog, not the bounded search
     # result. This prevents common terms from crowding out a precise match.
@@ -174,25 +194,6 @@ def route_buddy_learning_query(
                 "Verify the candidate against authoritative first-party sources, pin its exact version, "
                 "review license and rights, then author and assess an original study guide."
             ),
-            "mastery_awarded": False,
-        }
-
-    if guide_matches:
-        guide_documents = []
-        for match in guide_matches:
-            guide_path = root / str(match["guide_path"])
-            guide_documents.append(json.loads(guide_path.read_text(encoding="utf-8")))
-        return {
-            "schema": "dreamco.buddy_internal_first_learning_route.v1",
-            "query": normalized_query,
-            "route": "internal_approved_guide",
-            "answer_source": "dreamco_approved_library_guides",
-            "guide_matches": guide_matches,
-            "guide_documents": guide_documents,
-            "course_lessons": [],
-            "knowledge_gap": None,
-            "external_discovery_performed": False,
-            "external_model_routing_performed": False,
             "mastery_awarded": False,
         }
 
