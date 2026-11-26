@@ -85,8 +85,8 @@ class BuddyUniversityDailyPlanTests(unittest.TestCase):
         workflow = Path(__file__).resolve().parents[1] / ".github/workflows/buddy-open-source-weekly-bootcamp.yml"
         lines = workflow.read_text(encoding="utf-8").splitlines()
         start = lines.index("      - name: Build five-lesson-per-division Buddy University daily plan")
-        step = "\\n".join(lines[start:start + 8])
-        self.assertIn("PYTHONPATH: \${{ github.workspace }}", step)
+        step = "\n".join(lines[start:start + 8])
+        self.assertIn("PYTHONPATH: ${{ github.workspace }}", step)
 
     def test_unknown_division_or_incomplete_organization_fails_closed(self):
         payload = json.loads(self.organization.read_text(encoding="utf-8"))
