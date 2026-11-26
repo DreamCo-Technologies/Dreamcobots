@@ -43,4 +43,15 @@ class BuddySafeRepairTests(unittest.TestCase):
  def test_security_and_unknown_failures_never_run_commands(self):
   self.assertEqual(repair_plan({"failure_class":"security"}),[])
   self.assertEqual(repair_plan({"workflow":"random","job":"job","failed_step":"unknown"}),[])
+ def test_markdown_audit_and_file_prospectus_refresh_after_fleet_evidence(self):
+  workflow=(Path(__file__).resolve().parents[1]/".github/workflows/buddy-ci-safe-repair.yml").read_text(encoding="utf-8")
+  catalog=workflow.index("      - name: Regenerate canonical bot fleet catalog after certification drift")
+  e2e=workflow.index("      - name: Regenerate canonical fleet end-to-end evidence after certification drift")
+  markdown=workflow.index("python tools/audit_markdown_implementation_gaps.py --write")
+  prospectus=workflow.index("      - name: Regenerate file prospectus after all generated source inventories")
+  verify=workflow.index("      - name: Verify repaired indexes and Buddy repair-learning tests")
+  self.assertLess(catalog,markdown)
+  self.assertLess(e2e,markdown)
+  self.assertLess(markdown,prospectus)
+  self.assertLess(prospectus,verify)
 if __name__=="__main__":unittest.main()
