@@ -40,7 +40,8 @@ def _candidate_tokens(text: str) -> set[str]:
         parts = value.strip().split()
         if not parts:
             continue
-        token = parts[0].strip(".,;:()[]")
+        token = parts[0].lstrip("([")
+        token = token.rstrip(".,;:()[]")
         if token.startswith("./"):
             token = token[2:]
         if token.startswith(("https://", "http://", "mailto:", "#")):
