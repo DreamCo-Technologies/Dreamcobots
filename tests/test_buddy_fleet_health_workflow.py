@@ -8,7 +8,7 @@ WORKFLOW = ROOT / ".github" / "workflows" / "buddy-fleet-health.yml"
 class BuddyFleetHealthWorkflowTests(unittest.TestCase):
     def test_generated_e2e_evidence_is_refreshed_before_strict_check(self):
         workflow = WORKFLOW.read_text(encoding="utf-8")
-        refresh = workflow.index("node --import tsx tools/run_bot_fleet_e2e.ts\\n")
+        refresh = workflow.index("node --import tsx tools/run_bot_fleet_e2e.ts")
         strict_check = workflow.index("run: npm run buddy:fleet:e2e", refresh)
         self.assertLess(refresh, strict_check)
         self.assertIn("Validate fleet health workflow contract", workflow)
