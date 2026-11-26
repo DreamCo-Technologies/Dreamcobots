@@ -7,6 +7,7 @@ data must live outside public Pages and the repository.
 from __future__ import annotations
 
 from dataclasses import asdict
+from functools import lru_cache
 import json
 import os
 import re
@@ -21,6 +22,23 @@ from buddy.learning.evidence_acquisition import (
     Capability, CapabilityRegistry, LearningEvent, LearningLedger, benchmark_gate,
 )
 from dreamco_platform.automation.task_runner import BuddyTaskRunner
+
+
+@lru_cache(maxsize=1)
+def _freecodecamp_division_category_profiles() -> tuple[set[str], dict[str, set[str]]]:
+    """Load the shared subject-category profiles used by the queue builder."""
+    path = Path(__file__).resolve().parents[2] / "config/freecodecamp-division-category-profiles.json"
+    document = json.loads(path.read_text(encoding="utf-8"))
+    if document.get("schema") != "dreamco.freecodecamp_division_category_profiles.v1":
+        raise ValueError("unsupported FreeCodeCamp division category profile schema")
+    shared = set(document.get("shared_foundation_categories", []))
+    profiles = {
+        str(domain_id): set(categories)
+        for domain_id, categories in document.get("domain_categories", {}).items()
+    }
+    if len(profiles) != 55 or not shared:
+        raise ValueError("FreeCodeCamp category profiles must cover all 55 divisions and shared foundation")
+    return shared, profiles
 
 
 class PrivateLearningStore:
@@ -250,6 +268,7 @@ class BuddyLearningBridge:
             "benchmark": lesson.benchmark,
             "source_url": lesson.source_url,
             "source_video_id": lesson.source_video_id,
+            "video_categories": list(lesson.video_categories),
             "guide_path": lesson.guide_path,
             "division_targets": list(lesson.division_targets),
             "masterbot_targets": list(lesson.masterbot_targets),
@@ -301,10 +320,27 @@ class BuddyLearningBridge:
 
         catalog_lessons = load_course_lessons()
         if division:
-            lessons = [
-                lesson for lesson in catalog_lessons
-                if not lesson.division_targets or division in lesson.division_targets
-            ]
+            shared_categories, domain_profiles = _freecodecamp_division_category_profiles()
+            domain_categories = domain_profiles.get(division.casefold())
+            if domain_categories is None:
+                raise ValueError(f"no FreeCodeCamp category profile for canonical division: {division}")
+            allowed_video_categories = shared_categories | domain_categories
+
+            def belongs_to_division(lesson: CourseLesson) -> bool:
+                # Explicit curated routing is authoritative. Otherwise, video
+                # metadata is shared only when its categories match the domain's
+                # subject profile or the shared foundation.
+                if lesson.division_targets:
+                    return division in lesson.division_targets
+                if (
+                    lesson.source_video_id
+                    and lesson.track_id in {"freecodecamp-video-catalog", "freecodecamp-specialist-learning-paths"}
+                    and lesson.video_categories
+                ):
+                    return bool(set(lesson.video_categories) & allowed_video_categories)
+                return True
+
+            lessons = [lesson for lesson in catalog_lessons if belongs_to_division(lesson)]
         else:
             lessons = [
                 lesson for lesson in catalog_lessons
@@ -338,7 +374,7 @@ class BuddyLearningBridge:
                     lesson.objective, lesson.practice, lesson.assessment, lesson.benchmark,
                     lesson.source_url, lesson.source_video_id,
                     " ".join(lesson.division_targets), " ".join(lesson.masterbot_targets),
-                    " ".join(lesson.capability_tags), " ".join(lesson.tool_tags),
+                    " ".join(lesson.video_categories), " ".join(lesson.capability_tags), " ".join(lesson.tool_tags),
                     " ".join(lesson.agent_tags), " ".join(lesson.implementation_steps),
                     lesson.buddy_demo,
                 ))
