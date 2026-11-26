@@ -125,5 +125,31 @@ class ProductionCertificationTruthTests(unittest.TestCase):
         self.assertEqual(reports[0]["evidence"], [])
 
 
+    def test_partial_area_keeps_verified_refs_and_surfaces_resolution_errors(self):
+        from tools.production_readiness_gate import build_area_reports, AREA_EVIDENCE_SCHEMA
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            artifact = root / "tests/test_router.py"
+            artifact.parent.mkdir(parents=True)
+            artifact.write_text("test", encoding="utf-8")
+            manifest = {
+                "schema": AREA_EVIDENCE_SCHEMA,
+                "areas": {
+                    "buddy_orchestration": {
+                        "status": "PARTIAL",
+                        "evidence": [{"path": "tests/test_router.py", "sha": "a" * 40, "check_id": "123"}],
+                        "resolution_errors": ["missing routing runtime evidence"],
+                    }
+                },
+            }
+            reports = build_area_reports(
+                {"areas": [{"id": "buddy_orchestration", "label": "Buddy", "required": ["router", "routing runtime"]}]},
+                manifest, "a" * 40, "DreamCo-Technologies/Dreamcobots", "token",
+                root=root, verify_check=lambda *args: True,
+            )
+            self.assertEqual(reports[0]["status"], "partial")
+            self.assertEqual(reports[0]["evidence"][0]["path"], "tests/test_router.py")
+            self.assertIn("missing routing runtime evidence", reports[0]["evidence_errors"])
+
 if __name__ == "__main__":
     unittest.main()
