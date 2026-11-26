@@ -283,7 +283,12 @@ def build_area_reports(
             and not errors
             and len(verified_refs) == len(refs)
         )
-        status = "verified" if verified else ("partial" if isinstance(entry, dict) else "unknown")
+        if verified:
+            status = "verified"
+        elif isinstance(entry, dict) and verified_refs:
+            status = "partial"
+        else:
+            status = "unknown"
         reports.append({
             "id": area_id,
             "label": area.get("label", area_id),
