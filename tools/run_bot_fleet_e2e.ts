@@ -100,9 +100,16 @@ if (checkOnly) {
   divisionShards.forEach((shard) => writeFileSync(shard.path, shard.content));
 }
 
+const canonicalDivisionCoverage = report.summary.divisionsTested === 56 &&
+  report.divisions.length === 56 &&
+  new Set(report.divisions.map((division) => division.division)).size === 56 &&
+  report.divisions.some((division) => division.division === "CommandCore") &&
+  report.divisions.filter((division) => division.division !== "CommandCore").length === 55;
+
 if (
   !writeOnly &&
   (
+    !canonicalDivisionCoverage ||
     !report.summary.repositoryControlledFlowComplete ||
     !report.summary.allDeclaredCapabilitiesTested ||
     report.summary.failed > 0 ||
@@ -112,4 +119,4 @@ if (
   process.exitCode = 1;
 }
 
-console.log(JSON.stringify({ ok: report.summary.failed === 0, ...report.summary }, null, 2));
+console.log(JSON.stringify({ ok: report.summary.failed === 0 && canonicalDivisionCoverage, canonicalDivisionCoverage, ...report.summary }, null, 2));

@@ -6,6 +6,9 @@ on:
     branches: [main]
     paths:
       - ".github/workflows/buddy-ci-safe-repair.yml"
+      - ".github/workflows/full-system-certification.yml"
+      - "tools/run_bot_fleet_e2e.ts"
+      - "reports/BOT_FLEET_E2E.md"
   workflow_run:
     workflows:
       - "Repository Test Matrix"
@@ -104,7 +107,7 @@ jobs:
         if: github.event_name == 'workflow_run' && github.event.workflow_run.name == 'Full System Certification'
         run: node --import tsx tools/generate_bot_fleet_catalog.ts
       - name: Regenerate canonical fleet end-to-end evidence after certification drift
-        if: github.event_name == 'workflow_run' && github.event.workflow_run.name == 'Full System Certification'
+        if: github.event_name == 'push' || (github.event_name == 'workflow_run' && github.event.workflow_run.name == 'Full System Certification')
         run: node --import tsx tools/run_bot_fleet_e2e.ts
       - name: Verify repaired indexes and Buddy repair-learning tests
         run: |
@@ -132,7 +135,7 @@ jobs:
         if: github.event_name == 'workflow_run' && github.event.workflow_run.name == 'Full System Certification'
         run: npm run buddy:fleet
       - name: Verify canonical fleet end-to-end evidence
-        if: github.event_name == 'workflow_run' && github.event.workflow_run.name == 'Full System Certification'
+        if: github.event_name == 'push' || (github.event_name == 'workflow_run' && github.event.workflow_run.name == 'Full System Certification')
         run: npm run buddy:fleet:e2e
       - name: Detect allowlisted generated changes
         id: changes
