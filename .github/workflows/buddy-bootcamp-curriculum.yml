@@ -314,7 +314,7 @@ jobs:
           python -m unittest discover -s tests -p 'test_onet_task_curricula.py' -v
           python -m unittest discover -s tests -p 'test_buddy_fleet_internal_bootcamp_routing.py' -v
           python -m unittest discover -s tests -p 'test_fleet_runtime_executor.py' -v
-          python tools/generate_bot_manifests.py --check
+          # Manifest regeneration and drift validation are owned by fleet-runtime-truth.yml.
           python -m unittest discover -s tests -p 'test_buddy_library_registry_discovery.py' -v
           python -m unittest discover -s tests -p 'test_freecodecamp_learning_inventory.py' -v
           python -m unittest discover -s tests -p 'test_freecodecamp_specialist_routing.py' -v

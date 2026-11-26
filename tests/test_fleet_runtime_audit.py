@@ -22,6 +22,26 @@ FULL_EVIDENCE = {
 }
 
 
+class ReportFormattingTests(unittest.TestCase):
+    def test_generated_report_has_no_trailing_whitespace(self):
+        status = {
+            "summary": {
+                "by_state": {}, "bots": 0, "duplicates": 0, "placeholders": 0,
+                "flags": {}, "missing_pieces": {}, "by_engine": {}, "by_division": {},
+            },
+            "engine_unit_tests_passed": True,
+            "divisions": [],
+            "code_folders": [],
+            "bot_folders": [],
+            "links": {
+                "files_scanned": 0, "links_checked": 0, "broken_count": 0,
+                "server_api_refs": [], "broken": [],
+            },
+        }
+        report = audit.render_report(status, [])
+        self.assertTrue(all(line == line.rstrip() for line in report.splitlines()))
+
+
 class BotStateTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):

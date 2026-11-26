@@ -324,7 +324,7 @@ def _rows(track: dict, data: dict, root: Path = ROOT, *, include_blueprint: bool
                         ),
                         "assessment": (
                             "Complete a task-specific practical assessment, safety and credential-boundary "
-                            "review, independent unseen task, benchmark and reviewer sign-off; reading the "
+                            "review, unseen assessment on an independent task, benchmark and reviewer sign-off; reading the "
                             "task statement alone is not evidence of competence."
                         ),
                         "benchmark": "O*NET task-specific workflow, safety, tool-use and unseen-transfer benchmark.",
