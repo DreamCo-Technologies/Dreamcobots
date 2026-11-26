@@ -26,6 +26,8 @@ FOUNDATION = {
     "cloud_devops_and_ci_cd",
 }
 ALIASES = {
+    # Food systems: operational data, analytics, automation, and AI-supported planning.
+    "food": {"data_science_and_visualization", "databases_and_sql", "python_and_automation", "generative_ai_and_llms"},
     "finance": {"databases_and_sql", "data_science_and_visualization", "mathematics_and_statistics", "generative_ai_and_llms"},
     "real estate": {"databases_and_sql", "data_science_and_visualization", "software_architecture_and_testing", "generative_ai_and_llms"},
     "sales": {"generative_ai_and_llms", "data_science_and_visualization", "backend_and_apis"},
