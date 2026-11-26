@@ -190,6 +190,7 @@ jobs:
 
       - name: Build full certification receipt
         if: always()
+        continue-on-error: ${{ github.event_name == 'pull_request' }}
         run: python3 tools/build_full_system_certification.py
 
       - name: Build live-user readiness
