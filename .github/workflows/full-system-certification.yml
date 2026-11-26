@@ -88,10 +88,12 @@ jobs:
 
       - name: Refresh generated verification contracts
         run: |
+          node --import tsx tools/generate_bot_fleet_catalog.ts
           python3 tools/generate_repository_test_registry.py
           node --import tsx tools/generate_dreamco_search_index.ts
           python3 tools/generate_buddy_platform_expansion.py
           node --import tsx tools/generate_buddy_success_program.ts
+          node --import tsx tools/run_bot_fleet_e2e.ts --write-only
 
       - name: Validate certification policies
         run: |
@@ -236,6 +238,7 @@ jobs:
             config/generated/live-user-testing-readiness.json
             tmp/dreamco-verification/latest.json
             tmp/dreamco-verification/*.log
+            tmp/dreamco-verification/logs/**
             reports/FULL_SYSTEM_OPERATIONAL_CERTIFICATION.md
             reports/REPOSITORY_SYSTEM_CONNECTIONS.md
             reports/PARALLEL_BENCHMARK_GAP_REGISTRY.md
