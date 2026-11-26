@@ -1,11 +1,12 @@
 """Integration tests: task runner -> private learning -> coaching -> SOP -> dashboard."""
+import json
 import tempfile
 import unittest
 from unittest.mock import patch
 from pathlib import Path
 
 from buddy.learning.runtime_bridge import BuddyLearningBridge, PrivateLearningStore
-from buddy.learning.course_track_registry import CourseLesson
+from buddy.learning.course_track_registry import CourseLesson, load_course_lessons
 from dreamco_platform.automation.task_runner import BuddyTaskRunner
 
 
@@ -375,6 +376,34 @@ class RuntimeBridgeTests(unittest.TestCase):
         ids = [item["lesson_id"] for page in (first, second, third) for item in page["items"]]
         self.assertEqual(len(ids), 205)
         self.assertEqual(len(set(ids)), 205)
+
+
+    def test_all_55_divisions_receive_subject_relevant_video_pages(self):
+        root = Path(__file__).resolve().parents[1]
+        crosswalk = json.loads((root / "config/generated/masterbot-55-domain-crosswalk.json").read_text(encoding="utf-8"))
+        profiles = json.loads((root / "config/freecodecamp-division-category-profiles.json").read_text(encoding="utf-8"))
+        shared = set(profiles["shared_foundation_categories"])
+        lessons = load_course_lessons()
+        with patch("buddy.learning.runtime_bridge.resources_for_division", return_value=[]), \
+             patch("buddy.learning.runtime_bridge.load_course_lessons", return_value=lessons):
+            for domain in crosswalk["domains"]:
+                domain_name = domain["domain_name"]
+                allowed = shared | set(profiles["domain_categories"][domain["domain_id"]])
+                result = self.bridge.bootcamp_learning_queue(
+                    division=domain_name, query="freecodecamp", limit=100, offset=0
+                )
+                video_items = [item for item in result["items"] if item["source_video_id"]]
+                self.assertTrue(video_items, domain_name)
+                self.assertGreaterEqual(result["total_count"], 100, domain_name)
+                self.assertTrue(result["has_more"], domain_name)
+                for item in video_items:
+                    if item["track_id"] == "freecodecamp-metadata-triage":
+                        self.assertIn(domain_name, item["division_targets"], domain_name)
+                    else:
+                        self.assertTrue(
+                            set(item["video_categories"]) & allowed or domain_name in item["division_targets"],
+                            f"irrelevant video leaked into {domain_name}: {item['source_video_id']}",
+                        )
 
     def test_unclassified_video_triage_is_visible_only_to_review_lanes(self):
         # This policy test must remain valid when the live catalog is fully classified.
