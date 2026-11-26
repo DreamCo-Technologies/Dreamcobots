@@ -212,6 +212,28 @@ def build_queues(catalog: dict[str, Any], crosswalk: dict[str, Any], limit: int 
             "queue_count": len(selected),
             "truth_boundary": "Queued metadata is not evidence that the division watched, learned, trained on, or mastered this lesson.",
         })
+    assigned_video_ids = {
+        item["video_id"] for row in rows for item in row["items"]
+    }
+    classified_video_ids = {
+        video["video_id"] for video in videos
+        if set(video.get("categories") or []) and set(video.get("categories") or []) != {"other_or_unclassified"}
+    }
+    unrouted_video_ids = sorted(classified_video_ids - assigned_video_ids)
+    if unrouted_video_ids:
+        categories_by_id = {
+            video["video_id"]: sorted(set(video.get("categories") or []))
+            for video in videos if video["video_id"] in set(unrouted_video_ids)
+        }
+        samples = {video_id: categories_by_id[video_id] for video_id in unrouted_video_ids[:10]}
+        raise ValueError(
+            f"{len(unrouted_video_ids)} classified videos have no division category route; "
+            f"add reviewed category profiles or explicit triage routes: {samples}"
+        )
+    unclassified_video_count = sum(
+        set(video.get("categories") or []) == {"other_or_unclassified"}
+        for video in videos
+    )
     return {
         "schema": "dreamco.freecodecamp_division_learning_queues.v1",
         "source_catalog_generated_at": catalog.get("generated_at"),
@@ -221,6 +243,8 @@ def build_queues(catalog: dict[str, Any], crosswalk: dict[str, Any], limit: int 
         "coverage_warning": None if complete_inventory else "Only observed catalog entries are queued. The full historical freeCodeCamp video archive is not verified; do not claim complete source coverage.",
         "domain_count": len(rows),
         "catalog_video_count": len(videos),
+        "classified_video_count": len(classified_video_ids),
+        "unclassified_video_count": unclassified_video_count,
         "queue_limit_per_domain": limit,
         "rights_policy": catalog["rights_policy"],
         "domains": rows,
@@ -311,6 +335,8 @@ def main() -> int:
         args.out.write_text(rendered, encoding="utf-8")
     print(json.dumps({"ok": True, "queue_mode": payload["queue_mode"], "domains": 55, "catalog_videos": len(catalog["videos"]),
                       "queued_items": sum(row["queue_count"] for row in payload["domains"]),
+                      "classified_videos": payload["classified_video_count"],
+                      "unclassified_triage_videos": payload["unclassified_video_count"],
                       "subject_routed": sum(bool(row["target_categories"]) for row in payload["domains"]),
                       "learning_only_owner_mapping_pending": sum(row["queue_status"] == "subject_routed_learning_only_owner_mapping_pending" for row in payload["domains"]),
                       "foundation_only": sum(not row["target_categories"] for row in payload["domains"])}, indent=2))
