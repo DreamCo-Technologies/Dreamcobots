@@ -26,6 +26,37 @@ DOMAIN_CATEGORY_MAP: dict[str, set[str]] = {
     for domain_id, categories in _PROFILE.get("domain_categories", {}).items()
 }
 
+ALIASES = {
+    "finance": {"databases_and_sql", "data_science_and_visualization", "mathematics_and_statistics", "generative_ai_and_llms"},
+    "real estate": {"databases_and_sql", "data_science_and_visualization", "software_architecture_and_testing", "generative_ai_and_llms"},
+    "sales": {"generative_ai_and_llms", "data_science_and_visualization", "backend_and_apis"},
+    "ai infra": {"generative_ai_and_llms", "ai_agents_and_mcp", "cloud_devops_and_ci_cd", "databases_and_sql", "python_and_automation"},
+    "data": {"databases_and_sql", "data_science_and_visualization", "machine_learning_and_deep_learning", "python_and_automation"},
+    "automation": {"python_and_automation", "ai_agents_and_mcp", "backend_and_apis", "cloud_devops_and_ci_cd"},
+    "cyber": {"cybersecurity_and_privacy", "linux_networking_and_it", "c_cpp_and_systems"},
+    "code": {"computer_science_and_fundamentals", "javascript_and_typescript", "python_and_automation", "c_cpp_and_systems", "software_architecture_and_testing"},
+    "education": {"computer_science_and_fundamentals", "python_and_automation", "generative_ai_and_llms"},
+    "research": {"computer_science_and_fundamentals", "data_science_and_visualization", "machine_learning_and_deep_learning", "mathematics_and_statistics"},
+    "science": {"data_science_and_visualization", "machine_learning_and_deep_learning", "mathematics_and_statistics", "python_and_automation"},
+    "game": {"game_development", "c_cpp_and_systems", "mathematics_and_statistics"},
+    "content": {"html_css_and_accessibility", "javascript_and_typescript", "frontend_and_ui_frameworks", "data_science_and_visualization"},
+    "market": {"data_science_and_visualization", "databases_and_sql", "generative_ai_and_llms"},
+    "legal": {"cybersecurity_and_privacy", "databases_and_sql", "generative_ai_and_llms"},
+    "health": {"data_science_and_visualization", "cybersecurity_and_privacy", "databases_and_sql", "generative_ai_and_llms"},
+    "transport": {"data_science_and_visualization", "backend_and_apis", "cloud_devops_and_ci_cd"},
+    "construction": {"data_science_and_visualization", "python_and_automation", "software_architecture_and_testing"},
+    "agriculture": {"data_science_and_visualization", "python_and_automation", "machine_learning_and_deep_learning"},
+    "crypto": {"databases_and_sql", "cybersecurity_and_privacy", "mathematics_and_statistics", "backend_and_apis"},
+    "payments": {"databases_and_sql", "cybersecurity_and_privacy", "backend_and_apis"},
+    "admin": {"python_and_automation", "databases_and_sql", "cloud_devops_and_ci_cd"},
+    "agents": {"ai_agents_and_mcp", "generative_ai_and_llms", "python_and_automation"},
+    "benchmark": {"machine_learning_and_deep_learning", "data_science_and_visualization", "mathematics_and_statistics", "software_architecture_and_testing"},
+    "knowledge": {"generative_ai_and_llms", "databases_and_sql", "python_and_automation"},
+    "robot": {"c_cpp_and_systems", "python_and_automation", "machine_learning_and_deep_learning"},
+    "mobile": {"mobile_and_cross_platform", "javascript_and_typescript", "software_architecture_and_testing"},
+    "web": {"html_css_and_accessibility", "javascript_and_typescript", "frontend_and_ui_frameworks", "backend_and_apis"},
+}
+
 def _slug(text: str) -> str:
     return re.sub(r"[^a-z0-9]+", "-", text.casefold()).strip("-")
 
