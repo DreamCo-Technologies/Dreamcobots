@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import unittest
+import subprocess
+import sys
 
 try:
     from buddy.learning.course_track_registry import load_course_lessons as _course_track_adapter
@@ -28,6 +30,14 @@ class FreeCodeCampLearningInventoryTests(unittest.TestCase):
         if learning["youtube_video_inventory"]["expected_entry_count"] is None:
             self.assertFalse(learning["youtube_video_inventory"]["inventory_complete"])
             self.assertEqual(learning["youtube_video_inventory"]["inventory_status"], "partial")
+
+    def test_cli_imports_repository_packages_when_run_from_tools_path(self):
+        root = Path(__file__).resolve().parents[1]
+        result = subprocess.run(
+            [sys.executable, "tools/sync_freecodecamp_learning_inventory.py", "--check"],
+            cwd=root, capture_output=True, text=True,
+        )
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 
 
 if __name__ == "__main__":
