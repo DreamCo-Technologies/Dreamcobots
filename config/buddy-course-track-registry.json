@@ -3,7 +3,7 @@
   "status": "curriculum_sources_registered_runtime_adapter_tests_required",
   "division_source": "config/generated/masterbot-55-domain-crosswalk.json",
   "masterbot_source": "config/masterbot-65-registry.json",
-  "routing_policy": "All 55 canonical domains and 65 MasterBot lanes receive shared foundation lessons. Specialist ownership and execution remain governed by the reviewed crosswalk; unresolved mappings are never auto-assigned.",
+  "routing_policy": "All 55 canonical domains and 65 MasterBot lanes receive shared foundation lessons. FreeCodeCamp public metadata is routed by 25 category/title rules and nine per-video overrides; rule-matched items get specialist authoring tasks, and unclassified items get a dedicated DreamEducation/CommandCore review lane. Only nine videos currently have curated original implementation briefs; the remaining specialist items are authoring backlog, not summaries. Metadata and triage remain non-study-ready until item-level rights and human review are recorded. Runtime queues enforce owner filtering; unresolved mappings are never auto-assigned.",
   "tracks": [
     {
       "id": "tolkien",
@@ -132,6 +132,28 @@
       "source_url": "https://github.com/DreamCo-Technologies/Dreamcobots/tree/main/benchmarks",
       "delivery": "shared_foundation_all_55_and_65",
       "rights": "repository_owned_metadata_only_no_score_or_mastery_claim"
+    },
+    {
+      "id": "freecodecamp-specialist-learning-paths",
+      "title": "FreeCodeCamp Specialist Implementation Paths",
+      "source": "buddy/bootcamp/sources/freecodecamp/catalog.json",
+      "guide": "docs/FREECODECAMP_COMPLETE_BUDDY_LEARNING_PATH.md",
+      "parser": "freecodecamp_specialist_learning_paths",
+      "category": "programming_education",
+      "source_url": "https://www.freecodecamp.org/@freecodecamp",
+      "delivery": "specialist_division_paths_from_original_dreamco_curriculum",
+      "rights": "original_dreamco_implementation_briefs_link_to_video_metadata_only"
+    },
+    {
+      "id": "freecodecamp-metadata-triage",
+      "title": "FreeCodeCamp Unclassified Video Triage",
+      "source": "buddy/bootcamp/sources/freecodecamp/catalog.json",
+      "guide": "docs/FREECODECAMP_COMPLETE_BUDDY_LEARNING_PATH.md",
+      "parser": "freecodecamp_metadata_triage",
+      "category": "programming_education",
+      "source_url": "https://www.freecodecamp.org/@freecodecamp",
+      "delivery": "metadata_only_classification_review",
+      "rights": "public_metadata_only_no_derivative_content"
     }
   ],
   "resource_catalog": "config/buddy-course-source-resources.json"
