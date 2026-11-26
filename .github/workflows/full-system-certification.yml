@@ -30,6 +30,7 @@ on:
       - "tests/test_full_system_operational_certification.py"
       - "tests/test_model_foundry.py"
       - "tests/test_train_buddy_division_model_cli.py"
+      - "tests/test_full_system_certification_workflow_order.py"
       - "package.json"
       - "package-lock.json"
       - ".github/agents/**"
@@ -107,7 +108,7 @@ jobs:
 
       - name: Validate certification policies
         run: |
-          python3 -m unittest tests.test_full_system_operational_certification tests.test_trusted_code_delivery tests.test_change_impact_test_policy tests.test_recovery_ontology_workforce_runtime tests.test_unified_bot_cohorts tests.test_model_foundry tests.test_train_buddy_division_model_cli
+          python3 -m unittest tests.test_full_system_operational_certification tests.test_trusted_code_delivery tests.test_change_impact_test_policy tests.test_recovery_ontology_workforce_runtime tests.test_unified_bot_cohorts tests.test_model_foundry tests.test_train_buddy_division_model_cli tests.test_full_system_certification_workflow_order
           node --import tsx --test tests/server-health-runtime-policy.test.ts
 
       - name: Recover and unify legacy bot system
@@ -157,9 +158,9 @@ jobs:
           python3 tools/build_manufacturer_marketplace_catalog.py
           node --import tsx --test tests/business-data-trade-readiness.test.ts
 
-      - name: Run full production verification
-        run: npx tsx tools/run_universal_verification.ts --production
-
+      # Generate every evidence artifact before verification consumes it.
+      # The previous order verified BOT_FLEET_E2E.md before the fleet runner
+      # regenerated it, producing a deterministic stale-report failure.
       - name: Re-verify fleet E2E and inherit canonical sandbox evidence
         run: |
           npm run buddy:fleet:e2e
@@ -173,6 +174,9 @@ jobs:
 
       - name: Smoke-test built production runtime
         run: python3 tools/smoke_production_runtime.py
+
+      - name: Run full production verification
+        run: npx tsx tools/run_universal_verification.ts --production
 
       - name: Build full certification receipt
         if: always()
