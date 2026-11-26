@@ -34,7 +34,7 @@ def tracked_markdown(root: Path = ROOT) -> list[Path]:
 
 def _candidate_tokens(text: str) -> set[str]:
     candidates = set(re.findall(r"`([^`]+)`", text))
-    candidates.update(re.findall(r"](([^)]+))", text))
+    candidates.update(re.findall(r"\]\(([^)]+)\)", text))
     tokens = set()
     for value in candidates:
         parts = value.strip().split()
