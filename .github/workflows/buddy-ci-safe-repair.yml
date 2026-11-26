@@ -33,8 +33,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 25
     steps:
-      - name: Check out trusted default branch for failure-triggered repairs
-        if: github.event_name == 'workflow_run'
+      - name: Check out trusted default branch for generated-evidence repairs
         uses: actions/checkout@v4
         with:
           ref: main
