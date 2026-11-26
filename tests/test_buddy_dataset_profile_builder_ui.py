@@ -16,7 +16,7 @@ class DatasetProfileBuilderUITests(unittest.TestCase):
         if not node:
             self.skipTest("Node.js is not installed in this test environment")
         html = PAGE.read_text(encoding="utf-8")
-        scripts = re.findall(r"<script(?:\\s[^>]*)?>(.*?)</script>", html, flags=re.I | re.S)
+        scripts = re.findall(r"<script(?:\s[^>]*)?>(.*?)</script>", html, flags=re.I | re.S)
         inline_scripts = [script for script in scripts if script.strip()]
         self.assertTrue(inline_scripts, "expected inline profile-builder script")
         with tempfile.TemporaryDirectory() as directory:
