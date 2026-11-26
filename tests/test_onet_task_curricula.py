@@ -20,6 +20,24 @@ class OnetCurriculaTests(unittest.TestCase):
         self.assertGreaterEqual(len(playbook["agent_capabilities_to_assess"]), 15)
         self.assertIn("current high-end commercial products", playbook["tool_research_rule"])
         self.assertIn("pricing_models_to_evaluate", dev["task_playbooks"][0]["commercial_pathway"])
+
+    def test_reads_official_json_snake_case_field_names(self):
+        rows = [{
+            "onetsoc_code": "15-1252.00",
+            "title": "Software Developers",
+            "task_id": "16393",
+            "task": "Collect data through direct observation.",
+            "task_type": "Core",
+            "date_updated": "2026-11",
+            "domain_source": "Analyst",
+        }]
+        result = build(rows, "31.0")
+        self.assertEqual(result["inventory"]["task_statements"], 1)
+        occupation = result["occupations"][0]
+        self.assertEqual(occupation["occupation_code"], "15-1252.00")
+        self.assertEqual(occupation["occupation_title"], "Software Developers")
+        self.assertEqual(occupation["tasks"][0]["task_id"], "16393")
+
     def test_empty_or_incomplete_rows_do_not_create_fake_tasks(self):
         result=build([{"O*NET-SOC Code":"15-1252.00","Task ID":"","Task":"missing id"}],"31.0")
         self.assertEqual(result["inventory"]["task_statements"],0)
