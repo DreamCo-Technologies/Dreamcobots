@@ -107,6 +107,14 @@ class BuddyCourseTrackRegistryTests(unittest.TestCase):
         self.assertTrue(any("education" in lesson.title.casefold() for lesson in matches))
         self.assertTrue(any("licensing" in lesson.title.casefold() for lesson in matches))
 
+
+    def test_freecodecamp_video_categories_are_preserved_in_runtime_lessons(self):
+        lessons = load_course_lessons()
+        videos = [lesson for lesson in lessons if lesson.track_id == "freecodecamp-video-catalog" and lesson.source_video_id]
+        self.assertTrue(videos)
+        self.assertTrue(all(lesson.video_categories for lesson in videos))
+        self.assertTrue(any("python_and_automation" in lesson.video_categories for lesson in videos))
+
     def test_huggingface_full_map_includes_all_official_courses_and_ecosystem_modules(self):
         from pathlib import Path
         import json
