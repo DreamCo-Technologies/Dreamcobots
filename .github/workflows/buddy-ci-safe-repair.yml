@@ -55,7 +55,7 @@ jobs:
           node-version: "22"
           cache: npm
       - name: Install locked Node dependencies for fleet regeneration
-        if: github.event_name == 'push' || (github.event_name == 'workflow_run' && github.event.workflow_run.name == 'Full System Certification')
+        if: github.event_name == 'push' || (github.event_name == 'workflow_run' && (github.event.workflow_run.name == 'Full System Certification' || github.event.workflow_run.name == 'DreamCo Live Dashboard'))
         run: npm ci
       - name: Install pinned workflow parser dependency
         run: python -m pip install --disable-pip-version-check "PyYAML==6.0.3"
@@ -101,12 +101,6 @@ jobs:
           python tools/sync_freecodecamp_learning_inventory.py
           python tools/build_division_huggingface_taxonomy_map.py
           python tools/build_division_resource_readiness_map.py
-      - name: Regenerate canonical bot fleet catalog after certification drift
-        if: github.event_name == 'push' || (github.event_name == 'workflow_run' && (github.event.workflow_run.name == 'Full System Certification' || github.event.workflow_run.name == 'DreamCo Live Dashboard'))
-        run: node --import tsx tools/generate_bot_fleet_catalog.ts
-      - name: Regenerate canonical fleet end-to-end evidence after certification drift
-        if: github.event_name == 'push' || (github.event_name == 'workflow_run' && github.event.workflow_run.name == 'Full System Certification')
-        run: node --import tsx tools/run_bot_fleet_e2e.ts
       - name: Regenerate canonical fleet, search, learning graph, and command-center projections
         if: github.event_name == 'push' || (github.event_name == 'workflow_run' && (github.event.workflow_run.name == 'Full System Certification' || github.event.workflow_run.name == 'DreamCo Live Dashboard'))
         run: |
