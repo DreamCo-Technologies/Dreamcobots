@@ -176,7 +176,7 @@ jobs:
         with:
           python-version: "3.13"
       - run: npm ci
-      - run: python3 -m pip install --quiet pyyaml pytest "soundfile>=0.12,<1"
+      - run: python3 -m pip install --quiet pyyaml pytest -r requirements-buddy-learning.txt "soundfile>=0.12,<1" "Pillow>=10,<12"
       - name: Full audit (compile, import, typecheck, folder tests, links)
         run: python3 tools/fleet_runtime_audit.py --check-regressions --summary-json tmp/fleet-summary.json
       - name: Enforce zero failures in the four audited folder areas
@@ -207,6 +207,26 @@ jobs:
               raise SystemExit("Folder acceptance failed:\\n- " + "\\n- ".join(failures))
           print("Folder acceptance passed: buddy, buddy_os, website, runtime")
           PY
+      - name: Capture detailed traces for targeted folder failures
+        if: failure()
+        run: |
+          python3 - <<'PY'
+          import json
+          import subprocess
+          import sys
+          from pathlib import Path
+
+          status = json.loads(Path("website/data/fleet-runtime-status.json").read_text(encoding="utf-8"))
+          folders = {row["folder"]: row for row in status["code_folders"]}
+          for name in ("buddy", "buddy_os"):
+              row = folders.get(name, {})
+              tests = row.get("test_files", [])
+              if tests:
+                  print(f"\\n===== {name}: detailed pytest trace =====", flush=True)
+                  subprocess.run([sys.executable, "-m", "pytest", "-vv", "--tb=short", "-p", "no:cacheprovider", *tests], check=False)
+          PY
+          echo "===== Website Node test diagnostics ====="
+          node --import tsx --test tests/*.test.mjs tests/*.test.ts || true
       - name: Upload refreshed report and Pages status
         if: always()
         uses: actions/upload-artifact@v7
