@@ -235,8 +235,12 @@ def build_area_reports(
         verified_refs = []
         if not isinstance(entry, dict):
             errors.append("no evidence entry recorded")
-        elif entry.get("status") != "VERIFIED":
-            errors.append("area evidence status is not VERIFIED")
+        else:
+            resolution_errors = entry.get("resolution_errors", [])
+            if isinstance(resolution_errors, list):
+                errors.extend(str(item) for item in resolution_errors if item)
+            if entry.get("status") != "VERIFIED" and not resolution_errors:
+                errors.append("area evidence status is not VERIFIED")
         if not isinstance(refs, list) or not refs:
             errors.append("no evidence references recorded")
         else:
@@ -280,7 +284,7 @@ def build_area_reports(
             "id": area_id,
             "label": area.get("label", area_id),
             "status": status,
-            "evidence": verified_refs if verified else [],
+            "evidence": verified_refs,
             "evidence_errors": errors,
             "revision": current_sha,
             "required_evidence": area.get("required", []),
@@ -356,6 +360,21 @@ def write_markdown(report: dict) -> None:
         "",
         *[f"- `{item}`" for item in report.get("incomplete_areas", [])],
         "",
+        "## Area Evidence Details",
+        "",
+    ]
+    for area in report.get("areas", []):
+        lines.append(f"### {area.get('label', area.get('id'))} — `{area.get('status')}`")
+        evidence = area.get("evidence", [])
+        errors = area.get("evidence_errors", [])
+        if evidence:
+            lines.extend(f"- Verified reference: `{item.get('path')}`" for item in evidence)
+        if errors:
+            lines.extend(f"- Evidence gap: {item}" for item in errors)
+        if not evidence and not errors:
+            lines.append("- No evidence references recorded")
+        lines.append("")
+    lines.extend([
         "## Certification Blockers",
         "",
         *[f"- `{item}`" for item in report.get("certification_blockers", [])],
