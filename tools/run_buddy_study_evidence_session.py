@@ -23,6 +23,10 @@ from pathlib import Path
 from typing import Any, Callable
 from zoneinfo import ZoneInfo
 
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
 from buddy.learning.byte_bpe_trainer import (
     decode, encode, load_authorized_corpus, sha256_file, train_byte_bpe,
 )
@@ -30,7 +34,6 @@ from buddy.learning.study_resource_scheduler import (
     Capability, Resource, choose_next, priority, study_plan,
 )
 
-ROOT = Path(__file__).resolve().parents[1]
 REGISTRY_PATH = "config/generated/division-reconciliation.json"
 CROSSWALK_PATH = "config/generated/masterbot-55-domain-crosswalk.json"
 POLICY_PATH = "config/division-reconciliation-policy.json"
