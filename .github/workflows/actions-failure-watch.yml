@@ -56,14 +56,14 @@ jobs:
             error="$(head -c 500 failure-evidence/jobs-api-error.txt || true)"
             jq -n --arg reason "$error" '{jobs: [], availability: "unavailable", reason: $reason}' > failure-evidence/jobs.json
           fi
-          jq -r '.jobs[] | select(.conclusion != "success" and .conclusion != "skipped" and .conclusion != null) | [.id,.name,.conclusion] | @tsv' failure-evidence/jobs.json > failure-evidence/failed-jobs.tsv || true
+          jq -r '.jobs[] | select(.conclusion != "success" and .conclusion != "skipped" and .conclusion != null) | [.id,.conclusion] | @tsv' failure-evidence/jobs.json > failure-evidence/failed-jobs.tsv || true
       - name: Download logs for every failed job
         shell: bash
         run: |
           set -euo pipefail
-          while IFS= read -r job_id job_name conclusion; do
+          while read -r job_id conclusion; do
             [ -n "$job_id" ] || continue
-            echo "Collecting log for $job_name ($job_id): $conclusion"
+            echo "Collecting log for job $job_id: $conclusion"
             if ! curl --fail --silent --show-error --location --max-time 90 \
               -H "Authorization: Bearer $GH_TOKEN" \
               -H "Accept: application/vnd.github+json" \
