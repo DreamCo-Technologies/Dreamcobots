@@ -19,6 +19,8 @@ CREATE TABLE IF NOT EXISTS learning_review_history (
     (predicted_retrievability >= 0 AND predicted_retrievability <= 1)
   ),
   actual_recall BOOLEAN NOT NULL,
+  desired_retention DOUBLE PRECISION,
+  scheduler_config JSONB NOT NULL DEFAULT '{}'::jsonb,
   parameter_set_id TEXT,
   provenance JSONB NOT NULL DEFAULT '{}'::jsonb,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
