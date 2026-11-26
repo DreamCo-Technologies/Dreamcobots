@@ -28,12 +28,12 @@ env:
   PYTHONUNBUFFERED: '1'
 concurrency:
   group: dreamco-500-model-benchmark-${{ github.ref }}
-  cancel-in-progress: false
+  cancel-in-progress: true
 jobs:
   benchmark-all-500:
     name: Daily all-model/all-suite benchmark matrix
     runs-on: ubuntu-latest
-    timeout-minutes: 300
+    timeout-minutes: 60
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -51,8 +51,8 @@ jobs:
       - name: Install repository dependencies
         run: |
           npm ci
-          python3 -m pip install --disable-pip-version-check openpyxl soundfile pillow scipy psutil PyYAML
-          python3 -m pip install --disable-pip-version-check -r requirements-buddy-learning.txt
+          # This job inventories models and validates contracts; it does not train models or run media generation.
+          python3 -m pip install --disable-pip-version-check openpyxl PyYAML
           # Media/voice generation dependencies are isolated in their own workflow;
           # they are not required for model catalog or benchmark-contract validation.
       - name: Validate benchmark, learning, tracking, and prospectus contracts
@@ -104,17 +104,21 @@ jobs:
           python3 tools/run_optional_script.py tools/run_gap_analysis.py
           python3 tools/run_optional_script.py tools/build_forecast_report.py
           python3 tools/run_optional_script.py tools/build_capability_leads.py
-      - name: Run benchmark-policy and repository regression tests
+      - name: Run focused benchmark, learning, and prospectus regression tests
         if: always()
         run: |
-          python3 -m unittest tests.test_recovery_ontology_workforce_runtime tests.test_universal_capability_benchmark_policy tests.test_global_government_system tests.test_buddy_government_operating_system
-          if [ -f study_packs/career_pathways/raw/task_statements.csv ]; then
-            python3 -m pytest -q --disable-warnings --maxfail=20
-          else
-            echo "Career Pathways generated-data test pack is blocked: raw/task_statements.csv is not present in this checkout."
-            python3 -m pytest -q --disable-warnings --maxfail=20 --ignore=study_packs/career_pathways/tests
-            echo "SKIPPED: study_packs/career_pathways/tests (source data not provisioned; not counted as passing coverage)." >> "$GITHUB_STEP_SUMMARY"
-          fi
+          python3 -m unittest \
+            tests.test_recovery_ontology_workforce_runtime \
+            tests.test_universal_capability_benchmark_policy \
+            tests.test_global_government_system \
+            tests.test_buddy_government_operating_system \
+            tests.test_500_model_prospectus_matrix \
+            tests.test_500_model_workflow_scope \
+            tests.test_benchmark_scope_contract \
+            tests.test_benchmark_learning_progress \
+            tests.test_benchmark_runner_mastery_truth \
+            tests.test_buddy_benchmark_evidence_evaluator \
+            tests.test_buddy_benchmark_index
       - name: Validate full matrix coverage without inventing results
         if: always()
         run: |

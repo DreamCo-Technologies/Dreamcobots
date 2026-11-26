@@ -74,3 +74,47 @@ A fresh check suite was created after the deploy-gate and path-filter changes. A
 ## Explicit non-claims
 
 This ledger does not certify every division, every bot, every integration, model-weight training, transcript ingestion rights, production deployment, or overall production readiness. Those require their own current tests, runtime evidence, permission checks, and release gates.
+
+
+## Live reconciliation update — 2026-11-26 03:20 UTC
+
+**Current main inspected:** `cf0dfcf466cc242152e7e7ad693bca484920557c`.
+
+### Merged CI repair
+- PR #18524 is merged. Merge commit: `ec89bf44d3d989b1460a49849742dde67491e234`.
+- Its final branch head was `ec67f5ba6e35bcfdd6d2eb642a0cea99b188c900`.
+- On that exact head, the 14 benchmark-lane jobs, governed local tests, typecheck/tests/build/fleet/security, CodeQL Python and JavaScript/TypeScript analyses, Dependency Review, and several other validation jobs completed successfully.
+- The Repository Contract check was still queued at the latest inspection. CodeQL's aggregate PR check was neutral because its base configuration could not locate the Python language entry. A queued check and a neutral security result are not green evidence.
+- The reconciliation table above is historical; its prior claim that #18524 remained open is superseded by this update.
+
+### Current main CI queue
+- Current main SHA: `cf0dfcf466cc242152e7e7ad693bca484920557c`.
+- Its latest check suite contained 39 checks; at inspection, 22 were queued, 15 skipped, one successful, and one deployment build was in progress. Re-fetch the exact SHA's checks before treating this as current.
+- Multiple workflows were queued concurrently after the #18535 merge. This is an observed queue backlog, not proof that the workflows are hung or failed. Inspect runner queue times and concurrency/cancellation behavior before changing triggers or claiming a freeze.
+
+### Active FreeCodeCamp and O*NET reconciliation
+- Original PR #18537 is 38 commits behind current main and diverged. Do not merge it unchanged.
+- PR #18538 ports the non-overlapping FreeCodeCamp specialist routing, Buddy runtime bridge, internal-first learning router, and O*NET curriculum changes onto current main. Its new checks must pass before merge.
+- PR #18538 deliberately preserves current main's 55-domain category map. The older branch's 45-core/10-unresolved queue contract remains a separate reconciliation item; do not overwrite the canonical map or weaken its tests without an explicit crosswalk-level review.
+- The observed FreeCodeCamp catalog is partial: 1,740 metadata rows, 1,232 specialist-routed authoring backlog rows, nine curated original implementation briefs, and 508 metadata-triage rows. No claim of complete video summaries, transcript rights, or mastery is made.
+
+### Benchmark scope reconciliation
+- Current main already contains the core scope-correct benchmark converter, 65 MasterBot / 55 domain-division queue separation, and `tests/test_benchmark_scope_contract.py`; these files have identical blob SHAs on main and the old #18532 branch.
+- The remaining confirmed functional defect in the old #18532 branch was the training-plan artifact upload path. The generator writes `benchmark-training-plan.json`; the workflow previously uploaded `benchmark-training-execution.json`.
+- Fresh branch `reconcile/benchmark-plan-artifact-20261126` corrects that artifact path and updates this ledger. Validate its exact-head checks before merge.
+- Benchmark plan generation is not model training. The current registered executor reports `executed=0`; no model-weight training or paid compute is claimed.
+
+### Next actions
+1. Validate #18538 exact-head checks; inspect and repair any failed job before rerunning.
+2. Validate the fresh benchmark artifact/ledger PR and merge only after exact-head checks pass.
+3. Reconcile the 45/10 division queue policy against the current canonical 55-domain map without discarding existing mainline coverage.
+4. Continue the remaining #18508/#18507 certification-prerequisite work, then review the stale dataset-profile and trust-gate PRs against current main.
+5. Keep Buddy Bootcamp, division routing, model-training governance, and full-system certification evidence separate. A workflow being queued, a curriculum being routed, or a training plan being generated is not proof of runtime mastery or production readiness.
+
+
+### CI queue and long-running workflow correction — 2026-11-26 03:25 UTC
+- The current-main push produced 64 workflow runs. Most completed; a small number remained queued/in progress, so the overall system was not globally frozen.
+- The DreamCo 500-Model Benchmark System had remained in its dependency-install step for more than 20 minutes. That workflow installed PyTorch, safetensors, NumPy, media packages, and then ran repository-wide `pytest -q`, even though its stated work is model inventory, prospectus generation, and benchmark-contract validation; it does not execute model weights or paid provider calls.
+- PR #18539 now removes the heavyweight Buddy training runtime from that contract-only workflow and replaces repository-wide pytest with a focused set of benchmark, learning-progress, and prospectus regression tests. The Repository Test Matrix remains responsible for broad repository coverage.
+- PR #18538 also extends safe repair to regenerate the stale file prospectus shard before checking it, and retains full certification verification logs as artifacts.
+- The full-system certification's 3 governed-test failures still need their individual names/stack traces. The updated artifact upload in #18538 retains `tmp/dreamco-verification/*.log` for the next exact-head run; do not infer which tests failed from the truncated 4,000-character summary.
