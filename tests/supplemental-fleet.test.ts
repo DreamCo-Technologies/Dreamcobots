@@ -5,7 +5,7 @@ import vm from 'node:vm';
 import {buildFleetCatalog,compactCatalog} from '../tools/generate_bot_fleet_catalog.ts';
 import {loadSupplementalBotSources,buildSupplementalBotSeeds} from '../server/seed-supplemental-bots.ts';
 import {FleetRuntimeRegistry} from '../server/fleet-runtime.ts';
-test('all 50 original growth specifications survive supplemental routing without promoting readiness',()=>{
+test('all 69 original growth specifications survive supplemental routing without promoting readiness',()=>{
  const sources=loadSupplementalBotSources(), seeds=buildSupplementalBotSeeds(), catalog=buildFleetCatalog();
  assert.equal(sources.length,69);assert.equal(seeds.length,69);assert.equal(catalog.bots.length,1051);assert.equal(catalog.supplemental_bots.length,69);
  const runtime=FleetRuntimeRegistry.fromFile();
@@ -30,8 +30,8 @@ test('compact published fleet preserves every canonical and supplemental profile
  assert.equal(publicCatalog.bots.length,1120);
  assert.equal(publicCatalog.summary.profiles,1120);
  assert.equal(publicCatalog.summary.canonical_profiles,1051);
- assert.equal(publicCatalog.divisions.length,55);
- assert.equal(publicCatalog.summary.declared_capability_slots,8460);
+ assert.equal(publicCatalog.divisions.length,56);
+ assert.equal(publicCatalog.summary.declared_capability_slots,8555);
  for(const bot of [...catalog.bots,...catalog.supplemental_bots]){
   const shard=JSON.parse(readFileSync(`website/data/bot-fleet/${bot.identity.division}.json`,'utf8'));
   assert.deepEqual(shard.bots.find((item:any)=>item.identity.slug===bot.identity.slug),bot);
