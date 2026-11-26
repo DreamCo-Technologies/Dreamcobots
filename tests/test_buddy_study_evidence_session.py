@@ -4,6 +4,7 @@ from tools.run_buddy_study_evidence_session import (
     LESSON_PRIORITY,
     check_compatibility,
     extract_glossary,
+    RECALL_ITEMS,
     parse_division_profiles,
     score_active_recall,
     select_priority_lessons,
@@ -51,22 +52,54 @@ export const Profiles = {
         )
         self.assertEqual([row["priority_rank"] for row in selected], [1, 2, 3, 4, 5])
 
-    def test_active_recall_scores_reference_answers(self):
+    def test_active_recall_is_blocked_without_learner_responses(self):
         result = score_active_recall()
-        self.assertEqual(result["status"], "completed")
-        self.assertEqual(result["score"], 100.0)
+        self.assertEqual(result["status"], "blocked_no_learner_responses")
+        self.assertIsNone(result["score"])
+        self.assertEqual(result["items_passed"], 0)
+        self.assertTrue(all(item["learner_response"] is None for item in result["items"]))
         self.assertFalse(result["independent_model_inference"])
 
-    def test_glossary_only_emits_terms_found_in_approved_sources(self):
+    def test_active_recall_scores_only_supplied_learner_responses(self):
+        responses = [item["reference_answer"] for item in RECALL_ITEMS]
+        result = score_active_recall(responses, "unit-test-learner")
+        self.assertEqual(result["status"], "completed")
+        self.assertEqual(result["score"], 100.0)
+        self.assertEqual(result["learner_id"], "unit-test-learner")
+        self.assertEqual(result["response_mode"], "supplied_learner_response")
+        self.assertFalse(result["independent_model_inference"])
+
+    def test_active_recall_requires_nonempty_responses_and_learner_id(self):
+        with self.assertRaisesRegex(ValueError, "exactly"):
+            score_active_recall([], "unit-test-learner")
+        with self.assertRaisesRegex(ValueError, "learner_id"):
+            score_active_recall(["answer"] * len(RECALL_ITEMS), None)
+
+    def test_active_recall_failed_answers_require_remediation(self):
+        result = score_active_recall(["I do not know this yet."] * len(RECALL_ITEMS), "unit-test-learner")
+        self.assertEqual(result["status"], "needs_remediation")
+        self.assertEqual(result["score"], 0.0)
+
+    def test_glossary_extracts_definitions_from_approved_sources_only(self):
         glossary = extract_glossary({
-            "internal-guide.md": "A tokenizer uses UTF-8 and normalization.",
-            "synthetic.txt": "A merge updates the vocabulary.",
+            "docs/internal-guide.md": (
+                "- **Tokenizer:** A component that converts text into tokens.\n"
+                "- **UTF-8:** Encodes Unicode text as bytes.\n"
+                "- **Normalization:** A documented text transformation.\n"
+                "BPE is mentioned here but has no authored definition.\n"
+            ),
+            "data/buddy-authorized-corpora/synthetic-ci-corpus.txt": (
+                "A tokenizer uses UTF-8 and normalization.\n"
+            ),
+            "external/notes.md": "- **Unapproved:** This source must be ignored.\n",
         })
-        terms = {row["term"] for row in glossary}
-        self.assertIn("tokenizer", terms)
-        self.assertIn("UTF-8", terms)
-        self.assertIn("merge", terms)
-        self.assertNotIn("holdout", terms)
+        by_term = {row["term"]: row for row in glossary}
+        self.assertEqual(set(by_term), {"Tokenizer", "UTF-8", "Normalization"})
+        self.assertEqual(by_term["Tokenizer"]["definition"], "A component that converts text into tokens.")
+        self.assertEqual(by_term["Tokenizer"]["source_refs"], [{"path": "docs/internal-guide.md", "line": 1}])
+        self.assertNotIn("BPE", by_term)
+        self.assertNotIn("Unapproved", by_term)
+        self.assertEqual(by_term["UTF-8"]["extraction_method"], "markdown_bold_definition_line")
 
     def test_role_marker_contract_accepts_supported_roles(self):
         self.assertTrue(validate_role_markers(
