@@ -6,6 +6,10 @@ on:
       - "buddy/learning/byte_bpe_trainer.py"
       - "tests/test_buddy_byte_bpe_trainer.py"
       - "data/buddy-authorized-corpora/synthetic-ci-*"
+      - "data/dreamco_training/bootcamp/core_lessons.v1.jsonl"
+      - "governance/training-authorizations/dreamco-bootcamp-core-v1-owner-attestation.json"
+      - "tools/build_dreamco_bootcamp_tokenizer_manifest.py"
+      - "tests/test_dreamco_bootcamp_tokenizer_manifest.py"
       - ".github/workflows/buddy-authorized-tokenizer-training.yml"
   push:
     branches: [main]
@@ -13,6 +17,10 @@ on:
       - "buddy/learning/byte_bpe_trainer.py"
       - "tests/test_buddy_byte_bpe_trainer.py"
       - "data/buddy-authorized-corpora/synthetic-ci-*"
+      - "data/dreamco_training/bootcamp/core_lessons.v1.jsonl"
+      - "governance/training-authorizations/dreamco-bootcamp-core-v1-owner-attestation.json"
+      - "tools/build_dreamco_bootcamp_tokenizer_manifest.py"
+      - "tests/test_dreamco_bootcamp_tokenizer_manifest.py"
       - ".github/workflows/buddy-authorized-tokenizer-training.yml"
   workflow_dispatch:
     inputs:
@@ -85,6 +93,52 @@ jobs:
           if-no-files-found: error
           retention-days: 7
 
+  first-party-bootcamp-tokenizer-smoke:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Test owner authorization and split isolation
+        run: python -m unittest discover -s tests -p 'test_dreamco_bootcamp_tokenizer_manifest.py' -v
+      - name: Build the owner-authorized tokenizer-only manifest
+        run: python tools/build_dreamco_bootcamp_tokenizer_manifest.py
+      - name: Train tokenizer on first-party training split only
+        run: python buddy/learning/byte_bpe_trainer.py --manifest data/buddy-authorized-corpora/dreamco-bootcamp-core-v1-manifest.json --output artifacts/dreamco-bootcamp-tokenizer/tokenizer.json --vocab-size 512 --confirm-authorized-training
+      - name: Verify tokenizer-only evidence
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          model = json.loads(Path("artifacts/dreamco-bootcamp-tokenizer/tokenizer.json").read_text(encoding="utf-8"))
+          report = json.loads(Path("data/buddy-authorized-corpora/dreamco-bootcamp-core-v1-manifest-report.json").read_text(encoding="utf-8"))
+          assert model["training_executed"] is True
+          assert model["rights_gate_passed"] is True
+          assert model["model_weight_training_executed"] is False
+          assert model["holdout_used_for_training"] is False
+          assert report["training_rows_used"] == 10
+          assert report["validation_rows_excluded"] == 2
+          assert report["test_rows_excluded"] == 2
+          print(json.dumps({"status": "first_party_tokenizer_smoke_passed", "training_rows": 10, "validation_test_rows_excluded": 4, "model_weight_training_executed": False}, indent=2))
+          PY
+      - name: Upload first-party tokenizer evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: dreamco-bootcamp-tokenizer-\${{ github.run_id }}
+          path: |
+            artifacts/dreamco-bootcamp-tokenizer/tokenizer.json
+            data/buddy-authorized-corpora/dreamco-bootcamp-core-v1-manifest.json
+            data/buddy-authorized-corpora/dreamco-bootcamp-core-v1-manifest-report.json
+          if-no-files-found: error
+          retention-days: 30
+
   train-tokenizer:
     if: github.event_name == 'workflow_dispatch' && inputs.confirm_authorized_training == true
     runs-on: ubuntu-latest
@@ -99,6 +153,10 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
+
+      - name: Generate first-party tokenizer manifest when selected
+        if: inputs.manifest_path == 'data/buddy-authorized-corpora/dreamco-bootcamp-core-v1-manifest.json'
+        run: python tools/build_dreamco_bootcamp_tokenizer_manifest.py
 
       - name: Validate manifest location and vocabulary size
         env:
