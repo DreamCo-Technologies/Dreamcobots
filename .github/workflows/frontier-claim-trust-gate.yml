@@ -77,7 +77,49 @@ jobs:
           path: reports/frontier-claim-trust-deploy.json
           if-no-files-found: warn
 
+  claim-surface-scope:
+    name: Detect actual public frontier claim changes
+    runs-on: ubuntu-latest
+    outputs:
+      required: ${{ steps.scope.outputs.required }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - id: scope
+        shell: bash
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          BEFORE_SHA: ${{ github.event.before }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          if [[ "$EVENT_NAME" == "workflow_dispatch" ]]; then
+            echo "required=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          if [[ "$EVENT_NAME" == "pull_request" ]]; then
+            changed="$(git diff --name-only "$BASE_SHA" "$HEAD_SHA")"
+          elif [[ "$BEFORE_SHA" =~ ^0+$ ]]; then
+            changed="$(git show --pretty='' --name-only "$GITHUB_SHA")"
+          else
+            changed="$(git diff --name-only "$BEFORE_SHA" "$GITHUB_SHA")"
+          fi
+          required=false
+          while IFS= read -r path; do
+            case "$path" in
+              website/index.html|website/command-center.html|website/*benchmark*.html|website/*model*.html|website/*status*.html|website/*production*.html|website/data/*frontier*|website/data/*claim*|evidence/frontier/*|config/frontier-evidence-suite.json|config/buddy-frontier-claim-disclosure.json|config/buddy-frontier-readiness-gates.json|config/buddy-training-data-provenance-policy.json|config/buddy/500-model-operating-contract.json|config/generated/sandbox-24h-tick.json|reports/SANDBOX_24H.md)
+                required=true
+                ;;
+            esac
+          done <<< "$changed"
+          echo "required=$required" >> "$GITHUB_OUTPUT"
+          echo "Strict frontier claim certification required: $required"
+
   claim-surfaces-all-gates:
+    needs: [claim-surface-scope]
+    if: needs.claim-surface-scope.outputs.required == 'true'
     name: Claim surfaces require all four gates
     runs-on: ubuntu-latest
     timeout-minutes: 10
