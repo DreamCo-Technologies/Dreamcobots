@@ -2,12 +2,9 @@ name: Run Everything Now
 on:
   workflow_dispatch:
     inputs:
-      mode: {description: "quick, standard, or maximum", required: false, default: "maximum"}
+      mode: {description: "quick, standard, or maximum", required: false, default: "standard"}
   schedule:
-    - cron: "11 */6 * * *"
-  push:
-    branches: [main]
-    paths: ["App_bots/**","original-bots/**","bots/**","attached_assets/**","config/**","tools/**","tests/**","server/**","shared/**","docs/**",".github/agents/**",".github/workflows/run-everything-now.yml"]
+    - cron: "11 5 * * *"
 permissions: {contents: read, issues: write, actions: read}
 concurrency:
   group: "run-everything-now-${{ github.ref }}-${{ github.event_name == 'workflow_dispatch' && 'manual' || 'automatic' }}"
