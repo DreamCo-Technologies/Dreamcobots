@@ -36,6 +36,17 @@ class DreamCoBootcampTokenizerManifestTests(unittest.TestCase):
         rows = [json.loads(line) for line in corpus_path.read_text(encoding="utf-8").splitlines()]
 
         self.assertEqual(report["status"], "TOKENIZER_ONLY_CORPUS_READY")
+        source_rows = [
+            json.loads(line)
+            for line in (self.root / SOURCE).read_text(encoding="utf-8").splitlines()
+            if line.strip()
+        ]
+        authorization = json.loads((self.root / AUTHORIZATION).read_text(encoding="utf-8"))
+        self.assertTrue(all(row["authoring"]["status"] == "DRAFT_REQUIRES_HUMAN_REVIEW" for row in source_rows))
+        self.assertTrue(all(row["authoring"]["training_permission"] == "NOT_GRANTED" for row in source_rows))
+        self.assertEqual(authorization["scope"], "tokenizer_training_only")
+        self.assertFalse(authorization["allow_model_weight_training"])
+        self.assertFalse(authorization["allow_distillation"])
         self.assertEqual(report["source_split_counts"], {"train": 10, "validation": 2, "test": 2})
         self.assertEqual(report["training_rows_used"], 10)
         self.assertEqual(report["validation_rows_excluded"], 2)
