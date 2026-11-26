@@ -456,7 +456,11 @@ def _rows(track: dict, data: dict, root: Path = ROOT, *, include_blueprint: bool
                 "implementation_steps": implementation_steps,
                 "buddy_demo": buddy_demo,
                 "learning_modes": list(row.get("learning_modes") or [
-                    "guided_authoring", "interactive_sandbox", "independent_assessment", "human_review"
+                    "plain_language_explanation", "visual_concept_map", "worked_example",
+                    "interactive_sandbox", "guided_pair_programming", "flashcards",
+                    "retrieval_quiz", "spaced_repetition", "voice_walkthrough",
+                    "code_review", "scenario_simulation", "portfolio_capstone",
+                    "guided_authoring", "independent_assessment", "human_review"
                 ]),
             })
         return rows
