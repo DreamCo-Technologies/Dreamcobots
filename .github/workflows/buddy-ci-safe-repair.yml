@@ -147,7 +147,7 @@ jobs:
         if: steps.changes.outputs.changed == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
-          REPAIR_BRANCH: ${{ format('buddy/ci-repair-{0}', github.event.workflow_run.id || github.run_id) }}
+          REPAIR_BRANCH: ${{ format('buddy-ci-repair-{0}', github.event.workflow_run.id || github.run_id) }}
         shell: bash
         run: |
           set -euo pipefail
