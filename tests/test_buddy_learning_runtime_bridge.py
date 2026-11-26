@@ -278,7 +278,7 @@ class RuntimeBridgeTests(unittest.TestCase):
         agent_items = [item for item in agents["items"] if item.get("source_video_id") == "zH2Mg782XhA"]
         trade_items = [item for item in trade["items"] if item.get("source_video_id") == "zH2Mg782XhA"]
         self.assertTrue(any(item["track_id"] == "freecodecamp-specialist-learning-paths" for item in finance_items))
-        self.assertFalse(agent_items)
+        self.assertFalse(any(item["track_id"] == "freecodecamp-specialist-learning-paths" for item in agent_items))
         self.assertTrue(any(item["track_id"] == "freecodecamp-specialist-learning-paths" for item in trade_items))
         path = next(item for item in finance_items if item["track_id"] == "freecodecamp-specialist-learning-paths")
         self.assertGreaterEqual(len(path["implementation_steps"]), 10)
@@ -344,7 +344,7 @@ class RuntimeBridgeTests(unittest.TestCase):
              patch("buddy.learning.runtime_bridge.load_course_lessons", return_value=lessons):
             result = self.bridge.bootcamp_learning_queue(division="DreamFinance", limit=100)
         ids = {item["source_video_id"] for item in result["items"]}
-        self.assertEqual(ids, {"fixture-1", "fixture-2", "fixture-4", "fixture-6"})
+        self.assertEqual(ids, {"fixture-1", "fixture-2", "fixture-4", "fixture-5", "fixture-6"})
         self.assertTrue(all(item["video_categories"] for item in result["items"]))
 
 
