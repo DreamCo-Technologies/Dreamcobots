@@ -19,6 +19,10 @@ class FullSystemCertificationWorkflowOrderTests(unittest.TestCase):
         root = Path(__file__).resolve().parents[1]
         workflow = (root / ".github/workflows/full-system-certification.yml").read_text(encoding="utf-8")
         self.assertLess(
+            workflow.index("node --import tsx tools/run_bot_fleet_e2e.ts"),
+            workflow.index("npm run buddy:fleet:e2e"),
+        )
+        self.assertLess(
             workflow.index("npm run buddy:fleet:e2e"),
             workflow.index("Run full production verification"),
         )
