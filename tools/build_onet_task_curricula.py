@@ -57,7 +57,7 @@ def flatten_records(value: Any) -> list[dict[str, Any]]:
             result.extend(flatten_records(item))
         return result
     if isinstance(value, dict):
-        preferred = ("task statements", "task_statements", "task statements data", "task")
+        preferred = ("row", "task statements", "task_statements", "task statements data", "task")
         for key in preferred:
             if key in value:
                 found = flatten_records(value[key])
@@ -106,7 +106,7 @@ def build(rows: list[dict[str, str]], version: str) -> dict[str, Any]:
     )
     seen_tasks: set[tuple[str, str]] = set()
     for row in rows:
-        code = pick(row, "O*NET-SOC Code", "O*NET SOC Code", "occupation code")
+        code = pick(row, "O*NET-SOC Code", "O*NET SOC Code", "onetsoc_code", "occupation code")
         task_id = pick(row, "Task ID", "task id", "id")
         title = pick(row, "Task", "Task Statement", "task statement", "title")
         if not code or not task_id or not title or (code, task_id) in seen_tasks:
