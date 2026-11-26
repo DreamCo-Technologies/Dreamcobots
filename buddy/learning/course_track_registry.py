@@ -402,6 +402,8 @@ def _rows(track: dict, data: dict, root: Path = ROOT, *, include_blueprint: bool
         return rows
     if parser == "freecodecamp_specialist_learning_paths":
         metadata_rows = _rows({"parser": "freecodecamp_video_catalog"}, data, root, include_blueprint=True)
+        overrides = _read(root / "config/freecodecamp-division-routing-overrides.json")
+        curated_ids = {str(item.get("video_id")) for item in overrides.get("entries", [])}
         rows = []
         for row in metadata_rows:
             # Unclassified records belong to the dedicated rights/classification triage lane.
@@ -409,7 +411,7 @@ def _rows(track: dict, data: dict, root: Path = ROOT, *, include_blueprint: bool
                 continue
             implementation_steps = list(row.get("implementation_steps") or [])
             buddy_demo = str(row.get("buddy_demo") or "")
-            curated = bool(implementation_steps and buddy_demo)
+            curated = str(row.get("source_video_id")) in curated_ids
             if not curated:
                 implementation_steps = [
                     "Verify the source-video ID, public URL, title, channel, category tags, and catalog provenance.",
