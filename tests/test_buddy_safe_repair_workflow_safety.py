@@ -42,11 +42,13 @@ def test_safe_repair_uses_convergent_generators_and_only_pushes_a_repair_branch(
 def test_safe_repair_allowlist_includes_public_evidence_and_manifests():
     workflow_text = WORKFLOW_PATH.read_text(encoding="utf-8")
     for path in (
-        "config/bots",
+        "config/bots/bot-manifests.generated.json",
+        "config/bots/division-manifests.generated.json",
         "config/generated/file-prospectus",
         "website/data/run-prospectus.json",
         "website/data/run-prospectus-bots.json",
         "website/data/pages-feature-audit.json",
+        "command-center/data",
         "website/data/command-center",
         "website/data/fleet-runtime-status.json",
         "website/data/command-center",
