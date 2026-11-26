@@ -1,5 +1,5 @@
 import unittest
-from tools.build_freecodecamp_division_queues import build_queues, validate
+from tools.build_freecodecamp_division_queues import DOMAIN_CATEGORY_MAP, build_queues, validate
 
 
 def crosswalk_fixture():
@@ -15,6 +15,8 @@ def crosswalk_fixture():
                         "mapping_status": "unresolved", "review_required": True, "owner_approval": None})
     return {"domains": domains}
 
+
+ROOT = Path(__file__).resolve().parents[1]
 
 class FreeCodeCampDomainQueueTests(unittest.TestCase):
     def setUp(self):
@@ -73,7 +75,7 @@ class FreeCodeCampDomainQueueTests(unittest.TestCase):
         catalog = dict(self.catalog)
         catalog["inventory_status"] = "partial"
         catalog["inventory"] = {**self.catalog["inventory"], "complete": False}
-        with self.assertRaisesRegex(ValueError, "verified complete freeCodeCamp inventory"):
+        with self.assertRaisesRegex(ValueError, "verified complete freeCodeCamp inventory required"):
             build_queues(catalog, self.crosswalk, limit=10)
 
     def test_no_queue_item_is_authorized_for_training_or_media_ingestion(self):
@@ -121,9 +123,28 @@ class FreeCodeCampDomainQueueTests(unittest.TestCase):
             "complete": False,
             "observed_entry_count": 2,
         }
-        with self.assertRaisesRegex(ValueError, "verified complete inventory") as raised:
+        with self.assertRaisesRegex(ValueError, "verified complete freeCodeCamp inventory required") as raised:
             build_queues(catalog, self.crosswalk, limit=10, allow_partial=True)
-        self.assertIn("for freeCodeCamp", str(raised.exception))
+        self.assertIn("verified complete freeCodeCamp inventory required", str(raised.exception))
+
+
+    def test_every_canonical_domain_has_an_explicit_specialist_category_profile(self):
+        from pathlib import Path
+        import json
+
+        crosswalk = json.loads((ROOT / "config/generated/masterbot-55-domain-crosswalk.json").read_text(encoding="utf-8"))
+        domain_ids = {row["domain_id"] for row in crosswalk["domains"]}
+        self.assertEqual(domain_ids, set(DOMAIN_CATEGORY_MAP))
+        catalog = json.loads((ROOT / "buddy/bootcamp/sources/freecodecamp/catalog.json").read_text(encoding="utf-8"))
+        result = build_queues(catalog, crosswalk, limit=10, allow_partial=True)
+        validate(result)
+        self.assertTrue(all(row["target_categories"] for row in result["domains"]))
+        self.assertTrue(all(row["queue_status"] == "subject_routed" for row in result["domains"]))
+        for row in result["domains"]:
+            self.assertTrue(
+                any(set(item["categories"]) & set(row["target_categories"]) for item in row["items"]),
+                row["domain_name"],
+            )
 
 
 if __name__ == "__main__":
