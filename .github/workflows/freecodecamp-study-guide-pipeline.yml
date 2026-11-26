@@ -6,6 +6,13 @@ on:
   pull_request:
     paths:
       - "buddy/bootcamp/sources/freecodecamp/**"
+      - "tests/test_buddy_learning_runtime_bridge.py"
+      - "tests/test_buddy_course_track_registry.py"
+      - "tests/test_freecodecamp_specialist_routing.py"
+      - "buddy/learning/runtime_bridge.py"
+      - "buddy/learning/course_track_registry.py"
+      - "config/buddy-course-track-registry.json"
+      - "config/freecodecamp-division-routing-overrides.json"
       - "config/authorized-transcripts/**"
       - "config/freecodecamp-complete-learning-path.json"
       - "config/freecodecamp-detailed-video-study-guide.schema.json"
@@ -48,6 +55,8 @@ jobs:
         run: python -m unittest discover -s tests -p 'test_freecodecamp_study_guides.py' -v
       - name: Validate FreeCodeCamp catalog taxonomy
         run: python -m unittest discover -s tests -p 'test_freecodecamp_catalog_categories.py' -v
+      - name: Validate specialist division routing and rights-aware authoring backlog
+        run: python -m unittest discover -s tests -p 'test_freecodecamp_specialist_routing.py' -v
       - name: Build per-video guide queue
         run: python tools/build_freecodecamp_study_guides.py --out-dir "$RUNNER_TEMP/freecodecamp-study-guides"
       - name: Publish coverage truth
