@@ -1,9 +1,8 @@
 name: One-time Fleet Catalog Refresh
 on:
-  push:
-    branches: [ops/generate-fleet-catalog-once]
-    paths:
-      - ".github/workflows/one-time-fleet-catalog-refresh.yml"
+  pull_request:
+    branches: [main]
+    types: [opened]
 permissions:
   contents: write
 jobs:
