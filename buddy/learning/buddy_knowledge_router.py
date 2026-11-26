@@ -91,6 +91,11 @@ def _course_matches(query: str, root: Path, limit: int) -> list[dict[str, Any]]:
             "completion_status": "queued_not_studied",
             "mastery_awarded": False,
         })
+    best_track_score = max((row["track_match_score"] for row in matches), default=0.0)
+    # When the query explicitly names a curriculum track, do not dilute the
+    # result set with unrelated generic tracks that happen to share body words.
+    if best_track_score > 0:
+        matches = [row for row in matches if row["track_match_score"] == best_track_score]
     matches.sort(key=lambda row: (-row["track_match_score"], -row["score"], row["track_id"], row["lesson_id"]))
     return matches[:limit]
 
