@@ -77,7 +77,7 @@ class CompetitiveBenchmarkTests(unittest.TestCase):
             "output_schema": {"type": "object", "required": ["priority"], "properties": {"priority": {"type": "string"}}}
         }
         command = ["python", "-c", "import json,sys; x=json.load(sys.stdin); assert 'expected_result' not in x and 'repeat_index' not in x and 'model_artifact_path' in x; print(json.dumps({'result':{'priority':'high'},'route':'human_ai'}))"]
-        result = evaluate_model({"model_id": "test", "division_id": "dreamcyber", "_command": command}, [case], 2, 3)
+        result = evaluate_model({"model_id": "test", "model_version": "test-v1", "division_id": "dreamcyber", "_checkpoint_path": "/tmp/test-weights.bin", "_command": command}, [case], 2, 3)
         self.assertEqual(result["contract_pass_rate"], 1.0)
         self.assertEqual(result["task_exact_match_rate"], 1.0)
         self.assertEqual(result["routing_accuracy"], 1.0)
