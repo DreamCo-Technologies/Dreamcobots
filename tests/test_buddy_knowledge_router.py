@@ -60,7 +60,22 @@ class BuddyKnowledgeRouterTests(unittest.TestCase):
 
 
     def test_external_research_requires_explicit_opt_in(self):
-        route = route_buddy_learning_query("unmapped capability zebra quartz violet")
+        with tempfile.TemporaryDirectory() as directory:
+            with patch(
+                "buddy.learning.buddy_knowledge_router.search_internal_library_knowledge",
+                return_value={
+                    "matches": [],
+                    "seed_candidate_matches": [],
+                    "knowledge_gap": {"status": "internal_knowledge_gap"},
+                },
+            ), patch(
+                "buddy.learning.buddy_knowledge_router._course_matches",
+                return_value=[],
+            ):
+                route = route_buddy_learning_query(
+                    "unmapped capability zebra quartz violet",
+                    root=Path(directory),
+                )
         self.assertFalse(route["external_discovery_available"])
         self.assertTrue(route["external_discovery_requires_explicit_opt_in"])
         self.assertFalse(route["external_discovery_performed"])
