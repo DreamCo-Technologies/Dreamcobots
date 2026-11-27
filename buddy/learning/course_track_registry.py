@@ -187,6 +187,7 @@ def _rows(track: dict, data: dict, root: Path = ROOT, *, include_blueprint: bool
                     ),
                     "benchmark": "Library candidate provenance and study-guide evidence benchmark.",
                     "source_url": "",  # Internal DreamCo lesson; provenance stays in the seed catalog.
+                    "learner_visible": True,
                     "rights_mode": "metadata_discovery_only_no_download_no_execution",
                 })
         return rows
@@ -642,7 +643,7 @@ def load_course_lessons(root: Path = ROOT) -> list[CourseLesson]:
                 practice=str(row.get("practice", "")).strip(),
                 assessment=str(row.get("assessment", "")).strip(),
                 benchmark=str(row.get("benchmark", "independent task and regression suite")).strip(),
-                source_url=str(row.get("source_url") or track["source_url"]),
+                source_url=str(row.get("source_url") if "source_url" in row else track["source_url"]),
                 guide_path=str(row.get("guide_path") or track["guide"]),
                 rights_mode=str(row.get("rights_mode") or track["rights"]),
                 delivery=track["delivery"],
