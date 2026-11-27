@@ -72,7 +72,7 @@ def build_business_profile_foundry_kit(profile,output_root=OUTPUT_ROOT):
   "weights_status":"UNTRAINED_BLUEPRINT_READY_FOR_TRAINING","initialization":"random",
   "domain_specialization":"curriculum_and_future_training_data_only"
  })
- (kit/"blueprint/config.json").write_text(json.dumps(cfg,indent=2)+"\\n",encoding="utf-8")
+ (kit/"blueprint/config.json").write_text(json.dumps(cfg,indent=2)+"\n",encoding="utf-8")
  units=[{"id":u.get("unit_id"),"title":u.get("title"),"learning_objective":u.get("learning_objective"),"lab":u.get("lab"),"assessment":u.get("assessment")} for u in profile.get("ordered_units",[])]
  manifest={
   "schema":"dreamco.business_profile_foundry_manifest.v1",
@@ -94,11 +94,11 @@ def build_business_profile_foundry_kit(profile,output_root=OUTPUT_ROOT):
   "required_gates":["dataset_rights","source_provenance","clean_room","training_reproducibility","private_holdout","safety_regression","independent_review"]
  }
  manifest["kit_seal_sha256"]=hashlib.sha256(json.dumps(manifest,sort_keys=True).encode()).hexdigest()
- (kit/"BUYER_MANIFEST.json").write_text(json.dumps(manifest,indent=2)+"\\n",encoding="utf-8")
+ (kit/"BUYER_MANIFEST.json").write_text(json.dumps(manifest,indent=2)+"\n",encoding="utf-8")
  curriculum={"schema":"dreamco.business_profile_foundry_curriculum.v1","profile_id":profile_id,"profile":name,"course_title":profile.get("course_title"),"course_goal":profile.get("course_goal"),"prerequisites":profile.get("prerequisites",[]),"focus_areas":profile["focus_areas"],"modules":units,"capstone":profile.get("capstone"),"completion_requires":["practice_evidence","unit_tests","unseen_holdout","review_record"]}
- (kit/"curriculum/LEARNING_PATH.json").write_text(json.dumps(curriculum,indent=2)+"\\n",encoding="utf-8")
+ (kit/"curriculum/LEARNING_PATH.json").write_text(json.dumps(curriculum,indent=2)+"\n",encoding="utf-8")
  release={"schema":"dreamco.foundry_release_policy.v1","weights_status":"UNTRAINED_BLUEPRINT_READY_FOR_TRAINING","domain_weights_status":"NOT_TRAINED","promotion_requires":["verified_checkpoint_hash","tokenizer_hash","dataset_rights_evidence","training_run_manifest","independent_holdout_pass","safety_regression_pass","human_review"],"missing_evidence":"BLOCK"}
- (kit/"gates/RELEASE_POLICY.json").write_text(json.dumps(release,indent=2)+"\\n",encoding="utf-8")
+ (kit/"gates/RELEASE_POLICY.json").write_text(json.dumps(release,indent=2)+"\n",encoding="utf-8")
  return kit
 
 
@@ -136,7 +136,7 @@ def main():
  p.add_argument("--output",type=Path,default=OUTPUT_ROOT)
  a=p.parse_args()
  ds=load_divisions(); profiles=load_business_profiles(); cat=build_catalog(); a.output.mkdir(parents=True,exist_ok=True)
- cp=a.output/"CATALOG.json"; cp.write_text(json.dumps(cat,indent=2)+"\\n",encoding="utf-8")
+ cp=a.output/"CATALOG.json"; cp.write_text(json.dumps(cat,indent=2)+"\n",encoding="utf-8")
  if a.catalog_only:
   print(json.dumps({"status":"CATALOG_GENERATED","sku_count":cat["kit_count"],"masterbot_kits":cat["masterbot_kit_count"],"business_profile_kits":cat["business_profile_kit_count"],"path":str(cp)})); return 0
  if a.business_profiles_only or a.business_profile_id:
