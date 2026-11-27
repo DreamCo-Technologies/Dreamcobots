@@ -80,6 +80,7 @@ After a candidate, checkpoint, original/authorized fixture set, reviewed baselin
 python scripts/benchmark_vs_baselines.py \
   --candidate-manifest /path/to/release-candidate.json \
   --candidate-checkpoint /path/to/model.safetensors \
+  --candidate-tokenizer /path/to/tokenizer.json \
   --candidate-command '["python","/path/to/dreamco_adapter.py"]' \
   --baseline-registry config/institute-competitive-baselines.json \
   --fixtures /path/to/division-fixtures.json \
