@@ -82,7 +82,13 @@ def _exact_seed_candidate_ids(query: str, root: Path) -> set[str]:
 
 
 
-def _course_matches(query: str, root: Path, limit: int) -> list[dict[str, Any]]:
+def _course_matches(
+    query: str,
+    root: Path,
+    limit: int,
+    *,
+    preserve_ids: set[str] | None = None,
+) -> list[dict[str, Any]]:
     query_tokens = _tokens(query)
     matches: list[dict[str, Any]] = []
     for lesson in _cached_course_lessons(root.resolve()):
@@ -119,7 +125,11 @@ def _course_matches(query: str, root: Path, limit: int) -> list[dict[str, Any]]:
     # When the query explicitly names a curriculum track, do not dilute the
     # result set with unrelated generic tracks that happen to share body words.
     if best_track_score > 0:
-        matches = [row for row in matches if row["track_match_score"] == best_track_score]
+        preserve = preserve_ids or set()
+        matches = [
+            row for row in matches
+            if row["track_match_score"] == best_track_score or row["lesson_id"] in preserve
+        ]
     matches.sort(key=lambda row: (-row["track_match_score"], -row["score"], row["track_id"], row["lesson_id"]))
     return matches[:limit]
 
@@ -174,7 +184,10 @@ def route_buddy_learning_query(
     exact_candidate_ids = _exact_seed_candidate_ids(normalized_query, root)
     if exact_candidate_ids:
         all_lessons = _course_matches(
-            normalized_query, root, limit=len(_cached_course_lessons(root.resolve()))
+            normalized_query,
+            root,
+            limit=len(_cached_course_lessons(root.resolve())),
+            preserve_ids=exact_candidate_ids,
         )
         exact_candidate_lessons = [
             row for row in all_lessons if row["lesson_id"] in exact_candidate_ids
