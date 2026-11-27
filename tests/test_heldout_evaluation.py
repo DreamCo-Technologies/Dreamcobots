@@ -28,6 +28,7 @@ class HeldoutEvaluationTests(unittest.TestCase):
         self.assertTrue(report["passed"])
         self.assertEqual(report["accuracy"], 1.0)
         self.assertEqual(report["training_use"], "NEVER_TRAIN")
+        self.assertEqual(report["split"], "public_evaluation_smoke")
 
     def test_missing_prediction_fails_closed(self):
         report = evaluator.evaluate(self.suite, [], "test-model")
@@ -43,10 +44,10 @@ class HeldoutEvaluationTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "unknown"):
             evaluator.evaluate(self.suite, [{"task_id": "UNKNOWN", "output": "x"}], "test-model")
 
-    def test_suite_must_be_holdout(self):
+    def test_suite_must_be_training_isolated(self):
         suite = dict(self.suite)
         suite["training_use"] = "ALLOWED"
-        with self.assertRaisesRegex(ValueError, "evaluation-only"):
+        with self.assertRaisesRegex(ValueError, "isolated from training"):
             evaluator.evaluate(suite, [], "test-model")
 
     def test_checkpoint_signing_requires_rights_eval_and_measured_parameters(self):
@@ -55,7 +56,7 @@ class HeldoutEvaluationTests(unittest.TestCase):
             checkpoint = root / "weights.bin"
             checkpoint.write_bytes(b"not-real-weights-test-fixture")
             evaluation = root / "evaluation.json"
-            evaluation.write_text(json.dumps({"split":"evaluation_only_holdout","training_use":"NEVER_TRAIN","passed":True,"accuracy":1.0,"required_accuracy":0.85,"suite_id":"suite","suite_sha256":"abc"}))
+            evaluation.write_text(json.dumps({"split":"private_independent_holdout","training_use":"NEVER_TRAIN","passed":True,"accuracy":1.0,"required_accuracy":0.85,"suite_id":"suite","suite_sha256":"abc"}))
             config = root / "training.json"
             config.write_text(json.dumps({"seed":7,"code_revision":"abc123","base_model":"approved-base"}))
             dataset = root / "dataset.json"
