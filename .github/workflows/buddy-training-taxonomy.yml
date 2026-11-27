@@ -1,0 +1,23 @@
+name: Buddy Bootcamp Training Taxonomy
+on:
+  pull_request:
+    paths:
+      - 'buddy/bootcamp/training_methods_hub.py'
+      - 'buddy/bootcamp/training_taxonomy.py'
+      - 'tests/test_buddy_training_taxonomy.py'
+      - '.github/workflows/buddy-training-taxonomy.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: |
+          python -m unittest discover -s tests -p 'test_buddy_training_methods_hub.py' -v
+          python -m unittest discover -s tests -p 'test_buddy_training_taxonomy.py' -v
