@@ -170,7 +170,7 @@ class UniversalLibraryRegistryTests(unittest.TestCase):
         self.assertEqual(report["seed_candidate_count"], 531)
         self.assertEqual(report["ecosystem_count"], 38)
         self.assertEqual(report["automated_ecosystem_discovery_count"], 10)
-        self.assertEqual(report["manual_ecosystem_review_count"], 30)
+        self.assertEqual(report["manual_ecosystem_review_count"], 28)
         self.assertFalse(report["worldwide_completeness_claimed"])
 
     def test_approved_internal_guides_enter_the_shared_course_registry(self):
@@ -193,7 +193,13 @@ class UniversalLibraryRegistryTests(unittest.TestCase):
         self.assertGreaterEqual(len(rows), 30)
         self.assertTrue(any("python" in row.lesson_id for row in rows))
         self.assertTrue(all(row.assessment for row in rows))
-        self.assertTrue(all(row.rights_mode == "item_level_source_and_license_review" for row in rows))
+        ecosystem_rows = [row for row in rows if row.lesson_id.startswith("ecosystem-discovery-")]
+        candidate_rows = [row for row in rows if row.lesson_id.startswith("candidate-discovery-")]
+        self.assertTrue(ecosystem_rows)
+        self.assertTrue(candidate_rows)
+        self.assertTrue(all(row.rights_mode == "item_level_source_and_license_review" for row in ecosystem_rows))
+        self.assertTrue(all(row.rights_mode == "metadata_discovery_only_no_download_no_execution"
+                            for row in candidate_rows))
 
 
 if __name__ == "__main__":

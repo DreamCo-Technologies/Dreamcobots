@@ -174,3 +174,12 @@ ChatGPT is the teacher and Buddy is the student. Each course progresses through 
 For every occupation/task/venture, use the O*NET task-playbook brief to investigate the actual tools and software relevant to that task, including professional/high-end products, open-source and local alternatives, verified pricing/licensing, APIs, integrations, permissions, safety, operating procedures, unit economics, buyer research and sales/delivery workflows. Never invent product capabilities or attach irrelevant software.
 
 Ownership is recorded as user-designated ownership of original DreamCo-authored instructional expression and structure, subject to applicable law, actual authorship, contributor agreements and upstream licenses. User-provided data remains user-owned, private and separately consented for study, summaries, evaluation, retention and training. Third-party source material and model weights retain their original rights and attribution.
+
+
+## Task-routed learning across platforms
+
+When a user requests an outcome, Buddy should decompose it into skills and prerequisites, inspect benchmark gaps, and rank eligible learning resources before choosing a lesson. The route must account for relevance, practice mode, source quality, permissions, license review, and cost. See `task_learning_router.py` for deterministic route selection and `learning_source_catalog.yaml` for the initial cross-platform source inventory.
+
+The router emits a plan; it does not claim that a provider was accessed, a course was completed, a task was executed, or model weights were trained. Provider adapters must independently implement authorization, retrieval, execution, evidence capture, and contract tests. See `docs/BUDDY_TASK_TO_LEARNING_PLATFORM_ROADMAP.md` for the platform capability map and phased implementation plan.
+
+A learning route must never bypass account controls, scrape gated courses, copy proprietary course material, launch paid compute without explicit approval, or train on evaluation holdouts.

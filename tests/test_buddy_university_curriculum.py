@@ -41,7 +41,7 @@ class BuddyUniversityCurriculumTests(unittest.TestCase):
             "capstone": "Build an app", "required_before_mastery": ["unseen holdout"]
         }], "video_learning_tracks": ["programming", "audio production"]}
         self.fcc_catalog = {"schema": "dreamco.freecodecamp_catalog.v1", "inventory_status": "partial", "video_count": 2, "inventory": {"complete": False, "expected_entry_count": 1800, "observed_entry_count": 2}, "videos": [{"video_id": "abc123", "title": "JavaScript course", "categories": ["javascript_and_typescript"], "rights_status": "review_required", "learning_status": "not_studied"}, {"video_id": "xyz789", "title": "Unclassified lesson", "categories": ["other_or_unclassified"], "rights_status": "review_required", "learning_status": "not_studied"}]}
-        self.university = {"title": "DreamCo Buddy University", "knowledge_domains": [{"id": "computer-science", "scope": "Algorithms and software engineering"}], "source_families": [{"id": "open-academic-research", "scope": "research papers and scholarly datasets"}], "academic_structure": {"levels": [{"level": "100"}]}, "instructional_model": {"teacher": {"role": "ChatGPT"}, "student": {"role": "Buddy"}}}
+        self.university = {"title": "DreamCo Buddy University", "knowledge_domains": [{"id": "computer-science", "scope": "Algorithms and software engineering"}], "source_families": [{"id": "open-academic-research", "scope": "research papers and scholarly datasets"}, {"id": "official-documentation", "scope": "software engineering, databases, APIs and technical documentation"}], "academic_structure": {"levels": [{"level": "100"}]}, "instructional_model": {"teacher": {"role": "ChatGPT"}, "student": {"role": "Buddy"}}}
         self.onet = {"source": {"name": "O*NET"}, "inventory": {"occupations": 1, "task_statements": 1},
                      "occupations": [{"occupation_code": "15-1252.00", "occupation_title": "Software Developers",
                                       "tasks": [{"task_id": "123", "task": "Write software code and test applications"}],
@@ -155,7 +155,7 @@ class BuddyUniversityCurriculumTests(unittest.TestCase):
         self.assertTrue(result["university_curriculum"]["knowledge_expansion_protocol"]["no_coverage_shortcut"])
 
     def test_map_does_not_claim_training_or_mastery(self):
-        result = build(self.profiles, self.hf, self.fcc, self.onet, self.taxonomy)
+        result = build(self.profiles, self.hf, self.fcc, self.onet, self.taxonomy, self.university)
         self.assertIn("does not prove", result["truth_boundary"])
         self.assertTrue(result["training_policy"]["no_weight_training_without_asset_level_permission"])
         self.assertEqual(result["university_curriculum"]["title"], "DreamCo Buddy University")

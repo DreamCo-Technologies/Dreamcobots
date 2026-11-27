@@ -112,10 +112,10 @@ def report(data: dict) -> str:
     return "\n".join(lines) + "\n"
 
 
-def main() -> int:
+def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--check", action="store_true")
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
     data = build()
     payload = json.dumps(data, indent=2) + "\n"
     outputs = {OUT: payload, WEB: payload, REPORT: report(data)}

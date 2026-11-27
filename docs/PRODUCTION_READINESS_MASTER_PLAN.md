@@ -35,3 +35,8 @@ Never mark an old failure as a current blocker without reproducing it on the cur
 ## Completion criteria
 
 The platform may be called production-ready only after the certification workflow reports no release-blocking failures on a stable revision and the required external/runtime integrations have passed their live smoke tests. External credentials and hardware-dependent behavior must be tested in the appropriate environment rather than simulated as green.
+
+
+## Live production API verification
+
+The production-readiness workflow must not receive database, Stripe, or OpenAI secret values. Store those credentials only in the production deployment environment. Configure the non-secret repository variable `DREAMCO_PRODUCTION_API_BASE_URL` to the HTTPS base URL of the deployed API. The readiness gate probes `/api/health` and reads only boolean flags for database, Stripe, Stripe webhook, and OpenAI configuration. If the URL is absent, the endpoint is unreachable, or any flag is false, production certification remains blocked. Never commit secrets or paste them into chat.

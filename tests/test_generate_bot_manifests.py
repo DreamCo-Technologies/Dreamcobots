@@ -16,13 +16,20 @@ import generate_bot_manifests as gen  # noqa: E402
 class GeneratorTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        if gen.main([]) != 0:
-            raise RuntimeError("could not generate current bot manifests")
+        # Tests must not regenerate tracked files: downstream prospectuses index
+        # these outputs, so generation belongs in the explicit workflow step.
         cls.collection = gen.build()
         cls.by_slug = {b["slug"]: b for b in cls.collection["bots"]}
 
     def test_committed_file_is_current(self):
-        self.assertEqual(gen.main(["--check"]), 0)
+        self.assertEqual(
+            gen.OUT.read_text(encoding="utf-8"),
+            gen.render(self.collection),
+        )
+        self.assertEqual(
+            gen.DIV_OUT.read_text(encoding="utf-8"),
+            gen.render_divisions(self.collection),
+        )
 
     def test_deterministic(self):
         self.assertEqual(gen.render(gen.build()), gen.render(self.collection))

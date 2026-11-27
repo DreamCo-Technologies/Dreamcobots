@@ -55,7 +55,7 @@ function run(item: VerificationExpectation) {
   persistVerificationLog(resolve("tmp", "dreamco-verification"), item.id, output);
   const timedOut = result.error && (result.error as NodeJS.ErrnoException).code === "ETIMEDOUT";
   const state = result.status === 0 ? "passed" as const : "failed" as const;
-  return { expectationId: item.id, state, exitCode: result.status, durationMs: Date.now() - started, summary: timedOut ? `Timed out after ${item.timeoutSeconds}s` : output.slice(-4000) || (state === "passed" ? "Passed" : "Failed without output") };
+  return { expectationId: item.id, state, exitCode: result.status, durationMs: Date.now() - started, summary: timedOut ? `Timed out after ${item.timeoutSeconds}s` : output.slice(-(item.id === "governed-tests" ? 30000 : 4000)) || (state === "passed" ? "Passed" : "Failed without output") };
 }
 
 const startedAt = new Date().toISOString();

@@ -14,6 +14,17 @@ import build_file_prospectus as bfp  # noqa: E402
 INDEX = json.loads((ROOT / "config/generated/file-prospectus/index.json").read_text())
 
 
+def test_transient_python_and_test_caches_are_excluded_from_prospectus():
+    from tools.build_file_prospectus import is_transient_path
+
+    assert is_transient_path("App_bots/__pycache__/bot.cpython-313.pyc")
+    assert is_transient_path("bots/.pytest_cache/v/cache/nodeids")
+    assert is_transient_path("clients/.mypy_cache/module.json")
+    assert is_transient_path("database/compiled.pyo")
+    assert not is_transient_path("bots/ad-copy.md")
+    assert not is_transient_path("tools/build_file_prospectus.py")
+
+
 def test_committed_index_is_current():
     assert bfp.main(["--check"]) == 0
 

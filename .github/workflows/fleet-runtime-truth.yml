@@ -4,7 +4,7 @@ name: Fleet runtime truth
 # committed baseline (config/bots/fleet-runtime-baseline.json): a bot dropping
 # state, a new broken internal Pages link, manifest drift, or failing runtime
 # tests. Pre-existing debt (SPEC_ONLY bots, failing folder tests) is reported,
-# not blocking. The daily run also executes the full folder audit and the
+# not blocking. Daily runs and targeted PRs execute the full folder audit; the
 # full file-prospectus drift check (PRs only check the files they change).
 # It also fails if any Run with Buddy button lacks a generated prospectus or
 # the Actions health report stops covering every workflow file, if any
@@ -17,6 +17,11 @@ on:
       - "App_bots/**"
       - "website/**"
       - "buddy/**"
+      - "buddy_os/intelligence/**"
+      - "runtime/**"
+      - "tests/shared-repository-controls.test.mjs"
+      - "tests/test_buddy_capability_catalog_batch.py"
+      - "tests/test_compiled_bot_runtime.py"
       - "config/bots/**"
       - "server/seed-bots.ts"
       - "config/generated/bots.catalog.json"
@@ -76,12 +81,22 @@ jobs:
         run: python3 tools/generate_bot_manifests.py
       - name: Manifest drift check
         run: python3 tools/generate_bot_manifests.py --check
-      - name: Refresh deterministic repository evidence for this exact checkout
-        run: python3 tools/refresh_repository_evidence.py
-      - name: Regenerate fleet status and division audit for this checkout
+      - name: Sample smoke (one bot per engine + permission gate)
+        run: python3 -m buddy.fleet_runtime smoke analytics-hub compliance-scanner task-scheduler ad-copy ach-processor
+      - name: Full offline smoke (every mapped bot, no secrets)
+        run: python3 -m buddy.fleet_runtime smoke --all
+      - name: Division smoke (every division runs at least one of its bots end to end, offline)
+        run: python3 -m buddy.fleet_runtime division-smoke --all
+      - name: Regenerate fleet status after successful smoke evidence
         run: python3 tools/fleet_runtime_audit.py --skip-folder-tests
+      - name: Refresh dependent repository evidence after fleet status is current
+        run: python3 tools/refresh_repository_evidence.py
       - name: Runtime, generator, auditor and link-check tests
-        run: python3 -m pytest -q -p no:cacheprovider tests/test_fleet_runtime_executor.py tests/test_fleet_runtime_customize.py tests/test_generate_bot_manifests.py tests/test_fleet_runtime_audit.py tests/test_check_website_links.py tests/test_run_prospectus.py tests/test_file_prospectus.py tests/test_fleet_divisions.py tests/test_pages_feature_audit.py tests/test_build_queue.py
+        run: python3 -m pytest -q -p no:cacheprovider tests/test_fleet_runtime_executor.py tests/test_fleet_runtime_customize.py tests/test_generate_bot_manifests.py tests/test_fleet_runtime_audit.py tests/test_check_website_links.py tests/test_fleet_divisions.py tests/test_pages_feature_audit.py tests/test_build_queue.py tests/test_refresh_repository_evidence.py tests/test_buddy_safe_repair.py tests/test_buddy_safe_repair_workflow_safety.py tests/test_deploy_buddy_pages_manual_gate.py tests/test_actions_failure_sweep_safety.py tests/test_benchmark_scope_contract.py tests/test_issue_lifecycle.py tests/test_deploy_buddy_pages_manual_gate.py tests/test_actions_failure_sweep_safety.py
+      - name: Re-converge generated inventories after the full test suite
+        run: python3 tools/refresh_repository_evidence.py
+      - name: Verify generated prospectus contracts after all test side effects
+        run: python3 -m pytest -q -p no:cacheprovider tests/test_run_prospectus.py tests/test_file_prospectus.py
       - name: Actions workflow count drift (health report must cover every workflow file)
         run: |
           python3 - <<'PY'
@@ -106,12 +121,6 @@ jobs:
           fi
       - name: Pages Run/Customize and Actions page tests
         run: node --test tests/buddy-run-page.test.mjs tests/actions-page.test.mjs
-      - name: Smoke sample (one bot per engine + permission gate)
-        run: python3 -m buddy.fleet_runtime smoke analytics-hub compliance-scanner task-scheduler ad-copy ach-processor
-      - name: Full offline smoke (every mapped bot, no secrets)
-        run: python3 -m buddy.fleet_runtime smoke --all
-      - name: Division smoke (every division runs at least one of its bots end to end, offline)
-        run: python3 -m buddy.fleet_runtime division-smoke --all
       - name: Build bounded public technology radar projection
         run: |
           python3 tools/refresh_buddy_technology_radar.py --project
@@ -143,11 +152,18 @@ jobs:
           path: |
             tmp/fleet-summary.json
             tmp/links.json
+            config/bots/bot-manifests.generated.json
+            config/bots/division-manifests.generated.json
+            config/generated/file-prospectus/*.json
+            website/data/run-prospectus*.json
+            website/data/actions-health-report.json
+            website/data/pages-feature-audit.json
+            website/data/command-center/*.json
+            reports/**
           if-no-files-found: ignore
 
   full-audit:
-    name: Full folder audit (daily, report-only)
-    if: github.event_name != 'pull_request'
+    name: Full folder audit and targeted folder acceptance
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
@@ -160,9 +176,66 @@ jobs:
         with:
           python-version: "3.13"
       - run: npm ci
-      - run: python3 -m pip install --quiet pyyaml pytest
+      - run: python3 -m pip install --quiet pyyaml pytest -r requirements-buddy-learning.txt "soundfile>=0.12,<1" "Pillow>=10,<12"
+      - name: Refresh generated evidence before the full folder audit
+        run: |
+          python3 tools/generate_bot_manifests.py
+          python3 tools/build_buddy_fleet_execution_map.py
+          python3 tools/fleet_runtime_audit.py --skip-folder-tests
+          python3 tools/build_buddy_learning_os_connection_graph.py
+          npx tsx tools/generate_bot_fleet_catalog.ts
+          npx tsx tools/generate_dreamco_search_index.ts
+          python3 tools/refresh_repository_evidence.py
       - name: Full audit (compile, import, typecheck, folder tests, links)
         run: python3 tools/fleet_runtime_audit.py --check-regressions --summary-json tmp/fleet-summary.json
+      - name: Enforce zero failures in the four audited folder areas
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+
+          status = json.loads(Path("website/data/fleet-runtime-status.json").read_text(encoding="utf-8"))
+          folders = {row["folder"]: row for row in status["code_folders"]}
+          failures = []
+          for name in ("buddy", "buddy_os", "website", "runtime"):
+              row = folders.get(name)
+              if row is None:
+                  failures.append(f"{name}: missing audit result")
+                  continue
+              if row.get("verdict") != "working":
+                  failures.append(f"{name}: verdict={row.get('verdict')}")
+              for key in ("tests", "node_tests"):
+                  result = row.get(key) or {}
+                  if result.get("ran") and (result.get("failed", 0) or result.get("errors", 0) or result.get("cancelled", 0) or result.get("timeout")):
+                      failures.append(f"{name}: {key}={result}")
+              if (row.get("import_probe") or {}).get("failed", 0):
+                  failures.append(f"{name}: import failures={(row.get('import_probe') or {}).get('failures')}")
+              if row.get("site_check_ok") is False or row.get("links_broken", 0):
+                  failures.append(f"{name}: site/link verification failed")
+          if failures:
+              raise SystemExit("Folder acceptance failed:\\n- " + "\\n- ".join(failures))
+          print("Folder acceptance passed: buddy, buddy_os, website, runtime")
+          PY
+      - name: Capture detailed traces for targeted folder failures
+        if: failure()
+        run: |
+          python3 - <<'PY'
+          import json
+          import subprocess
+          import sys
+          from pathlib import Path
+
+          status = json.loads(Path("website/data/fleet-runtime-status.json").read_text(encoding="utf-8"))
+          folders = {row["folder"]: row for row in status["code_folders"]}
+          for name in ("buddy", "buddy_os"):
+              row = folders.get(name, {})
+              tests = row.get("test_files", [])
+              if tests:
+                  print(f"\\n===== {name}: detailed pytest trace =====", flush=True)
+                  subprocess.run([sys.executable, "-m", "pytest", "-vv", "--tb=short", "-p", "no:cacheprovider", *tests], check=False)
+          PY
+          echo "===== Website Node test diagnostics ====="
+          node --import tsx --test tests/*.test.mjs tests/*.test.ts || true
       - name: Upload refreshed report and Pages status
         if: always()
         uses: actions/upload-artifact@v7

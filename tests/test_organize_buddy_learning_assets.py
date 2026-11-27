@@ -34,6 +34,18 @@ class LearningOrganizationTests(unittest.TestCase):
         self.assertEqual(p["study_path"]["sequence"][-1]["type"],"teach_back_and_transfer")
         self.assertEqual(p["progress"]["mastery_status"],"not_assessed")
         self.assertEqual(result["division_curricula"][0]["available_learning_assets"],1)
+    def test_structured_division_registry_rows_are_normalized(self):
+        result=organize([self.guide()],[{"id":"ai","name":"AI"},{"division":"Sales"}])
+        self.assertEqual(result["coverage"]["divisions"],2)
+        self.assertEqual(result["coverage"]["approved_guides_organized"],1)
+        self.assertEqual(result["packages"][0]["division_ids"],["AI"])
+
+    def test_invalid_or_duplicate_division_registry_rows_fail_closed(self):
+        with self.assertRaisesRegex(ValueError,"non-empty name or division"):
+            organize([], [{"id":"missing-name"}])
+        with self.assertRaisesRegex(ValueError,"duplicate division names"):
+            organize([], ["AI", {"name":"AI"}])
+
     def test_only_approved_guides_are_organized(self):
         result=organize([self.guide(review="draft")],["AI"])
         self.assertEqual(result["packages"],[])

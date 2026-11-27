@@ -1,0 +1,110 @@
+{
+  "schema": "dreamco.universal_bot_learning_foundry_policy.v1",
+  "status": "SPECIFIED_NOT_TRAINED",
+  "principles": [
+    "Every one of the 55 domain divisions and all 65 MasterBot lanes is a Learning Division.",
+    "Every canonical fleet bot, supplemental bot, historical bot and commercial business micro-bot receives an individualized 100-slot curriculum manifest.",
+    "Stable identities and source lineage are preserved; aliases and duplicate profiles are flagged, not silently counted as new models.",
+    "A curriculum manifest is not a model checkpoint, a trained model, a passed benchmark or production readiness."
+  ],
+  "inventories": {
+    "canonical_fleet_source": "config/bots/bot-manifests.generated.json",
+    "canonical_fleet_count_expected": 1232,
+    "legacy_original_source": "original-bots/",
+    "legacy_income_bots_expected": 200,
+    "legacy_major_systems_expected": 12,
+    "masterbot_source": "config/masterbot-65-registry.json",
+    "masterbot_learning_divisions_expected": 65,
+    "domain_division_source": "config/generated/division-reconciliation.json",
+    "domain_divisions_expected": 55,
+    "commercial_microbot_roster": "config/dreamco-business-bot-55-roster.json"
+  },
+  "model_sizing": {
+    "business_55_default_parameters": 18500000,
+    "business_55_aggregate_parameters": 1017500000,
+    "old_bot_default_family": "18.5M micro-model target",
+    "old_bot_upgrade_family": "45M edge-agent target",
+    "upgrade_requires": [
+      "baseline evaluation",
+      "capability-gap evidence",
+      "resource profiling",
+      "controlled comparison",
+      "human approval"
+    ],
+    "no_parameter_count_claim_without_instantiated_tensor_count": true
+  },
+  "resource_manifest": {
+    "resources_per_bot": 100,
+    "stages": [
+      {
+        "id": "01_task_taxonomy",
+        "slots": "001-025",
+        "count": 25,
+        "purpose": "Occupation and task decomposition, role boundaries, human/robot/AI assignment, skills and safety."
+      },
+      {
+        "id": "02_domain_playbooks",
+        "slots": "026-055",
+        "count": 30,
+        "purpose": "Domain SOPs, regulations, policies, templates, calculations, workflows and exception handling."
+      },
+      {
+        "id": "03_synthetic_scenarios",
+        "slots": "056-080",
+        "count": 25,
+        "purpose": "Original DreamCo-authored synthetic examples, edge cases, tool-use drills and failure recovery."
+      },
+      {
+        "id": "04_evaluation_harnesses",
+        "slots": "081-100",
+        "count": 20,
+        "purpose": "Deterministic contracts, tests, independent holdouts, red-team checks and regression benchmarks."
+      }
+    ],
+    "synthetic_target_examples_per_bot": 10000,
+    "synthetic_target_status": "TARGET_NOT_GENERATED",
+    "slot_status_default": "PLANNED_NOT_CREATED",
+    "third_party_rights_default": "UNKNOWN_BLOCKED",
+    "third_party_use_requires": [
+      "exact source and revision",
+      "license and terms review",
+      "training permission",
+      "privacy and PII review",
+      "provenance and hash",
+      "human approval"
+    ],
+    "private_holdout_policy": "Never train on private holdout sets; keep holdouts isolated per bot and division."
+  },
+  "router": {
+    "name": "Buddy Semantic Router / Provost",
+    "loads_all_specialist_models_at_once": false,
+    "route_steps": [
+      "classify request and risk",
+      "retrieve approved bot capability cards",
+      "select minimum necessary specialists",
+      "check division ownership and permissions",
+      "dispatch in isolated sandbox",
+      "validate structured outputs and evidence",
+      "synthesize only passing specialist results",
+      "escalate unresolved or high-impact actions to a human"
+    ],
+    "no_cross_division_private_data_by_default": true
+  },
+  "learning_contract": {
+    "stages": [
+      "source_and_rights_review",
+      "skill_extraction",
+      "original_lesson_authored",
+      "guided_example",
+      "sandbox_lab",
+      "automated_tests",
+      "unseen_transfer_task",
+      "human_review_when_required",
+      "capability_registered",
+      "division_routed"
+    ],
+    "mastery_requires_evidence": true,
+    "training_requires_separate_authorization": true,
+    "live_actions_require_owner_approval": true
+  }
+}

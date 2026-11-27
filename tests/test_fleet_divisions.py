@@ -13,9 +13,6 @@ sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "tools"))
 import generate_bot_manifests as gen  # noqa: E402
 
-if gen.main([]) != 0:
-    raise RuntimeError("could not generate current division manifests")
-
 from buddy.fleet_runtime import FleetExecutor  # noqa: E402
 from buddy.fleet_runtime.__main__ import run_divisions  # noqa: E402
 from buddy.fleet_runtime.contract import load_manifests  # noqa: E402
@@ -57,7 +54,8 @@ def test_every_source_division_is_reconciled_to_56_business_divisions_and_shared
 def test_division_manifests_are_generated_not_hand_edited():
     import generate_bot_manifests as gen
 
-    text = gen.render_divisions(load_manifests())
+    # Use a fresh source build; load_manifests() is cached and may predate a generator refresh in another test.
+    text = gen.render_divisions(gen.build())
     assert (ROOT / "config/bots/division-manifests.generated.json").read_text() == text
 
 

@@ -1,18 +1,20 @@
 # Markdown-to-Implementation Gap Audit
 
-Generated: 2026-11-24T07:08:40Z
+Generated: 2026-11-26T13:27:50Z
 
 This is a live inventory of Git-tracked Markdown requirements and their linked repository paths. Counts are computed from the current Git tree; no document, claim, or reference count is a fixed ceiling.
 
 ## Current derived summary
 
-- Markdown documents scanned: 1676
-- Actionable claim lines detected: 11935
-- Documents with missing path references: 112
-- Documents without implementation references: 1590
-- Documents with implementation references but no test references: 69
-- Documents with inventory count claims: 113
-- Inventory count claims requiring review: 392
+- Markdown documents scanned: 1760
+- Actionable claim lines detected: 12455
+- Documents with missing path references: 93
+- Path-template references (not concrete repository paths): 42 across 25 documents
+- Machine-local absolute paths (not repository paths): 111 across 7 documents
+- Documents without implementation references: 1659
+- Documents with implementation references but no test references: 83
+- Documents with inventory count claims: 129
+- Inventory count claims requiring review: 431
 
 ## Fixed-count claims requiring review
 
@@ -32,6 +34,10 @@ This is a live inventory of Git-tracked Markdown requirements and their linked r
 - bots/resource-eligibility-bot.md:1 — # 211 Resource Eligibility Bot
 - bots/resource-eligibility-bot.md:43 — You are 211 Resource Eligibility Bot, a specialized AI bot in the DreamCo Empire OS DreamPersonalCare division. Helps individuals find and qualify for local social services, benefits programs, housing assistance, and emergency resources. Core capabilities: Local resource database
 - bots/resource-eligibility-bot.md:47 — Test every declared capability for 211 Resource Eligibility Bot in sandbox mode: Local resource database; Eligibility screening; Application guidance; Benefits gap analysis; Housing assistance finder; Food assistance locator; Mental health resource referral; Crisis intervention r
+- buddy/bootcamp/README.md:34 — Generate deterministic study candidates for the canonical 65 divisions with:
+- buddy/bootcamp/README.md:53 — The full source-route manifest is generated with `python tools/build_freecodecamp_routes.py` for audit/review artifacts. It keeps one route record for every discovered video and grants all 65 divisions catalog access; subject tags add specialty recommendations without hiding the
+- buddy/bootcamp/sources/MULTI_SOURCE_STUDY_AND_MODEL_BUILD.md:90 — A 45M model is a useful compact research model, not a frontier GPT-5 system. Reaching similar behavior cannot be inferred from parameter count. It requires independent evidence across capability, reliability, safety and scale.
+- buddy/bootcamp/sources/MULTI_SOURCE_STUDY_AND_MODEL_BUILD.md:162 — The tokenizer stage now has a 12-lesson Buddy course: [Buddy Tokenizer Engineering and Training Course](../../docs/BUDDY_TOKENIZER_TRAINING_STUDY_GUIDE.md), with its syllabus at `config/buddy-tokenizer-training-curriculum.json`. Make the lessons available as shared foundations to
 - buddy/openrouter/README.md:13 — OpenRouter currently advertises 500+ models and 80+ providers, with provider routing and model fallback support. OpenRouter also supports provider controls such as data-collection restrictions and ZDR where available.
 - buddy/openrouter/README.md:13 — OpenRouter currently advertises 500+ models and 80+ providers, with provider routing and model fallback support. OpenRouter also supports provider controls such as data-collection restrictions and ZDR where available.
 - buddy/openrouter/README.md:22 — -> DreamCo 500+ model catalog
@@ -85,6 +91,8 @@ This is a live inventory of Git-tracked Markdown requirements and their linked r
 - docs/BUDDY_1000_SOURCE_BOT_TRAINING_GROUND.md:79 — - Do not use 1000 sources for a problem that only needs two authoritative sources.
 - docs/BUDDY_14_DAY_MODEL_GROWTH_PLAN.md:5 — **Not a promise:** frontier GPT-5 capability, a production-ready 25M model, or a full DreamCo fleet certification cannot be guaranteed by a date. Completion is evidence-gated.
 - docs/BUDDY_24H_GAP_CLOSURE.md:9 — - Target throughput: 1,000 source-learning jobs per week.
+- docs/BUDDY_25M_CPU_LLM_RESOURCE_CATALOG.md:3 — This catalog supplies the reference inventory used by the 25M CPU LLM course tests and future study workflows. It contains 42 source pointers spanning the freeCodeCamp course, Hugging Face, PyTorch, Python, tokenization research, open reference implementations, evaluation benchma
+- docs/BUDDY_55_DIVISION_SPECIALIST_COURSES.md:1 — # 55 division specialist course drafts
 - docs/BUDDY_65_MASTERBOT_OPERATING_SYSTEM.md:10 — - **65 Division MasterBots** — domain owners. The 65-division registry in the product/repository is the source of truth for names and ownership; this document does not invent replacement division names.
 - docs/BUDDY_ACTIONS_ENGINE.md:5 — Make the Actions page the operational command center for Buddy: a goal-driven execution system that plans, previews, executes, verifies, observes, recovers and learns from work across the 46 Division Superbots, capability registry, device fabric and external tools.
 - docs/BUDDY_ACTIONS_UNIFIED_OPERATING_SYSTEM.md:9 — - all 45 divisions
@@ -95,13 +103,23 @@ This is a live inventory of Git-tracked Markdown requirements and their linked r
 - docs/BUDDY_ADDITIONAL_TAXONOMY_SYSTEMS.md:9086 — - **Mission:** Dedicated 211 source priority subsystem for "official agency APIs/data feeds".
 - docs/BUDDY_ADDITIONAL_TAXONOMY_SYSTEMS.md:9103 — - **Mission:** Dedicated 211 source priority subsystem for "verified nonprofit/service-provider sources".
 - docs/BUDDY_AUTOMATIC_BOT_ONBOARDING.md:55 — The classifier compares the bot against the canonical 46 divisions and existing capabilities. A high-confidence match is assigned automatically. Ambiguous matches become review items while remaining visible.
-- docs/BUDDY_BOOTCAMP_65_DIVISION_CURRICULUM.md:7 — - 65 division-specific curriculum lanes and independent model artifact namespaces.
-- docs/BUDDY_BOOTCAMP_65_DIVISION_CURRICULUM.md:8 — - All 37 task families from the repository's refreshable Hugging Face task taxonomy.
-- docs/BUDDY_BOOTCAMP_65_DIVISION_CURRICULUM.md:9 — - All 10 capability packs from the HF capability download map.
-- docs/BUDDY_BOOTCAMP_65_DIVISION_CURRICULUM.md:10 — - 12 dataset discovery dimensions and 9 model discovery dimensions.
+- docs/BUDDY_BOOTCAMP_65_DIVISION_CURRICULUM.md:9 — - All 37 task families from the repository's refreshable Hugging Face task taxonomy.
+- docs/BUDDY_BOOTCAMP_65_DIVISION_CURRICULUM.md:10 — - All 10 capability packs from the HF capability download map.
+- docs/BUDDY_BOOTCAMP_65_DIVISION_CURRICULUM.md:11 — - 12 dataset discovery dimensions and 9 model discovery dimensions.
 - docs/BUDDY_BOOTCAMP_AND_TRUST_FRAMEWORK.md:45 — The 500 model slots form a diverse review team rather than a single unquestioning agent. Roles include monitoring, training, evaluation, building, security, alignment, research, product, documentation, and red-team review.
+- docs/BUDDY_BOOTCAMP_FREE_RESOURCE_MAP.md:139 — Buddy's current 12-course Hugging Face Learn inventory is tracked in `config/buddy-huggingface-full-learning-map.json` and is linked from the shared course scheduler. It covers LLMs, context engineering, robotics, compact post-training, agents, Deep RL, computer vision, audio, op
+- docs/BUDDY_BYTE_BPE_TRAINER.md:7 — Prepare a manifest that points only to local files under `data/buddy-authorized-corpora/`. Each entry must include a verified SHA-256, source type, rights evidence, explicit model-training permission, privacy review, and a declaration that the corpus is neither sensitive nor hold
+- docs/BUDDY_DIVISION_MASTERBOT_LEARNING_PATHS.md:3 — This manifest derives 55 division profiles from `shared/division-production-contract.ts` and 65 MasterBot identities from `config/masterbot-65-registry.json`. Both receive the same seven-stage ordered learning path, with division-specific mission, outcome, boundary, and focus are
+- docs/BUDDY_FREECODECAMP_22_CATEGORY_STUDY_GUIDES.md:1 — # FreeCodeCamp 22-category study guide drafts
 - docs/BUDDY_GITHUB_COMPETITOR_MASTER_PLAN.md:171 — This repository already contains substantial infrastructure for the direction, including Buddy success/governance systems, benchmark tracking, model progress tooling, local repository integration, self-repair tooling, and dedicated Buddy pages. The generated success program curre
 - docs/BUDDY_GITHUB_COMPETITOR_MASTER_PLAN.md:171 — This repository already contains substantial infrastructure for the direction, including Buddy success/governance systems, benchmark tracking, model progress tooling, local repository integration, self-repair tooling, and dedicated Buddy pages. The generated success program curre
+- docs/BUDDY_HUGGINGFACE_TASK_FAMILY_PLAYBOOKS.md:1 — # Hugging Face 37 task-family playbooks
+- docs/BUDDY_ONET_FULL_CONTENT_MODEL_AND_TASK_PLAYBOOKS.md:21 — The current O*NET 31.0 production release (August 2026) reports 1,016 occupation records, 18,838 task statements, 165,780 task ratings, 338 emerging tasks, 74,702 work-activity rows and 305,389 work-context rows. It also includes software skills (31,821), essential skills (18,200
+- docs/BUDDY_ONET_FULL_CONTENT_MODEL_AND_TASK_PLAYBOOKS.md:21 — The current O*NET 31.0 production release (August 2026) reports 1,016 occupation records, 18,838 task statements, 165,780 task ratings, 338 emerging tasks, 74,702 work-activity rows and 305,389 work-context rows. It also includes software skills (31,821), essential skills (18,200
+- docs/BUDDY_OPEN_SOURCE_MULTIMODAL_BOOTCAMP.md:94 — Use `tools/fetch_onet_task_curricula.py` to locate and download the current public O*NET Task Statements JSON export from the official O*NET database page; no API key is required for this public database download. The script extracts the current release version, retains the raw s
+- docs/BUDDY_OPEN_SOURCE_MULTIMODAL_BOOTCAMP.md:94 — Use `tools/fetch_onet_task_curricula.py` to locate and download the current public O*NET Task Statements JSON export from the official O*NET database page; no API key is required for this public database download. The script extracts the current release version, retains the raw s
+- docs/BUDDY_OPEN_SOURCE_MULTIMODAL_BOOTCAMP.md:215 — The weekly workflow builds a daily plan with five lesson slots per division (275 slots across 55 divisions). A slot becomes assignable only when a complete, reviewed and rights-cleared original guide exists. If no guide exists, the slot remains awaiting_approved_original_summary;
+- docs/BUDDY_OPEN_SOURCE_MULTIMODAL_BOOTCAMP.md:256 — The map adds 18 original DreamCo ecosystem modules spanning Hub governance, cards and provenance, dataset engineering, Spaces, Transformers, tokenizers, Accelerate, PEFT, TRL, Diffusers, timm, embeddings/retrieval, kernels/quantization, evaluation, inference/deployment, Gradio/Tr
 - docs/BUDDY_PLATFORM_READINESS_SCORECARD.md:96 — All 18 categories in `docs/BUDDY_GITHUB_COMPETITOR_MASTER_PLAN.md` have current evidence.
 - docs/BUDDY_REPOSITORY_REPAIR_DATASETS_BENCHMARKS_AND_DISTILLATION.md:58 — These are routing defaults, not a claim that the whole 65-to-45 division mapping is finalized.
 - docs/BUDDY_RESOURCE_COVERAGE_FRAMEWORK.md:454 — The inspected `AI_MODEL_CATEGORIES` list has 20 categories:
@@ -137,6 +155,7 @@ This is a live inventory of Git-tracked Markdown requirements and their linked r
 - docs/DREAMCO_FIRST_PARTY_TRAINING_FACTORY_AND_BOOTCAMP.md:7 — The factory is not a promise that 65 models have already been trained. Each lane remains `SPECIFIED_NOT_TRAINED` until real checkpoints, hashes, training logs, and evaluation evidence exist.
 - docs/DREAMCO_FIRST_PARTY_TRAINING_FACTORY_AND_BOOTCAMP.md:37 — The 65-lane plan maps every division to the 37 structured Hugging Face task-family references (2,405 division/task assignments), division capability packs, Bootcamp levels, dataset planes and model identities. Hugging Face is one source taxonomy, not the entire curriculum.
 - docs/DREAMCO_FIRST_PARTY_TRAINING_FACTORY_AND_BOOTCAMP.md:46 — - 65 division-specific model identities with isolated adapters/checkpoints and evaluation lanes.
+- docs/DREAMCO_FIRST_PARTY_TRAINING_FACTORY_AND_BOOTCAMP.md:66 — The weekly first-party training-data workflow validates that these university course references are present in the 65-lane plan. It still does not authorize third-party data, ingest private user data, or start training. All 65 model identities remain `SPECIFIED_NOT_TRAINED` until
 - docs/DREAMCO_INDEPENDENT_DIVISION_MODEL_LIFECYCLE.md:3 — The canonical MasterBot registry defines 65 divisions. This lifecycle gives every division a distinct versioned model identity, weights directory, checkpoint directory, tokenizer snapshot, dataset lane, benchmark record and serving identity. The registry is a specification: it de
 - docs/DREAMCO_MASTERY_CONTINUITY_SYSTEM.md:92 — The new engine connects all 65 registry entries to logical lanes, goal routing, dependency metadata, shared regression execution, the existing lane planner, benchmark execution, and evidence artifacts. It does **not** yet implement every domain capability, execute every historica
 - docs/DREAMCO_MASTER_ROADMAP_2026.md:26 — ### 1–15 Workflow Organization & Dashboard
@@ -155,6 +174,8 @@ This is a live inventory of Git-tracked Markdown requirements and their linked r
 - docs/FLEET_ONE_WEEK_BUILD_PLAN.md:3 — Source of truth: `config/bots/build-queue.json` (checked by `tests/test_build_queue.py`). Starting point is the audit in #13731: 1232 bots (1213 TESTED, 19 SPEC_ONLY), all 55 App_bots divisions TESTED by the division smoke, 200 Pages (189 working, 10 stub, 1 broken), 105 workflow
 - docs/FLEET_ONE_WEEK_BUILD_PLAN.md:3 — Source of truth: `config/bots/build-queue.json` (checked by `tests/test_build_queue.py`). Starting point is the audit in #13731: 1232 bots (1213 TESTED, 19 SPEC_ONLY), all 55 App_bots divisions TESTED by the division smoke, 200 Pages (189 working, 10 stub, 1 broken), 105 workflow
 - docs/FLEET_ONE_WEEK_BUILD_PLAN.md:3 — Source of truth: `config/bots/build-queue.json` (checked by `tests/test_build_queue.py`). Starting point is the audit in #13731: 1232 bots (1213 TESTED, 19 SPEC_ONLY), all 55 App_bots divisions TESTED by the division smoke, 200 Pages (189 working, 10 stub, 1 broken), 105 workflow
+- docs/FREECODECAMP_COMPLETE_BUDDY_LEARNING_PATH.md:209 — The official O*NET 31.0 task-statement JSON export contains 18,838 task rows across 923 unique occupation codes. The ingestion builders recognize the official `row` collection and `onetsoc_code` field, preserve source task IDs, and create occupation/task indexes plus original aut
+- docs/FREECODECAMP_COMPLETE_BUDDY_LEARNING_PATH.md:209 — The official O*NET 31.0 task-statement JSON export contains 18,838 task rows across 923 unique occupation codes. The ingestion builders recognize the official `row` collection and `onetsoc_code` field, preserve source task IDs, and create occupation/task indexes plus original aut
 - docs/GAIN_PRODUCTION_PIPELINE_PLAN.md:8 — 1101 bots, 56 divisions, `production_ready_true: 0`.
 - docs/GAIN_PRODUCTION_PIPELINE_PLAN.md:8 — 1101 bots, 56 divisions, `production_ready_true: 0`.
 - docs/GROK_CAPABILITIES_FOR_DREAMCO.md:162 — 118. Pretend 1,051 bots are all fully implemented runtimes
@@ -176,6 +197,7 @@ This is a live inventory of Git-tracked Markdown requirements and their linked r
 - docs/THREE_RUNTIME_TRACEABILITY_LEDGER.md:95 — | [#14849](https://github.com/DreamCo-Technologies/Dreamcobots/pull/14849) | fix(ci): regenerate pages feature audit for 223 pages (was 205) | Review pending |
 - docs/UNIVERSAL_BOT_RUNTIME_CONTRACT.md:8 — DreamCo has ~1,120 bot profiles (`bots/*.md`, `App_bots/<Division>.json`,
 - docs/UNIVERSAL_BOT_RUNTIME_CONTRACT.md:21 — | 3 | capabilities | ≥1 bot-specific capability. Tier packaging (“Advanced analytics dashboard”, “Priority email support”, “API access”…) is dropped and counted in `tier_features_dropped` |
+- docs/UNIVERSAL_STUDY_RESOURCE_EXPANSION.md:22 — The 100-ID range is reserved for an expansion batch. This first commit seeds 100 resources:
 - docs/UNMERGEABLE_PR_RECONCILIATION_2026-08-12.md:53 — Preserves the core #476 Pages capability of routing browser `/api`, `/ws`, and `/socket` traffic to a configured HTTPS/WSS backend while leaving normal local development behavior unchanged.
 - docs/VIBE_CODING_CATEGORY_MAP.md:44 — ## 31–40: XR, simulation, infrastructure, data and productivity
 - docs/VIBE_CODING_CATEGORY_MAP.md:57 — ## 41–50: Civic, professional, industrial and physical-world systems
@@ -190,10 +212,29 @@ This is a live inventory of Git-tracked Markdown requirements and their linked r
 - docs/benchmarks/BENCHMARKS_801_1000.md:195 — - **991 task-decomposition benchmark** — turning goals into plans.
 - docs/benchmarks/BENCHMARKS_801_1000.md:196 — - **992 tool-selection benchmark** — selecting the best tool.
 - docs/benchmarks/BENCHMARKS_801_1000.md:198 — - **994 model-routing benchmark** — selecting the model for the task.
+- docs/bootcamp/DIVISION_MASTERBOT_COVERAGE_AUDIT.md:6 — - exactly 55 division foundation assignments and 65 MasterBot foundation assignments;
 - docs/dreamco-lite/DREAMCO_LITE_MVP.md:9 — - **2 bots**
 - docs/dreampayments_benchmark.md:12 — ## 30 capability scorecard
+- docs/engineering/DREAMCO_ENTERPRISE_REPAIR_PLAN_2026-11-25.md:11 — - Canonical business-domain crosswalk: 45 divisions.
+- docs/engineering/DREAMCO_ENTERPRISE_REPAIR_PLAN_2026-11-25.md:14 — - App bot portfolio: 56 source divisions, plus generated/shared routing.
+- docs/engineering/DREAMCO_ENTERPRISE_REPAIR_PLAN_2026-11-25.md:15 — - Full generated bot manifest: 1,232 bot profiles.
+- docs/engineering/DREAMCO_ENTERPRISE_REPAIR_PLAN_2026-11-25.md:55 — **Done when:** all generated artifacts are current, every expected division has a smoke result, all 1,232 bot profiles have consistent route metadata, and the fleet runtime gate passes without downgrading truth standards.
 - docs/engineering/DREAMCO_PROJECT_CHAT_CORPUS.md:23 — | LIB-MD-001 | `Pasted markdown.md` | `file_00000000ec84822fa5494193f142c5c9` | Read; 644 lines. Historical conversation transcript covering learning techniques, thinking strategies, repository organization, ChatGPT/GitHub integrations, GitLab/AWS/Ansible/Terraform/Kubernetes/Gra
-- docs/engineering/PR_RECONCILIATION_LEDGER.md:75 — - Useful work: proposes caller identity checks on 14 model routes, plan-policy enforcement, allowlist-only model selection, owner-only discovery, paid-use approval, and UI fallback/sign-in notices with tests.
+- docs/engineering/DREAMCO_PROJECT_CHAT_CORPUS.md:252 — | `SRC-CURRENT-2026-11-24-RESOURCES-01` | Add as many useful study resources as possible | `REQ-EXPAND-STUDY-RESOURCE-CATALOG` | PR #18214: 1101–1200 expansion; 100 resource pointers; Tolkien scholarly lane | 100 resource pointers cataloged; no bulk ingestion or blanket training
+- docs/engineering/DREAMCO_PROJECT_CHAT_CORPUS.md:252 — | `SRC-CURRENT-2026-11-24-RESOURCES-01` | Add as many useful study resources as possible | `REQ-EXPAND-STUDY-RESOURCE-CATALOG` | PR #18214: 1101–1200 expansion; 100 resource pointers; Tolkien scholarly lane | 100 resource pointers cataloged; no bulk ingestion or blanket training
+- docs/engineering/DREAMCO_PROJECT_CHAT_CORPUS.md:306 — The first clean-base Bootcamp CI run exposed a test-fixture omission (`video_count`) in the direct-catalog runtime test. The fixture was corrected in head commit `028f3d0c3138e66a9cd54280cc81ba1b7c463083`. The subsequent `generate-curriculum` job passed **67/67 focused tests**: c
+- docs/engineering/DREAMCO_PROJECT_CHAT_CORPUS.md:307 — - Current study artifact: run 45436272080, artifact ID `14939999424`, SHA-256 `fe1064eef3a290be4ac97b926c57ca99aa33bd37326c52cac3f2a0e4dc4be4ab`. It verifies 1,741/1,741 metadata entries, 0 null entries, 0 duplicate IDs, 65 divisions, 30 candidate references per division, 325 dai
+- docs/engineering/PR_RECONCILIATION_LEDGER.md:15 — ### 2026-11-24 refresh
+- docs/engineering/PR_RECONCILIATION_LEDGER.md:29 — ### 2026-11-18 historical snapshot
+- docs/engineering/PR_RECONCILIATION_LEDGER.md:84 — - Useful work: proposes caller identity checks on 14 model routes, plan-policy enforcement, allowlist-only model selection, owner-only discovery, paid-use approval, and UI fallback/sign-in notices with tests.
+- docs/engineering/PR_RECONCILIATION_LEDGER.md:153 — - **PR #18207 — freeCodeCamp Buddy Bootcamp integration:** `NEEDS_FIXES` + `NEEDS_REBASE`. Current head `197e8897ccb35263a8938bc70095f68576920e22`; base `9c1a7e109bc26bc5adc3bd4766baa547a6ac2c7c`; GitHub reports `mergeable_state=dirty`. Eleven review threads were returned; eight
+- docs/engineering/PR_RECONCILIATION_LEDGER.md:153 — - **PR #18207 — freeCodeCamp Buddy Bootcamp integration:** `NEEDS_FIXES` + `NEEDS_REBASE`. Current head `197e8897ccb35263a8938bc70095f68576920e22`; base `9c1a7e109bc26bc5adc3bd4766baa547a6ac2c7c`; GitHub reports `mergeable_state=dirty`. Eleven review threads were returned; eight
+- docs/engineering/PR_RECONCILIATION_LEDGER.md:182 — ### 2026-11-24 targeted duplicate reconciliation — PR #18212 and PR #18214
+- docs/engineering/PR_RECONCILIATION_LEDGER.md:185 — - The 100 resource records (IDs 1101–1200) are identical across both branches. The 727 unique dataset candidates and 1,783 route rows are also identical by candidate ID; PR #18214 replaces the ambiguous `catalog_train_flag` with `source_catalog_train_hint` and explicitly sets `tr
+- docs/engineering/PR_RECONCILIATION_LEDGER.md:190 — ### 2026-11-24 clean-base Bootcamp port — PR #18207 to PR #18216
+- docs/engineering/PR_RECONCILIATION_LEDGER_2026-11-26.md:69 — 5. Port #16912 and #16913 source implementations; do not carry old generated snapshots or stale workflow assumptions.
+- docs/engineering/PR_RECONCILIATION_LEDGER_2026-11-26.md:110 — 3. Reconcile the 45/10 division queue policy against the current canonical 55-domain map without discarding existing mainline coverage.
+- docs/engineering/PR_RECONCILIATION_LEDGER_2026-11-26.md:116 — - The current-main push produced 64 workflow runs. Most completed; a small number remained queued/in progress, so the overall system was not globally frozen.
 - docs/top-200-ideas-set-02.md:5 — ## 201–225 Systems & architecture
 - docs/top-200-ideas-set-02.md:5 — ## 201–225 Systems & architecture
 - docs/top-200-ideas-set-02.md:32 — ## 226–250 Memory & cognition
@@ -420,6 +461,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -430,6 +473,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -440,6 +485,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: client/public/sw.js
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Add focused tests and acceptance evidence for the referenced implementation.
 - Execution verified: No; run-specific evidence is required.
 
@@ -450,6 +497,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -460,6 +509,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -470,6 +521,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -480,6 +533,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: server/routes.ts, server/vite.ts
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Add focused tests and acceptance evidence for the referenced implementation.
 - Execution verified: No; run-specific evidence is required.
 
@@ -490,6 +545,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -500,6 +557,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -510,6 +569,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -520,6 +581,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -530,6 +593,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -540,6 +605,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -549,7 +616,9 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Actionable claim lines: 10
 - Implementation paths: None detected
 - Test paths: None detected
-- Missing paths: github/workflows/buddy-actions-test-lab.yml, tmp/dreamco-verification/latest.json
+- Missing paths: tmp/dreamco-verification/latest.json
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Repair or explicitly supersede the missing repository path references.
 - Execution verified: No; run-specific evidence is required.
 
@@ -560,6 +629,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -570,6 +641,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -580,6 +653,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -590,6 +665,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -600,6 +677,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -610,6 +689,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -620,6 +701,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -630,6 +713,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -640,6 +725,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -650,6 +737,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -660,6 +749,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -670,6 +761,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -680,6 +773,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -690,6 +785,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: config/generated/notes-to-code-backlog.json
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Repair or explicitly supersede the missing repository path references.
 - Execution verified: No; run-specific evidence is required.
 
@@ -700,6 +797,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -710,6 +809,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: tools/audit_actions_health.py, tools/buddy_local_repository.py
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Add focused tests and acceptance evidence for the referenced implementation.
 - Execution verified: No; run-specific evidence is required.
 
@@ -720,6 +821,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -730,6 +833,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -740,6 +845,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -750,6 +857,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -760,6 +869,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -770,6 +881,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -780,6 +893,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -790,6 +905,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -797,9 +914,11 @@ These are candidate count claims, not automatically incorrect values. Convert li
 
 - Status: test_reference_missing
 - Actionable claim lines: 8
-- Implementation paths: website/actions.html, website/autonomy.html, website/bootcamp-wrappers.html, website/bots.html, website/buddy.html, website/build.html, website/category-systems.html, website/chat-sync.html, website/devices.html, website/divisions.html, website/goals.html, website/hf-bootcamp.html, website/hub.html, website/learn-hf.html, website/learn.html, website/markdown-gap-audit.html, website/marketplace.html, website/models.html, website/open-model-lab.html, website/os.html, website/own-bootcamp.html, website/recover.html, website/sources.html, website/technology-radar.html, website/test-center.html, website/work.html
+- Implementation paths: website/actions.html, website/autonomy.html, website/bootcamp-wrappers.html, website/bots.html, website/buddy.html, website/build.html, website/category-systems.html, website/chat-sync.html, website/devices.html, website/divisions.html, website/goals.html, website/hf-bootcamp.html, website/hub.html, website/learn-hf.html, website/learn.html, website/markdown-gap-audit.html, website/marketplace.html, website/models.html, website/open-model-lab.html, website/os.html, website/own-bootcamp.html, website/pretrained-model-store.html, website/recover.html, website/sources.html, website/technology-radar.html, website/test-center.html, website/work.html
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Add focused tests and acceptance evidence for the referenced implementation.
 - Execution verified: No; run-specific evidence is required.
 
@@ -810,6 +929,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -820,6 +941,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: buddy/easy_github/buddy_easy_github.py
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Add focused tests and acceptance evidence for the referenced implementation.
 - Execution verified: No; run-specific evidence is required.
 
@@ -830,6 +953,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: client/index.html, client/public/manifest.json, client/public/sw.js, client/src/main.tsx, server/routes.ts, server/seed-bots.ts, server/seed-buddy-bot.ts, server/seed-codelabs.ts, server/seed-github-bots.ts, shared/schema.ts, shared/tool-belt.ts
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Add focused tests and acceptance evidence for the referenced implementation.
 - Execution verified: No; run-specific evidence is required.
 
@@ -840,6 +965,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -850,6 +977,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -860,6 +989,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -870,6 +1001,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -880,6 +1013,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -890,6 +1025,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -900,6 +1037,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -910,6 +1049,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -920,6 +1061,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -930,6 +1073,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -940,6 +1085,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -950,6 +1097,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -960,6 +1109,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -970,6 +1121,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -980,6 +1133,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -990,6 +1145,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -1000,6 +1157,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -1010,6 +1169,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -1020,6 +1181,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -1030,6 +1193,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -1040,6 +1205,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -1050,6 +1217,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -1060,6 +1229,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -1070,6 +1241,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -1080,6 +1253,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -1090,6 +1265,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -1100,6 +1277,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -1110,6 +1289,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -1120,6 +1301,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -1130,6 +1313,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -1140,6 +1325,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -1150,6 +1337,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -1160,6 +1349,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -1170,6 +1361,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -1180,6 +1373,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -1190,6 +1385,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -1200,6 +1397,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -1210,6 +1409,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -1220,6 +1421,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -1230,6 +1433,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -1240,6 +1445,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -1250,6 +1457,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -1260,6 +1469,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -1270,6 +1481,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -1280,6 +1493,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -1290,6 +1505,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -1300,6 +1517,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -1310,6 +1529,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -1320,6 +1541,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -1330,6 +1553,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -1340,6 +1565,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -1350,6 +1577,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -1360,6 +1589,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -1370,6 +1601,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -1380,6 +1613,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -1390,6 +1625,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -1400,6 +1637,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -1410,6 +1649,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -1420,6 +1661,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -1430,6 +1673,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -1440,6 +1685,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -1450,6 +1697,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -1460,6 +1709,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -1470,6 +1721,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -1480,6 +1733,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -1490,6 +1745,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -1500,6 +1757,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -1510,6 +1769,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -1520,6 +1781,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -1530,6 +1793,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -1540,6 +1805,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -1550,6 +1817,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -1560,6 +1829,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -1570,6 +1841,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -1580,6 +1853,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -1590,6 +1865,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -1600,6 +1877,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -1610,6 +1889,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -1620,6 +1901,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -1630,6 +1913,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -1640,6 +1925,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -1650,6 +1937,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -1660,6 +1949,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -1670,6 +1961,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -1680,6 +1973,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -1690,6 +1985,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -1700,6 +1997,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -1710,6 +2009,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -1720,6 +2021,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -1730,6 +2033,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -1740,6 +2045,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -1750,6 +2057,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -1760,6 +2069,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -1770,6 +2081,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -1780,6 +2093,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -1790,6 +2105,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -1800,6 +2117,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -1810,6 +2129,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -1820,6 +2141,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -1830,6 +2153,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -1840,6 +2165,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -1850,6 +2177,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -1860,6 +2189,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -1870,6 +2201,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -1880,6 +2213,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -1890,6 +2225,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -1900,6 +2237,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -1910,6 +2249,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -1920,6 +2261,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -1930,6 +2273,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -1940,6 +2285,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -1950,6 +2297,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -1960,6 +2309,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -1970,6 +2321,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -1980,6 +2333,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -1990,6 +2345,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -2000,6 +2357,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -2010,6 +2369,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -2020,6 +2381,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -2030,6 +2393,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -2040,6 +2405,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -2050,6 +2417,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -2060,6 +2429,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -2070,6 +2441,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -2080,6 +2453,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -2090,6 +2465,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -2100,6 +2477,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -2110,6 +2489,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -2120,6 +2501,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -2130,6 +2513,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -2140,6 +2525,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -2150,6 +2537,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -2160,6 +2549,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -2170,6 +2561,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -2180,6 +2573,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -2190,6 +2585,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -2200,6 +2597,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -2210,6 +2609,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -2220,6 +2621,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -2230,6 +2633,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -2240,6 +2645,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -2250,6 +2657,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -2260,6 +2669,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -2270,6 +2681,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -2280,6 +2693,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -2290,6 +2705,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -2300,6 +2717,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -2310,6 +2729,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -2320,6 +2741,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -2330,6 +2753,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -2340,6 +2765,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -2350,6 +2777,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -2360,6 +2789,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -2370,6 +2801,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -2380,6 +2813,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -2390,6 +2825,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -2400,6 +2837,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -2410,6 +2849,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -2420,6 +2861,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -2430,6 +2873,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -2440,6 +2885,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -2450,6 +2897,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -2460,6 +2909,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -2470,6 +2921,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -2480,6 +2933,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -2490,6 +2945,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -2500,6 +2957,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -2510,6 +2969,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -2520,6 +2981,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -2530,6 +2993,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -2540,6 +3005,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -2550,6 +3017,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -2560,6 +3029,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -2570,6 +3041,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -2580,6 +3053,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -2590,6 +3065,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -2600,6 +3077,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -2610,6 +3089,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -2620,6 +3101,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -2630,6 +3113,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -2640,6 +3125,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -2650,6 +3137,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -2660,6 +3149,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -2670,6 +3161,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -2680,6 +3173,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -2690,6 +3185,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -2700,6 +3197,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -2710,6 +3209,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -2720,6 +3221,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -2730,6 +3233,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -2740,6 +3245,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -2750,6 +3257,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -2760,6 +3269,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -2770,6 +3281,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -2780,6 +3293,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -2790,6 +3305,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -2800,6 +3317,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -2810,6 +3329,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -2820,6 +3341,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -2830,6 +3353,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -2840,6 +3365,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -2850,6 +3377,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -2860,6 +3389,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -2870,6 +3401,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -2880,6 +3413,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -2890,6 +3425,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -2900,6 +3437,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -2910,6 +3449,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -2920,6 +3461,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -2930,6 +3473,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -2940,6 +3485,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -2950,6 +3497,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -2960,6 +3509,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -2970,6 +3521,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -2980,6 +3533,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -2990,6 +3545,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -3000,6 +3557,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -3010,6 +3569,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -3020,6 +3581,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -3030,6 +3593,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -3040,6 +3605,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -3050,6 +3617,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -3060,6 +3629,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -3070,6 +3641,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -3080,6 +3653,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -3090,6 +3665,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -3100,6 +3677,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -3110,6 +3689,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -3120,6 +3701,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -3130,6 +3713,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -3140,6 +3725,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -3150,6 +3737,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -3160,6 +3749,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -3170,6 +3761,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -3180,6 +3773,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -3190,6 +3785,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -3200,6 +3797,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -3210,6 +3809,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -3220,6 +3821,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -3230,6 +3833,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -3240,6 +3845,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -3250,6 +3857,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -3260,6 +3869,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -3270,6 +3881,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -3280,6 +3893,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -3290,6 +3905,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -3300,6 +3917,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -3310,6 +3929,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -3320,6 +3941,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -3330,6 +3953,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -3340,6 +3965,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -3350,6 +3977,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -3360,6 +3989,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -3370,6 +4001,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -3380,6 +4013,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -3390,6 +4025,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -3400,6 +4037,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -3410,6 +4049,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -3420,6 +4061,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -3430,6 +4073,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -3440,6 +4085,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -3450,6 +4097,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -3460,6 +4109,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -3470,6 +4121,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -3480,6 +4133,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -3490,6 +4145,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -3500,6 +4157,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -3510,6 +4169,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -3520,6 +4181,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -3530,6 +4193,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -3540,6 +4205,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -3550,6 +4217,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -3560,6 +4229,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -3570,6 +4241,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -3580,6 +4253,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -3590,6 +4265,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -3600,6 +4277,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -3610,6 +4289,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -3620,6 +4301,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -3630,6 +4313,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -3640,6 +4325,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -3650,6 +4337,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -3660,6 +4349,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -3670,6 +4361,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -3680,6 +4373,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -3690,6 +4385,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -3700,6 +4397,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -3710,6 +4409,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -3720,6 +4421,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -3730,6 +4433,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -3740,6 +4445,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -3750,6 +4457,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -3760,6 +4469,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -3770,6 +4481,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -3780,6 +4493,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -3790,6 +4505,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -3800,6 +4517,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -3810,6 +4529,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -3820,6 +4541,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -3830,6 +4553,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -3840,6 +4565,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -3850,6 +4577,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -3860,6 +4589,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -3870,6 +4601,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -3880,6 +4613,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -3890,6 +4625,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -3900,6 +4637,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -3910,6 +4649,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -3920,6 +4661,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -3930,6 +4673,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -3940,6 +4685,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -3950,6 +4697,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -3960,6 +4709,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -3970,6 +4721,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -3980,6 +4733,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -3990,6 +4745,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -4000,6 +4757,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -4010,6 +4769,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -4020,6 +4781,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -4030,6 +4793,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -4040,6 +4805,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -4050,6 +4817,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -4060,6 +4829,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -4070,6 +4841,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -4080,6 +4853,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -4090,6 +4865,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -4100,6 +4877,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -4110,6 +4889,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -4120,6 +4901,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -4130,6 +4913,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -4140,6 +4925,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -4150,6 +4937,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -4160,6 +4949,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -4170,6 +4961,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -4180,6 +4973,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -4190,6 +4985,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -4200,6 +4997,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -4210,6 +5009,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -4220,6 +5021,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -4230,6 +5033,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -4240,6 +5045,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -4250,6 +5057,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -4260,6 +5069,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -4270,6 +5081,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -4280,6 +5093,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -4290,6 +5105,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -4300,6 +5117,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -4310,6 +5129,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -4320,6 +5141,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -4330,6 +5153,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -4340,6 +5165,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -4350,6 +5177,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -4360,6 +5189,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -4370,6 +5201,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -4380,6 +5213,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -4390,6 +5225,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -4400,6 +5237,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -4410,6 +5249,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -4420,6 +5261,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -4430,6 +5273,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -4440,6 +5285,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -4450,6 +5297,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -4460,6 +5309,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -4470,6 +5321,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -4480,6 +5333,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -4490,6 +5345,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -4500,6 +5357,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -4510,6 +5369,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -4520,6 +5381,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -4530,6 +5393,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -4540,6 +5405,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -4550,6 +5417,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -4560,6 +5429,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -4570,6 +5441,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -4580,6 +5453,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -4590,6 +5465,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -4600,6 +5477,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -4610,6 +5489,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -4620,6 +5501,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -4630,6 +5513,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -4640,6 +5525,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -4650,6 +5537,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -4660,6 +5549,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -4670,6 +5561,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -4680,6 +5573,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -4690,6 +5585,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -4700,6 +5597,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -4710,6 +5609,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -4720,6 +5621,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -4730,6 +5633,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -4740,6 +5645,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -4750,6 +5657,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -4760,6 +5669,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -4770,6 +5681,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -4780,6 +5693,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -4790,6 +5705,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -4800,6 +5717,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -4810,6 +5729,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -4820,6 +5741,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -4830,6 +5753,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -4840,6 +5765,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -4850,6 +5777,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -4860,6 +5789,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -4870,6 +5801,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -4880,6 +5813,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -4890,6 +5825,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -4900,6 +5837,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -4910,6 +5849,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -4920,6 +5861,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -4930,6 +5873,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -4940,6 +5885,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -4950,6 +5897,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -4960,6 +5909,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -4970,6 +5921,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -4980,6 +5933,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -4990,6 +5945,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -5000,6 +5957,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -5010,6 +5969,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -5020,6 +5981,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -5030,6 +5993,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -5040,6 +6005,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -5050,6 +6017,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -5060,6 +6029,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -5070,6 +6041,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -5080,6 +6053,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -5090,6 +6065,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -5100,6 +6077,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -5110,6 +6089,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -5120,6 +6101,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -5130,6 +6113,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -5140,6 +6125,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -5150,6 +6137,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -5160,6 +6149,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -5170,6 +6161,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -5180,6 +6173,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -5190,6 +6185,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -5200,6 +6197,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -5210,6 +6209,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -5220,6 +6221,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -5230,6 +6233,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -5240,6 +6245,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -5250,6 +6257,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -5260,6 +6269,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -5270,6 +6281,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -5280,6 +6293,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -5290,6 +6305,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -5300,6 +6317,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -5310,6 +6329,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -5320,6 +6341,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -5330,6 +6353,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -5340,6 +6365,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -5350,6 +6377,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -5360,6 +6389,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -5370,6 +6401,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -5380,6 +6413,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -5390,6 +6425,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -5400,6 +6437,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -5410,6 +6449,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -5420,6 +6461,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -5430,6 +6473,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -5440,6 +6485,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -5450,6 +6497,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -5460,6 +6509,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -5470,6 +6521,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -5480,6 +6533,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -5490,6 +6545,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -5500,6 +6557,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -5510,6 +6569,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -5520,6 +6581,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -5530,6 +6593,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -5540,6 +6605,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -5550,6 +6617,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -5560,6 +6629,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -5570,6 +6641,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -5580,6 +6653,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -5590,6 +6665,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -5600,6 +6677,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -5610,6 +6689,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -5620,6 +6701,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -5630,6 +6713,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -5640,6 +6725,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -5650,6 +6737,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -5660,6 +6749,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -5670,6 +6761,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -5680,6 +6773,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -5690,6 +6785,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -5700,6 +6797,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -5710,6 +6809,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -5720,6 +6821,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -5730,6 +6833,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -5740,6 +6845,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -5750,6 +6857,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -5760,6 +6869,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -5770,6 +6881,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -5780,6 +6893,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -5790,6 +6905,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -5800,6 +6917,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -5810,6 +6929,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -5820,6 +6941,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -5830,6 +6953,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -5840,6 +6965,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -5850,6 +6977,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -5860,6 +6989,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -5870,6 +7001,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -5880,6 +7013,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -5890,6 +7025,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -5900,6 +7037,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -5910,6 +7049,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -5920,6 +7061,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -5930,6 +7073,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -5940,6 +7085,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -5950,6 +7097,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -5960,6 +7109,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -5970,6 +7121,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -5980,6 +7133,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -5990,6 +7145,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -6000,6 +7157,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -6010,6 +7169,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -6020,6 +7181,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -6030,6 +7193,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -6040,6 +7205,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -6050,6 +7217,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -6060,6 +7229,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -6070,6 +7241,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -6080,6 +7253,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -6090,6 +7265,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -6100,6 +7277,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -6110,6 +7289,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -6120,6 +7301,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -6130,6 +7313,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -6140,6 +7325,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -6150,6 +7337,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -6160,6 +7349,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -6170,6 +7361,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -6180,6 +7373,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -6190,6 +7385,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -6200,6 +7397,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -6210,6 +7409,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -6220,6 +7421,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -6230,6 +7433,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -6240,6 +7445,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -6250,6 +7457,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -6260,6 +7469,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -6270,6 +7481,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -6280,6 +7493,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -6290,6 +7505,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -6300,6 +7517,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -6310,6 +7529,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -6320,6 +7541,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -6330,6 +7553,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -6340,6 +7565,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -6350,6 +7577,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -6360,6 +7589,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -6370,6 +7601,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -6380,6 +7613,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -6390,6 +7625,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -6400,6 +7637,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -6410,6 +7649,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -6420,6 +7661,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -6430,6 +7673,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -6440,6 +7685,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -6450,6 +7697,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -6460,6 +7709,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -6470,6 +7721,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -6480,6 +7733,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -6490,6 +7745,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -6500,6 +7757,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -6510,6 +7769,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -6520,6 +7781,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -6530,6 +7793,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -6540,6 +7805,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -6550,6 +7817,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -6560,6 +7829,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -6570,6 +7841,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -6580,6 +7853,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -6590,6 +7865,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -6600,6 +7877,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -6610,6 +7889,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -6620,6 +7901,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -6630,6 +7913,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -6640,6 +7925,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -6650,6 +7937,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -6660,6 +7949,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -6670,6 +7961,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -6680,6 +7973,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -6690,6 +7985,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -6700,6 +7997,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -6710,6 +8009,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -6720,6 +8021,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -6730,6 +8033,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -6740,6 +8045,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -6750,6 +8057,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -6760,6 +8069,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -6770,6 +8081,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -6780,6 +8093,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -6790,6 +8105,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -6800,6 +8117,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -6810,6 +8129,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -6820,6 +8141,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -6830,6 +8153,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -6840,6 +8165,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -6850,6 +8177,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -6860,6 +8189,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -6870,6 +8201,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -6880,6 +8213,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -6890,6 +8225,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -6900,6 +8237,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -6910,6 +8249,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -6920,6 +8261,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -6930,6 +8273,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -6940,6 +8285,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -6950,6 +8297,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -6960,6 +8309,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -6970,6 +8321,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -6980,6 +8333,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -6990,6 +8345,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -7000,6 +8357,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -7010,6 +8369,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -7020,6 +8381,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -7030,6 +8393,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -7040,6 +8405,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -7050,6 +8417,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -7060,6 +8429,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -7070,6 +8441,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -7080,6 +8453,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -7090,6 +8465,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -7100,6 +8477,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -7110,6 +8489,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -7120,6 +8501,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -7130,6 +8513,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -7140,6 +8525,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -7150,6 +8537,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -7160,6 +8549,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -7170,6 +8561,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -7180,6 +8573,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -7190,6 +8585,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -7200,6 +8597,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -7210,6 +8609,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -7220,6 +8621,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -7230,6 +8633,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -7240,6 +8645,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -7250,6 +8657,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -7260,6 +8669,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -7270,6 +8681,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -7280,6 +8693,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -7290,6 +8705,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -7300,6 +8717,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -7310,6 +8729,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -7320,6 +8741,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -7330,6 +8753,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -7340,6 +8765,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -7350,6 +8777,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -7360,6 +8789,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -7370,6 +8801,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -7380,6 +8813,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -7390,6 +8825,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -7400,6 +8837,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -7410,6 +8849,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -7420,6 +8861,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -7430,6 +8873,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -7440,6 +8885,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -7450,6 +8897,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -7460,6 +8909,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -7470,6 +8921,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -7480,6 +8933,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -7490,6 +8945,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -7500,6 +8957,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -7510,6 +8969,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -7520,6 +8981,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -7530,6 +8993,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -7540,6 +9005,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -7550,6 +9017,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -7560,6 +9029,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -7570,6 +9041,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -7580,6 +9053,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -7590,6 +9065,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -7600,6 +9077,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -7610,6 +9089,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -7620,6 +9101,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -7630,6 +9113,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -7640,6 +9125,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -7650,6 +9137,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -7660,6 +9149,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -7670,6 +9161,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -7680,6 +9173,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -7690,6 +9185,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -7700,6 +9197,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -7710,6 +9209,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -7720,6 +9221,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -7730,6 +9233,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -7740,6 +9245,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -7750,6 +9257,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -7760,6 +9269,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -7770,6 +9281,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -7780,6 +9293,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -7790,6 +9305,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -7800,6 +9317,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -7810,6 +9329,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -7820,6 +9341,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -7830,6 +9353,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -7840,6 +9365,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -7850,6 +9377,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -7860,6 +9389,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -7870,6 +9401,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -7880,6 +9413,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -7890,6 +9425,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -7900,6 +9437,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -7910,6 +9449,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -7920,6 +9461,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -7930,6 +9473,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -7940,6 +9485,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -7950,6 +9497,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -7960,6 +9509,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -7970,6 +9521,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -7980,6 +9533,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -7990,6 +9545,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -8000,6 +9557,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -8010,6 +9569,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -8020,6 +9581,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -8030,6 +9593,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -8040,6 +9605,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -8050,6 +9617,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -8060,6 +9629,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -8070,6 +9641,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -8080,6 +9653,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -8090,6 +9665,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -8100,6 +9677,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -8110,6 +9689,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -8120,6 +9701,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -8130,6 +9713,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -8140,6 +9725,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -8150,6 +9737,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -8160,6 +9749,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -8170,6 +9761,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -8180,6 +9773,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -8190,6 +9785,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -8200,6 +9797,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -8210,6 +9809,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -8220,6 +9821,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -8230,6 +9833,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -8240,6 +9845,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -8250,6 +9857,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -8260,6 +9869,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -8270,6 +9881,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -8280,6 +9893,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -8290,6 +9905,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -8300,6 +9917,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -8310,6 +9929,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -8320,6 +9941,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -8330,6 +9953,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -8340,6 +9965,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -8350,6 +9977,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -8360,6 +9989,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -8370,6 +10001,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -8380,6 +10013,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -8390,6 +10025,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -8400,6 +10037,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -8410,6 +10049,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -8420,6 +10061,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -8430,6 +10073,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -8440,6 +10085,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -8450,6 +10097,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -8460,6 +10109,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -8470,6 +10121,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -8480,6 +10133,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -8490,6 +10145,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -8500,6 +10157,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -8510,6 +10169,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -8520,6 +10181,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -8530,6 +10193,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -8540,6 +10205,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -8550,6 +10217,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -8560,6 +10229,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -8570,6 +10241,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -8580,6 +10253,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -8590,6 +10265,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -8600,6 +10277,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -8610,6 +10289,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -8620,6 +10301,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -8630,6 +10313,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -8640,6 +10325,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -8650,6 +10337,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -8660,6 +10349,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -8670,6 +10361,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -8680,6 +10373,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -8690,6 +10385,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -8700,6 +10397,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -8710,6 +10409,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -8720,6 +10421,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -8730,6 +10433,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -8740,6 +10445,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -8750,6 +10457,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -8760,6 +10469,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -8770,6 +10481,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -8780,6 +10493,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -8790,6 +10505,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -8800,6 +10517,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -8810,6 +10529,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -8820,6 +10541,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -8830,6 +10553,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -8840,6 +10565,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -8850,6 +10577,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -8860,6 +10589,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -8870,6 +10601,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -8880,6 +10613,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -8890,6 +10625,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -8900,6 +10637,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -8910,6 +10649,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -8920,6 +10661,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -8930,6 +10673,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -8940,6 +10685,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -8950,6 +10697,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -8960,6 +10709,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -8970,6 +10721,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -8980,6 +10733,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -8990,6 +10745,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -9000,6 +10757,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -9010,6 +10769,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -9020,6 +10781,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -9030,6 +10793,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -9040,6 +10805,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -9050,6 +10817,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -9060,6 +10829,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -9070,6 +10841,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -9080,6 +10853,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -9090,6 +10865,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -9100,6 +10877,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -9110,6 +10889,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -9120,6 +10901,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -9130,6 +10913,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -9140,6 +10925,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -9150,6 +10937,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -9160,6 +10949,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -9170,6 +10961,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -9180,6 +10973,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -9190,6 +10985,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -9200,6 +10997,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -9210,6 +11009,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -9220,6 +11021,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -9230,6 +11033,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -9240,6 +11045,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -9250,6 +11057,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -9260,6 +11069,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -9270,6 +11081,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -9280,6 +11093,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -9290,6 +11105,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -9300,6 +11117,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -9310,6 +11129,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -9320,6 +11141,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -9330,6 +11153,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -9340,6 +11165,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -9350,6 +11177,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -9360,6 +11189,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -9370,6 +11201,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -9380,6 +11213,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -9390,6 +11225,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -9400,6 +11237,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -9410,6 +11249,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -9420,6 +11261,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -9430,6 +11273,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -9440,6 +11285,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -9450,6 +11297,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -9460,6 +11309,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -9470,6 +11321,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -9480,6 +11333,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -9490,6 +11345,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -9500,6 +11357,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -9510,6 +11369,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -9520,6 +11381,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -9530,6 +11393,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -9540,6 +11405,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -9550,6 +11417,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -9560,6 +11429,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -9570,6 +11441,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -9580,6 +11453,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -9590,6 +11465,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -9600,6 +11477,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -9610,6 +11489,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -9620,6 +11501,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -9630,6 +11513,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -9640,6 +11525,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -9650,6 +11537,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -9660,6 +11549,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -9670,6 +11561,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -9680,6 +11573,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -9690,6 +11585,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -9700,6 +11597,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -9710,6 +11609,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -9720,6 +11621,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -9730,6 +11633,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -9740,6 +11645,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -9750,6 +11657,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -9760,6 +11669,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -9770,6 +11681,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -9780,6 +11693,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -9790,6 +11705,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -9800,6 +11717,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -9810,6 +11729,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -9820,6 +11741,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -9830,6 +11753,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -9840,6 +11765,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -9850,6 +11777,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -9860,6 +11789,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -9870,6 +11801,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -9880,6 +11813,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -9890,6 +11825,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -9900,6 +11837,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -9910,6 +11849,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -9920,6 +11861,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -9930,6 +11873,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -9940,6 +11885,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -9950,6 +11897,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -9960,6 +11909,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -9970,6 +11921,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -9980,6 +11933,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -9990,6 +11945,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -10000,6 +11957,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -10010,6 +11969,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -10020,6 +11981,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -10030,6 +11993,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -10040,6 +12005,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -10050,6 +12017,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -10060,6 +12029,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -10070,6 +12041,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -10080,6 +12053,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -10090,6 +12065,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -10100,6 +12077,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -10110,6 +12089,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -10120,6 +12101,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -10130,6 +12113,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -10140,6 +12125,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -10150,6 +12137,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -10160,6 +12149,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -10170,6 +12161,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -10180,6 +12173,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -10190,6 +12185,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -10200,6 +12197,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -10210,6 +12209,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -10220,6 +12221,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -10230,6 +12233,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -10240,6 +12245,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -10250,6 +12257,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -10260,6 +12269,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -10270,6 +12281,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -10280,6 +12293,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -10290,6 +12305,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -10300,6 +12317,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -10310,6 +12329,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -10320,6 +12341,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -10330,6 +12353,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -10340,6 +12365,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -10350,6 +12377,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -10360,6 +12389,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -10370,6 +12401,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -10380,6 +12413,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -10390,6 +12425,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -10400,6 +12437,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -10410,6 +12449,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -10420,6 +12461,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -10430,6 +12473,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -10440,6 +12485,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -10450,6 +12497,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -10460,6 +12509,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -10470,6 +12521,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -10480,6 +12533,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -10490,6 +12545,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -10500,6 +12557,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -10510,6 +12569,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -10520,6 +12581,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -10530,6 +12593,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -10540,6 +12605,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -10550,6 +12617,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -10560,6 +12629,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -10570,6 +12641,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -10580,6 +12653,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -10590,6 +12665,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -10600,6 +12677,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -10610,6 +12689,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -10620,6 +12701,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -10630,6 +12713,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -10640,6 +12725,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -10650,6 +12737,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -10660,6 +12749,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -10670,6 +12761,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -10680,6 +12773,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -10690,6 +12785,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -10700,6 +12797,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -10710,6 +12809,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -10720,6 +12821,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -10730,6 +12833,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -10740,6 +12845,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -10750,6 +12857,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -10760,6 +12869,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -10770,6 +12881,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -10780,6 +12893,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -10790,6 +12905,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -10800,6 +12917,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -10810,6 +12929,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -10820,6 +12941,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -10830,6 +12953,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -10840,6 +12965,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -10850,6 +12977,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -10860,6 +12989,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -10870,6 +13001,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -10880,6 +13013,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -10890,6 +13025,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -10900,6 +13037,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -10910,6 +13049,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -10920,6 +13061,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -10930,6 +13073,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -10940,6 +13085,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -10950,6 +13097,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -10960,6 +13109,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -10970,6 +13121,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -10980,6 +13133,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -10990,6 +13145,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -11000,6 +13157,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -11010,6 +13169,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -11020,6 +13181,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -11030,6 +13193,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -11040,6 +13205,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -11050,6 +13217,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -11060,6 +13229,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -11070,6 +13241,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -11080,6 +13253,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -11090,6 +13265,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -11100,6 +13277,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -11110,6 +13289,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -11120,6 +13301,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -11130,6 +13313,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -11140,6 +13325,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -11150,6 +13337,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -11160,6 +13349,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -11170,6 +13361,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -11180,6 +13373,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -11190,6 +13385,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -11200,6 +13397,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -11210,6 +13409,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -11220,6 +13421,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -11230,6 +13433,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -11240,6 +13445,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -11250,6 +13457,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -11260,6 +13469,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -11270,6 +13481,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -11280,6 +13493,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -11290,6 +13505,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -11300,6 +13517,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -11310,6 +13529,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -11320,6 +13541,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -11330,6 +13553,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -11340,6 +13565,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -11350,6 +13577,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -11360,6 +13589,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -11370,6 +13601,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -11380,6 +13613,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -11390,6 +13625,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -11400,6 +13637,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -11410,6 +13649,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -11420,6 +13661,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -11430,6 +13673,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -11440,6 +13685,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -11450,6 +13697,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -11460,6 +13709,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -11470,6 +13721,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -11480,6 +13733,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -11490,6 +13745,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -11500,6 +13757,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -11510,6 +13769,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -11520,6 +13781,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -11530,6 +13793,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -11540,6 +13805,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -11550,6 +13817,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -11560,6 +13829,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -11570,6 +13841,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -11580,6 +13853,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -11590,6 +13865,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -11600,6 +13877,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -11610,6 +13889,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -11620,6 +13901,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -11630,6 +13913,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -11640,6 +13925,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -11650,6 +13937,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -11660,6 +13949,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -11670,6 +13961,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -11680,6 +13973,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -11690,6 +13985,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -11700,6 +13997,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -11710,6 +14009,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -11720,6 +14021,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -11730,6 +14033,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -11740,6 +14045,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -11750,6 +14057,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -11760,6 +14069,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -11770,6 +14081,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -11780,6 +14093,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -11790,6 +14105,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -11800,6 +14117,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -11810,6 +14129,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -11820,6 +14141,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -11830,6 +14153,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -11840,6 +14165,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -11850,6 +14177,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -11860,6 +14189,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -11870,6 +14201,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -11880,6 +14213,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -11890,6 +14225,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -11900,6 +14237,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -11910,6 +14249,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -11920,6 +14261,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -11930,6 +14273,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -11940,6 +14285,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -11950,6 +14297,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -11960,6 +14309,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -11970,6 +14321,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -11980,6 +14333,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -11990,6 +14345,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -12000,6 +14357,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -12010,6 +14369,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -12020,6 +14381,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -12030,6 +14393,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -12040,6 +14405,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -12050,6 +14417,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -12060,6 +14429,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -12070,6 +14441,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -12080,6 +14453,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -12090,6 +14465,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -12100,6 +14477,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -12110,6 +14489,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -12120,16 +14501,128 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
 ### buddy/bootcamp/README.md
 
 - Status: implementation_reference_missing
+- Actionable claim lines: 15
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Execution verified: No; run-specific evidence is required.
+
+### buddy/bootcamp/prompts/buddy-university-teacher-authoring.md
+
+- Status: implementation_reference_missing
+- Actionable claim lines: 9
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Execution verified: No; run-specific evidence is required.
+
+### buddy/bootcamp/prompts/freecodecamp-video-study-guide-authoring.md
+
+- Status: implementation_reference_missing
+- Actionable claim lines: 7
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Execution verified: No; run-specific evidence is required.
+
+### buddy/bootcamp/prompts/open-source-study-guide-authoring.md
+
+- Status: implementation_reference_missing
+- Actionable claim lines: 8
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Execution verified: No; run-specific evidence is required.
+
+### buddy/bootcamp/sources/DREAMCO_MODEL_FOUNDRY_ROADMAP.md
+
+- Status: test_reference_missing
+- Actionable claim lines: 7
+- Implementation paths: website/pretrained-model-store.html
+- Test paths: None detected
+- Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
+- Next action: Add focused tests and acceptance evidence for the referenced implementation.
+- Execution verified: No; run-specific evidence is required.
+
+### buddy/bootcamp/sources/MULTI_SOURCE_STUDY_AND_MODEL_BUILD.md
+
+- Status: test_reference_missing
+- Actionable claim lines: 18
+- Implementation paths: tools/build_division_45m_model_blueprints.py, tools/organize_buddy_learning_assets.py
+- Test paths: None detected
+- Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
+- Next action: Add focused tests and acceptance evidence for the referenced implementation.
+- Execution verified: No; run-specific evidence is required.
+
+### buddy/bootcamp/sources/TRANSCRIPT_EVALUATION.md
+
+- Status: implementation_reference_missing
+- Actionable claim lines: 7
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Execution verified: No; run-specific evidence is required.
+
+### buddy/bootcamp/sources/freecodecamp/README.md
+
+- Status: implementation_reference_missing
 - Actionable claim lines: 1
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Execution verified: No; run-specific evidence is required.
+
+### buddy/bootcamp/templates/original-lesson.md
+
+- Status: implementation_reference_missing
+- Actionable claim lines: 1
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Execution verified: No; run-specific evidence is required.
+
+### buddy/bootcamp/templates/study-guide-template.md
+
+- Status: reference_only
+- Actionable claim lines: 0
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -12140,6 +14633,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -12150,6 +14645,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -12160,6 +14657,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -12170,6 +14669,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -12180,6 +14681,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -12190,6 +14693,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -12200,6 +14705,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -12210,6 +14717,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -12220,6 +14729,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -12230,6 +14741,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -12240,6 +14753,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -12250,6 +14765,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -12260,17 +14777,21 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: buddy/easy_github/skills_00.json
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Add focused tests and acceptance evidence for the referenced implementation.
 - Execution verified: No; run-specific evidence is required.
 
 ### buddy/learning/README.md
 
-- Status: implementation_reference_missing
-- Actionable claim lines: 1
-- Implementation paths: None detected
+- Status: test_reference_missing
+- Actionable claim lines: 3
+- Implementation paths: buddy/datasets/unknown_router.py, tools/buddy_library_knowledge.py, tools/create_buddy_library_guide_draft.py
 - Test paths: None detected
 - Missing paths: None detected
-- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Path templates: None detected
+- Machine-local paths: None detected
+- Next action: Add focused tests and acceptance evidence for the referenced implementation.
 - Execution verified: No; run-specific evidence is required.
 
 ### buddy/learning/REASONING_AND_LEARNING.md
@@ -12280,6 +14801,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -12290,16 +14813,20 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
 ### buddy/learning/learning_cycle_contract.md
 
 - Status: implementation_reference_missing
-- Actionable claim lines: 2
+- Actionable claim lines: 4
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -12310,6 +14837,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -12320,6 +14849,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -12330,17 +14861,21 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
 ### buddy_os/README.md
 
-- Status: broken_path_references
+- Status: implementation_and_test_paths_referenced_not_verified
 - Actionable claim lines: 5
 - Implementation paths: buddy_os/integration/runtime_map.yaml, dreamco_platform/automation/task_runner.py, server/buddy-model-policy.ts, server/fleet-runtime.ts, tools/buddy_cli.py, tools/buddy_local_bridge.py
 - Test paths: tests/test_buddy_os_contracts.py
-- Missing paths: github/workflows/buddy-actions-test-lab.yml, github/workflows/buddy-os-contracts.yml, github/workflows/dreamco-control-center.yml
-- Next action: Repair or explicitly supersede the missing repository path references.
+- Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
+- Next action: Run the linked tests and attach CI, benchmark, regression, and runtime evidence before promotion.
 - Execution verified: No; run-specific evidence is required.
 
 ### capabilities/BUDDY_CAPABILITIES_CATALOG.md
@@ -12350,6 +14885,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -12360,6 +14897,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -12370,6 +14909,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -12380,6 +14921,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -12390,6 +14933,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -12400,6 +14945,20 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Execution verified: No; run-specific evidence is required.
+
+### data/buddy-study-guides/README.md
+
+- Status: implementation_reference_missing
+- Actionable claim lines: 2
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -12410,17 +14969,21 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
 ### data/dreamco_knowledge/assets/_candidates/edu_cs_11.0701/v2/README.md
 
-- Status: broken_path_references
+- Status: test_reference_missing
 - Actionable claim lines: 5
 - Implementation paths: tools/score_data_package_candidate.py
 - Test paths: None detected
-- Missing paths: data/dreamco_knowledge/evidence/<kind>/<asset_id>/<YYYYMMDD>-<NN>.json
-- Next action: Repair or explicitly supersede the missing repository path references.
+- Missing paths: None detected
+- Path templates: data/dreamco_knowledge/evidence/<kind>/<asset_id>/<YYYYMMDD>-<NN>.json
+- Machine-local paths: None detected
+- Next action: Add focused tests and acceptance evidence for the referenced implementation.
 - Execution verified: No; run-specific evidence is required.
 
 ### data/dreamco_knowledge/assets/_candidates/edu_cs_11.0701/v3/README.md
@@ -12429,7 +14992,9 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Actionable claim lines: 8
 - Implementation paths: tools/license_provenance_gate.py, tools/score_data_package_candidate.py
 - Test paths: tests/test_license_provenance_gate.py
-- Missing paths: authored/target_overrides.json, data/practice_tasks.json, projections/*.candidate.json, verification/diversity_report.json, verification/leakage_report.json, verification/regression_and_evidence_check.json
+- Missing paths: authored/target_overrides.json, data/practice_tasks.json, verification/diversity_report.json, verification/leakage_report.json, verification/regression_and_evidence_check.json
+- Path templates: projections/*.candidate.json
+- Machine-local paths: None detected
 - Next action: Repair or explicitly supersede the missing repository path references.
 - Execution verified: No; run-specific evidence is required.
 
@@ -12439,7 +15004,9 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Actionable claim lines: 14
 - Implementation paths: tools/license_provenance_gate.py, tools/minimal_json_schema.py, tools/score_data_package_candidate.py
 - Test paths: tests/test_license_provenance_gate.py
-- Missing paths: data/practice_tasks.json, docs/data_dictionary.json, repo>/<evidence_root>/<kind>/<asset_id>/<run>.json, repo_root>/<evidence_root>/<kind>/<asset_id>/<run>.json, tests/test_build.py, verification/gate_all_1044_summary.json, verification/leakage_report_v4.json, verification/license_gate_cs_without_repo_root.json, verification/license_gate_generated_sample_14.4802.json
+- Missing paths: data/practice_tasks.json, docs/data_dictionary.json, tests/test_build.py, verification/gate_all_1044_summary.json, verification/leakage_report_v4.json, verification/license_gate_cs_without_repo_root.json, verification/license_gate_generated_sample_14.4802.json
+- Path templates: <repo>/<evidence_root>/<kind>/<asset_id>/<run>.json, <repo_root>/<evidence_root>/<kind>/<asset_id>/<run>.json
+- Machine-local paths: None detected
 - Next action: Repair or explicitly supersede the missing repository path references.
 - Execution verified: No; run-specific evidence is required.
 
@@ -12449,7 +15016,9 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Actionable claim lines: 7
 - Implementation paths: None detected
 - Test paths: None detected
-- Missing paths: authored/*.json, data/practice_tasks.json, evidence_root>/holdout/edu-cs-11.0701/<run>.json
+- Missing paths: data/practice_tasks.json
+- Path templates: <evidence_root>/holdout/edu-cs-11.0701/<run>.json, authored/*.json
+- Machine-local paths: None detected
 - Next action: Repair or explicitly supersede the missing repository path references.
 - Execution verified: No; run-specific evidence is required.
 
@@ -12460,6 +15029,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -12470,6 +15041,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -12480,6 +15053,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -12490,6 +15065,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: tools/build_universal_work_ai_catalog.py, tools/license_provenance_gate.py
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Add focused tests and acceptance evidence for the referenced implementation.
 - Execution verified: No; run-specific evidence is required.
 
@@ -12500,6 +15077,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -12510,6 +15089,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: tools/build_dp_onet_occ_syn_sample.py
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Add focused tests and acceptance evidence for the referenced implementation.
 - Execution verified: No; run-specific evidence is required.
 
@@ -12520,6 +15101,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: tools/build_dp_onet_occ_syn_sample.py
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Add focused tests and acceptance evidence for the referenced implementation.
 - Execution verified: No; run-specific evidence is required.
 
@@ -12530,6 +15113,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: tools/score_data_package_dataset.py
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Add focused tests and acceptance evidence for the referenced implementation.
 - Execution verified: No; run-specific evidence is required.
 
@@ -12540,7 +15125,21 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Execution verified: No; run-specific evidence is required.
+
+### data/onet/README.md
+
+- Status: test_reference_missing
+- Actionable claim lines: 0
+- Implementation paths: tools/build_onet_task_index.py
+- Test paths: None detected
+- Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
+- Next action: Add focused tests and acceptance evidence for the referenced implementation.
 - Execution verified: No; run-specific evidence is required.
 
 ### database/migrations/README_DIVISION_DATASET_CATALOG.md
@@ -12550,6 +15149,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: buddy/datasets/postgres_catalog.py
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Add focused tests and acceptance evidence for the referenced implementation.
 - Execution verified: No; run-specific evidence is required.
 
@@ -12560,6 +15161,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -12570,6 +15173,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -12580,6 +15185,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -12590,6 +15197,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -12600,6 +15209,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -12610,6 +15221,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -12620,6 +15233,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -12630,6 +15245,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -12640,6 +15257,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -12650,6 +15269,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -12660,6 +15281,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -12670,6 +15293,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -12680,6 +15305,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -12690,6 +15317,20 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Execution verified: No; run-specific evidence is required.
+
+### docs/BUDDY_13_BENCHMARK_PROGRAM_GUIDES.md
+
+- Status: implementation_reference_missing
+- Actionable claim lines: 1
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -12700,6 +15341,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: buddy/gpt_baseline/tiny_gpt.py, tools/run_buddy_gpt_baseline.py
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Add focused tests and acceptance evidence for the referenced implementation.
 - Execution verified: No; run-specific evidence is required.
 
@@ -12710,6 +15353,56 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Execution verified: No; run-specific evidence is required.
+
+### docs/BUDDY_25M_CPU_ARCHITECTURE_PREFLIGHT.md
+
+- Status: implementation_reference_missing
+- Actionable claim lines: 2
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Execution verified: No; run-specific evidence is required.
+
+### docs/BUDDY_25M_CPU_LLM_RESOURCE_CATALOG.md
+
+- Status: reference_only
+- Actionable claim lines: 0
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Execution verified: No; run-specific evidence is required.
+
+### docs/BUDDY_25M_CPU_LLM_STUDY_GUIDE.md
+
+- Status: implementation_reference_missing
+- Actionable claim lines: 12
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Execution verified: No; run-specific evidence is required.
+
+### docs/BUDDY_55_DIVISION_SPECIALIST_COURSES.md
+
+- Status: implementation_reference_missing
+- Actionable claim lines: 1
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -12720,6 +15413,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -12730,6 +15425,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -12740,6 +15437,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -12750,6 +15449,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: website/actions.html
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Add focused tests and acceptance evidence for the referenced implementation.
 - Execution verified: No; run-specific evidence is required.
 
@@ -12760,6 +15461,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -12770,6 +15473,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -12780,6 +15485,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -12790,6 +15497,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -12800,6 +15509,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -12810,16 +15521,20 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
 ### docs/BUDDY_ADDITIONAL_TAXONOMY_SYSTEMS.md
 
 - Status: test_reference_missing
-- Actionable claim lines: 746
+- Actionable claim lines: 748
 - Implementation paths: website/category-systems.html, website/data/additional-taxonomy-system-registry.json
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Add focused tests and acceptance evidence for the referenced implementation.
 - Execution verified: No; run-specific evidence is required.
 
@@ -12830,7 +15545,21 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Execution verified: No; run-specific evidence is required.
+
+### docs/BUDDY_AI_COLLEGE_TRAINING_STANDARD.md
+
+- Status: broken_path_references
+- Actionable claim lines: 13
+- Implementation paths: tools/build_dreamco_bootcamp_tokenizer_manifest.py
+- Test paths: None detected
+- Missing paths: data/buddy-authorized-corpora/dreamco-bootcamp-core-v1-manifest.json
+- Path templates: None detected
+- Machine-local paths: None detected
+- Next action: Repair or explicitly supersede the missing repository path references.
 - Execution verified: No; run-specific evidence is required.
 
 ### docs/BUDDY_AUTOMATIC_BOT_ONBOARDING.md
@@ -12840,6 +15569,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -12850,6 +15581,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -12860,6 +15593,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -12870,6 +15605,32 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Execution verified: No; run-specific evidence is required.
+
+### docs/BUDDY_BENCHMARK_EVIDENCE_EVALUATOR.md
+
+- Status: reference_only
+- Actionable claim lines: 0
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Execution verified: No; run-specific evidence is required.
+
+### docs/BUDDY_BENCHMARK_GUIDE_BACKLOG.md
+
+- Status: implementation_reference_missing
+- Actionable claim lines: 1
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -12880,6 +15641,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -12890,6 +15653,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -12900,6 +15665,20 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Execution verified: No; run-specific evidence is required.
+
+### docs/BUDDY_BOOTCAMP_FREE_RESOURCE_MAP.md
+
+- Status: implementation_reference_missing
+- Actionable claim lines: 13
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -12910,6 +15689,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -12920,6 +15701,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -12930,6 +15713,20 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Execution verified: No; run-specific evidence is required.
+
+### docs/BUDDY_BYTE_BPE_TRAINER.md
+
+- Status: implementation_reference_missing
+- Actionable claim lines: 1
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -12940,6 +15737,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -12950,17 +15749,45 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Execution verified: No; run-specific evidence is required.
+
+### docs/BUDDY_CAPABILITY_MASTERY_AND_REVENUE_CURRICULUM.md
+
+- Status: implementation_reference_missing
+- Actionable claim lines: 22
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
 ### docs/BUDDY_CI_REPAIR_DATASETS_DATABASES_BENCHMARKS_AND_DISTILLATION.md
 
-- Status: broken_path_references
+- Status: implementation_reference_missing
 - Actionable claim lines: 10
 - Implementation paths: None detected
 - Test paths: None detected
-- Missing paths: github/workflows/buddy-ci-safe-repair.yml, github/workflows/buddy-failure-learning-regression.yml
-- Next action: Repair or explicitly supersede the missing repository path references.
+- Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Execution verified: No; run-specific evidence is required.
+
+### docs/BUDDY_CONNECTION_SETUP_GUIDES.md
+
+- Status: implementation_reference_missing
+- Actionable claim lines: 4
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
 ### docs/BUDDY_CONTINUOUS_LEARNING_OPERATING_MODEL.md
@@ -12970,17 +15797,33 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: tools/buddy_masterbot_training_lane.py
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Add focused tests and acceptance evidence for the referenced implementation.
 - Execution verified: No; run-specific evidence is required.
 
 ### docs/BUDDY_CONTROL_PLANE.md
 
-- Status: broken_path_references
+- Status: implementation_and_test_paths_referenced_not_verified
 - Actionable claim lines: 14
 - Implementation paths: tools/buddy_control_plane.py, website/buddy-control.html, website/data/buddy-control-status.json
 - Test paths: tests/test_buddy_control_plane.py
-- Missing paths: github/workflows/buddy-command-router.yml
-- Next action: Repair or explicitly supersede the missing repository path references.
+- Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
+- Next action: Run the linked tests and attach CI, benchmark, regression, and runtime evidence before promotion.
+- Execution verified: No; run-specific evidence is required.
+
+### docs/BUDDY_DATABASE_AND_DATASET_STUDY_TRACK.md
+
+- Status: implementation_reference_missing
+- Actionable claim lines: 8
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
 ### docs/BUDDY_DATABASE_ROUTING_CONTRACT.md
@@ -12990,6 +15833,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -13000,6 +15845,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -13010,6 +15857,20 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Execution verified: No; run-specific evidence is required.
+
+### docs/BUDDY_DATASET_PROFILE_BUILDER.md
+
+- Status: implementation_reference_missing
+- Actionable claim lines: 5
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -13020,6 +15881,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -13030,17 +15893,45 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Execution verified: No; run-specific evidence is required.
+
+### docs/BUDDY_DISTILLATION_EXCELLENCE_STANDARD.md
+
+- Status: implementation_reference_missing
+- Actionable claim lines: 9
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
 ### docs/BUDDY_DISTILL_CONTRACT.md
 
-- Status: broken_path_references
+- Status: implementation_and_test_paths_referenced_not_verified
 - Actionable claim lines: 0
 - Implementation paths: tools/check_buddy_distill_gate.py
 - Test paths: tests/test_check_buddy_distill_gate.py
-- Missing paths: github/workflows/buddy-distill-gate.yml
-- Next action: Repair or explicitly supersede the missing repository path references.
+- Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
+- Next action: Run the linked tests and attach CI, benchmark, regression, and runtime evidence before promotion.
+- Execution verified: No; run-specific evidence is required.
+
+### docs/BUDDY_DIVISION_MASTERBOT_LEARNING_PATHS.md
+
+- Status: test_reference_missing
+- Actionable claim lines: 1
+- Implementation paths: shared/division-production-contract.ts
+- Test paths: None detected
+- Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
+- Next action: Add focused tests and acceptance evidence for the referenced implementation.
 - Execution verified: No; run-specific evidence is required.
 
 ### docs/BUDDY_DREAMCO_MASTER_VISION.md
@@ -13050,6 +15941,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -13060,6 +15953,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -13070,6 +15965,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -13080,6 +15977,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -13090,7 +15989,21 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: tools/buddy_failure_learning.py
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Add focused tests and acceptance evidence for the referenced implementation.
+- Execution verified: No; run-specific evidence is required.
+
+### docs/BUDDY_FREECODECAMP_22_CATEGORY_STUDY_GUIDES.md
+
+- Status: reference_only
+- Actionable claim lines: 0
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
 ### docs/BUDDY_FRONTIER_EVALUATION_HARNESS.md
@@ -13100,6 +16013,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -13109,7 +16024,21 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Actionable claim lines: 1
 - Implementation paths: None detected
 - Test paths: None detected
-- Missing paths: config/buddy/approved-models-allowlist.json, evidence/frontier/<suite>.bundle.json
+- Missing paths: config/buddy/approved-models-allowlist.json
+- Path templates: evidence/frontier/<suite>.bundle.json
+- Machine-local paths: None detected
+- Next action: Repair or explicitly supersede the missing repository path references.
+- Execution verified: No; run-specific evidence is required.
+
+### docs/BUDDY_FULL_FLEET_EXECUTION_AND_REVENUE_PLANS.md
+
+- Status: broken_path_references
+- Actionable claim lines: 8
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: config/generated/buddy-fleet-execution-map.json
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Repair or explicitly supersede the missing repository path references.
 - Execution verified: No; run-specific evidence is required.
 
@@ -13120,6 +16049,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -13130,6 +16061,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -13140,6 +16073,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -13150,6 +16085,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -13160,16 +16097,20 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
 ### docs/BUDDY_GPT_STYLE_MODEL_BOOTCAMP.md
 
 - Status: implementation_and_test_paths_referenced_not_verified
-- Actionable claim lines: 19
+- Actionable claim lines: 20
 - Implementation paths: buddy/bootcamp/buddy_bootcamp.yaml, buddy/gpt_baseline/tiny_gpt.py, buddy/learning/study_methods.py, tools/bootcamp_lesson_planner.py, tools/run_buddy_gpt_baseline.py
 - Test paths: tests/test_buddy_gpt_baseline.py
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Run the linked tests and attach CI, benchmark, regression, and runtime evidence before promotion.
 - Execution verified: No; run-specific evidence is required.
 
@@ -13180,17 +16121,57 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
 ### docs/BUDDY_HF_PACKAGES.md
 
-- Status: broken_path_references
+- Status: test_reference_missing
 - Actionable claim lines: 0
 - Implementation paths: website/data/buddy-hf-packages.json
 - Test paths: None detected
-- Missing paths: github/workflows/sync-to-huggingface.yml
-- Next action: Repair or explicitly supersede the missing repository path references.
+- Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
+- Next action: Add focused tests and acceptance evidence for the referenced implementation.
+- Execution verified: No; run-specific evidence is required.
+
+### docs/BUDDY_HUGGINGFACE_18_ECOSYSTEM_MODULE_GUIDES.md
+
+- Status: reference_only
+- Actionable claim lines: 0
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Execution verified: No; run-specific evidence is required.
+
+### docs/BUDDY_HUGGINGFACE_TASK_FAMILY_PLAYBOOKS.md
+
+- Status: implementation_reference_missing
+- Actionable claim lines: 1
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Execution verified: No; run-specific evidence is required.
+
+### docs/BUDDY_HUMAN_CENTRIC_MULTIMODAL_REQUIREMENTS.md
+
+- Status: implementation_reference_missing
+- Actionable claim lines: 6
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
 ### docs/BUDDY_LAPTOP_APP_TESTING.md
@@ -13200,6 +16181,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -13210,6 +16193,32 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Execution verified: No; run-specific evidence is required.
+
+### docs/BUDDY_LEARNING_ASSETS_AND_PROGRESS.md
+
+- Status: implementation_reference_missing
+- Actionable claim lines: 6
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Execution verified: No; run-specific evidence is required.
+
+### docs/BUDDY_LIBRARY_MASTERY_WORK_QUEUE.md
+
+- Status: implementation_reference_missing
+- Actionable claim lines: 3
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -13220,6 +16229,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -13230,7 +16241,45 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: tools/audit_markdown_implementation_gaps.py, website/data/markdown-implementation-gap-audit.json, website/markdown-gap-audit.html
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Add focused tests and acceptance evidence for the referenced implementation.
+- Execution verified: No; run-specific evidence is required.
+
+### docs/BUDDY_MODEL_FOUNDRY_25M_PROFILE_INTEGRATION.md
+
+- Status: implementation_reference_missing
+- Actionable claim lines: 1
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Execution verified: No; run-specific evidence is required.
+
+### docs/BUDDY_MODEL_PURPOSE_AND_DEPLOYMENT_PROFILES.md
+
+- Status: implementation_reference_missing
+- Actionable claim lines: 15
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Execution verified: No; run-specific evidence is required.
+
+### docs/BUDDY_MODEL_REGISTRY_AND_USER_DEFINED_SIZES.md
+
+- Status: implementation_reference_missing
+- Actionable claim lines: 3
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
 ### docs/BUDDY_OBSERVED_CAPABILITY_RUNTIME.md
@@ -13240,7 +16289,57 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: buddy/capabilities/runtime.py, buddy/store/own_model.py, server/open-model-lab-policy.ts, shared/model-provider-sources.ts, tools/check_buddy_distill_gate.py
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Add focused tests and acceptance evidence for the referenced implementation.
+- Execution verified: No; run-specific evidence is required.
+
+### docs/BUDDY_ONET_31_SUBJECT_STUDY_GUIDES.md
+
+- Status: implementation_reference_missing
+- Actionable claim lines: 2
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Execution verified: No; run-specific evidence is required.
+
+### docs/BUDDY_ONET_FULL_CONTENT_MODEL_AND_TASK_PLAYBOOKS.md
+
+- Status: broken_path_references
+- Actionable claim lines: 4
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: data/onet/onet-task-index.json
+- Path templates: None detected
+- Machine-local paths: None detected
+- Next action: Repair or explicitly supersede the missing repository path references.
+- Execution verified: No; run-specific evidence is required.
+
+### docs/BUDDY_OPEN_SOURCE_MULTIMODAL_BOOTCAMP.md
+
+- Status: test_reference_missing
+- Actionable claim lines: 37
+- Implementation paths: buddy/learning/course_track_registry.py, tools/fetch_onet_task_curricula.py, tools/organize_buddy_learning_assets.py, tools/process_authorized_bootcamp_media.py
+- Test paths: None detected
+- Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
+- Next action: Add focused tests and acceptance evidence for the referenced implementation.
+- Execution verified: No; run-specific evidence is required.
+
+### docs/BUDDY_OPT_IN_EVIDENCE_LEARNING.md
+
+- Status: implementation_reference_missing
+- Actionable claim lines: 3
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
 ### docs/BUDDY_PERSONAL_MEMORY_SHARED_LEARNING_AND_PERSONALITY.md
@@ -13250,6 +16349,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -13260,7 +16361,21 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Execution verified: No; run-specific evidence is required.
+
+### docs/BUDDY_REA_REVERSE_ENGINEERING.md
+
+- Status: test_reference_missing
+- Actionable claim lines: 1
+- Implementation paths: tools/buddy_paired_inference.py, tools/buddy_reverse_engineering.py, tools/master_teacher_distillation_loop.py, tools/master_teacher_evidence_gate.py
+- Test paths: None detected
+- Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
+- Next action: Add focused tests and acceptance evidence for the referenced implementation.
 - Execution verified: No; run-specific evidence is required.
 
 ### docs/BUDDY_REPAIR_EVENT_SCHEMA.md
@@ -13270,6 +16385,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -13280,6 +16397,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -13289,7 +16408,9 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Actionable claim lines: 10
 - Implementation paths: tools/buddy_failure_learning.py
 - Test paths: tests/test_buddy_failure_learning.py
-- Missing paths: github/workflows/buddy-failure-learning.yml
+- Missing paths: .github/workflows/buddy-failure-learning.yml
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Repair or explicitly supersede the missing repository path references.
 - Execution verified: No; run-specific evidence is required.
 
@@ -13300,6 +16421,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -13310,17 +16433,21 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
 ### docs/BUDDY_RESOURCE_COVERAGE_FRAMEWORK.md
 
-- Status: broken_path_references
+- Status: implementation_and_test_paths_referenced_not_verified
 - Actionable claim lines: 530
 - Implementation paths: shared/ai-models.ts, tools/refresh_buddy_technology_radar.py, website/category-systems.html, website/category-systems.js, website/data/additional-taxonomy-system-registry.json, website/data/category-system-registry.json, website/data/task-taxonomy-system-registry.json, website/markdown-gap-audit.html, website/technology-radar.html
 - Test paths: tests/test_buddy_category_system_registry.py
-- Missing paths: config/buddy-study-resources-*.json
-- Next action: Repair or explicitly supersede the missing repository path references.
+- Missing paths: None detected
+- Path templates: config/buddy-study-resources-*.json
+- Machine-local paths: None detected
+- Next action: Run the linked tests and attach CI, benchmark, regression, and runtime evidence before promotion.
 - Execution verified: No; run-specific evidence is required.
 
 ### docs/BUDDY_RESOURCE_MAP.md
@@ -13329,8 +16456,34 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Actionable claim lines: 8
 - Implementation paths: tools/generate_resource_connection_catalog.py, website/data/buddy-resource-connection-catalog.json
 - Test paths: None detected
-- Missing paths: /config/buddy/resource-registry.json
+- Missing paths: ../config/buddy/resource-registry.json
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Repair or explicitly supersede the missing repository path references.
+- Execution verified: No; run-specific evidence is required.
+
+### docs/BUDDY_REVENUE_LANE_PLAYBOOK_FRAMEWORK.md
+
+- Status: implementation_reference_missing
+- Actionable claim lines: 1
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Execution verified: No; run-specific evidence is required.
+
+### docs/BUDDY_REVENUE_PLAYBOOK_QUEUE.md
+
+- Status: implementation_reference_missing
+- Actionable claim lines: 1
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
 ### docs/BUDDY_SANDBOX_BOOTCAMP_DATA_PACKAGE.md
@@ -13340,6 +16493,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -13350,6 +16505,20 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: website/category-systems.html, website/data/task-taxonomy-system-registry.json
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
+- Next action: Add focused tests and acceptance evidence for the referenced implementation.
+- Execution verified: No; run-specific evidence is required.
+
+### docs/BUDDY_TECHNOLOGY_RADAR_PUBLIC_PROJECTION.md
+
+- Status: test_reference_missing
+- Actionable claim lines: 1
+- Implementation paths: website/data/buddy-technology-radar.json
+- Test paths: None detected
+- Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Add focused tests and acceptance evidence for the referenced implementation.
 - Execution verified: No; run-specific evidence is required.
 
@@ -13360,6 +16529,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -13370,6 +16541,32 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Execution verified: No; run-specific evidence is required.
+
+### docs/BUDDY_TOKENIZER_TRAINING_STUDY_GUIDE.md
+
+- Status: broken_path_references
+- Actionable claim lines: 12
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: ../config/buddy-25m-cpu-llm-course.json
+- Path templates: None detected
+- Machine-local paths: None detected
+- Next action: Repair or explicitly supersede the missing repository path references.
+- Execution verified: No; run-specific evidence is required.
+
+### docs/BUDDY_TOLKIEN_STUDY_TRACK.md
+
+- Status: implementation_reference_missing
+- Actionable claim lines: 11
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -13380,6 +16577,20 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Execution verified: No; run-specific evidence is required.
+
+### docs/BUDDY_TRAINING_METHODS_AND_COMPUTE_HUB.md
+
+- Status: implementation_reference_missing
+- Actionable claim lines: 1
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -13390,6 +16601,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -13400,6 +16613,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -13410,7 +16625,21 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Execution verified: No; run-specific evidence is required.
+
+### docs/BUDDY_UNIVERSAL_LIBRARY_STUDY_GUIDE_STANDARD.md
+
+- Status: test_reference_missing
+- Actionable claim lines: 22
+- Implementation paths: buddy/datasets/unknown_router.py, server/seed-buddy-bot.ts, tools/buddy_library_knowledge.py, tools/build_buddy_library_seed_catalog.py, tools/create_buddy_library_guide_draft.py
+- Test paths: None detected
+- Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
+- Next action: Add focused tests and acceptance evidence for the referenced implementation.
 - Execution verified: No; run-specific evidence is required.
 
 ### docs/BUDDY_USER_DATA_OWNERSHIP_AND_SUBSCRIPTION_CONTROL.md
@@ -13420,7 +16649,21 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: server/connection-policy.ts, server/data-rights-policy.ts, server/user-control-center-policy.ts, shared/personal-buddy-training-contract.ts
 - Test paths: tests/task-and-data-policy.test.ts
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Run the linked tests and attach CI, benchmark, regression, and runtime evidence before promotion.
+- Execution verified: No; run-specific evidence is required.
+
+### docs/BUDDY_USER_SCOPED_TASK_STORE.md
+
+- Status: implementation_reference_missing
+- Actionable claim lines: 1
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
 ### docs/BUDDY_USER_TESTING_CATALOG.md
@@ -13430,6 +16673,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -13440,6 +16685,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -13450,6 +16697,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -13460,6 +16709,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -13470,6 +16721,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -13480,6 +16733,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -13490,6 +16745,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -13500,6 +16757,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -13510,6 +16769,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -13520,17 +16781,21 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
 ### docs/CHAT_PRODUCTION_WORKLOG.md
 
-- Status: broken_path_references
+- Status: test_reference_missing
 - Actionable claim lines: 7
 - Implementation paths: tools/production_readiness_gate.py
 - Test paths: None detected
-- Missing paths: github/workflows/production-readiness.yml
-- Next action: Repair or explicitly supersede the missing repository path references.
+- Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
+- Next action: Add focused tests and acceptance evidence for the referenced implementation.
 - Execution verified: No; run-specific evidence is required.
 
 ### docs/CODERABBIT_PARITY_MATRIX.md
@@ -13540,6 +16805,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -13550,6 +16817,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -13560,6 +16829,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: client/src/pages/ActionsPage.tsx
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Add focused tests and acceptance evidence for the referenced implementation.
 - Execution verified: No; run-specific evidence is required.
 
@@ -13570,6 +16841,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -13580,6 +16853,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -13589,17 +16864,21 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Actionable claim lines: 17
 - Implementation paths: None detected
 - Test paths: None detected
-- Missing paths: github/workflows/dreamco-c-runtime.yml
+- Missing paths: .github/workflows/dreamco-c-runtime.yml
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Repair or explicitly supersede the missing repository path references.
 - Execution verified: No; run-specific evidence is required.
 
 ### docs/CUSTOMER_PRODUCTION_RUNBOOK.md
 
 - Status: implementation_reference_missing
-- Actionable claim lines: 7
+- Actionable claim lines: 8
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -13610,6 +16889,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -13620,6 +16901,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -13630,6 +16913,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -13640,6 +16925,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: tools/audit_actions_health.py
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Add focused tests and acceptance evidence for the referenced implementation.
 - Execution verified: No; run-specific evidence is required.
 
@@ -13650,17 +16937,33 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Execution verified: No; run-specific evidence is required.
+
+### docs/DREAMCO_ALWAYS_ON_RECONCILIATION.md
+
+- Status: broken_path_references
+- Actionable claim lines: 10
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: artifacts/dreamco-reconciliation/production-readiness-master-list.json, artifacts/dreamco-reconciliation/resource-routing-inventory.json
+- Path templates: None detected
+- Machine-local paths: None detected
+- Next action: Repair or explicitly supersede the missing repository path references.
 - Execution verified: No; run-specific evidence is required.
 
 ### docs/DREAMCO_APPROVED_TRAINING_EXECUTION.md
 
-- Status: broken_path_references
+- Status: implementation_reference_missing
 - Actionable claim lines: 4
 - Implementation paths: None detected
 - Test paths: None detected
-- Missing paths: artifacts/buddy-training-jobs/*.json
-- Next action: Repair or explicitly supersede the missing repository path references.
+- Missing paths: None detected
+- Path templates: artifacts/buddy-training-jobs/*.json
+- Machine-local paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
 ### docs/DREAMCO_BEGINNER_FIRST_PRODUCT_EXPERIENCE.md
@@ -13670,6 +16973,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -13680,6 +16985,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: command-center/data/master-build-status.json, framework/base_bot.py, framework/global_ai_sources_flow.py, global_learning_system/learning_loop.py, integrations/auth.py, integrations/base.py, integrations/errors.py, integrations/health.py, integrations/policies.py, integrations/registry.py, tools/auto_recovery.py, tools/check_bot_framework.py, tools/generate_bot_skeleton.py
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Repair or explicitly supersede the missing repository path references.
 - Execution verified: No; run-specific evidence is required.
 
@@ -13690,6 +16997,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -13700,6 +17009,20 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Execution verified: No; run-specific evidence is required.
+
+### docs/DREAMCO_CONTINUOUS_LEARNING_EXECUTION_TRUTH.md
+
+- Status: implementation_reference_missing
+- Actionable claim lines: 1
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -13710,6 +17033,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -13720,6 +17045,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: tools/chat_implementation_audit.py
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Add focused tests and acceptance evidence for the referenced implementation.
 - Execution verified: No; run-specific evidence is required.
 
@@ -13730,16 +17057,20 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: buddy/benchmarks/division_benchmark_executor.py
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Add focused tests and acceptance evidence for the referenced implementation.
 - Execution verified: No; run-specific evidence is required.
 
 ### docs/DREAMCO_DIVISION_DOMAIN_OWNER_REVIEW.md
 
 - Status: implementation_reference_missing
-- Actionable claim lines: 1
+- Actionable claim lines: 3
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -13750,6 +17081,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -13760,6 +17093,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -13770,6 +17105,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -13780,6 +17117,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -13790,6 +17129,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: tools/build_runtime_sync_plan.py, tools/recover_legacy_bots.py, tools/run_everything_now.py
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Add focused tests and acceptance evidence for the referenced implementation.
 - Execution verified: No; run-specific evidence is required.
 
@@ -13800,16 +17141,20 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
 ### docs/DREAMCO_FIRST_PARTY_TRAINING_FACTORY_AND_BOOTCAMP.md
 
 - Status: test_reference_missing
-- Actionable claim lines: 5
+- Actionable claim lines: 6
 - Implementation paths: tools/build_dreamco_training_factory.py
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Add focused tests and acceptance evidence for the referenced implementation.
 - Execution verified: No; run-specific evidence is required.
 
@@ -13820,17 +17165,21 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
 ### docs/DREAMCO_GLOBAL_RECONCILIATION.md
 
-- Status: broken_path_references
+- Status: test_reference_missing
 - Actionable claim lines: 7
 - Implementation paths: tools/dreamco_global_reconciliation.py
 - Test paths: None detected
-- Missing paths: github/workflows/dreamco-global-reconciliation.yml
-- Next action: Repair or explicitly supersede the missing repository path references.
+- Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
+- Next action: Add focused tests and acceptance evidence for the referenced implementation.
 - Execution verified: No; run-specific evidence is required.
 
 ### docs/DREAMCO_GOVERNED_DATASET_INGESTION.md
@@ -13840,6 +17189,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: buddy/datasets/license_policy.py
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Add focused tests and acceptance evidence for the referenced implementation.
 - Execution verified: No; run-specific evidence is required.
 
@@ -13850,6 +17201,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -13860,6 +17213,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -13870,6 +17225,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -13880,7 +17237,21 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: framework/global_ai_sources_flow.py
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Repair or explicitly supersede the missing repository path references.
+- Execution verified: No; run-specific evidence is required.
+
+### docs/DREAMCO_MODEL_PROVIDER_DATA_GOVERNANCE.md
+
+- Status: implementation_reference_missing
+- Actionable claim lines: 1
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
 ### docs/DREAMCO_NATIVE_TEACHER_MODEL_ADAPTERS.md
@@ -13890,16 +17261,20 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
 ### docs/DREAMCO_OBJECT_STORAGE_EVIDENCE.md
 
 - Status: implementation_reference_missing
-- Actionable claim lines: 5
+- Actionable claim lines: 7
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -13910,6 +17285,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -13920,6 +17297,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -13930,6 +17309,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -13940,6 +17321,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -13950,7 +17333,21 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: money/affiliate_engine.js, money/lead_seller.js, workflows/crypto.json, workflows/fiverr.json, workflows/grants.json, workflows/legal_money.json, workflows/real_estate.json
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Repair or explicitly supersede the missing repository path references.
+- Execution verified: No; run-specific evidence is required.
+
+### docs/DREAMTRADE_PAPER_TRADING_SANDBOX.md
+
+- Status: implementation_reference_missing
+- Actionable claim lines: 9
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
 ### docs/ENGINEERING_CONVENTIONS.md
@@ -13960,6 +17357,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -13970,7 +17369,57 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: tests/test_build_queue.py
 - Missing paths: config/bots/run-policy-overrides.json
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Repair or explicitly supersede the missing repository path references.
+- Execution verified: No; run-specific evidence is required.
+
+### docs/FREECODECAMP_COMPLETE_BUDDY_LEARNING_PATH.md
+
+- Status: implementation_reference_missing
+- Actionable claim lines: 35
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Execution verified: No; run-specific evidence is required.
+
+### docs/FREECODECAMP_PROVISIONAL_DIVISION_QUEUES.md
+
+- Status: implementation_reference_missing
+- Actionable claim lines: 3
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Execution verified: No; run-specific evidence is required.
+
+### docs/FREECODECAMP_TRANSCRIPT_RIGHTS_AND_WEEKLY_TESTS.md
+
+- Status: implementation_reference_missing
+- Actionable claim lines: 10
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Execution verified: No; run-specific evidence is required.
+
+### docs/FREECODECAMP_YOUTUBE_LEARNING_LIBRARY.md
+
+- Status: implementation_reference_missing
+- Actionable claim lines: 3
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
 ### docs/FREE_FIRST_LEARNING_POLICY.md
@@ -13980,6 +17429,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -13989,7 +17440,9 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Actionable claim lines: 4
 - Implementation paths: tools/check_frontier_claim_trust_gates.py, tools/verify_frontier_evidence.py
 - Test paths: None detected
-- Missing paths: config/generated/sandbox-24h-tick.json, github/workflows/deploy-buddy-pages.yml, github/workflows/frontier-claim-trust-gate.yml
+- Missing paths: config/generated/sandbox-24h-tick.json
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Repair or explicitly supersede the missing repository path references.
 - Execution verified: No; run-specific evidence is required.
 
@@ -14000,6 +17453,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: tools/verify_frontier_evidence.py
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Add focused tests and acceptance evidence for the referenced implementation.
 - Execution verified: No; run-specific evidence is required.
 
@@ -14010,6 +17465,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -14020,6 +17477,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -14030,6 +17489,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -14040,27 +17501,33 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
 ### docs/GITHUB_MODEL_REPOSITORY.md
 
-- Status: broken_path_references
+- Status: test_reference_missing
 - Actionable claim lines: 17
 - Implementation paths: tools/buddy_local_repository.py
 - Test paths: None detected
-- Missing paths: github/dependabot.yml, github/workflows/codeql.yml, github/workflows/dependency-review.yml
-- Next action: Repair or explicitly supersede the missing repository path references.
+- Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
+- Next action: Add focused tests and acceptance evidence for the referenced implementation.
 - Execution verified: No; run-specific evidence is required.
 
 ### docs/GITHUB_PAGES_UNIVERSE_LINK_PLAN.md
 
-- Status: broken_path_references
+- Status: test_reference_missing
 - Actionable claim lines: 7
 - Implementation paths: website/actions.html, website/autonomy.html, website/bots.html, website/hf-bootcamp.html, website/learn-hf.html, website/models.html, website/nav.js, website/os.html, website/own-bootcamp.html
 - Test paths: None detected
-- Missing paths: github/workflows/deploy-buddy-pages.yml, github/workflows/pages.yml, website/<page>.html
-- Next action: Repair or explicitly supersede the missing repository path references.
+- Missing paths: None detected
+- Path templates: website/<page>.html
+- Machine-local paths: None detected
+- Next action: Add focused tests and acceptance evidence for the referenced implementation.
 - Execution verified: No; run-specific evidence is required.
 
 ### docs/GLOBAL_AI_SOURCES_FLOW_SPEC.md
@@ -14070,6 +17537,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: framework/global_ai_sources_flow.py
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Repair or explicitly supersede the missing repository path references.
 - Execution verified: No; run-specific evidence is required.
 
@@ -14080,6 +17549,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -14090,17 +17561,21 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
 ### docs/GROK_CAPABILITIES_FOR_DREAMCO.md
 
-- Status: broken_path_references
+- Status: implementation_reference_missing
 - Actionable claim lines: 12
 - Implementation paths: None detected
 - Test paths: None detected
-- Missing paths: App_bots/*.json
-- Next action: Repair or explicitly supersede the missing repository path references.
+- Missing paths: None detected
+- Path templates: App_bots/*.json
+- Machine-local paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
 ### docs/GROK_TEACHES_BUDDY_SYLLABUS_v0.md
@@ -14110,6 +17585,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: buddy/bootcamp/buddy_bootcamp.yaml, tools/bootcamp_lesson_planner.py
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Add focused tests and acceptance evidence for the referenced implementation.
 - Execution verified: No; run-specific evidence is required.
 
@@ -14120,6 +17597,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: config/generated/hf-hub-literacy-checklist.json
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Repair or explicitly supersede the missing repository path references.
 - Execution verified: No; run-specific evidence is required.
 
@@ -14130,6 +17609,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -14140,6 +17621,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -14150,16 +17633,20 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
 ### docs/LOCAL_BUDDY_MODEL_BLUEPRINT.md
 
 - Status: implementation_reference_missing
-- Actionable claim lines: 4
+- Actionable claim lines: 6
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -14170,17 +17657,33 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: shared/division-production-contract.ts
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Add focused tests and acceptance evidence for the referenced implementation.
 - Execution verified: No; run-specific evidence is required.
 
 ### docs/MASTER_PLAN.md
 
-- Status: broken_path_references
+- Status: implementation_reference_missing
 - Actionable claim lines: 9
 - Implementation paths: None detected
 - Test paths: None detected
-- Missing paths: config/*.json
-- Next action: Repair or explicitly supersede the missing repository path references.
+- Missing paths: None detected
+- Path templates: config/*.json
+- Machine-local paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Execution verified: No; run-specific evidence is required.
+
+### docs/MASTER_TEACHER_EVIDENCE_GATE.md
+
+- Status: test_reference_missing
+- Actionable claim lines: 2
+- Implementation paths: tools/master_teacher_evidence_gate.py
+- Test paths: None detected
+- Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
+- Next action: Add focused tests and acceptance evidence for the referenced implementation.
 - Execution verified: No; run-specific evidence is required.
 
 ### docs/MEDIA_GAME_CAPABILITY_ROADMAP.md
@@ -14190,6 +17693,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -14200,6 +17705,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -14210,6 +17717,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -14220,6 +17729,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -14230,6 +17741,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: tools/create_bot.py
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Repair or explicitly supersede the missing repository path references.
 - Execution verified: No; run-specific evidence is required.
 
@@ -14240,6 +17753,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -14250,6 +17765,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -14260,6 +17777,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -14270,6 +17789,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -14280,6 +17801,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -14290,6 +17813,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -14300,6 +17825,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: shared/model-benchmark-targets.ts, tools/check_buddy_model_benchmarks.mjs
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Add focused tests and acceptance evidence for the referenced implementation.
 - Execution verified: No; run-specific evidence is required.
 
@@ -14310,6 +17837,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -14320,16 +17849,32 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Execution verified: No; run-specific evidence is required.
+
+### docs/PRODUCTION_READINESS_AREA_EVIDENCE.md
+
+- Status: implementation_reference_missing
+- Actionable claim lines: 3
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
 ### docs/PRODUCTION_READINESS_MASTER_PLAN.md
 
 - Status: implementation_reference_missing
-- Actionable claim lines: 2
+- Actionable claim lines: 3
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -14340,6 +17885,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -14350,6 +17897,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: framework/global_ai_sources_flow.py
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Repair or explicitly supersede the missing repository path references.
 - Execution verified: No; run-specific evidence is required.
 
@@ -14360,6 +17909,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -14370,6 +17921,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -14380,6 +17933,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -14390,16 +17945,20 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
 ### docs/READINESS_GATE_PLAN.md
 
 - Status: implementation_reference_missing
-- Actionable claim lines: 2
+- Actionable claim lines: 3
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -14410,6 +17969,20 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Execution verified: No; run-specific evidence is required.
+
+### docs/REPOSITORY_BENCHMARK_ARTIFACT_DISCOVERY.md
+
+- Status: implementation_reference_missing
+- Actionable claim lines: 1
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -14420,6 +17993,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -14430,6 +18005,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -14440,6 +18017,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -14450,6 +18029,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: tools/ensure_bots_production_ready.py
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Add focused tests and acceptance evidence for the referenced implementation.
 - Execution verified: No; run-specific evidence is required.
 
@@ -14460,6 +18041,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -14470,6 +18053,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -14480,6 +18065,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -14490,6 +18077,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -14500,6 +18089,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -14510,6 +18101,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -14520,6 +18113,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -14530,6 +18125,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -14540,6 +18137,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -14550,6 +18149,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -14560,6 +18161,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -14569,18 +18172,22 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Actionable claim lines: 20
 - Implementation paths: buddy/datasets/postgres_catalog.py, buddy/models/provider_runtime.py, buddy/storage/object_store.py
 - Test paths: tests/test_buddy_postgres_catalog.py
-- Missing paths: github/workflows/dreamco-c-runtime.yml
+- Missing paths: .github/workflows/dreamco-c-runtime.yml
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Repair or explicitly supersede the missing repository path references.
 - Execution verified: No; run-specific evidence is required.
 
 ### docs/UNIFIED_500_MODEL_BENCHMARK_OPERATING_PLAN.md
 
-- Status: broken_path_references
+- Status: implementation_reference_missing
 - Actionable claim lines: 5
 - Implementation paths: None detected
 - Test paths: None detected
-- Missing paths: github/workflows/dreamco-unified-system.yml
-- Next action: Repair or explicitly supersede the missing repository path references.
+- Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
 ### docs/UNIVERSAL_BOT_RUNTIME_CONTRACT.md
@@ -14589,7 +18196,9 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Actionable claim lines: 8
 - Implementation paths: buddy_os/governance/approval_policy.yaml, buddy_os/governance/release_readiness.yaml, server/seed-bots.ts, tools/fleet_runtime_audit.py, tools/generate_bot_manifests.py, website/data/fleet-runtime-status.json
 - Test paths: tests/test_fleet_runtime_executor.py
-- Missing paths: /config/bots/bot-manifests.generated.json, /config/bots/bot-runtime-contract.schema.json, App_bots/<Division>.json, evidence/fleet-runtime/<slug>.json
+- Missing paths: ../config/bots/bot-manifests.generated.json, ../config/bots/bot-runtime-contract.schema.json
+- Path templates: App_bots/<Division>.json, evidence/fleet-runtime/<slug>.json
+- Machine-local paths: None detected
 - Next action: Repair or explicitly supersede the missing repository path references.
 - Execution verified: No; run-specific evidence is required.
 
@@ -14600,7 +18209,21 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Execution verified: No; run-specific evidence is required.
+
+### docs/UNIVERSAL_STUDY_RESOURCE_EXPANSION.md
+
+- Status: test_reference_missing
+- Actionable claim lines: 9
+- Implementation paths: buddy/datasets/discovery_fleet.py, buddy/datasets/license_policy.py, buddy/learning/study_resource_scheduler.py
+- Test paths: None detected
+- Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
+- Next action: Add focused tests and acceptance evidence for the referenced implementation.
 - Execution verified: No; run-specific evidence is required.
 
 ### docs/UNMERGEABLE_PR_RECONCILIATION_2026-08-12.md
@@ -14610,6 +18233,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: client/src/lib/runtimeBackend.ts
 - Test paths: None detected
 - Missing paths: framework/global_ai_sources_flow.py
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Repair or explicitly supersede the missing repository path references.
 - Execution verified: No; run-specific evidence is required.
 
@@ -14620,6 +18245,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -14630,6 +18257,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -14640,6 +18269,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -14650,6 +18281,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: buddy/media/voice.py
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Add focused tests and acceptance evidence for the referenced implementation.
 - Execution verified: No; run-specific evidence is required.
 
@@ -14660,6 +18293,20 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Execution verified: No; run-specific evidence is required.
+
+### docs/architecture/BUDDY_BOOTCAMP_VIDEO_STUDY_AND_MASTERY_SYSTEM.md
+
+- Status: implementation_reference_missing
+- Actionable claim lines: 19
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -14670,6 +18317,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: buddy/resources/division_resource_router.py
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Add focused tests and acceptance evidence for the referenced implementation.
 - Execution verified: No; run-specific evidence is required.
 
@@ -14680,6 +18329,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -14690,6 +18341,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -14700,6 +18353,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -14710,6 +18365,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -14720,6 +18377,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -14730,6 +18389,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -14740,6 +18401,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -14750,6 +18413,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -14760,6 +18425,20 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Execution verified: No; run-specific evidence is required.
+
+### docs/benchmarks/BENCHMARK_RUNNER_TRUTH_BOUNDARY.md
+
+- Status: implementation_reference_missing
+- Actionable claim lines: 2
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -14770,6 +18449,152 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Execution verified: No; run-specific evidence is required.
+
+### docs/benchmarks/CORE_CAPABILITY_BENCHMARKS.md
+
+- Status: implementation_reference_missing
+- Actionable claim lines: 1
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Execution verified: No; run-specific evidence is required.
+
+### docs/bootcamp/COVERAGE_GATE.md
+
+- Status: reference_only
+- Actionable claim lines: 0
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Execution verified: No; run-specific evidence is required.
+
+### docs/bootcamp/DIVISION_MASTERBOT_COVERAGE_AUDIT.md
+
+- Status: implementation_reference_missing
+- Actionable claim lines: 1
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Execution verified: No; run-specific evidence is required.
+
+### docs/bootcamp/DIVISION_SPECIALIST_COURSE_READINESS.md
+
+- Status: reference_only
+- Actionable claim lines: 0
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Execution verified: No; run-specific evidence is required.
+
+### docs/bootcamp/FREECODECAMP_STUDY_GUIDE_REVIEW_POLICY.md
+
+- Status: implementation_reference_missing
+- Actionable claim lines: 2
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Execution verified: No; run-specific evidence is required.
+
+### docs/bootcamp/HUGGINGFACE_BOOTCAMP_COVERAGE.md
+
+- Status: reference_only
+- Actionable claim lines: 0
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Execution verified: No; run-specific evidence is required.
+
+### docs/bootcamp/HUGGINGFACE_MODULE_REVIEW_READINESS.md
+
+- Status: implementation_reference_missing
+- Actionable claim lines: 1
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Execution verified: No; run-specific evidence is required.
+
+### docs/bootcamp/LIBRARY_CANDIDATE_VERIFICATION_QUEUE.md
+
+- Status: implementation_reference_missing
+- Actionable claim lines: 2
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Execution verified: No; run-specific evidence is required.
+
+### docs/bootcamp/ONET_TASK_GUIDE_READINESS.md
+
+- Status: reference_only
+- Actionable claim lines: 0
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Execution verified: No; run-specific evidence is required.
+
+### docs/bootcamp/REVENUE_LANE_LEARNING_PLAYBOOKS.md
+
+- Status: implementation_reference_missing
+- Actionable claim lines: 1
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Execution verified: No; run-specific evidence is required.
+
+### docs/bootcamp/REVENUE_SCOUT_CURRICULUM_COVERAGE.md
+
+- Status: implementation_reference_missing
+- Actionable claim lines: 2
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Execution verified: No; run-specific evidence is required.
+
+### docs/bootcamp/TOKENIZER_TOLKIEN_CURRICULUM_READINESS.md
+
+- Status: reference_only
+- Actionable claim lines: 0
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -14780,6 +18605,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -14790,6 +18617,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -14800,6 +18629,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -14810,6 +18641,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: buddy/media/consent.py
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Add focused tests and acceptance evidence for the referenced implementation.
 - Execution verified: No; run-specific evidence is required.
 
@@ -14820,6 +18653,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: buddy/media/sellability_gate.py
 - Test paths: tests/test_sellability_gate.py
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Run the linked tests and attach CI, benchmark, regression, and runtime evidence before promotion.
 - Execution verified: No; run-specific evidence is required.
 
@@ -14830,6 +18665,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -14840,6 +18677,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -14850,6 +18689,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -14860,6 +18701,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -14870,6 +18713,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -14880,6 +18725,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -14890,6 +18737,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -14900,6 +18749,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -14910,6 +18761,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -14920,6 +18773,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -14930,6 +18785,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -14940,27 +18797,57 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Execution verified: No; run-specific evidence is required.
+
+### docs/engineering/DREAMCO_ENTERPRISE_REPAIR_PLAN_2026-11-25.md
+
+- Status: implementation_reference_missing
+- Actionable claim lines: 23
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
 ### docs/engineering/DREAMCO_PROJECT_CHAT_CORPUS.md
 
-- Status: implementation_reference_missing
-- Actionable claim lines: 13
-- Implementation paths: None detected
+- Status: test_reference_missing
+- Actionable claim lines: 26
+- Implementation paths: buddy/datasets/database_router.py, buddy/datasets/hub.py, buddy/datasets/postgres_catalog.py, tools/build_daily_lesson_plan.py, website/data/markdown-implementation-gap-audit.json
 - Test paths: None detected
 - Missing paths: None detected
-- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Path templates: None detected
+- Machine-local paths: None detected
+- Next action: Add focused tests and acceptance evidence for the referenced implementation.
 - Execution verified: No; run-specific evidence is required.
 
 ### docs/engineering/PR_RECONCILIATION_LEDGER.md
 
-- Status: broken_path_references
+- Status: implementation_and_test_paths_referenced_not_verified
+- Actionable claim lines: 26
+- Implementation paths: buddy/bootcamp/training_methods_hub.py, tools/audit_markdown_implementation_gaps.py, tools/build_dreamco_training_factory.py, website/data/bot-calculators.json, website/data/bot-fleet-catalog.json, website/data/buddy-technology-radar.json, website/data/command-center/capabilities.json, website/data/dreamco-search-index.js
+- Test paths: tests/test_buddy_resource_registry.py, tests/test_buddy_training_methods_hub.py
+- Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
+- Next action: Run the linked tests and attach CI, benchmark, regression, and runtime evidence before promotion.
+- Execution verified: No; run-specific evidence is required.
+
+### docs/engineering/PR_RECONCILIATION_LEDGER_2026-11-26.md
+
+- Status: implementation_reference_missing
 - Actionable claim lines: 16
 - Implementation paths: None detected
-- Test paths: tests/test_buddy_resource_registry.py
-- Missing paths: buddy/bootcamp/training_methods_hub.py, github/workflows/buddy-training-methods-hub.yml, github/workflows/command-center-index.yml, github/workflows/keep-green.yml, tests/test_buddy_training_methods_hub.py
-- Next action: Repair or explicitly supersede the missing repository path references.
+- Test paths: tests/test_benchmark_scope_contract.py, tests/test_refresh_repository_evidence.py
+- Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
 ### docs/hf/HF_PIN_MATRIX.md
@@ -14970,6 +18857,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: /workspace/hf-venv
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -14980,6 +18869,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -14990,7 +18881,21 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Execution verified: No; run-specific evidence is required.
+
+### docs/learning/BUDDY_ADAPTIVE_SPACED_REPETITION.md
+
+- Status: test_reference_missing
+- Actionable claim lines: 4
+- Implementation paths: shared/schema.ts
+- Test paths: None detected
+- Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
+- Next action: Add focused tests and acceptance evidence for the referenced implementation.
 - Execution verified: No; run-specific evidence is required.
 
 ### docs/local-command-center.md
@@ -15000,6 +18905,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -15010,6 +18917,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -15020,6 +18929,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -15030,6 +18941,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -15040,6 +18953,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: buddy/learning/learning_strategies_catalog.json, buddy/learning/study_methods.py
 - Test paths: tests/test_buddy_srs_sm2.py
 - Missing paths: tests/test_sm2.py
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Repair or explicitly supersede the missing repository path references.
 - Execution verified: No; run-specific evidence is required.
 
@@ -15050,6 +18965,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -15060,6 +18977,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: buddy_os/actions/model_marketplace_contract.yaml
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Add focused tests and acceptance evidence for the referenced implementation.
 - Execution verified: No; run-specific evidence is required.
 
@@ -15070,6 +18989,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -15080,6 +19001,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -15090,6 +19013,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -15100,6 +19025,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -15110,6 +19037,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -15120,6 +19049,44 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Execution verified: No; run-specific evidence is required.
+
+### docs/security/FULL_SYSTEM_CERTIFICATION_EVIDENCE_GATES.md
+
+- Status: implementation_reference_missing
+- Actionable claim lines: 2
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Execution verified: No; run-specific evidence is required.
+
+### docs/security/MODEL_TRAINING_AUTHORIZATION.md
+
+- Status: implementation_reference_missing
+- Actionable claim lines: 6
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Execution verified: No; run-specific evidence is required.
+
+### docs/security/SECRET_STORE.md
+
+- Status: reference_only
+- Actionable claim lines: 0
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -15130,6 +19097,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -15140,6 +19109,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -15150,6 +19121,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -15160,6 +19133,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -15170,6 +19145,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -15180,6 +19157,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -15190,6 +19169,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -15200,6 +19181,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -15210,6 +19193,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -15220,6 +19205,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -15230,6 +19217,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -15240,6 +19229,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -15250,6 +19241,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -15260,6 +19253,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -15270,6 +19265,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -15280,6 +19277,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -15290,6 +19289,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -15300,6 +19301,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -15310,6 +19313,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: frontier/F0.packet.json
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Repair or explicitly supersede the missing repository path references.
 - Execution verified: No; run-specific evidence is required.
 
@@ -15320,6 +19325,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -15330,6 +19337,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -15340,17 +19349,21 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: gate/cert_gate.py, schema/course_evidence_card.schema.json
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Repair or explicitly supersede the missing repository path references.
 - Execution verified: No; run-specific evidence is required.
 
 ### evidence/frontier/f0/README.md
 
-- Status: broken_path_references
+- Status: reference_only
 - Actionable claim lines: 0
 - Implementation paths: None detected
 - Test paths: None detected
-- Missing paths: packets/f0-*.json
-- Next action: Repair or explicitly supersede the missing repository path references.
+- Missing paths: None detected
+- Path templates: packets/f0-*.json
+- Machine-local paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
 ### evidence/ledger/README.md
@@ -15360,6 +19373,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -15370,6 +19385,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: tools/build_manufacturing_productivity_benchmarks.py
 - Test paths: tests/test_autonomous_business_and_deployment.py, tests/test_business_manufacturing_productivity_program.py
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Run the linked tests and attach CI, benchmark, regression, and runtime evidence before promotion.
 - Execution verified: No; run-specific evidence is required.
 
@@ -15380,6 +19397,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -15390,6 +19409,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -15400,17 +19421,21 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
 ### huggingface/dreamco-router/README.md
 
-- Status: broken_path_references
+- Status: reference_only
 - Actionable claim lines: 0
 - Implementation paths: None detected
 - Test paths: None detected
-- Missing paths: github/workflows/sync-to-huggingface.yml
-- Next action: Repair or explicitly supersede the missing repository path references.
+- Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
 ### integration/three-month-merge-audit-20261106.md
@@ -15420,6 +19445,32 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Execution verified: No; run-specific evidence is required.
+
+### licenses/DREAMCO-FIRST-PARTY-TRAINING-DATA-LICENSE-TEMPLATE.md
+
+- Status: implementation_reference_missing
+- Actionable claim lines: 3
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Execution verified: No; run-specific evidence is required.
+
+### models/buddy-tiny-gpt/README.md
+
+- Status: reference_only
+- Actionable claim lines: 0
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -15430,6 +19481,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -15440,6 +19493,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: automation/workflows.json, config/bot_registry.json, data/opportunity_sources.json
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Repair or explicitly supersede the missing repository path references.
 - Execution verified: No; run-specific evidence is required.
 
@@ -15450,6 +19505,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -15460,6 +19517,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -15470,6 +19529,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -15480,6 +19541,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -15490,6 +19553,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -15500,6 +19565,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -15510,6 +19577,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -15520,6 +19589,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -15530,6 +19601,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -15540,6 +19613,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -15550,6 +19625,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -15560,6 +19637,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -15570,6 +19649,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -15580,6 +19661,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -15590,6 +19673,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -15600,6 +19685,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -15610,6 +19697,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -15620,6 +19709,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -15630,6 +19721,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -15640,6 +19733,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -15650,6 +19745,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -15660,6 +19757,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -15670,6 +19769,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -15680,6 +19781,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -15690,6 +19793,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -15700,6 +19805,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -15710,6 +19817,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -15719,7 +19828,9 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Actionable claim lines: 8
 - Implementation paths: buddy/frontier/plan_status.py, buddy/media/consent.py, buddy/media/core.py, buddy/media/provenance.py, dreamco_platform/games/harness.py, tools/buddy_source_selector.py, tools/dreamco_file_converter.py, tools/video_evidence_validator.py, tools/video_package_compiler.py, tools/video_scan_fast.py, tools/video_scan_manifest.py, website/data/plan-status.json
 - Test paths: tests/test_buddy_game_lab.py
-- Missing paths: config/buddy_video_*.json, schemas/source_provenance_record.schema.json, tools/validate_source_provenance.py
+- Missing paths: schemas/source_provenance_record.schema.json, tools/validate_source_provenance.py
+- Path templates: config/buddy_video_*.json
+- Machine-local paths: None detected
 - Next action: Repair or explicitly supersede the missing repository path references.
 - Execution verified: No; run-specific evidence is required.
 
@@ -15729,7 +19840,9 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Actionable claim lines: 6
 - Implementation paths: None detected
 - Test paths: None detected
-- Missing paths: github/workflows/all-bot-sandbox-campaign.yml, github/workflows/auto-merge-intake.yml, github/workflows/benchmark-mastery-distillation.yml, github/workflows/buddy-bootcamp-resource-categories.yml, github/workflows/buddy-custom-training-rewards.yml, github/workflows/buddy-daily-capability-gap-lab.yml, github/workflows/buddy-evidence-acquisition-tests.yml, github/workflows/buddy-failure-learning.yml, github/workflows/buddy-inhouse-capability-certification.yml, github/workflows/buddy-learning-runtime-integration.yml, github/workflows/buddy-navigation-bootcamp.yml, github/workflows/buddy-preventive-site-audit.yml, github/workflows/buddy-production-evidence-preflight.yml, github/workflows/buddy-provider-learning-libraries.yml, github/workflows/buddy-recovery-systems.yml, github/workflows/buddy-safe-repair.yml, github/workflows/buddy-self-build.yml, github/workflows/buddy-task-store-tests.yml, github/workflows/buddy-teacher-coverage-audit.yml, github/workflows/buddy-training-methods-hub.yml, github/workflows/buddy-training-taxonomy.yml, github/workflows/ci-automation.yml, github/workflows/ci.yml, github/workflows/codex-scan-only.yml, github/workflows/compatibility-repair-apply.yml, github/workflows/consolidated-evidence.yml, github/workflows/dependency-security-repair.yml, github/workflows/dreamco-build.yml, github/workflows/dreamco-five-minute-status-monitor.yml
+- Missing paths: .github/workflows/all-bot-sandbox-campaign.yml, .github/workflows/auto-merge-intake.yml, .github/workflows/benchmark-mastery-distillation.yml, .github/workflows/buddy-bootcamp-resource-categories.yml, .github/workflows/buddy-custom-training-rewards.yml, .github/workflows/buddy-daily-capability-gap-lab.yml, .github/workflows/buddy-evidence-acquisition-tests.yml, .github/workflows/buddy-failure-learning.yml, .github/workflows/buddy-inhouse-capability-certification.yml, .github/workflows/buddy-learning-runtime-integration.yml, .github/workflows/buddy-navigation-bootcamp.yml, .github/workflows/buddy-preventive-site-audit.yml, .github/workflows/buddy-production-evidence-preflight.yml, .github/workflows/buddy-provider-learning-libraries.yml, .github/workflows/buddy-recovery-systems.yml, .github/workflows/buddy-safe-repair.yml, .github/workflows/buddy-self-build.yml, .github/workflows/buddy-teacher-coverage-audit.yml, .github/workflows/buddy-training-taxonomy.yml, .github/workflows/ci-automation.yml, .github/workflows/ci.yml, .github/workflows/codex-scan-only.yml, .github/workflows/compatibility-repair-apply.yml, .github/workflows/consolidated-evidence.yml, .github/workflows/dependency-security-repair.yml, .github/workflows/dreamco-build.yml, .github/workflows/dreamco-five-minute-status-monitor.yml
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Repair or explicitly supersede the missing repository path references.
 - Execution verified: No; run-specific evidence is required.
 
@@ -15740,6 +19853,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -15750,6 +19865,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -15760,6 +19877,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -15770,6 +19889,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -15780,6 +19901,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -15790,6 +19913,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: website/data/bot-fleet-e2e.json
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Add focused tests and acceptance evidence for the referenced implementation.
 - Execution verified: No; run-specific evidence is required.
 
@@ -15800,6 +19925,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -15810,17 +19937,21 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
 ### reports/BRANCH_PLAN_READINESS.md
 
-- Status: broken_path_references
+- Status: test_reference_missing
 - Actionable claim lines: 10
 - Implementation paths: tools/branch_health_daily.py, website/buddy.html, website/connections.html, website/desks.css, website/index.html, website/nav.js, website/wiring.html
 - Test paths: None detected
-- Missing paths: github/workflows/pages.yml
-- Next action: Repair or explicitly supersede the missing repository path references.
+- Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
+- Next action: Add focused tests and acceptance evidence for the referenced implementation.
 - Execution verified: No; run-specific evidence is required.
 
 ### reports/BUDDY_BENCHMARK_INDEX.md
@@ -15830,6 +19961,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -15840,6 +19973,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -15850,6 +19985,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -15860,6 +19997,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -15870,6 +20009,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -15880,6 +20021,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: website/os-observability.js
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Add focused tests and acceptance evidence for the referenced implementation.
 - Execution verified: No; run-specific evidence is required.
 
@@ -15890,6 +20033,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -15900,6 +20045,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -15910,6 +20057,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -15920,6 +20069,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -15930,6 +20081,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: website/buddy-site-sync.js, website/data/buddy-site-status.json
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Add focused tests and acceptance evidence for the referenced implementation.
 - Execution verified: No; run-specific evidence is required.
 
@@ -15940,6 +20093,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -15950,6 +20105,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -15960,6 +20117,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: website/capability-workbench.html
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Add focused tests and acceptance evidence for the referenced implementation.
 - Execution verified: No; run-specific evidence is required.
 
@@ -15969,7 +20128,9 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Actionable claim lines: 10
 - Implementation paths: buddy/bootcamp/buddy_bootcamp.yaml, buddy/learning/bootcamp.py, buddy_os/actions/paid_model_access_and_resource_import.yaml, tools/audit_repository_connections.py, tools/build_hf_capability_packs.py, tools/build_universal_work_ai_catalog.py, tools/connect_repository_pages.py, tools/score_data_package_candidate.py
 - Test paths: None detected
-- Missing paths: /home/box/roadmap/_crons.json, /home/box/roadmap/coverage_snapshot.json, benchmarks/america_gov/{sandbox.py,test_sandbox.py,catalog.json, benchmarks/resource_mastery/{sandbox.py,test_sandbox.py, config/generated/repository-system-connections.json, github/workflows/buddy-sandbox-bootcamp.yml, github/workflows/engineering-gap-closure.yml, github/workflows/grok-twins-hf-study.yml, github/workflows/pages.yml, github/workflows/repository-scan-update.yml, github/workflows/self-working-system.yml, study_packs/hub/{DAY1_NOTES.md,day1_audit.py,evidence/day1-inventory.json,evidence/drills.json, tools/check_bot_framework.py
+- Missing paths: config/generated/repository-system-connections.json, tools/check_bot_framework.py
+- Path templates: benchmarks/america_gov/{sandbox.py,test_sandbox.py,catalog.json}, benchmarks/resource_mastery/{sandbox.py,test_sandbox.py}, study_packs/hub/{DAY1_NOTES.md,day1_audit.py,evidence/day1-inventory.json,evidence/drills.json}
+- Machine-local paths: /home/box/roadmap/_crons.json, /home/box/roadmap/coverage_snapshot.json
 - Next action: Repair or explicitly supersede the missing repository path references.
 - Execution verified: No; run-specific evidence is required.
 
@@ -15980,6 +20141,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: buddy/memory/places.json, website/chat-data.js
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Add focused tests and acceptance evidence for the referenced implementation.
 - Execution verified: No; run-specific evidence is required.
 
@@ -15990,6 +20153,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -16000,6 +20165,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -16010,6 +20177,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -16020,6 +20189,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -16030,6 +20201,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: server/routes.ts, tools/build_dp_onet_occ_syn_sample.py, tools/minimal_json_schema.py, tools/score_data_package_dataset.py
 - Test paths: tests/test_license_provenance_gate.py, tests/test_score_data_package_dataset.py
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Run the linked tests and attach CI, benchmark, regression, and runtime evidence before promotion.
 - Execution verified: No; run-specific evidence is required.
 
@@ -16039,7 +20212,9 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Actionable claim lines: 17
 - Implementation paths: buddy/learning/multi_perspective_policy.json, buddy/learning/open_code_perspective.py, buddy/learning/study_data_schema.json, server/data-rights-policy.ts, server/routes.ts, tools/build_maximum_sandbox_matrix.py, tools/build_ontology_snapshot.py, tools/build_universal_capability_benchmark.py, tools/build_universal_work_ai_catalog.py, tools/score_data_package_candidate.py
 - Test paths: None detected
-- Missing paths: config/generated/universal-work-ai-catalog.json, tools/build_hf_*_packages.py
+- Missing paths: config/generated/universal-work-ai-catalog.json
+- Path templates: tools/build_hf_*_packages.py
+- Machine-local paths: None detected
 - Next action: Repair or explicitly supersede the missing repository path references.
 - Execution verified: No; run-specific evidence is required.
 
@@ -16050,6 +20225,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: buddy/learning/multi_perspective_policy.json, tools/build_sellable_data_package.py, tools/license_provenance_gate.py, tools/minimal_json_schema.py, tools/score_data_package_candidate.py
 - Test paths: tests/test_license_provenance_gate.py
 - Missing paths: as_is/candidate.json, as_is/license_gate.json, buddy/learning/multi_view_synthesizer.py, buddy/learning/sellable_package_schema.json, config/generated/universal-work-ai-catalog.json, templates/license_gate.json
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Repair or explicitly supersede the missing repository path references.
 - Execution verified: No; run-specific evidence is required.
 
@@ -16060,6 +20237,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -16069,7 +20248,9 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Actionable claim lines: 41
 - Implementation paths: website/fleet-status.html, website/nav.js, website/work-desk.html
 - Test paths: None detected
-- Missing paths: /website/fleet-status.html
+- Missing paths: ../website/fleet-status.html
+- Path templates: None detected
+- Machine-local paths: /home/box/os-scheduler, /home/box/roadmap/CERTIFY_FIRST_ORDER.md, /home/box/roadmap/MASTER_ROADMAP_CROSSWALK.md, /workspace/Dreamcobots-trust-gate, /workspace/Dreamcobots/docs/BUDDY_FRONTIER_PROMOTION_CHECKLIST.md, /workspace/Dreamcobots/reports/HUGGINGFACE_CAPABILITY_PACKS.md, /workspace/Dreamcobots/reports/PROD_CONNECTIVITY_SCAN.md, /workspace/Dreamcobots/study_packs, /workspace/Dreamcobots/study_packs/nlp-tasks, /workspace/agent-proc-table.tsv, /workspace/agents_proc_table.md, /workspace/api-surface, /workspace/biz-productivity-mfg, /workspace/bootcamp-evidence, /workspace/bootcamp-fix, /workspace/buddy-adapter-registry, /workspace/buddy-code-frontier, /workspace/buddy-debug-arena, /workspace/buddy-frontier/FRONTIER_STATUS.md, /workspace/buddy-logic-bench, /workspace/buddy-multimodal-trainer, /workspace/buddy-os-shell, /workspace/buddy-rca, /workspace/buddy-reasoning, /workspace/buddy-tokenizers, /workspace/buddydemo, /workspace/coding-courses, /workspace/college-catalog, /workspace/connectivity-scan, /workspace/cp-factory, /workspace/dc-buddy-demos, /workspace/dc-ecp, /workspace/dc-land, /workspace/deps-license-scan-report.md, /workspace/distill-contract, /workspace/div-gates, /workspace/dp-merchant/reports/DATA_PACKAGE_WEEK1_EVIDENCE.md, /workspace/dreamcobots-9576, /workspace/dreamcobots-branch-plan/BRANCH_PLAN_READINESS.md, /workspace/dreamcobots-edu-pr, /workspace/dreamcobots-model-access, /workspace/ecp-repo, /workspace/edu-benchmark, /workspace/edu-mastery-scorecards, /workspace/eng-gap-closure, /workspace/evidence-ledger, /workspace/f0-scorecard-draft, /workspace/fleet-gap/gap_summary.md, /workspace/gain-repo, /workspace/github-competitor, /workspace/goals-gates, /workspace/hf-accelerate, /workspace/hf-catalog-adapter, /workspace/hf-datasets-pack, /workspace/hf-day1-evidence, /workspace/hf-deps-pins, /workspace/hf-evaluate-pack, /workspace/hf-license-audit, /workspace/hf-license-audit/table.md, /workspace/hf-mastery/HF_CERT_LEDGER.md, /workspace/hf-swarm-status, /workspace/hf-transformers-core, /workspace/hub-day1-wt, /workspace/issues-kernel/triage-2026-09-28.md, /workspace/lp-strategies-wt, /workspace/masterbot-os/MASTERBOT_OS_READINESS.md, /workspace/media-game-mastery/plan-media-game-mastery.md, /workspace/memory-f0-wt, /workspace/mm-pack, /workspace/modernization/MODERNIZATION_TRACK_BASELINE.md, /workspace/nlp-tasks-build, /workspace/oer-ingest, /workspace/onet-ingest, /workspace/os-acl, /workspace/os-scheduler-p0, /workspace/pages-universe, /workspace/parity-fixes/parity-fixes.patch, /workspace/pathb-router, /workspace/plan-model-access, /workspace/platform-expansion, /workspace/prc-audit, /workspace/prod-cert-gate, /workspace/prod-plan-closure, /workspace/push-arena, /workspace/repair-scan, /workspace/resource-graph, /workspace/shared/buddy-tooluse-arena-baseline.md, /workspace/shared/lp-factory, /workspace/study-skills-os, /workspace/study_packs/trl, /workspace/teacher-curriculum/GROK_TEACHES_BUDDY_SYLLABUS_v0.md, /workspace/triangulation, /workspace/wt-k12, /workspace/wt-secrets
 - Next action: Repair or explicitly supersede the missing repository path references.
 - Execution verified: No; run-specific evidence is required.
 
@@ -16080,6 +20261,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: buddy/fleet_runtime/divisions.py, buddy/fleet_runtime/fixtures.py, tools/fleet_runtime_audit.py, tools/generate_bot_manifests.py
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Add focused tests and acceptance evidence for the referenced implementation.
 - Execution verified: No; run-specific evidence is required.
 
@@ -16090,17 +20273,21 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
 ### reports/GOALS_TO_PRODUCTION_GATES.md
 
-- Status: broken_path_references
+- Status: implementation_reference_missing
 - Actionable claim lines: 4
 - Implementation paths: None detected
 - Test paths: tests/test_buddy_media.py
-- Missing paths: buddy/media/{connectors,core,image,memory_guard,voice}.py
-- Next action: Repair or explicitly supersede the missing repository path references.
+- Missing paths: None detected
+- Path templates: buddy/media/{connectors,core,image,memory_guard,voice}.py
+- Machine-local paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
 ### reports/GROK_CHAT_SESSION_SNAPSHOT.md
@@ -16110,6 +20297,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: buddy/learning/learning_strategies_catalog.json, buddy/learning/reasoning_and_learning_registry.py, buddy/learning/reasoning_techniques_catalog.json, tools/ensure_bots_production_ready.py
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Add focused tests and acceptance evidence for the referenced implementation.
 - Execution verified: No; run-specific evidence is required.
 
@@ -16120,6 +20309,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -16130,6 +20321,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -16140,6 +20333,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -16149,7 +20344,9 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Actionable claim lines: 6
 - Implementation paths: tools/buddy_scan_hubs.py, tools/build_hf_capability_packs.py, tools/build_hf_download_packages.py
 - Test paths: None detected
-- Missing paths: /workspace/hf-license-audit/hub_license_audit.json, drills/drill_03_gated_probe.py, nlp-tasks-build/gen.py, study_packs/multimodal/evidence/run_<ts>.json, study_packs/nlp-tasks/*/sources.json, study_packs/nlp-tasks/classification/evidence/run_nlp-cls-sst2-20261013-r1.json, study_packs/transformers/evidence/run_<ts>.json, tools/download_hf_package.sh
+- Missing paths: drills/drill_03_gated_probe.py, nlp-tasks-build/gen.py, study_packs/nlp-tasks/classification/evidence/run_nlp-cls-sst2-20261013-r1.json, tools/download_hf_package.sh
+- Path templates: study_packs/multimodal/evidence/run_<ts>.json, study_packs/nlp-tasks/*/sources.json, study_packs/transformers/evidence/run_<ts>.json
+- Machine-local paths: /tmp/hf-pins-venv, /workspace/Dreamcobots, /workspace/buddy-tokenizers, /workspace/hf-datasets-pack, /workspace/hf-license-audit/hub_license_audit.json, /workspace/hf-pins-venv, /workspace/hf-transformers-core, /workspace/onet-recon, /workspace/pathb-router, /workspace/study_packs/trl
 - Next action: Repair or explicitly supersede the missing repository path references.
 - Execution verified: No; run-specific evidence is required.
 
@@ -16160,6 +20357,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -16170,6 +20369,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -16180,6 +20381,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -16190,6 +20393,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -16200,6 +20405,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: website/actions.html, website/data/os-observability-metrics.json, website/os-observability.js, website/os.html
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Add focused tests and acceptance evidence for the referenced implementation.
 - Execution verified: No; run-specific evidence is required.
 
@@ -16209,7 +20416,9 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Actionable claim lines: 9
 - Implementation paths: server/index.ts, server/routes.ts, tools/build_customer_model_plan.py, tools/check_frontier_claim_trust_gates.py, tools/run_weight_balancer.py, website/actions.html
 - Test paths: None detected
-- Missing paths: config/generated/grok-owner-systems.json, evidence/api_scan_main_5ba09f2.json, github/workflows/grok-owner-systems.yml, server/**/*.ts
+- Missing paths: config/generated/grok-owner-systems.json, evidence/api_scan_main_5ba09f2.json
+- Path templates: server/**/*.ts
+- Machine-local paths: /workspace/api-surface/API_SURFACE_MAP.md
 - Next action: Repair or explicitly supersede the missing repository path references.
 - Execution verified: No; run-specific evidence is required.
 
@@ -16220,6 +20429,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: tools/audit_pages_features.py
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Add focused tests and acceptance evidence for the referenced implementation.
 - Execution verified: No; run-specific evidence is required.
 
@@ -16230,6 +20441,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -16239,7 +20452,9 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Actionable claim lines: 6
 - Implementation paths: tools/check_frontier_claim_trust_gates.py, tools/ensure_bots_production_ready.py, tools/run_24h_sandbox_soak.py
 - Test paths: None detected
-- Missing paths: config/generated/sandbox-24h-tick.json, github/workflows/buddy-24h-sandbox-soak.yml
+- Missing paths: config/generated/sandbox-24h-tick.json
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Repair or explicitly supersede the missing repository path references.
 - Execution verified: No; run-specific evidence is required.
 
@@ -16250,17 +20465,21 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
 ### reports/PRODUCTION_READINESS_OFFLOAD.md
 
-- Status: broken_path_references
+- Status: test_reference_missing
 - Actionable claim lines: 5
 - Implementation paths: tools/grok_run_owner_systems.py
 - Test paths: None detected
-- Missing paths: github/dependabot.yml, github/workflows/actions-failure-watch.yml
-- Next action: Repair or explicitly supersede the missing repository path references.
+- Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
+- Next action: Add focused tests and acceptance evidence for the referenced implementation.
 - Execution verified: No; run-specific evidence is required.
 
 ### reports/PRODUCTION_READINESS_REPORT.md
@@ -16270,6 +20489,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: server/index.ts, server/observability.ts, server/openaiConfig.ts, server/stripeClient.ts, server/webhookHandlers.ts
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Add focused tests and acceptance evidence for the referenced implementation.
 - Execution verified: No; run-specific evidence is required.
 
@@ -16280,6 +20501,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -16290,6 +20513,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: website/actions.html
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Add focused tests and acceptance evidence for the referenced implementation.
 - Execution verified: No; run-specific evidence is required.
 
@@ -16299,7 +20524,9 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Actionable claim lines: 8
 - Implementation paths: None detected
 - Test paths: None detected
-- Missing paths: config/path-d-buddy-selector-allowlist.json, github/workflows/pages.yml, shared/os-event-bus-contract.ts, website/agents.html, website/bootcamp.html, website/buddy-os-bus.js, website/data-packages.html, website/frontier.html, website/issues.html, website/packages.html, website/pulls.html
+- Missing paths: config/path-d-buddy-selector-allowlist.json, shared/os-event-bus-contract.ts, website/agents.html, website/bootcamp.html, website/buddy-os-bus.js, website/data-packages.html, website/frontier.html, website/issues.html, website/packages.html, website/pulls.html
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Repair or explicitly supersede the missing repository path references.
 - Execution verified: No; run-specific evidence is required.
 
@@ -16310,6 +20537,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -16320,6 +20549,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: tools/audit_repository_connections.py, tools/build_hf_capability_packs.py, tools/build_universal_work_ai_catalog.py
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Add focused tests and acceptance evidence for the referenced implementation.
 - Execution verified: No; run-specific evidence is required.
 
@@ -16330,6 +20561,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -16340,6 +20573,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -16350,6 +20585,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -16360,6 +20597,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -16370,17 +20609,21 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
 ### study_packs/DAY1_INVENTORY.md
 
-- Status: broken_path_references
+- Status: reference_only
 - Actionable claim lines: 0
 - Implementation paths: None detected
 - Test paths: None detected
-- Missing paths: study_packs/*/sources.json
-- Next action: Repair or explicitly supersede the missing repository path references.
+- Missing paths: None detected
+- Path templates: study_packs/*/sources.json
+- Machine-local paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
 ### study_packs/README.md
@@ -16390,6 +20633,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -16400,6 +20645,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: scripts/smoke_offload.py
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Repair or explicitly supersede the missing repository path references.
 - Execution verified: No; run-specific evidence is required.
 
@@ -16410,6 +20657,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -16420,6 +20669,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -16430,6 +20681,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -16439,7 +20692,9 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Actionable claim lines: 24
 - Implementation paths: tools/license_provenance_gate.py
 - Test paths: None detected
-- Missing paths: authored/coverage_rules.json, authored/outline_topics.json, authored/release_changes.json, authored/target_overrides.json, data/dreamco_knowledge/evidence/regression/<asset_id>/<YYYYMMDD>-<NN>.json, data/majors_selected.json, data/practice_tasks.json, docs/data_dictionary.json, docs/make_data_dictionary.py, evidence/GENERATED_MANIFEST.json, evidence/holdout_kit/REVEALED_KEY.json, evidence/holdout_kit/VERIFIED_SHAS.json, evidence/scorer_input_cs_selfassessed.json, evidence_root>/<kind>/<asset_id>/<run>.json
+- Missing paths: authored/coverage_rules.json, authored/outline_topics.json, authored/release_changes.json, authored/target_overrides.json, data/majors_selected.json, data/practice_tasks.json, docs/data_dictionary.json, docs/make_data_dictionary.py, evidence/GENERATED_MANIFEST.json, evidence/holdout_kit/REVEALED_KEY.json, evidence/holdout_kit/VERIFIED_SHAS.json, evidence/scorer_input_cs_selfassessed.json
+- Path templates: <evidence_root>/<kind>/<asset_id>/<run>.json, data/dreamco_knowledge/evidence/regression/<asset_id>/<YYYYMMDD>-<NN>.json
+- Machine-local paths: /home/box/.ecp-holdout/passphrase, /workspace/edu-career-pathways-private
 - Next action: Repair or explicitly supersede the missing repository path references.
 - Execution verified: No; run-specific evidence is required.
 
@@ -16449,7 +20704,9 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Actionable claim lines: 50
 - Implementation paths: None detected
 - Test paths: None detected
-- Missing paths: data/dreamco_knowledge/evidence/holdout/<asset_id>/<run>.json, data/dreamco_knowledge/evidence/holdout/<asset_id>/<run>.results.json, data/dreamco_knowledge/evidence/regression/<asset_id>/<run>.json, data/dreamco_knowledge/evidence/regression/<asset_id>/<run>.results.json, data/majors_selected.json, data/practice_tasks.json, docs/data_dictionary.json, docs/make_data_dictionary.py, evidence/GENERATED_MANIFEST.json, evidence/holdout_kit/REVEALED_KEY.json, evidence/holdout_kit/VERIFIED_SHAS.json, evidence/holdout_kit/items.json, study_plans/<stem>/asset.json, study_plans/<stem>/candidate.json, study_plans/<stem>/license_gate.json, study_plans/<stem>/plan.json, study_plans/<stem>/provenance.json
+- Missing paths: data/majors_selected.json, data/practice_tasks.json, docs/data_dictionary.json, docs/make_data_dictionary.py, evidence/GENERATED_MANIFEST.json, evidence/holdout_kit/REVEALED_KEY.json, evidence/holdout_kit/VERIFIED_SHAS.json, evidence/holdout_kit/items.json
+- Path templates: data/dreamco_knowledge/evidence/holdout/<asset_id>/<run>.json, data/dreamco_knowledge/evidence/holdout/<asset_id>/<run>.results.json, data/dreamco_knowledge/evidence/regression/<asset_id>/<run>.json, data/dreamco_knowledge/evidence/regression/<asset_id>/<run>.results.json, study_plans/<stem>/asset.json, study_plans/<stem>/candidate.json, study_plans/<stem>/license_gate.json, study_plans/<stem>/plan.json, study_plans/<stem>/provenance.json
+- Machine-local paths: None detected
 - Next action: Repair or explicitly supersede the missing repository path references.
 - Execution verified: No; run-specific evidence is required.
 
@@ -16460,6 +20717,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: data/practice_tasks.json
+- Path templates: None detected
+- Machine-local paths: /workspace/dc-ecp
 - Next action: Repair or explicitly supersede the missing repository path references.
 - Execution verified: No; run-specific evidence is required.
 
@@ -16470,6 +20729,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -16480,6 +20741,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -16490,6 +20753,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: data/practice_tasks.json, study_plans/03.0104_environmental_science/license_gate.json, study_plans/03.0104_environmental_science/provenance.json
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Repair or explicitly supersede the missing repository path references.
 - Execution verified: No; run-specific evidence is required.
 
@@ -16500,6 +20765,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: data/practice_tasks.json, study_plans/09.0101_speech_communication_and_rhetoric/license_gate.json, study_plans/09.0101_speech_communication_and_rhetoric/provenance.json
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Repair or explicitly supersede the missing repository path references.
 - Execution verified: No; run-specific evidence is required.
 
@@ -16510,6 +20777,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: data/practice_tasks.json, study_plans/11.0401_information_science_studies/license_gate.json, study_plans/11.0401_information_science_studies/provenance.json
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Repair or explicitly supersede the missing repository path references.
 - Execution verified: No; run-specific evidence is required.
 
@@ -16520,6 +20789,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: data/practice_tasks.json, study_plans/11.0701_computer_science/license_gate.json, study_plans/11.0701_computer_science/provenance.json
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Repair or explicitly supersede the missing repository path references.
 - Execution verified: No; run-specific evidence is required.
 
@@ -16530,6 +20801,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: data/practice_tasks.json, study_plans/13.1202_elementary_education_and_teaching/license_gate.json, study_plans/13.1202_elementary_education_and_teaching/provenance.json
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Repair or explicitly supersede the missing repository path references.
 - Execution verified: No; run-specific evidence is required.
 
@@ -16540,6 +20813,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: data/practice_tasks.json, study_plans/14.0801_civil_engineering_general/license_gate.json, study_plans/14.0801_civil_engineering_general/provenance.json
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Repair or explicitly supersede the missing repository path references.
 - Execution verified: No; run-specific evidence is required.
 
@@ -16550,6 +20825,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: data/practice_tasks.json, study_plans/14.0901_computer_engineering_general/license_gate.json, study_plans/14.0901_computer_engineering_general/provenance.json
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Repair or explicitly supersede the missing repository path references.
 - Execution verified: No; run-specific evidence is required.
 
@@ -16560,6 +20837,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: data/practice_tasks.json, study_plans/14.1001_electrical_and_electronics_engineering/license_gate.json, study_plans/14.1001_electrical_and_electronics_engineering/provenance.json
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Repair or explicitly supersede the missing repository path references.
 - Execution verified: No; run-specific evidence is required.
 
@@ -16570,6 +20849,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: data/practice_tasks.json, study_plans/14.1901_mechanical_engineering/license_gate.json, study_plans/14.1901_mechanical_engineering/provenance.json
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Repair or explicitly supersede the missing repository path references.
 - Execution verified: No; run-specific evidence is required.
 
@@ -16580,6 +20861,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: data/practice_tasks.json, study_plans/23.0101_english_language_and_literature_general/license_gate.json, study_plans/23.0101_english_language_and_literature_general/provenance.json
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Repair or explicitly supersede the missing repository path references.
 - Execution verified: No; run-specific evidence is required.
 
@@ -16590,6 +20873,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: data/practice_tasks.json, study_plans/26.0101_biology_biological_sciences_general/license_gate.json, study_plans/26.0101_biology_biological_sciences_general/provenance.json
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Repair or explicitly supersede the missing repository path references.
 - Execution verified: No; run-specific evidence is required.
 
@@ -16600,6 +20885,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: data/practice_tasks.json, study_plans/27.0101_mathematics_general/license_gate.json, study_plans/27.0101_mathematics_general/provenance.json
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Repair or explicitly supersede the missing repository path references.
 - Execution verified: No; run-specific evidence is required.
 
@@ -16610,6 +20897,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: data/practice_tasks.json, study_plans/27.0501_statistics_general/license_gate.json, study_plans/27.0501_statistics_general/provenance.json
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Repair or explicitly supersede the missing repository path references.
 - Execution verified: No; run-specific evidence is required.
 
@@ -16620,6 +20909,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: data/practice_tasks.json, study_plans/40.0501_chemistry_general/license_gate.json, study_plans/40.0501_chemistry_general/provenance.json
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Repair or explicitly supersede the missing repository path references.
 - Execution verified: No; run-specific evidence is required.
 
@@ -16630,6 +20921,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: data/practice_tasks.json, study_plans/40.0801_physics_general/license_gate.json, study_plans/40.0801_physics_general/provenance.json
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Repair or explicitly supersede the missing repository path references.
 - Execution verified: No; run-specific evidence is required.
 
@@ -16640,6 +20933,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: data/practice_tasks.json, study_plans/42.0101_psychology_general/license_gate.json, study_plans/42.0101_psychology_general/provenance.json
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Repair or explicitly supersede the missing repository path references.
 - Execution verified: No; run-specific evidence is required.
 
@@ -16650,6 +20945,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: data/practice_tasks.json, study_plans/43.0104_criminal_justice_safety_studies/license_gate.json, study_plans/43.0104_criminal_justice_safety_studies/provenance.json
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Repair or explicitly supersede the missing repository path references.
 - Execution verified: No; run-specific evidence is required.
 
@@ -16660,6 +20957,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: data/practice_tasks.json, study_plans/44.0701_social_work/license_gate.json, study_plans/44.0701_social_work/provenance.json
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Repair or explicitly supersede the missing repository path references.
 - Execution verified: No; run-specific evidence is required.
 
@@ -16670,6 +20969,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: data/practice_tasks.json, study_plans/45.0601_economics_general/license_gate.json, study_plans/45.0601_economics_general/provenance.json
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Repair or explicitly supersede the missing repository path references.
 - Execution verified: No; run-specific evidence is required.
 
@@ -16680,6 +20981,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: data/practice_tasks.json, study_plans/45.1001_political_science_and_government_general/license_gate.json, study_plans/45.1001_political_science_and_government_general/provenance.json
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Repair or explicitly supersede the missing repository path references.
 - Execution verified: No; run-specific evidence is required.
 
@@ -16690,6 +20993,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: data/practice_tasks.json, study_plans/50.0409_graphic_design/license_gate.json, study_plans/50.0409_graphic_design/provenance.json
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Repair or explicitly supersede the missing repository path references.
 - Execution verified: No; run-specific evidence is required.
 
@@ -16700,6 +21005,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: data/practice_tasks.json, study_plans/51.2001_pharmacy/license_gate.json, study_plans/51.2001_pharmacy/provenance.json
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Repair or explicitly supersede the missing repository path references.
 - Execution verified: No; run-specific evidence is required.
 
@@ -16710,6 +21017,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: data/practice_tasks.json, study_plans/51.3801_registered_nursing_registered_nurse/license_gate.json, study_plans/51.3801_registered_nursing_registered_nurse/provenance.json
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Repair or explicitly supersede the missing repository path references.
 - Execution verified: No; run-specific evidence is required.
 
@@ -16720,6 +21029,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: data/practice_tasks.json, study_plans/52.0201_business_administration_and_management_general/license_gate.json, study_plans/52.0201_business_administration_and_management_general/provenance.json
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Repair or explicitly supersede the missing repository path references.
 - Execution verified: No; run-specific evidence is required.
 
@@ -16730,6 +21041,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: data/practice_tasks.json, study_plans/52.0301_accounting/license_gate.json, study_plans/52.0301_accounting/provenance.json
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Repair or explicitly supersede the missing repository path references.
 - Execution verified: No; run-specific evidence is required.
 
@@ -16740,6 +21053,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: data/practice_tasks.json, study_plans/52.0801_finance_general/license_gate.json, study_plans/52.0801_finance_general/provenance.json
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Repair or explicitly supersede the missing repository path references.
 - Execution verified: No; run-specific evidence is required.
 
@@ -16750,6 +21065,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: data/practice_tasks.json, study_plans/52.1401_marketing_marketing_management_general/license_gate.json, study_plans/52.1401_marketing_marketing_management_general/provenance.json
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Repair or explicitly supersede the missing repository path references.
 - Execution verified: No; run-specific evidence is required.
 
@@ -16760,6 +21077,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: tools/build_hf_capability_packs.py
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Add focused tests and acceptance evidence for the referenced implementation.
 - Execution verified: No; run-specific evidence is required.
 
@@ -16770,6 +21089,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -16780,6 +21101,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -16790,6 +21113,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -16800,6 +21125,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -16810,6 +21137,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: buddy/bench/scorecard.py, buddy/learning/bootcamp.py, tools/build_hf_capability_packs.py
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Add focused tests and acceptance evidence for the referenced implementation.
 - Execution verified: No; run-specific evidence is required.
 
@@ -16820,6 +21149,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -16830,6 +21161,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -16840,6 +21173,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -16850,6 +21185,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -16859,7 +21196,9 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Actionable claim lines: 3
 - Implementation paths: tools/build_hf_capability_packs.py, tools/build_hf_download_packages.py
 - Test paths: None detected
-- Missing paths: evidence/drill_05_inventory_audit.json, snapshots/169d4a43…/config.json, study_packs/<pack>/sources.json, study_packs/hf_packages/<pack>/package.json
+- Missing paths: evidence/drill_05_inventory_audit.json, snapshots/169d4a43…/config.json
+- Path templates: study_packs/<pack>/sources.json, study_packs/hf_packages/<pack>/package.json
+- Machine-local paths: None detected
 - Next action: Repair or explicitly supersede the missing repository path references.
 - Execution verified: No; run-specific evidence is required.
 
@@ -16870,6 +21209,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -16880,6 +21221,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -16890,6 +21233,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -16900,6 +21245,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: evidence/latest.json, evidence/run_20260928T225217.json, recipes/av_trainer_handoff.yaml
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Repair or explicitly supersede the missing repository path references.
 - Execution verified: No; run-specific evidence is required.
 
@@ -16910,6 +21257,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -16919,7 +21268,9 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Actionable claim lines: 0
 - Implementation paths: None detected
 - Test paths: None detected
-- Missing paths: /drill_runner.py
+- Missing paths: ../drill_runner.py
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Repair or explicitly supersede the missing repository path references.
 - Execution verified: No; run-specific evidence is required.
 
@@ -16929,7 +21280,9 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Actionable claim lines: 0
 - Implementation paths: None detected
 - Test paths: None detected
-- Missing paths: /drill_runner.py
+- Missing paths: ../drill_runner.py
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Repair or explicitly supersede the missing repository path references.
 - Execution verified: No; run-specific evidence is required.
 
@@ -16939,7 +21292,9 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Actionable claim lines: 0
 - Implementation paths: None detected
 - Test paths: None detected
-- Missing paths: /drill_runner.py
+- Missing paths: ../drill_runner.py
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Repair or explicitly supersede the missing repository path references.
 - Execution verified: No; run-specific evidence is required.
 
@@ -16949,7 +21304,9 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Actionable claim lines: 0
 - Implementation paths: None detected
 - Test paths: None detected
-- Missing paths: /drill_runner.py
+- Missing paths: ../drill_runner.py
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Repair or explicitly supersede the missing repository path references.
 - Execution verified: No; run-specific evidence is required.
 
@@ -16959,7 +21316,9 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Actionable claim lines: 0
 - Implementation paths: None detected
 - Test paths: None detected
-- Missing paths: /drill_runner.py
+- Missing paths: ../drill_runner.py
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Repair or explicitly supersede the missing repository path references.
 - Execution verified: No; run-specific evidence is required.
 
@@ -16970,6 +21329,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: recipes/dpo.yaml, recipes/sft.yaml
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Repair or explicitly supersede the missing repository path references.
 - Execution verified: No; run-specific evidence is required.
 
@@ -16980,6 +21341,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: recipes/dpo.yaml, recipes/sft.yaml
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Repair or explicitly supersede the missing repository path references.
 - Execution verified: No; run-specific evidence is required.
 
@@ -16990,6 +21353,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: recipes/dpo.yaml, recipes/sft.yaml
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Repair or explicitly supersede the missing repository path references.
 - Execution verified: No; run-specific evidence is required.
 
@@ -17000,6 +21365,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: recipes/dpo.yaml, recipes/sft.yaml
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Repair or explicitly supersede the missing repository path references.
 - Execution verified: No; run-specific evidence is required.
 
@@ -17010,6 +21377,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: recipes/dpo.yaml, recipes/sft.yaml
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Repair or explicitly supersede the missing repository path references.
 - Execution verified: No; run-specific evidence is required.
 
@@ -17020,6 +21389,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: recipes/dpo.yaml, recipes/sft.yaml
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Repair or explicitly supersede the missing repository path references.
 - Execution verified: No; run-specific evidence is required.
 
@@ -17030,6 +21401,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: recipes/dpo.yaml, recipes/sft.yaml
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Repair or explicitly supersede the missing repository path references.
 - Execution verified: No; run-specific evidence is required.
 
@@ -17040,6 +21413,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: recipes/dpo.yaml, recipes/sft.yaml
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Repair or explicitly supersede the missing repository path references.
 - Execution verified: No; run-specific evidence is required.
 
@@ -17050,6 +21425,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: recipes/dpo.yaml, recipes/sft.yaml
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Repair or explicitly supersede the missing repository path references.
 - Execution verified: No; run-specific evidence is required.
 
@@ -17060,6 +21437,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: recipes/dpo.yaml, recipes/sft.yaml
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Repair or explicitly supersede the missing repository path references.
 - Execution verified: No; run-specific evidence is required.
 
@@ -17070,6 +21449,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: recipes/dpo.yaml, recipes/sft.yaml
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Repair or explicitly supersede the missing repository path references.
 - Execution verified: No; run-specific evidence is required.
 
@@ -17080,6 +21461,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: recipes/dpo.yaml, recipes/sft.yaml
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Repair or explicitly supersede the missing repository path references.
 - Execution verified: No; run-specific evidence is required.
 
@@ -17090,6 +21473,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: drills/run_drills.py
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Repair or explicitly supersede the missing repository path references.
 - Execution verified: No; run-specific evidence is required.
 
@@ -17100,6 +21485,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -17109,7 +21496,9 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Actionable claim lines: 0
 - Implementation paths: None detected
 - Test paths: None detected
-- Missing paths: recipes/dpo.yaml, recipes/grpo.yaml, recipes/sft.yaml, scripts/train_*.py
+- Missing paths: recipes/dpo.yaml, recipes/grpo.yaml, recipes/sft.yaml
+- Path templates: scripts/train_*.py
+- Machine-local paths: None detected
 - Next action: Repair or explicitly supersede the missing repository path references.
 - Execution verified: No; run-specific evidence is required.
 
@@ -17120,6 +21509,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -17130,6 +21521,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
@@ -17140,36 +21533,44 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: config/generated/hf-hub-literacy-checklist.json
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Repair or explicitly supersede the missing repository path references.
 - Execution verified: No; run-specific evidence is required.
 
 ### study_packs/trl/eval_plan.md
-
-- Status: broken_path_references
-- Actionable claim lines: 0
-- Implementation paths: None detected
-- Test paths: None detected
-- Missing paths: study_packs/trl/scorecards/<pack_id>/<date>.json
-- Next action: Repair or explicitly supersede the missing repository path references.
-- Execution verified: No; run-specific evidence is required.
-
-### systems/README.md
-
-- Status: broken_path_references
-- Actionable claim lines: 0
-- Implementation paths: None detected
-- Test paths: None detected
-- Missing paths: App_bots/*.json
-- Next action: Repair or explicitly supersede the missing repository path references.
-- Execution verified: No; run-specific evidence is required.
-
-### tools/issue_cleaner/README.md
 
 - Status: reference_only
 - Actionable claim lines: 0
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
+- Path templates: study_packs/trl/scorecards/<pack_id>/<date>.json
+- Machine-local paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Execution verified: No; run-specific evidence is required.
+
+### systems/README.md
+
+- Status: reference_only
+- Actionable claim lines: 0
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: None detected
+- Path templates: App_bots/*.json
+- Machine-local paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Execution verified: No; run-specific evidence is required.
+
+### tools/issue_cleaner/README.md
+
+- Status: implementation_reference_missing
+- Actionable claim lines: 1
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: None detected
+- Path templates: None detected
+- Machine-local paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 

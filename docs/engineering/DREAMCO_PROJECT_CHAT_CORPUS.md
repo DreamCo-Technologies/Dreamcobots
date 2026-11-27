@@ -340,3 +340,44 @@ The study-resource validator now enforces 10 lessons, valid source IDs and all s
 ### Candidate-backed daily lesson slots — 2026-11-24
 
 The clean-base FreeCodeCamp PR #18216 now extends `tools/build_daily_lesson_plan.py` to accept the verified 65-division queue artifact. It assigns the top five candidate video metadata records to each division's five daily slots (325 total), preserving stable video IDs, title, URL, categories and priority score. Every candidate is forced to remain `rights_status=review_required`, `media_download_allowed=false`, `transcript_ingestion_allowed=false`, and `training_eligible=false`. Partial inventories, missing/duplicate IDs, and unsafe permission flags are rejected. The plan remains `queued_not_created`; it does not claim 325 authored lessons or any Buddy mastery. Synthetic regression fixtures verify 325 slots and the fail-closed boundary. Current-head CI run 45438151347 is queued; results are pending.
+
+
+## Daily corpus refresh — 2026-11-26
+
+### Current Project Library inventory
+
+- Current recursive Library listing: **28 files** — 5 Markdown, 2 patch files, 10 ZIP archives, and 11 image/video assets. The earlier 2026-11-18/24 ledger recorded 30 files and 13 media assets; two media entries are absent from the current listing and their identities remain unresolved. Preserve the earlier snapshot as history; do not silently treat the difference as deletion.
+- A Library semantic search for DreamCo transcripts, the Master Directive, patch/ZIP handoffs, Bootcamp learning, and product/automation ideas returned 7 relevant engineering artifacts and no further search cursor. The complete current Library metadata listing is 28 files. This does not enumerate all historical ChatGPT conversations.
+
+### Verified duplicate relationships
+
+| Logical source | Current verification |
+|---|---|
+| `Pasted markdown(1).md` + `Pasted markdown(2).md` | Byte-identical; 108,560 bytes; 7,374 lines; SHA-256 `6544cdfbbb11db0a0389b63a0f0c5ae0c5f903e95fc8470209f3dd294b3ab89e`. Keep both Library provenance records; process the unique content once. |
+| `dreamco-unified.patch` + `dreamco-unified(1).patch` | Byte-identical; 935,399 bytes; SHA-256 `817c07ff73535569e95cc9aa58885ae3619404032f46a2514c63e89fee53ec19`. No hunk has been applied; full hunk-to-main comparison remains pending. |
+| `Pasted markdown.md` + `chat-notes.md` inside `dreamco_codex_handoff.zip` | Byte-identical; 82,975 bytes; SHA-256 `be2bc6e6dac643c0bc84a3580297016a38b6667c960330e224f5a69055fb7624`. Treat as one logical transcript with both source references. |
+
+### ZIP integrity and version deltas
+
+- All 10 current ZIP archives passed CRC validation. No absolute paths, parent-traversal entries, or symlinks were found. Extraction occurred only after path checks and into an isolated inspection directory. No archive was applied to the repository.
+- Current central-directory entry counts: Bootcamp v2 11; v3 25; v4 18; v5 20; model-path bundle 7; scheduler bundle 7; v5 PR candidate 22; Codex implementation 144; Codex handoff 4; completion system 9.
+- Bootcamp source deltas: v3 adds `model_router.py`, `source_policy.py`, and corresponding tests but also includes generated `__pycache__` bytecode; v4 adds `capability_manager.py`, `routing_policy.py`, and tests while removing bytecode caches; v5 adds `routing_evidence.py` and its test. Shared files were hash-identical where compared.
+- The v5 PR candidate contains the same eight source/test files as v5 under a nested review directory, plus README and PULL_REQUEST draft files. It is a packaging copy, not a distinct implementation. The supplied local-test claims remain historical artifact claims and were not rerun in this pass.
+- The 144-entry Codex implementation archive is an offline reference bundle with generated division/operations material; the 9-entry completion-system archive and the model-path/scheduler bundles received manifest/integrity inspection only. Selected Bootcamp source files were read, but no archive received a complete code/security/dependency review.
+
+### Conversation and requirement coverage
+
+- The existing conversation registry still contains CHAT-01 through CHAT-15 and 210 D01-D14 pairs; it explicitly does not establish the total number of DreamCo project conversations.
+- A personal-context search surfaced 4 relevant prior-conversation clusters, but their overlap with the existing 15 CHAT entries is unresolved and complete transcript/message locators were not available. Do not create new CHAT IDs or claim a complete chat inventory from these summaries.
+- `Pasted markdown.md` remains a 644-line historical transcript previously read for major topics. The 7,374-line Master Directive copies are exact duplicates, but full requirement-by-requirement extraction remains incomplete. The 1,566-line unified patch copies are exact duplicates, but every hunk still needs comparison against main and open PRs.
+- `BUDDY_BOOTCAMP_PR_DRAFT.md` remains explicitly NOT OPENED / NOT PUSHED and holds branch creation pending deployment-isolation verification. `PULL_REQUEST.md` remains a draft, not an opened PR; its stated local test totals are not live repository, provider, device, training, or production evidence.
+- No private Library transcript, Gmail body, personal email, credential, or third-party personal data was used as model-training data. No model-weight training or private-source ingestion occurred.
+
+### Remaining corpus blockers
+
+1. Reconcile the two media assets absent from the current 28-file listing against the historical 30-file snapshot.
+2. Complete the 311-section Master Directive requirement extraction and stable DCR mappings; retain both duplicate source IDs.
+3. Compare all 1,566 patch lines/hunks against current main and every relevant open PR before any selective port.
+4. Complete code/dependency/security review of the ZIP contents; preserve the version deltas without applying whole archives.
+5. Enumerate full historical DreamCo conversation transcripts and message locators beyond the 15-entry registry; total conversation count remains UNKNOWN.
+6. Map each extracted user-authored requirement to current code, test, issue, PR, commit, benchmark, Pages page, and explicit lifecycle status.

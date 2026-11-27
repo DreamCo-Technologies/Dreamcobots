@@ -59,7 +59,12 @@ def complete(prompt: str, profile: dict[str, Any], offline: Callable[[], str],
         try:
             from buddy.openrouter.gateway import BuddyGateway, ClientPolicy
 
-            gateway = BuddyGateway(ClientPolicy(client_id="dreamco-fleet-runtime", allowed_models=frozenset()))
+            source_env = env if env is not None else os.environ
+            gateway = BuddyGateway(
+                ClientPolicy(client_id="dreamco-fleet-runtime", allowed_models=frozenset()),
+                api_key=source_env.get("OPENROUTER_API_KEY"),
+                base_url=source_env.get("OPENROUTER_BASE_URL"),
+            )
             response = gateway.chat(prompt, requested_model=profile.get("live_alias", "dreamco/auto"))
             choice = (response.get("choices") or [{}])[0]
             text = ((choice.get("message") or {}).get("content") or "").strip()

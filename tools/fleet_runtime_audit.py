@@ -112,7 +112,14 @@ def connections_ok(manifest: dict[str, Any], record: dict[str, Any] | None) -> b
 def unit_tests_pass(skip: bool) -> bool | None:
     if skip:
         return None
-    result = run([sys.executable, "-m", "unittest", "-q", UNIT_TEST_MODULE], timeout=600)
+    # Use unittest discovery by file path: the repository's tests directory is
+    # intentionally not a Python package, so importing tests.<module> can resolve
+    # an unrelated installed package or fail and incorrectly cap every division.
+    result = run(
+        [sys.executable, "-m", "unittest", "discover", "-s", "tests",
+         "-p", "test_fleet_runtime_executor.py", "-q"],
+        timeout=600,
+    )
     return result["code"] == 0
 
 
@@ -696,7 +703,7 @@ def render_report(status: dict[str, Any], rows: list[dict[str, Any]]) -> str:
         items = policy.get(key, [])
         lines += [f"- **{key}** ({len(items)}) — {reasons[key]}: " + ", ".join(f"`{x}`" for x in items)]
     lines.append("")
-    return "\n".join(lines) + "\n"
+    return "\n".join(line.rstrip() for line in lines) + "\n"
 
 
 # ---------------------------------------------------------------- regression

@@ -8,6 +8,36 @@ from unittest.mock import patch
 
 
 class RunEverythingNowTests(unittest.TestCase):
+    def test_standard_plan_runs_certification_before_readiness_and_progress(self) -> None:
+        module = importlib.import_module("tools.run_everything_now")
+        steps = module.select_steps("standard")
+        names = [name for name, _command in steps]
+        required = [
+            "production_verification",
+            "full_certification",
+            "live_user_readiness",
+            "system_progress",
+        ]
+        for name in required:
+            self.assertIn(name, names)
+        self.assertLess(names.index("production_verification"), names.index("full_certification"))
+        self.assertLess(names.index("full_certification"), names.index("live_user_readiness"))
+        self.assertLess(names.index("live_user_readiness"), names.index("system_progress"))
+        module.validate_plan(steps)
+
+    def test_quick_mode_does_not_claim_full_certification(self) -> None:
+        module = importlib.import_module("tools.run_everything_now")
+        names = [name for name, _command in module.select_steps("quick")]
+        self.assertNotIn("full_certification", names)
+        self.assertNotIn("live_user_readiness", names)
+        self.assertNotIn("system_progress", names)
+
+    def test_maximum_mode_includes_every_declared_step_in_dependency_order(self) -> None:
+        module = importlib.import_module("tools.run_everything_now")
+        steps = module.select_steps("maximum")
+        self.assertEqual([name for name, _command in steps], [name for name, _command in module.MAX_STEPS])
+        module.validate_plan(steps)
+
     def test_writes_inflight_status_before_dependent_step(self) -> None:
         module = importlib.import_module("tools.run_everything_now")
         with tempfile.TemporaryDirectory() as tmpdir:

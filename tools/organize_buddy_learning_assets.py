@@ -74,7 +74,30 @@ def guide_errors(guide:dict[str,Any], divisions:list[str])->list[str]:
     if not mapped: errors.append("division_mapping must reference at least one known division")
     return errors
 
+def normalize_divisions(value: Any) -> list[str]:
+    """Accept canonical division names or structured registry rows."""
+    if isinstance(value, dict):
+        value = value.get("divisions")
+    if not isinstance(value, list):
+        raise ValueError("divisions must be a list or an object containing a divisions list")
+    names: list[str] = []
+    for item in value:
+        if isinstance(item, str):
+            name = item.strip()
+        elif isinstance(item, dict):
+            name = str(item.get("name") or item.get("division") or "").strip()
+        else:
+            name = ""
+        if not name:
+            raise ValueError("each division entry must provide a non-empty name or division")
+        names.append(name)
+    if len(names) != len(set(names)):
+        raise ValueError("division registry contains duplicate division names")
+    return names
+
+
 def organize(guides:list[dict[str,Any]], divisions:list[str], user_data:list[dict[str,Any]]|None=None)->dict[str,Any]:
+    divisions = normalize_divisions(divisions)
     packages=[]
     rejected=[]
     division_index={name:[] for name in divisions}

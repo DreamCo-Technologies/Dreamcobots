@@ -13,25 +13,17 @@ on:
       - "website/data/actions-prospectus.json"
       - "website/actions.html"
       - ".github/workflows/actions-command-center.yml"
-  workflow_run:
-    workflows:
-      - Actions Health
-      - Actions Failure Sweep
-      - DreamCo Repository System Watch
-      - Full System Certification
-    types: [completed]
 
 permissions:
   contents: read
   actions: read
 
 concurrency:
-  group: dreamco-actions-command-center-${{ github.event.workflow_run.id || github.run_id }}
+  group: dreamco-actions-command-center-${{ github.run_id }}
   cancel-in-progress: false
 
 jobs:
   command-center:
-    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'failure'
     name: Build evidence-backed Actions prospectus summary
     runs-on: ubuntu-latest
     timeout-minutes: 10

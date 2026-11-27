@@ -1,9 +1,6 @@
 name: DreamCo Greenkeeper Root Cause
 
 on:
-  workflow_run:
-    workflows: ["Keep Green", "DreamCo Greenkeeper Orchestrator"]
-    types: [completed]
   workflow_dispatch: {}
 
 permissions:
@@ -11,7 +8,7 @@ permissions:
   actions: read
 
 concurrency:
-  group: greenkeeper-root-cause-${{ github.event.workflow_run.id || github.run_id }}
+  group: greenkeeper-root-cause-${{ github.run_id }}
   cancel-in-progress: false
 
 jobs:

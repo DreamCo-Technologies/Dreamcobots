@@ -60,7 +60,7 @@ def load_authorized_corpus(manifest:dict[str,Any],*,root:Path)->tuple[list[bytes
 def train_byte_bpe(texts:Iterable[bytes],vocab_size:int=512)->dict[str,Any]:
  if not isinstance(vocab_size,int) or isinstance(vocab_size,bool) or not 256<=vocab_size<=65536:
   raise ValueError("vocab_size must be an integer between 256 and 65536")
- sequences=[list(text) for text in texts if text]
+ sequences=[[bytes([value]) for value in text] for text in texts if text]
  if not sequences: raise ValueError("at least one non-empty training sequence is required")
  merges=[]
  while 256+len(merges)<vocab_size:

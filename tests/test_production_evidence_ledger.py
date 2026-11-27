@@ -14,14 +14,17 @@ from tools.generate_production_evidence_ledger import build, main as generate_le
 class ProductionEvidenceLedgerTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        if generate_manifests([]) != 0 or generate_ledger() != 0:
+        if generate_manifests([]) != 0 or generate_ledger([]) != 0:
             raise RuntimeError("could not generate fleet evidence manifests")
 
     def test_every_real_division_is_reconciled_without_pseudo_buckets(self):
         data = build()
-        self.assertEqual(data["summary"]["real_divisions"], 56)
-        self.assertEqual(len(data["divisions"]), 56)
-        self.assertEqual(data["summary"]["catalog_profiles"], 1120)
+        catalog = json.loads((ROOT / "config/generated/bots.catalog.json").read_text())
+        expected_divisions = len(catalog["divisions"]) + len(catalog["supplemental_divisions"])
+        expected_profiles = int(catalog["summary"]["combined_routable_profiles"])
+        self.assertEqual(data["summary"]["real_divisions"], expected_divisions)
+        self.assertEqual(len(data["divisions"]), expected_divisions)
+        self.assertEqual(data["summary"]["catalog_profiles"], expected_profiles)
         self.assertTrue(data["summary"]["catalogs_reconciled"])
         self.assertNotIn("UNASSIGNED", {row["name"] for row in data["divisions"]})
         self.assertIn("GrokTeammates", {row["name"] for row in data["non_division_buckets"]})

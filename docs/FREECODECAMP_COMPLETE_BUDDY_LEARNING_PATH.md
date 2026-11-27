@@ -80,7 +80,7 @@ The guide pipeline produces one queue row per catalog video. It will not invent 
 
 ## Division-wide course scheduler integration
 
-The eight-track registry now exposes the existing Tolkien, tokenizer, CPU-first LLM, O*NET, Hugging Face task-family, Hugging Face Learn course, freeCodeCamp curriculum and freeCodeCamp video paths through `buddy.learning.course_track_registry`. Every video ID in the checked-in catalog is available in the shared queue for each of the 55 canonical divisions and 65 MasterBot lanes. The legacy snapshot currently contains 1,740 metadata records; the count is derived from the catalog and changes when the verified refresh PR is merged.
+The 11-track registry exposes the eight initial Tolkien, tokenizer, CPU-first LLM, O*NET, Hugging Face task-family, Hugging Face Learn course, freeCodeCamp curriculum and freeCodeCamp video paths, plus universal software libraries, workforce/entrepreneurship/sales/public-opportunity playbooks, and benchmark guides, through `buddy.learning.course_track_registry`. Every video ID in the checked-in catalog is available in the shared queue for each of the 55 canonical divisions and 65 MasterBot lanes. The legacy snapshot currently contains 1,740 metadata records; the count is derived from the catalog and changes when the verified refresh PR is merged.
 
 **Important completeness boundary:** the checked-in 1,740-video catalog explicitly reports `inventory.complete=false` and `inventory_status=partial`. It is not the complete freeCodeCamp channel archive. The 14,038 challenge / 217 module / 779 unique block curriculum figures are a dated source snapshot, not proof that every current challenge's text, tests, answer keys or prerequisites have been ingested. A verified upstream playlist count and a versioned official curriculum ID inventory are required before marking full coverage complete. The new scheduled refresh workflow enumerates the uploads playlist with pinned yt-dlp, checks count/unique-ID equality and opens a review PR; it never pushes directly to main.
 
@@ -89,3 +89,127 @@ Every queued video remains metadata-only until item-level source rights and tran
 ## Certification and curriculum-primitive coverage
 
 The course scheduler now includes all seven core current certifications and all five additional official certifications in the roadmap, including the language and C# specialist paths. It also exposes all seven curriculum primitives: theory lessons, workshops, labs, review pages, quizzes, required projects and exams. Legacy curricula are preserved in a separate versioned inventory task and are never silently substituted for current v9 requirements. The scheduler retains the ten learning phases and all 22 video subject tracks, plus every video ID in the current catalog.
+
+## Owner setup: exact start-to-finish steps
+
+Use this sequence when setting up the FreeCodeCamp learning system on a fresh checkout. Run commands from the repository root.
+
+### Step 1 — Prepare the local environment
+
+```bash
+python -m venv .venv
+# macOS/Linux:
+source .venv/bin/activate
+# Windows PowerShell:
+# .venv\\Scripts\\Activate.ps1
+python -m pip install --upgrade pip
+python -m pip install yt-dlp
+```
+
+Use the Python version required by the repository's current CI configuration. Do not install unrelated packages globally.
+
+### Step 2 — Refresh and verify the public video catalog
+
+```bash
+python tools/sync_freecodecamp_catalog.py
+python tools/sync_freecodecamp_catalog.py --check
+```
+
+Review the generated catalog diff. Confirm that the official channel ID is unchanged, every video ID is unique, each record has its canonical video URL, and the observed inventory count matches the independently enumerated uploads-playlist count. A successful metadata refresh is not a transcript download or a completed lesson. If the count proof is absent or mismatched, keep the inventory marked partial and do not enable study routing.
+
+The scheduled workflow is `.github/workflows/freecodecamp-catalog-refresh.yml`. It is also manually dispatchable in GitHub Actions. Review and merge its pull request only after checking the inventory evidence and tests; the workflow must not push directly to the default branch.
+
+### Step 3 — Validate the learning roadmap and division queues
+
+```bash
+python tools/build_freecodecamp_division_queues.py --check
+python tools/sync_freecodecamp_learning_inventory.py --check
+```
+
+If the second command is unavailable in the checked-out revision, use the matching inventory workflow and tests rather than inventing a replacement command. Check that the roadmap still includes the seven core certifications, five additional certification tracks, ten learning phases, 22 video subject categories, and the current canonical division/MasterBot mapping. Treat counts as refreshed evidence, not constants.
+
+### Step 4 — Review transcript rights before creating a video summary
+
+For each selected video, obtain an authorized transcript or equivalent source through a permitted route. Register the canonical video URL, transcript file path, SHA-256, rights evidence reference, and separate permissions for study, derivative-summary creation and weekly evaluation in `config/authorized-transcripts/manifest.json`. Model-training permission is a separate field and must have its own evidence.
+
+Do not scrape captions, download media, or infer permission from public availability. When rights are unknown, leave the video in the blocked/pending queue and use its official link as a reference only.
+
+### Step 5 — Build and review detailed original study guides
+
+```bash
+python tools/build_freecodecamp_study_guides.py --out-dir artifacts/freecodecamp-study-guides
+python -m unittest discover -s tests -p 'test_freecodecamp_study_guides.py' -v
+```
+
+For each rights-cleared video, Buddy's teacher/authoring workflow must produce the complete schema-compliant guide: overview, detailed explanation, timestamped chapters, prerequisites, objectives, concepts, glossary, code patterns, verified examples, at least three exercises, a project, mistakes/debugging, at least five knowledge checks with answers, division applications, references, provenance and review. A human reviewer must approve the guide before it becomes an assignable lesson. A queue row or title-based outline is never counted as a summary.
+
+### Step 6 — Study, build, test and retain
+
+For each assigned lesson, Buddy or the learner must:
+1. Check prerequisites and state the measurable learning objective.
+2. Open the official course/video and study the authorized material.
+3. Explain the concepts in original language and retrieve them without looking at notes.
+4. Complete the worked example and graduated exercises in a sandbox.
+5. Build the independent project and run its tests.
+6. Complete the knowledge checks and explain incorrect answers.
+7. Pass an unseen transfer task and relevant regression checks.
+8. Store the attempt, guide revision, source/rights evidence, model version, test identifiers, results and failure notes.
+9. Schedule spaced review at 1, 3, 7, 14 and 30 days; failed concepts return to remediation.
+
+Reading, summarizing or watching a lesson does not by itself establish mastery. Model-weight training is not implied by study-guide generation and remains blocked until separately authorized data, compute, evaluation and training gates pass.
+
+### Step 7 — Run the repository checks and merge reviewed changes
+
+Run the focused FreeCodeCamp tests first, then the relevant Buddy Bootcamp workflow and full repository CI. Inspect generated artifacts and workflow logs. Fix failures on a branch, rerun the failing tests, and open a review PR. Merge only when required checks pass and the inventory, rights and mastery status remain truthful.
+
+## Verified setup status and remaining work (2026-11-25)
+
+| Area | Repository evidence | Status |
+|---|---|---|
+| Canonical learning roadmap | Ten phases, seven core certifications, five additional tracks and 22 video subject categories | Implemented; refresh official structures |
+| Video catalog | 1,740 committed legacy metadata rows; prior discovery reported 1,741 | Partial; verify and commit the full inventory |
+| Catalog refresh | Scheduled/manual GitHub Actions workflow opens a review PR | Implemented; verify latest run and reviewed PR |
+| Per-video work queue | Builder and detailed-guide schema exist | Implemented; queue rows are not completed summaries |
+| Authorized transcripts | `config/authorized-transcripts/manifest.json` currently has an empty `transcripts` array | Blocked pending item-level rights-cleared assets |
+| Detailed video guides | Builder validates transcript hash, permissions, required sections and human review | No approved guides are evidenced by the empty manifest |
+| Division routing | Roadmap and division-queue integration exist for the canonical divisions and MasterBot lanes | Verify against refreshed catalog and current registry |
+| Buddy practice and mastery | Exercises, holdouts, weekly evidence and spaced review are specified | Do not claim execution or mastery without persisted run evidence |
+| Model training | Separate training permission and training workflow required | Not authorized or started by this setup |
+
+### Completion definition
+
+This setup is complete only when the refreshed inventory is independently count-verified; every discovered video has a durable catalog/queue record; each guide counted as complete has authorized source evidence, all required sections and human approval; Buddy's practice/evaluation runs are persisted and reproducible; and the relevant CI checks pass. Until then, report exact counts and blocked states rather than calling the entire FreeCodeCamp library complete.
+
+## Specialist division routing and Buddy demonstrations
+
+The public FreeCodeCamp video catalog, metadata routing, original DreamCo briefs, and study-ready lessons are separate states:
+
+- `freecodecamp-video-catalog` stores public metadata only. A title, URL, category, or routing tag is not a transcript, completed lesson, or permission to create a derivative summary.
+- `freecodecamp-specialist-learning-paths` contains 1,232 specialist-routed authoring work items. Nine video IDs have curated original DreamCo implementation briefs; the other 1,223 are generic authoring backlog tasks, not completed summaries or verified video lessons.
+- `freecodecamp-metadata-triage` contains 508 unclassified records assigned to DreamEducation/CommandCore and the DreamDiscovery review lane. These remain metadata-only.
+- The runtime queue filters specialist resources by canonical division and MasterBot targets so they do not leak into unrelated learning queues.
+- All metadata, briefs, authoring tasks, and triage items remain non-study-ready. Buddy must not mark them studied or mastered until item-level rights, original guide content, exercises, assessments, holdout/regression evidence, and human review exist.
+
+The current snapshot has 1,740 public video metadata records and remains marked **partial**. Metadata routing covers 1,232 specialist records and 508 triage records; this is complete routing coverage for the observed snapshot, not complete per-video summarization. The category rules route JavaScript/TypeScript, Java/JVM, frontend/UI, backend/APIs, Python/automation, HTML/CSS/accessibility, computer science, careers/interviews, databases/SQL, mobile, games, generative AI/LLMs, data science, software architecture/testing, C/C++ systems, cybersecurity/privacy, Linux/networking/IT, mathematics/statistics, machine learning, AI agents/MCP, and cloud DevOps/CI/CD.
+
+The nine curated briefs include original implementation work for agentic AI, algorithmic trading (paper-only), PR review, OpenClaw-style automation, self-healing CI/CD, TypeScript, ML foundations, MLOps, and neural networks. The remaining specialist items receive generic rights-gated authoring steps only; those steps are a process scaffold, not a summary of the linked video.
+
+Unclassified records are assigned to DreamEducation and CommandCore for metadata triage, with DreamDiscovery as the review lane. They are not assigned to a guessed technical division and remain metadata-only until a human approves the topic, owner, and source rights.
+
+A successful metadata refresh does not grant transcript, derivative-summary, or training rights. The weekly public-inventory workflow uses metadata enumeration only, uploads the verified catalog and per-video authoring queue as review artifacts, and does not download video media or transcripts, call external models, commit generated data, or run training.
+
+## Specialist routing and authoring status (2026-11-26 snapshot)
+
+The current checked-in 1,740-record catalog snapshot routes 1,232 records into specialist authoring paths and 508 into metadata-only classification triage. Nine specialist records have curated original DreamCo implementation briefs. The remaining 1,223 specialist records are explicit authoring-backlog tasks, not completed summaries or study-ready lessons. The numbers are derived from this snapshot and must be refreshed with the source catalog.
+
+The 55-domain crosswalk currently contains 45 core proposed MasterBot mappings and 10 supplemental unresolved MasterBot ownership profiles. The repository owner has separately approved learning-only subject-category routes for all ten supplemental profiles, using their existing curated domain category profiles. Those ten domains receive relevant video metadata queues while retaining null MasterBot IDs and unresolved MasterBot ownership; no privileged runtime authority is implied. The default queue builder includes every matching video in the observed catalog for each division rather than silently truncating each division to the first 30 results; an explicit cap is available only when requested. Buddy's runtime uses the same canonical category profile to filter shared video-catalog lessons by each division's subject areas plus the common foundation; explicit curated division overrides remain authoritative, and unclassified metadata stays restricted to review lanes. The runtime returns the full matching count and exposes stable `offset`/`next_offset` pagination (100 items maximum per response), so large division queues can be consumed completely without truncation. The queue generator also fails closed if any classified video has no division route, and reports unclassified records separately for review-only triage. Because the catalog snapshot is still partial, this means all matching observed videos, not every video ever published by the channel. In the complete 1,741-entry inventory run, 568 videos were explicitly `other_or_unclassified`; those remain in the restricted metadata-triage review track until classified rather than being falsely assigned to a subject division. The `java_and_jvm` category is routed to the relevant software, backend, operations, finance, trading, mobile and game-development divisions. All 55 queues retain their owner-review and rights boundaries. Every queue item remains `queued_not_studied`, rights-review-required, and ineligible for transcript ingestion or model training.
+
+## O*NET occupational task integration
+
+The official O*NET 31.0 task-statement JSON export contains 18,838 task rows across 923 unique occupation codes. The ingestion builders recognize the official `row` collection and `onetsoc_code` field, preserve source task IDs, and create occupation/task indexes plus original authoring briefs. Task briefs are authoring candidates, not completed lessons or evidence of occupational competence. Validation and test splits remain excluded from tokenizer training and all mastery claims require separate practical assessment, holdout, and regression evidence.
+
+
+
+### FreeCodeCamp-style lesson completion contract
+
+Every source-aligned guide must preserve the learning sequence used by the current FreeCodeCamp curriculum: **theory** becomes the original explanation and worked examples; **workshops** become guided exercises; **labs** become independently testable projects; **review pages** become concept reviews and debugging playbooks; **quizzes** become knowledge checks with answer keys; and **certification projects** become capstones with at least three acceptance tests and a named evidence artifact. A video metadata row alone cannot satisfy any completion stage.
