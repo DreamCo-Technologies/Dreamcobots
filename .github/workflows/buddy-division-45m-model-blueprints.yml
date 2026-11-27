@@ -1,0 +1,37 @@
+name: Buddy Division 45M Model Blueprints
+on:
+  pull_request:
+    paths:
+      - "config/masterbot-65-registry.json"
+      - "tools/build_division_45m_model_blueprints.py"
+      - "config/generated/division-45m-model-blueprints.json"
+      - "tests/test_division_45m_model_blueprints.py"
+      - ".github/workflows/buddy-division-45m-model-blueprints.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: buddy-division-45m-model-blueprints-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  validate-blueprints:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Regenerate architecture blueprints
+        run: python tools/build_division_45m_model_blueprints.py
+      - name: Verify committed output is current
+        run: python tools/build_division_45m_model_blueprints.py --check
+      - name: Test exact parameter counting and all 65 divisions
+        run: python -m unittest discover -s tests -p 'test_division_45m_model_blueprints.py' -v
+      - name: Upload 65 division architecture blueprints
+        uses: actions/upload-artifact@v4
+        with:
+          name: buddy-division-45m-model-blueprints
+          path: config/generated/division-45m-model-blueprints.json
+          if-no-files-found: error
+          retention-days: 90

@@ -22,6 +22,26 @@ FULL_EVIDENCE = {
 }
 
 
+class ReportFormattingTests(unittest.TestCase):
+    def test_generated_report_has_no_trailing_whitespace(self):
+        status = {
+            "summary": {
+                "by_state": {}, "bots": 0, "duplicates": 0, "placeholders": 0,
+                "flags": {}, "missing_pieces": {}, "by_engine": {}, "by_division": {},
+            },
+            "engine_unit_tests_passed": True,
+            "divisions": [],
+            "code_folders": [],
+            "bot_folders": [],
+            "links": {
+                "files_scanned": 0, "links_checked": 0, "broken_count": 0,
+                "server_api_refs": [], "broken": [],
+            },
+        }
+        report = audit.render_report(status, [])
+        self.assertTrue(all(line == line.rstrip() for line in report.splitlines()))
+
+
 class BotStateTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -97,6 +117,17 @@ class RegressionGateTests(unittest.TestCase):
 
 
 class FolderVerdictTests(unittest.TestCase):
+    def test_unit_test_runner_uses_discovery_for_non_package_tests_directory(self):
+        with mock.patch.object(audit, "run", return_value={"code": 0}) as run:
+            self.assertTrue(audit.unit_tests_pass(skip=False))
+        command = run.call_args.args[0]
+        self.assertEqual(command[1:4], ["-m", "unittest", "discover"])
+        self.assertIn("test_fleet_runtime_executor.py", command)
+
+    def test_unit_test_runner_reports_failure(self):
+        with mock.patch.object(audit, "run", return_value={"code": 1}):
+            self.assertFalse(audit.unit_tests_pass(skip=False))
+
     def test_verdicts(self):
         v = audit.verdict
         self.assertEqual(v({"code_files": 0}), "placeholder")

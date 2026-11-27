@@ -14,29 +14,6 @@ export interface AIModel {
   country: string;
 }
 
-export const AI_MODEL_CATEGORIES = [
-  "General Chat",
-  "Coding",
-  "Research",
-  "Writing & Content",
-  "Image Generation",
-  "Video & Audio",
-  "Business & CRM",
-  "Data & Analytics",
-  "Autonomous Agents",
-  "Customer Support",
-  "Marketing & SEO",
-  "Finance & Trading",
-  "Healthcare AI",
-  "Legal & Compliance",
-  "Education",
-  "Voice & Speech",
-  "Translation",
-  "Robotics & IoT",
-  "Security",
-  "No-Code/Low-Code",
-] as const;
-
 export const PACKAGE_DEALS = [
   {
     id: "starter",
@@ -166,6 +143,9 @@ export const AI_MODELS: AIModel[] = [
   { id: 99, name: "Bolt.new", provider: "StackBlitz", category: "Coding", tier: "freemium", freeFeatures: ["Limited generations"], paidFeatures: ["Unlimited apps", "Advanced models", "Deployment", "Custom domains"], paidPrice: "$20/mo", packagePrice: "Included in Growth+", bestFor: "In-browser full-stack AI", benefit: "Build and deploy full-stack apps entirely in the browser — AI writes code, installs packages, and deploys without any local setup.", instructions: "1. Open Bolt.new in browser\n2. Describe your application\n3. AI builds everything in-browser\n4. Deploy instantly", country: "USA" },
   { id: 100, name: "OpenAgents", provider: "OpenAgents", category: "Autonomous Agents", tier: "free", freeFeatures: ["Full open-source", "Crypto wallet agents", "Financial transaction agents", "Web3 integration"], paidFeatures: ["Enterprise deployment", "Custom agents", "Managed hosting"], paidPrice: "Free (self-host)", packagePrice: "Managed in Empire", bestFor: "Web3 and financial agents", benefit: "Autonomous agents with crypto wallets — execute financial transactions, manage DeFi positions, and interact with blockchain protocols.", instructions: "1. Access through DreamCo crypto tools\n2. Configure wallet and permissions\n3. Agents manage DeFi positions\n4. Human approval for large transactions", country: "USA" },
 ];
+
+// Open-vocabulary category index: adding a model automatically adds its category.
+export const AI_MODEL_CATEGORIES: readonly string[] = [...new Set(AI_MODELS.map((model) => model.category))];
 
 export function getModelsByCategory(category: string) {
   return AI_MODELS.filter((m) => m.category === category);

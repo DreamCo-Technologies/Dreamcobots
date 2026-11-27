@@ -1,34 +1,547 @@
 {
-  "schema":"dreamco.buddy.college_curriculum.v1",
-  "mission":"After coding mastery is demonstrated, teach Buddy broad college-level knowledge through prerequisite graphs, active practice, assessment, retrieval, projects, and teach-back.",
-  "unlock":"config/buddy-coding-mastery-gate.json",
-  "learning_loop":["diagnose","plan","learn","retrieve","practice","apply","assess","critique","remediate","retest","teach_back","mastery_update"],
-  "mastery_rules":{"minimum_subject_mastery":0.90,"minimum_core_exam":0.85,"required_retrieval_pass":0.85,"required_application_pass":0.85,"never_mark_mastered_from_reading_only":true},
-  "domains":[
-    {"id":"mathematics","name":"Mathematics","tracks":["precalculus","calculus","linear_algebra","discrete_math","abstract_algebra","real_analysis","probability","statistics","numerical_methods","optimization"]},
-    {"id":"computer_science","name":"Computer Science","tracks":["algorithms","data_structures","operating_systems","networks","databases","compilers","distributed_systems","security","AI","machine_learning","programming_languages","human_computer_interaction"]},
-    {"id":"physics","name":"Physics","tracks":["classical_mechanics","electromagnetism","thermodynamics","waves","quantum","relativity","statistical_physics"]},
-    {"id":"chemistry","name":"Chemistry","tracks":["general","organic","inorganic","physical","analytical","biochemistry"]},
-    {"id":"biology","name":"Biology","tracks":["cell_biology","genetics","evolution","ecology","microbiology","physiology","neuroscience","bioinformatics"]},
-    {"id":"engineering","name":"Engineering","tracks":["mechanical","electrical","civil","chemical","systems","computer","materials","controls"]},
-    {"id":"economics","name":"Economics","tracks":["microeconomics","macroeconomics","econometrics","finance","game_theory","development"]},
-    {"id":"business","name":"Business","tracks":["management","marketing","operations","strategy","entrepreneurship","organizational_behavior"]},
-    {"id":"accounting","name":"Accounting","tracks":["financial","managerial","tax","auditing","forensic"]},
-    {"id":"psychology","name":"Psychology","tracks":["cognitive","developmental","social","behavioral","research_methods","neuroscience"]},
-    {"id":"sociology","name":"Sociology","tracks":["social_theory","institutions","inequality","culture","research_methods"]},
-    {"id":"history","name":"History","tracks":["world_history","US_history","economic_history","history_of_science","historiography"]},
-    {"id":"philosophy","name":"Philosophy","tracks":["logic","ethics","epistemology","metaphysics","political_philosophy","philosophy_of_science"]},
-    {"id":"political_science","name":"Political Science","tracks":["political_theory","comparative_politics","international_relations","public_policy","institutions"]},
-    {"id":"communication","name":"Communication","tracks":["writing","rhetoric","media","technical_communication","public_speaking"]},
-    {"id":"literature","name":"Literature","tracks":["close_reading","literary_history","criticism","comparative_literature","creative_practice"]},
-    {"id":"languages","name":"Languages","tracks":["linguistics","second_language_learning","phonetics","syntax","semantics","translation"]},
-    {"id":"arts_design","name":"Arts and Design","tracks":["visual_design","interaction_design","art_history","music","film","architecture"]},
-    {"id":"education","name":"Education","tracks":["learning_science","instructional_design","assessment","curriculum","educational_psychology"]}
+  "schema": "dreamco.buddy.college_curriculum.v1",
+  "mission": "After coding mastery is demonstrated, teach Buddy broad college-level knowledge through prerequisite graphs, active practice, assessment, retrieval, projects, and teach-back.",
+  "unlock": "config/buddy-coding-mastery-gate.json",
+  "learning_loop": [
+    "diagnose",
+    "plan",
+    "learn",
+    "retrieve",
+    "practice",
+    "apply",
+    "assess",
+    "critique",
+    "remediate",
+    "retest",
+    "teach_back",
+    "mastery_update"
   ],
-  "cross_domain_capabilities":["research","quantitative_reasoning","writing","argumentation","source_criticism","experimental_design","data_analysis","modeling","presentation","ethics","collaboration","project_management"],
-  "assessment_types":["diagnostic","retrieval_quiz","worked_problem","unseen_problem","oral_explanation","teach_back","lab_or_simulation","project","capstone","cross_domain_exam"],
-  "adaptation":"Use prerequisite graphs and observed errors to select the next best lesson, exercise, resource, and assessment. Revisit weak prerequisites before advancing.",
-  "evidence":"Track source provenance, lesson attempts, assessment results, mistakes, remediation, and mastery history. Do not claim a subject is mastered without current evidence.",
-  "college_scope":"College-level breadth and depth are curriculum targets, not a claim of accredited degree completion. External academic credentials remain separate.",
-  "truth_rule":"This manifest defines the curriculum architecture. It does not contain or license every textbook, lecture, paper, or course; permitted source acquisition must follow applicable rights and provider terms."
+  "mastery_rules": {
+    "minimum_subject_mastery": 0.9,
+    "minimum_core_exam": 0.85,
+    "required_retrieval_pass": 0.85,
+    "required_application_pass": 0.85,
+    "never_mark_mastered_from_reading_only": true
+  },
+  "domains": [
+    {
+      "id": "mathematics",
+      "name": "Mathematics",
+      "tracks": [
+        "precalculus",
+        "calculus",
+        "linear_algebra",
+        "discrete_math",
+        "abstract_algebra",
+        "real_analysis",
+        "probability",
+        "statistics",
+        "numerical_methods",
+        "optimization"
+      ]
+    },
+    {
+      "id": "computer_science",
+      "name": "Computer Science",
+      "tracks": [
+        "algorithms",
+        "data_structures",
+        "operating_systems",
+        "networks",
+        "databases",
+        "compilers",
+        "distributed_systems",
+        "security",
+        "AI",
+        "machine_learning",
+        "programming_languages",
+        "human_computer_interaction"
+      ]
+    },
+    {
+      "id": "physics",
+      "name": "Physics",
+      "tracks": [
+        "classical_mechanics",
+        "electromagnetism",
+        "thermodynamics",
+        "waves",
+        "quantum",
+        "relativity",
+        "statistical_physics"
+      ]
+    },
+    {
+      "id": "chemistry",
+      "name": "Chemistry",
+      "tracks": [
+        "general",
+        "organic",
+        "inorganic",
+        "physical",
+        "analytical",
+        "biochemistry"
+      ]
+    },
+    {
+      "id": "biology",
+      "name": "Biology",
+      "tracks": [
+        "cell_biology",
+        "genetics",
+        "evolution",
+        "ecology",
+        "microbiology",
+        "physiology",
+        "neuroscience",
+        "bioinformatics"
+      ]
+    },
+    {
+      "id": "engineering",
+      "name": "Engineering",
+      "tracks": [
+        "mechanical",
+        "electrical",
+        "civil",
+        "chemical",
+        "systems",
+        "computer",
+        "materials",
+        "controls"
+      ]
+    },
+    {
+      "id": "economics",
+      "name": "Economics",
+      "tracks": [
+        "microeconomics",
+        "macroeconomics",
+        "econometrics",
+        "finance",
+        "game_theory",
+        "development"
+      ]
+    },
+    {
+      "id": "business",
+      "name": "Business",
+      "tracks": [
+        "management",
+        "marketing",
+        "operations",
+        "strategy",
+        "entrepreneurship",
+        "organizational_behavior"
+      ]
+    },
+    {
+      "id": "accounting",
+      "name": "Accounting",
+      "tracks": [
+        "financial",
+        "managerial",
+        "tax",
+        "auditing",
+        "forensic"
+      ]
+    },
+    {
+      "id": "psychology",
+      "name": "Psychology",
+      "tracks": [
+        "cognitive",
+        "developmental",
+        "social",
+        "behavioral",
+        "research_methods",
+        "neuroscience"
+      ]
+    },
+    {
+      "id": "sociology",
+      "name": "Sociology",
+      "tracks": [
+        "social_theory",
+        "institutions",
+        "inequality",
+        "culture",
+        "research_methods"
+      ]
+    },
+    {
+      "id": "history",
+      "name": "History",
+      "tracks": [
+        "world_history",
+        "US_history",
+        "economic_history",
+        "history_of_science",
+        "historiography"
+      ]
+    },
+    {
+      "id": "philosophy",
+      "name": "Philosophy",
+      "tracks": [
+        "logic",
+        "ethics",
+        "epistemology",
+        "metaphysics",
+        "political_philosophy",
+        "philosophy_of_science"
+      ]
+    },
+    {
+      "id": "political_science",
+      "name": "Political Science",
+      "tracks": [
+        "political_theory",
+        "comparative_politics",
+        "international_relations",
+        "public_policy",
+        "institutions"
+      ]
+    },
+    {
+      "id": "communication",
+      "name": "Communication",
+      "tracks": [
+        "writing",
+        "rhetoric",
+        "media",
+        "technical_communication",
+        "public_speaking"
+      ]
+    },
+    {
+      "id": "literature",
+      "name": "Literature",
+      "tracks": [
+        "close_reading",
+        "literary_history",
+        "criticism",
+        "comparative_literature",
+        "creative_practice"
+      ]
+    },
+    {
+      "id": "languages",
+      "name": "Languages",
+      "tracks": [
+        "linguistics",
+        "second_language_learning",
+        "phonetics",
+        "syntax",
+        "semantics",
+        "translation"
+      ]
+    },
+    {
+      "id": "arts_design",
+      "name": "Arts and Design",
+      "tracks": [
+        "visual_design",
+        "interaction_design",
+        "art_history",
+        "music",
+        "film",
+        "architecture"
+      ]
+    },
+    {
+      "id": "education",
+      "name": "Education",
+      "tracks": [
+        "learning_science",
+        "instructional_design",
+        "assessment",
+        "curriculum",
+        "educational_psychology"
+      ]
+    },
+    {
+      "id": "law",
+      "name": "Law and Legal Systems",
+      "tracks": [
+        "legal research",
+        "contracts",
+        "civil procedure",
+        "administrative law",
+        "privacy and technology law",
+        "intellectual property",
+        "employment law",
+        "consumer protection",
+        "procurement law",
+        "legal ethics"
+      ]
+    },
+    {
+      "id": "public_administration",
+      "name": "Public Administration and Government",
+      "tracks": [
+        "federalism",
+        "state and local government",
+        "public budgeting",
+        "procurement",
+        "public records",
+        "program evaluation",
+        "public policy",
+        "civic technology",
+        "public ethics"
+      ]
+    },
+    {
+      "id": "health_and_public_health",
+      "name": "Health and Public Health",
+      "tracks": [
+        "health systems",
+        "epidemiology",
+        "health communication",
+        "health data literacy",
+        "community health",
+        "health informatics",
+        "medical terminology",
+        "patient privacy"
+      ]
+    },
+    {
+      "id": "social_work_and_human_services",
+      "name": "Social Work and Human Services",
+      "tracks": [
+        "human services",
+        "housing systems",
+        "homelessness response",
+        "veteran services",
+        "benefits navigation",
+        "trauma-informed practice",
+        "case management boundaries",
+        "community partnerships"
+      ]
+    },
+    {
+      "id": "agriculture_and_food_systems",
+      "name": "Agriculture and Food Systems",
+      "tracks": [
+        "agronomy",
+        "soil science",
+        "crop systems",
+        "livestock systems",
+        "food safety",
+        "agricultural economics",
+        "precision agriculture",
+        "supply chains"
+      ]
+    },
+    {
+      "id": "environment_and_climate",
+      "name": "Environmental Science and Climate",
+      "tracks": [
+        "ecology",
+        "climate science",
+        "conservation",
+        "environmental policy",
+        "renewable energy",
+        "water systems",
+        "sustainability",
+        "environmental data"
+      ]
+    },
+    {
+      "id": "manufacturing_and_industrial_systems",
+      "name": "Manufacturing and Industrial Systems",
+      "tracks": [
+        "industrial engineering",
+        "quality systems",
+        "lean operations",
+        "robotics",
+        "maintenance",
+        "supply chain",
+        "manufacturing data",
+        "workplace safety"
+      ]
+    },
+    {
+      "id": "logistics_and_supply_chain",
+      "name": "Logistics and Supply Chain",
+      "tracks": [
+        "procurement",
+        "inventory",
+        "warehousing",
+        "transportation",
+        "routing",
+        "demand planning",
+        "operations research",
+        "trade compliance"
+      ]
+    },
+    {
+      "id": "real_estate_and_built_environment",
+      "name": "Real Estate and Built Environment",
+      "tracks": [
+        "property operations",
+        "real estate finance",
+        "land use",
+        "construction management",
+        "facilities",
+        "building systems",
+        "fair housing",
+        "real estate data"
+      ]
+    },
+    {
+      "id": "sports_and_exercise_science",
+      "name": "Sports and Exercise Science",
+      "tracks": [
+        "anatomy",
+        "biomechanics",
+        "exercise physiology",
+        "strength training",
+        "program design",
+        "recovery",
+        "sports analytics",
+        "injury prevention"
+      ]
+    },
+    {
+      "id": "media_and_journalism",
+      "name": "Media and Journalism",
+      "tracks": [
+        "journalism",
+        "research verification",
+        "media production",
+        "digital publishing",
+        "information literacy",
+        "media law",
+        "audience analytics"
+      ]
+    },
+    {
+      "id": "security_and_risk",
+      "name": "Security, Risk and Resilience",
+      "tracks": [
+        "cybersecurity",
+        "physical security",
+        "risk management",
+        "emergency management",
+        "business continuity",
+        "digital forensics",
+        "privacy engineering"
+      ]
+    },
+    {
+      "id": "information_systems",
+      "name": "Information Systems and Enterprise Technology",
+      "tracks": [
+        "enterprise architecture",
+        "ERP",
+        "CRM",
+        "IT service management",
+        "cloud systems",
+        "data governance",
+        "systems integration",
+        "automation"
+      ]
+    },
+    {
+      "id": "statistics_and_operations_research",
+      "name": "Statistics and Operations Research",
+      "tracks": [
+        "causal inference",
+        "experimental design",
+        "forecasting",
+        "optimization",
+        "simulation",
+        "decision analysis",
+        "quality statistics"
+      ]
+    },
+    {
+      "id": "ethics_and_governance",
+      "name": "Ethics and AI Governance",
+      "tracks": [
+        "AI ethics",
+        "research ethics",
+        "data governance",
+        "algorithmic accountability",
+        "privacy",
+        "safety engineering",
+        "responsible innovation"
+      ]
+    }
+  ],
+  "cross_domain_capabilities": [
+    "research",
+    "quantitative_reasoning",
+    "writing",
+    "argumentation",
+    "source_criticism",
+    "experimental_design",
+    "data_analysis",
+    "modeling",
+    "presentation",
+    "ethics",
+    "collaboration",
+    "project_management"
+  ],
+  "assessment_types": [
+    "diagnostic",
+    "retrieval_quiz",
+    "worked_problem",
+    "unseen_problem",
+    "oral_explanation",
+    "teach_back",
+    "lab_or_simulation",
+    "project",
+    "capstone",
+    "cross_domain_exam"
+  ],
+  "adaptation": "Use prerequisite graphs and observed errors to select the next best lesson, exercise, resource, and assessment. Revisit weak prerequisites before advancing.",
+  "evidence": "Track source provenance, lesson attempts, assessment results, mistakes, remediation, and mastery history. Do not claim a subject is mastered without current evidence.",
+  "college_scope": "College-level breadth and depth are curriculum targets, not a claim of accredited degree completion. External academic credentials remain separate.",
+  "truth_rule": "This manifest defines the curriculum architecture. It does not contain or license every textbook, lecture, paper, or course; permitted source acquisition must follow applicable rights and provider terms.",
+  "source_coverage": {
+    "hugging_face": "Use the live Hugging Face Hub task/tag taxonomy for models, datasets and Spaces as a changing discovery layer; do not treat the seed list as exhaustive.",
+    "freecodecamp": "Consume the versioned FreeCodeCamp path and refreshed official curriculum/video inventory as the primary coding pathway; map every authorized source guide to relevant divisions.",
+    "open_curricula": "Compare with reputable university open courses, official vendor academies, open textbooks, standards bodies and maintained repositories.",
+    "source_policy": "Every learning item retains source version, license, rights permissions, attribution, last verification and division mappings."
+  },
+  "progression_policy": {
+    "parallel_start": "All 55 divisions may begin diagnostics, foundations, source discovery and rights-cleared learning paths in parallel.",
+    "advanced_gate": "The coding mastery gate controls advanced production software engineering and high-risk execution privileges, not basic exposure or unrelated academic foundations.",
+    "professional_practice": "Regulated, licensed, financial, medical, legal, public-benefit and government actions require separate competence, credential, authorization and human approval gates."
+  },
+  "teaching_standard": {
+    "teacher": "ChatGPT acts as instructor, explainer, reviewer and question setter; Buddy must solve independently and provide evidence.",
+    "sequence": [
+      "diagnostic",
+      "prerequisites",
+      "lecture_or_original_summary",
+      "guided_example",
+      "retrieval_practice",
+      "sandbox_lab",
+      "independent_exercise",
+      "project",
+      "assessment",
+      "feedback",
+      "remediation",
+      "delayed_retest",
+      "teach_back"
+    ],
+    "artifacts": [
+      "original summary",
+      "concept map",
+      "glossary",
+      "worked examples",
+      "lab notebook",
+      "exercises",
+      "rubric",
+      "answer key",
+      "capstone",
+      "source citations",
+      "progress record"
+    ],
+    "evaluation": "Compare coverage and outcomes to current high-quality open curricula and official vendor documentation; publish gaps and benchmark evidence.",
+    "no_degree_claim": "This is an internal learning program, not an accredited degree or official third-party certification."
+  }
 }

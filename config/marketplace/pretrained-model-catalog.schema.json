@@ -1,0 +1,173 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dreamco-technologies.github.io/Dreamcobots/schemas/pretrained-model-marketplace.v1.json",
+  "title": "DreamCo Pretrained Model Marketplace Catalog",
+  "type": "object",
+  "required": [
+    "schema",
+    "policy",
+    "models"
+  ],
+  "properties": {
+    "schema": {
+      "const": "dreamco.pretrained_model_marketplace.v1"
+    },
+    "policy": {
+      "type": "object",
+      "required": [
+        "parameter_count_limit",
+        "publish_requires",
+        "compute_policy",
+        "source_data_included",
+        "payment_enabled",
+        "listing_status"
+      ],
+      "properties": {
+        "parameter_count_limit": {
+          "type": "null"
+        },
+        "publish_requires": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "compute_policy": {
+          "type": "string"
+        },
+        "source_data_included": {
+          "const": false
+        },
+        "payment_enabled": {
+          "type": "boolean"
+        },
+        "listing_status": {
+          "type": "string"
+        }
+      }
+    },
+    "models": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "model_id",
+          "version",
+          "display_name",
+          "parameter_count",
+          "architecture",
+          "weights_sha256",
+          "tokenizer_sha256",
+          "model_license",
+          "commercial_use_allowed",
+          "redistribution_allowed",
+          "minimum_memory_gb",
+          "recommended_memory_gb",
+          "supported_runtimes",
+          "evaluation_report",
+          "model_card",
+          "status",
+          "dataset_provenance",
+          "rights_evidence_ref",
+          "weights_package_uri",
+          "rights_approval_status",
+          "evaluation_status"
+        ],
+        "properties": {
+          "model_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "version": {
+            "type": "string"
+          },
+          "display_name": {
+            "type": "string"
+          },
+          "parameter_count": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "architecture": {
+            "type": "string"
+          },
+          "weights_sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "tokenizer_sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "model_license": {
+            "type": "string"
+          },
+          "commercial_use_allowed": {
+            "type": "boolean"
+          },
+          "redistribution_allowed": {
+            "type": "boolean"
+          },
+          "minimum_memory_gb": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "recommended_memory_gb": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "supported_runtimes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "evaluation_report": {
+            "type": "string"
+          },
+          "model_card": {
+            "type": "string"
+          },
+          "training_run_id": {
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "trained_candidate",
+              "benchmarked",
+              "approved_for_sale",
+              "withdrawn"
+            ]
+          },
+          "dataset_provenance": {
+            "type": "string",
+            "minLength": 1
+          },
+          "rights_evidence_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "weights_package_uri": {
+            "type": "string",
+            "minLength": 1
+          },
+          "rights_approval_status": {
+            "enum": [
+              "PENDING",
+              "APPROVED",
+              "REJECTED"
+            ]
+          },
+          "evaluation_status": {
+            "enum": [
+              "PENDING",
+              "PASSED",
+              "FAILED"
+            ]
+          }
+        }
+      }
+    }
+  },
+  "additionalProperties": false
+}

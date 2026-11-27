@@ -1,9 +1,6 @@
 name: DreamCo Greenkeeper Orchestrator
 
 on:
-  workflow_run:
-    workflows: ["Keep Green"]
-    types: [completed]
   schedule:
     - cron: "31 */6 * * *"
   workflow_dispatch: {}
@@ -13,8 +10,8 @@ permissions:
   actions: read
 
 concurrency:
-  group: greenkeeper-orchestrator-${{ github.ref }}
-  cancel-in-progress: true
+  group: greenkeeper-orchestrator-${{ github.run_id }}
+  cancel-in-progress: false
 
 jobs:
   health-plan:

@@ -206,6 +206,18 @@
    "notes": "Generated from .github/workflows/benchmark-manifest-validation.yml."
   },
   {
+   "id": "wf_benchmark_runner_mastery_truth",
+   "family": "workflow",
+   "title": "Benchmark Runner Mastery Truth",
+   "workflow": "benchmark-runner-mastery-truth.yml",
+   "risk_tier": "read_only",
+   "requires_owner_approval": false,
+   "triggerable": true,
+   "inputs": {},
+   "generated": true,
+   "notes": "Generated from .github/workflows/benchmark-runner-mastery-truth.yml."
+  },
+  {
    "id": "wf_benchmark_sandbox_manifest",
    "family": "workflow",
    "title": "Benchmark Sandbox Manifest",
@@ -233,7 +245,7 @@
   {
    "id": "wf_benchmark_training_execution",
    "family": "workflow",
-   "title": "Benchmark Training Execution",
+   "title": "Benchmark Training Plan (No Runner)",
    "workflow": "benchmark-training-execution.yml",
    "risk_tier": "read_only",
    "requires_owner_approval": false,
@@ -377,6 +389,47 @@
    "notes": "Generated from .github/workflows/buddy-actions-test-lab.yml."
   },
   {
+   "id": "wf_buddy_authorized_tokenizer_training",
+   "family": "workflow",
+   "title": "Buddy Authorized Byte BPE Tokenizer Training",
+   "workflow": "buddy-authorized-tokenizer-training.yml",
+   "risk_tier": "read_only",
+   "requires_owner_approval": false,
+   "triggerable": true,
+   "inputs": {
+    "confirm_authorized_training": {
+     "type": "boolean",
+     "default": false
+    }
+   },
+   "generated": true,
+   "notes": "Generated from .github/workflows/buddy-authorized-tokenizer-training.yml."
+  },
+  {
+   "id": "wf_buddy_benchmark_evidence_evaluator",
+   "family": "workflow",
+   "title": "Buddy Benchmark Evidence Evaluator",
+   "workflow": "buddy-benchmark-evidence-evaluator.yml",
+   "risk_tier": "read_only",
+   "requires_owner_approval": false,
+   "triggerable": true,
+   "inputs": {},
+   "generated": true,
+   "notes": "Generated from .github/workflows/buddy-benchmark-evidence-evaluator.yml."
+  },
+  {
+   "id": "wf_buddy_benchmark_program_guides",
+   "family": "workflow",
+   "title": "Buddy Benchmark Program Guides",
+   "workflow": "buddy-benchmark-program-guides.yml",
+   "risk_tier": "read_only",
+   "requires_owner_approval": false,
+   "triggerable": true,
+   "inputs": {},
+   "generated": true,
+   "notes": "Generated from .github/workflows/buddy-benchmark-program-guides.yml."
+  },
+  {
    "id": "wf_buddy_benchmark_smoke",
    "family": "workflow",
    "title": "buddy-benchmark-smoke",
@@ -388,6 +441,128 @@
    "generated": true,
    "notes": "no permissions block (defaults may grant write); declare permissions before it can be triggered",
    "blocked_reason": "no permissions block (defaults may grant write); declare permissions before it can be triggered"
+  },
+  {
+   "id": "wf_buddy_bootcamp_coverage_gate",
+   "family": "workflow",
+   "title": "Buddy Bootcamp Coverage Gate",
+   "workflow": "buddy-bootcamp-coverage-gate.yml",
+   "risk_tier": "read_only",
+   "requires_owner_approval": false,
+   "triggerable": true,
+   "inputs": {},
+   "generated": true,
+   "notes": "Generated from .github/workflows/buddy-bootcamp-coverage-gate.yml."
+  },
+  {
+   "id": "wf_buddy_bootcamp_curriculum_refresh",
+   "family": "workflow",
+   "title": "Buddy Bootcamp Scheduled Curriculum Refresh",
+   "workflow": "buddy-bootcamp-curriculum-refresh.yml",
+   "risk_tier": "writes_code",
+   "requires_owner_approval": true,
+   "triggerable": true,
+   "inputs": {},
+   "generated": true,
+   "notes": "Generated from .github/workflows/buddy-bootcamp-curriculum-refresh.yml."
+  },
+  {
+   "id": "wf_buddy_bootcamp_curriculum",
+   "family": "workflow",
+   "title": "Buddy Bootcamp Curriculum",
+   "workflow": "buddy-bootcamp-curriculum.yml",
+   "risk_tier": "read_only",
+   "requires_owner_approval": false,
+   "triggerable": false,
+   "inputs": {},
+   "generated": true,
+   "notes": "no workflow_dispatch trigger; add one to run it from Buddy",
+   "blocked_reason": "no workflow_dispatch trigger; add one to run it from Buddy"
+  },
+  {
+   "id": "wf_buddy_bot_manifest_refresh",
+   "family": "workflow",
+   "title": "Buddy Bot Manifest Refresh",
+   "workflow": "buddy-bot-manifest-refresh.yml",
+   "risk_tier": "writes_code",
+   "requires_owner_approval": true,
+   "triggerable": false,
+   "inputs": {},
+   "generated": true,
+   "notes": "no workflow_dispatch trigger; add one to run it from Buddy",
+   "blocked_reason": "no workflow_dispatch trigger; add one to run it from Buddy"
+  },
+  {
+   "id": "wf_buddy_byte_bpe_trainer",
+   "family": "workflow",
+   "title": "Buddy Byte BPE Trainer Tests",
+   "workflow": "buddy-byte-bpe-trainer.yml",
+   "risk_tier": "read_only",
+   "requires_owner_approval": false,
+   "triggerable": true,
+   "inputs": {},
+   "generated": true,
+   "notes": "Generated from .github/workflows/buddy-byte-bpe-trainer.yml."
+  },
+  {
+   "id": "wf_buddy_ci_safe_repair",
+   "family": "workflow",
+   "title": "Buddy CI Safe Generated-Artifact Repair",
+   "workflow": "buddy-ci-safe-repair.yml",
+   "risk_tier": "writes_reports",
+   "requires_owner_approval": true,
+   "triggerable": true,
+   "inputs": {},
+   "generated": true,
+   "notes": "Generated from .github/workflows/buddy-ci-safe-repair.yml."
+  },
+  {
+   "id": "wf_buddy_connection_setup_guides",
+   "family": "workflow",
+   "title": "Buddy Connection Setup Guides",
+   "workflow": "buddy-connection-setup-guides.yml",
+   "risk_tier": "read_only",
+   "requires_owner_approval": false,
+   "triggerable": true,
+   "inputs": {},
+   "generated": true,
+   "notes": "Generated from .github/workflows/buddy-connection-setup-guides.yml."
+  },
+  {
+   "id": "wf_buddy_continuous_learning_planner",
+   "family": "workflow",
+   "title": "Buddy Continuous Learning Fleet",
+   "workflow": "buddy-continuous-learning-planner.yml",
+   "risk_tier": "read_only",
+   "requires_owner_approval": false,
+   "triggerable": true,
+   "inputs": {},
+   "generated": true,
+   "notes": "Generated from .github/workflows/buddy-continuous-learning-planner.yml."
+  },
+  {
+   "id": "wf_buddy_continuous_repair",
+   "family": "workflow",
+   "title": "Buddy Continuous Repair",
+   "workflow": "buddy-continuous-repair.yml",
+   "risk_tier": "writes_reports",
+   "requires_owner_approval": true,
+   "triggerable": true,
+   "inputs": {},
+   "generated": true,
+   "notes": "Generated from .github/workflows/buddy-continuous-repair.yml."
+  },
+  {
+   "id": "wf_buddy_continuous_study_policy",
+   "family": "workflow",
+   "title": "Buddy Continuous Study Policy",
+   "workflow": "buddy-continuous-study-policy.yml",
+   "risk_tier": "read_only",
+   "requires_owner_approval": false,
+   "triggerable": true,
+   "inputs": {},
+   "generated": true,
+   "notes": "Generated from .github/workflows/buddy-continuous-study-policy.yml."
   },
   {
    "id": "buddy_customize_apply",
@@ -404,6 +579,18 @@
    "covered_by_curated_job": "buddy_customize_apply"
   },
   {
+   "id": "wf_buddy_daily_lesson_target",
+   "family": "workflow",
+   "title": "Buddy Daily Lesson Production Target",
+   "workflow": "buddy-daily-lesson-target.yml",
+   "risk_tier": "read_only",
+   "requires_owner_approval": false,
+   "triggerable": true,
+   "inputs": {},
+   "generated": true,
+   "notes": "Generated from .github/workflows/buddy-daily-lesson-target.yml."
+  },
+  {
    "id": "wf_buddy_distill_gate",
    "family": "workflow",
    "title": "Buddy Distill Gate",
@@ -414,6 +601,42 @@
    "inputs": {},
    "generated": true,
    "notes": "Generated from .github/workflows/buddy-distill-gate.yml."
+  },
+  {
+   "id": "wf_buddy_division_45m_model_blueprints",
+   "family": "workflow",
+   "title": "Buddy Division 45M Model Blueprints",
+   "workflow": "buddy-division-45m-model-blueprints.yml",
+   "risk_tier": "read_only",
+   "requires_owner_approval": false,
+   "triggerable": true,
+   "inputs": {},
+   "generated": true,
+   "notes": "Generated from .github/workflows/buddy-division-45m-model-blueprints.yml."
+  },
+  {
+   "id": "wf_buddy_failure_learning_regression",
+   "family": "workflow",
+   "title": "Buddy Failure Learning Regression",
+   "workflow": "buddy-failure-learning-regression.yml",
+   "risk_tier": "read_only",
+   "requires_owner_approval": false,
+   "triggerable": true,
+   "inputs": {},
+   "generated": true,
+   "notes": "Generated from .github/workflows/buddy-failure-learning-regression.yml."
+  },
+  {
+   "id": "wf_buddy_fleet_execution_map",
+   "family": "workflow",
+   "title": "Buddy Fleet Execution Map",
+   "workflow": "buddy-fleet-execution-map.yml",
+   "risk_tier": "writes_code",
+   "requires_owner_approval": true,
+   "triggerable": true,
+   "inputs": {},
+   "generated": true,
+   "notes": "Generated from .github/workflows/buddy-fleet-execution-map.yml."
   },
   {
    "id": "fleet_health",
@@ -455,6 +678,19 @@
    "covered_by_curated_job": "hub_learning_packages"
   },
   {
+   "id": "wf_buddy_learning_income_tests",
+   "family": "workflow",
+   "title": "Buddy Learning Income Engine Tests",
+   "workflow": "buddy-learning-income-tests.yml",
+   "risk_tier": "read_only",
+   "requires_owner_approval": false,
+   "triggerable": false,
+   "inputs": {},
+   "generated": true,
+   "notes": "no workflow_dispatch trigger; add one to run it from Buddy",
+   "blocked_reason": "no workflow_dispatch trigger; add one to run it from Buddy"
+  },
+  {
    "id": "wf_buddy_learning_proof",
    "family": "workflow",
    "title": "Buddy Learning Proof",
@@ -477,6 +713,117 @@
    "inputs": {},
    "generated": true,
    "notes": "Generated from .github/workflows/buddy-learning-regression.yml."
+  },
+  {
+   "id": "wf_buddy_library_mastery_work_queue",
+   "family": "workflow",
+   "title": "Buddy Library Mastery Work Queue",
+   "workflow": "buddy-library-mastery-work-queue.yml",
+   "risk_tier": "read_only",
+   "requires_owner_approval": false,
+   "triggerable": true,
+   "inputs": {},
+   "generated": true,
+   "notes": "Generated from .github/workflows/buddy-library-mastery-work-queue.yml."
+  },
+  {
+   "id": "wf_buddy_markdown_gap_audit",
+   "family": "workflow",
+   "title": "Buddy Markdown Implementation Gap Audit",
+   "workflow": "buddy-markdown-gap-audit.yml",
+   "risk_tier": "read_only",
+   "requires_owner_approval": false,
+   "triggerable": true,
+   "inputs": {},
+   "generated": true,
+   "notes": "Generated from .github/workflows/buddy-markdown-gap-audit.yml."
+  },
+  {
+   "id": "wf_buddy_master_teacher_evidence",
+   "family": "workflow",
+   "title": "Buddy Master Teacher Evidence and REA Tests",
+   "workflow": "buddy-master-teacher-evidence.yml",
+   "risk_tier": "read_only",
+   "requires_owner_approval": false,
+   "triggerable": false,
+   "inputs": {},
+   "generated": true,
+   "notes": "no workflow_dispatch trigger; add one to run it from Buddy",
+   "blocked_reason": "no workflow_dispatch trigger; add one to run it from Buddy"
+  },
+  {
+   "id": "wf_buddy_model_foundry",
+   "family": "workflow",
+   "title": "Buddy Model Foundry",
+   "workflow": "buddy-model-foundry.yml",
+   "risk_tier": "read_only",
+   "requires_owner_approval": false,
+   "triggerable": true,
+   "inputs": {},
+   "generated": true,
+   "notes": "Generated from .github/workflows/buddy-model-foundry.yml."
+  },
+  {
+   "id": "wf_buddy_model_registry",
+   "family": "workflow",
+   "title": "Buddy Model Registry",
+   "workflow": "buddy-model-registry.yml",
+   "risk_tier": "read_only",
+   "requires_owner_approval": false,
+   "triggerable": false,
+   "inputs": {},
+   "generated": true,
+   "notes": "no workflow_dispatch trigger; add one to run it from Buddy",
+   "blocked_reason": "no workflow_dispatch trigger; add one to run it from Buddy"
+  },
+  {
+   "id": "wf_buddy_ollama_runtime",
+   "family": "workflow",
+   "title": "Buddy Local Ollama Runtime",
+   "workflow": "buddy-ollama-runtime.yml",
+   "risk_tier": "read_only",
+   "requires_owner_approval": false,
+   "triggerable": true,
+   "inputs": {},
+   "generated": true,
+   "notes": "Generated from .github/workflows/buddy-ollama-runtime.yml."
+  },
+  {
+   "id": "wf_buddy_onet_task_index_refresh",
+   "family": "workflow",
+   "title": "Buddy O*NET Task Index Refresh",
+   "workflow": "buddy-onet-task-index-refresh.yml",
+   "risk_tier": "writes_code",
+   "requires_owner_approval": true,
+   "triggerable": true,
+   "inputs": {},
+   "generated": true,
+   "notes": "Generated from .github/workflows/buddy-onet-task-index-refresh.yml."
+  },
+  {
+   "id": "wf_buddy_open_source_weekly_bootcamp",
+   "family": "workflow",
+   "title": "Buddy Open-Source Weekly Bootcamp",
+   "workflow": "buddy-open-source-weekly-bootcamp.yml",
+   "risk_tier": "read_only",
+   "requires_owner_approval": false,
+   "triggerable": true,
+   "inputs": {},
+   "generated": true,
+   "notes": "Generated from .github/workflows/buddy-open-source-weekly-bootcamp.yml."
+  },
+  {
+   "id": "wf_buddy_opt_in_evidence_learning",
+   "family": "workflow",
+   "title": "Buddy Opt-In Evidence Learning Integration",
+   "workflow": "buddy-opt-in-evidence-learning.yml",
+   "risk_tier": "read_only",
+   "requires_owner_approval": false,
+   "triggerable": false,
+   "inputs": {},
+   "generated": true,
+   "notes": "no workflow_dispatch trigger; add one to run it from Buddy",
+   "blocked_reason": "no workflow_dispatch trigger; add one to run it from Buddy"
   },
   {
    "id": "observability_contracts",
@@ -505,6 +852,18 @@
    "covered_by_curated_job": "pages_link_check"
   },
   {
+   "id": "wf_buddy_pages_mastery_evidence",
+   "family": "workflow",
+   "title": "Buddy Pages Mastery Evidence",
+   "workflow": "buddy-pages-mastery-evidence.yml",
+   "risk_tier": "read_only",
+   "requires_owner_approval": false,
+   "triggerable": true,
+   "inputs": {},
+   "generated": true,
+   "notes": "Generated from .github/workflows/buddy-pages-mastery-evidence.yml."
+  },
+  {
    "id": "wf_buddy_preventive_engineering",
    "family": "workflow",
    "title": "Buddy Preventive Engineering",
@@ -528,6 +887,93 @@
    "generated": true,
    "notes": "Generated from .github/workflows/buddy-sandbox-bootcamp.yml.",
    "covered_by_curated_job": "bootcamp"
+  },
+  {
+   "id": "wf_buddy_spaced_repetition_tests",
+   "family": "workflow",
+   "title": "Buddy Spaced Repetition Tests",
+   "workflow": "buddy-spaced-repetition-tests.yml",
+   "risk_tier": "read_only",
+   "requires_owner_approval": false,
+   "triggerable": true,
+   "inputs": {},
+   "generated": true,
+   "notes": "Generated from .github/workflows/buddy-spaced-repetition-tests.yml."
+  },
+  {
+   "id": "wf_buddy_study_resource_expansion",
+   "family": "workflow",
+   "title": "Buddy Study Resource Expansion Validation",
+   "workflow": "buddy-study-resource-expansion.yml",
+   "risk_tier": "read_only",
+   "requires_owner_approval": false,
+   "triggerable": false,
+   "inputs": {},
+   "generated": true,
+   "notes": "no workflow_dispatch trigger; add one to run it from Buddy",
+   "blocked_reason": "no workflow_dispatch trigger; add one to run it from Buddy"
+  },
+  {
+   "id": "wf_buddy_task_store_tests",
+   "family": "workflow",
+   "title": "Buddy Task Persistence Tests",
+   "workflow": "buddy-task-store-tests.yml",
+   "risk_tier": "read_only",
+   "requires_owner_approval": false,
+   "triggerable": false,
+   "inputs": {},
+   "generated": true,
+   "notes": "no workflow_dispatch trigger; add one to run it from Buddy",
+   "blocked_reason": "no workflow_dispatch trigger; add one to run it from Buddy"
+  },
+  {
+   "id": "wf_buddy_technology_radar",
+   "family": "workflow",
+   "title": "Buddy Living AI and Technology Radar",
+   "workflow": "buddy-technology-radar.yml",
+   "risk_tier": "writes_code",
+   "requires_owner_approval": true,
+   "triggerable": true,
+   "inputs": {},
+   "generated": true,
+   "notes": "Generated from .github/workflows/buddy-technology-radar.yml."
+  },
+  {
+   "id": "wf_buddy_tiny_gpt_cpu_baseline",
+   "family": "workflow",
+   "title": "Buddy TinyGPT CPU Baseline",
+   "workflow": "buddy-tiny-gpt-cpu-baseline.yml",
+   "risk_tier": "read_only",
+   "requires_owner_approval": false,
+   "triggerable": false,
+   "inputs": {},
+   "generated": true,
+   "notes": "no workflow_dispatch trigger; add one to run it from Buddy",
+   "blocked_reason": "no workflow_dispatch trigger; add one to run it from Buddy"
+  },
+  {
+   "id": "wf_buddy_training_methods_hub",
+   "family": "workflow",
+   "title": "Buddy Training Methods Hub",
+   "workflow": "buddy-training-methods-hub.yml",
+   "risk_tier": "read_only",
+   "requires_owner_approval": false,
+   "triggerable": true,
+   "inputs": {},
+   "generated": true,
+   "notes": "Generated from .github/workflows/buddy-training-methods-hub.yml."
+  },
+  {
+   "id": "wf_buddy_weekly_transcript_evaluation",
+   "family": "workflow",
+   "title": "Buddy Weekly Transcript Evaluation",
+   "workflow": "buddy-weekly-transcript-evaluation.yml",
+   "risk_tier": "read_only",
+   "requires_owner_approval": false,
+   "triggerable": true,
+   "inputs": {},
+   "generated": true,
+   "notes": "Generated from .github/workflows/buddy-weekly-transcript-evaluation.yml."
   },
   {
    "id": "wf_build_updates_now",
@@ -653,6 +1099,30 @@
    "notes": "Generated from .github/workflows/continuous-learning-runner.yml."
   },
   {
+   "id": "wf_core_capability_benchmark_definitions",
+   "family": "workflow",
+   "title": "Core Capability Benchmark Definitions",
+   "workflow": "core-capability-benchmark-definitions.yml",
+   "risk_tier": "read_only",
+   "requires_owner_approval": false,
+   "triggerable": true,
+   "inputs": {},
+   "generated": true,
+   "notes": "Generated from .github/workflows/core-capability-benchmark-definitions.yml."
+  },
+  {
+   "id": "wf_cross_runtime_contract",
+   "family": "workflow",
+   "title": "Cross-runtime contract",
+   "workflow": "cross-runtime-contract.yml",
+   "risk_tier": "read_only",
+   "requires_owner_approval": false,
+   "triggerable": true,
+   "inputs": {},
+   "generated": true,
+   "notes": "Generated from .github/workflows/cross-runtime-contract.yml."
+  },
+  {
    "id": "wf_daily_approval_list",
    "family": "workflow",
    "title": "Daily approval list",
@@ -775,6 +1245,67 @@
    "notes": "Generated from .github/workflows/deploy-buddy-pages.yml."
   },
   {
+   "id": "wf_division_masterbot_bootcamp_coverage",
+   "family": "workflow",
+   "title": "Division and MasterBot Bootcamp Coverage",
+   "workflow": "division-masterbot-bootcamp-coverage.yml",
+   "risk_tier": "read_only",
+   "requires_owner_approval": false,
+   "triggerable": true,
+   "inputs": {},
+   "generated": true,
+   "notes": "Generated from .github/workflows/division-masterbot-bootcamp-coverage.yml."
+  },
+  {
+   "id": "wf_division_masterbot_learning_paths",
+   "family": "workflow",
+   "title": "Division and MasterBot Learning Paths",
+   "workflow": "division-masterbot-learning-paths.yml",
+   "risk_tier": "read_only",
+   "requires_owner_approval": false,
+   "triggerable": true,
+   "inputs": {},
+   "generated": true,
+   "notes": "Generated from .github/workflows/division-masterbot-learning-paths.yml."
+  },
+  {
+   "id": "wf_division_owner_review_queue",
+   "family": "workflow",
+   "title": "Division Owner Review Queue",
+   "workflow": "division-owner-review-queue.yml",
+   "risk_tier": "writes_code",
+   "requires_owner_approval": true,
+   "triggerable": false,
+   "inputs": {},
+   "generated": true,
+   "notes": "no workflow_dispatch trigger; add one to run it from Buddy",
+   "blocked_reason": "no workflow_dispatch trigger; add one to run it from Buddy"
+  },
+  {
+   "id": "wf_division_specialist_course_drafts",
+   "family": "workflow",
+   "title": "Division Specialist Course Drafts",
+   "workflow": "division-specialist-course-drafts.yml",
+   "risk_tier": "read_only",
+   "requires_owner_approval": false,
+   "triggerable": true,
+   "inputs": {},
+   "generated": true,
+   "notes": "Generated from .github/workflows/division-specialist-course-drafts.yml."
+  },
+  {
+   "id": "wf_division_specialist_course_readiness",
+   "family": "workflow",
+   "title": "Division and MasterBot Specialist Course Readiness",
+   "workflow": "division-specialist-course-readiness.yml",
+   "risk_tier": "read_only",
+   "requires_owner_approval": false,
+   "triggerable": true,
+   "inputs": {},
+   "generated": true,
+   "notes": "Generated from .github/workflows/division-specialist-course-readiness.yml."
+  },
+  {
    "id": "wf_dreamco_control_center",
    "family": "workflow",
    "title": "DreamCo Control Center",
@@ -860,6 +1391,137 @@
    "notes": "Generated from .github/workflows/dreamco-daily-research-benchmark.yml."
   },
   {
+   "id": "wf_dreamco_dataset_ingestion_contract",
+   "family": "workflow",
+   "title": "DreamCo Dataset Ingestion Contract",
+   "workflow": "dreamco-dataset-ingestion-contract.yml",
+   "risk_tier": "read_only",
+   "requires_owner_approval": false,
+   "triggerable": false,
+   "inputs": {},
+   "generated": true,
+   "notes": "no workflow_dispatch trigger; add one to run it from Buddy",
+   "blocked_reason": "no workflow_dispatch trigger; add one to run it from Buddy"
+  },
+  {
+   "id": "wf_dreamco_division_benchmark_evidence",
+   "family": "workflow",
+   "title": "DreamCo Division Benchmark Evidence Gate",
+   "workflow": "dreamco-division-benchmark-evidence.yml",
+   "risk_tier": "read_only",
+   "requires_owner_approval": false,
+   "triggerable": false,
+   "inputs": {},
+   "generated": true,
+   "notes": "no workflow_dispatch trigger; add one to run it from Buddy",
+   "blocked_reason": "no workflow_dispatch trigger; add one to run it from Buddy"
+  },
+  {
+   "id": "wf_dreamco_division_lifecycle_migration",
+   "family": "workflow",
+   "title": "DreamCo Division Lifecycle Migration Contract",
+   "workflow": "dreamco-division-lifecycle-migration.yml",
+   "risk_tier": "read_only",
+   "requires_owner_approval": false,
+   "triggerable": false,
+   "inputs": {},
+   "generated": true,
+   "notes": "no workflow_dispatch trigger; add one to run it from Buddy",
+   "blocked_reason": "no workflow_dispatch trigger; add one to run it from Buddy"
+  },
+  {
+   "id": "wf_dreamco_division_mastery_engine",
+   "family": "workflow",
+   "title": "DreamCo Division Mastery Engine",
+   "workflow": "dreamco-division-mastery-engine.yml",
+   "risk_tier": "read_only",
+   "requires_owner_approval": false,
+   "triggerable": true,
+   "inputs": {},
+   "generated": true,
+   "notes": "Generated from .github/workflows/dreamco-division-mastery-engine.yml."
+  },
+  {
+   "id": "wf_dreamco_division_model_registry",
+   "family": "workflow",
+   "title": "DreamCo Division Model Registry",
+   "workflow": "dreamco-division-model-registry.yml",
+   "risk_tier": "read_only",
+   "requires_owner_approval": false,
+   "triggerable": false,
+   "inputs": {},
+   "generated": true,
+   "notes": "no workflow_dispatch trigger; add one to run it from Buddy",
+   "blocked_reason": "no workflow_dispatch trigger; add one to run it from Buddy"
+  },
+  {
+   "id": "wf_dreamco_division_release_evidence",
+   "family": "workflow",
+   "title": "DreamCo Division Release Evidence Gate",
+   "workflow": "dreamco-division-release-evidence.yml",
+   "risk_tier": "read_only",
+   "requires_owner_approval": false,
+   "triggerable": false,
+   "inputs": {},
+   "generated": true,
+   "notes": "no workflow_dispatch trigger; add one to run it from Buddy",
+   "blocked_reason": "no workflow_dispatch trigger; add one to run it from Buddy"
+  },
+  {
+   "id": "wf_dreamco_division_schema_provisioning",
+   "family": "workflow",
+   "title": "DreamCo Division Schema Provisioning Tests",
+   "workflow": "dreamco-division-schema-provisioning.yml",
+   "risk_tier": "read_only",
+   "requires_owner_approval": false,
+   "triggerable": true,
+   "inputs": {},
+   "generated": true,
+   "notes": "Generated from .github/workflows/dreamco-division-schema-provisioning.yml."
+  },
+  {
+   "id": "wf_dreamco_division_training_execution",
+   "family": "workflow",
+   "title": "DreamCo Division Training Execution",
+   "workflow": "dreamco-division-training-execution.yml",
+   "risk_tier": "read_only",
+   "requires_owner_approval": false,
+   "triggerable": false,
+   "inputs": {
+    "allow_model_download": {
+     "type": "boolean",
+     "default": false
+    }
+   },
+   "generated": true,
+   "notes": "required free-text input(s) job_manifest, compute_approval_id need an anchored pattern in the registry",
+   "blocked_reason": "required free-text input(s) job_manifest, compute_approval_id need an anchored pattern in the registry"
+  },
+  {
+   "id": "wf_dreamco_first_party_training_data",
+   "family": "workflow",
+   "title": "DreamCo First-Party Training Data Factory",
+   "workflow": "dreamco-first-party-training-data.yml",
+   "risk_tier": "read_only",
+   "requires_owner_approval": false,
+   "triggerable": true,
+   "inputs": {},
+   "generated": true,
+   "notes": "Generated from .github/workflows/dreamco-first-party-training-data.yml."
+  },
+  {
+   "id": "wf_dreamco_global_reconciliation",
+   "family": "workflow",
+   "title": "DreamCo Global Reconciliation",
+   "workflow": "dreamco-global-reconciliation.yml",
+   "risk_tier": "read_only",
+   "requires_owner_approval": false,
+   "triggerable": true,
+   "inputs": {},
+   "generated": true,
+   "notes": "Generated from .github/workflows/dreamco-global-reconciliation.yml."
+  },
+  {
    "id": "wf_dreamco_live_dashboard",
    "family": "workflow",
    "title": "DreamCo Live Dashboard",
@@ -885,6 +1547,57 @@
    "notes": "Generated from .github/workflows/dreamco-live-dashboard.yml."
   },
   {
+   "id": "wf_dreamco_mastery_continuity",
+   "family": "workflow",
+   "title": "DreamCo Mastery Continuity",
+   "workflow": "dreamco-mastery-continuity.yml",
+   "risk_tier": "read_only",
+   "requires_owner_approval": false,
+   "triggerable": true,
+   "inputs": {},
+   "generated": true,
+   "notes": "Generated from .github/workflows/dreamco-mastery-continuity.yml."
+  },
+  {
+   "id": "wf_dreamco_model_provider_runtime",
+   "family": "workflow",
+   "title": "DreamCo Model Provider Runtime",
+   "workflow": "dreamco-model-provider-runtime.yml",
+   "risk_tier": "read_only",
+   "requires_owner_approval": false,
+   "triggerable": false,
+   "inputs": {},
+   "generated": true,
+   "notes": "no workflow_dispatch trigger; add one to run it from Buddy",
+   "blocked_reason": "no workflow_dispatch trigger; add one to run it from Buddy"
+  },
+  {
+   "id": "wf_dreamco_native_teacher_model_adapters",
+   "family": "workflow",
+   "title": "DreamCo Native Teacher Model Adapters",
+   "workflow": "dreamco-native-teacher-model-adapters.yml",
+   "risk_tier": "read_only",
+   "requires_owner_approval": false,
+   "triggerable": false,
+   "inputs": {},
+   "generated": true,
+   "notes": "no workflow_dispatch trigger; add one to run it from Buddy",
+   "blocked_reason": "no workflow_dispatch trigger; add one to run it from Buddy"
+  },
+  {
+   "id": "wf_dreamco_object_store_contract",
+   "family": "workflow",
+   "title": "DreamCo Object Store Contract",
+   "workflow": "dreamco-object-store-contract.yml",
+   "risk_tier": "read_only",
+   "requires_owner_approval": false,
+   "triggerable": false,
+   "inputs": {},
+   "generated": true,
+   "notes": "no workflow_dispatch trigger; add one to run it from Buddy",
+   "blocked_reason": "no workflow_dispatch trigger; add one to run it from Buddy"
+  },
+  {
    "id": "curriculum_bots",
    "family": "workflow",
    "title": "DreamCo Platform Evolution",
@@ -896,6 +1609,31 @@
    "generated": true,
    "notes": "Generated from .github/workflows/dreamco-platform-evolution.yml.",
    "covered_by_curated_job": "curriculum_bots"
+  },
+  {
+   "id": "wf_dreamco_postgres_dataset_catalog",
+   "family": "workflow",
+   "title": "DreamCo PostgreSQL Dataset Catalog",
+   "workflow": "dreamco-postgres-dataset-catalog.yml",
+   "risk_tier": "read_only",
+   "requires_owner_approval": false,
+   "triggerable": false,
+   "inputs": {},
+   "generated": true,
+   "notes": "no workflow_dispatch trigger; add one to run it from Buddy",
+   "blocked_reason": "no workflow_dispatch trigger; add one to run it from Buddy"
+  },
+  {
+   "id": "wf_dreamco_postgres_probe",
+   "family": "workflow",
+   "title": "DreamCo PostgreSQL Division Probe Tests",
+   "workflow": "dreamco-postgres-probe.yml",
+   "risk_tier": "read_only",
+   "requires_owner_approval": false,
+   "triggerable": true,
+   "inputs": {},
+   "generated": true,
+   "notes": "Generated from .github/workflows/dreamco-postgres-probe.yml."
   },
   {
    "id": "wf_dreamco_pr_review_guardian",
@@ -910,6 +1648,44 @@
    "notes": "Generated from .github/workflows/dreamco-pr-review-guardian.yml."
   },
   {
+   "id": "wf_dreamco_private_holdout_benchmark",
+   "family": "workflow",
+   "title": "DreamCo Private Holdout Benchmark",
+   "workflow": "dreamco-private-holdout-benchmark.yml",
+   "risk_tier": "read_only",
+   "requires_owner_approval": false,
+   "triggerable": false,
+   "inputs": {},
+   "generated": true,
+   "notes": "no workflow_dispatch trigger; add one to run it from Buddy",
+   "blocked_reason": "no workflow_dispatch trigger; add one to run it from Buddy"
+  },
+  {
+   "id": "wf_dreamco_production_readiness",
+   "family": "workflow",
+   "title": "DreamCo Production Readiness Master List",
+   "workflow": "dreamco-production-readiness.yml",
+   "risk_tier": "read_only",
+   "requires_owner_approval": false,
+   "triggerable": true,
+   "inputs": {},
+   "generated": true,
+   "notes": "Generated from .github/workflows/dreamco-production-readiness.yml."
+  },
+  {
+   "id": "wf_dreamco_training_worker_contract",
+   "family": "workflow",
+   "title": "DreamCo Training Worker Contract",
+   "workflow": "dreamco-training-worker-contract.yml",
+   "risk_tier": "read_only",
+   "requires_owner_approval": false,
+   "triggerable": false,
+   "inputs": {},
+   "generated": true,
+   "notes": "no workflow_dispatch trigger; add one to run it from Buddy",
+   "blocked_reason": "no workflow_dispatch trigger; add one to run it from Buddy"
+  },
+  {
    "id": "wf_dreamco_unified_system",
    "family": "workflow",
    "title": "DreamCo 500-Model Benchmark System",
@@ -920,6 +1696,18 @@
    "inputs": {},
    "generated": true,
    "notes": "Generated from .github/workflows/dreamco-unified-system.yml."
+  },
+  {
+   "id": "wf_dreamco_verified_goals_contract",
+   "family": "workflow",
+   "title": "DreamCo Verified Goals Contract",
+   "workflow": "dreamco-verified-goals-contract.yml",
+   "risk_tier": "read_only",
+   "requires_owner_approval": false,
+   "triggerable": true,
+   "inputs": {},
+   "generated": true,
+   "notes": "Generated from .github/workflows/dreamco-verified-goals-contract.yml."
   },
   {
    "id": "gap_closure_engineering",
@@ -959,6 +1747,20 @@
    "notes": "Generated from .github/workflows/fleet-builder.yml."
   },
   {
+   "id": "wf_fleet_catalog_refresh_proposal",
+   "family": "workflow",
+   "title": "Safe fleet catalog refresh proposals",
+   "workflow": "fleet-catalog-refresh-proposal.yml",
+   "risk_tier": "writes_code",
+   "requires_owner_approval": true,
+   "triggerable": false,
+   "inputs": {},
+   "generated": true,
+   "notes": "workflow deletes branches/releases/resources; never triggerable from Buddy",
+   "blocked_reason": "workflow deletes branches/releases/resources; never triggerable from Buddy",
+   "destructive": true
+  },
+  {
    "id": "wf_fleet_runtime_truth",
    "family": "workflow",
    "title": "Fleet runtime truth",
@@ -969,6 +1771,80 @@
    "inputs": {},
    "generated": true,
    "notes": "Generated from .github/workflows/fleet-runtime-truth.yml."
+  },
+  {
+   "id": "wf_freecodecamp_catalog_refresh",
+   "family": "workflow",
+   "title": "FreeCodeCamp Catalog Refresh",
+   "workflow": "freecodecamp-catalog-refresh.yml",
+   "risk_tier": "writes_code",
+   "requires_owner_approval": true,
+   "triggerable": false,
+   "inputs": {},
+   "generated": true,
+   "notes": "workflow deletes branches/releases/resources; never triggerable from Buddy",
+   "blocked_reason": "workflow deletes branches/releases/resources; never triggerable from Buddy",
+   "destructive": true
+  },
+  {
+   "id": "wf_freecodecamp_category_study_guides",
+   "family": "workflow",
+   "title": "FreeCodeCamp Category Study Guides",
+   "workflow": "freecodecamp-category-study-guides.yml",
+   "risk_tier": "read_only",
+   "requires_owner_approval": false,
+   "triggerable": true,
+   "inputs": {},
+   "generated": true,
+   "notes": "Generated from .github/workflows/freecodecamp-category-study-guides.yml."
+  },
+  {
+   "id": "wf_freecodecamp_provisional_division_queues",
+   "family": "workflow",
+   "title": "FreeCodeCamp Provisional Division Queue Tests",
+   "workflow": "freecodecamp-provisional-division-queues.yml",
+   "risk_tier": "read_only",
+   "requires_owner_approval": false,
+   "triggerable": true,
+   "inputs": {},
+   "generated": true,
+   "notes": "Generated from .github/workflows/freecodecamp-provisional-division-queues.yml."
+  },
+  {
+   "id": "wf_freecodecamp_study_guide_pipeline",
+   "family": "workflow",
+   "title": "FreeCodeCamp Complete Study Guide Coverage",
+   "workflow": "freecodecamp-study-guide-pipeline.yml",
+   "risk_tier": "read_only",
+   "requires_owner_approval": false,
+   "triggerable": true,
+   "inputs": {},
+   "generated": true,
+   "notes": "Generated from .github/workflows/freecodecamp-study-guide-pipeline.yml."
+  },
+  {
+   "id": "wf_freecodecamp_study_guide_review_evidence",
+   "family": "workflow",
+   "title": "FreeCodeCamp Study Guide Review Evidence",
+   "workflow": "freecodecamp-study-guide-review-evidence.yml",
+   "risk_tier": "read_only",
+   "requires_owner_approval": false,
+   "triggerable": true,
+   "inputs": {},
+   "generated": true,
+   "notes": "Generated from .github/workflows/freecodecamp-study-guide-review-evidence.yml."
+  },
+  {
+   "id": "wf_freecodecamp_transcript_intake_audit",
+   "family": "workflow",
+   "title": "FreeCodeCamp Transcript Intake and Weekly Buddy Test Audit",
+   "workflow": "freecodecamp-transcript-intake-audit.yml",
+   "risk_tier": "read_only",
+   "requires_owner_approval": false,
+   "triggerable": true,
+   "inputs": {},
+   "generated": true,
+   "notes": "Generated from .github/workflows/freecodecamp-transcript-intake-audit.yml."
   },
   {
    "id": "wf_frontier_claim_trust_gate",
@@ -1069,12 +1945,60 @@
    "covered_by_curated_job": "hf_study_packs"
   },
   {
+   "id": "wf_huggingface_bootcamp_coverage",
+   "family": "workflow",
+   "title": "Hugging Face Bootcamp Coverage",
+   "workflow": "huggingface-bootcamp-coverage.yml",
+   "risk_tier": "read_only",
+   "requires_owner_approval": false,
+   "triggerable": true,
+   "inputs": {},
+   "generated": true,
+   "notes": "Generated from .github/workflows/huggingface-bootcamp-coverage.yml."
+  },
+  {
+   "id": "wf_huggingface_ecosystem_module_guides",
+   "family": "workflow",
+   "title": "Hugging Face Ecosystem Module Guides",
+   "workflow": "huggingface-ecosystem-module-guides.yml",
+   "risk_tier": "read_only",
+   "requires_owner_approval": false,
+   "triggerable": true,
+   "inputs": {},
+   "generated": true,
+   "notes": "Generated from .github/workflows/huggingface-ecosystem-module-guides.yml."
+  },
+  {
+   "id": "wf_huggingface_module_review_readiness",
+   "family": "workflow",
+   "title": "Hugging Face Module Review Readiness",
+   "workflow": "huggingface-module-review-readiness.yml",
+   "risk_tier": "read_only",
+   "requires_owner_approval": false,
+   "triggerable": true,
+   "inputs": {},
+   "generated": true,
+   "notes": "Generated from .github/workflows/huggingface-module-review-readiness.yml."
+  },
+  {
+   "id": "wf_huggingface_task_family_playbooks",
+   "family": "workflow",
+   "title": "Hugging Face Task Family Playbooks",
+   "workflow": "huggingface-task-family-playbooks.yml",
+   "risk_tier": "read_only",
+   "requires_owner_approval": false,
+   "triggerable": true,
+   "inputs": {},
+   "generated": true,
+   "notes": "Generated from .github/workflows/huggingface-task-family-playbooks.yml."
+  },
+  {
    "id": "issue_cleaner",
    "family": "workflow",
    "title": "Intelligent Issue Cleaner",
    "workflow": "intelligent-issue-cleaner.yml",
-   "risk_tier": "writes_reports",
-   "requires_owner_approval": true,
+   "risk_tier": "read_only",
+   "requires_owner_approval": false,
    "triggerable": true,
    "inputs": {},
    "generated": true,
@@ -1091,8 +2015,34 @@
    "triggerable": false,
    "inputs": {},
    "generated": true,
-   "notes": "no workflow_dispatch trigger; add one to run it from Buddy",
-   "blocked_reason": "no workflow_dispatch trigger; add one to run it from Buddy"
+   "notes": "required free-text input(s) run_id need an anchored pattern in the registry",
+   "blocked_reason": "required free-text input(s) run_id need an anchored pattern in the registry"
+  },
+  {
+   "id": "wf_issue_lifecycle",
+   "family": "workflow",
+   "title": "Issue Lifecycle Status",
+   "workflow": "issue-lifecycle.yml",
+   "risk_tier": "writes_reports",
+   "requires_owner_approval": true,
+   "triggerable": false,
+   "inputs": {
+    "status": {
+     "type": "choice",
+     "options": [
+      "new",
+      "investigating",
+      "fixing",
+      "retest",
+      "blocked",
+      "resolved"
+     ],
+     "default": "new"
+    }
+   },
+   "generated": true,
+   "notes": "required free-text input(s) issue_number need an anchored pattern in the registry",
+   "blocked_reason": "required free-text input(s) issue_number need an anchored pattern in the registry"
   },
   {
    "id": "wf_keep_green",
@@ -1107,6 +2057,18 @@
    "notes": "Generated from .github/workflows/keep-green.yml."
   },
   {
+   "id": "wf_library_candidate_verification_queue",
+   "family": "workflow",
+   "title": "Library Candidate Verification Queue",
+   "workflow": "library-candidate-verification-queue.yml",
+   "risk_tier": "read_only",
+   "requires_owner_approval": false,
+   "triggerable": true,
+   "inputs": {},
+   "generated": true,
+   "notes": "Generated from .github/workflows/library-candidate-verification-queue.yml."
+  },
+  {
    "id": "wf_masterbot_routing_audit",
    "family": "workflow",
    "title": "MasterBot Routing Audit",
@@ -1117,6 +2079,18 @@
    "inputs": {},
    "generated": true,
    "notes": "Generated from .github/workflows/masterbot-routing-audit.yml."
+  },
+  {
+   "id": "wf_model_foundry_training_authorization",
+   "family": "workflow",
+   "title": "Model Foundry Training Authorization",
+   "workflow": "model-foundry-training-authorization.yml",
+   "risk_tier": "read_only",
+   "requires_owner_approval": false,
+   "triggerable": true,
+   "inputs": {},
+   "generated": true,
+   "notes": "Generated from .github/workflows/model-foundry-training-authorization.yml."
   },
   {
    "id": "wf_model_progress_center",
@@ -1168,6 +2142,30 @@
    "inputs": {},
    "generated": true,
    "notes": "Generated from .github/workflows/note-model-hourly.yml."
+  },
+  {
+   "id": "wf_onet_31_subject_study_guides",
+   "family": "workflow",
+   "title": "O*NET 31 Subject Study Guides",
+   "workflow": "onet-31-subject-study-guides.yml",
+   "risk_tier": "read_only",
+   "requires_owner_approval": false,
+   "triggerable": true,
+   "inputs": {},
+   "generated": true,
+   "notes": "Generated from .github/workflows/onet-31-subject-study-guides.yml."
+  },
+  {
+   "id": "wf_onet_task_guide_readiness",
+   "family": "workflow",
+   "title": "O*NET Task Guide Readiness",
+   "workflow": "onet-task-guide-readiness.yml",
+   "risk_tier": "read_only",
+   "requires_owner_approval": false,
+   "triggerable": true,
+   "inputs": {},
+   "generated": true,
+   "notes": "Generated from .github/workflows/onet-task-guide-readiness.yml."
   },
   {
    "id": "wf_open_source_evolution",
@@ -1310,6 +2308,18 @@
    "notes": "Generated from .github/workflows/repo-capability-audit.yml."
   },
   {
+   "id": "wf_repository_benchmark_artifact_inventory",
+   "family": "workflow",
+   "title": "Repository Benchmark Artifact Inventory",
+   "workflow": "repository-benchmark-artifact-inventory.yml",
+   "risk_tier": "read_only",
+   "requires_owner_approval": false,
+   "triggerable": true,
+   "inputs": {},
+   "generated": true,
+   "notes": "Generated from .github/workflows/repository-benchmark-artifact-inventory.yml."
+  },
+  {
    "id": "connectivity_scan",
    "family": "workflow",
    "title": "Repository Scan Update",
@@ -1348,6 +2358,57 @@
    "notes": "Generated from .github/workflows/repository-test-matrix.yml."
   },
   {
+   "id": "wf_resource_efficiency_tests",
+   "family": "workflow",
+   "title": "Resource efficiency unit tests",
+   "workflow": "resource-efficiency-tests.yml",
+   "risk_tier": "read_only",
+   "requires_owner_approval": false,
+   "triggerable": true,
+   "inputs": {},
+   "generated": true,
+   "notes": "Generated from .github/workflows/resource-efficiency-tests.yml."
+  },
+  {
+   "id": "wf_revenue_lane_learning_playbooks",
+   "family": "workflow",
+   "title": "Revenue Lane Learning Playbooks",
+   "workflow": "revenue-lane-learning-playbooks.yml",
+   "risk_tier": "money",
+   "requires_owner_approval": true,
+   "triggerable": false,
+   "inputs": {},
+   "generated": true,
+   "notes": "money workflows are never triggerable from Buddy or Pages",
+   "blocked_reason": "money workflows are never triggerable from Buddy or Pages"
+  },
+  {
+   "id": "wf_revenue_lane_playbook_framework",
+   "family": "workflow",
+   "title": "Revenue Lane Playbook Framework",
+   "workflow": "revenue-lane-playbook-framework.yml",
+   "risk_tier": "money",
+   "requires_owner_approval": true,
+   "triggerable": false,
+   "inputs": {},
+   "generated": true,
+   "notes": "money workflows are never triggerable from Buddy or Pages",
+   "blocked_reason": "money workflows are never triggerable from Buddy or Pages"
+  },
+  {
+   "id": "wf_revenue_scout_curriculum",
+   "family": "workflow",
+   "title": "Revenue Scout Curriculum Coverage",
+   "workflow": "revenue-scout-curriculum.yml",
+   "risk_tier": "money",
+   "requires_owner_approval": true,
+   "triggerable": false,
+   "inputs": {},
+   "generated": true,
+   "notes": "money workflows are never triggerable from Buddy or Pages",
+   "blocked_reason": "money workflows are never triggerable from Buddy or Pages"
+  },
+  {
    "id": "onet_catalog",
    "family": "workflow",
    "title": "Run Everything Now",
@@ -1371,6 +2432,18 @@
    "inputs": {},
    "generated": true,
    "notes": "Generated from .github/workflows/score-scan.yml."
+  },
+  {
+   "id": "wf_secret_store_security",
+   "family": "workflow",
+   "title": "Secret Store Authenticated Encryption",
+   "workflow": "secret-store-security.yml",
+   "risk_tier": "read_only",
+   "requires_owner_approval": false,
+   "triggerable": true,
+   "inputs": {},
+   "generated": true,
+   "notes": "Generated from .github/workflows/secret-store-security.yml."
   },
   {
    "id": "fleet_status",
@@ -1415,13 +2488,12 @@
    "family": "workflow",
    "title": "Superbot Migration Ledger",
    "workflow": "superbot-migration-ledger.yml",
-   "risk_tier": "writes_code",
+   "risk_tier": "writes_reports",
    "requires_owner_approval": true,
-   "triggerable": false,
+   "triggerable": true,
    "inputs": {},
    "generated": true,
-   "notes": "no permissions block (defaults may grant write); declare permissions before it can be triggered",
-   "blocked_reason": "no permissions block (defaults may grant write); declare permissions before it can be triggered"
+   "notes": "Generated from .github/workflows/superbot-migration-ledger.yml."
   },
   {
    "id": "wf_sync_to_huggingface",
@@ -1459,6 +2531,18 @@
    "notes": "Generated from .github/workflows/system-scan-hourly.yml."
   },
   {
+   "id": "wf_tokenizer_tolkien_curriculum_readiness",
+   "family": "workflow",
+   "title": "Tokenizer and Tolkien Curriculum Readiness",
+   "workflow": "tokenizer-tolkien-curriculum-readiness.yml",
+   "risk_tier": "read_only",
+   "requires_owner_approval": false,
+   "triggerable": true,
+   "inputs": {},
+   "generated": true,
+   "notes": "Generated from .github/workflows/tokenizer-tolkien-curriculum-readiness.yml."
+  },
+  {
    "id": "wf_tool_skill_readiness",
    "family": "workflow",
    "title": "Buddy Tool and Skill Readiness",
@@ -1469,6 +2553,18 @@
    "inputs": {},
    "generated": true,
    "notes": "Generated from .github/workflows/tool-skill-readiness.yml."
+  },
+  {
+   "id": "wf_unified_pr_inventory",
+   "family": "workflow",
+   "title": "Unified PR inventory validation",
+   "workflow": "unified-pr-inventory.yml",
+   "risk_tier": "read_only",
+   "requires_owner_approval": false,
+   "triggerable": true,
+   "inputs": {},
+   "generated": true,
+   "notes": "Generated from .github/workflows/unified-pr-inventory.yml."
   },
   {
    "id": "wf_vibe_coding_taxonomy",

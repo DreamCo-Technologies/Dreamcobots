@@ -1,0 +1,829 @@
+{
+  "schema": "dreamco.business_micro_model_roster.v1",
+  "status": "DESIGN_TARGETS_NOT_TRAINED",
+  "business_bot_count": 55,
+  "proposed_parameter_count_per_bot": 18500000,
+  "aggregate_parameters_if_all_55_are_independent": 1017500000,
+  "aggregate_is_single_dense_model": false,
+  "model_policy": {
+    "default_family": "18.5M-domain-micro-model",
+    "fallback_family": "45M-edge-agent",
+    "selection": "Start with the 18.5M target for each of the 55 specialist roles. Promote to the 45M family only when a documented capability gap and controlled benchmark show the smaller model is insufficient.",
+    "parameter_count_truth": "Targets are not verified architecture counts until instantiated tensors are counted."
+  },
+  "bots": [
+    {
+      "bot_id": "BUSINESS_BOT_01",
+      "number": 1,
+      "name": "Chief Router & Orchestrator",
+      "cluster": "Executive",
+      "focus_tags": [
+        "intent routing",
+        "task decomposition",
+        "multi-agent coordination",
+        "semantic retrieval"
+      ],
+      "target_parameters": 18500000,
+      "model_status": "BLUEPRINT_TARGET_NOT_INSTANTIATED",
+      "curriculum_manifest": "config/generated/dreamco-business-bot-manifests/bot_01.json"
+    },
+    {
+      "bot_id": "BUSINESS_BOT_02",
+      "number": 2,
+      "name": "Corporate Strategy & M&A",
+      "cluster": "Executive",
+      "focus_tags": [
+        "market analysis",
+        "strategy",
+        "mergers",
+        "valuation"
+      ],
+      "target_parameters": 18500000,
+      "model_status": "BLUEPRINT_TARGET_NOT_INSTANTIATED",
+      "curriculum_manifest": "config/generated/dreamco-business-bot-manifests/bot_02.json"
+    },
+    {
+      "bot_id": "BUSINESS_BOT_03",
+      "number": 3,
+      "name": "Business Intelligence & KPI",
+      "cluster": "Executive",
+      "focus_tags": [
+        "SQL",
+        "dashboards",
+        "cohorts",
+        "anomaly detection"
+      ],
+      "target_parameters": 18500000,
+      "model_status": "BLUEPRINT_TARGET_NOT_INSTANTIATED",
+      "curriculum_manifest": "config/generated/dreamco-business-bot-manifests/bot_03.json"
+    },
+    {
+      "bot_id": "BUSINESS_BOT_04",
+      "number": 4,
+      "name": "Risk & Compliance Auditor",
+      "cluster": "Executive",
+      "focus_tags": [
+        "risk scoring",
+        "audit trails",
+        "regulatory controls"
+      ],
+      "target_parameters": 18500000,
+      "model_status": "BLUEPRINT_TARGET_NOT_INSTANTIATED",
+      "curriculum_manifest": "config/generated/dreamco-business-bot-manifests/bot_04.json"
+    },
+    {
+      "bot_id": "BUSINESS_BOT_05",
+      "number": 5,
+      "name": "OKR & Project Governance",
+      "cluster": "Executive",
+      "focus_tags": [
+        "OKRs",
+        "agile",
+        "dependencies",
+        "milestones"
+      ],
+      "target_parameters": 18500000,
+      "model_status": "BLUEPRINT_TARGET_NOT_INSTANTIATED",
+      "curriculum_manifest": "config/generated/dreamco-business-bot-manifests/bot_05.json"
+    },
+    {
+      "bot_id": "BUSINESS_BOT_06",
+      "number": 6,
+      "name": "Pricing & Monetization",
+      "cluster": "Executive",
+      "focus_tags": [
+        "pricing",
+        "elasticity",
+        "margins",
+        "packaging"
+      ],
+      "target_parameters": 18500000,
+      "model_status": "BLUEPRINT_TARGET_NOT_INSTANTIATED",
+      "curriculum_manifest": "config/generated/dreamco-business-bot-manifests/bot_06.json"
+    },
+    {
+      "bot_id": "BUSINESS_BOT_07",
+      "number": 7,
+      "name": "Partnership & Channel",
+      "cluster": "Executive",
+      "focus_tags": [
+        "partnerships",
+        "affiliate terms",
+        "channels",
+        "onboarding"
+      ],
+      "target_parameters": 18500000,
+      "model_status": "BLUEPRINT_TARGET_NOT_INSTANTIATED",
+      "curriculum_manifest": "config/generated/dreamco-business-bot-manifests/bot_07.json"
+    },
+    {
+      "bot_id": "BUSINESS_BOT_08",
+      "number": 8,
+      "name": "Crisis & Continuity Planner",
+      "cluster": "Executive",
+      "focus_tags": [
+        "incident response",
+        "continuity",
+        "recovery",
+        "communications"
+      ],
+      "target_parameters": 18500000,
+      "model_status": "BLUEPRINT_TARGET_NOT_INSTANTIATED",
+      "curriculum_manifest": "config/generated/dreamco-business-bot-manifests/bot_08.json"
+    },
+    {
+      "bot_id": "BUSINESS_BOT_09",
+      "number": 9,
+      "name": "Lead Scraping & Enrichment",
+      "cluster": "Sales",
+      "focus_tags": [
+        "firmographics",
+        "ICP",
+        "enrichment",
+        "data hygiene"
+      ],
+      "target_parameters": 18500000,
+      "model_status": "BLUEPRINT_TARGET_NOT_INSTANTIATED",
+      "curriculum_manifest": "config/generated/dreamco-business-bot-manifests/bot_09.json"
+    },
+    {
+      "bot_id": "BUSINESS_BOT_10",
+      "number": 10,
+      "name": "Outbound Cold Outreach",
+      "cluster": "Sales",
+      "focus_tags": [
+        "outreach",
+        "messaging",
+        "deliverability",
+        "experiments"
+      ],
+      "target_parameters": 18500000,
+      "model_status": "BLUEPRINT_TARGET_NOT_INSTANTIATED",
+      "curriculum_manifest": "config/generated/dreamco-business-bot-manifests/bot_10.json"
+    },
+    {
+      "bot_id": "BUSINESS_BOT_11",
+      "number": 11,
+      "name": "Inbound SDR & Qualification",
+      "cluster": "Sales",
+      "focus_tags": [
+        "lead qualification",
+        "discovery",
+        "CRM routing"
+      ],
+      "target_parameters": 18500000,
+      "model_status": "BLUEPRINT_TARGET_NOT_INSTANTIATED",
+      "curriculum_manifest": "config/generated/dreamco-business-bot-manifests/bot_11.json"
+    },
+    {
+      "bot_id": "BUSINESS_BOT_12",
+      "number": 12,
+      "name": "Proposal & RFP Writer",
+      "cluster": "Sales",
+      "focus_tags": [
+        "RFP",
+        "proposals",
+        "scope",
+        "statements of work"
+      ],
+      "target_parameters": 18500000,
+      "model_status": "BLUEPRINT_TARGET_NOT_INSTANTIATED",
+      "curriculum_manifest": "config/generated/dreamco-business-bot-manifests/bot_12.json"
+    },
+    {
+      "bot_id": "BUSINESS_BOT_13",
+      "number": 13,
+      "name": "Enterprise Deal Closer",
+      "cluster": "Sales",
+      "focus_tags": [
+        "negotiation",
+        "objections",
+        "procurement",
+        "concessions"
+      ],
+      "target_parameters": 18500000,
+      "model_status": "BLUEPRINT_TARGET_NOT_INSTANTIATED",
+      "curriculum_manifest": "config/generated/dreamco-business-bot-manifests/bot_13.json"
+    },
+    {
+      "bot_id": "BUSINESS_BOT_14",
+      "number": 14,
+      "name": "Account Expansion & Upsell",
+      "cluster": "Sales",
+      "focus_tags": [
+        "retention",
+        "cross-sell",
+        "renewals",
+        "usage signals"
+      ],
+      "target_parameters": 18500000,
+      "model_status": "BLUEPRINT_TARGET_NOT_INSTANTIATED",
+      "curriculum_manifest": "config/generated/dreamco-business-bot-manifests/bot_14.json"
+    },
+    {
+      "bot_id": "BUSINESS_BOT_15",
+      "number": 15,
+      "name": "Sales Enablement & Battlecards",
+      "cluster": "Sales",
+      "focus_tags": [
+        "competitive intelligence",
+        "battlecards",
+        "win-loss"
+      ],
+      "target_parameters": 18500000,
+      "model_status": "BLUEPRINT_TARGET_NOT_INSTANTIATED",
+      "curriculum_manifest": "config/generated/dreamco-business-bot-manifests/bot_15.json"
+    },
+    {
+      "bot_id": "BUSINESS_BOT_16",
+      "number": 16,
+      "name": "RevOps & CRM Hygiene",
+      "cluster": "Sales",
+      "focus_tags": [
+        "CRM",
+        "pipeline",
+        "forecasting",
+        "revenue operations"
+      ],
+      "target_parameters": 18500000,
+      "model_status": "BLUEPRINT_TARGET_NOT_INSTANTIATED",
+      "curriculum_manifest": "config/generated/dreamco-business-bot-manifests/bot_16.json"
+    },
+    {
+      "bot_id": "BUSINESS_BOT_17",
+      "number": 17,
+      "name": "E-Commerce Conversion",
+      "cluster": "Sales",
+      "focus_tags": [
+        "checkout",
+        "conversion",
+        "bundling",
+        "cart recovery"
+      ],
+      "target_parameters": 18500000,
+      "model_status": "BLUEPRINT_TARGET_NOT_INSTANTIATED",
+      "curriculum_manifest": "config/generated/dreamco-business-bot-manifests/bot_17.json"
+    },
+    {
+      "bot_id": "BUSINESS_BOT_18",
+      "number": 18,
+      "name": "SEO & Keyword Architect",
+      "cluster": "Marketing",
+      "focus_tags": [
+        "search intent",
+        "SEO",
+        "topic clusters",
+        "schema"
+      ],
+      "target_parameters": 18500000,
+      "model_status": "BLUEPRINT_TARGET_NOT_INSTANTIATED",
+      "curriculum_manifest": "config/generated/dreamco-business-bot-manifests/bot_18.json"
+    },
+    {
+      "bot_id": "BUSINESS_BOT_19",
+      "number": 19,
+      "name": "Direct-Response Copywriter",
+      "cluster": "Marketing",
+      "focus_tags": [
+        "copywriting",
+        "landing pages",
+        "conversion",
+        "AIDA/PAS"
+      ],
+      "target_parameters": 18500000,
+      "model_status": "BLUEPRINT_TARGET_NOT_INSTANTIATED",
+      "curriculum_manifest": "config/generated/dreamco-business-bot-manifests/bot_19.json"
+    },
+    {
+      "bot_id": "BUSINESS_BOT_20",
+      "number": 20,
+      "name": "Technical & Long-Form Writer",
+      "cluster": "Marketing",
+      "focus_tags": [
+        "technical writing",
+        "research synthesis",
+        "citations"
+      ],
+      "target_parameters": 18500000,
+      "model_status": "BLUEPRINT_TARGET_NOT_INSTANTIATED",
+      "curriculum_manifest": "config/generated/dreamco-business-bot-manifests/bot_20.json"
+    },
+    {
+      "bot_id": "BUSINESS_BOT_21",
+      "number": 21,
+      "name": "Social Media & Community",
+      "cluster": "Marketing",
+      "focus_tags": [
+        "social publishing",
+        "engagement",
+        "community"
+      ],
+      "target_parameters": 18500000,
+      "model_status": "BLUEPRINT_TARGET_NOT_INSTANTIATED",
+      "curriculum_manifest": "config/generated/dreamco-business-bot-manifests/bot_21.json"
+    },
+    {
+      "bot_id": "BUSINESS_BOT_22",
+      "number": 22,
+      "name": "Paid Ads & Media Buyer",
+      "cluster": "Marketing",
+      "focus_tags": [
+        "paid search",
+        "social ads",
+        "ROAS",
+        "experimentation"
+      ],
+      "target_parameters": 18500000,
+      "model_status": "BLUEPRINT_TARGET_NOT_INSTANTIATED",
+      "curriculum_manifest": "config/generated/dreamco-business-bot-manifests/bot_22.json"
+    },
+    {
+      "bot_id": "BUSINESS_BOT_23",
+      "number": 23,
+      "name": "Email Lifecycle & Retention",
+      "cluster": "Marketing",
+      "focus_tags": [
+        "email automation",
+        "segmentation",
+        "churn",
+        "deliverability"
+      ],
+      "target_parameters": 18500000,
+      "model_status": "BLUEPRINT_TARGET_NOT_INSTANTIATED",
+      "curriculum_manifest": "config/generated/dreamco-business-bot-manifests/bot_23.json"
+    },
+    {
+      "bot_id": "BUSINESS_BOT_24",
+      "number": 24,
+      "name": "Brand Voice & Style Guard",
+      "cluster": "Marketing",
+      "focus_tags": [
+        "brand voice",
+        "style",
+        "editorial quality"
+      ],
+      "target_parameters": 18500000,
+      "model_status": "BLUEPRINT_TARGET_NOT_INSTANTIATED",
+      "curriculum_manifest": "config/generated/dreamco-business-bot-manifests/bot_24.json"
+    },
+    {
+      "bot_id": "BUSINESS_BOT_25",
+      "number": 25,
+      "name": "PR & Media Relations",
+      "cluster": "Marketing",
+      "focus_tags": [
+        "press releases",
+        "media outreach",
+        "interview prep"
+      ],
+      "target_parameters": 18500000,
+      "model_status": "BLUEPRINT_TARGET_NOT_INSTANTIATED",
+      "curriculum_manifest": "config/generated/dreamco-business-bot-manifests/bot_25.json"
+    },
+    {
+      "bot_id": "BUSINESS_BOT_26",
+      "number": 26,
+      "name": "Video & Podcast Scripter",
+      "cluster": "Marketing",
+      "focus_tags": [
+        "video scripts",
+        "podcasts",
+        "storyboards",
+        "retention"
+      ],
+      "target_parameters": 18500000,
+      "model_status": "BLUEPRINT_TARGET_NOT_INSTANTIATED",
+      "curriculum_manifest": "config/generated/dreamco-business-bot-manifests/bot_26.json"
+    },
+    {
+      "bot_id": "BUSINESS_BOT_27",
+      "number": 27,
+      "name": "Bookkeeping & Ledger",
+      "cluster": "Finance",
+      "focus_tags": [
+        "bookkeeping",
+        "chart of accounts",
+        "reconciliation"
+      ],
+      "target_parameters": 18500000,
+      "model_status": "BLUEPRINT_TARGET_NOT_INSTANTIATED",
+      "curriculum_manifest": "config/generated/dreamco-business-bot-manifests/bot_27.json"
+    },
+    {
+      "bot_id": "BUSINESS_BOT_28",
+      "number": 28,
+      "name": "Accounts Payable & Receivable",
+      "cluster": "Finance",
+      "focus_tags": [
+        "invoices",
+        "aging",
+        "collections",
+        "payment workflows"
+      ],
+      "target_parameters": 18500000,
+      "model_status": "BLUEPRINT_TARGET_NOT_INSTANTIATED",
+      "curriculum_manifest": "config/generated/dreamco-business-bot-manifests/bot_28.json"
+    },
+    {
+      "bot_id": "BUSINESS_BOT_29",
+      "number": 29,
+      "name": "FP&A & Cash Flow Modeler",
+      "cluster": "Finance",
+      "focus_tags": [
+        "cash flow",
+        "forecasting",
+        "scenario modeling",
+        "unit economics"
+      ],
+      "target_parameters": 18500000,
+      "model_status": "BLUEPRINT_TARGET_NOT_INSTANTIATED",
+      "curriculum_manifest": "config/generated/dreamco-business-bot-manifests/bot_29.json"
+    },
+    {
+      "bot_id": "BUSINESS_BOT_30",
+      "number": 30,
+      "name": "Tax Prep & Deduction Finder",
+      "cluster": "Finance",
+      "focus_tags": [
+        "tax preparation",
+        "expense categories",
+        "tax compliance"
+      ],
+      "target_parameters": 18500000,
+      "model_status": "BLUEPRINT_TARGET_NOT_INSTANTIATED",
+      "curriculum_manifest": "config/generated/dreamco-business-bot-manifests/bot_30.json"
+    },
+    {
+      "bot_id": "BUSINESS_BOT_31",
+      "number": 31,
+      "name": "Payroll & Benefits Admin",
+      "cluster": "Finance",
+      "focus_tags": [
+        "payroll",
+        "overtime",
+        "benefits",
+        "worker classification"
+      ],
+      "target_parameters": 18500000,
+      "model_status": "BLUEPRINT_TARGET_NOT_INSTANTIATED",
+      "curriculum_manifest": "config/generated/dreamco-business-bot-manifests/bot_31.json"
+    },
+    {
+      "bot_id": "BUSINESS_BOT_32",
+      "number": 32,
+      "name": "Contract & NDA Reviewer",
+      "cluster": "Finance",
+      "focus_tags": [
+        "contract review",
+        "clauses",
+        "IP assignment",
+        "risk flags"
+      ],
+      "target_parameters": 18500000,
+      "model_status": "BLUEPRINT_TARGET_NOT_INSTANTIATED",
+      "curriculum_manifest": "config/generated/dreamco-business-bot-manifests/bot_32.json"
+    },
+    {
+      "bot_id": "BUSINESS_BOT_33",
+      "number": 33,
+      "name": "IP, Trademark & Licensing",
+      "cluster": "Finance",
+      "focus_tags": [
+        "intellectual property",
+        "trademarks",
+        "licensing",
+        "OSS licenses"
+      ],
+      "target_parameters": 18500000,
+      "model_status": "BLUEPRINT_TARGET_NOT_INSTANTIATED",
+      "curriculum_manifest": "config/generated/dreamco-business-bot-manifests/bot_33.json"
+    },
+    {
+      "bot_id": "BUSINESS_BOT_34",
+      "number": 34,
+      "name": "Fundraising & Investor Relations",
+      "cluster": "Finance",
+      "focus_tags": [
+        "fundraising",
+        "cap tables",
+        "investor reporting"
+      ],
+      "target_parameters": 18500000,
+      "model_status": "BLUEPRINT_TARGET_NOT_INSTANTIATED",
+      "curriculum_manifest": "config/generated/dreamco-business-bot-manifests/bot_34.json"
+    },
+    {
+      "bot_id": "BUSINESS_BOT_35",
+      "number": 35,
+      "name": "SOP & Process Engineer",
+      "cluster": "Operations",
+      "focus_tags": [
+        "SOPs",
+        "BPMN",
+        "process improvement",
+        "bottlenecks"
+      ],
+      "target_parameters": 18500000,
+      "model_status": "BLUEPRINT_TARGET_NOT_INSTANTIATED",
+      "curriculum_manifest": "config/generated/dreamco-business-bot-manifests/bot_35.json"
+    },
+    {
+      "bot_id": "BUSINESS_BOT_36",
+      "number": 36,
+      "name": "Procurement & Vendor Sourcing",
+      "cluster": "Operations",
+      "focus_tags": [
+        "procurement",
+        "RFQs",
+        "suppliers",
+        "negotiation"
+      ],
+      "target_parameters": 18500000,
+      "model_status": "BLUEPRINT_TARGET_NOT_INSTANTIATED",
+      "curriculum_manifest": "config/generated/dreamco-business-bot-manifests/bot_36.json"
+    },
+    {
+      "bot_id": "BUSINESS_BOT_37",
+      "number": 37,
+      "name": "Inventory & Demand Forecaster",
+      "cluster": "Operations",
+      "focus_tags": [
+        "inventory",
+        "demand planning",
+        "EOQ",
+        "safety stock"
+      ],
+      "target_parameters": 18500000,
+      "model_status": "BLUEPRINT_TARGET_NOT_INSTANTIATED",
+      "curriculum_manifest": "config/generated/dreamco-business-bot-manifests/bot_37.json"
+    },
+    {
+      "bot_id": "BUSINESS_BOT_38",
+      "number": 38,
+      "name": "Logistics & Freight Router",
+      "cluster": "Operations",
+      "focus_tags": [
+        "logistics",
+        "freight",
+        "customs",
+        "route planning"
+      ],
+      "target_parameters": 18500000,
+      "model_status": "BLUEPRINT_TARGET_NOT_INSTANTIATED",
+      "curriculum_manifest": "config/generated/dreamco-business-bot-manifests/bot_38.json"
+    },
+    {
+      "bot_id": "BUSINESS_BOT_39",
+      "number": 39,
+      "name": "Quality Assurance & Six Sigma",
+      "cluster": "Operations",
+      "focus_tags": [
+        "quality",
+        "DMAIC",
+        "CAPA",
+        "inspection"
+      ],
+      "target_parameters": 18500000,
+      "model_status": "BLUEPRINT_TARGET_NOT_INSTANTIATED",
+      "curriculum_manifest": "config/generated/dreamco-business-bot-manifests/bot_39.json"
+    },
+    {
+      "bot_id": "BUSINESS_BOT_40",
+      "number": 40,
+      "name": "Facilities & Asset Manager",
+      "cluster": "Operations",
+      "focus_tags": [
+        "facilities",
+        "maintenance",
+        "assets",
+        "safety"
+      ],
+      "target_parameters": 18500000,
+      "model_status": "BLUEPRINT_TARGET_NOT_INSTANTIATED",
+      "curriculum_manifest": "config/generated/dreamco-business-bot-manifests/bot_40.json"
+    },
+    {
+      "bot_id": "BUSINESS_BOT_41",
+      "number": 41,
+      "name": "Customer Onboarding Specialist",
+      "cluster": "Operations",
+      "focus_tags": [
+        "customer onboarding",
+        "implementation",
+        "migration"
+      ],
+      "target_parameters": 18500000,
+      "model_status": "BLUEPRINT_TARGET_NOT_INSTANTIATED",
+      "curriculum_manifest": "config/generated/dreamco-business-bot-manifests/bot_41.json"
+    },
+    {
+      "bot_id": "BUSINESS_BOT_42",
+      "number": 42,
+      "name": "Customer Support & Ticket Triage",
+      "cluster": "Operations",
+      "focus_tags": [
+        "support",
+        "triage",
+        "troubleshooting",
+        "escalation"
+      ],
+      "target_parameters": 18500000,
+      "model_status": "BLUEPRINT_TARGET_NOT_INSTANTIATED",
+      "curriculum_manifest": "config/generated/dreamco-business-bot-manifests/bot_42.json"
+    },
+    {
+      "bot_id": "BUSINESS_BOT_43",
+      "number": 43,
+      "name": "Product Manager & Roadmap",
+      "cluster": "Product_Tech",
+      "focus_tags": [
+        "product management",
+        "roadmaps",
+        "PRDs",
+        "prioritization"
+      ],
+      "target_parameters": 18500000,
+      "model_status": "BLUEPRINT_TARGET_NOT_INSTANTIATED",
+      "curriculum_manifest": "config/generated/dreamco-business-bot-manifests/bot_43.json"
+    },
+    {
+      "bot_id": "BUSINESS_BOT_44",
+      "number": 44,
+      "name": "UX/UI & Accessibility Auditor",
+      "cluster": "Product_Tech",
+      "focus_tags": [
+        "UX",
+        "UI",
+        "WCAG",
+        "accessibility",
+        "usability"
+      ],
+      "target_parameters": 18500000,
+      "model_status": "BLUEPRINT_TARGET_NOT_INSTANTIATED",
+      "curriculum_manifest": "config/generated/dreamco-business-bot-manifests/bot_44.json"
+    },
+    {
+      "bot_id": "BUSINESS_BOT_45",
+      "number": 45,
+      "name": "Backend & API Architect",
+      "cluster": "Product_Tech",
+      "focus_tags": [
+        "backend",
+        "APIs",
+        "OpenAPI",
+        "databases",
+        "security"
+      ],
+      "target_parameters": 18500000,
+      "model_status": "BLUEPRINT_TARGET_NOT_INSTANTIATED",
+      "curriculum_manifest": "config/generated/dreamco-business-bot-manifests/bot_45.json"
+    },
+    {
+      "bot_id": "BUSINESS_BOT_46",
+      "number": 46,
+      "name": "Frontend & Component Builder",
+      "cluster": "Product_Tech",
+      "focus_tags": [
+        "frontend",
+        "components",
+        "state",
+        "responsive design"
+      ],
+      "target_parameters": 18500000,
+      "model_status": "BLUEPRINT_TARGET_NOT_INSTANTIATED",
+      "curriculum_manifest": "config/generated/dreamco-business-bot-manifests/bot_46.json"
+    },
+    {
+      "bot_id": "BUSINESS_BOT_47",
+      "number": 47,
+      "name": "DevOps & CI/CD Automator",
+      "cluster": "Product_Tech",
+      "focus_tags": [
+        "DevOps",
+        "GitHub Actions",
+        "Docker",
+        "releases"
+      ],
+      "target_parameters": 18500000,
+      "model_status": "BLUEPRINT_TARGET_NOT_INSTANTIATED",
+      "curriculum_manifest": "config/generated/dreamco-business-bot-manifests/bot_47.json"
+    },
+    {
+      "bot_id": "BUSINESS_BOT_48",
+      "number": 48,
+      "name": "Cybersecurity & InfoSec",
+      "cluster": "Product_Tech",
+      "focus_tags": [
+        "cybersecurity",
+        "OWASP",
+        "IAM",
+        "zero trust"
+      ],
+      "target_parameters": 18500000,
+      "model_status": "BLUEPRINT_TARGET_NOT_INSTANTIATED",
+      "curriculum_manifest": "config/generated/dreamco-business-bot-manifests/bot_48.json"
+    },
+    {
+      "bot_id": "BUSINESS_BOT_49",
+      "number": 49,
+      "name": "Data Engineering & ETL",
+      "cluster": "Product_Tech",
+      "focus_tags": [
+        "data pipelines",
+        "ETL",
+        "schemas",
+        "deduplication"
+      ],
+      "target_parameters": 18500000,
+      "model_status": "BLUEPRINT_TARGET_NOT_INSTANTIATED",
+      "curriculum_manifest": "config/generated/dreamco-business-bot-manifests/bot_49.json"
+    },
+    {
+      "bot_id": "BUSINESS_BOT_50",
+      "number": 50,
+      "name": "AI Dataset & Eval Curator",
+      "cluster": "Product_Tech",
+      "focus_tags": [
+        "AI datasets",
+        "synthetic data",
+        "evaluation",
+        "benchmarks"
+      ],
+      "target_parameters": 18500000,
+      "model_status": "BLUEPRINT_TARGET_NOT_INSTANTIATED",
+      "curriculum_manifest": "config/generated/dreamco-business-bot-manifests/bot_50.json"
+    },
+    {
+      "bot_id": "BUSINESS_BOT_51",
+      "number": 51,
+      "name": "Talent Sourcer & Job Architect",
+      "cluster": "HR",
+      "focus_tags": [
+        "talent sourcing",
+        "job architecture",
+        "skills mapping"
+      ],
+      "target_parameters": 18500000,
+      "model_status": "BLUEPRINT_TARGET_NOT_INSTANTIATED",
+      "curriculum_manifest": "config/generated/dreamco-business-bot-manifests/bot_51.json"
+    },
+    {
+      "bot_id": "BUSINESS_BOT_52",
+      "number": 52,
+      "name": "Resume Screener & Interviewer",
+      "cluster": "HR",
+      "focus_tags": [
+        "resume review",
+        "structured interviews",
+        "candidate assessment"
+      ],
+      "target_parameters": 18500000,
+      "model_status": "BLUEPRINT_TARGET_NOT_INSTANTIATED",
+      "curriculum_manifest": "config/generated/dreamco-business-bot-manifests/bot_52.json"
+    },
+    {
+      "bot_id": "BUSINESS_BOT_53",
+      "number": 53,
+      "name": "Employee Onboarding & L&D",
+      "cluster": "HR",
+      "focus_tags": [
+        "employee onboarding",
+        "learning",
+        "30-60-90 plans"
+      ],
+      "target_parameters": 18500000,
+      "model_status": "BLUEPRINT_TARGET_NOT_INSTANTIATED",
+      "curriculum_manifest": "config/generated/dreamco-business-bot-manifests/bot_53.json"
+    },
+    {
+      "bot_id": "BUSINESS_BOT_54",
+      "number": 54,
+      "name": "Performance & Compensation",
+      "cluster": "HR",
+      "focus_tags": [
+        "performance",
+        "compensation",
+        "salary bands",
+        "promotion"
+      ],
+      "target_parameters": 18500000,
+      "model_status": "BLUEPRINT_TARGET_NOT_INSTANTIATED",
+      "curriculum_manifest": "config/generated/dreamco-business-bot-manifests/bot_54.json"
+    },
+    {
+      "bot_id": "BUSINESS_BOT_55",
+      "number": 55,
+      "name": "Employee Retention & Culture",
+      "cluster": "HR",
+      "focus_tags": [
+        "retention",
+        "employee experience",
+        "culture",
+        "mediation"
+      ],
+      "target_parameters": 18500000,
+      "model_status": "BLUEPRINT_TARGET_NOT_INSTANTIATED",
+      "curriculum_manifest": "config/generated/dreamco-business-bot-manifests/bot_55.json"
+    }
+  ]
+}

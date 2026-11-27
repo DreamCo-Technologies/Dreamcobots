@@ -1,0 +1,429 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "dreamco.buddy_source_study_guide.v1",
+  "title": "Buddy cross-source detailed study guide",
+  "type": "object",
+  "required": [
+    "schema",
+    "source",
+    "rights",
+    "summary",
+    "sections",
+    "learning_objectives",
+    "key_concepts",
+    "worked_examples",
+    "exercises",
+    "capstone",
+    "knowledge_checks",
+    "answer_key",
+    "division_mapping",
+    "references",
+    "review",
+    "authorship"
+  ],
+  "properties": {
+    "schema": {
+      "const": "dreamco.buddy_source_study_guide.v1"
+    },
+    "source": {
+      "type": "object",
+      "required": [
+        "source_type",
+        "source_id",
+        "url",
+        "revision"
+      ],
+      "properties": {
+        "source_type": {
+          "type": "string"
+        },
+        "source_id": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string",
+          "format": "uri"
+        },
+        "revision": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "license": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "discovered_at": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "retrieved_at": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "content_sha256": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "rights": {
+      "type": "object",
+      "required": [
+        "study_permission",
+        "summary_derivative_permission",
+        "evaluation_permission",
+        "training_permission",
+        "evidence_ref"
+      ],
+      "properties": {
+        "study_permission": {
+          "type": "boolean"
+        },
+        "summary_derivative_permission": {
+          "type": "boolean"
+        },
+        "evaluation_permission": {
+          "type": "boolean"
+        },
+        "training_permission": {
+          "type": "boolean"
+        },
+        "evidence_ref": {
+          "type": "string"
+        },
+        "redistribution_permission": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "commercial_use_permission": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "required": [
+        "executive_overview",
+        "detailed_explanation"
+      ],
+      "properties": {
+        "executive_overview": {
+          "type": "string",
+          "minLength": 100
+        },
+        "detailed_explanation": {
+          "type": "string",
+          "minLength": 500
+        },
+        "best_knowledge_extracted": {
+          "type": "object"
+        }
+      }
+    },
+    "sections": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "heading",
+          "explanation",
+          "source_locator"
+        ],
+        "properties": {
+          "heading": {
+            "type": "string"
+          },
+          "explanation": {
+            "type": "string",
+            "minLength": 80
+          },
+          "source_locator": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "learning_objectives": {
+      "type": "array",
+      "minItems": 3,
+      "items": {
+        "type": "string"
+      }
+    },
+    "key_concepts": {
+      "type": "array",
+      "minItems": 5,
+      "items": {
+        "type": "object",
+        "required": [
+          "name",
+          "explanation"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "explanation": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "worked_examples": {
+      "type": "array",
+      "minItems": 1
+    },
+    "exercises": {
+      "type": "array",
+      "minItems": 3
+    },
+    "capstone": {
+      "type": "object",
+      "required": [
+        "goal",
+        "acceptance_tests"
+      ]
+    },
+    "knowledge_checks": {
+      "type": "array",
+      "minItems": 5
+    },
+    "answer_key": {
+      "type": "array",
+      "minItems": 5
+    },
+    "division_mapping": {
+      "type": "array",
+      "minItems": 1
+    },
+    "references": {
+      "type": "array",
+      "minItems": 1
+    },
+    "review": {
+      "type": "object",
+      "required": [
+        "status",
+        "reviewer",
+        "reviewed_at"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "draft",
+            "needs_review",
+            "approved",
+            "rejected"
+          ]
+        },
+        "reviewer": {
+          "type": "string"
+        },
+        "reviewed_at": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "knowledge_map": {
+      "type": "object",
+      "properties": {
+        "concept_dependencies": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "core_principles": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "assumptions_and_limitations": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "common_misconceptions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "transfer_principles": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "prerequisites": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "workflow": {
+      "type": "array",
+      "minItems": 5,
+      "items": {
+        "type": "object",
+        "required": [
+          "step",
+          "inputs",
+          "actions",
+          "outputs",
+          "verification"
+        ]
+      }
+    },
+    "software_and_tools": {
+      "type": "array",
+      "minItems": 3,
+      "items": {
+        "type": "object",
+        "required": [
+          "category",
+          "capabilities",
+          "examples",
+          "alternatives",
+          "verification_date",
+          "license_or_pricing_review"
+        ]
+      }
+    },
+    "agent_capabilities": {
+      "type": "array",
+      "minItems": 3
+    },
+    "occupation_or_venture": {
+      "type": "object"
+    },
+    "commercial_pathway": {
+      "type": "object",
+      "required": [
+        "buyer_research",
+        "offer_scope",
+        "pricing_model",
+        "sales_workflow",
+        "eligibility_and_credentials"
+      ],
+      "properties": {
+        "buyer_research": {
+          "type": "array"
+        },
+        "offer_scope": {
+          "type": "object"
+        },
+        "pricing_model": {
+          "type": "object"
+        },
+        "sales_workflow": {
+          "type": "array"
+        },
+        "eligibility_and_credentials": {
+          "type": "array"
+        }
+      }
+    },
+    "teaching_notes": {
+      "type": "object"
+    },
+    "authorship": {
+      "type": "object",
+      "properties": {
+        "authoring_entity": {
+          "type": "string"
+        },
+        "authoring_model": {
+          "type": "string"
+        },
+        "model_version": {
+          "type": "string"
+        },
+        "commissioned_for": {
+          "type": "string"
+        },
+        "human_contribution": {
+          "type": "string"
+        },
+        "owner_designation": {
+          "type": "string"
+        },
+        "owner_confirmation_status": {
+          "enum": [
+            "pending",
+            "confirmed",
+            "not_applicable"
+          ]
+        },
+        "revision_history_ref": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "authoring_entity",
+        "authoring_model",
+        "model_version",
+        "commissioned_for",
+        "human_contribution",
+        "owner_designation",
+        "owner_confirmation_status"
+      ]
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "source": {
+            "properties": {
+              "source_type": {
+                "enum": [
+                  "onet_task",
+                  "occupation",
+                  "business_venture",
+                  "venture_track",
+                  "job_task"
+                ]
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "occupation_or_venture",
+          "workflow",
+          "software_and_tools",
+          "agent_capabilities",
+          "commercial_pathway"
+        ]
+      }
+    }
+  ]
+}

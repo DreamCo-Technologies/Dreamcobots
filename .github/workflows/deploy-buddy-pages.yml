@@ -10,8 +10,26 @@ on:
       - codex/master-capability-pages
     paths:
       - "website/**"
+      - "command-center/**"
+      - "App_bots/**"
+      - "bots/**"
+      - "original-bots/**"
+      - "buddy/**"
+      - "buddy_os/**"
       - "docs/**"
+      - "config/masterbot-65-registry.json"
+      - "config/master_bot_registry.json"
+      - "config/generated/masterbot-55-domain-crosswalk.json"
+      - "config/project-feature-coverage.json"
+      - "config/buddy-course-track-registry.json"
+      - "config/buddy-model-registry.json"
+      - "config/buddy-model-selection-registry.json"
+      - "config/buddy-fleet-quality-program.json"
+      - "config/fleet-growth-policy.json"
+      - "config/production-readiness-contract.json"
+      - "governance/production-readiness-area-evidence.json"
       - "tools/build_buddy_public_site.py"
+      - "tools/generate_github_control_tower.py"
       - "tools/buddy_control_plane.py"
       - "tools/audit_actions_health.py"
       - "tools/audit_actions_live.py"
@@ -31,19 +49,15 @@ on:
       - "tools/generate_command_center_data.py"
       - "tools/normalize_legacy_portfolios.py"
       - "tools/place_original_bots.py"
-      - "original-bots/**"
-      - "bots/**"
-      - "config/project-feature-coverage.json"
       - "tools/generate_resource_connection_catalog.py"
       - "tools/generate_buddy_expert_mode.py"
-      - "command-center/data/**"
-      - "docs/DREAMCO_BUDDY_MASTER_CODEX_DIRECTIVE.md"
-      - "config/**"
-      - ".github/workflows/deploy-buddy-pages.yml"
       - "tools/build_pages_connection_index.py"
-      - "buddy/capabilities/**"
-      - "tests/capability-workbench.test.mjs"
-      - "tests/test_observed_capability_runtime.py"
+      - "package.json"
+      - "package-lock.json"
+      - "pyproject.toml"
+      - "requirements*.txt"
+      - ".github/agents/**"
+      - ".github/workflows/deploy-buddy-pages.yml"
   schedule:
     # Refresh live-ish data on Pages (Actions health + Buddy control-plane status).
     - cron: "47 5,17 * * *"
@@ -51,6 +65,7 @@ on:
 permissions:
   contents: read
   actions: read
+  pull-requests: read
 
 concurrency:
   group: dreamco-github-pages-${{ github.ref }}
@@ -86,6 +101,7 @@ jobs:
           mkdir -p config/generated reports website/data
           python3 tools/audit_actions_health.py
           python3 tools/audit_actions_live.py
+          python3 tools/generate_github_control_tower.py
           python3 tools/problem_registry.py
           python3 tools/auto_repair_policy.py config/generated/problem-registry.json
           python3 tools/build_actions_prospectus.py
@@ -98,6 +114,9 @@ jobs:
           python3 tools/buddy_control_plane.py status --out website/data/buddy-control-status.json
       - name: Run deployment preflight
         run: |
+          python3 tools/refresh_buddy_technology_radar.py --project
+          python3 tools/refresh_buddy_technology_radar.py --check
+          python3 -m unittest tests.test_buddy_technology_radar
           python3 tools/check_deployment_cost_policy.py
           python3 tools/generate_buddy_model_router.py --check
           node tools/check_buddy_model_benchmarks.mjs
@@ -111,6 +130,9 @@ jobs:
           python3 tools/generate_master_directive_status.py
           python3 tools/generate_command_center_data.py
           python3 tools/generate_command_center_data.py --check
+          python3 tools/generate_github_control_tower.py --check
+          python3 -m unittest tests.test_github_control_tower
+          node --check website/control-tower.js
           python3 tools/generate_resource_connection_catalog.py
           python3 tools/generate_resource_connection_catalog.py --check
           python3 tools/generate_opportunity_hub.py --check
@@ -121,6 +143,7 @@ jobs:
           python3 tools/generate_buddy_open_model_lab.py --check
           python3 tools/generate_buddy_learning_strategies.py --check
           python3 tools/generate_professional_bootcamp.py --check
+          python3 tools/generate_production_evidence_ledger.py
           python3 tools/generate_production_evidence_ledger.py --check
           python3 tools/build_manufacturer_marketplace_catalog.py
           python3 tools/build_system_progress_status.py
@@ -225,12 +248,16 @@ jobs:
           test -s public_site/buddy-model-lab.html
           test -s public_site/professional-bootcamp.html
           test -s public_site/production-evidence.html
+          test -s public_site/control-tower.html
+          test -s public_site/data/control-tower/github-status.json
       - name: Upload public website
         uses: actions/upload-pages-artifact@v5
         with:
           path: public_site
   deploy:
-    if: github.ref == 'refs/heads/main'
+    # Main-branch pushes build and validate the site, but deployment is manual-only.
+    # This prevents an ordinary PR merge from publishing without an explicit dispatch.
+    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'
     needs: build
     runs-on: ubuntu-latest
     timeout-minutes: 20

@@ -1,0 +1,130 @@
+{
+  "schema_version": "1.0.0",
+  "program": "dreamco_dataset_studio_and_marketplace",
+  "status": "specification_only",
+  "default_policy": {
+    "unknown_rights": "quarantine",
+    "customer_data": "private_by_default",
+    "cross_tenant_training": false,
+    "resale_without_explicit_distribution_rights": false,
+    "public_access_implies_commercial_rights": false
+  },
+  "rights_classes": [
+    "owned",
+    "licensed_for_training",
+    "licensed_for_redistribution",
+    "public_restricted",
+    "customer_private",
+    "research_only",
+    "blocked"
+  ],
+  "permissions": [
+    "view",
+    "download",
+    "train",
+    "commercial_use",
+    "redistribute",
+    "sublicense",
+    "create_derivatives",
+    "resell"
+  ],
+  "required_manifest_fields": [
+    "dataset_id",
+    "version_id",
+    "owner_or_creator",
+    "source_uri",
+    "acquisition_method",
+    "acquired_at",
+    "license_id",
+    "license_text_or_immutable_reference",
+    "attribution",
+    "restrictions",
+    "permissions",
+    "privacy_assessment",
+    "content_hashes",
+    "schema_summary",
+    "format",
+    "size_bytes",
+    "language",
+    "time_coverage",
+    "dataset_card_uri",
+    "quality_report_uri",
+    "split_strategy",
+    "leakage_checks",
+    "reviewer_ids",
+    "approval_events"
+  ],
+  "release_gates": [
+    "rights_review",
+    "privacy_review",
+    "security_scan",
+    "quality_profile",
+    "dataset_card",
+    "human_approval_when_required"
+  ],
+  "lifecycle": [
+    "discover",
+    "quarantine",
+    "rights_review",
+    "privacy_security_scan",
+    "profile_quality",
+    "version_manifest",
+    "dataset_card",
+    "human_approval",
+    "publish_catalog",
+    "entitlement_delivery",
+    "monitor_and_takedown"
+  ],
+  "buddy_capabilities": [
+    "catalog_search",
+    "license_explanation",
+    "schema_profiling",
+    "quality_analysis",
+    "deduplication_review",
+    "leakage_detection",
+    "split_planning",
+    "dataset_card_generation",
+    "lineage_explanation",
+    "customer_workspace_preparation",
+    "bootcamp_instruction"
+  ],
+  "marketplace_capabilities": [
+    "dataset_listing",
+    "versioning",
+    "license_display",
+    "permitted_sample_preview",
+    "purchase_entitlements",
+    "approved_download_or_api_delivery",
+    "creator_analytics",
+    "takedown_and_dispute_handling"
+  ],
+  "prohibited_defaults": [
+    "train_on_customer_private_data_for_other_tenants",
+    "resell_customer_data_without_explicit_rights",
+    "redistribute_research_only_data",
+    "treat_publicly_accessible_data_as_public_domain",
+    "publish_unreviewed_dataset",
+    "invent_license_or_quality_evidence"
+  ],
+  "implementation_phases": [
+    "manifest_and_rights_taxonomy",
+    "read_only_catalog_and_cards",
+    "offline_quality_validation",
+    "training_lineage",
+    "tenant_isolated_storage",
+    "rights_reviewed_listing",
+    "payments_and_payouts_after_compliance_review",
+    "monitoring_and_takedown"
+  ],
+  "metrics": [
+    "provenance_completeness_rate",
+    "rights_review_coverage",
+    "quality_report_coverage",
+    "approval_lead_time",
+    "buyer_task_success",
+    "dataset_defect_rate",
+    "takedown_rate",
+    "unauthorized_access_incidents",
+    "training_lineage_completeness"
+  ]
+}

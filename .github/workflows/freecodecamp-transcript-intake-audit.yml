@@ -1,0 +1,60 @@
+name: FreeCodeCamp Transcript Intake and Weekly Buddy Test Audit
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 12 * * 1"
+  pull_request:
+    paths:
+      - "buddy/bootcamp/sources/freecodecamp/catalog.json"
+      - "config/authorized-transcripts/**"
+      - "tools/build_freecodecamp_transcript_intake.py"
+      - "tests/test_freecodecamp_transcript_intake.py"
+      - ".github/workflows/freecodecamp-transcript-intake-audit.yml"
+  push:
+    branches: [main]
+    paths:
+      - "buddy/bootcamp/sources/freecodecamp/catalog.json"
+      - "config/authorized-transcripts/**"
+      - "tools/build_freecodecamp_transcript_intake.py"
+      - "tests/test_freecodecamp_transcript_intake.py"
+      - ".github/workflows/freecodecamp-transcript-intake-audit.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: freecodecamp-transcript-intake-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  intake-and-weekly-coverage:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - name: Validate rights-gated transcript intake and weekly coverage
+        run: |
+          python -m unittest discover -s tests -p 'test_freecodecamp_transcript_intake.py' -v
+          python tools/build_freecodecamp_transcript_intake.py --out-dir artifacts/freecodecamp-transcripts
+      - name: Publish truthful weekly coverage summary
+        if: always()
+        run: |
+          if [ -f artifacts/freecodecamp-transcripts/summary.json ]; then
+            cat artifacts/freecodecamp-transcripts/summary.json >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "Transcript intake summary was not generated; coverage is unverified." >> "$GITHUB_STEP_SUMMARY"
+          fi
+      - name: Upload transcript intake and weekly test audit
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: freecodecamp-transcript-intake-${{ github.run_id }}
+          path: artifacts/freecodecamp-transcripts/
+          if-no-files-found: error
+          retention-days: 30

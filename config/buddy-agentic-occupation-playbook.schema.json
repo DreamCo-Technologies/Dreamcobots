@@ -1,0 +1,163 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "dreamco.buddy_agentic_occupation_playbook.v1",
+  "type": "object",
+  "required": [
+    "schema",
+    "source",
+    "occupation_or_venture",
+    "task",
+    "purpose_and_customer_problem",
+    "workflow",
+    "prerequisites_and_domain_knowledge",
+    "software_and_tools",
+    "agent_capabilities",
+    "inputs_outputs",
+    "decision_rules_and_exceptions",
+    "quality_and_acceptance_tests",
+    "safety_legal_and_license_boundaries",
+    "privacy_security_and_records",
+    "human_review_and_escalation",
+    "commercial_pathway",
+    "delivery_and_metrics",
+    "examples_exercises_and_capstone",
+    "citations_and_rights"
+  ],
+  "properties": {
+    "schema": {
+      "const": "dreamco.buddy_agentic_occupation_playbook.v1"
+    },
+    "source": {
+      "type": "object",
+      "required": [
+        "source_type",
+        "source_id",
+        "revision",
+        "url"
+      ]
+    },
+    "occupation_or_venture": {
+      "type": "object",
+      "required": [
+        "title",
+        "code_or_id",
+        "jurisdiction_or_market"
+      ]
+    },
+    "task": {
+      "type": "object",
+      "required": [
+        "task_id",
+        "title",
+        "task_type"
+      ]
+    },
+    "purpose_and_customer_problem": {
+      "type": "string",
+      "minLength": 100
+    },
+    "workflow": {
+      "type": "array",
+      "minItems": 5,
+      "items": {
+        "type": "object",
+        "required": [
+          "step",
+          "inputs",
+          "actions",
+          "outputs",
+          "verification"
+        ]
+      }
+    },
+    "prerequisites_and_domain_knowledge": {
+      "type": "array",
+      "minItems": 3
+    },
+    "software_and_tools": {
+      "type": "array",
+      "minItems": 3,
+      "items": {
+        "type": "object",
+        "required": [
+          "category",
+          "capabilities",
+          "examples",
+          "alternatives",
+          "verification_date",
+          "license_or_pricing_review"
+        ]
+      }
+    },
+    "agent_capabilities": {
+      "type": "array",
+      "minItems": 3
+    },
+    "inputs_outputs": {
+      "type": "object",
+      "required": [
+        "inputs",
+        "outputs",
+        "data_schemas"
+      ]
+    },
+    "decision_rules_and_exceptions": {
+      "type": "array",
+      "minItems": 3
+    },
+    "quality_and_acceptance_tests": {
+      "type": "array",
+      "minItems": 3
+    },
+    "safety_legal_and_license_boundaries": {
+      "type": "array",
+      "minItems": 3
+    },
+    "privacy_security_and_records": {
+      "type": "array",
+      "minItems": 3
+    },
+    "human_review_and_escalation": {
+      "type": "array",
+      "minItems": 1
+    },
+    "commercial_pathway": {
+      "type": "object",
+      "required": [
+        "buyer_research",
+        "offer_scope",
+        "pricing_model",
+        "sales_workflow",
+        "eligibility_and_credentials"
+      ]
+    },
+    "delivery_and_metrics": {
+      "type": "object",
+      "required": [
+        "delivery_checklist",
+        "quality_metrics",
+        "cost_metrics",
+        "support_and_rework"
+      ]
+    },
+    "examples_exercises_and_capstone": {
+      "type": "object",
+      "required": [
+        "worked_examples",
+        "beginner_exercise",
+        "advanced_exercise",
+        "capstone",
+        "answer_key"
+      ]
+    },
+    "citations_and_rights": {
+      "type": "object",
+      "required": [
+        "references",
+        "rights_evidence",
+        "attribution",
+        "training_permission"
+      ]
+    }
+  }
+}

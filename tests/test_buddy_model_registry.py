@@ -1,0 +1,194 @@
+from __future__ import annotations
+
+import copy
+import json
+import unittest
+from pathlib import Path
+
+from buddy.modeling.registry import (
+    ModelRegistryError,
+    load_registry,
+    route_model,
+    validate_registry,
+)
+
+
+
+ROOT = Path(__file__).resolve().parents[1]
+SHA = "a" * 64
+COMMIT = "b" * 40
+
+
+def eligible_candidate():
+    return {
+        "model_id": "dreamco/test-candidate",
+        "lifecycle_status": "PRODUCTION_VERIFIED",
+        "model_card": "models/test/README.md",
+        "code_path": "buddy/modeling/tiny_gpt.py",
+        "capabilities": ["causal_language_modeling"],
+        "parameter_count": 25000000,
+        "training_mode": "from_scratch",
+        "compute_profile": {"status": "VERIFIED", "hardware_cohort": "cpu-reference", "estimated_training_seconds": 1200, "estimated_peak_memory_gb": 2, "estimated_storage_gb": 1, "estimated_cost_usd": 0, "available_compute_hours": 1},
+        "marketplace": {"eligible_for_sale": False, "status": "NOT_SELLABLE"},
+        "lineage": {
+            "parent_model_id": None,
+            "dataset_card": "config/test-data-card.json",
+            "dataset_card_sha256": SHA,
+            "dataset_rights_status": "VERIFIED",
+            "model_license_status": "VERIFIED",
+            "model_license_url": "https://example.com/model-license",
+            "model_license_evidence": "model-license-review-123",
+            "training_authorization_id": "approval-123",
+            "training_run_id": "run-123",
+            "base_model_revision": COMMIT,
+        },
+        "weights": {
+            "trained": True,
+            "artifact_path": "artifacts/models/test/model.safetensors",
+            "artifact_sha256": SHA,
+        },
+        "route_policy": {"enabled": True},
+        "benchmark_evidence": [{
+            "benchmark_id": "heldout-causal-lm-v1",
+            "baseline_score": 0.70,
+            "candidate_score": 0.82,
+            "score_direction": "higher_is_better",
+            "routing_weight": 1.0,
+            "holdout_passed": True,
+            "regression_passed": True,
+            "provenance_verified": True,
+            "dataset_rights_verified": True,
+            "independent_review_approved": True,
+            "tested_commit_sha": COMMIT,
+        }],
+    }
+
+
+
+
+def registry_with(models):
+    registry = load_registry()
+    registry["models"] = models
+    return registry
+
+
+class BuddyModelRegistryTests(unittest.TestCase):
+    def test_committed_baseline_is_registered_but_never_routed(self):
+        registry = load_registry(ROOT / "config" / "buddy-model-registry.json")
+        self.assertEqual(len(registry["models"]), 1)
+        decision = route_model(registry, "causal_language_modeling")
+        self.assertEqual(decision["status"], "BLOCKED_NO_ELIGIBLE_MODEL")
+        self.assertIsNone(decision["selected_model_id"])
+        self.assertFalse(decision["production_side_effects"])
+        reasons = decision["blocked_candidates"][0]["reasons"]
+        self.assertIn("route_disabled", reasons)
+        self.assertIn("verified_weight_artifact_missing", reasons)
+        self.assertIn("dataset_rights_not_verified", reasons)
+
+    def test_complete_rights_lineage_and_benchmark_can_be_routed(self):
+        registry = registry_with([eligible_candidate()])
+        decision = route_model(registry, "causal_language_modeling")
+        self.assertEqual(decision["status"], "ELIGIBLE_FOR_ROUTING")
+        self.assertEqual(decision["selected_model_id"], "dreamco/test-candidate")
+        self.assertAlmostEqual(decision["weighted_relative_improvement"], (0.82 - 0.70) / 0.70)
+        self.assertFalse(decision["production_side_effects"])
+
+    def test_missing_training_authorization_blocks_routing(self):
+        candidate = eligible_candidate()
+        candidate["lineage"]["training_authorization_id"] = None
+        decision = route_model(registry_with([candidate]),
+                               "causal_language_modeling")
+        self.assertEqual(decision["status"], "BLOCKED_NO_ELIGIBLE_MODEL")
+        self.assertIn("separate_training_authorization_missing", decision["blocked_candidates"][0]["reasons"])
+
+    def test_benchmark_regression_blocks_routing(self):
+        candidate = eligible_candidate()
+        candidate["benchmark_evidence"][0]["candidate_score"] = 0.60
+        decision = route_model(registry_with([candidate]),
+                               "causal_language_modeling")
+        self.assertEqual(decision["status"], "BLOCKED_NO_ELIGIBLE_MODEL")
+        self.assertIn("benchmark_regression", decision["blocked_candidates"][0]["reasons"])
+
+    def test_lower_is_better_benchmark_uses_correct_direction(self):
+        candidate = eligible_candidate()
+        evidence = candidate["benchmark_evidence"][0]
+        evidence["score_direction"] = "lower_is_better"
+        evidence["baseline_score"] = 0.20
+        evidence["candidate_score"] = 0.16
+        decision = route_model(registry_with([candidate]),
+                               "causal_language_modeling")
+        self.assertEqual(decision["status"], "ELIGIBLE_FOR_ROUTING")
+        self.assertAlmostEqual(decision["weighted_relative_improvement"], 0.20)
+
+    def test_unverified_model_license_blocks_routing(self):
+        candidate = eligible_candidate()
+        candidate["lineage"]["model_license_status"] = "UNKNOWN"
+        decision = route_model(registry_with([candidate]),
+                               "causal_language_modeling")
+        self.assertEqual(decision["status"], "BLOCKED_NO_ELIGIBLE_MODEL")
+        self.assertIn("model_license_not_verified", decision["blocked_candidates"][0]["reasons"])
+
+    def test_duplicate_model_ids_are_rejected(self):
+        candidate = eligible_candidate()
+        with self.assertRaises(ModelRegistryError):
+            validate_registry(registry_with([candidate, copy.deepcopy(candidate)]))
+
+
+
+    def test_user_defined_parameter_counts_have_no_fixed_catalog_ceiling(self):
+        candidate = eligible_candidate()
+        candidate["parameter_count"] = 9876543210
+        registry = registry_with([candidate])
+        self.assertTrue(registry["parameter_sizing_policy"]["custom_parameter_count_allowed"])
+        self.assertIsNone(registry["parameter_sizing_policy"]["maximum_parameters"])
+        self.assertEqual(validate_registry(registry)["models"][0]["parameter_count"], 9876543210)
+
+    def test_zero_or_negative_parameter_count_is_rejected(self):
+        candidate = eligible_candidate()
+        candidate["parameter_count"] = 0
+        with self.assertRaises(ModelRegistryError):
+            validate_registry(registry_with([candidate]))
+
+    def test_untrained_baseline_cannot_be_marked_sellable(self):
+        registry = load_registry()
+        registry["marketplace_policy"]["sale_enabled"] = True
+        registry["models"][0]["marketplace"]["eligible_for_sale"] = True
+        with self.assertRaisesRegex(ModelRegistryError, "untrained or unverified model cannot be sold"):
+            validate_registry(registry)
+
+
+    def test_tiny_gpt_benchmark_contract_blocks_promotion_until_capability_benchmarks_run(self):
+        contract = json.loads((ROOT / "config" / "buddy-tiny-gpt-benchmark-contract.json").read_text(encoding="utf-8"))
+        self.assertEqual(contract["capability_quality_benchmarks"]["status"], "NOT_RUN")
+        self.assertEqual(contract["promotion_status"], "BLOCKED_NOT_TRAINED_NO_CAPABILITY_BENCHMARK")
+        self.assertTrue(all(item["gate"] for item in contract["engineering_checks"]))
+
+    def test_synthetic_baseline_fixture_is_not_training_approved(self):
+        card = json.loads((ROOT / "config" / "buddy-tiny-gpt-synthetic-data-card.json").read_text(encoding="utf-8"))
+        self.assertFalse(card["training_approved"])
+        self.assertFalse(card["third_party_content"])
+        self.assertFalse(card["personal_data"])
+        self.assertFalse(card["network_download_required"])
+
+
+    def test_sale_requires_all_rights_security_and_human_release_gates(self):
+        candidate = eligible_candidate()
+        candidate["marketplace"] = {
+            "eligible_for_sale": True,
+            "status": "RELEASE_APPROVED",
+            "ownership_verified": True,
+            "security_scan_passed": True,
+            "model_card_verified": True,
+            "human_release_approved": True,
+            "export_format": "safetensors",
+        }
+        registry = registry_with([candidate])
+        registry["marketplace_policy"]["sale_enabled"] = True
+        self.assertIs(validate_registry(registry)["models"][0], candidate)
+
+        candidate["marketplace"]["security_scan_passed"] = False
+        with self.assertRaisesRegex(ModelRegistryError, "security_scan_passed"):
+            validate_registry(registry)
+
+if __name__ == "__main__":
+    unittest.main()

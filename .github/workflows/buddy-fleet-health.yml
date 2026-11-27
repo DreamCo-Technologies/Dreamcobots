@@ -16,6 +16,7 @@ on:
       - 'tools/generate_buddy_fleet_quality_program.ts'
       - 'tests/bot-fleet-catalog.test.ts'
       - 'tests/fleet-runtime.test.ts'
+      - 'tests/test_buddy_fleet_health_workflow.py'
 
 permissions:
   contents: read
@@ -40,10 +41,14 @@ jobs:
         with:
           python-version: '3.13'
       - run: npm ci --ignore-scripts
+      - name: Validate fleet health workflow contract
+        run: python3 -m unittest discover -s tests -p 'test_buddy_fleet_health_workflow.py' -v
       - name: Validate fleet catalog
         run: npm run buddy:fleet
       - name: Validate fleet quality contracts
         run: npm run buddy:fleet-quality
+      - name: Regenerate deterministic fleet E2E evidence
+        run: node --import tsx tools/run_bot_fleet_e2e.ts
       - name: Execute bounded fleet E2E checks
         run: npm run buddy:fleet:e2e
       - name: Verify routing/runtime contracts

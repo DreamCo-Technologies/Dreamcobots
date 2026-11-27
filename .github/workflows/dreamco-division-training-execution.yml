@@ -1,0 +1,62 @@
+name: DreamCo Division Training Execution
+on:
+  workflow_dispatch:
+    inputs:
+      job_manifest:
+        description: Repository path to an owner-approved job manifest under artifacts/buddy-training-jobs/
+        required: true
+        type: string
+      compute_approval_id:
+        description: Approval reference recorded in the training job manifest
+        required: true
+        type: string
+      allow_model_download:
+        description: Allow the runner to download the pinned base model (requires DREAMCO_ALLOW_MODEL_DOWNLOAD=1 secret)
+        required: false
+        default: false
+        type: boolean
+permissions:
+  contents: read
+concurrency:
+  group: dreamco-division-training-${{ inputs.job_manifest }}
+  cancel-in-progress: false
+jobs:
+  execute-approved-training:
+    runs-on: [self-hosted, linux, x64, gpu, dreamco-training]
+    environment: dreamco-training
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate approved job manifest path
+        env:
+          JOB_MANIFEST: ${{ inputs.job_manifest }}
+        run: |
+          case "$JOB_MANIFEST" in
+            artifacts/buddy-training-jobs/*.json) ;;
+            *) echo "Job manifest must be under artifacts/buddy-training-jobs/" >&2; exit 1 ;;
+          esac
+          test -f "$JOB_MANIFEST"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Verify training runtime dependencies
+        run: python -c "import torch, transformers, peft; print('torch', torch.__version__, 'transformers', transformers.__version__, 'peft', peft.__version__)"
+      - name: Execute the explicitly approved division training job
+        env:
+          DREAMCO_ALLOW_TRAINING_EXECUTION: ${{ secrets.DREAMCO_ALLOW_TRAINING_EXECUTION }}
+          DREAMCO_ALLOW_MODEL_DOWNLOAD: ${{ secrets.DREAMCO_ALLOW_MODEL_DOWNLOAD }}
+          GITHUB_SHA: ${{ github.sha }}
+          JOB_MANIFEST: ${{ inputs.job_manifest }}
+          COMPUTE_APPROVAL_ID: ${{ inputs.compute_approval_id }}
+          ALLOW_MODEL_DOWNLOAD: ${{ inputs.allow_model_download }}
+        run: |
+          args=(--job-manifest "$JOB_MANIFEST" --approval-id "$COMPUTE_APPROVAL_ID" --evidence-root "artifacts/training-evidence/$GITHUB_RUN_ID")
+          if [ "$ALLOW_MODEL_DOWNLOAD" = "true" ]; then args+=(--allow-model-download); fi
+          python tools/execute_buddy_training_job.py "${args[@]}"
+      - name: Preserve immutable training evidence and division checkpoints
+        uses: actions/upload-artifact@v4
+        with:
+          name: dreamco-division-training-evidence-${{ github.run_id }}
+          path: artifacts/training-evidence/${{ github.run_id }}
+          if-no-files-found: error
+          retention-days: 90

@@ -1,0 +1,170 @@
+{
+  "schema": "dreamco.buddy_conversation_learning_governance.v1",
+  "version": "1.1.0",
+  "status": "POLICY_DEFINED_RUNTIME_INTEGRATION_REQUIRED",
+  "principles": {
+    "private_by_default": true,
+    "conversation_is_not_automatically_training_data": true,
+    "personal_memory_and_global_learning_are_separate": true,
+    "raw_transcripts_never_enter_shared_learning": true,
+    "consent_is_purpose_specific_and_revocable": true,
+    "unknown_rights_or_consent_means_deny": true
+  },
+  "separate_opt_ins": {
+    "personal_memory": "Remember selected facts/preferences for this user only.",
+    "product_improvement": "Contribute de-identified aggregate patterns to improve DreamCo.",
+    "cross_user_sharing": "Share an eligible de-identified lesson across users.",
+    "foundation_model_training": "Consider a rights-cleared derived example for separately reviewed model training."
+  },
+  "content_rules": {
+    "accepted_candidate_forms": [
+      "structured_preference",
+      "user_correction",
+      "task_outcome",
+      "verified_procedure",
+      "aggregate_pattern"
+    ],
+    "raw_transcript_allowed": false,
+    "credentials_allowed": false,
+    "sensitive_data_default": "exclude_from_shared_learning",
+    "third_party_personal_data_default": "exclude_from_shared_learning",
+    "children_data_default": "exclude_from_shared_learning"
+  },
+  "personal_memory": {
+    "requires_explicit_opt_in": true,
+    "tenant_scope": "single_user",
+    "default_retention_days": 90,
+    "maximum_retention_days": 365,
+    "user_controls": [
+      "view",
+      "correct",
+      "export",
+      "delete",
+      "disable_learning"
+    ],
+    "never_promote_as_fact_without_validation": true,
+    "sensitive_memory_requires_separate_opt_in": true,
+    "third_party_personal_data_requires_subject_permission": true
+  },
+  "cross_user_learning": {
+    "requires_product_improvement_opt_in": true,
+    "requires_cross_user_sharing_opt_in": true,
+    "requires_deidentification": true,
+    "minimum_cohort_size": 20,
+    "requires_sensitive_data_absent": true,
+    "requires_third_party_data_absent": true,
+    "allowed_output": "generalized_pattern_or_verified_procedure_only",
+    "raw_user_ids_or_conversation_ids_allowed": false,
+    "per_user_private_memory_must_never_be_shared": true
+  },
+  "foundation_model_training": {
+    "enabled_by_default": false,
+    "requires_separate_explicit_opt_in": true,
+    "requires_rights_and_provenance_evidence": true,
+    "requires_deidentification_and_privacy_review": true,
+    "requires_human_review": true,
+    "requires_dataset_card_and_withdrawal_path": true,
+    "paid_compute_requires_separate_budget_approval": true
+  },
+  "revocation": {
+    "stop_future_ingestion": true,
+    "remove_retrieval_access": true,
+    "queue_deletion_from_eligible_stores": true,
+    "record_completion_evidence": true,
+    "already_released_aggregate_or_model_artifacts": "Follow documented legal, technical, and contractual withdrawal limits; never promise impossible retroactive unlearning."
+  },
+  "human_like_experience": {
+    "identity": "Consistent transparent AI assistant; never claim to be human.",
+    "memory": "Retrieve relevant user-approved context and confirm uncertain or stale facts.",
+    "continuity": "Track open commitments, project state, decisions, and next steps with timestamps.",
+    "communication": "Adapt warmth, directness, detail, and format to user preferences.",
+    "emotional_attunement": "Acknowledge feelings without diagnosing, manipulating, or encouraging dependency.",
+    "honesty": "State uncertainty, distinguish memory from inference, and never fabricate experiences or actions.",
+    "agency": "Ask before consequential external actions and respect user corrections.",
+    "repair": "Admit mistakes, explain the correction, and record verified lessons."
+  },
+  "quality_gates": {
+    "every_memory_has_source_scope_timestamp_and_confidence": true,
+    "stale_memories_are_revalidated": true,
+    "contradictions_are_flagged_not_silently_overwritten": true,
+    "cross_user_lessons_are_tested_before_promotion": true,
+    "benchmark_data_is_excluded_from_training_unless_authorized": true,
+    "learning_pipeline_evidence_required": true,
+    "every_promoted_lesson_has_source_rights_scope_and_version": true,
+    "training_and_retrieval_are_separate": true
+  },
+  "learning_coverage": {
+    "objective": "Continuously improve Buddy from every eligible, authorized, rights-cleared source and every permitted interaction, without treating access as training consent.",
+    "event_classes": [
+      "user_correction",
+      "accepted_answer_feedback",
+      "task_success_or_failure",
+      "tool_execution_result",
+      "verified_workflow",
+      "benchmark_result",
+      "bug_and_regression",
+      "documentation_update",
+      "authorized_chat_summary",
+      "authorized_file_or_media_insight",
+      "authorized_connector_record",
+      "model_evaluation",
+      "human_review_decision"
+    ],
+    "source_classes": [
+      "conversations",
+      "user_memory",
+      "uploaded_files",
+      "documents",
+      "code_repositories",
+      "issues_and_pull_requests",
+      "workflow_runs_and_logs",
+      "connected_apps",
+      "email_exports",
+      "calendar_exports",
+      "databases",
+      "authorized_apis",
+      "public_web",
+      "licensed_datasets",
+      "model_cards",
+      "research_papers",
+      "audio_transcripts",
+      "video_transcripts",
+      "images_and_ocr",
+      "user_feedback",
+      "task_and_runtime_telemetry"
+    ],
+    "mandatory_pipeline": [
+      "discover_source",
+      "verify_identity_and_ownership",
+      "verify_source_scope_and_rights",
+      "classify_data_and_sensitivity",
+      "resolve_purpose_specific_consent",
+      "minimize_and_transform_to_allowed_candidate",
+      "attach_provenance_and_content_hash",
+      "deduplicate_and_version",
+      "evaluate_candidate_policy",
+      "sandbox_test_lesson",
+      "measure_against_regression_benchmarks",
+      "human_review_when_required",
+      "promote_to_correct_learning_plane",
+      "record_lineage_and_withdrawal_path"
+    ],
+    "learning_planes": {
+      "personal_memory": "Only the individual user's explicitly selected, scoped facts and preferences; tenant-isolated.",
+      "procedural_knowledge": "Verified public, licensed, or owner-authorized procedures; cite provenance and validate before reuse.",
+      "product_improvement": "De-identified aggregate patterns with separate opt-in and cohort safeguards.",
+      "cross_user_shared": "Generalized, reviewed lessons only with separate opt-in; never private memory or raw conversations.",
+      "foundation_model_training": "Separate explicit opt-in, rights/provenance, privacy and human review, dataset card, withdrawal path, and separate compute approval."
+    },
+    "default_access": "deny",
+    "access_is_not_training_consent": true,
+    "no_bypass_of_paywalls_logins_captchas_or_access_controls": true,
+    "no_credential_harvesting": true,
+    "private_user_data_never_shared_by_default": true,
+    "benchmark_holdouts_excluded_from_training": true,
+    "failure_learning": "Record minimized error signatures, root-cause hypotheses, fix commits, and regression tests; do not ingest secrets or raw private transcripts.",
+    "stale_or_conflicting_knowledge": "Preserve provenance, timestamps, confidence, version, and conflicting claims; do not silently overwrite verified knowledge.",
+    "model_update_policy": "Learning candidates may update retrieval or reviewed knowledge only through approved paths; weight updates require separately approved reproducible training and promotion.",
+    "continuous_operation": "Scheduled and event-driven best-effort cycles; bounded retries, dependency-aware queues, quotas, and explicit approval for paid compute."
+  }
+}

@@ -19,13 +19,17 @@ def ensure_recovery():
 def main()->int:
     ensure_recovery(); recovery=json.loads(RECOVERY.read_text())
     canonical=[]
+    supplemental=[]
     for path in sorted(APP.glob('*.json')):
         payload=json.loads(path.read_text())
         division=payload.get('division') or path.stem
+        is_supplemental=payload.get('growth') is True
+        target=supplemental if is_supplemental else canonical
         for bot in payload.get('bots',[]):
-            canonical.append({
+            target.append({
                 'slug':bot.get('slug'),'display_name':bot.get('displayName'),'division':division,'category':bot.get('category'),
-                'capabilities':bot.get('capabilities',[]),'status':'canonical_active','source':str(path.relative_to(ROOT)),
+                'capabilities':bot.get('capabilities',[]),'status':'supplemental_pending_promotion' if is_supplemental else 'canonical_active',
+                'cohort':'supplemental' if is_supplemental else 'canonical','source':str(path.relative_to(ROOT)),
                 'sandbox_required':True,'business_curriculum_required':True,'runtime_route_required':True
             })
     candidates=[]
@@ -38,13 +42,15 @@ def main()->int:
                     'sandbox_required':True,'runtime_route_required':True,'canonical_counted':False
                 })
     payload={
-      'schema':'dreamco.unified_bot_system.v1','canonical_bot_count':len(canonical),'legacy_pending_candidate_count':len(candidates),
-      'total_accounted_worker_records':len(canonical)+len(candidates),'canonical_bots':canonical,'legacy_candidates':candidates,
+      'schema':'dreamco.unified_bot_system.v1','canonical_bot_count':len(canonical),
+      'supplemental_bot_count':len(supplemental),'legacy_pending_candidate_count':len(candidates),
+      'total_accounted_worker_records':len(canonical)+len(supplemental)+len(candidates),
+      'canonical_bots':canonical,'supplemental_bots':supplemental,'legacy_candidates':candidates,
       'legacy_state_counts':recovery.get('state_counts',{}),
-      'truth_boundary':'Canonical bot count only includes App_bots. Legacy candidates are fully accounted for but cannot become live fleet members until the promotion gate passes.'
+      'truth_boundary':'Canonical count excludes growth=true supplemental App_bots profiles. Supplemental and legacy records are accounted separately and require independent promotion evidence.'
     }
     OUT.parent.mkdir(parents=True,exist_ok=True); OUT.write_text(json.dumps(payload,indent=2)+'\n')
-    print(json.dumps({'ok':True,'canonical':len(canonical),'legacy_candidates':len(candidates),'output':str(OUT.relative_to(ROOT))},indent=2))
+    print(json.dumps({'ok':True,'canonical':len(canonical),'supplemental':len(supplemental),'legacy_candidates':len(candidates),'output':str(OUT.relative_to(ROOT))},indent=2))
     return 0
 
 if __name__=='__main__': raise SystemExit(main())

@@ -44,3 +44,8 @@ The reference configuration targets approximately 500M parameters. That is an en
 
 ## Benchmark interpretation
 A local model can be optimized for speed, cost, and educational value without claiming parity with frontier hosted models. Report parameter count, hardware, quantization, context length, training data scope, and benchmark revision with every result.
+
+## Required tokenizer curriculum
+
+Before training the local model tokenizer, complete the [Buddy Tokenizer Engineering and Training Course](BUDDY_TOKENIZER_TRAINING_STUDY_GUIDE.md). Compare BPE and Unigram (including byte-level coverage where relevant), record normalization and pre-tokenization, verify special-token atomicity, and evaluate on a source-isolated holdout. Bind the tokenizer revision and special-token map hash to the exact model/checkpoint. Do not use evaluation or holdout material for tokenizer training.
+

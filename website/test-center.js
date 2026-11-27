@@ -7,7 +7,7 @@
   let latestPlan = null;
   let selectedQualityBot = null;
   const selectedSuites = new Set();
-  const quality = window.BUDDY_FLEET_QUALITY_PROGRAM || { summary: {}, bots: [], quality_workers: [], release_pipeline: [] };
+  let quality = window.BUDDY_FLEET_QUALITY_PROGRAM || { summary: {}, bots: [], quality_workers: [], release_pipeline: [] };
   const improvement = window.BUDDY_SELF_IMPROVEMENT || { mode: 'catalog_unavailable', improvement_loop: [], hallucination_controls: [] };
   const benchmarkIndex = window.BUDDY_BENCHMARK_INDEX || { summary: {}, realisticPlan: [], programs: [], repositorySuites: [] };
 
@@ -399,12 +399,18 @@
   }
 
   async function init() {
-    const response = await fetch('data/repository-test-registry.json?v=4', { cache: 'no-store' });
+    const [response, qualityData] = await Promise.all([
+      fetch('data/repository-test-registry.json?v=4', { cache: 'no-store' }),
+      window.BUDDY_FLEET_QUALITY_PROGRAM_READY || Promise.resolve(quality),
+    ]);
     if (!response.ok) throw new Error(`Test registry request failed: ${response.status}`);
     registry = await response.json();
+    quality = qualityData || quality;
     renderMetrics();
     renderSuites();
     renderRoutes();
+    renderQualityMetrics();
+    renderQualityBots();
   }
 
   byId('test-suite-search').addEventListener('input', renderSuites);
@@ -440,8 +446,6 @@
     }
   });
 
-  renderQualityMetrics();
-  renderQualityBots();
   renderBenchmarkIndex();
   renderImprovementGuardrails();
   init().catch((error) => {

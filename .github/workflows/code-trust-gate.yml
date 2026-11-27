@@ -27,13 +27,12 @@ permissions:
 
 concurrency:
   group: code-trust-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   trusted-code:
     runs-on: ubuntu-latest
     timeout-minutes: 90
-    continue-on-error: true
     steps:
       - uses: actions/checkout@v7
         with:
@@ -75,8 +74,37 @@ jobs:
           python3 tools/generate_repository_test_registry.py
           python3 tools/generate_dreamco_repository_master_map.py
           python3 tools/generate_buddy_benchmark_index.py
+          python3 tools/generate_command_center_data.py
+          # Refresh runtime manifests before regenerating the repository inventory that hashes them.
+          python3 tools/generate_bot_manifests.py
+          # Refresh the canonical fleet before search indexing and repository verification.
+          node --import tsx tools/generate_bot_fleet_catalog.ts
           node --import tsx tools/generate_dreamco_search_index.ts
           node --import tsx tools/generate_buddy_success_program.ts
+          python3 tools/audit_actions_health.py
+          python3 tools/build_actions_prospectus.py
+          # Reconcile the registry after all generated registries have been refreshed.
+          python3 tools/generate_repository_test_registry.py
+          python3 tools/audit_actions_health.py
+          python3 tools/build_actions_prospectus.py
+          # Reconcile the registry after every generator has finished.
+          python3 tools/generate_repository_test_registry.py
+          # Refresh command-center projections last because the fleet and manifests above are inputs.
+          python3 tools/generate_command_center_data.py
+          python3 tools/generate_command_center_data.py --check
+      - name: Verify Buddy tokenizer curriculum and study-guide coverage
+        run: python3 -m unittest tests.test_buddy_tokenizer_training_curriculum -v
+      - name: Verify first-party Bootcamp training data factory
+        run: |
+          python3 -m unittest discover -s tests -p "test_dreamco_bootcamp_seed_data.py" -v
+          python3 -m unittest discover -s tests -p "test_dreamco_training_factory.py" -v
+          python3 -m unittest discover -s tests -p "test_dreamco_original_training_examples.py" -v
+      - name: Final repository test registry reconciliation
+        run: python3 tools/generate_repository_test_registry.py
+      - name: Test production certification truth rules
+        run: python3 -m unittest tests.test_production_readiness_gate -v
+      - name: Regenerate current fleet end-to-end evidence before repository checks
+        run: node --import tsx tools/run_bot_fleet_e2e.ts
       - name: Full repository verification
         run: npm run test:repository
       - name: Fleet end-to-end verification

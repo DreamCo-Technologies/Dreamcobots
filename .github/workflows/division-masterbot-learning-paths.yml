@@ -1,0 +1,33 @@
+name: Division and MasterBot Learning Paths
+
+on:
+  pull_request:
+    paths:
+      - "shared/division-production-contract.ts"
+      - "config/masterbot-65-registry.json"
+      - "config/generated/masterbot-55-domain-crosswalk.json"
+      - "config/buddy-division-masterbot-learning-paths.json"
+      - "tools/validate_buddy_division_masterbot_learning_paths.py"
+      - "tests/test_buddy_division_masterbot_learning_paths.py"
+      - ".github/workflows/division-masterbot-learning-paths.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: division-masterbot-paths-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: python -m pip install --disable-pip-version-check pytest
+      - run: python -m pytest -q tests/test_buddy_division_masterbot_learning_paths.py
+      - run: python tools/validate_buddy_division_masterbot_learning_paths.py

@@ -11,7 +11,10 @@
     ".cjs"
   ],
   "test_paths": [
-    "tests/"
+    "tests/",
+    "buddy/learning/continuous_learning_controller_test.py",
+    "buddy/learning/registered_runner_test.py",
+    "buddy/learning/workflow_benchmark_readiness_test.py"
   ],
   "high_risk_path_keywords": [
     "stripe",
@@ -323,15 +326,6 @@
     },
     {
       "sources": [
-        "website/data/buddy-routing-index.js",
-        "website/data/buddy-capability-certifications.js"
-      ],
-      "tests": [
-        "tests/supplemental-fleet.test.ts"
-      ]
-    },
-    {
-      "sources": [
         "website/models.js"
       ],
       "tests": [
@@ -377,7 +371,8 @@
       ],
       "tests": [
         "tests/supplemental-fleet.test.ts",
-        "tests/fleet-runtime.test.ts"
+        "tests/fleet-runtime.test.ts",
+        "tests/test_full_system_certification_workflow_order.py"
       ]
     },
     {
@@ -433,6 +428,148 @@
       "tests": [
         "tests/capability-workbench.test.mjs"
       ]
+    },
+    {
+      "sources": [
+        "tools/generate_github_control_tower.py"
+      ],
+      "tests": [
+        "tests/test_github_control_tower.py"
+      ]
+    },
+    {
+      "sources": [
+        "website/control-tower.js"
+      ],
+      "tests": [
+        "tests/master-directive-nav-buddy-public-site.test.mjs"
+      ]
+    },
+    {
+      "sources": [
+        "tools/audit_change_test_coverage.py"
+      ],
+      "tests": [
+        "tests/test_change_impact_test_policy.py"
+      ]
+    },
+    {
+      "sources": [
+        "tools/build_buddy_revenue_playbook_queue.py"
+      ],
+      "tests": [
+        "tests/test_buddy_revenue_playbook_queue.py"
+      ],
+      "reason": "Revenue playbook queue and missing-capstone authoring backlog"
+    },
+    {
+      "sources": [
+        "buddy/learning/course_track_registry.py",
+        "buddy/learning/runtime_bridge.py",
+        "config/buddy-course-track-registry.json",
+        "config/freecodecamp-division-routing-overrides.json",
+        "config/freecodecamp-division-category-profiles.json"
+      ],
+      "tests": [
+        "tests/test_buddy_course_track_registry.py",
+        "tests/test_buddy_learning_runtime_bridge.py",
+        "tests/test_freecodecamp_specialist_routing.py",
+        "tests/test_freecodecamp_division_queues.py"
+      ]
+    },
+    {
+      "sources": [
+        "buddy/learning/srs/fsrs.py",
+        "buddy/learning/srs/anki_classic.py",
+        "buddy/learning/srs/store.py",
+        "buddy/learning/srs/service.py",
+        "shared/schema.ts",
+        "migrations/0001_learning_srs.sql"
+      ],
+      "tests": [
+        "tests/test_buddy_srs_fsrs.py",
+        "tests/test_buddy_srs_anki_classic.py",
+        "tests/test_buddy_srs_store.py",
+        "tests/test_buddy_srs_service.py"
+      ],
+      "reason": "Shared FSRS scheduling, legacy compatibility, offline event persistence and mastery separation"
+    },
+    {
+      "sources": [
+        "website/data/buddy-routing-index.js",
+        "website/data/buddy-capability-certifications.js"
+      ],
+      "tests": [
+        "tests/supplemental-fleet.test.ts",
+        "tests/bot-fleet-catalog.test.ts",
+        "tests/buddy-capability-certifications.test.mjs"
+      ],
+      "reason": "Validate generated Buddy routing and capability indexes against canonical and supplemental fleet sources"
+    },
+    {
+      "sources": [
+        "tools/run_bot_fleet_e2e.ts"
+      ],
+      "tests": [
+        "tests/test_full_system_operational_certification.py",
+        "tests/fleet-runtime.test.ts",
+        "tests/buddy-capability-certifications.test.mjs"
+      ],
+      "reason": "Fleet E2E evidence generation ordering, write-only refresh semantics, and runtime certification contracts"
+    },
+    {
+      "sources": [
+        "tools/run_everything_now.py"
+      ],
+      "tests": [
+        "tests/test_run_everything_now.py"
+      ],
+      "reason": "Run Everything mode selection and certification prerequisite ordering"
+    },
+    {
+      "sources": [
+        "tools/build_production_readiness_evidence_manifest.py",
+        "config/production-readiness-evidence-map.json",
+        "tools/production_readiness_gate.py",
+        "server/index.ts",
+        ".github/workflows/production-readiness.yml",
+        "docs/PRODUCTION_READINESS_MASTER_PLAN.md"
+      ],
+      "tests": [
+        "tests/test_production_readiness_evidence_manifest.py",
+        "tests/test_production_readiness_gate.py",
+        "tests/test_production_readiness_workflow.py"
+      ]
+    },
+    {
+      "sources": [
+        "tools/build_freecodecamp_division_queues.py",
+        "config/review/freecodecamp-supplemental-domain-learning-approval.json"
+      ],
+      "tests": [
+        "tests/test_freecodecamp_division_queues.py"
+      ],
+      "reason": "Owner-approved FreeCodeCamp subject-learning routes for all 55 domain divisions; MasterBot ownership remains separately governed."
+    },
+    {
+      "sources": [
+        "tools/build_freecodecamp_study_guides.py",
+        "config/freecodecamp-detailed-video-study-guide.schema.json",
+        "config/authorized-transcripts/manifest.json"
+      ],
+      "tests": [
+        "tests/test_freecodecamp_study_guides.py"
+      ],
+      "reason": "Rights-gated FreeCodeCamp video study-guide completeness, original exercises, independent projects and capstone acceptance evidence."
+    },
+    {
+      "sources": [
+        ".github/workflows/buddy-fleet-health.yml"
+      ],
+      "tests": [
+        "tests/test_buddy_fleet_health_workflow.py"
+      ],
+      "reason": "Fleet health must refresh its deterministic E2E report before the strict generated-evidence check."
     }
   ],
   "evidence_rules": {

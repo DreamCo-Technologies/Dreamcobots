@@ -12,6 +12,45 @@ REPORT=ROOT/'reports/FULL_SYSTEM_OPERATIONAL_CERTIFICATION.md'
 SOURCES={
  'verification':ROOT/'tmp/dreamco-verification/latest.json','speed_accuracy':ROOT/'config/generated/system-speed-accuracy-benchmarks.json','runtime_smoke':ROOT/'config/generated/production-runtime-smoke.json','connections':ROOT/'config/generated/runtime-connection-readiness.json','repository_connections':ROOT/'config/generated/repository-system-connections.json','code_trust':ROOT/'config/generated/trusted-code-delivery-audit.json','bot_accounting':ROOT/'config/generated/bot-accounting-placement-audit.json','legacy_recovery':ROOT/'config/generated/legacy-bot-recovery-manifest.json','unified_bots':ROOT/'config/generated/unified-bot-system.json','maximum_sandbox':ROOT/'config/generated/maximum-sandbox-matrix.json','sandbox_runtime':ROOT/'config/generated/maximum-sandbox-runtime-audit.json','ontology':ROOT/'config/generated/dreamco-ontology-snapshot.json','work_benchmarks':ROOT/'config/generated/work-platform-benchmark-backlog.json','manufacturing':ROOT/'config/generated/manufacturing-productivity-benchmarks.json','universal_benchmark':ROOT/'config/generated/universal-capability-benchmark.json','business_benchmarks':ROOT/'config/generated/business-lifecycle-benchmarks.json','creative_benchmarks':ROOT/'config/generated/creative-studio-mastery-benchmarks.json','government_benchmarks':ROOT/'config/generated/government-public-sector-benchmarks.json','benchmark_gap_registry':ROOT/'config/generated/parallel-benchmark-gap-registry.json','value_discovery':ROOT/'config/generated/continuous-value-discovery-backlog.json'}
 def load(path): return json.loads(path.read_text()) if path.exists() else {}
+
+
+def runtime_connection_evidence_valid(document):
+    """Validate consistency and provenance of runtime connection claims."""
+    rows = document.get("connections")
+    if not isinstance(rows, list) or document.get("connection_count") != len(rows):
+        return False
+    if any(not isinstance(row, dict) for row in rows):
+        return False
+    ids = [row.get("connection_id") for row in rows]
+    if any(not isinstance(value, str) or not value for value in ids) or len(ids) != len(set(ids)):
+        return False
+    verified_rows = [row for row in rows if row.get("state") == "runtime_verified"]
+    if any(row.get("runtime_verified") is not True for row in verified_rows):
+        return False
+    if any(not row.get("evidence_reference") or not row.get("tested_at") for row in verified_rows):
+        return False
+    if any(row.get("runtime_verified") is True and row.get("state") != "runtime_verified" for row in rows):
+        return False
+    if document.get("runtime_verified_count") != len(verified_rows):
+        return False
+    all_verified = bool(rows) and len(verified_rows) == len(rows)
+    return document.get("all_declared_runtime_connections_verified") is all_verified
+
+
+def work_platform_benchmarks_ready(document):
+    """A missing work catalog or empty generated backlog is a certification failure."""
+    cases = document.get("cases")
+    count = document.get("benchmark_case_count")
+    return (
+        document.get("status") == "generated"
+        and isinstance(cases, list)
+        and isinstance(count, int)
+        and count > 0
+        and len(cases) == count
+        and document.get("task_count", 0) > 0
+    )
+
+
 def main()->int:
     program=json.loads(PROGRAM.read_text()); docs={n:load(p) for n,p in SOURCES.items()}; blockers=[f'missing evidence:{n}' for n,p in SOURCES.items() if not p.exists()]
     d=docs
@@ -26,9 +65,9 @@ def main()->int:
       'maximum_sandbox_matrix':d['maximum_sandbox'].get('worker_count',0)>=1051 and d['maximum_sandbox'].get('minimum_test_dimensions_per_applicable_case',0)>=40,
       'canonical_sandbox_runtime_evidence':d['sandbox_runtime'].get('all_canonical_workers_have_runtime_evidence') is True,
       'ontology_snapshot':d['ontology'].get('object_count',0)>0 and d['ontology'].get('link_count',0)>0,
-      'runtime_connection_truth':d['connections'].get('connection_count',0)>=0,
+      'runtime_connection_truth':runtime_connection_evidence_valid(d['connections']),
       'repository_connection_integrity':d['repository_connections'].get('ok') is True,
-      'work_platform_benchmarks':d['work_benchmarks'].get('status') in {'generated','work_catalog_missing'},
+      'work_platform_benchmarks':work_platform_benchmarks_ready(d['work_benchmarks']),
       'manufacturing_productivity_benchmarks':d['manufacturing'].get('benchmark_case_count',0)>0,
       'universal_human_computer_ai_benchmark':d['universal_benchmark'].get('case_count',0)>0,
       'business_lifecycle_benchmarks':d['business_benchmarks'].get('case_count',0)>0,

@@ -1,0 +1,39 @@
+name: DreamCo Object Store Contract
+
+on:
+  pull_request:
+    paths:
+      - "buddy/storage/**"
+      - "tests/test_buddy_object_store.py"
+      - "docs/DREAMCO_OBJECT_STORAGE_EVIDENCE.md"
+      - ".github/workflows/dreamco-object-store-contract.yml"
+  push:
+    branches: [main]
+    paths:
+      - "buddy/storage/**"
+      - "tests/test_buddy_object_store.py"
+      - "docs/DREAMCO_OBJECT_STORAGE_EVIDENCE.md"
+      - ".github/workflows/dreamco-object-store-contract.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: dreamco-object-store-contract-${{ github.event.pull_request.number || github.sha }}
+  cancel-in-progress: false
+
+jobs:
+  object-store-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - name: Run isolated fake-client contract tests
+        run: python -m unittest discover -s tests -p 'test_buddy_object_store.py' -v
+      - name: Compile object storage adapter
+        run: python -m py_compile buddy/storage/object_store.py

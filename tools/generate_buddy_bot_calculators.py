@@ -370,15 +370,21 @@ def stable_json(value: dict[str, Any]) -> str:
     return json.dumps(value, indent=2, sort_keys=True) + "\n"
 
 
+def compact_web_json(value: dict[str, Any]) -> str:
+    """Serialize the public Pages mirror compactly without changing its JSON data."""
+    return json.dumps(value, separators=(",", ":"), sort_keys=True) + "\n"
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--check", action="store_true")
     args = parser.parse_args()
     registry = build_registry()
     expected_json = stable_json(registry)
+    expected_web_json = compact_web_json(registry)
     expected_report = build_report(registry)
     if args.check:
-        for path, expected in ((CONFIG_OUT, expected_json), (WEB_OUT, expected_json), (REPORT_OUT, expected_report)):
+        for path, expected in ((CONFIG_OUT, expected_json), (WEB_OUT, expected_web_json), (REPORT_OUT, expected_report)):
             if not path.exists() or path.read_text(encoding="utf-8") != expected:
                 raise SystemExit(f"Generated output is stale: {path.relative_to(ROOT)}")
         print(json.dumps({"ok": True, **registry["summary"]}, indent=2))
@@ -386,7 +392,7 @@ def main() -> int:
     for path in (CONFIG_OUT, WEB_OUT, REPORT_OUT):
         path.parent.mkdir(parents=True, exist_ok=True)
     CONFIG_OUT.write_text(expected_json, encoding="utf-8")
-    WEB_OUT.write_text(expected_json, encoding="utf-8")
+    WEB_OUT.write_text(expected_web_json, encoding="utf-8")
     REPORT_OUT.write_text(expected_report, encoding="utf-8")
     print(json.dumps({"ok": True, **registry["summary"]}, indent=2))
     return 0

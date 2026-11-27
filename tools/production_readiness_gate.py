@@ -10,6 +10,9 @@ import argparse
 import json
 import os
 import subprocess
+import urllib.parse
+import urllib.request
+import urllib.error
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -17,6 +20,8 @@ ROOT = Path(__file__).resolve().parents[1]
 CONTRACT = ROOT / "config/production-readiness-contract.json"
 OUT = ROOT / "data/production-readiness-report.json"
 MD_OUT = ROOT / "reports/PRODUCTION_READINESS_REPORT.md"
+AREA_EVIDENCE = ROOT / "governance/production-readiness-area-evidence.json"
+AREA_EVIDENCE_SCHEMA = "dreamco.production_readiness_area_evidence.v1"
 
 def exists_any(patterns: list[str]) -> list[str]:
     found=[]
@@ -45,6 +50,88 @@ def package_json() -> dict:
     if not package_path.exists():
         return {}
     return json.loads(package_path.read_text())
+
+def probe_live_environment(base_url: str | None, opener=None) -> dict:
+    """Probe the real API health endpoint without exposing production secrets to CI."""
+    if not base_url:
+        return {
+            "status": "external_config_required",
+            "evidence": [],
+            "release_blocker": False,
+            "missing_required": ["DREAMCO_PRODUCTION_API_BASE_URL"],
+            "note": "Set the non-secret API base URL as a repository variable; production credentials stay on the deployment host.",
+        }
+    parsed_url = urllib.parse.urlsplit(base_url)
+    if (
+        parsed_url.scheme != "https"
+        or not parsed_url.netloc
+        or parsed_url.username
+        or parsed_url.password
+        or parsed_url.query
+        or parsed_url.fragment
+    ):
+        return {
+            "status": "fail",
+            "evidence": [],
+            "release_blocker": True,
+            "note": "Production API health probes require a clean HTTPS base URL without embedded credentials, query, or fragment.",
+        }
+
+    base_path = parsed_url.path.rstrip("/")
+    health_path = f"{base_path}/health" if base_path.endswith("/api") else f"{base_path}/api/health"
+    health_url = urllib.parse.urlunsplit(("https", parsed_url.netloc, health_path, "", ""))
+    request = urllib.request.Request(
+        health_url,
+        headers={
+            "Accept": "application/json",
+            "User-Agent": "DreamCo-Production-Readiness/1.0",
+        },
+    )
+    open_url = opener or urllib.request.urlopen
+    try:
+        with open_url(request, timeout=10) as response:
+            payload = json.loads(response.read().decode("utf-8"))
+    except Exception as exc:
+        return {
+            "status": "fail",
+            "evidence": [health_url],
+            "release_blocker": True,
+            "error_type": type(exc).__name__,
+            "note": "The configured production API health endpoint could not be reached.",
+        }
+
+    if not isinstance(payload, dict):
+        return {
+            "status": "fail",
+            "evidence": [health_url],
+            "release_blocker": True,
+            "note": "The production API health endpoint returned a non-object JSON payload.",
+        }
+
+    if payload.get("ok") is not True:
+        return {
+            "status": "fail",
+            "evidence": [health_url],
+            "release_blocker": True,
+            "note": "The production API health endpoint did not report a healthy process.",
+        }
+
+    required_flags = (
+        "databaseConfigured",
+        "stripeConfigured",
+        "stripeWebhookConfigured",
+        "openaiConfigured",
+        "configurationReady",
+    )
+    missing_flags = [flag for flag in required_flags if payload.get(flag) is not True]
+    return {
+        "status": "external_config_required" if missing_flags else "pass",
+        "evidence": [health_url],
+        "release_blocker": False,
+        "missing_required": missing_flags,
+        "note": "Only boolean configuration state is read; no secret values are sent to CI.",
+    }
+
 
 def check_runtime_contracts() -> list[dict]:
     env_example = read(".env.example")
@@ -127,7 +214,7 @@ def check_runtime_contracts() -> list[dict]:
         {
             "id": "required_scripts_exist",
             "label": "Build, typecheck, local app, Pages, and readiness scripts exist",
-            "status": "pass" if all(name in scripts for name in ["build", "check", "buddy:laptop:check", "buddy:site:check", "production:readiness"]) else "fail",
+            "status": "pass" if all(name in scripts for name in ["build", "check", "buddy:laptop:check", "buddy:site:check", "production:readiness", "production:certification"]) else "fail",
             "evidence": ["package.json"],
             "release_blocker": True,
         },
@@ -147,32 +234,185 @@ def check_runtime_contracts() -> list[dict]:
         },
     ]
 
-    environment_required = [
-        "DATABASE_URL",
-        "STRIPE_WEBHOOK_SECRET",
-    ]
-    environment_any_of = {
-        "stripe_secret_key": ["STRIPE_SECRET_KEY", "STRIPE_LIVE_SECRET_KEY"],
-        "stripe_publishable_key": ["STRIPE_PUBLISHABLE_KEY", "STRIPE_LIVE_PK"],
-        "openai_key": ["AI_INTEGRATIONS_OPENAI_API_KEY", "OPENAI_API_KEY", "OPENAI_ADMIN_KEY"],
-    }
-    missing_required = [name for name in environment_required if not os.environ.get(name)]
-    missing_any_of = {
-        key: options
-        for key, options in environment_any_of.items()
-        if not any(os.environ.get(option) for option in options)
-    }
     checks.append({
         "id": "live_environment_configured",
-        "label": "Current runner has live production environment variables",
-        "status": "pass" if not missing_required and not missing_any_of else "external_config_required",
-        "evidence": [],
-        "release_blocker": False,
-        "missing_required": missing_required,
-        "missing_any_of": missing_any_of,
-        "note": "CI and local scans do not prove customer readiness until deployment secrets are configured in the production host.",
+        "label": "Live production API health confirms database, Stripe, webhook, and OpenAI configuration",
+        **probe_live_environment(os.getenv("DREAMCO_PRODUCTION_API_BASE_URL")),
     })
     return checks
+
+
+def verify_github_check(repository: str, check_id: str, current_sha: str, token: str | None) -> bool:
+    """Require a successful Actions run/check-run on the exact current revision."""
+    if not token or not check_id.isdigit():
+        return False
+    endpoints = (
+        f"https://api.github.com/repos/{repository}/actions/runs/{check_id}",
+        f"https://api.github.com/repos/{repository}/check-runs/{check_id}",
+    )
+    for url in endpoints:
+        request = urllib.request.Request(url, headers={
+            "Accept": "application/vnd.github+json",
+            "Authorization": f"Bearer {token}",
+            "X-GitHub-Api-Version": "2022-11-28",
+        })
+        try:
+            with urllib.request.urlopen(request, timeout=20) as response:
+                payload = json.loads(response.read().decode("utf-8"))
+        except urllib.error.HTTPError as exc:
+            if exc.code == 404:
+                continue
+            return False
+        except Exception:
+            return False
+        return (
+            payload.get("head_sha") == current_sha
+            and payload.get("status") == "completed"
+            and payload.get("conclusion") == "success"
+        )
+    return False
+
+
+def build_area_reports(
+    contract: dict,
+    evidence_manifest: dict,
+    current_sha: str,
+    repository: str,
+    token: str | None,
+    *,
+    root: Path = ROOT,
+    verify_check=verify_github_check,
+) -> list[dict]:
+    """Resolve every contract area from evidence, never from file presence alone."""
+    if evidence_manifest.get("schema") != AREA_EVIDENCE_SCHEMA:
+        raise ValueError("unsupported production-readiness area evidence schema")
+    entries = evidence_manifest.get("areas")
+    if not isinstance(entries, dict):
+        raise ValueError("production-readiness area evidence must contain an areas object")
+    reports = []
+    check_cache: dict[tuple[str, str, str | None], bool] = {}
+    for area in contract.get("areas", []):
+        area_id = area["id"]
+        entry = entries.get(area_id)
+        refs = entry.get("evidence", []) if isinstance(entry, dict) else []
+        errors = []
+        verified_refs = []
+        if not isinstance(entry, dict):
+            errors.append("no evidence entry recorded")
+        else:
+            resolution_errors = entry.get("resolution_errors", [])
+            if isinstance(resolution_errors, list):
+                errors.extend(str(item) for item in resolution_errors if item)
+            if entry.get("status") != "VERIFIED" and not resolution_errors:
+                errors.append("area evidence status is not VERIFIED")
+        if not isinstance(refs, list) or not refs:
+            errors.append("no evidence references recorded")
+        else:
+            for ref in refs:
+                if not isinstance(ref, dict) or not all(ref.get(key) for key in ("path", "sha", "check_id")):
+                    errors.append("evidence reference is missing path, sha, or check_id")
+                    continue
+                relative = Path(str(ref["path"]))
+                if relative.is_absolute() or ".." in relative.parts:
+                    errors.append("evidence path is unsafe")
+                    continue
+                artifact = (root / relative).resolve()
+                try:
+                    artifact.relative_to(root.resolve())
+                except ValueError:
+                    errors.append("evidence path escapes repository root")
+                    continue
+                if not artifact.is_file():
+                    errors.append(f"evidence artifact does not exist: {relative.as_posix()}")
+                    continue
+                if ref["sha"] != current_sha:
+                    errors.append("evidence SHA does not match current revision")
+                    continue
+                check_id = str(ref["check_id"])
+                if not check_id.isdigit():
+                    errors.append("check_id must be a GitHub Actions run or check-run ID")
+                    continue
+                cache_key = (repository, check_id, token)
+                if cache_key not in check_cache:
+                    check_cache[cache_key] = verify_check(repository, check_id, current_sha, token)
+                if not check_cache[cache_key]:
+                    errors.append("linked GitHub check is not successful on the current revision")
+                    continue
+                verified_refs.append(ref)
+        verified = (
+            isinstance(entry, dict)
+            and entry.get("status") == "VERIFIED"
+            and isinstance(refs, list)
+            and not errors
+            and len(verified_refs) == len(refs)
+        )
+        if verified:
+            status = "verified"
+        elif isinstance(entry, dict) and verified_refs:
+            status = "partial"
+        else:
+            status = "unknown"
+        reports.append({
+            "id": area_id,
+            "label": area.get("label", area_id),
+            "status": status,
+            "evidence": verified_refs,
+            "evidence_errors": errors,
+            "revision": current_sha,
+            "required_evidence": area.get("required", []),
+        })
+    return reports
+
+
+def summarize_readiness(areas: list[dict], runtime_checks: list[dict]) -> dict:
+    """Classify certification from evidence states, never from file presence alone."""
+    critical_ids = {"buddy_orchestration", "benchmark_framework", "security", "deployment", "observability"}
+    blocking_unknowns = [
+        area["id"] for area in areas
+        if area.get("status") == "unknown" and area.get("id") in critical_ids
+    ]
+    incomplete_areas = [
+        area["id"] for area in areas if area.get("status") != "verified"
+    ]
+    blocking_runtime = [
+        check["id"] for check in runtime_checks
+        if check.get("status") == "fail" and check.get("release_blocker")
+    ]
+    external_config = [
+        check["id"] for check in runtime_checks
+        if check.get("status") == "external_config_required"
+    ]
+    production_ready = not blocking_unknowns and not incomplete_areas and not blocking_runtime and not external_config
+    if blocking_unknowns or blocking_runtime:
+        release_status = "blocked"
+    elif incomplete_areas:
+        release_status = "evidence_incomplete"
+    elif external_config:
+        release_status = "external_config_required"
+    else:
+        release_status = "production_ready"
+    blockers = (
+        [f"critical_unknown:{item}" for item in blocking_unknowns]
+        + [f"incomplete_evidence:{item}" for item in incomplete_areas]
+        + [f"runtime_check_failed:{item}" for item in blocking_runtime]
+        + [f"external_configuration_missing:{item}" for item in external_config]
+    )
+    return {
+        "release_status": release_status,
+        "production_ready": production_ready,
+        "blocking_unknowns": blocking_unknowns,
+        "incomplete_areas": incomplete_areas,
+        "blocking_runtime_checks": blocking_runtime,
+        "external_config_required": external_config,
+        "certification_blockers": blockers,
+    }
+
+
+def should_fail_gate(report: dict, *, strict: bool, certification: bool) -> bool:
+    if report.get("blocking_unknowns") or (strict and report.get("blocking_runtime_checks")):
+        return True
+    return certification and not report.get("production_ready", False)
+
 
 def write_markdown(report: dict) -> None:
     counts: dict[str, int] = {}
@@ -184,13 +424,38 @@ def write_markdown(report: dict) -> None:
         f"- Commit: `{report['commit']}`",
         f"- Generated: `{report['generated_at']}`",
         f"- Release status: `{report['release_status']}`",
+        f"- Production certified: {report.get('production_ready', False)}",
+        f"- Incomplete evidence areas: {len(report.get('incomplete_areas', []))}",
         f"- Runtime checks: " + ", ".join(f"{k}={v}" for k, v in sorted(counts.items())),
+        "",
+        "## Incomplete Evidence Areas",
+        "",
+        *[f"- `{item}`" for item in report.get("incomplete_areas", [])],
+        "",
+        "## Area Evidence Details",
+        "",
+    ]
+    for area in report.get("areas", []):
+        lines.append(f"### {area.get('label', area.get('id'))} — `{area.get('status')}`")
+        evidence = area.get("evidence", [])
+        errors = area.get("evidence_errors", [])
+        if evidence:
+            lines.extend(f"- Verified reference: `{item.get('path')}`" for item in evidence)
+        if errors:
+            lines.extend(f"- Evidence gap: {item}" for item in errors)
+        if not evidence and not errors:
+            lines.append("- No evidence references recorded")
+        lines.append("")
+    lines.extend([
+        "## Certification Blockers",
+        "",
+        *[f"- `{item}`" for item in report.get("certification_blockers", [])],
         "",
         "## Runtime Checks",
         "",
         "| Check | Status | Evidence |",
         "|---|---:|---|",
-    ]
+    ])
     for check in report["runtime_checks"]:
         evidence = ", ".join(f"`{item}`" for item in check.get("evidence", [])) or "runtime env"
         lines.append(f"| {check['label']} | `{check['status']}` | {evidence} |")
@@ -208,10 +473,19 @@ def write_markdown(report: dict) -> None:
 
 def main() -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--strict", action="store_true", help="Fail when release-blocking runtime checks fail.")
+    parser.add_argument("--strict", action="store_true", help="Fail on critical unknowns or release-blocking runtime failures (code gate).")
+    parser.add_argument("--certification", action="store_true", help="Fail unless every area is evidence-verified and all runtime/external configuration gates pass.")
+    parser.add_argument("--evidence-manifest", help="Use a revision-bound evidence manifest generated for this exact commit.")
     args = parser.parse_args()
     contract=json.loads(CONTRACT.read_text())
-    reports=[]
+    current_sha = git_sha()
+    repository = os.getenv("GITHUB_REPOSITORY", "DreamCo-Technologies/Dreamcobots")
+    token = os.getenv("GITHUB_TOKEN") or os.getenv("GH_TOKEN")
+    evidence_path = Path(args.evidence_manifest or os.getenv("DREAMCO_PRODUCTION_EVIDENCE_MANIFEST", str(AREA_EVIDENCE)))
+    evidence_manifest = json.loads(evidence_path.read_text()) if evidence_path.exists() else {
+        "schema": AREA_EVIDENCE_SCHEMA, "areas": {}
+    }
+    reports = build_area_reports(contract, evidence_manifest, current_sha, repository, token)
     common={
         "buddy_orchestration":["buddy_os/**","tools/*buddy*","tests/*buddy*"],
         "benchmark_framework":["docs/*BENCHMARK*","tools/*benchmark*","tests/*benchmark*"],
@@ -233,21 +507,16 @@ def main() -> int:
         "observability":["*observability*","server/*observability*","tests/*observability*","*telemetry*","*tracing*","tools/*observ*"],
         "cost_accounting":["*cost*","*billing*","*usage*","tools/*cost*","tools/*usage*"]
     }
-    for area in contract["areas"]:
-        found=exists_any(common.get(area["id"],[]))
-        status="partial" if found else "unknown"
-        reports.append({"id":area["id"],"label":area["label"],"status":status,"repository_evidence":found,"required_evidence":area["required"]})
-    critical=[r for r in reports if r["status"]=="unknown" and r["id"] in {"buddy_orchestration","benchmark_framework","security","deployment","observability"}]
+    for report in reports:
+        report["repository_evidence"] = exists_any(common.get(report["id"], []))
     runtime_checks = check_runtime_contracts()
-    blocking_runtime = [c["id"] for c in runtime_checks if c["status"] == "fail" and c.get("release_blocker")]
-    external_config = [c["id"] for c in runtime_checks if c["status"] == "external_config_required"]
-    release_status = "blocked" if critical or blocking_runtime else "external_config_required" if external_config else "not_certified"
-    report={"schema_version":2,"generated_at":datetime.now(timezone.utc).isoformat(),"commit":git_sha(),"policy":"evidence-first","release_status":release_status,"areas":reports,"runtime_checks":runtime_checks,"blocking_unknowns":[r["id"] for r in critical],"blocking_runtime_checks":blocking_runtime,"external_config_required":external_config,"note":"Partial/unknown is intentional until executable evidence is attached. This report is not a claim of production certification."}
+    readiness = summarize_readiness(reports, runtime_checks)
+    report={"schema_version":4,"generated_at":datetime.now(timezone.utc).isoformat(),"commit":current_sha,"policy":"evidence-first","areas":reports,"runtime_checks":runtime_checks,**readiness,"note":"Repository file presence is inventory only. Production certification requires every area to be evidence-verified, runtime checks to pass, and external production configuration to be confirmed. This report is not a claim of production certification unless production_ready is true."}
     OUT.parent.mkdir(parents=True,exist_ok=True)
     OUT.write_text(json.dumps(report,indent=2)+"\n")
     write_markdown(report)
     print(json.dumps(report,indent=2))
-    if critical or (args.strict and blocking_runtime):
+    if should_fail_gate(report, strict=args.strict, certification=args.certification):
         return 1
     return 0
 

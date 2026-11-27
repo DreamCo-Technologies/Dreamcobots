@@ -1,0 +1,29 @@
+name: O*NET Task Guide Readiness
+
+on:
+  pull_request:
+    paths:
+      - "tools/audit_onet_task_guide_readiness.py"
+      - "tests/test_onet_task_guide_readiness.py"
+      - "docs/bootcamp/ONET_TASK_GUIDE_READINESS.md"
+      - ".github/workflows/onet-task-guide-readiness.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: onet-guide-readiness-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: python -m pip install --disable-pip-version-check pytest
+      - run: python -m pytest -q tests/test_onet_task_guide_readiness.py

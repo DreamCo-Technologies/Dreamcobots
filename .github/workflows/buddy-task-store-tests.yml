@@ -1,0 +1,32 @@
+name: Buddy Task Persistence Tests
+on:
+  pull_request:
+    paths:
+      - 'buddy/capabilities/task_store.py'
+      - 'tests/test_buddy_task_store.py'
+      - 'docs/BUDDY_USER_SCOPED_TASK_STORE.md'
+      - '.github/workflows/buddy-task-store-tests.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'buddy/capabilities/task_store.py'
+      - 'tests/test_buddy_task_store.py'
+      - 'docs/BUDDY_USER_SCOPED_TASK_STORE.md'
+permissions:
+  contents: read
+concurrency:
+  group: buddy-task-store
+  cancel-in-progress: false
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.13'
+      - run: python -m unittest discover -s tests -p 'test_buddy_task_store.py' -v

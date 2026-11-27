@@ -27,7 +27,8 @@ def digest(value: Any) -> str:
 
 def run_record(*, manifest: dict[str, Any], task: dict[str, Any], status: str, mode: str,
                permission: dict[str, Any], guardrails: dict[str, Any], result: Any,
-               error: dict[str, Any] | None = None, stamp: bool = False) -> dict[str, Any]:
+               routing: dict[str, Any] | None = None, error: dict[str, Any] | None = None,
+               stamp: bool = False) -> dict[str, Any]:
     record = {
         "schema": SCHEMA,
         "bot": manifest.get("slug"),
@@ -43,6 +44,8 @@ def run_record(*, manifest: dict[str, Any], task: dict[str, Any], status: str, m
         "live_external_action_taken": False,
         "proves": "one execution of the shared runtime; not capability quality, not production readiness",
     }
+    if routing is not None:
+        record["routing"] = routing
     if error:
         record["error"] = error
     record["run_id"] = digest(record)[:16]

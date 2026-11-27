@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 
-import argparse,json,urllib.request
+import argparse,json,urllib.request,time
+from urllib.error import HTTPError, URLError
 from datetime import datetime,timezone
 from pathlib import Path
 
@@ -10,10 +11,41 @@ OUT=ROOT/'config/generated/public-fiscal-latest.json'
 US_DEBT_URL='https://api.fiscaldata.treasury.gov/services/api/fiscal_service/v2/accounting/od/debt_to_penny?sort=-record_date&page[size]=1'
 US_AGENCIES_URL='https://api.usaspending.gov/api/v2/references/toptier_agencies/'
 
-def fetch_json(url:str)->dict:
-    req=urllib.request.Request(url,headers={'User-Agent':'DreamCo-Buddy-Public-Fiscal-Transparency/1.0'})
-    with urllib.request.urlopen(req,timeout=30) as response:
-        return json.loads(response.read().decode('utf-8'))
+def fetch_json(url:str, *, attempts:int=3, timeout:int=45)->dict:
+    """Fetch public data with bounded retries for transient upstream failures."""
+    if attempts < 1:
+        raise ValueError("attempts must be at least 1")
+    req=urllib.request.Request(url,headers={
+        'User-Agent':'DreamCo-Buddy-Public-Fiscal-Transparency/1.0',
+        'Accept':'application/json',
+    })
+    last_error=None
+    for attempt in range(attempts):
+        try:
+            with urllib.request.urlopen(req,timeout=timeout) as response:
+                payload=json.loads(response.read().decode('utf-8'))
+                if not isinstance(payload,dict):
+                    raise ValueError("authoritative endpoint returned a non-object JSON payload")
+                return payload
+        except HTTPError as exc:
+            last_error=exc
+            retryable=exc.code == 429 or 500 <= exc.code < 600
+            if not retryable or attempt + 1 >= attempts:
+                raise
+            retry_after=exc.headers.get("Retry-After") if exc.headers else None
+            try:
+                delay=min(30.0,max(0.0,float(retry_after))) if retry_after else min(8.0,2.0**attempt)
+            except (TypeError,ValueError):
+                delay=min(8.0,2.0**attempt)
+        except (URLError,TimeoutError,ConnectionError) as exc:
+            last_error=exc
+            if attempt + 1 >= attempts:
+                raise
+            delay=min(8.0,2.0**attempt)
+        except (json.JSONDecodeError,UnicodeDecodeError,ValueError):
+            raise
+        time.sleep(delay)
+    raise RuntimeError(f"public fiscal request failed after {attempts} attempts") from last_error
 
 def main()->int:
     ap=argparse.ArgumentParser(); ap.add_argument('--allow-offline',action='store_true'); args=ap.parse_args()
@@ -41,7 +73,7 @@ def main()->int:
     payload={
       'schema':'dreamco.public_fiscal_latest.v2','generated_at':fetched_at,'debt_records':records,'agency_spending_records':agency_spending,'failures':failures,
       'runtime_verified_source_count':len({r['source_id'] for r in records}|({x['source_id'] for x in agency_spending} if agency_spending else set())),
-      'failed_source_count':len(failures),
+      'failed_source_count':len(failures),'failure_details':failures,
       'truth_boundary':'Values are copied from authoritative source records with their fiscal/source context. The generated-at timestamp is not the fiscal record date; debt and spending use different accounting periods and definitions and must not be mixed without explicit normalization.'
     }
     OUT.parent.mkdir(parents=True,exist_ok=True); OUT.write_text(json.dumps(payload,indent=2)+'\n')

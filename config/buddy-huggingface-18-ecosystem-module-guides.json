@@ -1,0 +1,1165 @@
+{
+  "schema": "dreamco.huggingface_18_ecosystem_module_guides.v1",
+  "source": "config/buddy-huggingface-full-learning-map.json",
+  "official_course_count": 12,
+  "ecosystem_module_count": 18,
+  "task_family_taxonomy": "config/huggingface-task-taxonomy.json",
+  "status": "18_original_module_guide_drafts_needs_human_review",
+  "truth_boundary": "These original study-guide drafts expand the repository's Hugging Face ecosystem map. They do not reproduce official course content, prove course completion, run training, or demonstrate mastery.",
+  "official_courses": [
+    {
+      "id": "hf-llm-course",
+      "title": "LLM Course",
+      "url": "https://huggingface.co/learn/llm-course/chapter1/1",
+      "topics": "Transformers, NLP, inference, fine-tuning, Hub, Datasets, Tokenizers, high-quality data and reasoning models",
+      "transcript_permission": "not_granted",
+      "training_data_authorized": false,
+      "status": "link_only_reference_course_completion_not_claimed"
+    },
+    {
+      "id": "hf-context-course",
+      "title": "Context Course",
+      "url": "https://huggingface.co/learn/context-course/unit0/introduction",
+      "topics": "Context engineering, agent skills, MCP, plugins, subagents, hooks and minimal agent harness",
+      "transcript_permission": "not_granted",
+      "training_data_authorized": false,
+      "status": "link_only_reference_course_completion_not_claimed"
+    },
+    {
+      "id": "hf-robotics-course",
+      "title": "Robotics Course",
+      "url": "https://huggingface.co/learn/robotics-course/unit0/1",
+      "topics": "LeRobot, robot datasets, policies, simulation and embodied AI safety",
+      "transcript_permission": "not_granted",
+      "training_data_authorized": false,
+      "status": "link_only_reference_course_completion_not_claimed"
+    },
+    {
+      "id": "hf-smol-course",
+      "title": "A smol course",
+      "url": "https://huggingface.co/learn/smol-course/unit0/1",
+      "topics": "Compact post-training, fine-tuning and practical LLM workflows",
+      "transcript_permission": "not_granted",
+      "training_data_authorized": false,
+      "status": "link_only_reference_course_completion_not_claimed"
+    },
+    {
+      "id": "hf-agents-course",
+      "title": "Agents Course",
+      "url": "https://huggingface.co/learn/agents-course/unit0/introduction",
+      "topics": "Agent foundations, tool use, reasoning/planning, smolagents, deployment and evaluation",
+      "transcript_permission": "not_granted",
+      "training_data_authorized": false,
+      "status": "link_only_reference_course_completion_not_claimed"
+    },
+    {
+      "id": "hf-deep-rl-course",
+      "title": "Deep RL Course",
+      "url": "https://huggingface.co/learn/deep-rl-course/unit0/introduction",
+      "topics": "Deep reinforcement learning theory, Stable Baselines3, Sample Factory, CleanRL and environment training",
+      "transcript_permission": "not_granted",
+      "training_data_authorized": false,
+      "status": "link_only_reference_course_completion_not_claimed"
+    },
+    {
+      "id": "hf-computer-vision-course",
+      "title": "Community Computer Vision Course",
+      "url": "https://huggingface.co/learn/computer-vision-course/unit0/welcome/welcome",
+      "topics": "Computer vision fundamentals, model use, datasets, evaluation and practical projects",
+      "transcript_permission": "not_granted",
+      "training_data_authorized": false,
+      "status": "link_only_reference_course_completion_not_claimed"
+    },
+    {
+      "id": "hf-audio-course",
+      "title": "Audio Course",
+      "url": "https://huggingface.co/learn/audio-course/chapter0/introduction",
+      "topics": "Audio transformers, speech recognition, audio classification, synthesis and evaluation",
+      "transcript_permission": "not_granted",
+      "training_data_authorized": false,
+      "status": "link_only_reference_course_completion_not_claimed"
+    },
+    {
+      "id": "hf-open-source-ai-cookbook",
+      "title": "Open-Source AI Cookbook",
+      "url": "https://huggingface.co/learn/cookbook/index",
+      "topics": "Runnable open-source AI recipes and practical notebooks",
+      "transcript_permission": "not_granted",
+      "training_data_authorized": false,
+      "status": "link_only_reference_course_completion_not_claimed"
+    },
+    {
+      "id": "hf-ml-games-course",
+      "title": "ML for Games Course",
+      "url": "https://huggingface.co/learn/ml-games-course/unit0/introduction",
+      "topics": "Integrating models and AI tools into game development workflows",
+      "transcript_permission": "not_granted",
+      "training_data_authorized": false,
+      "status": "link_only_reference_course_completion_not_claimed"
+    },
+    {
+      "id": "hf-diffusion-course",
+      "title": "Diffusion Course",
+      "url": "https://huggingface.co/learn/diffusion-course/unit0/1",
+      "topics": "Diffusion theory, Diffusers, image/audio generation, training, fine-tuning and guidance",
+      "transcript_permission": "not_granted",
+      "training_data_authorized": false,
+      "status": "link_only_reference_course_completion_not_claimed"
+    },
+    {
+      "id": "hf-ml-3d-course",
+      "title": "ML for 3D Course",
+      "url": "https://huggingface.co/learn/ml-for-3d-course/unit0/introduction",
+      "topics": "3D machine learning, 3D data and models across the Hugging Face ecosystem",
+      "transcript_permission": "not_granted",
+      "training_data_authorized": false,
+      "status": "link_only_reference_course_completion_not_claimed"
+    }
+  ],
+  "modules": [
+    {
+      "module_id": "HFEC-01",
+      "title": "Hub and repository operations",
+      "source_objective": "Models, datasets, Spaces, collections, organizations, revisions, branches, commits, CLI, API and Xet.",
+      "original_lesson_status": "draft_needs_human_review",
+      "learning_objectives": [
+        "Repository identity and immutable revisions",
+        "Metadata, cards, branches, commits, tags, Xet, CLI/API authentication and provenance",
+        "Model/dataset/Space organization and reproducible handoff"
+      ],
+      "lesson_sequence": [
+        {
+          "order": 1,
+          "title": "Concepts and architecture",
+          "outcome": "Repository identity and immutable revisions",
+          "activity": "Explain the main abstractions and trace the data/control flow."
+        },
+        {
+          "order": 2,
+          "title": "Implementation and ecosystem tools",
+          "outcome": "Metadata, cards, branches, commits, tags, Xet, CLI/API authentication and provenance",
+          "activity": "Create a versioned model/dataset/Space project with metadata and immutable revision references."
+        },
+        {
+          "order": 3,
+          "title": "Reliability, governance and measurement",
+          "outcome": "Model/dataset/Space organization and reproducible handoff",
+          "activity": "Create a versioned evidence record, permission review, and failure-recovery plan."
+        }
+      ],
+      "hands_on_lab": "Create a versioned sample project with immutable revision references and model/data cards.",
+      "assessment": {
+        "task": "R",
+        "acceptance": [
+          "reproducible artifact or plan",
+          "source and version provenance",
+          "independent holdout task",
+          "failure and recovery evidence",
+          "human review where required"
+        ]
+      },
+      "failure_cases": [
+        "mutable-main-branch-reference",
+        "secret-in-commit",
+        "missing-license-metadata"
+      ],
+      "required_evidence": [
+        "lesson_notes",
+        "lab_artifact_hash",
+        "assessment_result",
+        "holdout_result",
+        "regression_result",
+        "source_versions",
+        "reviewer_and_timestamp"
+      ],
+      "rights_policy": "Official documentation and course pages are link-only references; review each software, model, dataset, and course license separately. Do not download or redistribute course transcripts without item-level permission.",
+      "execution_status": "guide_draft_not_studied_or_benchmarked"
+    },
+    {
+      "module_id": "HFEC-02",
+      "title": "Model cards, dataset cards and governance",
+      "source_objective": "Model/dataset cards, licenses, intended use, limitations, bias, safety, provenance, gated access and security review.",
+      "original_lesson_status": "draft_needs_human_review",
+      "learning_objectives": [
+        "Model and dataset card structure",
+        "License, intended use, limitations, evaluation, risks, provenance and gated access",
+        "Governance decisions, security and reproducible model selection"
+      ],
+      "lesson_sequence": [
+        {
+          "order": 1,
+          "title": "Concepts and architecture",
+          "outcome": "Model and dataset card structure",
+          "activity": "Explain the main abstractions and trace the data/control flow."
+        },
+        {
+          "order": 2,
+          "title": "Implementation and ecosystem tools",
+          "outcome": "License, intended use, limitations, evaluation, risks, provenance and gated access",
+          "activity": "Audit three synthetic repository cards and produce a provenance decision."
+        },
+        {
+          "order": 3,
+          "title": "Reliability, governance and measurement",
+          "outcome": "Governance decisions, security and reproducible model selection",
+          "activity": "Create a versioned evidence record, permission review, and failure-recovery plan."
+        }
+      ],
+      "hands_on_lab": "Audit synthetic model and dataset cards; produce a reuse decision with evidence.",
+      "assessment": {
+        "task": "R",
+        "acceptance": [
+          "reproducible artifact or plan",
+          "source and version provenance",
+          "independent holdout task",
+          "failure and recovery evidence",
+          "human review where required"
+        ]
+      },
+      "failure_cases": [
+        "license-confusion",
+        "unsupported-capability-claim",
+        "gated-data-misuse"
+      ],
+      "required_evidence": [
+        "lesson_notes",
+        "lab_artifact_hash",
+        "assessment_result",
+        "holdout_result",
+        "regression_result",
+        "source_versions",
+        "reviewer_and_timestamp"
+      ],
+      "rights_policy": "Official documentation and course pages are link-only references; review each software, model, dataset, and course license separately. Do not download or redistribute course transcripts without item-level permission.",
+      "execution_status": "guide_draft_not_studied_or_benchmarked"
+    },
+    {
+      "module_id": "HFEC-03",
+      "title": "Dataset engineering",
+      "source_objective": "Load, stream, map, filter, split, deduplicate, curate, version and audit datasets with privacy and licensing controls.",
+      "original_lesson_status": "draft_needs_human_review",
+      "learning_objectives": [
+        "Dataset loading and streaming",
+        "Mapping, filtering, splitting, deduplication, schema validation and versioning",
+        "Privacy, contamination, data cards and reproducibility"
+      ],
+      "lesson_sequence": [
+        {
+          "order": 1,
+          "title": "Concepts and architecture",
+          "outcome": "Dataset loading and streaming",
+          "activity": "Explain the main abstractions and trace the data/control flow."
+        },
+        {
+          "order": 2,
+          "title": "Implementation and ecosystem tools",
+          "outcome": "Mapping, filtering, splitting, deduplication, schema validation and versioning",
+          "activity": "Build a reproducible dataset pipeline with isolated train/validation/test/private holdout."
+        },
+        {
+          "order": 3,
+          "title": "Reliability, governance and measurement",
+          "outcome": "Privacy, contamination, data cards and reproducibility",
+          "activity": "Create a versioned evidence record, permission review, and failure-recovery plan."
+        }
+      ],
+      "hands_on_lab": "Build a local synthetic dataset pipeline with isolated train/validation/test/holdout splits.",
+      "assessment": {
+        "task": "D",
+        "acceptance": [
+          "reproducible artifact or plan",
+          "source and version provenance",
+          "independent holdout task",
+          "failure and recovery evidence",
+          "human review where required"
+        ]
+      },
+      "failure_cases": [
+        "split-leakage",
+        "sensitive-record",
+        "schema-drift"
+      ],
+      "required_evidence": [
+        "lesson_notes",
+        "lab_artifact_hash",
+        "assessment_result",
+        "holdout_result",
+        "regression_result",
+        "source_versions",
+        "reviewer_and_timestamp"
+      ],
+      "rights_policy": "Official documentation and course pages are link-only references; review each software, model, dataset, and course license separately. Do not download or redistribute course transcripts without item-level permission.",
+      "execution_status": "guide_draft_not_studied_or_benchmarked"
+    },
+    {
+      "module_id": "HFEC-04",
+      "title": "Spaces and ML application delivery",
+      "source_objective": "Gradio/Streamlit SDKs, app configuration, secrets, hardware, ZeroGPU concepts, logs, builds and rollback.",
+      "original_lesson_status": "draft_needs_human_review",
+      "learning_objectives": [
+        "Gradio and Streamlit application patterns",
+        "Space configuration, requirements, hardware, secrets, build logs and runtime health",
+        "Safe release, rollback and cost awareness"
+      ],
+      "lesson_sequence": [
+        {
+          "order": 1,
+          "title": "Concepts and architecture",
+          "outcome": "Gradio and Streamlit application patterns",
+          "activity": "Explain the main abstractions and trace the data/control flow."
+        },
+        {
+          "order": 2,
+          "title": "Implementation and ecosystem tools",
+          "outcome": "Space configuration, requirements, hardware, secrets, build logs and runtime health",
+          "activity": "Build a local demo and deployment plan with secrets excluded from source."
+        },
+        {
+          "order": 3,
+          "title": "Reliability, governance and measurement",
+          "outcome": "Safe release, rollback and cost awareness",
+          "activity": "Create a versioned evidence record, permission review, and failure-recovery plan."
+        }
+      ],
+      "hands_on_lab": "Build a local demo and a deployment plan with secret references, health checks and rollback.",
+      "assessment": {
+        "task": "D",
+        "acceptance": [
+          "reproducible artifact or plan",
+          "source and version provenance",
+          "independent holdout task",
+          "failure and recovery evidence",
+          "human review where required"
+        ]
+      },
+      "failure_cases": [
+        "secret-exposure",
+        "unbounded-hardware-cost",
+        "failed-build"
+      ],
+      "required_evidence": [
+        "lesson_notes",
+        "lab_artifact_hash",
+        "assessment_result",
+        "holdout_result",
+        "regression_result",
+        "source_versions",
+        "reviewer_and_timestamp"
+      ],
+      "rights_policy": "Official documentation and course pages are link-only references; review each software, model, dataset, and course license separately. Do not download or redistribute course transcripts without item-level permission.",
+      "execution_status": "guide_draft_not_studied_or_benchmarked"
+    },
+    {
+      "module_id": "HFEC-05",
+      "title": "Transformers and model execution",
+      "source_objective": "Configs, tokenizers, processors, model heads, generation, pipelines, Trainer, inference and model compatibility.",
+      "original_lesson_status": "draft_needs_human_review",
+      "learning_objectives": [
+        "Model/config/tokenizer compatibility",
+        "Processors, model heads, generation, pipelines, Trainer and inference contracts",
+        "Memory, batching, output validation and reproducible runs"
+      ],
+      "lesson_sequence": [
+        {
+          "order": 1,
+          "title": "Concepts and architecture",
+          "outcome": "Model/config/tokenizer compatibility",
+          "activity": "Explain the main abstractions and trace the data/control flow."
+        },
+        {
+          "order": 2,
+          "title": "Implementation and ecosystem tools",
+          "outcome": "Processors, model heads, generation, pipelines, Trainer and inference contracts",
+          "activity": "Run a local small model task and test schema, memory and output correctness."
+        },
+        {
+          "order": 3,
+          "title": "Reliability, governance and measurement",
+          "outcome": "Memory, batching, output validation and reproducible runs",
+          "activity": "Create a versioned evidence record, permission review, and failure-recovery plan."
+        }
+      ],
+      "hands_on_lab": "Run a tiny local inference fixture and validate model/config/tokenizer compatibility.",
+      "assessment": {
+        "task": "R",
+        "acceptance": [
+          "reproducible artifact or plan",
+          "source and version provenance",
+          "independent holdout task",
+          "failure and recovery evidence",
+          "human review where required"
+        ]
+      },
+      "failure_cases": [
+        "tokenizer-mismatch",
+        "oom",
+        "untrusted-model-artifact"
+      ],
+      "required_evidence": [
+        "lesson_notes",
+        "lab_artifact_hash",
+        "assessment_result",
+        "holdout_result",
+        "regression_result",
+        "source_versions",
+        "reviewer_and_timestamp"
+      ],
+      "rights_policy": "Official documentation and course pages are link-only references; review each software, model, dataset, and course license separately. Do not download or redistribute course transcripts without item-level permission.",
+      "execution_status": "guide_draft_not_studied_or_benchmarked"
+    },
+    {
+      "module_id": "HFEC-06",
+      "title": "Tokenizers and text representation",
+      "source_objective": "Normalization, pre-tokenization, BPE, WordPiece, Unigram, byte-level tokenization, vocabulary and alignment.",
+      "original_lesson_status": "draft_needs_human_review",
+      "learning_objectives": [
+        "Normalization and byte-level coverage",
+        "BPE, WordPiece, Unigram, special tokens, offsets and vocabulary trade-offs",
+        "Round-trip, multilingual coverage, fertility and tokenization metrics"
+      ],
+      "lesson_sequence": [
+        {
+          "order": 1,
+          "title": "Concepts and architecture",
+          "outcome": "Normalization and byte-level coverage",
+          "activity": "Explain the main abstractions and trace the data/control flow."
+        },
+        {
+          "order": 2,
+          "title": "Implementation and ecosystem tools",
+          "outcome": "BPE, WordPiece, Unigram, special tokens, offsets and vocabulary trade-offs",
+          "activity": "Train a rights-cleared tokenizer and test Unicode, code, multilingual coverage and round-trip."
+        },
+        {
+          "order": 3,
+          "title": "Reliability, governance and measurement",
+          "outcome": "Round-trip, multilingual coverage, fertility and tokenization metrics",
+          "activity": "Create a versioned evidence record, permission review, and failure-recovery plan."
+        }
+      ],
+      "hands_on_lab": "Train a rights-cleared local tokenizer and test Unicode, code, emoji and multilingual fixtures.",
+      "assessment": {
+        "task": "P",
+        "acceptance": [
+          "reproducible artifact or plan",
+          "source and version provenance",
+          "independent holdout task",
+          "failure and recovery evidence",
+          "human review where required"
+        ]
+      },
+      "failure_cases": [
+        "unicode-loss",
+        "special-token-collision",
+        "holdout-contamination"
+      ],
+      "required_evidence": [
+        "lesson_notes",
+        "lab_artifact_hash",
+        "assessment_result",
+        "holdout_result",
+        "regression_result",
+        "source_versions",
+        "reviewer_and_timestamp"
+      ],
+      "rights_policy": "Official documentation and course pages are link-only references; review each software, model, dataset, and course license separately. Do not download or redistribute course transcripts without item-level permission.",
+      "execution_status": "guide_draft_not_studied_or_benchmarked"
+    },
+    {
+      "module_id": "HFEC-07",
+      "title": "Accelerate and distributed training",
+      "source_objective": "Device maps, mixed precision, multi-GPU, distributed execution, gradient accumulation and CPU fallback.",
+      "original_lesson_status": "draft_needs_human_review",
+      "learning_objectives": [
+        "Device placement and memory planning",
+        "Mixed precision, distributed data parallelism, accumulation and checkpointing",
+        "CPU fallback, deterministic configuration and cost/approval controls"
+      ],
+      "lesson_sequence": [
+        {
+          "order": 1,
+          "title": "Concepts and architecture",
+          "outcome": "Device placement and memory planning",
+          "activity": "Explain the main abstractions and trace the data/control flow."
+        },
+        {
+          "order": 2,
+          "title": "Implementation and ecosystem tools",
+          "outcome": "Mixed precision, distributed data parallelism, accumulation and checkpointing",
+          "activity": "Design a reproducible hardware-aware training launch plan; no compute starts without approval."
+        },
+        {
+          "order": 3,
+          "title": "Reliability, governance and measurement",
+          "outcome": "CPU fallback, deterministic configuration and cost/approval controls",
+          "activity": "Create a versioned evidence record, permission review, and failure-recovery plan."
+        }
+      ],
+      "hands_on_lab": "Produce a hardware-aware launch plan with memory estimates and no compute execution.",
+      "assessment": {
+        "task": "C",
+        "acceptance": [
+          "reproducible artifact or plan",
+          "source and version provenance",
+          "independent holdout task",
+          "failure and recovery evidence",
+          "human review where required"
+        ]
+      },
+      "failure_cases": [
+        "unexpected-paid-compute",
+        "device-mismatch",
+        "non-deterministic-run"
+      ],
+      "required_evidence": [
+        "lesson_notes",
+        "lab_artifact_hash",
+        "assessment_result",
+        "holdout_result",
+        "regression_result",
+        "source_versions",
+        "reviewer_and_timestamp"
+      ],
+      "rights_policy": "Official documentation and course pages are link-only references; review each software, model, dataset, and course license separately. Do not download or redistribute course transcripts without item-level permission.",
+      "execution_status": "guide_draft_not_studied_or_benchmarked"
+    },
+    {
+      "module_id": "HFEC-08",
+      "title": "PEFT and efficient fine-tuning",
+      "source_objective": "LoRA, adapters, prompt tuning, QLoRA, trainable parameter scopes and checkpoint comparison.",
+      "original_lesson_status": "draft_needs_human_review",
+      "learning_objectives": [
+        "LoRA and adapter concepts",
+        "Trainable parameter scopes, rank/alpha, target modules and QLoRA basics",
+        "Checkpointing, adapter composition and rollback"
+      ],
+      "lesson_sequence": [
+        {
+          "order": 1,
+          "title": "Concepts and architecture",
+          "outcome": "LoRA and adapter concepts",
+          "activity": "Explain the main abstractions and trace the data/control flow."
+        },
+        {
+          "order": 2,
+          "title": "Implementation and ecosystem tools",
+          "outcome": "Trainable parameter scopes, rank/alpha, target modules and QLoRA basics",
+          "activity": "Fine-tuning plan with frozen weights, trainable-parameter manifest and rollback."
+        },
+        {
+          "order": 3,
+          "title": "Reliability, governance and measurement",
+          "outcome": "Checkpointing, adapter composition and rollback",
+          "activity": "Create a versioned evidence record, permission review, and failure-recovery plan."
+        }
+      ],
+      "hands_on_lab": "Create a fine-tuning plan with frozen-weight inventory and trainable-parameter manifest.",
+      "assessment": {
+        "task": "V",
+        "acceptance": [
+          "reproducible artifact or plan",
+          "source and version provenance",
+          "independent holdout task",
+          "failure and recovery evidence",
+          "human review where required"
+        ]
+      },
+      "failure_cases": [
+        "full-weight-update",
+        "base-license-mismatch",
+        "adapter-conflict"
+      ],
+      "required_evidence": [
+        "lesson_notes",
+        "lab_artifact_hash",
+        "assessment_result",
+        "holdout_result",
+        "regression_result",
+        "source_versions",
+        "reviewer_and_timestamp"
+      ],
+      "rights_policy": "Official documentation and course pages are link-only references; review each software, model, dataset, and course license separately. Do not download or redistribute course transcripts without item-level permission.",
+      "execution_status": "guide_draft_not_studied_or_benchmarked"
+    },
+    {
+      "module_id": "HFEC-09",
+      "title": "TRL and post-training",
+      "source_objective": "SFT, preference data, reward models, DPO, GRPO, PPO concepts, distillation and post-training evaluation.",
+      "original_lesson_status": "draft_needs_human_review",
+      "learning_objectives": [
+        "Supervised fine-tuning and preference data",
+        "Reward modeling, DPO/GRPO/PPO concepts, distillation and reward hacking",
+        "Post-training evaluation, safety, holdout and regression"
+      ],
+      "lesson_sequence": [
+        {
+          "order": 1,
+          "title": "Concepts and architecture",
+          "outcome": "Supervised fine-tuning and preference data",
+          "activity": "Explain the main abstractions and trace the data/control flow."
+        },
+        {
+          "order": 2,
+          "title": "Implementation and ecosystem tools",
+          "outcome": "Reward modeling, DPO/GRPO/PPO concepts, distillation and reward hacking",
+          "activity": "Build a toy reward pipeline and adversarial reward-hacking test."
+        },
+        {
+          "order": 3,
+          "title": "Reliability, governance and measurement",
+          "outcome": "Post-training evaluation, safety, holdout and regression",
+          "activity": "Create a versioned evidence record, permission review, and failure-recovery plan."
+        }
+      ],
+      "hands_on_lab": "Build a toy reward pipeline and test adversarial reward-hacking cases.",
+      "assessment": {
+        "task": "D",
+        "acceptance": [
+          "reproducible artifact or plan",
+          "source and version provenance",
+          "independent holdout task",
+          "failure and recovery evidence",
+          "human review where required"
+        ]
+      },
+      "failure_cases": [
+        "reward-hacking",
+        "preference-data-leak",
+        "safety-regression"
+      ],
+      "required_evidence": [
+        "lesson_notes",
+        "lab_artifact_hash",
+        "assessment_result",
+        "holdout_result",
+        "regression_result",
+        "source_versions",
+        "reviewer_and_timestamp"
+      ],
+      "rights_policy": "Official documentation and course pages are link-only references; review each software, model, dataset, and course license separately. Do not download or redistribute course transcripts without item-level permission.",
+      "execution_status": "guide_draft_not_studied_or_benchmarked"
+    },
+    {
+      "module_id": "HFEC-10",
+      "title": "Diffusers and generative media",
+      "source_objective": "Text-to-image, image-to-image, audio/video/3D workflows where supported, schedulers, conditioning and fine-tuning.",
+      "original_lesson_status": "draft_needs_human_review",
+      "learning_objectives": [
+        "Diffusion pipelines and schedulers",
+        "Conditioning, generation controls, fine-tuning, media modalities and reproducibility",
+        "Rights, provenance, watermark/metadata policy and safety"
+      ],
+      "lesson_sequence": [
+        {
+          "order": 1,
+          "title": "Concepts and architecture",
+          "outcome": "Diffusion pipelines and schedulers",
+          "activity": "Explain the main abstractions and trace the data/control flow."
+        },
+        {
+          "order": 2,
+          "title": "Implementation and ecosystem tools",
+          "outcome": "Conditioning, generation controls, fine-tuning, media modalities and reproducibility",
+          "activity": "Create original synthetic media fixtures and compare quality/safety metrics."
+        },
+        {
+          "order": 3,
+          "title": "Reliability, governance and measurement",
+          "outcome": "Rights, provenance, watermark/metadata policy and safety",
+          "activity": "Create a versioned evidence record, permission review, and failure-recovery plan."
+        }
+      ],
+      "hands_on_lab": "Create original synthetic fixtures and compare reproducible generation settings.",
+      "assessment": {
+        "task": "R",
+        "acceptance": [
+          "reproducible artifact or plan",
+          "source and version provenance",
+          "independent holdout task",
+          "failure and recovery evidence",
+          "human review where required"
+        ]
+      },
+      "failure_cases": [
+        "copyrighted-source-ingestion",
+        "unsafe-output",
+        "nondeterministic-settings"
+      ],
+      "required_evidence": [
+        "lesson_notes",
+        "lab_artifact_hash",
+        "assessment_result",
+        "holdout_result",
+        "regression_result",
+        "source_versions",
+        "reviewer_and_timestamp"
+      ],
+      "rights_policy": "Official documentation and course pages are link-only references; review each software, model, dataset, and course license separately. Do not download or redistribute course transcripts without item-level permission.",
+      "execution_status": "guide_draft_not_studied_or_benchmarked"
+    },
+    {
+      "module_id": "HFEC-11",
+      "title": "Vision and timm",
+      "source_objective": "Image classification, detection, segmentation, vision transformers, transfer learning and evaluation.",
+      "original_lesson_status": "draft_needs_human_review",
+      "learning_objectives": [
+        "Image classification and vision transformers",
+        "Detection, segmentation, transfer learning and dataset annotation",
+        "Class-wise metrics, split integrity, calibration and error analysis"
+      ],
+      "lesson_sequence": [
+        {
+          "order": 1,
+          "title": "Concepts and architecture",
+          "outcome": "Image classification and vision transformers",
+          "activity": "Explain the main abstractions and trace the data/control flow."
+        },
+        {
+          "order": 2,
+          "title": "Implementation and ecosystem tools",
+          "outcome": "Detection, segmentation, transfer learning and dataset annotation",
+          "activity": "Build a vision evaluation set with split integrity and class-wise metrics."
+        },
+        {
+          "order": 3,
+          "title": "Reliability, governance and measurement",
+          "outcome": "Class-wise metrics, split integrity, calibration and error analysis",
+          "activity": "Create a versioned evidence record, permission review, and failure-recovery plan."
+        }
+      ],
+      "hands_on_lab": "Build a small synthetic vision evaluation set with class-wise metrics.",
+      "assessment": {
+        "task": "I",
+        "acceptance": [
+          "reproducible artifact or plan",
+          "source and version provenance",
+          "independent holdout task",
+          "failure and recovery evidence",
+          "human review where required"
+        ]
+      },
+      "failure_cases": [
+        "duplicate-image-leakage",
+        "label-noise",
+        "class-imbalance"
+      ],
+      "required_evidence": [
+        "lesson_notes",
+        "lab_artifact_hash",
+        "assessment_result",
+        "holdout_result",
+        "regression_result",
+        "source_versions",
+        "reviewer_and_timestamp"
+      ],
+      "rights_policy": "Official documentation and course pages are link-only references; review each software, model, dataset, and course license separately. Do not download or redistribute course transcripts without item-level permission.",
+      "execution_status": "guide_draft_not_studied_or_benchmarked"
+    },
+    {
+      "module_id": "HFEC-12",
+      "title": "Embeddings and retrieval",
+      "source_objective": "Sentence Transformers, embedding models, semantic search, reranking, vector stores and retrieval metrics.",
+      "original_lesson_status": "draft_needs_human_review",
+      "learning_objectives": [
+        "Embedding models and similarity",
+        "Semantic search, reranking, vector stores and hybrid retrieval",
+        "Recall/precision, provenance, freshness and hallucination checks"
+      ],
+      "lesson_sequence": [
+        {
+          "order": 1,
+          "title": "Concepts and architecture",
+          "outcome": "Embedding models and similarity",
+          "activity": "Explain the main abstractions and trace the data/control flow."
+        },
+        {
+          "order": 2,
+          "title": "Implementation and ecosystem tools",
+          "outcome": "Semantic search, reranking, vector stores and hybrid retrieval",
+          "activity": "Build a small retrieval benchmark with recall, precision and hallucination checks."
+        },
+        {
+          "order": 3,
+          "title": "Reliability, governance and measurement",
+          "outcome": "Recall/precision, provenance, freshness and hallucination checks",
+          "activity": "Create a versioned evidence record, permission review, and failure-recovery plan."
+        }
+      ],
+      "hands_on_lab": "Build a local retrieval benchmark with recall@k, precision and citation checks.",
+      "assessment": {
+        "task": "D",
+        "acceptance": [
+          "reproducible artifact or plan",
+          "source and version provenance",
+          "independent holdout task",
+          "failure and recovery evidence",
+          "human review where required"
+        ]
+      },
+      "failure_cases": [
+        "embedding-drift",
+        "stale-index",
+        "citation-mismatch"
+      ],
+      "required_evidence": [
+        "lesson_notes",
+        "lab_artifact_hash",
+        "assessment_result",
+        "holdout_result",
+        "regression_result",
+        "source_versions",
+        "reviewer_and_timestamp"
+      ],
+      "rights_policy": "Official documentation and course pages are link-only references; review each software, model, dataset, and course license separately. Do not download or redistribute course transcripts without item-level permission.",
+      "execution_status": "guide_draft_not_studied_or_benchmarked"
+    },
+    {
+      "module_id": "HFEC-13",
+      "title": "Kernels, optimization and quantization",
+      "source_objective": "Kernels, Optimum, Safetensors, bitsandbytes, quantization, compilation, memory and hardware-specific optimization.",
+      "original_lesson_status": "draft_needs_human_review",
+      "learning_objectives": [
+        "Kernel and operator optimization",
+        "Quantization, compilation, Safetensors, bitsandbytes and hardware compatibility",
+        "Latency, memory, quality, numerical drift and portability"
+      ],
+      "lesson_sequence": [
+        {
+          "order": 1,
+          "title": "Concepts and architecture",
+          "outcome": "Kernel and operator optimization",
+          "activity": "Explain the main abstractions and trace the data/control flow."
+        },
+        {
+          "order": 2,
+          "title": "Implementation and ecosystem tools",
+          "outcome": "Quantization, compilation, Safetensors, bitsandbytes and hardware compatibility",
+          "activity": "Benchmark quality, latency, memory and compatibility before/after optimization."
+        },
+        {
+          "order": 3,
+          "title": "Reliability, governance and measurement",
+          "outcome": "Latency, memory, quality, numerical drift and portability",
+          "activity": "Create a versioned evidence record, permission review, and failure-recovery plan."
+        }
+      ],
+      "hands_on_lab": "Benchmark an original fixture before and after a simulated optimization plan.",
+      "assessment": {
+        "task": "R",
+        "acceptance": [
+          "reproducible artifact or plan",
+          "source and version provenance",
+          "independent holdout task",
+          "failure and recovery evidence",
+          "human review where required"
+        ]
+      },
+      "failure_cases": [
+        "quantization-regression",
+        "unsafe-weight-format",
+        "hardware-incompatibility"
+      ],
+      "required_evidence": [
+        "lesson_notes",
+        "lab_artifact_hash",
+        "assessment_result",
+        "holdout_result",
+        "regression_result",
+        "source_versions",
+        "reviewer_and_timestamp"
+      ],
+      "rights_policy": "Official documentation and course pages are link-only references; review each software, model, dataset, and course license separately. Do not download or redistribute course transcripts without item-level permission.",
+      "execution_status": "guide_draft_not_studied_or_benchmarked"
+    },
+    {
+      "module_id": "HFEC-14",
+      "title": "Evaluation and leaderboards",
+      "source_objective": "Lighteval, task suites, contamination checks, statistical evaluation, scorecards and leaderboard limitations.",
+      "original_lesson_status": "draft_needs_human_review",
+      "learning_objectives": [
+        "Evaluation task design and scorecards",
+        "Contamination checks, statistical uncertainty, reproducibility and leaderboards",
+        "Hidden holdout, confidence intervals, failure analysis and reporting"
+      ],
+      "lesson_sequence": [
+        {
+          "order": 1,
+          "title": "Concepts and architecture",
+          "outcome": "Evaluation task design and scorecards",
+          "activity": "Explain the main abstractions and trace the data/control flow."
+        },
+        {
+          "order": 2,
+          "title": "Implementation and ecosystem tools",
+          "outcome": "Contamination checks, statistical uncertainty, reproducibility and leaderboards",
+          "activity": "Create reproducible benchmark cards with isolated private holdout."
+        },
+        {
+          "order": 3,
+          "title": "Reliability, governance and measurement",
+          "outcome": "Hidden holdout, confidence intervals, failure analysis and reporting",
+          "activity": "Create a versioned evidence record, permission review, and failure-recovery plan."
+        }
+      ],
+      "hands_on_lab": "Create a benchmark card with separate training and private holdout fixtures.",
+      "assessment": {
+        "task": "I",
+        "acceptance": [
+          "reproducible artifact or plan",
+          "source and version provenance",
+          "independent holdout task",
+          "failure and recovery evidence",
+          "human review where required"
+        ]
+      },
+      "failure_cases": [
+        "holdout-contamination",
+        "benchmark-cherry-picking",
+        "score-without-evidence"
+      ],
+      "required_evidence": [
+        "lesson_notes",
+        "lab_artifact_hash",
+        "assessment_result",
+        "holdout_result",
+        "regression_result",
+        "source_versions",
+        "reviewer_and_timestamp"
+      ],
+      "rights_policy": "Official documentation and course pages are link-only references; review each software, model, dataset, and course license separately. Do not download or redistribute course transcripts without item-level permission.",
+      "execution_status": "guide_draft_not_studied_or_benchmarked"
+    },
+    {
+      "module_id": "HFEC-15",
+      "title": "Inference Providers and Endpoints",
+      "source_objective": "Hosted inference, dedicated endpoints, provider routing, autoscaling, data residency, observability and costs.",
+      "original_lesson_status": "draft_needs_human_review",
+      "learning_objectives": [
+        "Hosted inference and dedicated endpoints",
+        "Provider routing, autoscaling, residency, observability and cost models",
+        "Threat modeling, access scopes and deployment approval"
+      ],
+      "lesson_sequence": [
+        {
+          "order": 1,
+          "title": "Concepts and architecture",
+          "outcome": "Hosted inference and dedicated endpoints",
+          "activity": "Explain the main abstractions and trace the data/control flow."
+        },
+        {
+          "order": 2,
+          "title": "Implementation and ecosystem tools",
+          "outcome": "Provider routing, autoscaling, residency, observability and cost models",
+          "activity": "Create a deployment threat model and cost/performance comparison; do not deploy automatically."
+        },
+        {
+          "order": 3,
+          "title": "Reliability, governance and measurement",
+          "outcome": "Threat modeling, access scopes and deployment approval",
+          "activity": "Create a versioned evidence record, permission review, and failure-recovery plan."
+        }
+      ],
+      "hands_on_lab": "Compare local, hosted and dedicated endpoint plans without deploying.",
+      "assessment": {
+        "task": "S",
+        "acceptance": [
+          "reproducible artifact or plan",
+          "source and version provenance",
+          "independent holdout task",
+          "failure and recovery evidence",
+          "human review where required"
+        ]
+      },
+      "failure_cases": [
+        "unapproved-deployment",
+        "data-residency-mismatch",
+        "cost-overrun"
+      ],
+      "required_evidence": [
+        "lesson_notes",
+        "lab_artifact_hash",
+        "assessment_result",
+        "holdout_result",
+        "regression_result",
+        "source_versions",
+        "reviewer_and_timestamp"
+      ],
+      "rights_policy": "Official documentation and course pages are link-only references; review each software, model, dataset, and course license separately. Do not download or redistribute course transcripts without item-level permission.",
+      "execution_status": "guide_draft_not_studied_or_benchmarked"
+    },
+    {
+      "module_id": "HFEC-16",
+      "title": "Gradio, Trackio and experiment operations",
+      "source_objective": "Interactive demos, experiment tracking, metric logging, artifacts, reproducibility and privacy-safe telemetry.",
+      "original_lesson_status": "draft_needs_human_review",
+      "learning_objectives": [
+        "Experiment tracking and metric logging",
+        "Artifacts, run metadata, reproducibility and UI patterns",
+        "Telemetry minimization, privacy and local-first observability"
+      ],
+      "lesson_sequence": [
+        {
+          "order": 1,
+          "title": "Concepts and architecture",
+          "outcome": "Experiment tracking and metric logging",
+          "activity": "Explain the main abstractions and trace the data/control flow."
+        },
+        {
+          "order": 2,
+          "title": "Implementation and ecosystem tools",
+          "outcome": "Artifacts, run metadata, reproducibility and UI patterns",
+          "activity": "Build a local experiment tracker and UI with no private data exfiltration."
+        },
+        {
+          "order": 3,
+          "title": "Reliability, governance and measurement",
+          "outcome": "Telemetry minimization, privacy and local-first observability",
+          "activity": "Create a versioned evidence record, permission review, and failure-recovery plan."
+        }
+      ],
+      "hands_on_lab": "Build a local experiment record with immutable artifact hashes and privacy-safe metrics.",
+      "assessment": {
+        "task": "D",
+        "acceptance": [
+          "reproducible artifact or plan",
+          "source and version provenance",
+          "independent holdout task",
+          "failure and recovery evidence",
+          "human review where required"
+        ]
+      },
+      "failure_cases": [
+        "secret-in-telemetry",
+        "unreproducible-run",
+        "metric-schema-drift"
+      ],
+      "required_evidence": [
+        "lesson_notes",
+        "lab_artifact_hash",
+        "assessment_result",
+        "holdout_result",
+        "regression_result",
+        "source_versions",
+        "reviewer_and_timestamp"
+      ],
+      "rights_policy": "Official documentation and course pages are link-only references; review each software, model, dataset, and course license separately. Do not download or redistribute course transcripts without item-level permission.",
+      "execution_status": "guide_draft_not_studied_or_benchmarked"
+    },
+    {
+      "module_id": "HFEC-17",
+      "title": "Agents and environments",
+      "source_objective": "smolagents, tool calling, MCP, OpenEnv, environment contracts, tool permissions, evaluation and sandboxing.",
+      "original_lesson_status": "draft_needs_human_review",
+      "learning_objectives": [
+        "Agent tool contracts and permissions",
+        "MCP, smolagents, OpenEnv, tool schemas and bounded planning",
+        "Sandboxing, prompt injection, audit receipts and recovery"
+      ],
+      "lesson_sequence": [
+        {
+          "order": 1,
+          "title": "Concepts and architecture",
+          "outcome": "Agent tool contracts and permissions",
+          "activity": "Explain the main abstractions and trace the data/control flow."
+        },
+        {
+          "order": 2,
+          "title": "Implementation and ecosystem tools",
+          "outcome": "MCP, smolagents, OpenEnv, tool schemas and bounded planning",
+          "activity": "Build a least-privilege agent in a network-disabled test environment."
+        },
+        {
+          "order": 3,
+          "title": "Reliability, governance and measurement",
+          "outcome": "Sandboxing, prompt injection, audit receipts and recovery",
+          "activity": "Create a versioned evidence record, permission review, and failure-recovery plan."
+        }
+      ],
+      "hands_on_lab": "Build a least-privilege agent in a network-disabled test environment.",
+      "assessment": {
+        "task": "R",
+        "acceptance": [
+          "reproducible artifact or plan",
+          "source and version provenance",
+          "independent holdout task",
+          "failure and recovery evidence",
+          "human review where required"
+        ]
+      },
+      "failure_cases": [
+        "prompt-injection",
+        "permission-escalation",
+        "unverified-tool-result"
+      ],
+      "required_evidence": [
+        "lesson_notes",
+        "lab_artifact_hash",
+        "assessment_result",
+        "holdout_result",
+        "regression_result",
+        "source_versions",
+        "reviewer_and_timestamp"
+      ],
+      "rights_policy": "Official documentation and course pages are link-only references; review each software, model, dataset, and course license separately. Do not download or redistribute course transcripts without item-level permission.",
+      "execution_status": "guide_draft_not_studied_or_benchmarked"
+    },
+    {
+      "module_id": "HFEC-18",
+      "title": "Robotics, games and 3D systems",
+      "source_objective": "LeRobot, robotics datasets, embodied agents, game environments, 3D data, simulation and physical safety.",
+      "original_lesson_status": "draft_needs_human_review",
+      "learning_objectives": [
+        "Embodied AI data and simulation",
+        "LeRobot, robot datasets, game environments and 3D simulation",
+        "Actuation safety, sim-to-real gaps and physical review"
+      ],
+      "lesson_sequence": [
+        {
+          "order": 1,
+          "title": "Concepts and architecture",
+          "outcome": "Embodied AI data and simulation",
+          "activity": "Explain the main abstractions and trace the data/control flow."
+        },
+        {
+          "order": 2,
+          "title": "Implementation and ecosystem tools",
+          "outcome": "LeRobot, robot datasets, game environments and 3D simulation",
+          "activity": "Simulate an embodied workflow; require hardware safety review before any physical actuation."
+        },
+        {
+          "order": 3,
+          "title": "Reliability, governance and measurement",
+          "outcome": "Actuation safety, sim-to-real gaps and physical review",
+          "activity": "Create a versioned evidence record, permission review, and failure-recovery plan."
+        }
+      ],
+      "hands_on_lab": "Simulate an embodied workflow and document the hardware safety gate.",
+      "assessment": {
+        "task": "K",
+        "acceptance": [
+          "reproducible artifact or plan",
+          "source and version provenance",
+          "independent holdout task",
+          "failure and recovery evidence",
+          "human review where required"
+        ]
+      },
+      "failure_cases": [
+        "unsafe-actuation",
+        "simulation-reality-gap",
+        "dataset-license-gap"
+      ],
+      "required_evidence": [
+        "lesson_notes",
+        "lab_artifact_hash",
+        "assessment_result",
+        "holdout_result",
+        "regression_result",
+        "source_versions",
+        "reviewer_and_timestamp"
+      ],
+      "rights_policy": "Official documentation and course pages are link-only references; review each software, model, dataset, and course license separately. Do not download or redistribute course transcripts without item-level permission.",
+      "execution_status": "guide_draft_not_studied_or_benchmarked"
+    }
+  ]
+}

@@ -3,6 +3,7 @@ import { mkdirSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 import type { VerificationExpectation, UniversalVerificationReport } from "../shared/universal-verification-contract.js";
 import { isVerificationRunSuccessful } from "../shared/universal-verification-policy.js";
+import { persistVerificationLog } from "../shared/universal-verification-diagnostics.js";
 
 const args = new Set(process.argv.slice(2));
 const mode = args.has("--production") ? "production" : args.has("--full") ? "full" : args.has("--quick") ? "quick" : "ci";
@@ -50,10 +51,11 @@ function run(item: VerificationExpectation) {
   const started = Date.now();
   if (!shouldRun(item)) return { expectationId: item.id, state: "skipped" as const, exitCode: null, durationMs: 0, summary: `Skipped in ${mode} mode` };
   const result = spawnSync(item.command, { shell: true, encoding: "utf8", timeout: item.timeoutSeconds * 1000, env: process.env });
-  const output = `${result.stdout ?? ""}\n${result.stderr ?? ""}`.trim();
+  const output = `${result.stdout ?? ""}\n${result.stderr ?? ""}\n${result.error?.message ?? ""}`.trim();
+  persistVerificationLog(resolve("tmp", "dreamco-verification"), item.id, output);
   const timedOut = result.error && (result.error as NodeJS.ErrnoException).code === "ETIMEDOUT";
   const state = result.status === 0 ? "passed" as const : "failed" as const;
-  return { expectationId: item.id, state, exitCode: result.status, durationMs: Date.now() - started, summary: timedOut ? `Timed out after ${item.timeoutSeconds}s` : output.slice(-4000) || (state === "passed" ? "Passed" : "Failed without output") };
+  return { expectationId: item.id, state, exitCode: result.status, durationMs: Date.now() - started, summary: timedOut ? `Timed out after ${item.timeoutSeconds}s` : output.slice(-(item.id === "governed-tests" ? 30000 : 4000)) || (state === "passed" ? "Passed" : "Failed without output") };
 }
 
 const startedAt = new Date().toISOString();

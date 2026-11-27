@@ -1,0 +1,243 @@
+name: DreamCo Division Mastery Engine
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "config/masterbot-65-registry.json"
+      - "config/division-reconciliation-policy.json"
+      - "config/generated/division-reconciliation.json"
+      - "tools/build_division_reconciliation.py"
+      - "tests/test_division_reconciliation.py"
+      - "tools/normalize_legacy_portfolios.py"
+      - "shared/division-production-contract.ts"
+      - "tools/build_masterbot_division_crosswalk.py"
+      - "tests/test_masterbot_division_crosswalk.py"
+      - "config/generated/masterbot-55-domain-crosswalk.json"
+      - "config/dreamco-mastery-continuity-registry.json"
+      - "config/division-model-competitiveness-policy.json"
+      - "config/buddy-engineering-capability-contract.json"
+      - "config/buddy-dataset-routing-policy.json"
+      - "config/huggingface-task-taxonomy.json"
+      - "config/generated/division-huggingface-taxonomy-map.json"
+      - "config/generated/division-resource-readiness-map.json"
+      - "schemas/division-resource-readiness-map.schema.json"
+      - "tools/build_division_resource_readiness_map.py"
+      - "tests/test_division_resource_readiness.py"
+      - "tests/test_division_resource_router.py"
+      - "buddy/resources/**"
+      - "config/review/masterbot-domain-crosswalk-owner-review.json"
+      - "config/review/division-owner-conversation-approval.json"
+      - "docs/architecture/DREAMCO_DIVISION_RESOURCE_READINESS.md"
+      - "schemas/division-huggingface-taxonomy-map.schema.json"
+      - "tools/build_division_huggingface_taxonomy_map.py"
+      - "tests/test_division_huggingface_taxonomy_map.py"
+      - "docs/architecture/DREAMCO_HUGGINGFACE_DIVISION_TAXONOMY.md"
+      - "buddy/datasets/**"
+      - "tests/test_buddy_cross_model_benchmark.py"
+      - "tools/create_buddy_model_benchmark.py"
+      - "tools/run_buddy_model_benchmark.py"
+      - "tests/test_buddy_dataset_hub_runtime.py"
+      - "tests/test_buddy_database_sources.py"
+      - "tests/test_buddy_database_router.py"
+      - "config/buddy-database-source-registry.json"
+      - "docs/BUDDY_DATABASE_ROUTING_CONTRACT.md"
+      - "tools/route_buddy_unknown_problem.py"
+      - "tools/run_buddy_training_job.py"
+      - "tools/create_buddy_training_job.py"
+      - "tools/build_dreamco_training_examples.py"
+      - "tests/test_dreamco_original_training_examples.py"
+      - "tools/register_buddy_dataset.py"
+      - "buddy/datasets/discovery_fleet.py"
+      - "buddy/datasets/license_policy.py"
+      - "tools/run_buddy_dataset_discovery.py"
+      - "tests/test_buddy_dataset_discovery_fleet.py"
+      - "docs/BUDDY_DATASET_HUB_RUNTIME_IMPLEMENTATION.md"
+      - "website/data/free-datasets.json"
+      - "docs/BUDDY_VIBE_CODING_REVERSE_ENGINEERING_DISTILLATION_AND_TRAINING.md"
+      - "docs/BUDDY_DATASET_HUB_AND_UNKNOWN_PROBLEM_ROUTER.md"
+      - "tools/validate_buddy_engineering_capabilities.py"
+      - "tests/test_buddy_engineering_capability_contract.py"
+      - "tools/build_buddy_dataset_routes.py"
+      - "tests/test_buddy_dataset_routing.py"
+      - "tools/build_division_model_fleet.py"
+      - "tests/test_division_model_fleet.py"
+      - "tools/dreamco_division_mastery_orchestrator.py"
+      - "tools/buddy_masterbot_training_lane.py"
+      - "tools/validate_dreamco_mastery_registry.py"
+      - "tests/test_dreamco_division_mastery_orchestrator.py"
+      - ".github/workflows/dreamco-division-mastery-engine.yml"
+      - ".github/workflows/buddy-failure-learning.yml"
+      - "tools/buddy_failure_learning.py"
+      - "tests/test_buddy_failure_learning.py"
+      - ".github/workflows/buddy-safe-repair.yml"
+      - "tools/buddy_safe_repair.py"
+      - "tests/test_buddy_safe_repair.py"
+      - "config/dreamco-universal-division-mastery-contract.json"
+      - "docs/architecture/DREAMCO_UNIVERSAL_DIVISION_MASTERY_STANDARD.md"
+      - "tests/test_universal_division_mastery_contract.py"
+      - "tools/build_division_learning_model_kits.py"
+      - "tests/test_division_learning_model_kits.py"
+      - "config/dreamco-500-model-benchmark-100-upgrade-roadmap.json"
+      - "tools/dreamco_benchmark_v2_engine.py"
+      - "tests/test_dreamco_benchmark_v2_engine.py"
+  schedule:
+    - cron: "41 13 * * *"
+    - cron: "41 1 * * *"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: dreamco-division-mastery-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  resource-readiness:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Compile Buddy resource routing helpers
+        run: python -m compileall -q buddy/resources buddy/datasets/discovery_fleet.py tools/build_division_resource_readiness_map.py
+      - name: Verify generated resource and owner-review manifests
+        run: python tools/build_division_resource_readiness_map.py --check
+      - name: Test 65 division resource bundles and model routing
+        run: python -m unittest tests.test_division_resource_readiness tests.test_division_resource_router tests.test_buddy_dataset_discovery_fleet tests.test_dreamco_division_mastery_orchestrator tests.test_universal_division_mastery_contract tests.test_division_learning_model_kits
+      - name: Validate universal division mastery contract JSON
+        run: python -m json.tool config/dreamco-universal-division-mastery-contract.json > /dev/null
+      - name: Validate 100-upgrade benchmark roadmap
+        run: python -m json.tool config/dreamco-500-model-benchmark-100-upgrade-roadmap.json > /dev/null
+      - name: Compile and test evidence-first benchmark primitives
+        run: |
+          python -m py_compile tools/dreamco_benchmark_v2_engine.py tests/test_dreamco_benchmark_v2_engine.py
+          python -m unittest tests.test_dreamco_benchmark_v2_engine
+      - name: Validate schemas and whitespace
+        run: |
+          python -m json.tool schemas/division-resource-readiness-map.schema.json > /dev/null
+          git diff --check
+
+  prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.plan.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - id: plan
+        name: Build and validate 65-division dependency-aware queue
+        run: |
+          MATRIX=$(python tools/dreamco_division_mastery_orchestrator.py --matrix)
+          echo "matrix=$MATRIX" >> "$GITHUB_OUTPUT"
+          python tools/build_masterbot_division_crosswalk.py --check
+          python tools/build_division_reconciliation.py --check
+          python -m unittest tests.test_division_reconciliation
+          python -m unittest tests.test_masterbot_division_crosswalk
+          python -m unittest tests.test_dreamco_division_mastery_orchestrator tests.test_division_model_fleet tests.test_buddy_engineering_capability_contract tests.test_buddy_dataset_routing tests.test_buddy_dataset_hub_runtime tests.test_buddy_database_sources tests.test_buddy_database_router tests.test_dreamco_original_training_examples tests.test_buddy_dataset_discovery_fleet tests.test_buddy_cross_model_benchmark tests.test_buddy_failure_learning tests.test_buddy_safe_repair
+          python tools/validate_buddy_engineering_capabilities.py
+          python tools/validate_dreamco_mastery_registry.py
+          python tools/build_division_model_fleet.py --check
+          python tools/build_division_model_fleet.py
+          python tools/build_division_huggingface_taxonomy_map.py --check
+          python -m unittest tests.test_division_huggingface_taxonomy_map
+          python tools/build_division_resource_readiness_map.py --check
+          python -m unittest tests.test_division_resource_readiness tests.test_division_resource_router
+          python tools/build_buddy_dataset_routes.py
+          python tools/build_division_learning_model_kits.py --write
+          python -m unittest tests.test_division_learning_model_kits
+      - name: Preserve canonical division and dataset queues
+        uses: actions/upload-artifact@v4
+        with:
+          name: dreamco-division-mastery-queue-${{ github.run_id }}
+          path: |
+            artifacts/division-mastery/division-mastery-queue.json
+            artifacts/buddy-dataset-hub/dataset-routes.json
+            config/generated/division-resource-readiness-map.json
+            config/review/masterbot-domain-crosswalk-owner-review.json
+          if-no-files-found: error
+          retention-days: 90
+      - name: Publish 195 untrained learning-kit manifests as an inspectable artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dreamco-195-division-learning-model-kits-${{ github.run_id }}
+          path: config/generated/division-learning-model-kits/
+          if-no-files-found: error
+          retention-days: 90
+
+  benchmark:
+    needs: prepare
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+      - run: npm ci
+      - name: Run division capability contract benchmark
+        run: |
+          mkdir -p artifacts/division-mastery
+          npx tsx tools/run_daily_division_benchmarks.ts --concurrency=8 > artifacts/division-mastery/division-contract-benchmark.json
+      - name: Record benchmark run as contract evidence only
+        if: always()
+        run: |
+          mkdir -p artifacts/division-mastery
+          printf '{"kind":"structural_contract_benchmark","run_id":"%s","commit":"%s","note":"This is not proof of model training or production mastery."}\n' "$GITHUB_RUN_ID" "$GITHUB_SHA" > artifacts/division-mastery/benchmark-run-metadata.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: division-contract-benchmark-${{ github.run_id }}
+          path: |
+            artifacts/division-mastery/benchmark-run-metadata.json
+            artifacts/division-mastery/division-contract-benchmark.json
+          if-no-files-found: warn
+          retention-days: 90
+
+  division-lanes:
+    needs: prepare
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    strategy:
+      fail-fast: false
+      max-parallel: 5
+      matrix: ${{ fromJSON(needs.prepare.outputs.matrix) }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Run dependency-gated safe tasks for this division
+        env:
+          GITHUB_RUN_ID: ${{ github.run_id }}
+          GITHUB_RUN_ATTEMPT: ${{ github.run_attempt }}
+        run: |
+          python tools/dreamco_division_mastery_orchestrator.py \
+            --run-lane \
+            --division-id "${{ matrix.division_id }}" \
+            --run-id "$GITHUB_RUN_ID" \
+            --commit-sha "$GITHUB_SHA"
+      - name: Preserve division-specific evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: division-mastery-${{ matrix.division_id }}-${{ github.run_id }}
+          path: |
+            artifacts/division-mastery/division-${{ matrix.division_id }}/run-${{ github.run_id }}.json
+            artifacts/masterbot-training/
+            reports/DREAMCO_MASTERY_DAILY_QUEUE.md
+          if-no-files-found: warn
+          retention-days: 90

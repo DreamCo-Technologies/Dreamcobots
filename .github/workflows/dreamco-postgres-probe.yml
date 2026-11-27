@@ -1,0 +1,34 @@
+name: DreamCo PostgreSQL Division Probe Tests
+
+on:
+  pull_request:
+    paths:
+      - "buddy/datasets/postgres_probe.py"
+      - "tests/test_buddy_postgres_probe.py"
+      - ".github/workflows/dreamco-postgres-probe.yml"
+      - "config/generated/division-resource-readiness-map.json"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: dreamco-postgres-probe-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  postgres-probe-unit-tests:
+    name: PostgreSQL probe safety tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Run focused unit tests
+        env:
+          PYTHONPATH: .
+        run: python -m unittest discover -s tests -p 'test_buddy_postgres_probe.py' -v
