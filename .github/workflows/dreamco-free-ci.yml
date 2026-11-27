@@ -1,0 +1,79 @@
+name: DreamCo Free CI and Benchmark Safety Gate
+
+on:
+  pull_request:
+    paths:
+      - "tools/dreamco_benchmark_v2_engine.py"
+      - "tests/test_dreamco_benchmark_v2_engine.py"
+      - "tools/run_500_model_benchmarks.py"
+      - "tools/generate_division_model_manifest.py"
+      - "config/dreamco-500-model-benchmark-100-upgrade-roadmap.json"
+      - "config/masterbot-65-registry.json"
+      - "config/division-model-training-policy.json"
+      - "config/generated/division-model-manifest.json"
+      - ".github/workflows/dreamco-free-ci.yml"
+      - "docs/architecture/DREAMCO_FREE_GITHUB_EXECUTION_PLAN.md"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: dreamco-free-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  free-ci:
+    name: Free, no-paid-inference validation
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout without persisted credentials
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Compile evidence and benchmark modules
+        run: |
+          python -m py_compile \
+            tools/dreamco_benchmark_v2_engine.py \
+            tools/run_500_model_benchmarks.py \
+            tools/generate_division_model_manifest.py \
+            tests/test_dreamco_benchmark_v2_engine.py
+      - name: Run evidence-first benchmark unit tests
+        run: python -m unittest tests.test_dreamco_benchmark_v2_engine -v
+      - name: Validate 100-upgrade roadmap structure
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          path = Path("config/dreamco-500-model-benchmark-100-upgrade-roadmap.json")
+          data = json.loads(path.read_text(encoding="utf-8"))
+          upgrades = [item for pillar in data["pillars"] for item in pillar["upgrades"]]
+          assert len(data["pillars"]) == 10, "expected exactly 10 pillars"
+          assert len(upgrades) == 100, f"expected 100 upgrades, found {len(upgrades)}"
+          assert len({item["id"] for item in upgrades}) == 100, "upgrade IDs must be unique"
+          assert all(item["status"] == "PLANNED" for item in upgrades), "unverified upgrades must not be marked implemented"
+          print("Validated 10 pillars / 100 planned upgrades; no implementation claims inferred.")
+          PY
+      - name: Verify canonical division-model manifest
+        run: python tools/generate_division_model_manifest.py --check
+      - name: Confirm 500-model runner remains fail-closed without approved execution
+        run: |
+          python tools/run_500_model_benchmarks.py --mode quick --out "$RUNNER_TEMP/dreamco-benchmark-status.json"
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          status = json.loads((Path(os.environ["RUNNER_TEMP"]) / "dreamco-benchmark-status.json").read_text())
+          assert status["status"] == "BLOCKED_RUNNER_NOT_IMPLEMENTED"
+          assert status["execution_started"] is False
+          assert status["provider_calls"] == 0
+          assert status["verified_results"] == 0
+          assert status["paid_calls_enabled"] is False
+          print("Safety gate confirmed: no model downloads, provider calls, paid calls, or fabricated scores.")
+          PY
+      - name: Check patch whitespace
+        run: git diff --check
