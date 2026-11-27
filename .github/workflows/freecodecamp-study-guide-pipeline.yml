@@ -93,9 +93,9 @@ jobs:
               "blockers": report["blockers"],
           }
           with open(os.environ["GITHUB_STEP_SUMMARY"], "a", encoding="utf-8") as stream:
-              stream.write("FreeCodeCamp division/video coverage audit\\n\\n")
-              stream.write("Inventory report only; not a study, mastery, ownership, or production certification.\\n\\n")
-              stream.write(json.dumps(summary, indent=2) + "\\n")
+              stream.write("FreeCodeCamp division/video coverage audit\n\n")
+              stream.write("Inventory report only; not a study, mastery, ownership, or production certification.\n\n")
+              stream.write(json.dumps(summary, indent=2) + "\n")
           PY
       - name: Upload division and video coverage audit
         if: always()
