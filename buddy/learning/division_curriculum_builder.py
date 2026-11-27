@@ -358,7 +358,7 @@ def build_manifest(catalog: dict[str, Any]) -> dict[str, Any]:
             "training_eligibility": course["training_eligibility"],
         })
     return {
-        "schema": "dreamco.buddy_division_specialist_course_artifacts.v1",
+        "schema": "dreamco.division_specialist_curriculum_catalog.v1",
         "version": "1.0.0",
         "status": "draft_generated_needs_owner_review",
         "ownership_class": "dreamco_owned",
