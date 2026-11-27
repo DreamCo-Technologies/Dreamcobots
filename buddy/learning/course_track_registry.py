@@ -676,8 +676,9 @@ def resources_for_division(division: str, root: Path = ROOT) -> list[Resource]:
         raise ValueError(f"unknown canonical division: {division}")
     return [
         Resource(id=lesson.resource_id, name=lesson.title, category=lesson.category, url=lesson.source_url,
-                 methods=("study_original_dreamco_guide", "practice_in_sandbox", "complete_assessment",
-                          "run_independent_benchmark", "record_evidence"))
+                 methods=("review_original_dreamco_lesson", "practice_in_sandbox", "complete_exercises",
+                          "complete_project", "complete_assessment", "run_independent_benchmark",
+                          "record_evidence", "trigger_targeted_retraining"))
         for lesson in load_course_lessons(root)
         if lesson.content_status == "authored"
         and lesson.learner_visible
