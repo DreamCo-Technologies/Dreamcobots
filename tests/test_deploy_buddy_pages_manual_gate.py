@@ -24,3 +24,13 @@ def test_production_evidence_ledger_is_refreshed_after_validation_before_pages_c
     refresh_position = commands.index("generate_production_evidence_ledger.py", check_position + 1)
     downstream_position = commands.index("build_manufacturer_marketplace_catalog.py")
     assert check_position < refresh_position < downstream_position
+
+
+def test_pages_preflight_checks_committed_evidence_before_regeneration():
+    workflow = yaml.safe_load((ROOT / ".github/workflows/deploy-buddy-pages.yml").read_text(encoding="utf-8"))
+    build_steps = workflow["jobs"]["build"]["steps"]
+    preflight = next(step for step in build_steps if step.get("name") == "Run deployment preflight")
+    commands = preflight["run"].splitlines()
+    check = commands.index("python3 tools/generate_production_evidence_ledger.py --check")
+    generate = commands.index("python3 tools/generate_production_evidence_ledger.py")
+    assert check < generate
