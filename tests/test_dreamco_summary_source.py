@@ -137,9 +137,10 @@ class DreamCoSummarySourceTests(unittest.TestCase):
         plan = select_next_for_division(
             "DreamAI", [Capability(name="AI", category="DreamAI")], self.organization
         )
+        selected_source = plan["source"]
         mismatched = StudyAuthorization(
-            source_name="example/guide",
-            source_url="https://example.org/guide",
+            source_name=selected_source["source_id"],
+            source_url=selected_source["url"],
             review_status="approved",
             allowed_operations=frozenset({"open_official_page"}),
             evidence_ref="wrong-evidence",
@@ -147,8 +148,8 @@ class DreamCoSummarySourceTests(unittest.TestCase):
         with self.assertRaises(PermissionError):
             execute_study_plan(plan, mismatched, lambda *_: {}, self.root / "workspace", self.progress, self.organization)
         write_access = StudyAuthorization(
-            source_name="example/guide",
-            source_url="https://example.org/guide",
+            source_name=selected_source["source_id"],
+            source_url=selected_source["url"],
             review_status="approved",
             allowed_operations=frozenset({"open_official_page", "download_media"}),
             evidence_ref="rights-review-1",
