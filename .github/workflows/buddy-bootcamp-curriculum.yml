@@ -4,6 +4,20 @@ on:
     paths:
       - ".github/workflows/buddy-bootcamp-curriculum.yml"
       - "tools/build_buddy_bootcamp_curriculum.py"
+      - "config/dreamco-universal-capability-taxonomy.json"
+      - "config/buddy-division-specialist-course-artifacts.json"
+      - "config/dreamco-universal-division-mastery-contract.json"
+      - "buddy/learning/division_curriculum_builder.py"
+      - "buddy/learning/course_track_registry.py"
+      - "buddy/learning/buddy_knowledge_router.py"
+      - "tools/build_buddy_division_curricula.py"
+      - "tools/build_division_learning_model_kits.py"
+      - "tests/test_buddy_division_curriculum_builder.py"
+      - "tests/test_buddy_course_track_registry.py"
+      - "tests/test_buddy_knowledge_router.py"
+      - "tests/test_division_learning_model_kits.py"
+      - "tests/test_buddy_bootcamp_model_kits_workflow.py"
+      - "docs/DREAMCO_UNIVERSAL_CAPABILITY_TAXONOMY.md"
       - "tests/test_buddy_bootcamp_curriculum.py"
       - "tools/build_buddy_dataset_routes.py"
       - "tests/test_buddy_dataset_route_check.py"
@@ -132,6 +146,20 @@ on:
     paths:
       - ".github/workflows/buddy-bootcamp-curriculum.yml"
       - "tools/build_buddy_bootcamp_curriculum.py"
+      - "config/dreamco-universal-capability-taxonomy.json"
+      - "config/buddy-division-specialist-course-artifacts.json"
+      - "config/dreamco-universal-division-mastery-contract.json"
+      - "buddy/learning/division_curriculum_builder.py"
+      - "buddy/learning/course_track_registry.py"
+      - "buddy/learning/buddy_knowledge_router.py"
+      - "tools/build_buddy_division_curricula.py"
+      - "tools/build_division_learning_model_kits.py"
+      - "tests/test_buddy_division_curriculum_builder.py"
+      - "tests/test_buddy_course_track_registry.py"
+      - "tests/test_buddy_knowledge_router.py"
+      - "tests/test_division_learning_model_kits.py"
+      - "tests/test_buddy_bootcamp_model_kits_workflow.py"
+      - "docs/DREAMCO_UNIVERSAL_CAPABILITY_TAXONOMY.md"
       - "config/masterbot-65-registry.json"
       - "config/generated/masterbot-55-domain-crosswalk.json"
       - "config/buddy-continuous-study-policy.json"
@@ -378,6 +406,14 @@ jobs:
           retention-days: 90
       - name: Build and validate curriculum
         run: |
+          python tools/build_division_learning_model_kits.py --write
+          python tools/build_division_learning_model_kits.py --check
+          python -m unittest tests.test_division_learning_model_kits -v
+          python tools/build_buddy_division_curricula.py --write
+          python tools/build_buddy_division_curricula.py --check
+          python -m unittest tests.test_buddy_division_curriculum_builder -v
+          python -m unittest tests.test_buddy_course_track_registry tests.test_buddy_knowledge_router -v
+          python -m unittest tests.test_buddy_bootcamp_model_kits_workflow -v
           python tools/build_buddy_bootcamp_curriculum.py
           python tools/build_buddy_bootcamp_curriculum.py --check
           python -m unittest discover -s tests -p 'test_buddy_bootcamp_curriculum.py' -v
@@ -418,6 +454,9 @@ jobs:
             ${{ runner.temp }}/freecodecamp-source-routes.json
             config/generated/daily-lesson-production-plan.json
             config/generated/buddy-bootcamp-curriculum.json
+            config/generated/division-learning-model-kits/
+            data/dreamco_training/division_curricula/
+            config/buddy-division-specialist-course-artifacts.json
           if-no-files-found: warn
           retention-days: 14
 
