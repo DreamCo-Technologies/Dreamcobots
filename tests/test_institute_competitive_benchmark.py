@@ -67,6 +67,10 @@ class CompetitiveBenchmarkTests(unittest.TestCase):
             path.write_text(json.dumps(manifest), encoding="utf-8")
             adapter = ["python", "-c", "print('{}')"]
             self.assertEqual(validate_candidate(path, checkpoint, tokenizer, adapter, "dreamcyber")["model_id"], "dreamcyber-45m")
+            tokenizer.write_bytes(b"tampered-tokenizer")
+            with self.assertRaises(ValueError):
+                validate_candidate(path, checkpoint, tokenizer, adapter, "dreamcyber")
+            tokenizer.write_bytes(b"tokenizer-v1")
             manifest["parameter_count"] = 45000000
             path.write_text(json.dumps(manifest), encoding="utf-8")
             with self.assertRaises(ValueError):
