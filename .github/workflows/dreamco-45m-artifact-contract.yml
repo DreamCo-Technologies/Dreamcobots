@@ -1,0 +1,31 @@
+name: DreamCo 45M Artifact Contract
+on:
+  pull_request:
+    paths:
+      - "tools/verify_45m_checkpoints.py"
+      - "tests/test_45m_checkpoint_gates.py"
+      - "baselines/competitor_registry.json"
+      - "docs/institute/VERIFIED_45M_ARTIFACT_CONTRACT.md"
+      - ".github/workflows/dreamco-45m-artifact-contract.yml"
+  push:
+    branches: [main]
+    paths:
+      - "tools/verify_45m_checkpoints.py"
+      - "tests/test_45m_checkpoint_gates.py"
+      - "baselines/competitor_registry.json"
+      - "docs/institute/VERIFIED_45M_ARTIFACT_CONTRACT.md"
+      - ".github/workflows/dreamco-45m-artifact-contract.yml"
+permissions:
+  contents: read
+jobs:
+  artifact-contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Run checkpoint contract tests
+        run: python -m unittest tests.test_45m_checkpoint_gates -v
+      - name: Verify available fleet artifacts (missing artifacts fail closed)
+        run: python tools/verify_45m_checkpoints.py
