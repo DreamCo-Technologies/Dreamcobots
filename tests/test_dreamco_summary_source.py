@@ -95,9 +95,13 @@ class DreamCoSummarySourceTests(unittest.TestCase):
         plan = select_next_for_division(
             "DreamAI", [Capability(name="AI", category="DreamAI")], self.organization
         )
+        selected_source = plan["source"]
+        self.assertEqual(selected_source["source_id"], "example/guide")
+        self.assertEqual(selected_source["url"], "https://example.org/guide")
+        self.assertEqual(selected_source["revision"], "rev-1")
         authorization = StudyAuthorization(
-            source_name="example/guide",
-            source_url="https://example.org/guide",
+            source_name=selected_source["source_id"],
+            source_url=selected_source["url"],
             review_status="approved",
             allowed_operations=frozenset({"open_official_page"}),
             evidence_ref="rights-review-1",
