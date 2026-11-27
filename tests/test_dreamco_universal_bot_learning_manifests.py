@@ -28,10 +28,10 @@ class UniversalBotLearningFoundryTests(unittest.TestCase):
   self.assertTrue(all(len(x["resources"])==100 for x in division_manifests))
   self.assertEqual({x["source_kind"] for x in manifests},{"canonical_fleet","legacy_original_bot_or_system","commercial_business_microbot"})
   business=[x for x in manifests if x["source_kind"]=="commercial_business_microbot"]
-  legacy_systems=[x for x in manifests if x["source_kind"]=="legacy_original_bot_or_system" and x["bot_id"].endswith("master-bot-system")]
+  legacy_systems=[x for x in manifests if x["source_kind"]=="legacy_original_bot_or_system" and x["bot_id"].startswith("legacy-original-bots-systems-")]
   self.assertTrue(all(x["model"]["target_parameters"]==18500000 for x in business))
-  self.assertEqual(len(legacy_systems),1)
-  self.assertEqual(legacy_systems[0]["model"]["target_parameters"],45000000)
+  self.assertEqual(len(legacy_systems),12)
+  self.assertTrue(all(x["model"]["target_parameters"]==45000000 for x in legacy_systems))
   self.assertEqual(index["counts"]["legacy_income_bots"],200)
   self.assertEqual(index["counts"]["legacy_major_systems"],12)
   self.assertEqual(index["counts"]["resource_slots_per_bot"],100)
