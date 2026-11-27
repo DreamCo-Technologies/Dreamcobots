@@ -64,6 +64,8 @@ on:
       - "tools/build_freecodecamp_routes.py"
       - "buddy/learning/freecodecamp_source.py"
       - "buddy/learning/study_resource_scheduler.py"
+      - "buddy/learning/task_runner.py"
+      - "config/generated/masterbot-55-domain-crosswalk.json"
       - "tests/test_study_resource_scheduler.py"
       - "tests/test_freecodecamp_source_routes.py"
       - "buddy/learning/study_artifact_cleanup.py"
@@ -207,6 +209,8 @@ on:
       - "tools/build_freecodecamp_routes.py"
       - "buddy/learning/freecodecamp_source.py"
       - "buddy/learning/study_resource_scheduler.py"
+      - "buddy/learning/task_runner.py"
+      - "config/generated/masterbot-55-domain-crosswalk.json"
       - "tests/test_freecodecamp_source_routes.py"
       - "buddy/learning/study_artifact_cleanup.py"
       - "tests/test_study_artifact_cleanup.py"
@@ -425,6 +429,7 @@ jobs:
           python tools/build_buddy_division_curricula.py --check
           python -m unittest tests.test_buddy_division_curriculum_builder -v
           python -m unittest tests.test_buddy_course_track_registry tests.test_buddy_knowledge_router -v
+          python -m unittest tests.test_buddy_learning_runtime_bridge tests.test_buddy_internal_first_learning_router -v
           python -m unittest tests.test_buddy_bootcamp_model_kits_workflow -v
           python tools/smoke_commandcore_bootcamp.py
           python -m unittest tests.test_commandcore_bootcamp_smoke -v
