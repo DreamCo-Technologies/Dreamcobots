@@ -43,8 +43,8 @@ def build_manifest(checkpoint: Path, evaluation_path: Path, training_config_path
     config = read_json(training_config_path)
     dataset = read_json(dataset_manifest_path)
     metrics = read_json(metrics_path)
-    if evaluation.get("split") != "evaluation_only_holdout" or evaluation.get("training_use") != "NEVER_TRAIN":
-        raise ValueError("evaluation report is not an isolated holdout report")
+    if evaluation.get("split") != "private_independent_holdout" or evaluation.get("training_use") != "NEVER_TRAIN":
+        raise ValueError("checkpoint promotion requires a private independent holdout report; public smoke suites are insufficient")
     if evaluation.get("passed") is not True or float(evaluation.get("accuracy", 0)) < float(evaluation.get("required_accuracy", 0.85)):
         raise ValueError("held-out evaluation did not pass")
     if dataset.get("training_authorized") is not True or dataset.get("rights_review_status") != "APPROVED":
