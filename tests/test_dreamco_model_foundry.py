@@ -2,7 +2,7 @@ import json
 import tempfile
 import unittest
 from pathlib import Path
-from scripts.dreamco_model_foundry import MODEL_BLUEPRINTS, build_catalog, build_buyer_foundry_kit, load_divisions
+from scripts.dreamco_model_foundry import MODEL_BLUEPRINTS, estimate_llama_parameters, build_catalog, build_buyer_foundry_kit, load_divisions
 from scripts.train_my_agent import preflight
 
 class ModelFoundryCommercialKitTests(unittest.TestCase):
@@ -11,8 +11,9 @@ class ModelFoundryCommercialKitTests(unittest.TestCase):
   skus=[x["sku"] for x in c["kits"]]; self.assertEqual(len(set(skus)),195)
   self.assertTrue(all(x["weights_included"] is False for x in c["kits"]))
   self.assertTrue(all(x["weights_status"]=="UNTRAINED_BLUEPRINT_READY_FOR_TRAINING" for x in c["kits"]))
- def test_canonical_divisions_and_tiers(self):
+ def test_canonical_divisions_tiers_and_exact_parameter_counts(self):
   self.assertEqual(len(load_divisions()),65); self.assertEqual(set(MODEL_BLUEPRINTS),{"45m-edge","350m-workstation","1b-sovereign"})
+  for spec in MODEL_BLUEPRINTS.values(): self.assertEqual(estimate_llama_parameters(spec["config"]),spec["parameter_target"])
  def test_buyer_kit_manifest_and_seal(self):
   with tempfile.TemporaryDirectory() as tmp:
    kit=build_buyer_foundry_kit("45m-edge",load_divisions()[0],Path(tmp)); m=json.loads((kit/"BUYER_MANIFEST.json").read_text())
