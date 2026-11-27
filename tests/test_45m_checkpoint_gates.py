@@ -66,7 +66,7 @@ class CheckpointGateTests(unittest.TestCase):
         checkpoint = self.directory / "model.safetensors"
         with checkpoint.open("r+b") as stream:
             stream.seek(-1, 2)
-            stream.write(b"\\x02")
+            stream.write(bytes([2]))
         with self.assertRaisesRegex(ValueError, "checkpoint_sha256"):
             validate_division(self.directory, "dreamcyber")
 
