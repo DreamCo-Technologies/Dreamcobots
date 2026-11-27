@@ -327,8 +327,8 @@ def evaluate_model(model: dict[str, Any], cases: list[dict[str, Any]], repeats: 
         "task_exact_match_rate": round(exact_passes / total, 4) if total else None,
         "routing_accuracy": round(route_passes / total, 4) if total else None,
         "deterministic_repeat_rate": round(deterministic_passes / len(cases), 4) if cases else None,
-        "latency_p50_ms": percentile(latencies, 0.50),
-        "latency_p95_ms": percentile(latencies, 0.95),
+        "adapter_round_trip_p50_ms": percentile(latencies, 0.50),
+        "adapter_round_trip_p95_ms": percentile(latencies, 0.95),
         "failure_rate": round(failures / total, 4) if total else None,
         "timeout_rate": round(timeouts / total, 4) if total else None,
         "split_metrics": split_metrics,
@@ -370,9 +370,9 @@ def run_benchmark(candidate_manifest: Path, candidate_checkpoint: Path, candidat
                 if candidate_result[metric] is not None and baseline[metric] is not None else None
                 for metric in ("contract_pass_rate", "task_exact_match_rate", "routing_accuracy", "deterministic_repeat_rate")
             },
-            "latency_p95_ratio_candidate_over_baseline": (
-                round(candidate_result["latency_p95_ms"] / baseline["latency_p95_ms"], 4)
-                if candidate_result["latency_p95_ms"] is not None and baseline["latency_p95_ms"] not in (None, 0) else None
+            "adapter_round_trip_p95_ratio_candidate_over_baseline": (
+                round(candidate_result["adapter_round_trip_p95_ms"] / baseline["adapter_round_trip_p95_ms"], 4)
+                if candidate_result["adapter_round_trip_p95_ms"] is not None and baseline["adapter_round_trip_p95_ms"] not in (None, 0) else None
             ),
         })
     return {
@@ -389,7 +389,7 @@ def run_benchmark(candidate_manifest: Path, candidate_checkpoint: Path, candidat
             "runner_platform": platform.platform(),
             "python_version": sys.version.split()[0],
             "cpu_identifier": platform.processor() or None,
-            "process_startup_included_in_latency": True,
+            "process_startup_included_in_adapter_round_trip": True,
         },
         "candidate": candidate_result,
         "baselines": baseline_results,
