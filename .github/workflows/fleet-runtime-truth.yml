@@ -176,7 +176,7 @@ jobs:
         with:
           python-version: "3.13"
       - run: npm ci
-      - run: python3 -m pip install --quiet pyyaml pytest -r requirements-buddy-learning.txt "soundfile>=0.12,<1" "Pillow>=10,<12"
+      - run: python3 -m pip install --quiet pyyaml pytest -r requirements-buddy-learning.txt "soundfile>=0.12,<1" "Pillow>=10,<12" "scipy>=1.11,<2"
       - name: Refresh generated evidence before the full folder audit
         run: |
           python3 tools/generate_bot_manifests.py
