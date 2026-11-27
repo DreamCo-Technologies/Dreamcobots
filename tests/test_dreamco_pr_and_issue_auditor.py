@@ -139,5 +139,20 @@ class AuditorTests(unittest.TestCase):
         self.assertEqual(audit("diff --git a/README.md b/README.md\n")["review_status"], "REVIEW_REQUIRED")
 
 
+    def test_windows_checkpoint_path_is_normalized_before_evidence_scope(self):
+        patch = (
+            "diff --git a/checkpoints\\\\buddy-sec\\\\model.safetensors b/checkpoints\\\\buddy-sec\\\\model.safetensors\\n"
+            "new file mode 100644\\n"
+            "--- /dev/null\\n"
+            "+++ b/checkpoints\\\\buddy-sec\\\\model.safetensors\\n"
+        )
+        report = audit(patch)
+        self.assertTrue(any(
+            item["code"] == "CHECKPOINT_WITHOUT_EVIDENCE"
+            and item["path"] == "checkpoints/buddy-sec/model.safetensors"
+            for item in report["gate_findings"]
+        ))
+
+
 if __name__ == "__main__":
     unittest.main()
