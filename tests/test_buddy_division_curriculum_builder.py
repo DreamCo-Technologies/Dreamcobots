@@ -2,7 +2,7 @@
 import unittest
 from pathlib import Path
 
-from buddy.learning.division_curriculum_builder import build_division_curricula
+from buddy.learning.division_curriculum_builder import ROOT, build_division_curricula
 
 
 class BuddyDivisionCurriculumBuilderTests(unittest.TestCase):
@@ -53,7 +53,7 @@ class BuddyDivisionCurriculumBuilderTests(unittest.TestCase):
     def test_all_source_portfolios_exist_and_match_their_division(self):
         catalog = build_division_curricula()
         for course in catalog["artifacts"]:
-            self.assertTrue((Path(course["source_portfolio"])).name)
+            self.assertTrue((ROOT / course["source_portfolio"]).is_file())
             self.assertEqual(course["source_profile_count"], len(course["source_profile_slugs"]))
             self.assertTrue(course["source_profile_count"] > 0)
 
