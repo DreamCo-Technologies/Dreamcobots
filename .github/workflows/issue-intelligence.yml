@@ -1,10 +1,12 @@
 name: Issue Intelligence
 
 on:
-  workflow_run:
-    workflows: ["Buddy Sandbox Bootcamp", "Actions Page Gate", "Actions Health", "Repository System Watch", "Buddy Preventive Engineering"]
-    types: [completed]
-    branches: [main]
+  workflow_dispatch:
+    inputs:
+      run_id:
+        description: Failed GitHub Actions run ID to triage
+        required: true
+        type: string
 
 permissions:
   actions: read
@@ -12,13 +14,13 @@ permissions:
   issues: write
 
 concurrency:
-  group: issue-intelligence-${{ github.event.workflow_run.id || github.run_id }}
+  group: issue-intelligence-${{ github.run_id }}
   cancel-in-progress: false
 
 jobs:
   triage:
     name: Triage completed workflow
-    if: ${{ github.event.workflow_run.conclusion == 'failure' }}
+    if: ${{ github.event_name == 'workflow_dispatch' }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -39,5 +41,5 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           GITHUB_REPOSITORY: ${{ github.repository }}
-          RUN_ID: ${{ github.event.workflow_run.id }}
+          RUN_ID: ${{ inputs.run_id }}
         run: python3 tools/issue_intelligence.py

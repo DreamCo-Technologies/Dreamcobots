@@ -9,6 +9,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[1]
+WORKFLOW = ROOT / ".github" / "workflows" / "buddy-continuous-learning-planner.yml"
 sys.path.insert(0, str(ROOT / "tools"))
 import buddy_masterbot_training_lane as lane
 import aggregate_masterbot_training_runs as aggregator
@@ -105,6 +106,16 @@ class MasterBotTrainingPlanTests(unittest.TestCase):
             with self.assertRaisesRegex(SystemExit, "MASTERBOT_NAME is required"):
                 lane.main()
 
+
+    def test_learning_system_changes_trigger_full_fleet_plan_sweep(self):
+        workflow = WORKFLOW.read_text(encoding="utf-8")
+        self.assertIn("push:", workflow)
+        self.assertIn('"config/masterbot-65-registry.json"', workflow)
+        self.assertIn('"tools/buddy_masterbot_training_lane.py"', workflow)
+        self.assertIn('mode="PULL_REQUEST_CONTRACT_SAMPLE"', workflow)
+        self.assertIn('mode="FULL_FLEET_SWEEP"', workflow)
+        self.assertIn("selected=divisions", workflow)
+        self.assertIn("aggregate_masterbot_training_runs.py", workflow)
 
     def test_continuous_learning_policy_separates_plans_from_training(self):
         policy = json.loads((ROOT / "config/buddy-continuous-learning-policy.json").read_text(encoding="utf-8"))

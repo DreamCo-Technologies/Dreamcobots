@@ -8,6 +8,8 @@ const webJsonPath = resolve(process.cwd(), "website", "data", "bot-fleet-e2e.jso
 const webScriptPath = resolve(process.cwd(), "website", "data", "buddy-capability-certifications.js");
 const webShardDir = resolve(process.cwd(), "website", "data", "bot-capability-tests");
 const checkOnly = process.argv.includes("--check");
+const writeOnly = process.argv.includes("--write-only");
+if (checkOnly && writeOnly) throw new Error("Choose either --check or --write-only, not both.");
 
 const report = FleetRuntimeRegistry.fromFile().certifyAllEndToEnd();
 const webIndex = {
@@ -98,13 +100,23 @@ if (checkOnly) {
   divisionShards.forEach((shard) => writeFileSync(shard.path, shard.content));
 }
 
+const canonicalDivisionCoverage = report.summary.divisionsTested === 56 &&
+  report.divisions.length === 56 &&
+  new Set(report.divisions.map((division) => division.division)).size === 56 &&
+  report.divisions.some((division) => division.division === "CommandCore") &&
+  report.divisions.filter((division) => division.division !== "CommandCore").length === 55;
+
 if (
-  !report.summary.repositoryControlledFlowComplete ||
-  !report.summary.allDeclaredCapabilitiesTested ||
-  report.summary.failed > 0 ||
-  report.summary.sandboxCapabilityTestsFailed > 0
+  !writeOnly &&
+  (
+    !canonicalDivisionCoverage ||
+    !report.summary.repositoryControlledFlowComplete ||
+    !report.summary.allDeclaredCapabilitiesTested ||
+    report.summary.failed > 0 ||
+    report.summary.sandboxCapabilityTestsFailed > 0
+  )
 ) {
   process.exitCode = 1;
 }
 
-console.log(JSON.stringify({ ok: report.summary.failed === 0, ...report.summary }, null, 2));
+console.log(JSON.stringify({ ok: report.summary.failed === 0 && canonicalDivisionCoverage, canonicalDivisionCoverage, ...report.summary }, null, 2));

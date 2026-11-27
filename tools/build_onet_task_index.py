@@ -38,7 +38,7 @@ def build_task_index(
     duplicate_count = 0
 
     for row in rows:
-        occupation_code = pick(row, "O*NET-SOC Code", "O*NET SOC Code", "occupation code")
+        occupation_code = pick(row, "O*NET-SOC Code", "O*NET SOC Code", "onetsoc_code", "occupation code")
         task_id = pick(row, "Task ID", "task id", "id")
         statement = pick(row, "Task", "Task Statement", "task statement", "title")
         if not occupation_code or not task_id or not statement:

@@ -24,6 +24,8 @@ jobs:
           python-version: "3.13"
       - name: Validate global government architecture
         run: python3 -m unittest tests.test_global_government_system
+      - name: Test authoritative fiscal fetch retry behavior
+        run: python3 -m unittest discover -s tests -p 'test_public_fiscal_data_refresh.py' -v
       - name: Refresh authoritative public fiscal data
         run: python3 tools/refresh_public_fiscal_data.py
       - name: Rebuild global government benchmarks

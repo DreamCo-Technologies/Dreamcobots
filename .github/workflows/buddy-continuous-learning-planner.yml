@@ -9,6 +9,14 @@ on:
       - "tools/aggregate_masterbot_training_runs.py"
       - "tests/test_buddy_masterbot_training_lane.py"
       - ".github/workflows/buddy-continuous-learning-planner.yml"
+  push:
+    branches: [main]
+    paths:
+      - "config/buddy-continuous-learning-policy.json"
+      - "config/masterbot-65-registry.json"
+      - "tools/buddy_masterbot_training_lane.py"
+      - "tools/aggregate_masterbot_training_runs.py"
+      - ".github/workflows/buddy-continuous-learning-planner.yml"
   schedule:
     - cron: "*/5 * * * *"
     - cron: "15 */6 * * *"

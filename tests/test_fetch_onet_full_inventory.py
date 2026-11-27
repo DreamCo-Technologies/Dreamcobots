@@ -1,7 +1,7 @@
 import unittest
 
 from tools.fetch_onet_task_curricula import (
-    DownloadLinkParser, discover_json_links, enrich_occupations, read_table_rows
+    DownloadLinkParser, discover_json_links, enrich_occupations, flatten_records, read_table_rows
 )
 
 
@@ -15,6 +15,18 @@ class OnetFullInventoryTests(unittest.TestCase):
             path.write_text(json.dumps({"data":[{"onetsoc_code":"15-1252.00","element_name":"Programming"}]}),encoding="utf-8")
             rows=read_table_rows(path)
         self.assertEqual(rows[0]["element_name"],"Programming")
+
+    def test_flatten_records_accepts_camel_case_task_statements_container(self):
+        document = {
+            "TaskStatements": {
+                "data": [
+                    {"O*NET-SOC Code": "15-1252.00", "Task ID": "1", "Task": "Write code"}
+                ]
+            }
+        }
+        rows = flatten_records(document)
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(rows[0]["Task ID"], "1")
 
     def test_current_page_link_discovery_uses_exact_json_file_names(self):
         parser=DownloadLinkParser()
@@ -75,7 +87,7 @@ class OnetFullInventoryTests(unittest.TestCase):
         self.assertEqual(playbook["occupation_profile_ref"],"15-1252.00")
         self.assertIn("Python",playbook["guide_authoring_brief"]["official_software_examples"])
         self.assertNotIn("software_skills",playbook.get("official_occupation_profile",{}))
-        self.assertEqual(enriched["source"]["license"].split(".")[0],"Creative Commons Attribution 4.0 International")
+        self.assertEqual(enriched["source"]["license"].split(";")[0],"Creative Commons Attribution 4.0 International")
 
 
 if __name__=="__main__":

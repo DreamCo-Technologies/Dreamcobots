@@ -703,7 +703,7 @@ def render_report(status: dict[str, Any], rows: list[dict[str, Any]]) -> str:
         items = policy.get(key, [])
         lines += [f"- **{key}** ({len(items)}) — {reasons[key]}: " + ", ".join(f"`{x}`" for x in items)]
     lines.append("")
-    return "\n".join(lines) + "\n"
+    return "\n".join(line.rstrip() for line in lines) + "\n"
 
 
 # ---------------------------------------------------------------- regression
