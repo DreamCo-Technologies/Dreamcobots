@@ -161,11 +161,17 @@ def build() -> tuple[dict[str,Any], list[dict[str,Any]]]:
     if len({x["bot_id"] for x in records})!=len(records): raise ValueError("Bot IDs collide; preserve identity and resolve duplicates.")
     manifests=[build_bot_manifest(x,"canonical_or_legacy_or_business") for x in records]
     division_records=[]
+    division_manifests=[]
     for item in master["divisions"]:
         division_records.append({"masterbot_id":int(item["id"]),"division":item["name"],"learning_division":True,
             "curriculum_status":"SEVEN_STAGE_PATH_PRESERVED_AND_EXTENDED_BY_100_SLOT_TEMPLATE",
             "model_family_target":"45M-edge-agent","model_status":"BLUEPRINT_TARGET_NOT_TRAINED",
             "resource_slot_template":"shared 100-slot learning template; division-personalized at materialization"})
+        division_manifests.append(build_bot_manifest({"bot_id":"MASTERBOT_"+str(int(item["id"])).zfill(2),"name":item["name"],"division":item["name"],
+            "capability_count":12,"focus_tags":["masterbot","division-orchestration"],"source_refs":["config/masterbot-65-registry.json"]},"masterbot_learning_division"))
+    for item in reconciliation["domain_divisions"]:
+        division_manifests.append(build_bot_manifest({"bot_id":"DOMAIN_"+slug(item["name"]),"name":item["name"],"division":item["name"],
+            "capability_count":12,"focus_tags":["domain-division","specialist-learning"],"source_refs":["config/generated/division-reconciliation.json"]},"domain_learning_division"))
     index={
         "schema":"dreamco.universal_bot_learning_foundry_index.v1",
         "status":"CURRICULUM_AND_BLUEPRINT_PLAN_ONLY",
@@ -173,7 +179,8 @@ def build() -> tuple[dict[str,Any], list[dict[str,Any]]]:
         "counts":{"canonical_fleet_entries":len(bots),"legacy_income_bots":200,"legacy_major_systems":12,
             "business_micro_bots":len(business["bots"]),"individual_bot_manifests":len(manifests),
             "masterbot_learning_divisions":len(division_records),"domain_learning_divisions":len(reconciliation["domain_divisions"]),
-            "resource_slots_per_bot":100,"resource_slots_if_materialized":len(manifests)*100},
+            "division_learning_manifests":len(division_manifests),
+            "resource_slots_per_bot":100,"resource_slots_if_materialized":(len(manifests)+len(division_manifests))*100},
         "model_aggregation":{"business_micro_bot_count":55,"business_micro_bot_target_each":18500000,
             "business_micro_bot_aggregate_target":1017500000,"aggregate_is_one_dense_model":False,
             "fleet_parameter_total":"NOT_ASSERTED; mixed-size targets and untrained weights"},
@@ -181,9 +188,10 @@ def build() -> tuple[dict[str,Any], list[dict[str,Any]]]:
             "route_policy":"select minimum necessary approved specialists; enforce primary division, permissions, sandbox, output contracts, evidence and human escalation"},
         "learning_divisions":division_records,
         "manifest_paths":[f"config/generated/dreamco-bot-learning-manifests/{slug(x['bot_id'])}.json" for x in records],
+        "division_manifest_paths":[f"config/generated/dreamco-bot-learning-manifests/{slug(x['bot_id'])}.json" for x in division_manifests],
         "truth_boundary":"This index is not proof of lessons authored, data ingested, models trained, tests passed, or production deployment."
     }
-    return index,manifests
+    return index,manifests,division_manifests
 
 def main() -> int:
     parser=argparse.ArgumentParser(description=__doc__)
@@ -192,7 +200,7 @@ def main() -> int:
     parser.add_argument("--out",type=Path,default=OUTPUT)
     parser.add_argument("--manifest-dir",type=Path,default=MANIFEST_DIR)
     args=parser.parse_args()
-    index,manifests=build()
+    index,manifests,division_manifests=build()
     rendered=json.dumps(index,indent=2,ensure_ascii=False)+"\n"
     if args.check:
         if not args.out.exists() or args.out.read_text(encoding="utf-8")!=rendered: raise SystemExit("Learning-foundry index is stale.")
@@ -200,7 +208,7 @@ def main() -> int:
     args.out.parent.mkdir(parents=True,exist_ok=True); args.out.write_text(rendered,encoding="utf-8")
     if args.materialize:
         args.manifest_dir.mkdir(parents=True,exist_ok=True)
-        for manifest in manifests:
+        for manifest in manifests+division_manifests:
             path=args.manifest_dir/(slug(manifest["bot_id"])+".json")
             path.write_text(json.dumps(manifest,indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
     print(json.dumps({"written":args.out.relative_to(ROOT).as_posix(),**index["counts"],"materialized":args.materialize},indent=2))
