@@ -1,5 +1,5 @@
 import unittest
-from buddy.bootcamp.provider_learning_libraries import LIBRARIES, catalog, search, validate
+from buddy.bootcamp.provider_learning_libraries import catalog, search, validate
 
 class ProviderLearningLibrariesTests(unittest.TestCase):
     def test_all_twelve_have_libraries(self):
