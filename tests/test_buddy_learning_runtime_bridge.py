@@ -78,10 +78,9 @@ class RuntimeBridgeTests(unittest.TestCase):
         self.assertEqual(self.bridge.sop_candidates("alice", "technical")[0]["steps"], [])
         self.assertFalse(self.bridge.coach("alice", "technical")["automated"])
 
-    def test_library_knowledge_is_internal_first_and_network_off_by_default(self):
-        result = self.bridge.library_knowledge("React", external_discovery=False)
+    def test_library_knowledge_never_performs_external_discovery(self):
+        result = self.bridge.library_knowledge("React", external_discovery=True)
         self.assertEqual(result["route"], "internal_knowledge_gap")
-        self.assertTrue(result["internal"]["seed_candidate_matches"])
         self.assertFalse(result["external_discovery_performed"])
         self.assertFalse(result["external_model_call_performed"])
 
@@ -92,43 +91,38 @@ class RuntimeBridgeTests(unittest.TestCase):
         self.assertGreaterEqual(report["review_required_guide_count"], 1)
         self.assertFalse(report["worldwide_completeness_claimed"])
 
-    def test_library_learning_queue_serves_internal_curriculum_without_mastery_claims(self):
+    def test_library_learning_queue_serves_dreamco_curriculum_with_owner_review_gate(self):
         queue = self.bridge.library_learning_queue(
-            division="DreamCodeLab", query="React", limit=10
+            division="DreamCodeLab", query="task", limit=10
         )
         self.assertEqual(queue["schema"], "dreamco.buddy_library_learning_queue.v1")
-        self.assertGreaterEqual(queue["available_count"], 1)
-        self.assertTrue(any("React" in item["title"] for item in queue["items"]))
-        self.assertTrue(all(
-            item["completion_status"] == (
-                "queued_not_studied" if item["content_status"] == "authored"
-                else "metadata_only" if item["content_status"] == "metadata_only"
-                else "authoring_backlog"
-            )
-            for item in queue["items"]
-        ))
-        self.assertTrue(all(
-            item["study_allowed"] is (item["content_status"] == "authored")
-            for item in queue["items"]
-        ))
-        self.assertTrue(all(
-            item["authoring_required"] is (item["content_status"] in {"authoring_backlog", "metadata_only"})
-            for item in queue["items"]
-        ))
+        self.assertEqual(queue["available_count"], 6)
+        self.assertEqual(queue["returned_count"], 6)
+        self.assertTrue(all(item["track_id"] == "dreamco-division-specialist" for item in queue["items"]))
+        self.assertTrue(all(item["source_url"] == "" for item in queue["items"]))
+        self.assertTrue(all(item["completion_status"] == "queued_for_owner_review" for item in queue["items"]))
+        self.assertTrue(all(item["study_allowed"] is False for item in queue["items"]))
+        self.assertTrue(all(item["authoring_required"] is True for item in queue["items"]))
+        self.assertTrue(all(item["exercise_ids"] and item["project_ids"] and item["assessment_ids"] for item in queue["items"]))
+        self.assertTrue(all(item["retraining_policy_id"] for item in queue["items"]))
         self.assertTrue(all(item["mastery_awarded"] is False for item in queue["items"]))
+        self.assertFalse(queue["external_discovery_performed"])
         self.assertFalse(queue["external_model_call_performed"])
 
-    def test_library_learning_queue_contains_all_seed_and_ecosystem_lanes(self):
+    def test_library_learning_queue_is_bounded_to_the_dreamco_division_course(self):
         queue = self.bridge.library_learning_queue(division="DreamCodeLab", limit=100)
-        self.assertGreaterEqual(queue["available_count"], 569)
-        self.assertEqual(queue["returned_count"], 100)
+        self.assertEqual(queue["available_count"], 6)
+        self.assertEqual(queue["returned_count"], 6)
+        self.assertEqual(queue["items"][0]["track_id"], "dreamco-division-specialist")
 
     def test_library_learning_queue_supports_masterbot_lanes(self):
         queue = self.bridge.library_learning_queue(
-            masterbot="DreamCodeLab", query="React", limit=5
+            masterbot="CommandCore", query="approval-aware routing", limit=5
         )
-        self.assertEqual(queue["masterbot"], "DreamCodeLab")
+        self.assertEqual(queue["masterbot"], "CommandCore")
         self.assertGreaterEqual(queue["returned_count"], 1)
+        self.assertTrue(all(item["track_id"] == "dreamco-division-specialist" for item in queue["items"]))
+        self.assertTrue(all("CommandCore" in item["masterbot_targets"] for item in queue["items"]))
 
     def test_library_learning_queue_requires_exactly_one_owner(self):
         with self.assertRaises(ValueError):
@@ -177,47 +171,38 @@ class RuntimeBridgeTests(unittest.TestCase):
 
 
 
-    def test_onet_outlines_are_discoverable_as_internal_authoring_backlog(self):
-        queue = self.bridge.bootcamp_learning_queue(
-            division="DreamCodeLab", query="worker requirements", limit=20
-        )
-        matches = [item for item in queue["items"] if item["track_id"] == "onet"]
-        self.assertTrue(matches)
-        self.assertTrue(all(item["completion_status"] == "authoring_backlog" for item in matches))
-        self.assertTrue(all(item["study_allowed"] is False for item in matches))
-        self.assertTrue(all(item["authoring_required"] is True for item in matches))
-        self.assertTrue(all(item["mastery_awarded"] is False for item in matches))
+    def test_external_provider_tracks_are_not_exposed_to_the_bootcamp_queue(self):
+        queue = self.bridge.bootcamp_learning_queue(division="DreamCodeLab", limit=100)
+        external_ids = {
+            "onet", "hugging-face", "freecodecamp", "huggingface-full",
+            "freecodecamp-video-catalog", "freecodecamp-specialist-learning-paths",
+            "freecodecamp-metadata-triage",
+        }
+        self.assertFalse(any(item["track_id"] in external_ids for item in queue["items"]))
+        self.assertTrue(all(item["source_url"] == "" for item in queue["items"]))
+        self.assertEqual(queue["track_ids"], ["dreamco-division-specialist"])
 
-    def test_freecodecamp_video_metadata_is_not_presented_as_study_content(self):
-        queue = self.bridge.bootcamp_learning_queue(
-            division="DreamCodeLab", query="fcc-video", limit=100
-        )
-        video_items = [item for item in queue["items"] if item["track_id"] == "freecodecamp-video-catalog"]
-        self.assertTrue(video_items)
-        self.assertTrue(all(item["completion_status"] == "metadata_only" for item in video_items))
-        self.assertTrue(all(item["study_allowed"] is False for item in video_items))
-        self.assertTrue(all(item["authoring_required"] is True for item in video_items))
-        self.assertTrue(all(item["mastery_awarded"] is False for item in video_items))
+    def test_external_metadata_is_not_presented_as_a_dreamco_lesson(self):
+        queue = self.bridge.bootcamp_learning_queue(division="DreamCodeLab", query="video metadata", limit=100)
+        self.assertFalse(any(item.get("source_video_id") for item in queue["items"]))
+        self.assertTrue(all(item["source_url"] == "" for item in queue["items"]))
 
-    def test_benchmark_guide_work_items_are_discoverable_in_internal_queue(self):
+    def test_division_benchmark_lessons_include_assessments_and_retraining(self):
         queue = self.bridge.bootcamp_learning_queue(
-            division="DreamCodeLab", query="long_context", limit=20
+            division="DreamCodeLab", query="benchmark", limit=20
         )
-        matches = [item for item in queue["items"] if item["track_id"] == "benchmark-guides"]
-        self.assertTrue(matches)
-        self.assertTrue(all(item["completion_status"] == "authoring_backlog" for item in matches))
-        self.assertTrue(all(item["study_allowed"] is False for item in matches))
-        self.assertTrue(all(item["authoring_required"] is True for item in matches))
-        self.assertTrue(all(item["mastery_awarded"] is False for item in matches))
-
-    def test_workforce_playbooks_appear_as_authoring_backlog_not_study_ready(self):
-        queue = self.bridge.bootcamp_learning_queue(
-            division="DreamCodeLab", query="government grants", limit=20
-        )
-        self.assertGreater(queue["authoring_backlog_count"], 0)
-        self.assertEqual(queue["study_ready_count"], 0)
         self.assertTrue(queue["items"])
-        self.assertTrue(all(item["completion_status"] == "authoring_backlog" for item in queue["items"]))
+        self.assertTrue(all(item["assessment_ids"] for item in queue["items"]))
+        self.assertTrue(all(item["retraining_policy_id"] for item in queue["items"]))
+        self.assertTrue(all(item["mastery_awarded"] is False for item in queue["items"]))
+
+    def test_generated_curriculum_stays_in_owner_review_until_approved(self):
+        queue = self.bridge.bootcamp_learning_queue(division="DreamCodeLab", limit=20)
+        self.assertEqual(queue["study_ready_count"], 0)
+        self.assertEqual(queue["authoring_backlog_count"], 6)
+        self.assertTrue(all(item["review_status"] == "draft_needs_owner_review" for item in queue["items"]))
+        self.assertTrue(all(item["training_eligibility"] == "internal_sandbox_practice_only" for item in queue["items"]))
+        self.assertTrue(all(item["completion_status"] == "queued_for_owner_review" for item in queue["items"]))
         self.assertTrue(all(item["study_allowed"] is False for item in queue["items"]))
         self.assertTrue(all(item["authoring_required"] is True for item in queue["items"]))
         self.assertTrue(all(item["mastery_awarded"] is False for item in queue["items"]))
@@ -229,29 +214,30 @@ class RuntimeBridgeTests(unittest.TestCase):
         self.assertEqual(self.bridge.coach("alice", "technical")["observations"], 0)
 
 
-    def test_bootcamp_learning_queue_exposes_all_internal_tracks(self):
+    def test_bootcamp_learning_queue_exposes_only_dreamco_owned_curriculum(self):
         queue = self.bridge.bootcamp_learning_queue(division="DreamCodeLab", limit=100)
         self.assertEqual(queue["schema"], "dreamco.buddy_bootcamp_learning_queue.v1")
-        self.assertGreater(queue["catalog_lesson_count"], 2000)
-        self.assertEqual(queue["returned_count"], 100)
-        self.assertTrue({"onet", "hugging-face", "huggingface-full", "freecodecamp",
-                         "freecodecamp-video-catalog", "tokenizer"}.issubset(set(queue["track_ids"])))
-        self.assertTrue(all(item["completion_status"] in {"queued_not_studied", "metadata_only", "authoring_backlog"} for item in queue["items"]))
-        self.assertTrue(all(item["mastery_awarded"] is False for item in queue["items"]))
-        self.assertTrue(all(item["study_allowed"] is (item["content_status"] == "authored") for item in queue["items"]))
-        self.assertTrue(all(item["authoring_required"] is (item["content_status"] in {"metadata_only", "authoring_backlog", "original_implementation_brief"}) for item in queue["items"]))
+        self.assertEqual(queue["catalog_lesson_count"], 330)
+        self.assertEqual(queue["available_count"], 6)
+        self.assertEqual(queue["returned_count"], 6)
+        self.assertEqual(queue["track_ids"], ["dreamco-division-specialist"])
+        self.assertTrue(all(item["completion_status"] == "queued_for_owner_review" for item in queue["items"]))
+        self.assertTrue(all(item["study_allowed"] is False for item in queue["items"]))
+        self.assertTrue(all(item["authoring_required"] is True for item in queue["items"]))
+        self.assertTrue(all(item["exercise_ids"] and item["project_ids"] and item["assessment_ids"] for item in queue["items"]))
         self.assertTrue(all(item["mastery_awarded"] is False for item in queue["items"]))
         self.assertFalse(queue["external_discovery_performed"])
         self.assertFalse(queue["external_model_call_performed"])
 
     def test_bootcamp_learning_queue_filters_and_supports_masterbot_lanes(self):
         queue = self.bridge.bootcamp_learning_queue(
-            masterbot="DreamCodeLab", query="hf-llm-course", limit=10
+            masterbot="CommandCore", query="approval-aware routing", limit=10
         )
-        self.assertEqual(queue["masterbot"], "DreamCodeLab")
+        self.assertEqual(queue["masterbot"], "CommandCore")
         self.assertGreaterEqual(queue["returned_count"], 1)
-        self.assertIn("huggingface-full", queue["track_ids"])
-        self.assertTrue(all(item["lesson_id"] == "hf-llm-course" for item in queue["items"]))
+        self.assertEqual(queue["track_ids"], ["dreamco-division-specialist"])
+        self.assertTrue(all("CommandCore" in item["masterbot_targets"] for item in queue["items"]))
+        self.assertTrue(all(item["source_url"] == "" for item in queue["items"]))
 
     def test_bootcamp_learning_queue_requires_exactly_one_owner_and_bounded_query(self):
         with self.assertRaises(ValueError):
@@ -264,30 +250,19 @@ class RuntimeBridgeTests(unittest.TestCase):
             self.bridge.bootcamp_learning_queue(division="DreamCodeLab", query="x" * 1001)
 
 
-    def test_specialist_learning_paths_are_scoped_and_demonstrable(self):
-        finance = self.bridge.bootcamp_learning_queue(
-            division="DreamFinance", query="algorithmic trading", limit=10
-        )
-        agents = self.bridge.bootcamp_learning_queue(
-            division="DreamAgents", query="algorithmic trading", limit=10
-        )
-        trade = self.bridge.bootcamp_learning_queue(
-            masterbot="DreamTrade", query="algorithmic trading", limit=10
-        )
-        finance_items = [item for item in finance["items"] if item.get("source_video_id") == "zH2Mg782XhA"]
-        agent_items = [item for item in agents["items"] if item.get("source_video_id") == "zH2Mg782XhA"]
-        trade_items = [item for item in trade["items"] if item.get("source_video_id") == "zH2Mg782XhA"]
-        self.assertTrue(any(item["track_id"] == "freecodecamp-specialist-learning-paths" for item in finance_items))
-        self.assertFalse(any(item["track_id"] == "freecodecamp-specialist-learning-paths" for item in agent_items))
-        self.assertTrue(any(item["track_id"] == "freecodecamp-specialist-learning-paths" for item in trade_items))
-        path = next(item for item in finance_items if item["track_id"] == "freecodecamp-specialist-learning-paths")
-        self.assertGreaterEqual(len(path["implementation_steps"]), 10)
-        self.assertTrue(path["buddy_demo"])
-        self.assertFalse(path["study_allowed"])
-        self.assertTrue(path["authoring_required"])
-        self.assertEqual(path["completion_status"], "authoring_backlog")
-
-
+    def test_division_and_masterbot_curricula_are_scoped_and_demonstrable(self):
+        finance = self.bridge.bootcamp_learning_queue(division="DreamFinance", limit=10)
+        agents = self.bridge.bootcamp_learning_queue(division="DreamAgents", limit=10)
+        commandcore = self.bridge.bootcamp_learning_queue(masterbot="CommandCore", limit=10)
+        self.assertEqual(len(finance["items"]), 6)
+        self.assertEqual(len(agents["items"]), 6)
+        self.assertTrue(all("DreamFinance" in item["division_targets"] for item in finance["items"]))
+        self.assertTrue(all("DreamAgents" in item["division_targets"] for item in agents["items"]))
+        self.assertTrue(all("CommandCore" in item["masterbot_targets"] for item in commandcore["items"]))
+        for queue in (finance, agents, commandcore):
+            self.assertEqual(queue["track_ids"], ["dreamco-division-specialist"])
+            self.assertTrue(all(item["exercise_ids"] and item["project_ids"] and item["assessment_ids"] for item in queue["items"]))
+            self.assertTrue(all(item["source_url"] == "" for item in queue["items"]))
 
     def test_query_ranks_exact_specialist_title_before_broad_shared_matches(self):
         def lesson(resource_id, title, objective, *, division_targets=()):
@@ -297,7 +272,7 @@ class RuntimeBridgeTests(unittest.TestCase):
                 practice="Build a safe, deterministic practice project.",
                 assessment="Verify the result with independent tests.",
                 benchmark="Task-matched holdout and regression.",
-                source_url="https://example.org/course", guide_path="fixture",
+                source_url="", guide_path="docs/DREAMCO_UNIVERSAL_CAPABILITY_TAXONOMY.md",
                 rights_mode="metadata_only", delivery="metadata_only",
                 content_status="metadata_only", division_targets=tuple(division_targets),
             )
@@ -320,34 +295,45 @@ class RuntimeBridgeTests(unittest.TestCase):
         self.assertEqual(result["items"][0]["title"], "Algorithmic Trading with Risk Controls")
 
 
-    def test_video_catalog_is_filtered_by_division_categories_and_shared_foundation(self):
-        def video(resource_id, title, categories, *, division_targets=(), track_id="freecodecamp-video-catalog"):
-            return CourseLesson(
-                resource_id=resource_id, lesson_id=f"video-{resource_id}", track_id=track_id,
-                title=title, category="video", objective="Original metadata-only learning candidate.",
-                practice="Verify source rights before authoring.", assessment="Require an independent project assessment.",
-                benchmark="Task-matched holdout and regression.", source_url="https://www.youtube.com/watch?v=fixture",
-                guide_path="metadata-only", rights_mode="metadata_only", delivery="metadata_only",
-                content_status="metadata_only", division_targets=tuple(division_targets),
-                source_video_id=f"fixture-{resource_id}", video_categories=tuple(categories),
-            )
+    def test_all_55_divisions_receive_six_dreamco_owned_lessons(self):
+        root = Path(__file__).resolve().parents[1]
+        crosswalk = json.loads((root / "config/generated/masterbot-55-domain-crosswalk.json").read_text(encoding="utf-8"))
+        for domain in crosswalk["domains"]:
+            division = domain["domain_name"]
+            with self.subTest(division=division):
+                queue = self.bridge.bootcamp_learning_queue(division=division, limit=10)
+                self.assertEqual(queue["available_count"], 6)
+                self.assertEqual(queue["track_ids"], ["dreamco-division-specialist"])
+                self.assertTrue(all(division in item["division_targets"] for item in queue["items"]))
+                self.assertTrue(all(item["source_url"] == "" for item in queue["items"]))
+                self.assertTrue(all(item["exercise_ids"] and item["project_ids"] and item["assessment_ids"] for item in queue["items"]))
 
-        lessons = [
-            video(1, "Shared Python foundations", ["python_and_automation"]),
-            video(2, "Finance database design", ["databases_and_sql"]),
-            video(3, "Unrelated CSS animation", ["html_css_and_accessibility"]),
-            video(4, "Explicit finance specialist override", ["html_css_and_accessibility"], division_targets=("DreamFinance",), track_id="freecodecamp-specialist-learning-paths"),
-            video(5, "Cybersecurity specialist route", ["cybersecurity_and_privacy"], division_targets=("DreamCyber",)),
-            video(6, "Spring Boot Java service", ["java_and_jvm"]),
-        ]
+    def test_external_metadata_tracks_are_filtered_before_learner_routing(self):
+        external = CourseLesson(
+            resource_id=1, lesson_id="external-reference", track_id="freecodecamp-video-catalog",
+            title="External metadata record", category="metadata", objective="Not learner content.",
+            practice="Internal rights review only.", assessment="Not an assessment.",
+            benchmark="Not a learner benchmark.", source_url="https://example.org/video",
+            guide_path="", rights_mode="metadata_only", delivery="internal_authoring_reference",
+            content_status="metadata_only", learner_visible=False,
+        )
+        internal = CourseLesson(
+            resource_id=2, lesson_id="dreamco-commandcore", track_id="dreamco-division-specialist",
+            title="CommandCore: Task Understanding", category="task_understanding",
+            objective="Understand a CommandCore task.", practice="Practice in an isolated sandbox.",
+            assessment="Verify a new CommandCore task.", benchmark="Holdout benchmark.",
+            source_url="", guide_path="docs/DREAMCO_UNIVERSAL_CAPABILITY_TAXONOMY.md",
+            rights_mode="dreamco_original_internal", delivery="internal_bootcamp",
+            content_status="authored", division_targets=("CommandCore",),
+            learner_visible=True, review_status="draft_needs_owner_review",
+            training_eligibility="internal_sandbox_practice_only",
+        )
         with patch("buddy.learning.runtime_bridge.resources_for_division", return_value=[]), \
-             patch("buddy.learning.runtime_bridge.load_course_lessons", return_value=lessons):
-            result = self.bridge.bootcamp_learning_queue(division="DreamFinance", limit=100)
-        ids = {item["source_video_id"] for item in result["items"]}
-        self.assertEqual(ids, {"fixture-1", "fixture-2", "fixture-4", "fixture-5", "fixture-6"})
-        self.assertTrue(all(item["video_categories"] for item in result["items"]))
-
-
+             patch("buddy.learning.runtime_bridge.load_course_lessons", return_value=[external, internal]):
+            queue = self.bridge.bootcamp_learning_queue(division="CommandCore", limit=10)
+        self.assertEqual(queue["track_ids"], ["dreamco-division-specialist"])
+        self.assertEqual([item["lesson_id"] for item in queue["items"]], ["dreamco-commandcore"])
+        self.assertTrue(all(item["source_url"] == "" for item in queue["items"]))
     def test_learning_queue_paginates_without_dropping_later_lessons(self):
         lessons = [
             CourseLesson(
@@ -355,7 +341,7 @@ class RuntimeBridgeTests(unittest.TestCase):
                 title=f"Shared curriculum lesson {index}", category="foundation",
                 objective="Study and practice a foundational skill.", practice="Complete a guided exercise.",
                 assessment="Pass the independent check.", benchmark="Regression benchmark.",
-                source_url="https://example.org/lesson", guide_path="fixture", rights_mode="original",
+                source_url="", guide_path="docs/DREAMCO_UNIVERSAL_CAPABILITY_TAXONOMY.md", rights_mode="original",
                 delivery="original", content_status="authored",
             )
             for index in range(205)
