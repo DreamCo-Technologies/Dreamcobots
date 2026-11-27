@@ -73,13 +73,15 @@ jobs:
           pr = os.environ["PR_NUMBER"]
           def gh(args):
               return subprocess.run(["gh", *args], text=True, check=True, capture_output=True).stdout
-          comments = json.loads(gh(["api", f"repos/{repo}/issues/{pr}/comments", "--paginate"]))
+          comment_pages = json.loads(gh(["api", f"repos/{repo}/issues/{pr}/comments", "--paginate", "--slurp"]))
+          comments = [item for page in comment_pages for item in page]
           existing = next((x for x in reversed(comments) if "<!-- dreamco-pr-audit -->" in x.get("body", "")), None)
           if existing:
               gh(["api", "--method", "PATCH", f"repos/{repo}/issues/comments/{existing['id']}", "-f", f"body={body}"])
           else:
               gh(["api", "--method", "POST", f"repos/{repo}/issues/{pr}/comments", "-f", f"body={body}"])
-          issues = json.loads(gh(["api", f"repos/{repo}/issues?state=open&per_page=100", "--paginate"]))
+          issue_pages = json.loads(gh(["api", f"repos/{repo}/issues?state=open&per_page=100", "--paginate", "--slurp"]))
+          issues = [item for page in issue_pages for item in page]
           ticket = next((x for x in issues if not x.get("pull_request") and x.get("title", "").startswith(f"[MR-FIX] PR #{pr} ")), None)
           needs_ticket = bool(report["gate_findings"] or report["mr_issues_queue"])
           if needs_ticket:
