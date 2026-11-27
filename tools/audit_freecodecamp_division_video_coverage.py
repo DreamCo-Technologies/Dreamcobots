@@ -191,7 +191,7 @@ def audit(root: Path = ROOT) -> dict[str, Any]:
         )
         for target_id in ids for module in MODULES
     }
-    missing_artifact_count = len(expected_keys - artifact_keys)
+    missing_artifact_count = (expected_artifacts - len(expected_keys)) + len(expected_keys - artifact_keys)
 
     inventory = catalog.get("inventory") if isinstance(catalog.get("inventory"), dict) else {}
     inventory_complete = (
