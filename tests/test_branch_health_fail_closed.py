@@ -27,7 +27,7 @@ class BranchHealthFailClosedTests(unittest.TestCase):
                 health.local_missing("unrelated-history")
 
     def test_local_branch_inventory_uses_api_protection_flags(self):
-        branch_line = "origin/example\\tdeadbeef\\t2026-11-09T00:00:00Z"
+        branch_line = "origin/example\tdeadbeef\t2026-11-09T00:00:00Z"
         completed = subprocess.CompletedProcess(["git"], 0, branch_line, "")
         with patch.object(health, "git", return_value=completed), patch.object(
             health, "api_branches", return_value=[{"name": "example", "protected": True}]
