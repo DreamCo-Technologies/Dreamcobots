@@ -69,11 +69,14 @@ class CheckpointGateTests(unittest.TestCase):
             validate_division(self.directory, "dreamcyber")
 
     def test_rejects_wrong_parameter_count(self) -> None:
-        bad = self.root / "wrong.safetensors"
-        write_safetensors(bad, 123)
-        self.assertEqual(safetensors_parameter_count(bad), 123)
+        checkpoint = self.directory / "model.safetensors"
+        write_safetensors(checkpoint, 123)
+        stamp_path = self.directory / "evidence_stamp.json"
+        evidence = json.loads(stamp_path.read_text())
+        evidence["checkpoint_sha256"] = hashlib.sha256(checkpoint.read_bytes()).hexdigest()
+        stamp_path.write_text(json.dumps(evidence))
         with self.assertRaisesRegex(ValueError, "parameter count"):
-            validate_division(self.directory, "dreamcyber") if False else (_ for _ in ()).throw(ValueError("parameter count mismatch"))
+            validate_division(self.directory, "dreamcyber")
 
 
 if __name__ == "__main__":
