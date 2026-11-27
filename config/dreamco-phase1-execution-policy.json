@@ -8,7 +8,8 @@
     "target_status": "TARGET_ONLY_NOT_INSTANTIATED"
   },
   "holdout": {
-    "suite": "evals/suites/dreamcodelab_execution_v1.json",
+    "public_smoke_suite": "evals/suites/dreamcodelab_execution_v1.json",
+    "certification_suite": "private_independent_holdout",
     "training_use": "NEVER_TRAIN",
     "minimum_accuracy": 0.85,
     "unknown_or_duplicate_predictions": "FAIL_CLOSED"
@@ -29,7 +30,7 @@
     "mastery_status_requires": [
       "trained_checkpoint",
       "signed_checkpoint_manifest",
-      "independent_holdout_pass",
+      "private_independent_holdout_pass",
       "regression_review",
       "safety_review",
       "human_release_approval"
