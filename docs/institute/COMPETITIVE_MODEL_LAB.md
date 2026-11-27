@@ -68,7 +68,7 @@ This does not confer a degree, certify production readiness, or authorize public
 
 ## Public baseline admission
 
-The baseline registry intentionally starts empty. To add a public model, first pin its exact repository ID and immutable revision, obtain the model artifact locally, verify its hash, review the applicable license and repository terms, record a license-review reference, and confirm benchmark execution is permitted. Then add its adapter command and artifact record to `config/institute-competitive-baselines.json`.
+The baseline registry intentionally starts empty. To add a public model, first pin its exact repository ID and immutable revision, obtain the model artifact locally, verify its hash, review the applicable license and repository terms, record a license-review reference, store hash-verified local license/permission evidence, and confirm benchmark execution is permitted. Pin the immutable 40-character model commit SHA. Then add its adapter command and artifact record to `config/institute-competitive-baselines.json`.
 
 A model's presence on a public model hub is not by itself permission to download, benchmark, train on, redistribute, or commercially use it. Do not substitute a different model revision when a baseline is unavailable.
 
