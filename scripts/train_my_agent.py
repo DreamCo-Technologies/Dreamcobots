@@ -2,7 +2,10 @@
 """Fail-closed buyer training preflight; backend execution is not enabled."""
 import argparse,json
 from pathlib import Path
-from dreamco_hardware_detector import detect
+try:
+    from .dreamco_hardware_detector import detect
+except ImportError:
+    from dreamco_hardware_detector import detect
 ROOT=Path(__file__).resolve().parents[1]
 def preflight(kit,execute=False):
  mpath=kit/"BUYER_MANIFEST.json"; cpath=kit/"blueprint/config.json"
