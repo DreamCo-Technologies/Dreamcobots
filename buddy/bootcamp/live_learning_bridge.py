@@ -169,11 +169,13 @@ def evaluate_learning_completion(event: Mapping[str, Any]) -> dict[str, Any]:
     weights_claimed = event.get("weights_trained", False)
     weights_trained = bool(weights_claimed and artifact_refs)
     promotion_evidence_present = bool(artifact_refs and provenance_refs)
+    external_assistance = bool(event.get("external_assistance", False))
     promote = bool(
         decision.promote
         and holdout_passed
         and event["status"] == "succeeded"
         and promotion_evidence_present
+        and not external_assistance
     )
     return {
         "schema": RESULT_SCHEMA,
@@ -186,7 +188,8 @@ def evaluate_learning_completion(event: Mapping[str, Any]) -> dict[str, Any]:
         "promote": promote,
         "promotion_reason": (
             "verified_success_with_holdout_regression_safety_and_provenance"
-            if promote else decision.reason if not decision.promote
+            if promote else "external_assistance_is_not_native_mastery"
+            if external_assistance else decision.reason if not decision.promote
             else "holdout_execution_or_evidence_blocks_promotion"
         ),
         "artifact_refs": artifact_refs,
