@@ -716,12 +716,27 @@ export function writeFleetCatalog({ check = false } = {}) {
   const compact = compactCatalog(catalog);
   const publicCatalog = compactCatalog(catalog, { includeSupplemental: true });
   const routingIndex = browserRoutingIndex(catalog);
-  const divisionShards = [...catalog.divisions, ...catalog.supplemental_divisions].map((division) => [
-    join(WEBSITE_SHARD_DIR, `${division.name}.json`),
+  const allBots = [...catalog.bots, ...catalog.supplemental_bots];
+  const domainDivisionNames = new Set(catalog.divisions.map((division) => division.name));
+  const supplementalDivisionNames = new Set(catalog.supplemental_divisions.map((division) => division.name));
+  // Every published identity.division must have a compact shard. Supplemental
+  // portfolios such as Dream3D remain portfolios, not additional domain divisions.
+  const shardNames = new Set([
+    ...domainDivisionNames,
+    ...supplementalDivisionNames,
+    ...allBots.map((bot) => bot.identity.division).filter(Boolean),
+  ]);
+  const divisionShards = [...shardNames].sort().map((name) => [
+    join(WEBSITE_SHARD_DIR, `${name}.json`),
     JSON.stringify({
       schema: "dreamco.bot_fleet_division.v2",
-      division: division.name,
-      bots: [...catalog.bots, ...catalog.supplemental_bots].filter((bot) => bot.identity.division === division.name),
+      division: name,
+      group_type: domainDivisionNames.has(name)
+        ? "domain_division"
+        : supplementalDivisionNames.has(name)
+          ? "supplemental_division"
+          : "portfolio_or_shared_group",
+      bots: allBots.filter((bot) => bot.identity.division === name),
     }),
   ] as const);
 
