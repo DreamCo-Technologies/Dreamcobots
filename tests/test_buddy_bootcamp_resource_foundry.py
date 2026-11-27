@@ -36,10 +36,10 @@ class BuddyBootcampGeneratorTests(unittest.TestCase):
             generator.validate_rights(rights, "test-source", "test-license")
 
     def test_challenge_has_schema_and_source_provenance(self):
-        division = {"id": 41, "name": "DreamCodeLab"}
+        division = {"id": 11, "slug": "dreamcodelab", "name": "DreamCodeLab"}
         challenge = generator.build_challenge(self.row, division, self.rights,
                                               "test-source", "test-license", 1)
-        self.assertEqual(challenge["division"]["id"], 41)
+        self.assertEqual(challenge["division"]["id"], 11)
         self.assertEqual(challenge["source"]["source_task_id"], "T-1")
         self.assertEqual(challenge["response_schema"]["type"], "object")
         self.assertEqual(challenge["provenance"]["holdout_split"], "NEVER_GENERATE_FROM_THIS_TOOL")
@@ -49,10 +49,19 @@ class BuddyBootcampGeneratorTests(unittest.TestCase):
         registry = json.loads((ROOT / "config/masterbot-65-registry.json").read_text())
         self.assertEqual(manifest["resource_count"], 100)
         self.assertEqual(len(manifest["resources"]), 100)
+        self.assertEqual(len(manifest["canonical_divisions"]), 55)
+        self.assertEqual(manifest["canonical_division_count"], 55)
+        self.assertEqual(len(manifest["masterbot_learning_lanes"]), 65)
+        self.assertEqual(manifest["masterbot_learning_lane_count"], 65)
         self.assertEqual(len(registry["divisions"]), 65)
         self.assertEqual(manifest["division_coverage"]["uncovered_ids"], [])
         self.assertEqual(set(manifest["division_coverage"]["covered_ids"]),
+                         {item["id"] for item in manifest["canonical_divisions"]})
+        self.assertEqual(manifest["masterbot_lane_coverage"]["uncovered_ids"], [])
+        self.assertEqual(set(manifest["masterbot_lane_coverage"]["covered_ids"]),
                          {item["id"] for item in registry["divisions"]})
+        self.assertTrue(all(item["domain_division_ids"] for item in manifest["resources"]))
+        self.assertTrue(all(item["masterbot_lane_ids"] for item in manifest["resources"]))
 
 
 if __name__ == "__main__":
