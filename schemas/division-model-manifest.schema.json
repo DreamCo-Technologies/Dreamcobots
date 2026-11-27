@@ -1,0 +1,215 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "DreamCo Division Model Manifest",
+  "type": "object",
+  "required": [
+    "schema",
+    "status",
+    "source_of_truth",
+    "source_blob_sha",
+    "division_count",
+    "records",
+    "truth"
+  ],
+  "properties": {
+    "schema": {
+      "const": "dreamco.division_model_manifest.v1"
+    },
+    "status": {
+      "const": "inventory_only_not_trained"
+    },
+    "source_of_truth": {
+      "const": "config/masterbot-65-registry.json"
+    },
+    "source_blob_sha": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{40}$"
+    },
+    "division_count": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "records": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "division_id",
+          "division_name",
+          "model_id",
+          "model_version",
+          "lifecycle_state",
+          "ownership_class",
+          "base_model",
+          "tokenizer",
+          "training",
+          "evaluation",
+          "serving",
+          "release_evidence"
+        ],
+        "properties": {
+          "division_id": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "division_name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "model_id": {
+            "type": "string",
+            "pattern": "^dreamco\\.division\\.[a-z0-9-]+$"
+          },
+          "model_version": {
+            "const": "0.0.0"
+          },
+          "lifecycle_state": {
+            "const": "planned"
+          },
+          "ownership_class": {
+            "const": "dreamco_first_party_candidate"
+          },
+          "base_model": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "tokenizer": {
+            "type": "object",
+            "required": [
+              "mode",
+              "reference"
+            ],
+            "properties": {
+              "mode": {
+                "const": "unselected"
+              },
+              "reference": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "additionalProperties": false
+          },
+          "training": {
+            "type": "object",
+            "required": [
+              "dataset_manifest",
+              "recipe",
+              "checkpoint",
+              "checkpoint_sha256"
+            ],
+            "properties": {
+              "dataset_manifest": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "recipe": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "checkpoint": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "checkpoint_sha256": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "additionalProperties": false
+          },
+          "evaluation": {
+            "type": "object",
+            "required": [
+              "suite",
+              "last_result"
+            ],
+            "properties": {
+              "suite": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "last_result": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "additionalProperties": false
+          },
+          "serving": {
+            "type": "object",
+            "required": [
+              "endpoint",
+              "deployment_revision"
+            ],
+            "properties": {
+              "endpoint": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "deployment_revision": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "additionalProperties": false
+          },
+          "release_evidence": {
+            "type": "object",
+            "required": [
+              "model_card",
+              "license_review",
+              "approval_record"
+            ],
+            "properties": {
+              "model_card": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "license_review": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "approval_record": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      }
+    },
+    "truth": {
+      "type": "string",
+      "minLength": 1
+    }
+  },
+  "additionalProperties": false
+}

@@ -2,13 +2,17 @@
 
 from __future__ import annotations
 
+import json
 import unittest
+from pathlib import Path
 
 from buddy.builder.division_audit import audit
 from buddy.builder.division_gaps import check
 from buddy.builder.division_resources import resources
 from buddy.builder.model_selection import select
 from buddy.builder.promotion_gate import promote
+
+ROOT = Path(__file__).resolve().parents[1]
 
 
 class BuddyOsEvidenceGateTests(unittest.TestCase):
@@ -24,7 +28,10 @@ class BuddyOsEvidenceGateTests(unittest.TestCase):
 
     def test_division_gaps_keep_every_division_not_working(self) -> None:
         report = check()
-        self.assertEqual(len(report["divisions"]), 40)
+        crosswalk = json.loads((ROOT / "config/generated/masterbot-55-domain-crosswalk.json").read_text(encoding="utf-8"))
+        expected = {row["domain_name"] for row in crosswalk["domains"]}
+        actual = {row["division"] for row in report["divisions"]}
+        self.assertEqual(actual, expected)
         self.assertEqual(report["working"], 0)
         self.assertFalse(report["production_ready"])
         self.assertTrue(all(row["working"] is False for row in report["divisions"]))

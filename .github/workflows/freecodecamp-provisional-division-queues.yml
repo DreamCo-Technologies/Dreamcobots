@@ -1,0 +1,25 @@
+name: FreeCodeCamp Provisional Division Queue Tests
+on:
+  pull_request:
+    paths:
+      - "tools/build_freecodecamp_division_queues.py"
+      - "tests/test_freecodecamp_division_queues.py"
+      - "docs/FREECODECAMP_PROVISIONAL_DIVISION_QUEUES.md"
+      - ".github/workflows/freecodecamp-provisional-division-queues.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: freecodecamp-provisional-queues-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: python -m pip install --disable-pip-version-check pytest
+      - run: python -m pytest -q tests/test_freecodecamp_division_queues.py

@@ -177,3 +177,8 @@ The Universal Learning Engine is successful when Buddy can demonstrate:
 `learn -> practice -> generalize -> verify -> remember -> transfer -> improve`
 
 with measurable gains in quality, reliability, efficiency and user outcomes.
+
+
+## Conversation-learning governance integration
+
+Conversation data follows the dedicated consent and privacy contract in `config/buddy-conversation-learning-governance.json`. Personal memory is single-user scoped. Product aggregates and cross-user lessons require explicit opt-ins, de-identification, a minimum cohort of 20, and exclusion of direct identifiers; shared lessons receive additional review. Foundation-model training has its own opt-in and rights/evidence gates. The candidate evaluator in `tools/buddy_conversation_learning_policy.py` is a deny-by-default policy check, not a transcript ingestion service or proof of runtime deployment.

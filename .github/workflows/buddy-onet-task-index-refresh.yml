@@ -1,0 +1,91 @@
+name: Buddy O*NET Task Index Refresh
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "11 8 1 * *"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: buddy-onet-task-index-refresh
+  cancel-in-progress: false
+
+jobs:
+  refresh-task-index:
+    if: github.repository == 'DreamCo-Technologies/Dreamcobots'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Download the official current O*NET task-statements export
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          import sys
+          from pathlib import Path
+          sys.path.insert(0, "tools")
+          from fetch_onet_task_curricula import fetch_current_export
+          payload, version, url = fetch_current_export()
+          temp = Path(os.environ["RUNNER_TEMP"])
+          temp.joinpath("onet-task-statements.json").write_bytes(payload)
+          temp.joinpath("onet-source-metadata.json").write_text(
+              json.dumps({"release_version": version, "official_download_url": url}),
+              encoding="utf-8",
+          )
+          print(json.dumps({"release_version": version, "download_bytes": len(payload), "source": url}))
+          PY
+      - name: Build compact task index with release and source-hash evidence
+        run: |
+          python tools/build_onet_task_index.py \
+            --input "$RUNNER_TEMP/onet-task-statements.json" \
+            --metadata "$RUNNER_TEMP/onet-source-metadata.json" \
+            --out data/onet/onet-task-index.json
+      - name: Validate task index and runtime routing
+        run: |
+          python -m py_compile tools/build_onet_task_index.py buddy/learning/course_track_registry.py
+          python -m unittest discover -s tests -p 'test_buddy_onet_task_index.py' -v
+          python -m unittest discover -s tests -p 'test_buddy_course_track_registry.py' -v
+      - name: Publish inventory and completeness evidence
+        run: |
+          python - <<'PY' >> "$GITHUB_STEP_SUMMARY"
+          import json
+          from pathlib import Path
+          data = json.loads(Path("data/onet/onet-task-index.json").read_text(encoding="utf-8"))
+          print("# O*NET task-index refresh")
+          print(json.dumps(data["inventory"], indent=2))
+          print()
+          print(data["truth_boundary"])
+          PY
+      - name: Propose refreshed task index
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          base: main
+          branch: automation/buddy-onet-task-index-refresh
+          delete-branch: false
+          add-paths: |
+            data/onet/onet-task-index.json
+          commit-message: "chore(learning): refresh O*NET task-level study index"
+          title: "chore(learning): refresh O*NET task-level study index"
+          body: |
+            ## Summary
+            - Refresh the public O*NET task-statements export and produce a compact task index.
+            - Preserve release version, official source URL, SHA-256 digest, attribution and task identities.
+            - Add one task-level study assignment per unique O*NET occupation/task pair through Buddy's course-track runtime.
+
+            ## Truth and safety
+            - Task metadata is not a detailed guide, occupational credential, license or proof of capability.
+            - Every task still requires original instruction, practice, task-specific AI/human suitability review, benchmark and unseen assessment.
+            - No model-weight training, paid compute or autonomous professional action is started.
+            - If the release or row count differs from the reviewed reference, the index remains review-required rather than claiming completeness.

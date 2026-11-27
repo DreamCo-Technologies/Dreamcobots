@@ -2,30 +2,8 @@ name: Parallel Benchmark Gap Builders
 
 on:
   workflow_dispatch:
-  push:
-    branches: [main]
-    paths:
-      - "config/**"
-      - "tools/**"
-      - "server/**"
-      - "client/**"
-      - "website/**"
-      - "dreamco_platform/**"
-      - "tests/**"
-      - "App_bots/**"
-      - ".github/workflows/parallel-benchmark-gap-builders.yml"
-  pull_request:
-    paths:
-      - "config/**"
-      - "tools/**"
-      - "server/**"
-      - "client/**"
-      - "website/**"
-      - "dreamco_platform/**"
-      - "tests/**"
-      - "App_bots/**"
-      - ".github/workflows/parallel-benchmark-gap-builders.yml"
-
+  schedule:
+    - cron: "47 5 * * *"
 permissions:
   contents: read
 
@@ -87,11 +65,16 @@ jobs:
         run: python3 tools/check_guardrails_benchmark_program.py
       - name: Regenerate canonical generated state
         run: |
+          python3 tools/generate_bot_manifests.py
           python3 tools/generate_repository_test_registry.py
           python3 tools/generate_dreamco_repository_master_map.py
           python3 tools/generate_buddy_benchmark_index.py
+          node --import tsx tools/generate_bot_fleet_catalog.ts
           node --import tsx tools/generate_dreamco_search_index.ts
           node --import tsx tools/generate_buddy_success_program.ts
+          python3 tools/refresh_buddy_technology_radar.py --project
+          python3 tools/refresh_buddy_technology_radar.py --check
+          python3 tools/generate_repository_test_registry.py
       - name: Regenerate gap plan
         run: python3 tools/plan_parallel_benchmark_gaps.py
       - name: Run lane-owned suites through universal verification

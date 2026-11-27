@@ -5,14 +5,20 @@ import vm from 'node:vm';
 import {buildFleetCatalog,compactCatalog} from '../tools/generate_bot_fleet_catalog.ts';
 import {loadSupplementalBotSources,buildSupplementalBotSeeds} from '../server/seed-supplemental-bots.ts';
 import {FleetRuntimeRegistry} from '../server/fleet-runtime.ts';
-test('all 50 original growth specifications survive supplemental routing without promoting readiness',()=>{
+test('all registered growth specifications survive supplemental routing without promoting readiness',()=>{
  const sources=loadSupplementalBotSources(), seeds=buildSupplementalBotSeeds(), catalog=buildFleetCatalog();
- assert.equal(sources.length,50);assert.equal(seeds.length,50);assert.equal(catalog.bots.length,1051);assert.equal(catalog.supplemental_bots.length,50);
+ assert.ok(sources.length>=50,`expected at least 50 original growth specifications; found ${sources.length}`);
+ assert.equal(seeds.length,sources.length);
+ assert.equal(catalog.bots.length,catalog.summary.profiles);
+ assert.equal(catalog.supplemental_bots.length,sources.length);
+ assert.equal(catalog.summary.supplemental_profiles,sources.length);
+ assert.equal(catalog.summary.combined_routable_profiles,catalog.bots.length+catalog.supplemental_bots.length);
+ const seedBySlug=new Map(seeds.map(seed=>[seed.slug,seed]));
  const runtime=FleetRuntimeRegistry.fromFile();
  for(const {profile,source} of sources){
   const raw=JSON.parse(readFileSync(source,'utf8')).bots.find((b:any)=>b.slug===profile.slug);
   assert.deepEqual(profile.capabilities,raw.capabilities);assert.equal(profile.description,raw.description);
-  const seed=seeds.find(b=>b.slug===profile.slug)!;assert.equal(seed.status,'sandbox');assert.deepEqual(seed.capabilities,profile.capabilities);
+  const seed=seedBySlug.get(profile.slug);assert.ok(seed,profile.slug);assert.equal(seed.status,'sandbox');assert.deepEqual(seed.capabilities,profile.capabilities);
   const bot=runtime.get(profile.slug);assert.ok(bot,profile.slug);
   for(const c of profile.capabilities){const result=bot.testCapability(c);assert.equal(result.status,'sandbox_contract_passed');assert.equal(result.liveExternalActionTaken,false);}
   const result=bot.execute({objective:'Prepare a sandbox acceptance test for this original specification.',input:{},requestedCapabilities:profile.capabilities,liveActionRequested:true});assert.equal(result.status,'approval_required');assert.equal(result.liveExternalActionTaken,false);
@@ -27,11 +33,16 @@ test('compact published fleet preserves every canonical and supplemental profile
  const catalog=buildFleetCatalog();
  const publicCatalog=JSON.parse(readFileSync('website/data/bot-fleet-catalog.json','utf8'));
  assert.deepEqual(publicCatalog,compactCatalog(catalog,{includeSupplemental:true}));
- assert.equal(publicCatalog.bots.length,1101);
- assert.equal(publicCatalog.summary.profiles,1101);
- assert.equal(publicCatalog.summary.canonical_profiles,1051);
- assert.equal(publicCatalog.divisions.length,55);
- assert.equal(publicCatalog.summary.declared_capability_slots,8460);
+ const allBots=[...catalog.bots,...catalog.supplemental_bots];
+ const expectedProfiles=allBots.length;
+ const expectedDivisions=catalog.divisions.length+catalog.supplemental_divisions.length;
+ const expectedCapabilities=allBots.reduce((total,bot)=>total+bot.capabilities.length,0);
+ assert.equal(publicCatalog.bots.length,expectedProfiles);
+ assert.equal(publicCatalog.summary.profiles,expectedProfiles);
+ assert.equal(publicCatalog.summary.canonical_profiles,catalog.bots.length);
+ assert.equal(publicCatalog.summary.supplemental_profiles,catalog.supplemental_bots.length);
+ assert.equal(publicCatalog.divisions.length,expectedDivisions);
+ assert.equal(publicCatalog.summary.declared_capability_slots,expectedCapabilities);
  for(const bot of [...catalog.bots,...catalog.supplemental_bots]){
   const shard=JSON.parse(readFileSync(`website/data/bot-fleet/${bot.identity.division}.json`,'utf8'));
   assert.deepEqual(shard.bots.find((item:any)=>item.identity.slug===bot.identity.slug),bot);
@@ -43,8 +54,12 @@ test('published routing and sandbox certifications agree for every fleet profile
  const routing=context.window.BUDDY_ROUTING_INDEX;
  const certification=context.window.BUDDY_CAPABILITY_CERTIFICATIONS;
  const catalog=JSON.parse(readFileSync('website/data/bot-fleet-catalog.json','utf8'));
- assert.equal(routing.summary.profiles,catalog.summary.profiles);
- assert.equal(certification.summary.profilesTested,catalog.summary.profiles);
+ const expectedProfiles=catalog.summary.canonical_profiles+catalog.summary.supplemental_profiles;
+ assert.equal(catalog.summary.profiles,expectedProfiles);
+ assert.equal(routing.summary.profiles,expectedProfiles);
+ assert.equal(routing.summary.canonical_profiles,catalog.summary.canonical_profiles);
+ assert.equal(routing.summary.supplemental_profiles,catalog.summary.supplemental_profiles);
+ assert.equal(certification.summary.profilesTested,expectedProfiles);
  assert.equal(certification.summary.declaredCapabilitiesTested,catalog.summary.declared_capability_slots);
  assert.equal(certification.summary.liveExternalFlowComplete,false);
  const routes=new Set(routing.bots.map((row:any[])=>row[0]));

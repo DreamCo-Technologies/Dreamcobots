@@ -1,0 +1,77 @@
+name: FreeCodeCamp Catalog Refresh
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "23 9 * * 1"
+permissions:
+  contents: write
+  pull-requests: write
+concurrency:
+  group: freecodecamp-catalog-refresh
+  cancel-in-progress: false
+jobs:
+  refresh-metadata-and-open-pr:
+    if: github.repository == 'DreamCo-Technologies/Dreamcobots'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install pinned metadata enumerator
+        run: python -m pip install --disable-pip-version-check "yt-dlp==2026.11.23"
+      - name: Enumerate the full public freeCodeCamp uploads playlist
+        run: |
+          python tools/sync_freecodecamp_catalog.py --out buddy/bootcamp/sources/freecodecamp/catalog.json
+          python tools/sync_freecodecamp_catalog.py --check --out buddy/bootcamp/sources/freecodecamp/catalog.json
+      - name: Synchronize course and division queue counts
+        run: |
+          python tools/sync_freecodecamp_learning_inventory.py
+          python tools/sync_freecodecamp_learning_inventory.py --check
+      - name: Build division queues with truthful inventory status
+        run: |
+          if python -c 'import json; from pathlib import Path; d=json.loads(Path("buddy/bootcamp/sources/freecodecamp/catalog.json").read_text()); i=d.get("inventory", {}); raise SystemExit(0 if d.get("inventory_status") == "complete" and i.get("complete") is True else 1)'; then
+            python tools/build_freecodecamp_division_queues.py --out config/generated/freecodecamp-division-learning-queues.json
+            rm -f config/generated/freecodecamp-provisional-division-learning-queues.json
+          else
+            python tools/build_freecodecamp_division_queues.py --allow-partial --out config/generated/freecodecamp-provisional-division-learning-queues.json
+            rm -f config/generated/freecodecamp-division-learning-queues.json
+          fi
+      - name: Validate curriculum, catalog, and division queue tests
+        run: |
+          python -m py_compile tools/sync_freecodecamp_catalog.py tools/sync_freecodecamp_learning_inventory.py tools/build_freecodecamp_division_queues.py buddy/learning/course_track_registry.py
+          python -m unittest discover -s tests -p 'test_freecodecamp_catalog.py' -v
+          python -m unittest discover -s tests -p 'test_freecodecamp_learning_inventory.py' -v
+          python -m unittest discover -s tests -p 'test_freecodecamp_division_queues.py' -v
+          python -m unittest discover -s tests -p 'test_buddy_course_track_registry.py' -v
+      - name: Open a reviewable catalog update PR
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: automation/freecodecamp-catalog-refresh
+          delete-branch: true
+          commit-message: "chore(learning): refresh freeCodeCamp public video metadata"
+          title: "chore(learning): refresh complete freeCodeCamp video catalog"
+          body: |
+            ## Summary
+            - Refresh public freeCodeCamp channel metadata from the official uploads playlist.
+            - Require yt-dlp's playlist count to match every parsed, non-null, unique video ID.
+            - Synchronize Buddy's video inventory and course-queue counts.
+
+            ## Safety
+            - Metadata only: no video, audio, captions, transcripts, comments or viewer data are downloaded.
+            - This does not grant training or redistribution rights.
+            - The PR updates the catalog and count manifests only; it does not train model weights or deploy services.
+
+            ## Completeness
+            - The catalog remains partial if upstream playlist count, enumerator version or unique ID coverage cannot be verified.
+            - All cataloged videos enter the shared Buddy course queue as metadata-only study candidates.
+          add-paths: |
+            buddy/bootcamp/sources/freecodecamp/catalog.json
+            config/freecodecamp-complete-learning-path.json
+            config/buddy-continuous-study-policy.json
+            config/generated/freecodecamp-division-learning-queues.json
+            config/generated/freecodecamp-provisional-division-learning-queues.json

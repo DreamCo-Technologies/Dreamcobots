@@ -1,0 +1,61 @@
+name: Model Foundry Training Authorization
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "buddy/learning/model_foundry.py"
+      - "tools/train_buddy_division_model.py"
+      - "tests/test_model_foundry.py"
+      - "tests/test_train_buddy_division_model_cli.py"
+      - "tests/test_model_foundry_training_smoke.py"
+      - "config/buddy-25m-cpu-architecture-profile.json"
+      - "config/buddy-small-cpu-architecture-profile.json"
+      - "config/authorized-training-datasets/manifest.json"
+      - ".github/workflows/model-foundry-training-authorization.yml"
+  pull_request:
+    paths:
+      - "buddy/learning/model_foundry.py"
+      - "tools/train_buddy_division_model.py"
+      - "tests/test_model_foundry.py"
+      - "tests/test_train_buddy_division_model_cli.py"
+      - "tests/test_model_foundry_training_smoke.py"
+      - "config/buddy-25m-cpu-architecture-profile.json"
+      - "config/buddy-small-cpu-architecture-profile.json"
+      - "config/authorized-training-datasets/manifest.json"
+      - ".github/workflows/model-foundry-training-authorization.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: model-foundry-authorization-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  authorization-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Verify training gates without starting a training run
+        run: |
+          python -m unittest tests.test_model_foundry tests.test_train_buddy_division_model_cli
+          python -m py_compile buddy/learning/model_foundry.py tools/train_buddy_division_model.py
+      - name: Install pinned CPU-only PyTorch for synthetic training smoke
+        run: python -m pip install --disable-pip-version-check --index-url https://download.pytorch.org/whl/cpu "torch==2.7.1+cpu"
+      - name: Run real CPU model-weight training on synthetic CI-only data
+        env:
+          DREAMCO_MODEL_FOUNDRY_SMOKE_OUTPUT: artifacts/model-foundry-ci/${{ github.run_id }}
+        run: python -m unittest discover -s tests -p "test_model_foundry_training_smoke.py" -v
+      - name: Upload experimental synthetic checkpoint and training evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: buddy-synthetic-model-checkpoint-${{ github.run_id }}
+          path: artifacts/model-foundry-ci/${{ github.run_id }}/private/checkpoints/*
+          if-no-files-found: error
+          retention-days: 7

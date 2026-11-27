@@ -1,10 +1,6 @@
 name: Keep Green
 
 on:
-  push:
-    branches: [main]
-  pull_request:
-    branches: [main]
   workflow_dispatch:
   schedule:
     - cron: "17 */6 * * *"
@@ -14,7 +10,7 @@ permissions:
 
 concurrency:
   group: keep-green-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   repository-contract:
@@ -35,6 +31,10 @@ jobs:
         run: |
           npm run markdown:audit:check
           python3 -m unittest tests.test_markdown_requirements_audit
+      # Rebuild this generated index in the CI workspace before syntax checks.
+      # Artifact freshness remains enforced by the dedicated Pages generator gate.
+      - name: Regenerate derived Pages connection index for JSON validation
+        run: python3 tools/build_pages_connection_index.py
       - name: Validate JSON files
         run: |
           python3 - <<'PY'
@@ -67,6 +67,12 @@ jobs:
       - name: Install dependencies when package-lock exists
         run: npm ci --ignore-scripts
         if: hashFiles('package-lock.json') != ''
+      - name: Install workflow prospectus parser
+        run: python3 -m pip install PyYAML
+      - name: Refresh Actions workflow inventory and prospectus
+        run: |
+          python3 tools/audit_actions_health.py
+          python3 tools/build_actions_prospectus.py
       - name: Run Actions page test suite
         run: npm run test:actions-page
 

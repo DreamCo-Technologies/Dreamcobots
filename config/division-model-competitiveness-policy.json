@@ -1,0 +1,150 @@
+{
+  "schema": "dreamco.division_model_competitiveness.v1",
+  "version": "1.0.0",
+  "objective": "Make every canonical MasterBot/division independently capable as a domain-specialized model system, with evidence-backed competitiveness against current open-weight models.",
+  "scope": {
+    "canonical_masterbots": 65,
+    "domain_divisions_target": 45,
+    "masterbot_to_domain_crosswalk": "REQUIRED_NOT_YET_VERIFIED",
+    "profile_generation": "one independent model profile and training/evaluation lane per canonical MasterBot"
+  },
+  "architecture": {
+    "division_model": "A division-owned model system with a versioned model identity, approved open-weight base model, division-specific adapter or checkpoint, domain retrieval corpus, tools, policy, memory namespace, evaluation suite, and deployment manifest.",
+    "independence": "Each division can complete its own domain tasks without requiring Buddy to solve the task; Buddy may route, delegate, compare, and coordinate but is not a hidden dependency for division acceptance.",
+    "shared_foundation": "Base weights, tokenizer, inference runtime, safety infrastructure, and common adapters may be shared where licenses and compatibility permit. Division-specific adapters, retrieval indexes, tool permissions, evaluations, model cards, and release records remain separately versioned.",
+    "training_strategy": [
+      "benchmark candidate open-weight base models before selection",
+      "start with prompting, retrieval, tool use, and structured workflows",
+      "use LoRA/QLoRA or other parameter-efficient tuning when evaluation shows a repeatable gap",
+      "consider continued pretraining or full fine-tuning only with rights-cleared data, approved compute, and reproducible baselines",
+      "train a foundation model from scratch only as a separately approved research program"
+    ],
+    "no_fake_independence": "A prompt template or renamed API endpoint alone does not qualify as an independently capable division model."
+  },
+  "per_division_required_assets": [
+    "stable_division_model_id",
+    "mission_and_domain_scope",
+    "primary_masterbot_owner",
+    "45_domain_crosswalk_status",
+    "approved_base_model_and_license",
+    "model_card_and_version",
+    "division_adapter_or_explicit_no_adapter_rationale",
+    "domain_dataset_manifest_and_rights",
+    "tenant_scoped_retrieval_index",
+    "tool_and_runtime_capability_contract",
+    "task_runner_and_sandbox",
+    "domain_benchmark_suite",
+    "general_capability_regression_suite",
+    "held_out_private_evaluation_set",
+    "baseline_and_candidate_scores",
+    "latency_throughput_memory_and_cost_profile",
+    "safety_and_permission_tests",
+    "lineage_and_evidence_hashes",
+    "rollback_and_release_plan"
+  ],
+  "lifecycle": [
+    "profiled",
+    "base_model_selected",
+    "domain_data_ready",
+    "baseline_measured",
+    "adaptation_ready",
+    "sandbox_trained_or_configured",
+    "domain_benchmarked",
+    "general_regression_passed",
+    "independent_review",
+    "release_eligible",
+    "mastered"
+  ],
+  "benchmark_policy": {
+    "comparison_rules": [
+      "compare same task, prompt, tool access, context, decoding settings, precision, and hardware class",
+      "report parameter count and active parameters for MoE models",
+      "report model weights/license and inference stack",
+      "repeat runs and report confidence intervals where applicable",
+      "separate public benchmark scores from private held-out scores",
+      "track contamination risk and benchmark version",
+      "compare cost, latency, throughput, memory, and reliability as well as accuracy"
+    ],
+    "shared_general_suite": [
+      "instruction_following",
+      "knowledge_and_reasoning",
+      "math_and_science",
+      "coding_and_repository_tasks",
+      "long_context_retrieval",
+      "tool_use_and_agentic_completion",
+      "factuality_and_calibration",
+      "multilingual_and_multimodal_when_in_scope",
+      "safety_and_policy_compliance"
+    ],
+    "domain_suite_per_division": [
+      "expert-authored task set",
+      "realistic end-to-end workflow tasks",
+      "tool/runtime integration tasks",
+      "adversarial and edge-case tasks",
+      "private held-out tasks",
+      "regression cases from verified failures"
+    ],
+    "external_reference_sources": [
+      "Artificial Analysis Intelligence Index and methodology",
+      "Hugging Face Open LLM Leaderboard and evaluation documentation",
+      "LiveCodeBench or equivalent time-sensitive coding evaluation where applicable",
+      "SWE-bench Verified/Pro or equivalent repository task evaluation where applicable",
+      "GPQA Diamond and HLE where domain-appropriate"
+    ],
+    "promotion_targets": {
+      "domain_quality": "candidate must exceed approved baseline and meet a pre-registered division-specific target on private held-out tasks",
+      "frontier_comparison": "report rank/score gap to the strongest license-compatible open-weight models on comparable evaluations; no blanket claim of frontier parity",
+      "non_regression": "no critical regression in general, safety, privacy, tool permissions, or reliability suites",
+      "economics": "meet division-specific latency, memory, throughput, and cost budgets",
+      "reproducibility": "independent rerun from pinned artifacts must reproduce within declared tolerance"
+    }
+  },
+  "data_and_privacy": {
+    "default": "deny",
+    "require_provenance_and_rights": true,
+    "user_data_requires_purpose_specific_opt_in": true,
+    "personal_memory_shared_learning_and_foundation_model_training_are_separate_consents": true,
+    "raw_conversations_into_shared_training": false,
+    "third_party_personal_data_requires_authority": true,
+    "holdout_data_must_never_enter_training_or_tuning": true,
+    "tenant_isolation_required": true,
+    "withdrawal_and_deletion_propagation_required": true
+  },
+  "execution": {
+    "task_runner": "division-specific allowlisted sandbox runner",
+    "dependency_aware": true,
+    "bounded_parallelism": true,
+    "persistent_run_records": true,
+    "retry_policy": "bounded retries; classify failures; do not loop on unchanged blockers",
+    "scheduled_work": "best-effort CI schedule; not a 24x7 compute guarantee",
+    "resource_budget": "per-division quotas and explicit user approval for paid compute",
+    "production_safety_hold": true,
+    "auto_merge": false,
+    "auto_deploy": false,
+    "automatic_production_weight_updates": false
+  },
+  "promotion_gate": {
+    "requires": [
+      "pinned_base_model_and_adapter",
+      "data_rights_and_provenance",
+      "dataset_manifest_and_split_hashes",
+      "baseline_and_candidate_scores",
+      "private_holdout_pass",
+      "general_regression_pass",
+      "safety_and_permission_pass",
+      "cost_latency_memory_report",
+      "reproducible_run_artifacts",
+      "tested_commit_sha",
+      "independent_reviewer_approval"
+    ],
+    "result": "eligible_for_human_review_only",
+    "no_automatic_release": true
+  },
+  "honesty_rules": [
+    "A logical training lane is not a trained model.",
+    "A generated model profile is not proof of domain capability.",
+    "A contract benchmark is not a model-quality benchmark.",
+    "Do not claim competitiveness without comparable benchmark evidence.",
+    "Do not mark mastery without independent held-out evidence and sustained regression-free operation."
+  ]
+}

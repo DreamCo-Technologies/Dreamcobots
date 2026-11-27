@@ -12,14 +12,29 @@ tracks:
   - web_mobile
   - math_statistics
   - occupational_real_world
+  - freecodecamp_source_learning
+  - hugging_face_dataset_and_model_learning
+  - ollama_local_model_learning
+  - division_language_model_research
+  - model_foundry_from_scratch
+  - tokenizer_engineering
+  - cpu_first_25m_llm_architecture
+  - tolkien_studies
+  - onet_full_content_model_and_task_engineering
+  - huggingface_full_learning_map
+  - freecodecamp_complete_video_catalog
+  - universal_software_libraries_and_frameworks
 stages:
   - diagnose
   - select_resource
+  - rights_review
   - study
+  - original_study_guide
   - sandbox
   - targeted_benchmark
   - holdout
   - regression
+  - spaced_retrieval
   - promote
 rules:
   select_resource: highest_expected_gain_per_minute
@@ -29,6 +44,216 @@ rules:
   require_regression_for_mastery: true
   preserve_original_model_catalog: true
   client_data_training_default: false
+  continuous_study_policy: config/buddy-continuous-study-policy.json
+  course_track_registry: config/buddy-course-track-registry.json
+  course_source_catalog: config/buddy-course-source-resources.json
+  course_track_runtime_adapter: buddy.learning.course_track_registry
+  original_study_guide_template: buddy/bootcamp/templates/study-guide-template.md
+learning_sources:
+  - id: universal_software_libraries
+    name: Universal software library and framework catalog
+    curriculum: config/buddy-universal-library-curriculum.json
+    guide_schema: config/buddy-library-study-guide.schema.json
+    guide_standard: docs/BUDDY_UNIVERSAL_LIBRARY_STUDY_GUIDE_STANDARD.md
+    runtime_adapter: buddy.learning.universal_library_registry
+    scheduler: buddy.learning.course_track_registry
+    internal_search: search_internal_library_knowledge
+    gap_recorder: record_library_knowledge_gap
+    coverage_report: library_coverage_report
+    host_bridge: buddy.learning.runtime_bridge.BuddyLearningBridge.library_knowledge
+    study_queue: buddy.learning.runtime_bridge.BuddyLearningBridge.library_learning_queue
+    coverage_report: buddy.learning.runtime_bridge.BuddyLearningBridge.library_coverage
+    study_queue_scope: all_55_canonical_divisions_and_65_masterbot_lanes
+    study_queue_completion_default: queued_not_studied
+    study_queue_mastery_default: false
+    unknown_problem_router: buddy.datasets.unknown_router.route_problem
+    unknown_problem_router_checks_library_queries: true
+    internal_retrieval_engine: foundry.local_rag.LocalRagStore.tfidf
+    external_discovery_requires_explicit_host_opt_in: true
+    gap_persistence_requires_redacted_query: true
+    gap_storage: .dreamco/library-knowledge-gaps.jsonl
+    general_external_model_routing_on_gap: false
+    cli: tools/buddy_library_knowledge.py
+    registry_adapters: config/buddy-library-registry-adapters.json
+    ecosystem_adapter_coverage: config/buddy-library-ecosystem-adapter-coverage.json
+    automated_ecosystem_discovery_count: 10
+    manual_ecosystem_review_count: 28
+    metadata_discovery: buddy.learning.library_registry_discovery.search_public_registry
+    metadata_discovery_network_default: disabled
+    metadata_discovery_requires_explicit_opt_in: true
+    guide_draft_builder: tools/create_buddy_library_guide_draft.py
+    draft_status: review_required
+    draft_rights_default: pending
+    automatic_guide_approval: false
+    curated_seed_catalog: data/buddy-library-seed-catalog.json
+    curated_seed_builder: tools/build_buddy_library_seed_catalog.py
+    curated_seed_candidate_count: 531
+    curated_seed_candidates_are_unverified: true
+    package_downloads_and_execution: prohibited_by_discovery_adapter
+    applies_to: all_55_canonical_divisions_and_65_masterbot_lanes
+    discovery: authoritative_package_registries_first_party_docs_and_source_repositories
+    internal_first: true
+    api_inventory_must_be_version_pinned: true
+    rights_review_required: true
+    sandbox_required_for_untrusted_code: true
+    dataset_scripts_disabled_by_default: true
+    model_weight_training_requires_explicit_approval: true
+    mastery_evidence_required: [guide_review, sandbox_exercises, targeted_benchmark, unseen_holdout, regression]
+  - id: freecodecamp
+    name: freeCodeCamp.org
+    channel_url: https://www.youtube.com/@freecodecamp
+    channel_id: UC8butISFwT-Wl7EV0hUK0BQ
+    catalog_path: buddy/bootcamp/sources/freecodecamp/catalog.json
+    complete_routes_path: config/generated/freecodecamp-source-routes.json
+    route_builder: tools/build_freecodecamp_routes.py
+    runtime_adapter: buddy.learning.freecodecamp_source
+    scheduler_functions: [resources_for_division, select_next_for_division, plan_next_lesson]
+    catalog_access: all_videos_available_to_all_65_divisions
+    specialty_routing: recommendation_priority_only
+    taxonomy_path: buddy/bootcamp/sources/freecodecamp/catalog.schema.json
+    applies_to: all_65_divisions
+    discovery: public_video_metadata_only
+    transcript_ingestion: disabled_by_default
+    media_download: disabled_by_default
+    rights_review_required_before_training: true
+    learning_evidence_required: [sandbox_exercise, targeted_benchmark, holdout, regression]
+  - id: hugging_face
+    name: Hugging Face Hub
+    discovery_policy: config/generated/division-huggingface-taxonomy-map.json
+    capability_map: config/hf-capability-download-map.json
+    applies_to: all_65_divisions
+    discovery: metadata_and_model_dataset_cards
+    runtime_adapter: tools.refresh_buddy_technology_radar
+    catalog_path: config/generated/buddy-technology-radar.json
+    dataset_api_source_id: huggingface-datasets
+    model_api_source_id: huggingface-models
+    dataset_ingestion: requires_item_level_license_and_terms_review
+    gated_access: requires_explicit_account_and_terms_approval
+    training_approval_default: false
+    training_evidence_required: [dataset_revision, license_evidence, provenance, split_hashes, benchmark, holdout, regression]
+  - id: tokenizer_engineering
+    name: Buddy tokenizer engineering and training
+    curriculum: config/buddy-tokenizer-training-curriculum.json
+    study_guide: docs/BUDDY_TOKENIZER_TRAINING_STUDY_GUIDE.md
+    owner_lane: Grok-HF-Tokenizers
+    applies_to: all_55_canonical_divisions_and_65_masterbot_lanes_as_shared_foundation
+    specialist_ownership: preserve_existing_crosswalk
+    scheduler: buddy.learning.course_track_registry
+    training_data_rights_required: true
+    model_weight_training_authorized: false
+    paid_compute_authorized: false
+    mastery_evidence_required: [round_trip_tests, vocabulary_hash, reproducible_config, multilingual_holdout, model_compatibility, regression]
+  - id: cpu_first_25m_llm_course
+    name: CPU-first 25M-class LLM engineering and reinforcement learning
+    curriculum: config/buddy-25m-cpu-llm-course.json
+    study_guide: docs/BUDDY_25M_CPU_LLM_STUDY_GUIDE.md
+    model_training_units: config/buddy-gpt-style-model-training-units.json
+    applies_to: all_55_canonical_divisions_and_65_masterbot_lanes_as_shared_foundation
+    scheduler: buddy.learning.course_track_registry
+    video_id: -gfgQfw2g_E
+    transcript_ingestion: disabled_by_default
+    training_data_rights_required: true
+    model_weight_training_authorized: false
+    paid_compute_authorized: false
+    mastery_evidence_required: [all_module_assessments, exact_parameter_count, reproducible_manifest, private_holdout, multi_seed_statistics, regression, rollback]
+  - id: tolkien_studies
+    name: Tolkien studies, philology and original mythopoeia
+    curriculum: config/buddy-tolkien-study-track.json
+    study_guide: docs/BUDDY_TOLKIEN_STUDY_TRACK.md
+    applies_to: all_55_canonical_divisions_as_shared_elective
+    masterbot_lanes: all_65
+    scheduler: buddy.learning.course_track_registry
+    rights_policy: block_unknown_rights_and_copyrighted_text_ingestion
+    copyrighted_tolkien_text_training: false
+    mastery_evidence_required: [original_artifact, citations, item_level_rights_review, rubric, unseen_assessment, reviewer]
+  - id: freecodecamp_complete_video_catalog
+    name: freeCodeCamp full public video catalog and rights-gated lesson queue
+    curriculum: config/freecodecamp-complete-learning-path.json
+    video_catalog: buddy/bootcamp/sources/freecodecamp/catalog.json
+    study_guide_contract: config/freecodecamp-detailed-video-study-guide.schema.json
+    study_guide: docs/FREECODECAMP_COMPLETE_BUDDY_LEARNING_PATH.md
+    applies_to: all_55_canonical_divisions_and_65_masterbot_lanes
+    scheduler: buddy.learning.course_track_registry
+    metadata_only_until_item_level_permissions: true
+    transcript_ingestion: disabled_by_default
+    model_training_permission: separate_and_not_granted
+    inventory_completeness: partial_until_verified_playlist_count
+    mastery_evidence_required: [authorized_source, timestamped_guide, original_exercises, answer_key, independent_assessment, reviewer]
+  - id: huggingface_full_learning_map
+    name: Hugging Face full official course catalog and ecosystem engineering
+    curriculum: config/buddy-huggingface-full-learning-map.json
+    study_guide: docs/BUDDY_OPEN_SOURCE_MULTIMODAL_BOOTCAMP.md
+    task_taxonomy: config/huggingface-task-taxonomy.json
+    applies_to: all_55_canonical_divisions_and_65_masterbot_lanes
+    scheduler: buddy.learning.course_track_registry
+    transcript_ingestion: disabled_by_default
+    training_data_rights_required: true
+    specialist_ownership: preserve_existing_crosswalk
+    mastery_evidence_required: [course_assessments, original_projects, source_rights_review, independent_task, regression_benchmark]
+  - id: onet_full_content_model
+    name: O*NET full content model and task engineering
+    curriculum: config/buddy-onet-content-model-curriculum.json
+    study_guide: docs/BUDDY_ONET_FULL_CONTENT_MODEL_AND_TASK_PLAYBOOKS.md
+    task_index: data/onet/onet-task-index.json
+    task_index_refresh: .github/workflows/buddy-onet-task-index-refresh.yml
+    task_index_completion_default: queued_not_studied
+    applies_to: all_55_canonical_divisions_and_65_masterbot_lanes
+    scheduler: buddy.learning.course_track_registry
+    source_refresh: official_onet_release
+    task_suitability_review_required: true
+    specialist_ownership: preserve_existing_crosswalk
+    mastery_evidence_required: [source_release, task_id, detailed_guide, sandbox, human_safety_review, independent_benchmark]
+  - id: ollama
+    name: Ollama local model runtime
+    purpose: local_model_import_inference_and_evaluation
+    runtime_adapter: buddy.learning.ollama_runtime.OllamaLocalRuntime
+    discovery_source_id: ollama-library
+    runtime_scope: loopback_only
+    automatic_model_pull_create_delete_push: false
+    model_license_review_required: true
+    base_model_and_adapter_match_required: true
+    paid_compute_default: false
+    model_training: external_training_pipeline_only
+    runtime_evidence_required: [model_digest, modelfile_hash, runtime_version, hardware, latency, memory, benchmark]
+  - id: division_45m_model_research
+    name: Division-specific 45M parameter model research
+    policy: config/buddy-continuous-study-policy.json
+    applies_to: all_65_divisions
+    parameter_target: 45000000
+    training_status: design_blueprints_generated_by_tools_build_division_45m_model_blueprints
+    blueprint_path: config/generated/division-45m-model-blueprints.json
+    blueprint_generator: tools/build_division_45m_model_blueprints.py
+    training_status_truth: design_only_not_trained_until_weight_hash_and_run_evidence_exist
+    training_from_scratch_requires: [authorized_corpus, compute_budget_approval, tokenizer, architecture_config, reproducible_run, holdout, regression, model_card]
+  - id: dreamco_model_foundry
+    name: DreamCo owner-controlled Model Foundry
+    purpose: train division-specific experimental weights from random initialization using approved local datasets
+    manifest: config/authorized-training-datasets/manifest.json
+    planner: tools/build_division_training_matrix.py
+    trainer: tools/train_buddy_division_model.py
+    runtime: buddy.learning.model_foundry
+    execution: owner_controlled_self_hosted_runner
+    runner_label: dreamco-private-training
+    max_parallel_jobs: 4
+    checkpoint_directory: $HOME/DreamCo-models
+    data_directory: $HOME/DreamCo-private-data
+    data_downloads: disabled
+    pretrained_base_models: prohibited_for_from_scratch_runs
+    training_requires: [owner_attestation, license_evidence, training_permission, commercial_model_use_permission, derivative_model_permission, dataset_sha256, division_scope, training_strategy]
+    current_capabilities: [random_initialization, byte_level_tokenizer, next_token_cross_entropy, train_validation_holdout_splits, checkpoint_resume, provenance_hashes]
+    planned_capabilities: [hybrid_linear_sparse_attention, mixture_of_experts, image_patch_multimodality, code_execution_reward_loop, multi_seed_significance]
+  - id: pretrained_model_marketplace
+    name: DreamCo Pretrained Model Store
+    catalog: config/marketplace/pretrained-model-catalog.json
+    schema: config/marketplace/pretrained-model-catalog.schema.json
+    validator: tools/validate_pretrained_model_catalog.py
+    storefront: website/pretrained-model-store.html
+    parameter_count_limit: null
+    purchase_entitlement: planned_not_enabled
+    source_data_distribution: prohibited
+    model_release_requires: [weights_sha256, tokenizer_sha256, training_run_id, dataset_provenance, rights_approval, commercial_model_use_permission, evaluation_report, model_card, license_id]
+    local_inference_compute: buyer_owned
+    hosted_inference_billing: separate_usage_metered
 metrics:
   - benchmark_score_delta
   - native_pass_rate
@@ -38,3 +263,7 @@ metrics:
   - retries
   - regression_failures
   - capability_mastery_count
+  - transcript_weekly_coverage
+  - dataset_rights_coverage
+  - model_parameter_count
+  - model_training_compute_cost

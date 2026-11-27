@@ -123,6 +123,9 @@ def check_disclosure_and_claimable(cfg: dict, errors: list[str]) -> tuple[bool, 
         errors.append(f"claim assessment missing: {cfg['claimable_assessment_path']}")
         return True, False
     assessment = _load_json(assessment_path)
+    for detail in assessment.get("errors") or []:
+        if isinstance(detail, str) and detail.strip():
+            errors.append(f"claim assessment: {detail}")
     claimable = bool(assessment.get("claimable") is True and assessment.get("status") == "claimable")
     if not claimable:
         errors.append(

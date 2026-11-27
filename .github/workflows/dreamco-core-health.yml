@@ -73,9 +73,13 @@ jobs:
       - name: Typecheck
         run: npm run check
 
+      - name: Install workflow prospectus parser
+        run: python3 -m pip install PyYAML
+
       - name: Actions and repository static health
         run: |
           python3 tools/audit_actions_health.py
+          python3 tools/build_actions_prospectus.py
           python3 tools/generate_repository_test_registry.py
           python3 tools/generate_repository_test_registry.py --check
 
@@ -83,6 +87,8 @@ jobs:
         run: |
           npx tsx tools/generate_bot_fleet_catalog.ts
           npm run buddy:fleet-quality
+          # Regenerate deterministic E2E evidence before the strict committed-artifact check.
+          node --import tsx tools/run_bot_fleet_e2e.ts
           npm run buddy:fleet:e2e
 
       - name: Governed regression tests
@@ -102,5 +108,8 @@ jobs:
           path: |
             reports/**
             config/generated/**
+            website/data/bot-fleet-e2e.json
+            website/data/buddy-capability-certifications.js
+            website/data/bot-capability-tests/**
           if-no-files-found: ignore
           retention-days: 14

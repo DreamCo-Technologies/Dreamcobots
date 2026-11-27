@@ -37,6 +37,9 @@ APP_BOTS = ROOT / "App_bots"
 CATALOG = ROOT / "config" / "generated" / "bots.catalog.json"
 OUT = ROOT / "config" / "bots" / "bot-manifests.generated.json"
 DIV_OUT = ROOT / "config" / "bots" / "division-manifests.generated.json"
+MASTERBOT_CROSSWALK = ROOT / "config" / "generated" / "masterbot-45-domain-crosswalk.json"
+SUPPLEMENTAL_CHARTERS = ROOT / "config" / "supplemental-portfolio-capability-charters.json"
+TEAMMATE_CROSSWALK = ROOT / "config" / "bots" / "teammate-lane-division-crosswalk.json"
 
 MAX_CAPS = 12
 MIN_SCORE = 2.0
@@ -102,7 +105,7 @@ PROFILES: dict[str, Any] = {
     },
     "io_schema": {
         "engine:analysis": {
-            "input": {"type": "object", "properties": {"objective": {"type": "string"}, "input": {"type": "object", "properties": {
+            "input": {"type": "object", "properties": {"objective": {"type": "string"}, "learning_task": {"type": "boolean"}, "allow_external_learning_fallback": {"type": "boolean"}, "input": {"type": "object", "properties": {
                 "records": {"type": "array"}, "values": {"type": "array"}, "metric": {"type": "string"},
                 "group_by": {"type": "string"}, "filters": {"type": "object"}, "query": {"type": "string"}, "top_n": {"type": "integer"}}}}},
             "output": {"type": "object", "required": ["status", "summary"], "properties": {
@@ -110,25 +113,28 @@ PROFILES: dict[str, Any] = {
                 "row_count": {"type": "integer"}, "numeric_fields": {"type": "object"}, "groups": {"type": "object"}, "top": {"type": "array"}}},
         },
         "engine:classification": {
-            "input": {"type": "object", "properties": {"objective": {"type": "string"}, "input": {"type": "object", "properties": {
+            "input": {"type": "object", "properties": {"objective": {"type": "string"}, "learning_task": {"type": "boolean"}, "allow_external_learning_fallback": {"type": "boolean"}, "input": {"type": "object", "properties": {
                 "text": {"type": "string"}, "labels": {"type": "array"}}}}},
             "output": {"type": "object", "required": ["status", "summary"], "properties": {
                 "status": {"enum": ["ok", "needs_input"]}, "summary": {"type": "string"}, "ranked": {"type": "array"},
                 "confidence": {"type": "number"}, "escalate_to_human": {"type": "boolean"}}},
         },
         "engine:workflow": {
-            "input": {"type": "object", "properties": {"objective": {"type": "string"}, "input": {"type": "object", "properties": {
+            "input": {"type": "object", "properties": {"objective": {"type": "string"}, "learning_task": {"type": "boolean"}, "allow_external_learning_fallback": {"type": "boolean"}, "input": {"type": "object", "properties": {
                 "steps": {"type": "array"}, "completed_steps": {"type": "array"}}}}},
             "output": {"type": "object", "required": ["status", "summary", "steps", "next_actions", "awaiting_owner_approval"], "properties": {
                 "status": {"enum": ["ok"]}, "summary": {"type": "string"}, "steps": {"type": "array"},
                 "next_actions": {"type": "array"}, "awaiting_owner_approval": {"type": "array"}}},
         },
         "engine:drafting": {
-            "input": {"type": "object", "properties": {"objective": {"type": "string"}, "input": {"type": "object", "properties": {
-                "audience": {"type": "string"}, "tone": {"type": "string"}}}}},
+            "input": {"type": "object", "properties": {
+                "objective": {"type": "string"}, "learning_task": {"type": "boolean"},
+                "allow_external_learning_fallback": {"type": "boolean"},
+                "input": {"type": "object", "properties": {
+                    "audience": {"type": "string"}, "tone": {"type": "string"}}}}},
             "output": {"type": "object", "required": ["status", "summary", "draft_markdown", "generated_by"], "properties": {
                 "status": {"enum": ["ok"]}, "summary": {"type": "string"}, "draft_markdown": {"type": "string", "minLength": 1},
-                "generated_by": {"enum": ["offline_deterministic", "live_model"]}}},
+                "generated_by": {"enum": ["offline_deterministic", "live_model", "internal_knowledge", "internal_bootcamp_study"]}}},
         },
     },
     "error_handling": {
@@ -210,7 +216,56 @@ def run_policy(text: str, engine: str) -> str:
     return "allowed"
 
 
-def build_manifest(slug: str, entry: dict[str, Any], api: dict[str, list[str]], known_divisions: set[str]) -> dict[str, Any]:
+def load_route_metadata() -> dict[str, Any]:
+    master = json.loads(MASTERBOT_CROSSWALK.read_text(encoding="utf-8"))
+    charters = json.loads(SUPPLEMENTAL_CHARTERS.read_text(encoding="utf-8"))
+    teammates = json.loads(TEAMMATE_CROSSWALK.read_text(encoding="utf-8"))
+    domains = master.get("domains", [])
+    domain_names = {str(row["domain_name"]) for row in domains}
+    masterbot_by_domain = {
+        re.sub(r"[^a-z0-9]", "", str(row["domain_name"]).casefold()): int(row["masterbot_id"])
+        for row in domains
+    }
+    portfolio_by_name = {row["portfolio"]: row for row in charters.get("portfolios", [])}
+    specialist_by_slug: dict[str, dict[str, Any]] = {}
+    for portfolio in charters.get("portfolios", []):
+        for item in portfolio.get("bots", []):
+            slug = item[0]
+            if slug in specialist_by_slug:
+                raise ValueError(f"Specialist slug appears in multiple portfolios: {slug}")
+            specialist_by_slug[slug] = {
+                "portfolio": portfolio["portfolio"],
+                "owner": portfolio["owner"],
+                "classification": portfolio.get("classification"),
+                "unique_domain": portfolio["unique_domain"],
+                "purpose": item[1],
+                "capabilities": item[2],
+            }
+    teammate_by_slug = {row["lane_slug"]: row for row in teammates.get("lanes", [])}
+    if len(domain_names) != 45 or len(portfolio_by_name) != 11 or len(specialist_by_slug) != 69:
+        raise ValueError("Canonical domains or specialist charter registry is incomplete")
+    if len(teammate_by_slug) != 112:
+        raise ValueError("All 112 GrokTeammates lanes must have a division crosswalk")
+    for row in teammates.get("lanes", []):
+        if row.get("canonical_owner_division") not in domain_names:
+            raise ValueError(f"Unknown teammate division owner for {row.get('lane_slug')}")
+        if not 46 <= int(row.get("shared_masterbot_id", 0)) <= 65:
+            raise ValueError(f"Invalid shared MasterBot route for {row.get('lane_slug')}")
+    for portfolio in charters.get("portfolios", []):
+        if portfolio.get("owner") not in domain_names:
+            raise ValueError(f"Unknown canonical owner for {portfolio.get('portfolio')}")
+    division_names = domain_names | set(portfolio_by_name) | {"GrokTeammates"}
+    return {
+        "domain_names": domain_names,
+        "division_names": division_names,
+        "masterbot_by_domain": masterbot_by_domain,
+        "portfolio_by_name": portfolio_by_name,
+        "specialist_by_slug": specialist_by_slug,
+        "teammate_by_slug": teammate_by_slug,
+    }
+
+
+def build_manifest(slug: str, entry: dict[str, Any], api: dict[str, list[str]], known_divisions: set[str], route_metadata: dict[str, Any]) -> dict[str, Any]:
     app, md, lane = entry.get("app"), entry.get("md"), entry.get("lane")
     base = app or md or lane
     flags = set(entry["flags"])
@@ -219,24 +274,51 @@ def build_manifest(slug: str, entry: dict[str, Any], api: dict[str, list[str]], 
     if not SLUG_RE.match(slug):
         flags.add("invalid_slug")
     if app and md:
-        if md["division"] and md["division"] != app["division"]:
+        if md["division"] and md["division"] not in {"UNASSIGNED", app["division"]}:
             flags.add("division_conflict_md")
     elif md and not app and not lane:
         flags.add("md_only")
-    division = (app or {}).get("division") or (md or {}).get("division") or (lane or {}).get("division") or ""
-    if not division:
-        flags.add("division_missing")
-    elif division not in known_divisions:
+    source_division = (app or {}).get("division") or (md or {}).get("division") or (lane or {}).get("division") or "UNASSIGNED"
+    specialist = route_metadata["specialist_by_slug"].get(slug)
+    teammate = route_metadata["teammate_by_slug"].get(slug) if lane else None
+    supplemental_portfolio = specialist.get("portfolio") if specialist else None
+    proposed_domain_owner = None
+    proposed_primary_masterbot_id = None
+    if specialist:
+        division = source_division if source_division in route_metadata["portfolio_by_name"] else specialist["portfolio"]
+        portfolio = route_metadata["portfolio_by_name"][specialist["portfolio"]]
+        if portfolio.get("classification") == "supplemental_domain_profile":
+            # The ten supplemental domains remain unassigned; charter owners are proposals only.
+            primary_domain_owner = None
+            proposed_domain_owner = specialist["owner"]
+            proposed_primary_masterbot_id = route_metadata["masterbot_by_domain"].get(re.sub(r"[^a-z0-9]", "", proposed_domain_owner.casefold()))
+            flags.add("supplemental_domain_unassigned_pending_owner_review")
+        else:
+            primary_domain_owner = specialist["owner"]
+        flags.add("supplemental_specialist_portfolio")
+    elif teammate:
+        division = source_division
+        primary_domain_owner = teammate["canonical_owner_division"]
+        flags.add("shared_workforce_lane")
+    else:
+        division = source_division
+        primary_domain_owner = source_division if source_division in route_metadata["domain_names"] else None
+    if division not in known_divisions:
         flags.add("division_unknown")
+        division = "DreamDiscovery"
+    if primary_domain_owner is not None and primary_domain_owner not in route_metadata["domain_names"]:
+        primary_domain_owner = None
     seed_division = entry.get("seed_division")
-    if seed_division and seed_division != division:
+    if seed_division and seed_division not in {"UNASSIGNED", source_division}:
         flags.add("division_conflict_seed")
-    raw_caps = list(dict.fromkeys(base["capabilities"] or (md or {}).get("capabilities", [])))
-    caps = [c[:120] for c in raw_caps if c.strip().lower() not in TIER_BOILERPLATE]
+    source_caps = base.get("capabilities") or (md or {}).get("capabilities", [])
+    raw_caps = list(dict.fromkeys((specialist or {}).get("capabilities", []) + list(source_caps)))
+    caps = [c[:120] for c in raw_caps if c.strip().lower() not in TIER_BOILERPLATE][:MAX_CAPS]
     dropped = len(raw_caps) - len(caps)
     if not caps:
         flags.add("placeholder_no_specific_capabilities")
-    description = (base.get("description") or "")[:300]
+    source_description = (base.get("description") or "").strip()
+    description = " ".join(x for x in ((specialist or {}).get("purpose", ""), source_description) if x)[:300]
     if not description:
         flags.add("placeholder_no_description")
     scores = score_engines({
@@ -273,7 +355,17 @@ def build_manifest(slug: str, entry: dict[str, Any], api: dict[str, list[str]], 
         "run": policy,
         "slug": slug,
         "name": base.get("name") or slug,
-        "division": division or "UNASSIGNED",
+        "division": division or "DreamDiscovery",
+        "source_division": source_division,
+        "primary_domain_owner": primary_domain_owner,
+        "primary_masterbot_id": route_metadata["masterbot_by_domain"].get(re.sub(r"[^a-z0-9]", "", primary_domain_owner.casefold())) if primary_domain_owner else None,
+        "division_route_status": (
+            "supplemental_domain_unassigned_pending_owner_review" if proposed_domain_owner else
+            "proposed_domain_masterbot_match_requires_owner_review" if primary_domain_owner in route_metadata["domain_names"] else
+            "discovery_review_required"
+        ),
+        "owner_approval_required": True,
+        "shared_platform_masterbot_ids": list(range(46, 66)),
         "tier": (base.get("tier") or "").lower(),
         "engine": engine,
         "engine_confidence": confidence,
@@ -291,7 +383,17 @@ def build_manifest(slug: str, entry: dict[str, Any], api: dict[str, list[str]], 
         entry_out["api"] = api[slug]
     if claims:
         entry_out["claims_ready"] = True
-    if seed_division and seed_division != division:
+    if supplemental_portfolio:
+        entry_out["supplemental_portfolio"] = supplemental_portfolio
+        entry_out["specialist_capability_domain"] = specialist["unique_domain"]
+    if proposed_domain_owner:
+        entry_out["proposed_domain_owner"] = proposed_domain_owner
+        entry_out["proposed_primary_masterbot_id"] = proposed_primary_masterbot_id
+    if teammate:
+        entry_out["shared_workforce_group"] = "GrokTeammates"
+        entry_out["shared_teammate_masterbot_id"] = int(teammate["shared_masterbot_id"])
+        entry_out["shared_teammate_masterbot_route"] = teammate["shared_masterbot_route"]
+    if seed_division and seed_division != source_division:
         entry_out["seed_division"] = seed_division
     if base.get("category"):
         entry_out["category"] = base["category"]
@@ -320,7 +422,7 @@ def render(collection: dict[str, Any]) -> str:
     head = {k: v for k, v in collection.items() if k != "bots"}
     text = json.dumps(head, indent=2, sort_keys=True, ensure_ascii=False)
     lines = ",\n".join("    " + json.dumps(b, sort_keys=True, ensure_ascii=False, separators=(",", ":")) for b in bots)
-    return text[:-2] + ',\n  "bots": [\n' + lines + "\n  ]\n}\n"
+    return text[:-1] + ',\n  "bots": [\n' + lines + "\n  ]\n}\n"
 
 
 def seed_division_counts() -> dict[str, int]:
@@ -340,15 +442,13 @@ def build() -> dict[str, Any]:
     entries, inputs, folder_notes = load_sources()
     api = load_api_candidates()
     digest = hashlib.sha256()
-    for path in inputs + [CATALOG, Path(__file__)]:
+    route_metadata = load_route_metadata()
+    for path in inputs + [CATALOG, Path(__file__), MASTERBOT_CROSSWALK, SUPPLEMENTAL_CHARTERS, TEAMMATE_CROSSWALK]:
         if path.exists():
             digest.update(path.relative_to(ROOT).as_posix().encode())
             digest.update(path.read_bytes())
-    known = {json.loads(p.read_text(encoding="utf-8")).get("division") for p in APP_BOTS.glob("*.json")}
-    lanes_path = ROOT / "config" / "bots" / "teammate-lanes.json"
-    if lanes_path.exists():
-        known.add(json.loads(lanes_path.read_text(encoding="utf-8")).get("division", "GrokTeammates"))
-    manifests = [build_manifest(slug, entries[slug], api, known) for slug in sorted(entries)]
+    known = set(route_metadata["division_names"])
+    manifests = [build_manifest(slug, entries[slug], api, known, route_metadata) for slug in sorted(entries)]
     mark_duplicates(manifests, entries)
     engines: dict[str, int] = {}
     flags: dict[str, int] = {}

@@ -14,18 +14,18 @@
   "tests",
   "readiness"
  ],
- "files": 5052,
+ "files": 5853,
  "purpose_sources": {
-  "auto-summary": 993,
-  "docstring": 465,
-  "header": 3325,
-  "readme": 269
+  "auto-summary": 1198,
+  "docstring": 678,
+  "header": 3707,
+  "readme": 270
  },
  "shards": [
   {
    "name": "App_bots",
    "url": "App_bots.json",
-   "files": 56
+   "files": 57
   },
   {
    "name": "DreamPayments",
@@ -36,6 +36,11 @@
    "name": "agents",
    "url": "agents.json",
    "files": 11
+  },
+  {
+   "name": "artifacts",
+   "url": "artifacts.json",
+   "files": 2
   },
   {
    "name": "attached_assets",
@@ -60,7 +65,7 @@
   {
    "name": "buddy",
    "url": "buddy.json",
-   "files": 247
+   "files": 327
   },
   {
    "name": "buddy_os",
@@ -85,22 +90,27 @@
   {
    "name": "command-center",
    "url": "command-center.json",
-   "files": 15
+   "files": 16
   },
   {
    "name": "config",
    "url": "config.json",
-   "files": 457
+   "files": 566
   },
   {
    "name": "data",
    "url": "data.json",
-   "files": 49
+   "files": 56
+  },
+  {
+   "name": "database",
+   "url": "database.json",
+   "files": 2
   },
   {
    "name": "docs",
    "url": "docs.json",
-   "files": 225
+   "files": 349
   },
   {
    "name": "dreamco_platform",
@@ -130,7 +140,12 @@
   {
    "name": "github",
    "url": "github.json",
-   "files": 134
+   "files": 221
+  },
+  {
+   "name": "governance",
+   "url": "governance.json",
+   "files": 5
   },
   {
    "name": "huggingface",
@@ -138,8 +153,28 @@
    "files": 8
   },
   {
+   "name": "integration",
+   "url": "integration.json",
+   "files": 6
+  },
+  {
+   "name": "licenses",
+   "url": "licenses.json",
+   "files": 1
+  },
+  {
    "name": "marketplace",
    "url": "marketplace.json",
+   "files": 1
+  },
+  {
+   "name": "migrations",
+   "url": "migrations.json",
+   "files": 1
+  },
+  {
+   "name": "models",
+   "url": "models.json",
    "files": 1
   },
   {
@@ -150,7 +185,7 @@
   {
    "name": "money_os",
    "url": "money_os.json",
-   "files": 15
+   "files": 16
   },
   {
    "name": "original-bots",
@@ -165,12 +200,12 @@
   {
    "name": "reports",
    "url": "reports.json",
-   "files": 109
+   "files": 112
   },
   {
    "name": "root",
    "url": "root.json",
-   "files": 93
+   "files": 94
   },
   {
    "name": "runtime",
@@ -180,7 +215,7 @@
   {
    "name": "schemas",
    "url": "schemas.json",
-   "files": 10
+   "files": 18
   },
   {
    "name": "script",
@@ -195,7 +230,7 @@
   {
    "name": "server",
    "url": "server.json",
-   "files": 65
+   "files": 66
   },
   {
    "name": "settings",
@@ -205,12 +240,12 @@
   {
    "name": "shared",
    "url": "shared.json",
-   "files": 41
+   "files": 42
   },
   {
    "name": "study_packs",
    "url": "study_packs.json",
-   "files": 623
+   "files": 624
   },
   {
    "name": "systems",
@@ -225,17 +260,17 @@
   {
    "name": "tests",
    "url": "tests.json",
-   "files": 291
+   "files": 498
   },
   {
    "name": "tools",
    "url": "tools.json",
-   "files": 244
+   "files": 361
   },
   {
    "name": "website",
    "url": "website.json",
-   "files": 624
+   "files": 658
   }
  ],
  "enums": {
@@ -252,6 +287,7 @@
    "jsonl",
    "manifest/package-lock.json",
    "manifest/package.json",
+   "manifest/requirements-buddy-gpt.txt",
    "manifest/requirements-buddy-learning.txt",
    "manifest/requirements-hf-learning.txt",
    "manifest/requirements-media.txt",
@@ -264,6 +300,8 @@
    "python",
    "readme",
    "shell",
+   "sql",
+   "test/javascript",
    "test/javascript-module",
    "test/python",
    "test/typescript",
@@ -318,6 +356,7 @@
    "Systems",
    "Test suite",
    "Web client",
+   "artifacts",
    "automation-tools",
    "bot:3d-asset-mgr",
    "bot:5s-audit-tool",
@@ -1441,7 +1480,9 @@
    "bot:zoning-compliance",
    "bots",
    "clients",
+   "database",
    "division:CommandCore",
+   "division:Dream3D",
    "division:DreamAIInfra",
    "division:DreamAdmin",
    "division:DreamAffiliate",
@@ -1497,6 +1538,11 @@
    "division:DreamTravel",
    "division:GameTitan",
    "division:MasterbotProfilesExcluded",
+   "governance",
+   "integration",
+   "licenses",
+   "migrations",
+   "models",
    "script",
    "scripts",
    "settings",
@@ -1524,7 +1570,6 @@
    "4/4 bots TESTED",
    "5/5 bots TESTED",
    "CONFIGURED (static checks; runtime unknown)",
-   "SPEC_ONLY",
    "TESTED",
    "folder broken",
    "folder partial",

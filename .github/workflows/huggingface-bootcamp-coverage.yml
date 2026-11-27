@@ -1,0 +1,29 @@
+name: Hugging Face Bootcamp Coverage
+
+on:
+  pull_request:
+    paths:
+      - "config/buddy-huggingface-full-learning-map.json"
+      - "config/huggingface-task-taxonomy.json"
+      - "config/buddy-course-track-registry.json"
+      - "tools/audit_huggingface_bootcamp_coverage.py"
+      - "tests/test_huggingface_bootcamp_coverage.py"
+      - ".github/workflows/huggingface-bootcamp-coverage.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: huggingface-bootcamp-coverage-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: python -m pip install --disable-pip-version-check pytest
+      - run: python -m pytest -q tests/test_huggingface_bootcamp_coverage.py
+      - run: python tools/audit_huggingface_bootcamp_coverage.py

@@ -54,6 +54,11 @@ def main() -> int:
 
     site_bytes = sum(path.stat().st_size for path in website.rglob("*") if path.is_file())
     site_mib = round(site_bytes / MIB, 2)
+    largest_public_files = sorted(
+        ({"path": path.relative_to(ROOT).as_posix(), "mib": round(path.stat().st_size / MIB, 3)}
+         for path in website.rglob("*") if path.is_file()),
+        key=lambda item: item["mib"], reverse=True,
+    )[:20]
     maximum_mib = int(policy["cost_controls"]["maximum_public_site_mib"])
     if site_bytes > maximum_mib * MIB:
         errors.append(f"Static site is {site_mib} MiB; maximum is {maximum_mib} MiB.")
@@ -64,6 +69,7 @@ def main() -> int:
         "profile": policy["default_mode"],
         "public_site_mib": site_mib,
         "public_files": sum(1 for path in website.rglob("*") if path.is_file()),
+        "largest_public_files": largest_public_files,
         "automatic_vercel_deployments": vercel["git"]["deploymentEnabled"],
         "controlled_github_pages_deployments": bool(deployment.get("controlled_github_pages_deployments")),
         "scheduled_dashboard_runs": False,

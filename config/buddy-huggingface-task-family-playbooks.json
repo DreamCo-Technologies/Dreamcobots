@@ -1,0 +1,2121 @@
+{
+  "schema": "dreamco.huggingface_task_family_playbooks.v1",
+  "source": "config/huggingface-task-taxonomy.json",
+  "source_status": "reference_snapshot_dynamic_hub_refresh_required",
+  "task_family_count": 37,
+  "status": "37_original_task_family_playbook_drafts_needs_human_review",
+  "truth_boundary": "The task taxonomy is a dynamic discovery snapshot, not a complete permanent inventory of Hugging Face or all AI capabilities. These are original study/playbook drafts, not executed tasks, model endorsements, or mastery evidence.",
+  "refresh_policy": "Refresh official Hub task metadata and docs; preserve unknown task families and do not infer support from absent tags.",
+  "modules": [
+    {
+      "task_id": "fill-mask",
+      "family": "natural_language_processing",
+      "modality": "text",
+      "pipeline_tag": "fill-mask",
+      "task_description": "predict masked tokens",
+      "study_status": "original_task_guide_draft_not_executed",
+      "learning_objectives": [
+        "Explain the inputs, outputs, and failure modes for predict masked tokens.",
+        "Select a compatible model and processor using current task tags, model card, license, revision, hardware needs, and evaluation evidence.",
+        "Design a task-specific dataset and separate training, validation, and private holdout data.",
+        "Measure quality, calibration, robustness, latency, memory, and cost against a simple baseline.",
+        "Document limitations, provenance, safety boundaries, and when a human must review the output."
+      ],
+      "ordered_workflow": [
+        "Define the user outcome, input contract, output schema, and prohibited uses.",
+        "Discover candidate models using documented task tags; pin exact revisions and inspect model/dataset cards.",
+        "Verify licenses, provenance, privacy, consent, and access requirements before using any data.",
+        "Build a small synthetic or rights-cleared fixture and a deterministic baseline.",
+        "Run the task-specific evaluation metrics and inspect class/segment/subgroup errors.",
+        "Test adversarial, out-of-domain, malformed, and low-confidence cases; define abstention and escalation.",
+        "Compare local and hosted inference costs and permissions before proposing deployment.",
+        "Record artifacts, hashes, versions, metrics, failures, and reviewer sign-off."
+      ],
+      "practice_lab": "Build a small text sandbox using synthetic or rights-cleared text/tabular fixtures; implement a deterministic baseline and compare one candidate model without sending private data to an external provider.",
+      "evaluation_metrics": [
+        "masked-token accuracy",
+        "top-k accuracy",
+        "calibration"
+      ],
+      "risk_checks": [
+        "prompt injection",
+        "fabricated output",
+        "privacy leakage",
+        "language/domain shift"
+      ],
+      "acceptance_criteria": [
+        "exact input/output contract",
+        "reproducible pinned model and dataset revisions",
+        "separate holdout set",
+        "task-specific metrics with baseline",
+        "failure analysis and safe abstention",
+        "rights/privacy review",
+        "human review for consequential outputs"
+      ],
+      "required_evidence": [
+        "model_and_dataset_card_review",
+        "license_and_provenance_record",
+        "fixture_hashes",
+        "run_configuration",
+        "metric_report",
+        "failure_analysis",
+        "reviewer_and_timestamp"
+      ],
+      "task_id_note": "Pipeline tag is a discovery hint, not proof that a model is suitable or maintained.",
+      "mastery_status": "not_assessed"
+    },
+    {
+      "task_id": "question-answering",
+      "family": "natural_language_processing",
+      "modality": "text",
+      "pipeline_tag": "question-answering",
+      "task_description": "answer questions from supplied context",
+      "study_status": "original_task_guide_draft_not_executed",
+      "learning_objectives": [
+        "Explain the inputs, outputs, and failure modes for answer questions from supplied context.",
+        "Select a compatible model and processor using current task tags, model card, license, revision, hardware needs, and evaluation evidence.",
+        "Design a task-specific dataset and separate training, validation, and private holdout data.",
+        "Measure quality, calibration, robustness, latency, memory, and cost against a simple baseline.",
+        "Document limitations, provenance, safety boundaries, and when a human must review the output."
+      ],
+      "ordered_workflow": [
+        "Define the user outcome, input contract, output schema, and prohibited uses.",
+        "Discover candidate models using documented task tags; pin exact revisions and inspect model/dataset cards.",
+        "Verify licenses, provenance, privacy, consent, and access requirements before using any data.",
+        "Build a small synthetic or rights-cleared fixture and a deterministic baseline.",
+        "Run the task-specific evaluation metrics and inspect class/segment/subgroup errors.",
+        "Test adversarial, out-of-domain, malformed, and low-confidence cases; define abstention and escalation.",
+        "Compare local and hosted inference costs and permissions before proposing deployment.",
+        "Record artifacts, hashes, versions, metrics, failures, and reviewer sign-off."
+      ],
+      "practice_lab": "Build a small text sandbox using synthetic or rights-cleared text/tabular fixtures; implement a deterministic baseline and compare one candidate model without sending private data to an external provider.",
+      "evaluation_metrics": [
+        "exact match",
+        "token F1",
+        "citation support",
+        "abstention accuracy"
+      ],
+      "risk_checks": [
+        "prompt injection",
+        "fabricated output",
+        "privacy leakage",
+        "language/domain shift"
+      ],
+      "acceptance_criteria": [
+        "exact input/output contract",
+        "reproducible pinned model and dataset revisions",
+        "separate holdout set",
+        "task-specific metrics with baseline",
+        "failure analysis and safe abstention",
+        "rights/privacy review",
+        "human review for consequential outputs"
+      ],
+      "required_evidence": [
+        "model_and_dataset_card_review",
+        "license_and_provenance_record",
+        "fixture_hashes",
+        "run_configuration",
+        "metric_report",
+        "failure_analysis",
+        "reviewer_and_timestamp"
+      ],
+      "task_id_note": "Pipeline tag is a discovery hint, not proof that a model is suitable or maintained.",
+      "mastery_status": "not_assessed"
+    },
+    {
+      "task_id": "sentence-similarity",
+      "family": "natural_language_processing",
+      "modality": "text",
+      "pipeline_tag": "sentence-similarity",
+      "task_description": "compare semantic similarity",
+      "study_status": "original_task_guide_draft_not_executed",
+      "learning_objectives": [
+        "Explain the inputs, outputs, and failure modes for compare semantic similarity.",
+        "Select a compatible model and processor using current task tags, model card, license, revision, hardware needs, and evaluation evidence.",
+        "Design a task-specific dataset and separate training, validation, and private holdout data.",
+        "Measure quality, calibration, robustness, latency, memory, and cost against a simple baseline.",
+        "Document limitations, provenance, safety boundaries, and when a human must review the output."
+      ],
+      "ordered_workflow": [
+        "Define the user outcome, input contract, output schema, and prohibited uses.",
+        "Discover candidate models using documented task tags; pin exact revisions and inspect model/dataset cards.",
+        "Verify licenses, provenance, privacy, consent, and access requirements before using any data.",
+        "Build a small synthetic or rights-cleared fixture and a deterministic baseline.",
+        "Run the task-specific evaluation metrics and inspect class/segment/subgroup errors.",
+        "Test adversarial, out-of-domain, malformed, and low-confidence cases; define abstention and escalation.",
+        "Compare local and hosted inference costs and permissions before proposing deployment.",
+        "Record artifacts, hashes, versions, metrics, failures, and reviewer sign-off."
+      ],
+      "practice_lab": "Build a small text sandbox using synthetic or rights-cleared text/tabular fixtures; implement a deterministic baseline and compare one candidate model without sending private data to an external provider.",
+      "evaluation_metrics": [
+        "Spearman correlation",
+        "retrieval recall@k",
+        "false-match rate"
+      ],
+      "risk_checks": [
+        "prompt injection",
+        "fabricated output",
+        "privacy leakage",
+        "language/domain shift"
+      ],
+      "acceptance_criteria": [
+        "exact input/output contract",
+        "reproducible pinned model and dataset revisions",
+        "separate holdout set",
+        "task-specific metrics with baseline",
+        "failure analysis and safe abstention",
+        "rights/privacy review",
+        "human review for consequential outputs"
+      ],
+      "required_evidence": [
+        "model_and_dataset_card_review",
+        "license_and_provenance_record",
+        "fixture_hashes",
+        "run_configuration",
+        "metric_report",
+        "failure_analysis",
+        "reviewer_and_timestamp"
+      ],
+      "task_id_note": "Pipeline tag is a discovery hint, not proof that a model is suitable or maintained.",
+      "mastery_status": "not_assessed"
+    },
+    {
+      "task_id": "summarization",
+      "family": "natural_language_processing",
+      "modality": "text",
+      "pipeline_tag": "summarization",
+      "task_description": "compress documents while preserving key information",
+      "study_status": "original_task_guide_draft_not_executed",
+      "learning_objectives": [
+        "Explain the inputs, outputs, and failure modes for compress documents while preserving key information.",
+        "Select a compatible model and processor using current task tags, model card, license, revision, hardware needs, and evaluation evidence.",
+        "Design a task-specific dataset and separate training, validation, and private holdout data.",
+        "Measure quality, calibration, robustness, latency, memory, and cost against a simple baseline.",
+        "Document limitations, provenance, safety boundaries, and when a human must review the output."
+      ],
+      "ordered_workflow": [
+        "Define the user outcome, input contract, output schema, and prohibited uses.",
+        "Discover candidate models using documented task tags; pin exact revisions and inspect model/dataset cards.",
+        "Verify licenses, provenance, privacy, consent, and access requirements before using any data.",
+        "Build a small synthetic or rights-cleared fixture and a deterministic baseline.",
+        "Run the task-specific evaluation metrics and inspect class/segment/subgroup errors.",
+        "Test adversarial, out-of-domain, malformed, and low-confidence cases; define abstention and escalation.",
+        "Compare local and hosted inference costs and permissions before proposing deployment.",
+        "Record artifacts, hashes, versions, metrics, failures, and reviewer sign-off."
+      ],
+      "practice_lab": "Build a small text sandbox using synthetic or rights-cleared text/tabular fixtures; implement a deterministic baseline and compare one candidate model without sending private data to an external provider.",
+      "evaluation_metrics": [
+        "factual consistency",
+        "coverage",
+        "compression ratio",
+        "human rubric"
+      ],
+      "risk_checks": [
+        "prompt injection",
+        "fabricated output",
+        "privacy leakage",
+        "language/domain shift"
+      ],
+      "acceptance_criteria": [
+        "exact input/output contract",
+        "reproducible pinned model and dataset revisions",
+        "separate holdout set",
+        "task-specific metrics with baseline",
+        "failure analysis and safe abstention",
+        "rights/privacy review",
+        "human review for consequential outputs"
+      ],
+      "required_evidence": [
+        "model_and_dataset_card_review",
+        "license_and_provenance_record",
+        "fixture_hashes",
+        "run_configuration",
+        "metric_report",
+        "failure_analysis",
+        "reviewer_and_timestamp"
+      ],
+      "task_id_note": "Pipeline tag is a discovery hint, not proof that a model is suitable or maintained.",
+      "mastery_status": "not_assessed"
+    },
+    {
+      "task_id": "table-question-answering",
+      "family": "natural_language_processing",
+      "modality": "tabular_text",
+      "pipeline_tag": "table-question-answering",
+      "task_description": "answer questions over structured tables",
+      "study_status": "original_task_guide_draft_not_executed",
+      "learning_objectives": [
+        "Explain the inputs, outputs, and failure modes for answer questions over structured tables.",
+        "Select a compatible model and processor using current task tags, model card, license, revision, hardware needs, and evaluation evidence.",
+        "Design a task-specific dataset and separate training, validation, and private holdout data.",
+        "Measure quality, calibration, robustness, latency, memory, and cost against a simple baseline.",
+        "Document limitations, provenance, safety boundaries, and when a human must review the output."
+      ],
+      "ordered_workflow": [
+        "Define the user outcome, input contract, output schema, and prohibited uses.",
+        "Discover candidate models using documented task tags; pin exact revisions and inspect model/dataset cards.",
+        "Verify licenses, provenance, privacy, consent, and access requirements before using any data.",
+        "Build a small synthetic or rights-cleared fixture and a deterministic baseline.",
+        "Run the task-specific evaluation metrics and inspect class/segment/subgroup errors.",
+        "Test adversarial, out-of-domain, malformed, and low-confidence cases; define abstention and escalation.",
+        "Compare local and hosted inference costs and permissions before proposing deployment.",
+        "Record artifacts, hashes, versions, metrics, failures, and reviewer sign-off."
+      ],
+      "practice_lab": "Build a small tabular_text sandbox using synthetic or rights-cleared text/tabular fixtures; implement a deterministic baseline and compare one candidate model without sending private data to an external provider.",
+      "evaluation_metrics": [
+        "exact match",
+        "numeric tolerance",
+        "cell provenance"
+      ],
+      "risk_checks": [
+        "source rights and provenance",
+        "privacy and sensitive-data leakage",
+        "distribution shift",
+        "unsupported output claims"
+      ],
+      "acceptance_criteria": [
+        "exact input/output contract",
+        "reproducible pinned model and dataset revisions",
+        "separate holdout set",
+        "task-specific metrics with baseline",
+        "failure analysis and safe abstention",
+        "rights/privacy review",
+        "human review for consequential outputs"
+      ],
+      "required_evidence": [
+        "model_and_dataset_card_review",
+        "license_and_provenance_record",
+        "fixture_hashes",
+        "run_configuration",
+        "metric_report",
+        "failure_analysis",
+        "reviewer_and_timestamp"
+      ],
+      "task_id_note": "Pipeline tag is a discovery hint, not proof that a model is suitable or maintained.",
+      "mastery_status": "not_assessed"
+    },
+    {
+      "task_id": "text-classification",
+      "family": "natural_language_processing",
+      "modality": "text",
+      "pipeline_tag": "text-classification",
+      "task_description": "classify text into labels",
+      "study_status": "original_task_guide_draft_not_executed",
+      "learning_objectives": [
+        "Explain the inputs, outputs, and failure modes for classify text into labels.",
+        "Select a compatible model and processor using current task tags, model card, license, revision, hardware needs, and evaluation evidence.",
+        "Design a task-specific dataset and separate training, validation, and private holdout data.",
+        "Measure quality, calibration, robustness, latency, memory, and cost against a simple baseline.",
+        "Document limitations, provenance, safety boundaries, and when a human must review the output."
+      ],
+      "ordered_workflow": [
+        "Define the user outcome, input contract, output schema, and prohibited uses.",
+        "Discover candidate models using documented task tags; pin exact revisions and inspect model/dataset cards.",
+        "Verify licenses, provenance, privacy, consent, and access requirements before using any data.",
+        "Build a small synthetic or rights-cleared fixture and a deterministic baseline.",
+        "Run the task-specific evaluation metrics and inspect class/segment/subgroup errors.",
+        "Test adversarial, out-of-domain, malformed, and low-confidence cases; define abstention and escalation.",
+        "Compare local and hosted inference costs and permissions before proposing deployment.",
+        "Record artifacts, hashes, versions, metrics, failures, and reviewer sign-off."
+      ],
+      "practice_lab": "Build a small text sandbox using synthetic or rights-cleared text/tabular fixtures; implement a deterministic baseline and compare one candidate model without sending private data to an external provider.",
+      "evaluation_metrics": [
+        "macro F1",
+        "per-class recall",
+        "calibration",
+        "confusion matrix"
+      ],
+      "risk_checks": [
+        "prompt injection",
+        "fabricated output",
+        "privacy leakage",
+        "language/domain shift"
+      ],
+      "acceptance_criteria": [
+        "exact input/output contract",
+        "reproducible pinned model and dataset revisions",
+        "separate holdout set",
+        "task-specific metrics with baseline",
+        "failure analysis and safe abstention",
+        "rights/privacy review",
+        "human review for consequential outputs"
+      ],
+      "required_evidence": [
+        "model_and_dataset_card_review",
+        "license_and_provenance_record",
+        "fixture_hashes",
+        "run_configuration",
+        "metric_report",
+        "failure_analysis",
+        "reviewer_and_timestamp"
+      ],
+      "task_id_note": "Pipeline tag is a discovery hint, not proof that a model is suitable or maintained.",
+      "mastery_status": "not_assessed"
+    },
+    {
+      "task_id": "text-generation",
+      "family": "natural_language_processing",
+      "modality": "text",
+      "pipeline_tag": "text-generation",
+      "task_description": "generate or continue text",
+      "study_status": "original_task_guide_draft_not_executed",
+      "learning_objectives": [
+        "Explain the inputs, outputs, and failure modes for generate or continue text.",
+        "Select a compatible model and processor using current task tags, model card, license, revision, hardware needs, and evaluation evidence.",
+        "Design a task-specific dataset and separate training, validation, and private holdout data.",
+        "Measure quality, calibration, robustness, latency, memory, and cost against a simple baseline.",
+        "Document limitations, provenance, safety boundaries, and when a human must review the output."
+      ],
+      "ordered_workflow": [
+        "Define the user outcome, input contract, output schema, and prohibited uses.",
+        "Discover candidate models using documented task tags; pin exact revisions and inspect model/dataset cards.",
+        "Verify licenses, provenance, privacy, consent, and access requirements before using any data.",
+        "Build a small synthetic or rights-cleared fixture and a deterministic baseline.",
+        "Run the task-specific evaluation metrics and inspect class/segment/subgroup errors.",
+        "Test adversarial, out-of-domain, malformed, and low-confidence cases; define abstention and escalation.",
+        "Compare local and hosted inference costs and permissions before proposing deployment.",
+        "Record artifacts, hashes, versions, metrics, failures, and reviewer sign-off."
+      ],
+      "practice_lab": "Build a small text sandbox using synthetic or rights-cleared text/tabular fixtures; implement a deterministic baseline and compare one candidate model without sending private data to an external provider.",
+      "evaluation_metrics": [
+        "task success",
+        "factuality",
+        "instruction adherence",
+        "toxicity/safety"
+      ],
+      "risk_checks": [
+        "prompt injection",
+        "fabricated output",
+        "privacy leakage",
+        "language/domain shift"
+      ],
+      "acceptance_criteria": [
+        "exact input/output contract",
+        "reproducible pinned model and dataset revisions",
+        "separate holdout set",
+        "task-specific metrics with baseline",
+        "failure analysis and safe abstention",
+        "rights/privacy review",
+        "human review for consequential outputs"
+      ],
+      "required_evidence": [
+        "model_and_dataset_card_review",
+        "license_and_provenance_record",
+        "fixture_hashes",
+        "run_configuration",
+        "metric_report",
+        "failure_analysis",
+        "reviewer_and_timestamp"
+      ],
+      "task_id_note": "Pipeline tag is a discovery hint, not proof that a model is suitable or maintained.",
+      "mastery_status": "not_assessed"
+    },
+    {
+      "task_id": "text2text-generation",
+      "family": "natural_language_processing",
+      "modality": "text",
+      "pipeline_tag": "text2text-generation",
+      "task_description": "transform one text sequence into another",
+      "study_status": "original_task_guide_draft_not_executed",
+      "learning_objectives": [
+        "Explain the inputs, outputs, and failure modes for transform one text sequence into another.",
+        "Select a compatible model and processor using current task tags, model card, license, revision, hardware needs, and evaluation evidence.",
+        "Design a task-specific dataset and separate training, validation, and private holdout data.",
+        "Measure quality, calibration, robustness, latency, memory, and cost against a simple baseline.",
+        "Document limitations, provenance, safety boundaries, and when a human must review the output."
+      ],
+      "ordered_workflow": [
+        "Define the user outcome, input contract, output schema, and prohibited uses.",
+        "Discover candidate models using documented task tags; pin exact revisions and inspect model/dataset cards.",
+        "Verify licenses, provenance, privacy, consent, and access requirements before using any data.",
+        "Build a small synthetic or rights-cleared fixture and a deterministic baseline.",
+        "Run the task-specific evaluation metrics and inspect class/segment/subgroup errors.",
+        "Test adversarial, out-of-domain, malformed, and low-confidence cases; define abstention and escalation.",
+        "Compare local and hosted inference costs and permissions before proposing deployment.",
+        "Record artifacts, hashes, versions, metrics, failures, and reviewer sign-off."
+      ],
+      "practice_lab": "Build a small text sandbox using synthetic or rights-cleared text/tabular fixtures; implement a deterministic baseline and compare one candidate model without sending private data to an external provider.",
+      "evaluation_metrics": [
+        "exact match or task metric",
+        "semantic preservation",
+        "format validity"
+      ],
+      "risk_checks": [
+        "prompt injection",
+        "fabricated output",
+        "privacy leakage",
+        "language/domain shift"
+      ],
+      "acceptance_criteria": [
+        "exact input/output contract",
+        "reproducible pinned model and dataset revisions",
+        "separate holdout set",
+        "task-specific metrics with baseline",
+        "failure analysis and safe abstention",
+        "rights/privacy review",
+        "human review for consequential outputs"
+      ],
+      "required_evidence": [
+        "model_and_dataset_card_review",
+        "license_and_provenance_record",
+        "fixture_hashes",
+        "run_configuration",
+        "metric_report",
+        "failure_analysis",
+        "reviewer_and_timestamp"
+      ],
+      "task_id_note": "Pipeline tag is a discovery hint, not proof that a model is suitable or maintained.",
+      "mastery_status": "not_assessed"
+    },
+    {
+      "task_id": "token-classification",
+      "family": "natural_language_processing",
+      "modality": "text",
+      "pipeline_tag": "token-classification",
+      "task_description": "label tokens and spans",
+      "study_status": "original_task_guide_draft_not_executed",
+      "learning_objectives": [
+        "Explain the inputs, outputs, and failure modes for label tokens and spans.",
+        "Select a compatible model and processor using current task tags, model card, license, revision, hardware needs, and evaluation evidence.",
+        "Design a task-specific dataset and separate training, validation, and private holdout data.",
+        "Measure quality, calibration, robustness, latency, memory, and cost against a simple baseline.",
+        "Document limitations, provenance, safety boundaries, and when a human must review the output."
+      ],
+      "ordered_workflow": [
+        "Define the user outcome, input contract, output schema, and prohibited uses.",
+        "Discover candidate models using documented task tags; pin exact revisions and inspect model/dataset cards.",
+        "Verify licenses, provenance, privacy, consent, and access requirements before using any data.",
+        "Build a small synthetic or rights-cleared fixture and a deterministic baseline.",
+        "Run the task-specific evaluation metrics and inspect class/segment/subgroup errors.",
+        "Test adversarial, out-of-domain, malformed, and low-confidence cases; define abstention and escalation.",
+        "Compare local and hosted inference costs and permissions before proposing deployment.",
+        "Record artifacts, hashes, versions, metrics, failures, and reviewer sign-off."
+      ],
+      "practice_lab": "Build a small text sandbox using synthetic or rights-cleared text/tabular fixtures; implement a deterministic baseline and compare one candidate model without sending private data to an external provider.",
+      "evaluation_metrics": [
+        "span precision/recall/F1",
+        "boundary accuracy"
+      ],
+      "risk_checks": [
+        "prompt injection",
+        "fabricated output",
+        "privacy leakage",
+        "language/domain shift"
+      ],
+      "acceptance_criteria": [
+        "exact input/output contract",
+        "reproducible pinned model and dataset revisions",
+        "separate holdout set",
+        "task-specific metrics with baseline",
+        "failure analysis and safe abstention",
+        "rights/privacy review",
+        "human review for consequential outputs"
+      ],
+      "required_evidence": [
+        "model_and_dataset_card_review",
+        "license_and_provenance_record",
+        "fixture_hashes",
+        "run_configuration",
+        "metric_report",
+        "failure_analysis",
+        "reviewer_and_timestamp"
+      ],
+      "task_id_note": "Pipeline tag is a discovery hint, not proof that a model is suitable or maintained.",
+      "mastery_status": "not_assessed"
+    },
+    {
+      "task_id": "translation",
+      "family": "natural_language_processing",
+      "modality": "text",
+      "pipeline_tag": "translation",
+      "task_description": "translate between languages",
+      "study_status": "original_task_guide_draft_not_executed",
+      "learning_objectives": [
+        "Explain the inputs, outputs, and failure modes for translate between languages.",
+        "Select a compatible model and processor using current task tags, model card, license, revision, hardware needs, and evaluation evidence.",
+        "Design a task-specific dataset and separate training, validation, and private holdout data.",
+        "Measure quality, calibration, robustness, latency, memory, and cost against a simple baseline.",
+        "Document limitations, provenance, safety boundaries, and when a human must review the output."
+      ],
+      "ordered_workflow": [
+        "Define the user outcome, input contract, output schema, and prohibited uses.",
+        "Discover candidate models using documented task tags; pin exact revisions and inspect model/dataset cards.",
+        "Verify licenses, provenance, privacy, consent, and access requirements before using any data.",
+        "Build a small synthetic or rights-cleared fixture and a deterministic baseline.",
+        "Run the task-specific evaluation metrics and inspect class/segment/subgroup errors.",
+        "Test adversarial, out-of-domain, malformed, and low-confidence cases; define abstention and escalation.",
+        "Compare local and hosted inference costs and permissions before proposing deployment.",
+        "Record artifacts, hashes, versions, metrics, failures, and reviewer sign-off."
+      ],
+      "practice_lab": "Build a small text sandbox using synthetic or rights-cleared text/tabular fixtures; implement a deterministic baseline and compare one candidate model without sending private data to an external provider.",
+      "evaluation_metrics": [
+        "COMET or chrF",
+        "human adequacy",
+        "terminology consistency"
+      ],
+      "risk_checks": [
+        "prompt injection",
+        "fabricated output",
+        "privacy leakage",
+        "language/domain shift"
+      ],
+      "acceptance_criteria": [
+        "exact input/output contract",
+        "reproducible pinned model and dataset revisions",
+        "separate holdout set",
+        "task-specific metrics with baseline",
+        "failure analysis and safe abstention",
+        "rights/privacy review",
+        "human review for consequential outputs"
+      ],
+      "required_evidence": [
+        "model_and_dataset_card_review",
+        "license_and_provenance_record",
+        "fixture_hashes",
+        "run_configuration",
+        "metric_report",
+        "failure_analysis",
+        "reviewer_and_timestamp"
+      ],
+      "task_id_note": "Pipeline tag is a discovery hint, not proof that a model is suitable or maintained.",
+      "mastery_status": "not_assessed"
+    },
+    {
+      "task_id": "zero-shot-classification",
+      "family": "natural_language_processing",
+      "modality": "text",
+      "pipeline_tag": "zero-shot-classification",
+      "task_description": "classify without task-specific training examples",
+      "study_status": "original_task_guide_draft_not_executed",
+      "learning_objectives": [
+        "Explain the inputs, outputs, and failure modes for classify without task-specific training examples.",
+        "Select a compatible model and processor using current task tags, model card, license, revision, hardware needs, and evaluation evidence.",
+        "Design a task-specific dataset and separate training, validation, and private holdout data.",
+        "Measure quality, calibration, robustness, latency, memory, and cost against a simple baseline.",
+        "Document limitations, provenance, safety boundaries, and when a human must review the output."
+      ],
+      "ordered_workflow": [
+        "Define the user outcome, input contract, output schema, and prohibited uses.",
+        "Discover candidate models using documented task tags; pin exact revisions and inspect model/dataset cards.",
+        "Verify licenses, provenance, privacy, consent, and access requirements before using any data.",
+        "Build a small synthetic or rights-cleared fixture and a deterministic baseline.",
+        "Run the task-specific evaluation metrics and inspect class/segment/subgroup errors.",
+        "Test adversarial, out-of-domain, malformed, and low-confidence cases; define abstention and escalation.",
+        "Compare local and hosted inference costs and permissions before proposing deployment.",
+        "Record artifacts, hashes, versions, metrics, failures, and reviewer sign-off."
+      ],
+      "practice_lab": "Build a small text sandbox using synthetic or rights-cleared text/tabular fixtures; implement a deterministic baseline and compare one candidate model without sending private data to an external provider.",
+      "evaluation_metrics": [
+        "macro F1",
+        "calibration",
+        "label sensitivity"
+      ],
+      "risk_checks": [
+        "prompt injection",
+        "fabricated output",
+        "privacy leakage",
+        "language/domain shift"
+      ],
+      "acceptance_criteria": [
+        "exact input/output contract",
+        "reproducible pinned model and dataset revisions",
+        "separate holdout set",
+        "task-specific metrics with baseline",
+        "failure analysis and safe abstention",
+        "rights/privacy review",
+        "human review for consequential outputs"
+      ],
+      "required_evidence": [
+        "model_and_dataset_card_review",
+        "license_and_provenance_record",
+        "fixture_hashes",
+        "run_configuration",
+        "metric_report",
+        "failure_analysis",
+        "reviewer_and_timestamp"
+      ],
+      "task_id_note": "Pipeline tag is a discovery hint, not proof that a model is suitable or maintained.",
+      "mastery_status": "not_assessed"
+    },
+    {
+      "task_id": "feature-extraction",
+      "family": "natural_language_processing",
+      "modality": "text",
+      "pipeline_tag": "feature-extraction",
+      "task_description": "produce numerical text representations",
+      "study_status": "original_task_guide_draft_not_executed",
+      "learning_objectives": [
+        "Explain the inputs, outputs, and failure modes for produce numerical text representations.",
+        "Select a compatible model and processor using current task tags, model card, license, revision, hardware needs, and evaluation evidence.",
+        "Design a task-specific dataset and separate training, validation, and private holdout data.",
+        "Measure quality, calibration, robustness, latency, memory, and cost against a simple baseline.",
+        "Document limitations, provenance, safety boundaries, and when a human must review the output."
+      ],
+      "ordered_workflow": [
+        "Define the user outcome, input contract, output schema, and prohibited uses.",
+        "Discover candidate models using documented task tags; pin exact revisions and inspect model/dataset cards.",
+        "Verify licenses, provenance, privacy, consent, and access requirements before using any data.",
+        "Build a small synthetic or rights-cleared fixture and a deterministic baseline.",
+        "Run the task-specific evaluation metrics and inspect class/segment/subgroup errors.",
+        "Test adversarial, out-of-domain, malformed, and low-confidence cases; define abstention and escalation.",
+        "Compare local and hosted inference costs and permissions before proposing deployment.",
+        "Record artifacts, hashes, versions, metrics, failures, and reviewer sign-off."
+      ],
+      "practice_lab": "Build a small text sandbox using synthetic or rights-cleared text/tabular fixtures; implement a deterministic baseline and compare one candidate model without sending private data to an external provider.",
+      "evaluation_metrics": [
+        "retrieval recall@k",
+        "embedding consistency",
+        "downstream task score"
+      ],
+      "risk_checks": [
+        "prompt injection",
+        "fabricated output",
+        "privacy leakage",
+        "language/domain shift"
+      ],
+      "acceptance_criteria": [
+        "exact input/output contract",
+        "reproducible pinned model and dataset revisions",
+        "separate holdout set",
+        "task-specific metrics with baseline",
+        "failure analysis and safe abstention",
+        "rights/privacy review",
+        "human review for consequential outputs"
+      ],
+      "required_evidence": [
+        "model_and_dataset_card_review",
+        "license_and_provenance_record",
+        "fixture_hashes",
+        "run_configuration",
+        "metric_report",
+        "failure_analysis",
+        "reviewer_and_timestamp"
+      ],
+      "task_id_note": "Pipeline tag is a discovery hint, not proof that a model is suitable or maintained.",
+      "mastery_status": "not_assessed"
+    },
+    {
+      "task_id": "background-removal",
+      "family": "computer_vision",
+      "modality": "image",
+      "pipeline_tag": "background-removal",
+      "task_description": "separate foreground from background",
+      "study_status": "original_task_guide_draft_not_executed",
+      "learning_objectives": [
+        "Explain the inputs, outputs, and failure modes for separate foreground from background.",
+        "Select a compatible model and processor using current task tags, model card, license, revision, hardware needs, and evaluation evidence.",
+        "Design a task-specific dataset and separate training, validation, and private holdout data.",
+        "Measure quality, calibration, robustness, latency, memory, and cost against a simple baseline.",
+        "Document limitations, provenance, safety boundaries, and when a human must review the output."
+      ],
+      "ordered_workflow": [
+        "Define the user outcome, input contract, output schema, and prohibited uses.",
+        "Discover candidate models using documented task tags; pin exact revisions and inspect model/dataset cards.",
+        "Verify licenses, provenance, privacy, consent, and access requirements before using any data.",
+        "Build a small synthetic or rights-cleared fixture and a deterministic baseline.",
+        "Run the task-specific evaluation metrics and inspect class/segment/subgroup errors.",
+        "Test adversarial, out-of-domain, malformed, and low-confidence cases; define abstention and escalation.",
+        "Compare local and hosted inference costs and permissions before proposing deployment.",
+        "Record artifacts, hashes, versions, metrics, failures, and reviewer sign-off."
+      ],
+      "practice_lab": "Build a small image sandbox using synthetic or rights-cleared images/documents; implement a deterministic baseline and compare one candidate model without sending private data to an external provider.",
+      "evaluation_metrics": [
+        "mask IoU",
+        "boundary quality",
+        "artifact rate"
+      ],
+      "risk_checks": [
+        "consent and likeness",
+        "sensitive visual inference",
+        "dataset rights",
+        "distribution shift"
+      ],
+      "acceptance_criteria": [
+        "exact input/output contract",
+        "reproducible pinned model and dataset revisions",
+        "separate holdout set",
+        "task-specific metrics with baseline",
+        "failure analysis and safe abstention",
+        "rights/privacy review",
+        "human review for consequential outputs"
+      ],
+      "required_evidence": [
+        "model_and_dataset_card_review",
+        "license_and_provenance_record",
+        "fixture_hashes",
+        "run_configuration",
+        "metric_report",
+        "failure_analysis",
+        "reviewer_and_timestamp"
+      ],
+      "task_id_note": "Pipeline tag is a discovery hint, not proof that a model is suitable or maintained.",
+      "mastery_status": "not_assessed"
+    },
+    {
+      "task_id": "depth-estimation",
+      "family": "computer_vision",
+      "modality": "image",
+      "pipeline_tag": "depth-estimation",
+      "task_description": "estimate scene depth",
+      "study_status": "original_task_guide_draft_not_executed",
+      "learning_objectives": [
+        "Explain the inputs, outputs, and failure modes for estimate scene depth.",
+        "Select a compatible model and processor using current task tags, model card, license, revision, hardware needs, and evaluation evidence.",
+        "Design a task-specific dataset and separate training, validation, and private holdout data.",
+        "Measure quality, calibration, robustness, latency, memory, and cost against a simple baseline.",
+        "Document limitations, provenance, safety boundaries, and when a human must review the output."
+      ],
+      "ordered_workflow": [
+        "Define the user outcome, input contract, output schema, and prohibited uses.",
+        "Discover candidate models using documented task tags; pin exact revisions and inspect model/dataset cards.",
+        "Verify licenses, provenance, privacy, consent, and access requirements before using any data.",
+        "Build a small synthetic or rights-cleared fixture and a deterministic baseline.",
+        "Run the task-specific evaluation metrics and inspect class/segment/subgroup errors.",
+        "Test adversarial, out-of-domain, malformed, and low-confidence cases; define abstention and escalation.",
+        "Compare local and hosted inference costs and permissions before proposing deployment.",
+        "Record artifacts, hashes, versions, metrics, failures, and reviewer sign-off."
+      ],
+      "practice_lab": "Build a small image sandbox using synthetic or rights-cleared images/documents; implement a deterministic baseline and compare one candidate model without sending private data to an external provider.",
+      "evaluation_metrics": [
+        "AbsRel",
+        "RMSE",
+        "scale consistency"
+      ],
+      "risk_checks": [
+        "consent and likeness",
+        "sensitive visual inference",
+        "dataset rights",
+        "distribution shift"
+      ],
+      "acceptance_criteria": [
+        "exact input/output contract",
+        "reproducible pinned model and dataset revisions",
+        "separate holdout set",
+        "task-specific metrics with baseline",
+        "failure analysis and safe abstention",
+        "rights/privacy review",
+        "human review for consequential outputs"
+      ],
+      "required_evidence": [
+        "model_and_dataset_card_review",
+        "license_and_provenance_record",
+        "fixture_hashes",
+        "run_configuration",
+        "metric_report",
+        "failure_analysis",
+        "reviewer_and_timestamp"
+      ],
+      "task_id_note": "Pipeline tag is a discovery hint, not proof that a model is suitable or maintained.",
+      "mastery_status": "not_assessed"
+    },
+    {
+      "task_id": "image-classification",
+      "family": "computer_vision",
+      "modality": "image",
+      "pipeline_tag": "image-classification",
+      "task_description": "classify images",
+      "study_status": "original_task_guide_draft_not_executed",
+      "learning_objectives": [
+        "Explain the inputs, outputs, and failure modes for classify images.",
+        "Select a compatible model and processor using current task tags, model card, license, revision, hardware needs, and evaluation evidence.",
+        "Design a task-specific dataset and separate training, validation, and private holdout data.",
+        "Measure quality, calibration, robustness, latency, memory, and cost against a simple baseline.",
+        "Document limitations, provenance, safety boundaries, and when a human must review the output."
+      ],
+      "ordered_workflow": [
+        "Define the user outcome, input contract, output schema, and prohibited uses.",
+        "Discover candidate models using documented task tags; pin exact revisions and inspect model/dataset cards.",
+        "Verify licenses, provenance, privacy, consent, and access requirements before using any data.",
+        "Build a small synthetic or rights-cleared fixture and a deterministic baseline.",
+        "Run the task-specific evaluation metrics and inspect class/segment/subgroup errors.",
+        "Test adversarial, out-of-domain, malformed, and low-confidence cases; define abstention and escalation.",
+        "Compare local and hosted inference costs and permissions before proposing deployment.",
+        "Record artifacts, hashes, versions, metrics, failures, and reviewer sign-off."
+      ],
+      "practice_lab": "Build a small image sandbox using synthetic or rights-cleared images/documents; implement a deterministic baseline and compare one candidate model without sending private data to an external provider.",
+      "evaluation_metrics": [
+        "top-1 accuracy",
+        "macro F1",
+        "per-class recall"
+      ],
+      "risk_checks": [
+        "consent and likeness",
+        "sensitive visual inference",
+        "dataset rights",
+        "distribution shift"
+      ],
+      "acceptance_criteria": [
+        "exact input/output contract",
+        "reproducible pinned model and dataset revisions",
+        "separate holdout set",
+        "task-specific metrics with baseline",
+        "failure analysis and safe abstention",
+        "rights/privacy review",
+        "human review for consequential outputs"
+      ],
+      "required_evidence": [
+        "model_and_dataset_card_review",
+        "license_and_provenance_record",
+        "fixture_hashes",
+        "run_configuration",
+        "metric_report",
+        "failure_analysis",
+        "reviewer_and_timestamp"
+      ],
+      "task_id_note": "Pipeline tag is a discovery hint, not proof that a model is suitable or maintained.",
+      "mastery_status": "not_assessed"
+    },
+    {
+      "task_id": "image-segmentation",
+      "family": "computer_vision",
+      "modality": "image",
+      "pipeline_tag": "image-segmentation",
+      "task_description": "label image pixels or regions",
+      "study_status": "original_task_guide_draft_not_executed",
+      "learning_objectives": [
+        "Explain the inputs, outputs, and failure modes for label image pixels or regions.",
+        "Select a compatible model and processor using current task tags, model card, license, revision, hardware needs, and evaluation evidence.",
+        "Design a task-specific dataset and separate training, validation, and private holdout data.",
+        "Measure quality, calibration, robustness, latency, memory, and cost against a simple baseline.",
+        "Document limitations, provenance, safety boundaries, and when a human must review the output."
+      ],
+      "ordered_workflow": [
+        "Define the user outcome, input contract, output schema, and prohibited uses.",
+        "Discover candidate models using documented task tags; pin exact revisions and inspect model/dataset cards.",
+        "Verify licenses, provenance, privacy, consent, and access requirements before using any data.",
+        "Build a small synthetic or rights-cleared fixture and a deterministic baseline.",
+        "Run the task-specific evaluation metrics and inspect class/segment/subgroup errors.",
+        "Test adversarial, out-of-domain, malformed, and low-confidence cases; define abstention and escalation.",
+        "Compare local and hosted inference costs and permissions before proposing deployment.",
+        "Record artifacts, hashes, versions, metrics, failures, and reviewer sign-off."
+      ],
+      "practice_lab": "Build a small image sandbox using synthetic or rights-cleared images/documents; implement a deterministic baseline and compare one candidate model without sending private data to an external provider.",
+      "evaluation_metrics": [
+        "mean IoU",
+        "Dice score",
+        "boundary F1"
+      ],
+      "risk_checks": [
+        "consent and likeness",
+        "sensitive visual inference",
+        "dataset rights",
+        "distribution shift"
+      ],
+      "acceptance_criteria": [
+        "exact input/output contract",
+        "reproducible pinned model and dataset revisions",
+        "separate holdout set",
+        "task-specific metrics with baseline",
+        "failure analysis and safe abstention",
+        "rights/privacy review",
+        "human review for consequential outputs"
+      ],
+      "required_evidence": [
+        "model_and_dataset_card_review",
+        "license_and_provenance_record",
+        "fixture_hashes",
+        "run_configuration",
+        "metric_report",
+        "failure_analysis",
+        "reviewer_and_timestamp"
+      ],
+      "task_id_note": "Pipeline tag is a discovery hint, not proof that a model is suitable or maintained.",
+      "mastery_status": "not_assessed"
+    },
+    {
+      "task_id": "image-to-image",
+      "family": "computer_vision",
+      "modality": "image",
+      "pipeline_tag": "image-to-image",
+      "task_description": "transform one image into another",
+      "study_status": "original_task_guide_draft_not_executed",
+      "learning_objectives": [
+        "Explain the inputs, outputs, and failure modes for transform one image into another.",
+        "Select a compatible model and processor using current task tags, model card, license, revision, hardware needs, and evaluation evidence.",
+        "Design a task-specific dataset and separate training, validation, and private holdout data.",
+        "Measure quality, calibration, robustness, latency, memory, and cost against a simple baseline.",
+        "Document limitations, provenance, safety boundaries, and when a human must review the output."
+      ],
+      "ordered_workflow": [
+        "Define the user outcome, input contract, output schema, and prohibited uses.",
+        "Discover candidate models using documented task tags; pin exact revisions and inspect model/dataset cards.",
+        "Verify licenses, provenance, privacy, consent, and access requirements before using any data.",
+        "Build a small synthetic or rights-cleared fixture and a deterministic baseline.",
+        "Run the task-specific evaluation metrics and inspect class/segment/subgroup errors.",
+        "Test adversarial, out-of-domain, malformed, and low-confidence cases; define abstention and escalation.",
+        "Compare local and hosted inference costs and permissions before proposing deployment.",
+        "Record artifacts, hashes, versions, metrics, failures, and reviewer sign-off."
+      ],
+      "practice_lab": "Build a small image sandbox using synthetic or rights-cleared images/documents; implement a deterministic baseline and compare one candidate model without sending private data to an external provider.",
+      "evaluation_metrics": [
+        "task-specific fidelity",
+        "structural similarity",
+        "artifact rate"
+      ],
+      "risk_checks": [
+        "consent and likeness",
+        "sensitive visual inference",
+        "dataset rights",
+        "distribution shift"
+      ],
+      "acceptance_criteria": [
+        "exact input/output contract",
+        "reproducible pinned model and dataset revisions",
+        "separate holdout set",
+        "task-specific metrics with baseline",
+        "failure analysis and safe abstention",
+        "rights/privacy review",
+        "human review for consequential outputs"
+      ],
+      "required_evidence": [
+        "model_and_dataset_card_review",
+        "license_and_provenance_record",
+        "fixture_hashes",
+        "run_configuration",
+        "metric_report",
+        "failure_analysis",
+        "reviewer_and_timestamp"
+      ],
+      "task_id_note": "Pipeline tag is a discovery hint, not proof that a model is suitable or maintained.",
+      "mastery_status": "not_assessed"
+    },
+    {
+      "task_id": "mask-generation",
+      "family": "computer_vision",
+      "modality": "image",
+      "pipeline_tag": "mask-generation",
+      "task_description": "generate object masks",
+      "study_status": "original_task_guide_draft_not_executed",
+      "learning_objectives": [
+        "Explain the inputs, outputs, and failure modes for generate object masks.",
+        "Select a compatible model and processor using current task tags, model card, license, revision, hardware needs, and evaluation evidence.",
+        "Design a task-specific dataset and separate training, validation, and private holdout data.",
+        "Measure quality, calibration, robustness, latency, memory, and cost against a simple baseline.",
+        "Document limitations, provenance, safety boundaries, and when a human must review the output."
+      ],
+      "ordered_workflow": [
+        "Define the user outcome, input contract, output schema, and prohibited uses.",
+        "Discover candidate models using documented task tags; pin exact revisions and inspect model/dataset cards.",
+        "Verify licenses, provenance, privacy, consent, and access requirements before using any data.",
+        "Build a small synthetic or rights-cleared fixture and a deterministic baseline.",
+        "Run the task-specific evaluation metrics and inspect class/segment/subgroup errors.",
+        "Test adversarial, out-of-domain, malformed, and low-confidence cases; define abstention and escalation.",
+        "Compare local and hosted inference costs and permissions before proposing deployment.",
+        "Record artifacts, hashes, versions, metrics, failures, and reviewer sign-off."
+      ],
+      "practice_lab": "Build a small image sandbox using synthetic or rights-cleared images/documents; implement a deterministic baseline and compare one candidate model without sending private data to an external provider.",
+      "evaluation_metrics": [
+        "mask IoU",
+        "boundary F1",
+        "prompt robustness"
+      ],
+      "risk_checks": [
+        "consent and likeness",
+        "sensitive visual inference",
+        "dataset rights",
+        "distribution shift"
+      ],
+      "acceptance_criteria": [
+        "exact input/output contract",
+        "reproducible pinned model and dataset revisions",
+        "separate holdout set",
+        "task-specific metrics with baseline",
+        "failure analysis and safe abstention",
+        "rights/privacy review",
+        "human review for consequential outputs"
+      ],
+      "required_evidence": [
+        "model_and_dataset_card_review",
+        "license_and_provenance_record",
+        "fixture_hashes",
+        "run_configuration",
+        "metric_report",
+        "failure_analysis",
+        "reviewer_and_timestamp"
+      ],
+      "task_id_note": "Pipeline tag is a discovery hint, not proof that a model is suitable or maintained.",
+      "mastery_status": "not_assessed"
+    },
+    {
+      "task_id": "object-detection",
+      "family": "computer_vision",
+      "modality": "image",
+      "pipeline_tag": "object-detection",
+      "task_description": "locate and classify objects",
+      "study_status": "original_task_guide_draft_not_executed",
+      "learning_objectives": [
+        "Explain the inputs, outputs, and failure modes for locate and classify objects.",
+        "Select a compatible model and processor using current task tags, model card, license, revision, hardware needs, and evaluation evidence.",
+        "Design a task-specific dataset and separate training, validation, and private holdout data.",
+        "Measure quality, calibration, robustness, latency, memory, and cost against a simple baseline.",
+        "Document limitations, provenance, safety boundaries, and when a human must review the output."
+      ],
+      "ordered_workflow": [
+        "Define the user outcome, input contract, output schema, and prohibited uses.",
+        "Discover candidate models using documented task tags; pin exact revisions and inspect model/dataset cards.",
+        "Verify licenses, provenance, privacy, consent, and access requirements before using any data.",
+        "Build a small synthetic or rights-cleared fixture and a deterministic baseline.",
+        "Run the task-specific evaluation metrics and inspect class/segment/subgroup errors.",
+        "Test adversarial, out-of-domain, malformed, and low-confidence cases; define abstention and escalation.",
+        "Compare local and hosted inference costs and permissions before proposing deployment.",
+        "Record artifacts, hashes, versions, metrics, failures, and reviewer sign-off."
+      ],
+      "practice_lab": "Build a small image sandbox using synthetic or rights-cleared images/documents; implement a deterministic baseline and compare one candidate model without sending private data to an external provider.",
+      "evaluation_metrics": [
+        "mAP",
+        "IoU",
+        "per-class recall"
+      ],
+      "risk_checks": [
+        "consent and likeness",
+        "sensitive visual inference",
+        "dataset rights",
+        "distribution shift"
+      ],
+      "acceptance_criteria": [
+        "exact input/output contract",
+        "reproducible pinned model and dataset revisions",
+        "separate holdout set",
+        "task-specific metrics with baseline",
+        "failure analysis and safe abstention",
+        "rights/privacy review",
+        "human review for consequential outputs"
+      ],
+      "required_evidence": [
+        "model_and_dataset_card_review",
+        "license_and_provenance_record",
+        "fixture_hashes",
+        "run_configuration",
+        "metric_report",
+        "failure_analysis",
+        "reviewer_and_timestamp"
+      ],
+      "task_id_note": "Pipeline tag is a discovery hint, not proof that a model is suitable or maintained.",
+      "mastery_status": "not_assessed"
+    },
+    {
+      "task_id": "video-classification",
+      "family": "computer_vision",
+      "modality": "video",
+      "pipeline_tag": "video-classification",
+      "task_description": "classify video clips",
+      "study_status": "original_task_guide_draft_not_executed",
+      "learning_objectives": [
+        "Explain the inputs, outputs, and failure modes for classify video clips.",
+        "Select a compatible model and processor using current task tags, model card, license, revision, hardware needs, and evaluation evidence.",
+        "Design a task-specific dataset and separate training, validation, and private holdout data.",
+        "Measure quality, calibration, robustness, latency, memory, and cost against a simple baseline.",
+        "Document limitations, provenance, safety boundaries, and when a human must review the output."
+      ],
+      "ordered_workflow": [
+        "Define the user outcome, input contract, output schema, and prohibited uses.",
+        "Discover candidate models using documented task tags; pin exact revisions and inspect model/dataset cards.",
+        "Verify licenses, provenance, privacy, consent, and access requirements before using any data.",
+        "Build a small synthetic or rights-cleared fixture and a deterministic baseline.",
+        "Run the task-specific evaluation metrics and inspect class/segment/subgroup errors.",
+        "Test adversarial, out-of-domain, malformed, and low-confidence cases; define abstention and escalation.",
+        "Compare local and hosted inference costs and permissions before proposing deployment.",
+        "Record artifacts, hashes, versions, metrics, failures, and reviewer sign-off."
+      ],
+      "practice_lab": "Build a small video sandbox using rights-cleared short clips with frame-level provenance; implement a deterministic baseline and compare one candidate model without sending private data to an external provider.",
+      "evaluation_metrics": [
+        "top-1 accuracy",
+        "macro F1",
+        "temporal robustness"
+      ],
+      "risk_checks": [
+        "consent and surveillance misuse",
+        "temporal context loss",
+        "privacy retention"
+      ],
+      "acceptance_criteria": [
+        "exact input/output contract",
+        "reproducible pinned model and dataset revisions",
+        "separate holdout set",
+        "task-specific metrics with baseline",
+        "failure analysis and safe abstention",
+        "rights/privacy review",
+        "human review for consequential outputs"
+      ],
+      "required_evidence": [
+        "model_and_dataset_card_review",
+        "license_and_provenance_record",
+        "fixture_hashes",
+        "run_configuration",
+        "metric_report",
+        "failure_analysis",
+        "reviewer_and_timestamp"
+      ],
+      "task_id_note": "Pipeline tag is a discovery hint, not proof that a model is suitable or maintained.",
+      "mastery_status": "not_assessed"
+    },
+    {
+      "task_id": "unconditional-image-generation",
+      "family": "computer_vision",
+      "modality": "image",
+      "pipeline_tag": null,
+      "task_description": "generate images without conditioning input",
+      "study_status": "original_task_guide_draft_not_executed",
+      "learning_objectives": [
+        "Explain the inputs, outputs, and failure modes for generate images without conditioning input.",
+        "Select a compatible model and processor using current task tags, model card, license, revision, hardware needs, and evaluation evidence.",
+        "Design a task-specific dataset and separate training, validation, and private holdout data.",
+        "Measure quality, calibration, robustness, latency, memory, and cost against a simple baseline.",
+        "Document limitations, provenance, safety boundaries, and when a human must review the output."
+      ],
+      "ordered_workflow": [
+        "Define the user outcome, input contract, output schema, and prohibited uses.",
+        "Discover candidate models using documented task tags; pin exact revisions and inspect model/dataset cards.",
+        "Verify licenses, provenance, privacy, consent, and access requirements before using any data.",
+        "Build a small synthetic or rights-cleared fixture and a deterministic baseline.",
+        "Run the task-specific evaluation metrics and inspect class/segment/subgroup errors.",
+        "Test adversarial, out-of-domain, malformed, and low-confidence cases; define abstention and escalation.",
+        "Compare local and hosted inference costs and permissions before proposing deployment.",
+        "Record artifacts, hashes, versions, metrics, failures, and reviewer sign-off."
+      ],
+      "practice_lab": "Build a small image sandbox using synthetic or rights-cleared images/documents; implement a deterministic baseline and compare one candidate model without sending private data to an external provider.",
+      "evaluation_metrics": [
+        "FID or KID",
+        "diversity",
+        "memorization checks"
+      ],
+      "risk_checks": [
+        "consent and likeness",
+        "sensitive visual inference",
+        "dataset rights",
+        "distribution shift"
+      ],
+      "acceptance_criteria": [
+        "exact input/output contract",
+        "reproducible pinned model and dataset revisions",
+        "separate holdout set",
+        "task-specific metrics with baseline",
+        "failure analysis and safe abstention",
+        "rights/privacy review",
+        "human review for consequential outputs"
+      ],
+      "required_evidence": [
+        "model_and_dataset_card_review",
+        "license_and_provenance_record",
+        "fixture_hashes",
+        "run_configuration",
+        "metric_report",
+        "failure_analysis",
+        "reviewer_and_timestamp"
+      ],
+      "task_id_note": "Taxonomy record has no documented pipeline tag; do not invent one. Verify current Hub task support before routing.",
+      "mastery_status": "not_assessed"
+    },
+    {
+      "task_id": "image-feature-extraction",
+      "family": "computer_vision",
+      "modality": "image",
+      "pipeline_tag": "image-feature-extraction",
+      "task_description": "produce image representations",
+      "study_status": "original_task_guide_draft_not_executed",
+      "learning_objectives": [
+        "Explain the inputs, outputs, and failure modes for produce image representations.",
+        "Select a compatible model and processor using current task tags, model card, license, revision, hardware needs, and evaluation evidence.",
+        "Design a task-specific dataset and separate training, validation, and private holdout data.",
+        "Measure quality, calibration, robustness, latency, memory, and cost against a simple baseline.",
+        "Document limitations, provenance, safety boundaries, and when a human must review the output."
+      ],
+      "ordered_workflow": [
+        "Define the user outcome, input contract, output schema, and prohibited uses.",
+        "Discover candidate models using documented task tags; pin exact revisions and inspect model/dataset cards.",
+        "Verify licenses, provenance, privacy, consent, and access requirements before using any data.",
+        "Build a small synthetic or rights-cleared fixture and a deterministic baseline.",
+        "Run the task-specific evaluation metrics and inspect class/segment/subgroup errors.",
+        "Test adversarial, out-of-domain, malformed, and low-confidence cases; define abstention and escalation.",
+        "Compare local and hosted inference costs and permissions before proposing deployment.",
+        "Record artifacts, hashes, versions, metrics, failures, and reviewer sign-off."
+      ],
+      "practice_lab": "Build a small image sandbox using synthetic or rights-cleared images/documents; implement a deterministic baseline and compare one candidate model without sending private data to an external provider.",
+      "evaluation_metrics": [
+        "retrieval recall@k",
+        "embedding consistency",
+        "downstream task score"
+      ],
+      "risk_checks": [
+        "consent and likeness",
+        "sensitive visual inference",
+        "dataset rights",
+        "distribution shift"
+      ],
+      "acceptance_criteria": [
+        "exact input/output contract",
+        "reproducible pinned model and dataset revisions",
+        "separate holdout set",
+        "task-specific metrics with baseline",
+        "failure analysis and safe abstention",
+        "rights/privacy review",
+        "human review for consequential outputs"
+      ],
+      "required_evidence": [
+        "model_and_dataset_card_review",
+        "license_and_provenance_record",
+        "fixture_hashes",
+        "run_configuration",
+        "metric_report",
+        "failure_analysis",
+        "reviewer_and_timestamp"
+      ],
+      "task_id_note": "Pipeline tag is a discovery hint, not proof that a model is suitable or maintained.",
+      "mastery_status": "not_assessed"
+    },
+    {
+      "task_id": "audio-classification",
+      "family": "audio",
+      "modality": "audio",
+      "pipeline_tag": "audio-classification",
+      "task_description": "classify audio signals",
+      "study_status": "original_task_guide_draft_not_executed",
+      "learning_objectives": [
+        "Explain the inputs, outputs, and failure modes for classify audio signals.",
+        "Select a compatible model and processor using current task tags, model card, license, revision, hardware needs, and evaluation evidence.",
+        "Design a task-specific dataset and separate training, validation, and private holdout data.",
+        "Measure quality, calibration, robustness, latency, memory, and cost against a simple baseline.",
+        "Document limitations, provenance, safety boundaries, and when a human must review the output."
+      ],
+      "ordered_workflow": [
+        "Define the user outcome, input contract, output schema, and prohibited uses.",
+        "Discover candidate models using documented task tags; pin exact revisions and inspect model/dataset cards.",
+        "Verify licenses, provenance, privacy, consent, and access requirements before using any data.",
+        "Build a small synthetic or rights-cleared fixture and a deterministic baseline.",
+        "Run the task-specific evaluation metrics and inspect class/segment/subgroup errors.",
+        "Test adversarial, out-of-domain, malformed, and low-confidence cases; define abstention and escalation.",
+        "Compare local and hosted inference costs and permissions before proposing deployment.",
+        "Record artifacts, hashes, versions, metrics, failures, and reviewer sign-off."
+      ],
+      "practice_lab": "Build a small audio sandbox using consented or synthetic audio fixtures; implement a deterministic baseline and compare one candidate model without sending private data to an external provider.",
+      "evaluation_metrics": [
+        "macro F1",
+        "AUROC",
+        "noise robustness"
+      ],
+      "risk_checks": [
+        "voice consent",
+        "speaker privacy",
+        "background speech leakage",
+        "noise/domain shift"
+      ],
+      "acceptance_criteria": [
+        "exact input/output contract",
+        "reproducible pinned model and dataset revisions",
+        "separate holdout set",
+        "task-specific metrics with baseline",
+        "failure analysis and safe abstention",
+        "rights/privacy review",
+        "human review for consequential outputs"
+      ],
+      "required_evidence": [
+        "model_and_dataset_card_review",
+        "license_and_provenance_record",
+        "fixture_hashes",
+        "run_configuration",
+        "metric_report",
+        "failure_analysis",
+        "reviewer_and_timestamp"
+      ],
+      "task_id_note": "Pipeline tag is a discovery hint, not proof that a model is suitable or maintained.",
+      "mastery_status": "not_assessed"
+    },
+    {
+      "task_id": "audio-to-audio",
+      "family": "audio",
+      "modality": "audio",
+      "pipeline_tag": "audio-to-audio",
+      "task_description": "transform audio input into audio output",
+      "study_status": "original_task_guide_draft_not_executed",
+      "learning_objectives": [
+        "Explain the inputs, outputs, and failure modes for transform audio input into audio output.",
+        "Select a compatible model and processor using current task tags, model card, license, revision, hardware needs, and evaluation evidence.",
+        "Design a task-specific dataset and separate training, validation, and private holdout data.",
+        "Measure quality, calibration, robustness, latency, memory, and cost against a simple baseline.",
+        "Document limitations, provenance, safety boundaries, and when a human must review the output."
+      ],
+      "ordered_workflow": [
+        "Define the user outcome, input contract, output schema, and prohibited uses.",
+        "Discover candidate models using documented task tags; pin exact revisions and inspect model/dataset cards.",
+        "Verify licenses, provenance, privacy, consent, and access requirements before using any data.",
+        "Build a small synthetic or rights-cleared fixture and a deterministic baseline.",
+        "Run the task-specific evaluation metrics and inspect class/segment/subgroup errors.",
+        "Test adversarial, out-of-domain, malformed, and low-confidence cases; define abstention and escalation.",
+        "Compare local and hosted inference costs and permissions before proposing deployment.",
+        "Record artifacts, hashes, versions, metrics, failures, and reviewer sign-off."
+      ],
+      "practice_lab": "Build a small audio sandbox using consented or synthetic audio fixtures; implement a deterministic baseline and compare one candidate model without sending private data to an external provider.",
+      "evaluation_metrics": [
+        "signal quality",
+        "intelligibility",
+        "task fidelity"
+      ],
+      "risk_checks": [
+        "voice consent",
+        "speaker privacy",
+        "background speech leakage",
+        "noise/domain shift"
+      ],
+      "acceptance_criteria": [
+        "exact input/output contract",
+        "reproducible pinned model and dataset revisions",
+        "separate holdout set",
+        "task-specific metrics with baseline",
+        "failure analysis and safe abstention",
+        "rights/privacy review",
+        "human review for consequential outputs"
+      ],
+      "required_evidence": [
+        "model_and_dataset_card_review",
+        "license_and_provenance_record",
+        "fixture_hashes",
+        "run_configuration",
+        "metric_report",
+        "failure_analysis",
+        "reviewer_and_timestamp"
+      ],
+      "task_id_note": "Pipeline tag is a discovery hint, not proof that a model is suitable or maintained.",
+      "mastery_status": "not_assessed"
+    },
+    {
+      "task_id": "automatic-speech-recognition",
+      "family": "audio",
+      "modality": "audio",
+      "pipeline_tag": "automatic-speech-recognition",
+      "task_description": "transcribe speech to text",
+      "study_status": "original_task_guide_draft_not_executed",
+      "learning_objectives": [
+        "Explain the inputs, outputs, and failure modes for transcribe speech to text.",
+        "Select a compatible model and processor using current task tags, model card, license, revision, hardware needs, and evaluation evidence.",
+        "Design a task-specific dataset and separate training, validation, and private holdout data.",
+        "Measure quality, calibration, robustness, latency, memory, and cost against a simple baseline.",
+        "Document limitations, provenance, safety boundaries, and when a human must review the output."
+      ],
+      "ordered_workflow": [
+        "Define the user outcome, input contract, output schema, and prohibited uses.",
+        "Discover candidate models using documented task tags; pin exact revisions and inspect model/dataset cards.",
+        "Verify licenses, provenance, privacy, consent, and access requirements before using any data.",
+        "Build a small synthetic or rights-cleared fixture and a deterministic baseline.",
+        "Run the task-specific evaluation metrics and inspect class/segment/subgroup errors.",
+        "Test adversarial, out-of-domain, malformed, and low-confidence cases; define abstention and escalation.",
+        "Compare local and hosted inference costs and permissions before proposing deployment.",
+        "Record artifacts, hashes, versions, metrics, failures, and reviewer sign-off."
+      ],
+      "practice_lab": "Build a small audio sandbox using consented or synthetic audio fixtures; implement a deterministic baseline and compare one candidate model without sending private data to an external provider.",
+      "evaluation_metrics": [
+        "WER",
+        "CER",
+        "speaker/dialect robustness"
+      ],
+      "risk_checks": [
+        "voice consent",
+        "speaker privacy",
+        "background speech leakage",
+        "noise/domain shift"
+      ],
+      "acceptance_criteria": [
+        "exact input/output contract",
+        "reproducible pinned model and dataset revisions",
+        "separate holdout set",
+        "task-specific metrics with baseline",
+        "failure analysis and safe abstention",
+        "rights/privacy review",
+        "human review for consequential outputs"
+      ],
+      "required_evidence": [
+        "model_and_dataset_card_review",
+        "license_and_provenance_record",
+        "fixture_hashes",
+        "run_configuration",
+        "metric_report",
+        "failure_analysis",
+        "reviewer_and_timestamp"
+      ],
+      "task_id_note": "Pipeline tag is a discovery hint, not proof that a model is suitable or maintained.",
+      "mastery_status": "not_assessed"
+    },
+    {
+      "task_id": "text-to-speech",
+      "family": "audio",
+      "modality": "text_audio",
+      "pipeline_tag": "text-to-speech",
+      "task_description": "synthesize speech from text",
+      "study_status": "original_task_guide_draft_not_executed",
+      "learning_objectives": [
+        "Explain the inputs, outputs, and failure modes for synthesize speech from text.",
+        "Select a compatible model and processor using current task tags, model card, license, revision, hardware needs, and evaluation evidence.",
+        "Design a task-specific dataset and separate training, validation, and private holdout data.",
+        "Measure quality, calibration, robustness, latency, memory, and cost against a simple baseline.",
+        "Document limitations, provenance, safety boundaries, and when a human must review the output."
+      ],
+      "ordered_workflow": [
+        "Define the user outcome, input contract, output schema, and prohibited uses.",
+        "Discover candidate models using documented task tags; pin exact revisions and inspect model/dataset cards.",
+        "Verify licenses, provenance, privacy, consent, and access requirements before using any data.",
+        "Build a small synthetic or rights-cleared fixture and a deterministic baseline.",
+        "Run the task-specific evaluation metrics and inspect class/segment/subgroup errors.",
+        "Test adversarial, out-of-domain, malformed, and low-confidence cases; define abstention and escalation.",
+        "Compare local and hosted inference costs and permissions before proposing deployment.",
+        "Record artifacts, hashes, versions, metrics, failures, and reviewer sign-off."
+      ],
+      "practice_lab": "Build a small text_audio sandbox using consented or synthetic audio fixtures; implement a deterministic baseline and compare one candidate model without sending private data to an external provider.",
+      "evaluation_metrics": [
+        "MOS",
+        "intelligibility",
+        "pronunciation accuracy",
+        "speaker-consent review"
+      ],
+      "risk_checks": [
+        "voice consent",
+        "impersonation risk",
+        "recording privacy"
+      ],
+      "acceptance_criteria": [
+        "exact input/output contract",
+        "reproducible pinned model and dataset revisions",
+        "separate holdout set",
+        "task-specific metrics with baseline",
+        "failure analysis and safe abstention",
+        "rights/privacy review",
+        "human review for consequential outputs"
+      ],
+      "required_evidence": [
+        "model_and_dataset_card_review",
+        "license_and_provenance_record",
+        "fixture_hashes",
+        "run_configuration",
+        "metric_report",
+        "failure_analysis",
+        "reviewer_and_timestamp"
+      ],
+      "task_id_note": "Pipeline tag is a discovery hint, not proof that a model is suitable or maintained.",
+      "mastery_status": "not_assessed"
+    },
+    {
+      "task_id": "tabular-classification",
+      "family": "tabular",
+      "modality": "tabular",
+      "pipeline_tag": "tabular-classification",
+      "task_description": "predict categorical outcomes from structured features",
+      "study_status": "original_task_guide_draft_not_executed",
+      "learning_objectives": [
+        "Explain the inputs, outputs, and failure modes for predict categorical outcomes from structured features.",
+        "Select a compatible model and processor using current task tags, model card, license, revision, hardware needs, and evaluation evidence.",
+        "Design a task-specific dataset and separate training, validation, and private holdout data.",
+        "Measure quality, calibration, robustness, latency, memory, and cost against a simple baseline.",
+        "Document limitations, provenance, safety boundaries, and when a human must review the output."
+      ],
+      "ordered_workflow": [
+        "Define the user outcome, input contract, output schema, and prohibited uses.",
+        "Discover candidate models using documented task tags; pin exact revisions and inspect model/dataset cards.",
+        "Verify licenses, provenance, privacy, consent, and access requirements before using any data.",
+        "Build a small synthetic or rights-cleared fixture and a deterministic baseline.",
+        "Run the task-specific evaluation metrics and inspect class/segment/subgroup errors.",
+        "Test adversarial, out-of-domain, malformed, and low-confidence cases; define abstention and escalation.",
+        "Compare local and hosted inference costs and permissions before proposing deployment.",
+        "Record artifacts, hashes, versions, metrics, failures, and reviewer sign-off."
+      ],
+      "practice_lab": "Build a small tabular sandbox using synthetic or rights-cleared text/tabular fixtures; implement a deterministic baseline and compare one candidate model without sending private data to an external provider.",
+      "evaluation_metrics": [
+        "macro F1",
+        "AUROC",
+        "calibration",
+        "subgroup error"
+      ],
+      "risk_checks": [
+        "sensitive feature leakage",
+        "target leakage",
+        "dataset shift",
+        "unfair subgroup error"
+      ],
+      "acceptance_criteria": [
+        "exact input/output contract",
+        "reproducible pinned model and dataset revisions",
+        "separate holdout set",
+        "task-specific metrics with baseline",
+        "failure analysis and safe abstention",
+        "rights/privacy review",
+        "human review for consequential outputs"
+      ],
+      "required_evidence": [
+        "model_and_dataset_card_review",
+        "license_and_provenance_record",
+        "fixture_hashes",
+        "run_configuration",
+        "metric_report",
+        "failure_analysis",
+        "reviewer_and_timestamp"
+      ],
+      "task_id_note": "Pipeline tag is a discovery hint, not proof that a model is suitable or maintained.",
+      "mastery_status": "not_assessed"
+    },
+    {
+      "task_id": "tabular-regression",
+      "family": "tabular",
+      "modality": "tabular",
+      "pipeline_tag": "tabular-regression",
+      "task_description": "predict numeric outcomes from structured features",
+      "study_status": "original_task_guide_draft_not_executed",
+      "learning_objectives": [
+        "Explain the inputs, outputs, and failure modes for predict numeric outcomes from structured features.",
+        "Select a compatible model and processor using current task tags, model card, license, revision, hardware needs, and evaluation evidence.",
+        "Design a task-specific dataset and separate training, validation, and private holdout data.",
+        "Measure quality, calibration, robustness, latency, memory, and cost against a simple baseline.",
+        "Document limitations, provenance, safety boundaries, and when a human must review the output."
+      ],
+      "ordered_workflow": [
+        "Define the user outcome, input contract, output schema, and prohibited uses.",
+        "Discover candidate models using documented task tags; pin exact revisions and inspect model/dataset cards.",
+        "Verify licenses, provenance, privacy, consent, and access requirements before using any data.",
+        "Build a small synthetic or rights-cleared fixture and a deterministic baseline.",
+        "Run the task-specific evaluation metrics and inspect class/segment/subgroup errors.",
+        "Test adversarial, out-of-domain, malformed, and low-confidence cases; define abstention and escalation.",
+        "Compare local and hosted inference costs and permissions before proposing deployment.",
+        "Record artifacts, hashes, versions, metrics, failures, and reviewer sign-off."
+      ],
+      "practice_lab": "Build a small tabular sandbox using synthetic or rights-cleared text/tabular fixtures; implement a deterministic baseline and compare one candidate model without sending private data to an external provider.",
+      "evaluation_metrics": [
+        "MAE",
+        "RMSE",
+        "R-squared",
+        "calibration"
+      ],
+      "risk_checks": [
+        "sensitive feature leakage",
+        "target leakage",
+        "dataset shift",
+        "unfair subgroup error"
+      ],
+      "acceptance_criteria": [
+        "exact input/output contract",
+        "reproducible pinned model and dataset revisions",
+        "separate holdout set",
+        "task-specific metrics with baseline",
+        "failure analysis and safe abstention",
+        "rights/privacy review",
+        "human review for consequential outputs"
+      ],
+      "required_evidence": [
+        "model_and_dataset_card_review",
+        "license_and_provenance_record",
+        "fixture_hashes",
+        "run_configuration",
+        "metric_report",
+        "failure_analysis",
+        "reviewer_and_timestamp"
+      ],
+      "task_id_note": "Pipeline tag is a discovery hint, not proof that a model is suitable or maintained.",
+      "mastery_status": "not_assessed"
+    },
+    {
+      "task_id": "document-question-answering",
+      "family": "multimodal",
+      "modality": "document_image",
+      "pipeline_tag": "document-question-answering",
+      "task_description": "answer questions from document images",
+      "study_status": "original_task_guide_draft_not_executed",
+      "learning_objectives": [
+        "Explain the inputs, outputs, and failure modes for answer questions from document images.",
+        "Select a compatible model and processor using current task tags, model card, license, revision, hardware needs, and evaluation evidence.",
+        "Design a task-specific dataset and separate training, validation, and private holdout data.",
+        "Measure quality, calibration, robustness, latency, memory, and cost against a simple baseline.",
+        "Document limitations, provenance, safety boundaries, and when a human must review the output."
+      ],
+      "ordered_workflow": [
+        "Define the user outcome, input contract, output schema, and prohibited uses.",
+        "Discover candidate models using documented task tags; pin exact revisions and inspect model/dataset cards.",
+        "Verify licenses, provenance, privacy, consent, and access requirements before using any data.",
+        "Build a small synthetic or rights-cleared fixture and a deterministic baseline.",
+        "Run the task-specific evaluation metrics and inspect class/segment/subgroup errors.",
+        "Test adversarial, out-of-domain, malformed, and low-confidence cases; define abstention and escalation.",
+        "Compare local and hosted inference costs and permissions before proposing deployment.",
+        "Record artifacts, hashes, versions, metrics, failures, and reviewer sign-off."
+      ],
+      "practice_lab": "Build a small document_image sandbox using synthetic or rights-cleared images/documents; implement a deterministic baseline and compare one candidate model without sending private data to an external provider.",
+      "evaluation_metrics": [
+        "exact match",
+        "field-level accuracy",
+        "page/region provenance"
+      ],
+      "risk_checks": [
+        "personal-data exposure",
+        "OCR error",
+        "document provenance"
+      ],
+      "acceptance_criteria": [
+        "exact input/output contract",
+        "reproducible pinned model and dataset revisions",
+        "separate holdout set",
+        "task-specific metrics with baseline",
+        "failure analysis and safe abstention",
+        "rights/privacy review",
+        "human review for consequential outputs"
+      ],
+      "required_evidence": [
+        "model_and_dataset_card_review",
+        "license_and_provenance_record",
+        "fixture_hashes",
+        "run_configuration",
+        "metric_report",
+        "failure_analysis",
+        "reviewer_and_timestamp"
+      ],
+      "task_id_note": "Pipeline tag is a discovery hint, not proof that a model is suitable or maintained.",
+      "mastery_status": "not_assessed"
+    },
+    {
+      "task_id": "image-to-text",
+      "family": "multimodal",
+      "modality": "image_text",
+      "pipeline_tag": "image-to-text",
+      "task_description": "describe or extract text from images",
+      "study_status": "original_task_guide_draft_not_executed",
+      "learning_objectives": [
+        "Explain the inputs, outputs, and failure modes for describe or extract text from images.",
+        "Select a compatible model and processor using current task tags, model card, license, revision, hardware needs, and evaluation evidence.",
+        "Design a task-specific dataset and separate training, validation, and private holdout data.",
+        "Measure quality, calibration, robustness, latency, memory, and cost against a simple baseline.",
+        "Document limitations, provenance, safety boundaries, and when a human must review the output."
+      ],
+      "ordered_workflow": [
+        "Define the user outcome, input contract, output schema, and prohibited uses.",
+        "Discover candidate models using documented task tags; pin exact revisions and inspect model/dataset cards.",
+        "Verify licenses, provenance, privacy, consent, and access requirements before using any data.",
+        "Build a small synthetic or rights-cleared fixture and a deterministic baseline.",
+        "Run the task-specific evaluation metrics and inspect class/segment/subgroup errors.",
+        "Test adversarial, out-of-domain, malformed, and low-confidence cases; define abstention and escalation.",
+        "Compare local and hosted inference costs and permissions before proposing deployment.",
+        "Record artifacts, hashes, versions, metrics, failures, and reviewer sign-off."
+      ],
+      "practice_lab": "Build a small image_text sandbox using synthetic or rights-cleared images/documents; implement a deterministic baseline and compare one candidate model without sending private data to an external provider.",
+      "evaluation_metrics": [
+        "OCR character error rate",
+        "caption relevance",
+        "hallucination rate"
+      ],
+      "risk_checks": [
+        "visual hallucination",
+        "sensitive inference",
+        "unconsented likeness"
+      ],
+      "acceptance_criteria": [
+        "exact input/output contract",
+        "reproducible pinned model and dataset revisions",
+        "separate holdout set",
+        "task-specific metrics with baseline",
+        "failure analysis and safe abstention",
+        "rights/privacy review",
+        "human review for consequential outputs"
+      ],
+      "required_evidence": [
+        "model_and_dataset_card_review",
+        "license_and_provenance_record",
+        "fixture_hashes",
+        "run_configuration",
+        "metric_report",
+        "failure_analysis",
+        "reviewer_and_timestamp"
+      ],
+      "task_id_note": "Pipeline tag is a discovery hint, not proof that a model is suitable or maintained.",
+      "mastery_status": "not_assessed"
+    },
+    {
+      "task_id": "text-to-image",
+      "family": "multimodal",
+      "modality": "text_image",
+      "pipeline_tag": "text-to-image",
+      "task_description": "generate images from text prompts",
+      "study_status": "original_task_guide_draft_not_executed",
+      "learning_objectives": [
+        "Explain the inputs, outputs, and failure modes for generate images from text prompts.",
+        "Select a compatible model and processor using current task tags, model card, license, revision, hardware needs, and evaluation evidence.",
+        "Design a task-specific dataset and separate training, validation, and private holdout data.",
+        "Measure quality, calibration, robustness, latency, memory, and cost against a simple baseline.",
+        "Document limitations, provenance, safety boundaries, and when a human must review the output."
+      ],
+      "ordered_workflow": [
+        "Define the user outcome, input contract, output schema, and prohibited uses.",
+        "Discover candidate models using documented task tags; pin exact revisions and inspect model/dataset cards.",
+        "Verify licenses, provenance, privacy, consent, and access requirements before using any data.",
+        "Build a small synthetic or rights-cleared fixture and a deterministic baseline.",
+        "Run the task-specific evaluation metrics and inspect class/segment/subgroup errors.",
+        "Test adversarial, out-of-domain, malformed, and low-confidence cases; define abstention and escalation.",
+        "Compare local and hosted inference costs and permissions before proposing deployment.",
+        "Record artifacts, hashes, versions, metrics, failures, and reviewer sign-off."
+      ],
+      "practice_lab": "Build a small text_image sandbox using synthetic or rights-cleared images/documents; implement a deterministic baseline and compare one candidate model without sending private data to an external provider.",
+      "evaluation_metrics": [
+        "prompt adherence",
+        "image quality",
+        "diversity",
+        "rights/safety review"
+      ],
+      "risk_checks": [
+        "copyright/source rights",
+        "deceptive media",
+        "unsafe output"
+      ],
+      "acceptance_criteria": [
+        "exact input/output contract",
+        "reproducible pinned model and dataset revisions",
+        "separate holdout set",
+        "task-specific metrics with baseline",
+        "failure analysis and safe abstention",
+        "rights/privacy review",
+        "human review for consequential outputs"
+      ],
+      "required_evidence": [
+        "model_and_dataset_card_review",
+        "license_and_provenance_record",
+        "fixture_hashes",
+        "run_configuration",
+        "metric_report",
+        "failure_analysis",
+        "reviewer_and_timestamp"
+      ],
+      "task_id_note": "Pipeline tag is a discovery hint, not proof that a model is suitable or maintained.",
+      "mastery_status": "not_assessed"
+    },
+    {
+      "task_id": "visual-question-answering",
+      "family": "multimodal",
+      "modality": "image_text",
+      "pipeline_tag": "visual-question-answering",
+      "task_description": "answer questions about images",
+      "study_status": "original_task_guide_draft_not_executed",
+      "learning_objectives": [
+        "Explain the inputs, outputs, and failure modes for answer questions about images.",
+        "Select a compatible model and processor using current task tags, model card, license, revision, hardware needs, and evaluation evidence.",
+        "Design a task-specific dataset and separate training, validation, and private holdout data.",
+        "Measure quality, calibration, robustness, latency, memory, and cost against a simple baseline.",
+        "Document limitations, provenance, safety boundaries, and when a human must review the output."
+      ],
+      "ordered_workflow": [
+        "Define the user outcome, input contract, output schema, and prohibited uses.",
+        "Discover candidate models using documented task tags; pin exact revisions and inspect model/dataset cards.",
+        "Verify licenses, provenance, privacy, consent, and access requirements before using any data.",
+        "Build a small synthetic or rights-cleared fixture and a deterministic baseline.",
+        "Run the task-specific evaluation metrics and inspect class/segment/subgroup errors.",
+        "Test adversarial, out-of-domain, malformed, and low-confidence cases; define abstention and escalation.",
+        "Compare local and hosted inference costs and permissions before proposing deployment.",
+        "Record artifacts, hashes, versions, metrics, failures, and reviewer sign-off."
+      ],
+      "practice_lab": "Build a small image_text sandbox using synthetic or rights-cleared images/documents; implement a deterministic baseline and compare one candidate model without sending private data to an external provider.",
+      "evaluation_metrics": [
+        "exact match",
+        "answer grounding",
+        "abstention accuracy"
+      ],
+      "risk_checks": [
+        "visual hallucination",
+        "sensitive inference",
+        "unconsented likeness"
+      ],
+      "acceptance_criteria": [
+        "exact input/output contract",
+        "reproducible pinned model and dataset revisions",
+        "separate holdout set",
+        "task-specific metrics with baseline",
+        "failure analysis and safe abstention",
+        "rights/privacy review",
+        "human review for consequential outputs"
+      ],
+      "required_evidence": [
+        "model_and_dataset_card_review",
+        "license_and_provenance_record",
+        "fixture_hashes",
+        "run_configuration",
+        "metric_report",
+        "failure_analysis",
+        "reviewer_and_timestamp"
+      ],
+      "task_id_note": "Pipeline tag is a discovery hint, not proof that a model is suitable or maintained.",
+      "mastery_status": "not_assessed"
+    },
+    {
+      "task_id": "zero-shot-audio-classification",
+      "family": "multimodal",
+      "modality": "audio",
+      "pipeline_tag": "zero-shot-audio-classification",
+      "task_description": "classify audio with unseen labels",
+      "study_status": "original_task_guide_draft_not_executed",
+      "learning_objectives": [
+        "Explain the inputs, outputs, and failure modes for classify audio with unseen labels.",
+        "Select a compatible model and processor using current task tags, model card, license, revision, hardware needs, and evaluation evidence.",
+        "Design a task-specific dataset and separate training, validation, and private holdout data.",
+        "Measure quality, calibration, robustness, latency, memory, and cost against a simple baseline.",
+        "Document limitations, provenance, safety boundaries, and when a human must review the output."
+      ],
+      "ordered_workflow": [
+        "Define the user outcome, input contract, output schema, and prohibited uses.",
+        "Discover candidate models using documented task tags; pin exact revisions and inspect model/dataset cards.",
+        "Verify licenses, provenance, privacy, consent, and access requirements before using any data.",
+        "Build a small synthetic or rights-cleared fixture and a deterministic baseline.",
+        "Run the task-specific evaluation metrics and inspect class/segment/subgroup errors.",
+        "Test adversarial, out-of-domain, malformed, and low-confidence cases; define abstention and escalation.",
+        "Compare local and hosted inference costs and permissions before proposing deployment.",
+        "Record artifacts, hashes, versions, metrics, failures, and reviewer sign-off."
+      ],
+      "practice_lab": "Build a small audio sandbox using consented or synthetic audio fixtures; implement a deterministic baseline and compare one candidate model without sending private data to an external provider.",
+      "evaluation_metrics": [
+        "macro F1",
+        "label robustness",
+        "calibration"
+      ],
+      "risk_checks": [
+        "voice consent",
+        "speaker privacy",
+        "background speech leakage",
+        "noise/domain shift"
+      ],
+      "acceptance_criteria": [
+        "exact input/output contract",
+        "reproducible pinned model and dataset revisions",
+        "separate holdout set",
+        "task-specific metrics with baseline",
+        "failure analysis and safe abstention",
+        "rights/privacy review",
+        "human review for consequential outputs"
+      ],
+      "required_evidence": [
+        "model_and_dataset_card_review",
+        "license_and_provenance_record",
+        "fixture_hashes",
+        "run_configuration",
+        "metric_report",
+        "failure_analysis",
+        "reviewer_and_timestamp"
+      ],
+      "task_id_note": "Pipeline tag is a discovery hint, not proof that a model is suitable or maintained.",
+      "mastery_status": "not_assessed"
+    },
+    {
+      "task_id": "zero-shot-image-classification",
+      "family": "multimodal",
+      "modality": "image",
+      "pipeline_tag": "zero-shot-image-classification",
+      "task_description": "classify images with unseen labels",
+      "study_status": "original_task_guide_draft_not_executed",
+      "learning_objectives": [
+        "Explain the inputs, outputs, and failure modes for classify images with unseen labels.",
+        "Select a compatible model and processor using current task tags, model card, license, revision, hardware needs, and evaluation evidence.",
+        "Design a task-specific dataset and separate training, validation, and private holdout data.",
+        "Measure quality, calibration, robustness, latency, memory, and cost against a simple baseline.",
+        "Document limitations, provenance, safety boundaries, and when a human must review the output."
+      ],
+      "ordered_workflow": [
+        "Define the user outcome, input contract, output schema, and prohibited uses.",
+        "Discover candidate models using documented task tags; pin exact revisions and inspect model/dataset cards.",
+        "Verify licenses, provenance, privacy, consent, and access requirements before using any data.",
+        "Build a small synthetic or rights-cleared fixture and a deterministic baseline.",
+        "Run the task-specific evaluation metrics and inspect class/segment/subgroup errors.",
+        "Test adversarial, out-of-domain, malformed, and low-confidence cases; define abstention and escalation.",
+        "Compare local and hosted inference costs and permissions before proposing deployment.",
+        "Record artifacts, hashes, versions, metrics, failures, and reviewer sign-off."
+      ],
+      "practice_lab": "Build a small image sandbox using synthetic or rights-cleared images/documents; implement a deterministic baseline and compare one candidate model without sending private data to an external provider.",
+      "evaluation_metrics": [
+        "macro F1",
+        "label robustness",
+        "calibration"
+      ],
+      "risk_checks": [
+        "consent and likeness",
+        "sensitive visual inference",
+        "dataset rights",
+        "distribution shift"
+      ],
+      "acceptance_criteria": [
+        "exact input/output contract",
+        "reproducible pinned model and dataset revisions",
+        "separate holdout set",
+        "task-specific metrics with baseline",
+        "failure analysis and safe abstention",
+        "rights/privacy review",
+        "human review for consequential outputs"
+      ],
+      "required_evidence": [
+        "model_and_dataset_card_review",
+        "license_and_provenance_record",
+        "fixture_hashes",
+        "run_configuration",
+        "metric_report",
+        "failure_analysis",
+        "reviewer_and_timestamp"
+      ],
+      "task_id_note": "Pipeline tag is a discovery hint, not proof that a model is suitable or maintained.",
+      "mastery_status": "not_assessed"
+    },
+    {
+      "task_id": "zero-shot-object-detection",
+      "family": "multimodal",
+      "modality": "image",
+      "pipeline_tag": "zero-shot-object-detection",
+      "task_description": "detect objects using text-defined classes",
+      "study_status": "original_task_guide_draft_not_executed",
+      "learning_objectives": [
+        "Explain the inputs, outputs, and failure modes for detect objects using text-defined classes.",
+        "Select a compatible model and processor using current task tags, model card, license, revision, hardware needs, and evaluation evidence.",
+        "Design a task-specific dataset and separate training, validation, and private holdout data.",
+        "Measure quality, calibration, robustness, latency, memory, and cost against a simple baseline.",
+        "Document limitations, provenance, safety boundaries, and when a human must review the output."
+      ],
+      "ordered_workflow": [
+        "Define the user outcome, input contract, output schema, and prohibited uses.",
+        "Discover candidate models using documented task tags; pin exact revisions and inspect model/dataset cards.",
+        "Verify licenses, provenance, privacy, consent, and access requirements before using any data.",
+        "Build a small synthetic or rights-cleared fixture and a deterministic baseline.",
+        "Run the task-specific evaluation metrics and inspect class/segment/subgroup errors.",
+        "Test adversarial, out-of-domain, malformed, and low-confidence cases; define abstention and escalation.",
+        "Compare local and hosted inference costs and permissions before proposing deployment.",
+        "Record artifacts, hashes, versions, metrics, failures, and reviewer sign-off."
+      ],
+      "practice_lab": "Build a small image sandbox using synthetic or rights-cleared images/documents; implement a deterministic baseline and compare one candidate model without sending private data to an external provider.",
+      "evaluation_metrics": [
+        "mAP",
+        "IoU",
+        "prompt/class robustness"
+      ],
+      "risk_checks": [
+        "consent and likeness",
+        "sensitive visual inference",
+        "dataset rights",
+        "distribution shift"
+      ],
+      "acceptance_criteria": [
+        "exact input/output contract",
+        "reproducible pinned model and dataset revisions",
+        "separate holdout set",
+        "task-specific metrics with baseline",
+        "failure analysis and safe abstention",
+        "rights/privacy review",
+        "human review for consequential outputs"
+      ],
+      "required_evidence": [
+        "model_and_dataset_card_review",
+        "license_and_provenance_record",
+        "fixture_hashes",
+        "run_configuration",
+        "metric_report",
+        "failure_analysis",
+        "reviewer_and_timestamp"
+      ],
+      "task_id_note": "Pipeline tag is a discovery hint, not proof that a model is suitable or maintained.",
+      "mastery_status": "not_assessed"
+    },
+    {
+      "task_id": "image-text-to-text",
+      "family": "multimodal",
+      "modality": "image_text_text",
+      "pipeline_tag": "image-text-to-text",
+      "task_description": "generate text conditioned on image and text",
+      "study_status": "original_task_guide_draft_not_executed",
+      "learning_objectives": [
+        "Explain the inputs, outputs, and failure modes for generate text conditioned on image and text.",
+        "Select a compatible model and processor using current task tags, model card, license, revision, hardware needs, and evaluation evidence.",
+        "Design a task-specific dataset and separate training, validation, and private holdout data.",
+        "Measure quality, calibration, robustness, latency, memory, and cost against a simple baseline.",
+        "Document limitations, provenance, safety boundaries, and when a human must review the output."
+      ],
+      "ordered_workflow": [
+        "Define the user outcome, input contract, output schema, and prohibited uses.",
+        "Discover candidate models using documented task tags; pin exact revisions and inspect model/dataset cards.",
+        "Verify licenses, provenance, privacy, consent, and access requirements before using any data.",
+        "Build a small synthetic or rights-cleared fixture and a deterministic baseline.",
+        "Run the task-specific evaluation metrics and inspect class/segment/subgroup errors.",
+        "Test adversarial, out-of-domain, malformed, and low-confidence cases; define abstention and escalation.",
+        "Compare local and hosted inference costs and permissions before proposing deployment.",
+        "Record artifacts, hashes, versions, metrics, failures, and reviewer sign-off."
+      ],
+      "practice_lab": "Build a small image_text_text sandbox using synthetic or rights-cleared images/documents; implement a deterministic baseline and compare one candidate model without sending private data to an external provider.",
+      "evaluation_metrics": [
+        "answer correctness",
+        "visual grounding",
+        "instruction adherence"
+      ],
+      "risk_checks": [
+        "visual hallucination",
+        "sensitive inference",
+        "privacy leakage"
+      ],
+      "acceptance_criteria": [
+        "exact input/output contract",
+        "reproducible pinned model and dataset revisions",
+        "separate holdout set",
+        "task-specific metrics with baseline",
+        "failure analysis and safe abstention",
+        "rights/privacy review",
+        "human review for consequential outputs"
+      ],
+      "required_evidence": [
+        "model_and_dataset_card_review",
+        "license_and_provenance_record",
+        "fixture_hashes",
+        "run_configuration",
+        "metric_report",
+        "failure_analysis",
+        "reviewer_and_timestamp"
+      ],
+      "task_id_note": "Pipeline tag is a discovery hint, not proof that a model is suitable or maintained.",
+      "mastery_status": "not_assessed"
+    },
+    {
+      "task_id": "reinforcement-learning",
+      "family": "reinforcement_learning",
+      "modality": "environment_action",
+      "pipeline_tag": null,
+      "task_description": "learn policies through environment interaction",
+      "study_status": "original_task_guide_draft_not_executed",
+      "learning_objectives": [
+        "Explain the inputs, outputs, and failure modes for learn policies through environment interaction.",
+        "Select a compatible model and processor using current task tags, model card, license, revision, hardware needs, and evaluation evidence.",
+        "Design a task-specific dataset and separate training, validation, and private holdout data.",
+        "Measure quality, calibration, robustness, latency, memory, and cost against a simple baseline.",
+        "Document limitations, provenance, safety boundaries, and when a human must review the output."
+      ],
+      "ordered_workflow": [
+        "Define the user outcome, input contract, output schema, and prohibited uses.",
+        "Discover candidate models using documented task tags; pin exact revisions and inspect model/dataset cards.",
+        "Verify licenses, provenance, privacy, consent, and access requirements before using any data.",
+        "Build a small synthetic or rights-cleared fixture and a deterministic baseline.",
+        "Run the task-specific evaluation metrics and inspect class/segment/subgroup errors.",
+        "Test adversarial, out-of-domain, malformed, and low-confidence cases; define abstention and escalation.",
+        "Compare local and hosted inference costs and permissions before proposing deployment.",
+        "Record artifacts, hashes, versions, metrics, failures, and reviewer sign-off."
+      ],
+      "practice_lab": "Build a small environment_action sandbox using network-disabled deterministic simulator with action limits; implement a deterministic baseline and compare one candidate model without sending private data to an external provider.",
+      "evaluation_metrics": [
+        "environment reward",
+        "success rate",
+        "constraint violations",
+        "seed variance"
+      ],
+      "risk_checks": [
+        "unsafe actions",
+        "reward hacking",
+        "sim-to-real failure",
+        "unbounded resource use"
+      ],
+      "acceptance_criteria": [
+        "exact input/output contract",
+        "reproducible pinned model and dataset revisions",
+        "separate holdout set",
+        "task-specific metrics with baseline",
+        "failure analysis and safe abstention",
+        "rights/privacy review",
+        "human review for consequential outputs"
+      ],
+      "required_evidence": [
+        "model_and_dataset_card_review",
+        "license_and_provenance_record",
+        "fixture_hashes",
+        "run_configuration",
+        "metric_report",
+        "failure_analysis",
+        "reviewer_and_timestamp"
+      ],
+      "task_id_note": "Taxonomy record has no documented pipeline tag; do not invent one. Verify current Hub task support before routing.",
+      "mastery_status": "not_assessed"
+    }
+  ]
+}

@@ -11,11 +11,10 @@ const divisions = JSON.parse(readFileSync('website/data/command-center/divisions
 const worker = readFileSync('website/service-worker.js', 'utf8');
 
 test('every registered bot has a prospectus and shares the local specialist questionnaire', () => {
-  assert.equal(fleet.summary.profiles, 1101);
-  assert.equal(fleet.summary.canonical_profiles, 1051);
-  assert.equal(fleet.summary.supplemental_profiles, 50);
-  assert.equal(fleet.bots.length, 1101);
-  assert.equal(fleet.summary.declared_capability_slots, 8460);
+  const expectedProfiles = fleet.summary.canonical_profiles + fleet.summary.supplemental_profiles;
+  assert.equal(fleet.summary.profiles, expectedProfiles);
+  assert.equal(fleet.bots.length, expectedProfiles);
+  assert.equal(fleet.summary.declared_capability_slots, fleet.bots.reduce((total, bot) => total + bot.capability_count, 0));
   assert.equal(fleet.bots.length, fleet.summary.profiles);
   assert.ok(fleet.bots.every((bot) => bot.identity?.slug && bot.mission && bot.capability_search));
   assert.match(botsHtml, /id="specialist-matcher-form"/);

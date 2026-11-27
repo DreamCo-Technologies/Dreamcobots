@@ -1,0 +1,123 @@
+version: 1
+name: DreamCo Learning Source Catalog
+policy:
+  source_discovery_is_not_content_access: true
+  require_user_authorization_for_account_or_gated_content: true
+  require_license_and_terms_review_before_reuse: true
+  create_original_lessons_and_benchmarks: true
+  never_republish_proprietary_course_material: true
+  paid_compute_requires_explicit_owner_approval: true
+  source_status_values: [discovered, metadata_reviewed, access_verified, content_reviewed, task_tested]
+sources:
+  - id: github_docs
+    name: GitHub Skills and Documentation
+    url: https://docs.github.com/
+    domains: [git, github, collaboration, issues, pull_requests, actions, security, releases]
+    source_type: documentation_and_hands_on_training
+    access: public_documentation; account_required_for_some_exercises
+    status: discovered
+  - id: github_skills
+    name: GitHub Skills
+    url: https://skills.github.com/
+    domains: [git, github_actions, pull_requests, automation]
+    source_type: interactive_courses
+    access: public; github_account_may_be_required
+    status: discovered
+  - id: huggingface_docs
+    name: Hugging Face Learn and Documentation
+    url: https://huggingface.co/learn
+    domains: [transformers, datasets, peft, evaluation, agents, computer_vision, audio, robotics]
+    source_type: courses_and_documentation
+    access: public; gated_models_and_compute_possible
+    status: discovered
+  - id: ollama_docs
+    name: Ollama Documentation
+    url: https://docs.ollama.com/
+    domains: [local_inference, model_import, model_serving, tool_use]
+    source_type: documentation
+    access: public; local_hardware_required
+    status: discovered
+  - id: onet
+    name: O*NET OnLine and Web Services
+    url: https://www.onetonline.org/
+    domains: [occupations, tasks, skills, knowledge, abilities, work_activities, work_context]
+    source_type: occupational_taxonomy_and_data
+    access: public; review_data_terms_and_attribution
+    status: discovered
+  - id: freecodecamp
+    name: freeCodeCamp
+    url: https://www.freecodecamp.org/learn/
+    domains: [web_development, javascript, python, databases, scientific_computing, security]
+    source_type: interactive_curriculum_and_projects
+    access: public; account_optional_for_some_features
+    status: discovered
+  - id: codecademy
+    name: Codecademy
+    url: https://www.codecademy.com/catalog
+    domains: [programming, data, cloud, cybersecurity, career_paths]
+    source_type: interactive_courses
+    access: freemium; account_and_paid_content_possible
+    status: discovered
+  - id: khan_academy
+    name: Khan Academy
+    url: https://www.khanacademy.org/
+    domains: [math, science, economics, computing, foundational_learning]
+    source_type: lessons_and_practice
+    access: free; account_optional_for_browsing
+    status: discovered
+  - id: mit_ocw
+    name: MIT OpenCourseWare
+    url: https://ocw.mit.edu/
+    domains: [engineering, computer_science, mathematics, science, business]
+    source_type: open_course_materials
+    access: free; reuse_terms_vary_by_asset
+    status: discovered
+  - id: microsoft_learn
+    name: Microsoft Learn
+    url: https://learn.microsoft.com/training/
+    domains: [azure, developer_tools, security, data, microsoft_365]
+    source_type: learning_paths_and_modules
+    access: public; sandbox_and_exam_costs_may_apply
+    status: discovered
+  - id: aws_skill_builder
+    name: AWS Skill Builder
+    url: https://skillbuilder.aws/
+    domains: [aws, cloud_architecture, security, machine_learning, operations]
+    source_type: courses_and_labs
+    access: freemium; paid_labs_or_subscriptions_possible
+    status: discovered
+  - id: google_cloud_learning
+    name: Google Cloud Skills
+    url: https://cloud.google.com/learn
+    domains: [google_cloud, data, ai, infrastructure, security]
+    source_type: courses_and_labs
+    access: freemium; credits_or_paid_labs_possible
+    status: discovered
+  - id: nist
+    name: NIST Cybersecurity and AI Resources
+    url: https://www.nist.gov/
+    domains: [cybersecurity, privacy, risk_management, ai_governance, standards]
+    source_type: standards_and_reference_material
+    access: public
+    status: discovered
+  - id: osha
+    name: OSHA Training and Education
+    url: https://www.osha.gov/training
+    domains: [workplace_safety, hazard_communication, fall_protection, lockout_tagout]
+    source_type: official_training_and_guidance
+    access: public; official certification may require authorized providers
+    status: discovered
+  - id: coursera
+    name: Coursera
+    url: https://www.coursera.org/
+    domains: [technology, business, data, professional_certificates]
+    source_type: courses_and_certificates
+    access: freemium; paid_enrollment_possible
+    status: discovered
+  - id: edx
+    name: edX
+    url: https://www.edx.org/
+    domains: [computer_science, engineering, business, humanities]
+    source_type: courses_and_programs
+    access: freemium; verified_certificates_paid
+    status: discovered

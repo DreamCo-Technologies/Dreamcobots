@@ -2,11 +2,6 @@ name: DreamCo Repository System Watch
 
 on:
   workflow_dispatch:
-  push:
-    branches: [main, codex/master-capability-pages]
-    paths-ignore:
-      - "website/data/repository-master-map.json"
-      - "config/generated/repository-master-map.json"
   schedule:
     - cron: "31 * * * *"
 
@@ -39,6 +34,9 @@ jobs:
           node-version: 22
           cache: npm
 
+      - name: Install Python workflow parser dependency
+        run: python3 -m pip install --disable-pip-version-check "PyYAML==6.0.3"
+
       - name: Install deterministic dependencies
         run: npm ci
 
@@ -51,6 +49,12 @@ jobs:
 
       - name: Generate repository master inventory
         run: python3 tools/generate_dreamco_repository_master_map.py
+
+      - name: Refresh Actions health inventory and prospectus
+        run: |
+          python3 tools/audit_actions_health.py
+          python3 tools/build_actions_prospectus.py
+          python3 tools/build_actions_prospectus.py --check --check-buttons
 
       - name: Reconcile generated repository test registry after all generators
         run: python3 tools/generate_repository_test_registry.py

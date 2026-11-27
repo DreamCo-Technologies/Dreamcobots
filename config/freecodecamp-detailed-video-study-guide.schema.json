@@ -1,0 +1,674 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "dreamco.freecodecamp.detailed_video_study_guide.v1",
+  "title": "DreamCo Buddy detailed freeCodeCamp video study guide",
+  "type": "object",
+  "required": [
+    "schema",
+    "video_id",
+    "source",
+    "rights",
+    "summary",
+    "chapter_summaries",
+    "learning_objectives",
+    "key_concepts",
+    "terminology",
+    "code_patterns",
+    "worked_examples",
+    "exercises",
+    "projects",
+    "common_mistakes",
+    "debugging_playbook",
+    "prerequisites",
+    "division_applications",
+    "knowledge_checks",
+    "answer_key",
+    "references",
+    "review",
+    "capstone",
+    "authorship"
+  ],
+  "properties": {
+    "schema": {
+      "const": "dreamco.freecodecamp_video_study_guide.v1"
+    },
+    "video_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "source": {
+      "type": "object",
+      "required": [
+        "title",
+        "url",
+        "channel",
+        "retrieved_at",
+        "transcript_sha256"
+      ],
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        },
+        "channel": {
+          "const": "freeCodeCamp.org"
+        },
+        "retrieved_at": {
+          "type": "string"
+        },
+        "transcript_sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "instructor": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "published_at": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "duration_seconds": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        }
+      }
+    },
+    "rights": {
+      "type": "object",
+      "required": [
+        "evidence_ref",
+        "study_permission",
+        "summary_derivative_permission",
+        "evaluation_permission"
+      ],
+      "properties": {
+        "evidence_ref": {
+          "type": "string"
+        },
+        "study_permission": {
+          "const": true
+        },
+        "summary_derivative_permission": {
+          "const": true
+        },
+        "evaluation_permission": {
+          "const": true
+        },
+        "training_permission": {
+          "type": "boolean"
+        },
+        "training_evidence_ref": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "required": [
+        "executive_overview",
+        "detailed_explanation",
+        "intended_audience",
+        "scope_and_limits"
+      ],
+      "properties": {
+        "executive_overview": {
+          "type": "string",
+          "minLength": 100
+        },
+        "detailed_explanation": {
+          "type": "string",
+          "minLength": 500
+        },
+        "intended_audience": {
+          "type": "string"
+        },
+        "scope_and_limits": {
+          "type": "string"
+        }
+      }
+    },
+    "chapter_summaries": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "start_seconds",
+          "topic",
+          "detailed_notes",
+          "demonstrations"
+        ],
+        "properties": {
+          "start_seconds": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "end_seconds": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 0
+          },
+          "topic": {
+            "type": "string"
+          },
+          "detailed_notes": {
+            "type": "string",
+            "minLength": 80
+          },
+          "demonstrations": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "learning_objectives": {
+      "type": "array",
+      "minItems": 3,
+      "items": {
+        "type": "string"
+      }
+    },
+    "key_concepts": {
+      "type": "array",
+      "minItems": 5,
+      "items": {
+        "type": "object",
+        "required": [
+          "name",
+          "plain_language_explanation",
+          "technical_detail",
+          "when_to_use",
+          "limitations"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "plain_language_explanation": {
+            "type": "string"
+          },
+          "technical_detail": {
+            "type": "string"
+          },
+          "when_to_use": {
+            "type": "string"
+          },
+          "limitations": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "terminology": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "term",
+          "definition",
+          "example"
+        ],
+        "properties": {
+          "term": {
+            "type": "string"
+          },
+          "definition": {
+            "type": "string"
+          },
+          "example": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "code_patterns": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "language_or_tool",
+          "pattern",
+          "explanation",
+          "pitfalls"
+        ],
+        "properties": {
+          "language_or_tool": {
+            "type": "string"
+          },
+          "pattern": {
+            "type": "string"
+          },
+          "explanation": {
+            "type": "string"
+          },
+          "pitfalls": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "worked_examples": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "problem",
+          "approach",
+          "solution",
+          "reasoning",
+          "verification"
+        ],
+        "properties": {
+          "problem": {
+            "type": "string"
+          },
+          "approach": {
+            "type": "string"
+          },
+          "solution": {
+            "type": "string"
+          },
+          "reasoning": {
+            "type": "string"
+          },
+          "verification": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "exercises": {
+      "type": "array",
+      "minItems": 3,
+      "items": {
+        "type": "object",
+        "required": [
+          "prompt",
+          "difficulty",
+          "expected_skills",
+          "acceptance_criteria",
+          "hints"
+        ],
+        "properties": {
+          "prompt": {
+            "type": "string"
+          },
+          "difficulty": {
+            "enum": [
+              "beginner",
+              "intermediate",
+              "advanced"
+            ]
+          },
+          "expected_skills": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "acceptance_criteria": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "hints": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "projects": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "name",
+          "brief",
+          "requirements",
+          "test_plan",
+          "extension_ideas"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "brief": {
+            "type": "string"
+          },
+          "requirements": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "test_plan": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "extension_ideas": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "common_mistakes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "symptom",
+          "cause",
+          "fix",
+          "prevention"
+        ],
+        "properties": {
+          "symptom": {
+            "type": "string"
+          },
+          "cause": {
+            "type": "string"
+          },
+          "fix": {
+            "type": "string"
+          },
+          "prevention": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "debugging_playbook": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "failure",
+          "diagnostic_steps",
+          "repair",
+          "regression_test"
+        ],
+        "properties": {
+          "failure": {
+            "type": "string"
+          },
+          "diagnostic_steps": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "repair": {
+            "type": "string"
+          },
+          "regression_test": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "prerequisites": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "division_applications": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "division_id",
+          "application",
+          "adapted_exercise"
+        ],
+        "properties": {
+          "division_id": {
+            "type": "string"
+          },
+          "application": {
+            "type": "string"
+          },
+          "adapted_exercise": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "knowledge_checks": {
+      "type": "array",
+      "minItems": 5,
+      "items": {
+        "type": "object",
+        "required": [
+          "question",
+          "type",
+          "difficulty"
+        ],
+        "properties": {
+          "question": {
+            "type": "string"
+          },
+          "type": {
+            "enum": [
+              "multiple_choice",
+              "short_answer",
+              "code_trace",
+              "debugging",
+              "build_task"
+            ]
+          },
+          "difficulty": {
+            "enum": [
+              "beginner",
+              "intermediate",
+              "advanced"
+            ]
+          }
+        }
+      }
+    },
+    "answer_key": {
+      "type": "array",
+      "minItems": 5,
+      "items": {
+        "type": "object",
+        "required": [
+          "question_index",
+          "answer",
+          "explanation",
+          "grading_rubric"
+        ],
+        "properties": {
+          "question_index": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "answer": {
+            "type": "string"
+          },
+          "explanation": {
+            "type": "string"
+          },
+          "grading_rubric": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "references": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "label",
+          "url",
+          "relationship"
+        ],
+        "properties": {
+          "label": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "relationship": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "review": {
+      "type": "object",
+      "required": [
+        "authoring_model",
+        "reviewer",
+        "review_status",
+        "created_at",
+        "quality_checks",
+        "reviewed_at"
+      ],
+      "properties": {
+        "authoring_model": {
+          "type": "string"
+        },
+        "reviewer": {
+          "type": "string"
+        },
+        "review_status": {
+          "enum": [
+            "draft",
+            "needs_human_review",
+            "approved",
+            "rejected"
+          ]
+        },
+        "created_at": {
+          "type": "string"
+        },
+        "quality_checks": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "reviewed_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "capstone": {
+      "type": "object",
+      "required": [
+        "goal",
+        "acceptance_tests",
+        "evidence_artifact"
+      ],
+      "properties": {
+        "goal": {
+          "type": "string",
+          "minLength": 30
+        },
+        "acceptance_tests": {
+          "type": "array",
+          "minItems": 3,
+          "items": {
+            "type": "string"
+          }
+        },
+        "evidence_artifact": {
+          "type": "string"
+        },
+        "stretch_goals": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "authorship": {
+      "type": "object",
+      "required": [
+        "authoring_entity",
+        "authoring_model",
+        "model_version",
+        "commissioned_for",
+        "human_contribution",
+        "owner_designation",
+        "owner_confirmation_status"
+      ],
+      "properties": {
+        "authoring_entity": {
+          "type": "string",
+          "minLength": 2
+        },
+        "authoring_model": {
+          "type": "string",
+          "minLength": 2
+        },
+        "model_version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "commissioned_for": {
+          "type": "string",
+          "minLength": 2
+        },
+        "human_contribution": {
+          "type": "string",
+          "minLength": 10
+        },
+        "owner_designation": {
+          "type": "string",
+          "minLength": 10
+        },
+        "owner_confirmation_status": {
+          "enum": [
+            "pending",
+            "confirmed",
+            "not_applicable"
+          ]
+        },
+        "revision_history_ref": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    }
+  }
+}

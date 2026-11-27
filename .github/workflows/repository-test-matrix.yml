@@ -40,6 +40,16 @@ jobs:
       - uses: actions/setup-python@v7
         with:
           python-version: "3.13"
+      - name: Compile DreamCo Model Foundry source and entry points
+        run: python -m compileall -q buddy/learning/model_foundry.py tools/build_division_training_matrix.py tools/train_buddy_division_model.py tools/build_model_release_candidate.py
+      - name: Verify Buddy tokenizer curriculum and study-guide coverage
+        run: python3 -m unittest tests.test_buddy_tokenizer_training_curriculum -v
+      - name: Test Model Foundry rights gate and parallel division planner
+        run: python -m unittest discover -s tests -p "test_model_foundry.py" -v
+      - name: Validate pretrained model store catalog and publication gates
+        run: python tools/validate_pretrained_model_catalog.py --check && python -m unittest tests.test_pretrained_model_catalog -v
+      - name: Test evidence-linked model release candidate gates
+        run: python -m compileall -q tools/build_model_release_candidate.py && python -m unittest tests.test_model_release_candidate -v
       - run: npm ci
       - name: Verify Buddy model progress center
         run: npm run buddy:model-progress
@@ -49,6 +59,8 @@ jobs:
         run: npx tsx tools/check_builder_team_readiness.ts
       - name: Validate Buddy personality and acting program
         run: python3 tools/check_buddy_personality_acting_program.py
+      - name: Refresh canonical bot fleet catalog
+        run: npx tsx tools/generate_bot_fleet_catalog.ts
       - name: Refresh Buddy search index
         run: npx tsx tools/generate_dreamco_search_index.ts
       - name: Refresh Buddy success program
@@ -59,8 +71,21 @@ jobs:
         run: python3 tools/audit_bot_division_placement.py
       - name: Audit all bots categories divisions and specialist agents
         run: python3 tools/audit_all_bots_categories_and_agents.py
+      - name: Regenerate canonical bot runtime manifests before repository inventory
+        run: python3 tools/generate_bot_manifests.py
       - name: Refresh derived repository registry after all generators
         run: python3 tools/generate_repository_test_registry.py
+      - name: Build bounded public technology radar projection
+        run: |
+          python3 tools/refresh_buddy_technology_radar.py --project
+          python3 tools/refresh_buddy_technology_radar.py --check
+          python3 -m unittest tests.test_buddy_technology_radar
+      - name: Final repository test registry reconciliation
+        run: python3 tools/generate_repository_test_registry.py
+      - name: Validate Buddy self-authoring Bootcamp curriculum contracts
+        run: python3 -m unittest tests.test_buddy_self_bootcamp tests.test_bootcamp_discovery -v
+      - name: Test production certification truth rules
+        run: python3 -m unittest tests.test_production_readiness_gate -v
       - name: Run DreamCo Universal Verification Engine
         run: npx tsx tools/run_universal_verification.ts
       - name: Save debugging evidence

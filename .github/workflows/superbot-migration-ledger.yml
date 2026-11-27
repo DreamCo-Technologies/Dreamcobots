@@ -2,6 +2,22 @@ name: Superbot Migration Ledger
 
 on:
   workflow_dispatch:
+  pull_request:
+    paths:
+      - 'config/superbot-consolidation-v1.json'
+      - 'config/generated/superbot-repository-inventory.json'
+      - 'config/generated/legacy-bot-recovery-manifest.json'
+      - 'tools/compile_superbot_migration.py'
+      - 'tools/build_superbot_repository_inventory.py'
+      - 'tools/build_division_superbot_manifests.py'
+      - 'tools/generate_bot_manifests.py'
+      - 'config/bots/bot-manifests.generated.json'
+      - 'App_bots/**'
+      - 'tests/test_division_superbot_manifests.py'
+      - '.github/workflows/superbot-migration-ledger.yml'
+      - 'shared/division-production-contract.ts'
+      - 'config/generated/division-model-manifest.json'
+      - 'config/division-model-training-policy.json'
   push:
     branches: [main, 'codex/superbot-consolidation']
     paths:
@@ -10,6 +26,13 @@ on:
       - 'config/generated/legacy-bot-recovery-manifest.json'
       - 'tools/compile_superbot_migration.py'
       - 'tools/build_division_superbot_manifests.py'
+      - 'tools/generate_bot_manifests.py'
+      - 'config/bots/bot-manifests.generated.json'
+      - 'App_bots/**'
+      - 'tests/test_division_superbot_manifests.py'
+
+permissions:
+  contents: write
 
 jobs:
   compile:
@@ -23,6 +46,15 @@ jobs:
         run: python tools/recover_legacy_bots.py
       - name: Build whole-repository inventory
         run: python tools/build_superbot_repository_inventory.py
+      - name: Generate current bot routing manifests
+        run: |
+          python tools/generate_bot_manifests.py
+          python tools/generate_bot_manifests.py --check
+      - name: Build source-backed Division Superbot manifests
+        run: |
+          python tools/build_division_superbot_manifests.py
+          python tools/build_division_superbot_manifests.py --check
+          python -m unittest tests.test_division_superbot_manifests -v
       - name: Compile migration ledger
         run: python tools/compile_superbot_migration.py
       - name: Validate migration ledger
@@ -38,3 +70,19 @@ jobs:
             reports/SUPERBOT_MIGRATION_LEDGER.md
             config/generated/legacy-bot-recovery-manifest.json
             reports/LEGACY_BOT_RECOVERY.md
+            config/divisions/
+      - name: Update generated Division Superbot review branch
+        if: github.ref == 'refs/heads/main'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -B automation/division-superbot-manifests
+          git add config/divisions/
+          if git diff --cached --quiet; then
+            echo "Division Superbot manifests are already current." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          git commit -m "chore: refresh source-backed Division Superbot manifests"
+          git push --force-with-lease origin automation/division-superbot-manifests
+          echo "Generated manifests pushed to [the review branch](https://github.com/DreamCo-Technologies/Dreamcobots/tree/automation/division-superbot-manifests)." >> "$GITHUB_STEP_SUMMARY"
+          echo "The repository does not allow GITHUB_TOKEN to create pull requests, so the review PR must be opened manually." >> "$GITHUB_STEP_SUMMARY"

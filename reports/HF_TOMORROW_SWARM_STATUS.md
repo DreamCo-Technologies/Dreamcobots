@@ -1,3 +1,36 @@
+# HF Swarm Checklist for Tue Oct 13, 2026
+Published 2026-10-12 16:50 CT by Grok-HF-Swarm-Conductor (main @ 737b2e02c). **claimable: false. Verified mastery: 0. No ready flags flipped.**
+
+## Where things stand (on main)
+- Dual-run MATCH (repeatability only, not a scored benchmark): `study_packs/nlp-tasks/evidence/harness_selftest_run1.json` + `harness_selftest_run2.json`; `study_packs/hub/evidence/hub_drills_run1.json` + `hub_drills_run2.json` (PR #13722).
+- Drift: datasets pack (environment changed between runs); multimodal (pass_rate 0.4 vs 1.0). Neither counts.
+- No scored benchmark has two matching runs yet.
+
+## The one Day-1 evidence target for tomorrow
+| Field | Value |
+|---|---|
+| Bench | nlp-tasks classification (sentiment) |
+| Model | `distilbert/distilbert-base-uncased-finetuned-sst-2-english` @ `714eb0fa89d2f80546fda750413ed43d93601a13` (Hub license apache-2.0) |
+| Dataset | `stanfordnlp/sst2` validation split @ `8d51e7e4887a4caaa95b3fbebbf53c0490b58bbb` (Hub license: unknown, so eval-only, never in a sellable package) |
+| Run ids | `nlp-cls-sst2-20261013-r1`, `nlp-cls-sst2-20261013-r2` (same pins, same env) |
+| Evidence files | `study_packs/nlp-tasks/classification/evidence/run_nlp-cls-sst2-20261013-r1.json`, `..._r2.json` |
+| Pass floor | accuracy >= 0.85 on both runs, and the two accuracies within 0.005 of each other |
+| Owner | Grok-HF-Day1-Evidence; Swarm Conductor verifies |
+
+### Steps
+1. Pin the model and dataset revision and license above into `study_packs/nlp-tasks/classification/sources.json` (`pin_status: pinned`).
+2. Load the pinned `stanfordnlp/sst2` **validation** split at revision `8d51e7e4887a4caaa95b3fbebbf53c0490b58bbb` (eval-only). Do **not** score `classification/drills.jsonl` for this Day-1 target; `drill_runner.py` only grades those hand-authored drills and cannot establish the SST-2 floor.
+3. On CPU, run the pinned DistilBERT SST-2 pipeline over every validation example. Write predictions plus gold labels, and write evidence JSON that records **both** `model_revision` (`714eb0fa…`) and `dataset_revision` (`8d51e7e4…`), plus run id, env (python/transformers/torch), and accuracy. Save as `study_packs/nlp-tasks/classification/evidence/run_nlp-cls-sst2-20261013-r1.json`, then repeat identically for r2.
+4. Pass only if both runs hit accuracy >= 0.85 and the two accuracies differ by at most 0.005. Open one PR with both evidence files (and env). Don't merge from an agent.
+
+## Other HF lanes (secondary)
+- Fill remaining nlp-tasks pins (`revision: null`, `license: TBD`).
+- Datasets pack: rerun in a frozen venv to remove the env drift.
+- Keep non-commercial or undeclared assets out of sellable packages: mms-tts, nllb-200, alpaca, CLIP; Llama/Gemma need owner sign-off.
+
+---
+# Prior checklist (history)
+
 # HF Swarm Status — Literacy Window
 **Refreshed 2026-10-05 16:45 CT** by Grok-HF-Swarm-Conductor. Main tip: see commit after this lands.
 

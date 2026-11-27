@@ -1,0 +1,209 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "DreamCo Division Hugging Face Taxonomy Map",
+  "type": "object",
+  "required": [
+    "schema",
+    "status",
+    "source_of_truth",
+    "counts",
+    "source_blob_shas",
+    "hub_metadata_dimensions",
+    "routes",
+    "rights_policy",
+    "truth"
+  ],
+  "properties": {
+    "schema": {
+      "const": "dreamco.division_huggingface_taxonomy_map.v1"
+    },
+    "status": {
+      "const": "discovery_only_requires_owner_and_rights_review"
+    },
+    "source_of_truth": {
+      "const": "config/masterbot-65-registry.json"
+    },
+    "counts": {
+      "type": "object",
+      "required": [
+        "masterbots",
+        "domain_divisions",
+        "proposed_exact_name_matches",
+        "unresolved_masterbots",
+        "task_families",
+        "capability_packs"
+      ],
+      "properties": {
+        "masterbots": {
+          "const": 65
+        },
+        "domain_divisions": {
+          "const": 55
+        },
+        "proposed_exact_name_matches": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "unresolved_masterbots": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "task_families": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "capability_packs": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "source_blob_shas": {
+      "type": "object",
+      "minProperties": 5,
+      "additionalProperties": {
+        "type": "string",
+        "pattern": "^[a-f0-9]{40}$"
+      }
+    },
+    "hub_metadata_dimensions": {
+      "type": "object",
+      "required": [
+        "datasets",
+        "models"
+      ],
+      "properties": {
+        "datasets": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "models": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "routes": {
+      "type": "array",
+      "minItems": 65,
+      "maxItems": 65,
+      "items": {
+        "type": "object",
+        "required": [
+          "masterbot_id",
+          "masterbot_name",
+          "lane_id",
+          "subject_terms",
+          "search_queries",
+          "domain_crosswalk",
+          "capability_pack_ids",
+          "candidate_pipeline_tags",
+          "rights_status",
+          "training_approved"
+        ],
+        "properties": {
+          "masterbot_id": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "masterbot_name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "lane_id": {
+            "type": "string",
+            "pattern": "^hf-discovery-lane-[0-9]{3}$"
+          },
+          "subject_terms": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string"
+            }
+          },
+          "search_queries": {
+            "type": "array",
+            "minItems": 3,
+            "items": {
+              "type": "string"
+            }
+          },
+          "domain_crosswalk": {
+            "type": "object",
+            "required": [
+              "domain_id",
+              "domain_name",
+              "mapping_status",
+              "owner_review_required",
+              "owner_approval"
+            ],
+            "properties": {
+              "domain_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "domain_name": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "mapping_status": {
+                "enum": [
+                  "proposed_exact_name_match",
+                  "unresolved"
+                ]
+              },
+              "owner_review_required": {
+                "const": true
+              },
+              "owner_approval": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "additionalProperties": false
+          },
+          "capability_pack_ids": {
+            "type": "array",
+            "minItems": 3,
+            "items": {
+              "type": "string"
+            }
+          },
+          "candidate_pipeline_tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "rights_status": {
+            "const": "UNVERIFIED_DISCOVERY_ONLY"
+          },
+          "training_approved": {
+            "const": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "rights_policy": {
+      "type": "object"
+    },
+    "truth": {
+      "type": "string",
+      "minLength": 1
+    }
+  },
+  "additionalProperties": false
+}

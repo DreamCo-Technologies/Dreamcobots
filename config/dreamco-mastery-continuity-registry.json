@@ -1,0 +1,421 @@
+{
+  "schema_version": "1.0.0",
+  "registry_id": "dreamco-master-goal-registry",
+  "purpose": "Preserve every historical DreamCo goal, approved plan, requirement, dependency, and unfinished task until evidence-backed mastery or an explicit user-directed disposition.",
+  "defaults": {
+    "status": "catalogued",
+    "priority": "untriaged",
+    "execution": "continuous_review",
+    "completion_claims_require_evidence": true,
+    "preserve_history": true,
+    "additive_changes_only": true,
+    "production_safety_hold": true,
+    "auto_merge": false,
+    "auto_deploy": false,
+    "auto_spend": false,
+    "auto_change_credentials": false,
+    "bypass_protections": false
+  },
+  "mastery_lifecycle": [
+    "catalogued",
+    "specified",
+    "implemented",
+    "sandbox_verified",
+    "benchmark_verified",
+    "regression_verified",
+    "production_verified",
+    "mastered"
+  ],
+  "evidence_requirements": {
+    "implemented": [
+      "implementation_reference",
+      "owner_or_maintainer"
+    ],
+    "sandbox_verified": [
+      "reproducible_test_command",
+      "passing_test_evidence",
+      "environment"
+    ],
+    "benchmark_verified": [
+      "benchmark_definition",
+      "baseline",
+      "measured_result",
+      "acceptance_threshold"
+    ],
+    "regression_verified": [
+      "regression_suite",
+      "passing_run_id",
+      "tested_commit_sha"
+    ],
+    "production_verified": [
+      "approved_deployment_reference",
+      "health_evidence",
+      "rollback_plan",
+      "human_release_approval"
+    ],
+    "mastered": [
+      "all_prior_gates_passed",
+      "sustained_success_window",
+      "monitoring_owner",
+      "no_open_critical_findings"
+    ]
+  },
+  "operating_rules": [
+    "Never delete a historical goal merely because it is duplicated; link duplicates to one canonical implementation while preserving source references.",
+    "Never mark a goal mastered from documentation, file counts, mock output, or an unverified assistant claim.",
+    "Reopen mastered goals when regressions, drift, new requirements, or failed monitoring appear.",
+    "Continue the next safe, dependency-unblocked task; keep blocked work visible with its blocker and required decision.",
+    "Run read-only audits and local tests automatically; require human approval for production releases, destructive changes, paid compute, billing, credentials, permissions, and external data actions.",
+    "User approval of a plan does not authorize merge, deployment, spending, or safety bypass.",
+    "Historical conversation and PR reconciliation remains an explicit workstream until every discovered requirement has a source reference and disposition."
+  ],
+  "workstreams": [
+    {
+      "id": "DCO-001",
+      "name": "Historical plan and conversation reconciliation",
+      "scope": "Import every DreamCo/Buddy goal, approval, requirement, branch, PR, tool, capability, and unfinished task from historical conversations and repository artifacts.",
+      "priority": "critical",
+      "status": "catalogued",
+      "acceptance": [
+        "source inventory",
+        "deduplicated canonical goal records",
+        "no lost requirements",
+        "conflicts and superseded decisions preserved",
+        "every goal linked to implementation/tests/runtime/benchmark evidence"
+      ],
+      "continuous": true
+    },
+    {
+      "id": "DCO-002",
+      "name": "Repository health and production readiness",
+      "scope": "Repository structure, dependencies, security, secrets, CI, branch protection, deployment isolation, recovery, documentation, and production-readiness evidence.",
+      "priority": "critical",
+      "status": "catalogued",
+      "acceptance": [
+        "all workflows audited",
+        "critical failures resolved",
+        "dependency and security checks pass",
+        "reproducible builds",
+        "rollback and recovery tested",
+        "production isolation independently verified"
+      ],
+      "continuous": true
+    },
+    {
+      "id": "DCO-003",
+      "name": "Buddy OS orchestration and end-to-end execution",
+      "scope": "Buddy routing, tool gateway, approval layer, task execution, retries, observability, command centers, and safe integrations.",
+      "priority": "critical",
+      "status": "catalogued",
+      "acceptance": [
+        "real end-to-end tasks pass",
+        "permission checks enforced",
+        "failures recover safely",
+        "runtime traces and audit evidence available"
+      ],
+      "continuous": true
+    },
+    {
+      "id": "DCO-004",
+      "name": "Dream Brain memory and knowledge",
+      "scope": "Persistent memory, knowledge graph, hybrid search, retrieval, provenance, correction, retention, deletion, and user controls.",
+      "priority": "high",
+      "status": "catalogued",
+      "acceptance": [
+        "retrieval benchmark",
+        "source provenance",
+        "tenant isolation",
+        "user view/correct/export/delete controls",
+        "privacy regression suite"
+      ],
+      "continuous": true
+    },
+    {
+      "id": "DCO-005",
+      "name": "MasterBot and bot ecosystem registry",
+      "scope": "Canonical 65-MasterBot registry, 45 domain divisions, 1,051+ specialist bot inventory, capability contracts, runtime routes, certification, and per-MasterBot logical training lanes.",
+      "priority": "high",
+      "status": "catalogued",
+      "acceptance": [
+        "canonical registry reconciled",
+        "every bot has capability contract",
+        "routes and tests mapped",
+        "certification evidence",
+        "inventory counts reconciled against repository"
+      ],
+      "continuous": true
+    },
+    {
+      "id": "DCO-006",
+      "name": "Model routing, catalog, and benchmarks",
+      "scope": "500-model/provider/resource inventory, provider adapters, model selection, policy-aware routing, benchmark harness, evaluation, certification, and fallback.",
+      "priority": "high",
+      "status": "catalogued",
+      "acceptance": [
+        "model inventory provenance",
+        "provider permission enforcement",
+        "repeatable benchmark suite",
+        "measured routing quality/cost/latency",
+        "fallback and regression tests"
+      ],
+      "continuous": true
+    },
+    {
+      "id": "DCO-007",
+      "name": "Buddy continuous learning and mastery",
+      "scope": "24x7 logical learning policy, dedicated lane per MasterBot, benchmark-gap closure, lesson memory, failure recurrence, rollback, and human approval gates.",
+      "priority": "high",
+      "status": "catalogued",
+      "acceptance": [
+        "measurable benchmark-gap reduction",
+        "learning provenance",
+        "no unapproved production weight changes",
+        "regression and rollback proof",
+        "per-lane health report"
+      ],
+      "continuous": true
+    },
+    {
+      "id": "DCO-008",
+      "name": "Buddy model engineering and training",
+      "scope": "Tokenizer, transformer, efficient attention/MoE, optimization, pretraining, SFT/adapters, reward/evaluation loops, multimodal vision, checkpoints, and independent graduation.",
+      "priority": "high",
+      "status": "catalogued",
+      "acceptance": [
+        "reproducible baseline",
+        "dataset rights/provenance",
+        "compute budget approval",
+        "checkpoint integrity",
+        "independent held-out benchmark"
+      ],
+      "continuous": true
+    },
+    {
+      "id": "DCO-009",
+      "name": "User data ownership, privacy, and consent",
+      "scope": "Purpose-specific opt-in/out, company permissions, connected source study, cross-user learning, data rights, auditability, revocation, deletion propagation, and subscription control.",
+      "priority": "critical",
+      "status": "catalogued",
+      "acceptance": [
+        "authenticated controls",
+        "durable consent receipts",
+        "tenant isolation",
+        "provider confirmation tracking",
+        "withdrawal tests",
+        "no silent sale/share/training"
+      ],
+      "continuous": true
+    },
+    {
+      "id": "DCO-010",
+      "name": "Universal integrations and resource routing",
+      "scope": "Authorized GitHub, Gmail, cloud, database, APIs, app connectors, routing workflows, integration contracts, credential scopes, and end-to-end tests.",
+      "priority": "high",
+      "status": "catalogued",
+      "acceptance": [
+        "connector inventory",
+        "least-privilege scopes",
+        "contract tests",
+        "revoke and expiry tests",
+        "real sandbox end-to-end verification"
+      ],
+      "continuous": true
+    },
+    {
+      "id": "DCO-011",
+      "name": "Command centers, dashboards, and GitHub Pages",
+      "scope": "Live repository status, bot/model/learning dashboards, operational metrics, evidence registry, Pages feature audits, and data freshness.",
+      "priority": "medium",
+      "status": "catalogued",
+      "acceptance": [
+        "live source-backed data",
+        "freshness indicators",
+        "correct status semantics",
+        "dashboard contract tests",
+        "Pages deployment evidence"
+      ],
+      "continuous": true
+    },
+    {
+      "id": "DCO-012",
+      "name": "Builder automation, marketplace, and revenue systems",
+      "scope": "Automation builder, opportunity hunter, offer launcher, affiliate/referral workflows, freelance arbitrage, real-estate research, digital products, and marketplace tiers.",
+      "priority": "medium",
+      "status": "catalogued",
+      "acceptance": [
+        "user-approved business rules",
+        "sandboxed workflows",
+        "disclosure/compliance checks",
+        "measured conversion and unit economics",
+        "billing and cancellation safeguards"
+      ],
+      "continuous": true
+    },
+    {
+      "id": "DCO-013",
+      "name": "Robotics, vision, and embodied AI research",
+      "scope": "Vision, multimodal perception, embodied-agent research, hardware/resource discovery, simulation, and safety evaluation.",
+      "priority": "medium",
+      "status": "catalogued",
+      "acceptance": [
+        "research provenance",
+        "simulation tests",
+        "safety evaluation",
+        "hardware-independent reproducibility"
+      ],
+      "continuous": true
+    },
+    {
+      "id": "DCO-014",
+      "name": "Governance, security, recovery, and operations",
+      "scope": "Council/review processes, approval matrix, audit logs, threat modeling, incident response, backups, restore drills, and policy enforcement.",
+      "priority": "critical",
+      "status": "catalogued",
+      "acceptance": [
+        "security review",
+        "policy tests",
+        "auditable approvals",
+        "restore drill evidence",
+        "incident and rollback runbooks"
+      ],
+      "continuous": true
+    },
+    {
+      "id": "DCO-015",
+      "name": "Python-first repository completion and cross-runtime readiness",
+      "scope": "Complete and evidence every approved main-repository goal before beginning implementation work in the separate Apple C and Swift repositories. Preserve Python as canonical source of truth; retain the existing C and Swift candidates without modifying them during this phase. Reconcile all relevant current-thread requirements, historical goal records, open and closed PRs, branches, workflows, issues, registries, datasets, databases, storage, queues, training, tokenizer, model identities, benchmarks, governance, security, recovery, dashboards, integrations, and revenue plans.",
+      "priority": "critical",
+      "status": "catalogued",
+      "acceptance": [
+        "current conversation requirements captured as stable goal records without copying private chat transcripts or secrets",
+        "historical source inventory and known coverage limitations explicitly recorded",
+        "every open and relevant closed PR has a disposition: merge candidate, superseded with provenance, blocked, or intentionally retained",
+        "all main-repository workflows and recurring schedules inventoried with current run evidence and failure ownership",
+        "all 65 division identities and per-division database, dataset, tokenizer, model, checkpoint, training, benchmark, and serving contracts traced to implementations and tests",
+        "real PostgreSQL, object storage, task queue, workers, training compute, teacher/provider access, and secrets are either verified with safe evidence or retained as explicitly blocked dependencies",
+        "actual tokenizer training and model-weight training are distinguished from planning, dry-runs, mocks, and structural validation",
+        "Buddy Bootcamp curriculum and teacher resources cover the approved Hugging Face taxonomy with source snapshots, mapped ownership, and unresolved-owner review",
+        "benchmark suites include private holdouts, safety, privacy, robustness, regression, latency, throughput, memory, cost, and reproducibility evidence",
+        "production, privacy, security, backup/restore, rollback, observability, and human approval gates pass without bypass",
+        "main-repository public/private dashboards and status reports reflect real evidence and distinguish planned, running, blocked, and completed work",
+        "all Python-first release gates are satisfied and independently reviewed before any C or Swift repository implementation work begins",
+        "later C and Swift competition uses versioned shared contracts, identical task fixtures, recorded hardware, and comparable evidence",
+        "Python, C, and Swift receive equal compute budgets and identical benchmark conditions within comparable laptop and GitHub runner cohorts; every attempt and failure is retained and no candidate receives hidden advantages",
+        "division-private data, databases, checkpoints, and evaluation holdouts remain isolated by default; shared corpora are immutable, rights/privacy-reviewed, scoped, and provenance-tracked",
+        "Buddy selects the best eligible model and dataset per task using hard capability, permission, privacy, licensing, safety, budget, and availability gates before ranking by fresh measured quality and operational metrics",
+        "Buddy Bootcamp has audited coverage across relevant AI training resource ecosystems beyond Hugging Face, with licensing, quality, provenance, and division ownership reviewed",
+        "daily tests cover routing, quality, latency, throughput, compute, memory, cost, reliability, safety, privacy, retrieval provenance, tool use, recovery, regression, and reproducibility after readiness gates pass",
+        "the narrow Swift safe-run bridge is documented with least-privilege dispatch prerequisites and remains non-mutating; main-repository Python completion remains the priority",
+        "Python-first gate requires all designated critical/safe workflows green over a declared observation window, with failures/cancellations reconciled and no unowned critical blockers",
+        "three-runtime anti-cheating protocol gives every candidate equal declared compute/time/resource budgets within each hardware cohort and retains every attempt",
+        "laptop and GitHub runner results are reported as separate cohorts unless a documented calibration method supports comparison",
+        "shared resource catalog exposes only metadata and rights evidence while division-owned data lanes isolate raw data, splits, holdouts, weights, checkpoints, tokenizers, and storage grants",
+        "Buddy Bootcamp includes vendor-neutral training resources beyond Hugging Face with source-specific rights, privacy, provenance, and output-use review",
+        "the private Apple repository is prepared as the eventual unified CI/conformance reporting location for Python, C and Swift, but three-candidate execution remains disabled until Python-first completion and explicit release approval",
+        "before the gate, only allowlisted safe read-only status/contract checks may be mirrored; canonical Python CI/training remains in the main repository"
+      ],
+      "dependencies": [
+        "DCO-001",
+        "DCO-002",
+        "DCO-003",
+        "DCO-004",
+        "DCO-005",
+        "DCO-006",
+        "DCO-007",
+        "DCO-008",
+        "DCO-009",
+        "DCO-010",
+        "DCO-011",
+        "DCO-012",
+        "DCO-014"
+      ],
+      "continuous": true
+    },
+    {
+      "id": "DCO-016",
+      "name": "First-party DreamCo training corpus and Bootcamp data factory",
+      "scope": "Build original DreamCo-authored teaching and task datasets, a governed multi-ecosystem source registry, reproducible per-division corpus materialization, and a training-data factory for Buddy Teacher and all 65 MasterBot lanes. Preserve rights, provenance, privacy, quality, split isolation, model lineage, and evidence for every source and transformation.",
+      "priority": "critical",
+      "status": "catalogued",
+      "acceptance": [
+        "original DreamCo Bootcamp seed lessons have stable IDs, answer rubrics, provenance, source version, split assignments, and explicit human-review/rights status",
+        "candidate builder deterministically materializes common foundation data into all 65 isolated MasterBot dataset lanes without sharing private division data or evaluation holdouts",
+        "all candidate manifests pin source, output, and train/validation/test hashes and are reproducible from a fixed commit",
+        "source registry covers first-party work, official technical documentation, public dataset catalogs, research metadata, code repositories, government/standards data, user contributions, teacher outputs, and evaluation-only resources beyond Hugging Face",
+        "metadata discovery is distinct from download, ingestion, training permission, and commercial redistribution permission",
+        "license, file-level rights, privacy/consent, PII/secrets, duplicate, quality, contamination, and split-isolation gates run before any dataset can be approved",
+        "division-specialist datasets have one primary owner and explicit collaborator grants; shared foundation assets use immutable references and per-division materialization",
+        "Buddy can select the best eligible teacher/model and dataset using capability, rights, privacy, quality, freshness, cost, and latency evidence",
+        "teacher outputs are training inputs only when provider/account terms and output-use permissions are explicitly verified",
+        "dataset registration does not imply training; actual weight updates require the separate approved compute workflow, pinned base/tokenizer, checkpoint hashes, and independent holdout benchmarks",
+        "the factory can produce reproducible candidate datasets for Buddy Teacher and 65 divisions, with blocked and unreviewed assets visibly excluded"
+      ],
+      "dependencies": [
+        "DCO-005",
+        "DCO-006",
+        "DCO-007",
+        "DCO-008",
+        "DCO-009",
+        "DCO-014"
+      ],
+      "continuous": true
+    },
+    {
+      "id": "DCO-017",
+      "name": "Buddy resource intelligence and shared-catalog / isolated-data plane",
+      "scope": "Build a vendor-neutral catalog for datasets, teacher models, tokenizers, benchmarks, training frameworks and compute. Let Buddy discover the best eligible resource per task while preserving division-owned data and artifact isolation.",
+      "priority": "critical",
+      "status": "catalogued",
+      "acceptance": [
+        "resource adapters cover multiple approved model, dataset, research, code, knowledge, government and owner-authorized data families",
+        "every resource has immutable identity, source provenance, revision, license and intended-use rights evidence, freshness, quality, privacy class, contamination status and compatibility metadata",
+        "catalog metadata is discoverable by Buddy but raw data requires a separate authorized data-plane grant",
+        "each division has isolated data manifests, train/validation/test splits, private holdouts, checkpoints, weights, tokenizer snapshots, database namespace and object-store prefix",
+        "cross-division reuse requires explicit approval, purpose, source and recipient identities, transformations, hashes and expiry",
+        "Buddy resource/model routing ranks task relevance, rights, provenance, quality, freshness, safety, privacy, compatibility, reliability, compute and cost",
+        "Bootcamp curriculum teaches discovery, rights review, ingestion, tokenizer/model training, evaluation, safety, deployment and reproducibility across multiple resource ecosystems"
+      ],
+      "dependencies": [
+        "DCO-005",
+        "DCO-006",
+        "DCO-007",
+        "DCO-008",
+        "DCO-009",
+        "DCO-010",
+        "DCO-014",
+        "DCO-016"
+      ],
+      "continuous": true
+    }
+  ],
+  "historical_reconciliation": {
+    "status": "required",
+    "source_sets": [
+      "historical ChatGPT conversations",
+      "all DreamCo repository branches",
+      "open and closed pull requests",
+      "issues and discussions",
+      "workflow definitions and run history",
+      "docs and Markdown specifications",
+      "bot/model/tool registries",
+      "generated dashboards and reports",
+      "current approved ChatGPT project conversation requirements (2026-11-23)",
+      "main-repository open and closed PR inventory refreshed 2026-11-23"
+    ],
+    "required_mapping": [
+      "goal_id",
+      "source_reference",
+      "requirement",
+      "implementation_paths",
+      "tests",
+      "runtime_routes",
+      "benchmark",
+      "dependencies",
+      "risk",
+      "status",
+      "evidence",
+      "next_action"
+    ],
+    "note": "Seed workstreams summarize known historical plans; they are not proof that every historical item has been imported. Reconciliation must keep running until the source inventory is complete. Current conversation requirements are captured as approved project requirements, not raw transcript content. External historical ChatGPT conversation exports and attachments remain required where the repository documents missing or unreadable source material. New approved 2026-11-24 decisions require all designated Python runs green before cross-runtime cloning, equal declared compute budgets within matched hardware cohorts, a shared metadata catalog with division-isolated raw data/holdouts/artifacts, and vendor-neutral AI training-resource coverage beyond Hugging Face."
+  }
+}

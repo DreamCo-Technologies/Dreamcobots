@@ -1,0 +1,60 @@
+name: Buddy Bootcamp Coverage Gate
+
+on:
+  pull_request:
+    paths:
+      - "config/buddy-huggingface-full-learning-map.json"
+      - "config/buddy-onet-content-model-curriculum.json"
+      - "config/freecodecamp-complete-learning-path.json"
+      - "config/buddy-tokenizer-training-curriculum.json"
+      - "config/buddy-tolkien-study-track.json"
+      - "config/masterbot-65-registry.json"
+      - "config/generated/masterbot-55-domain-crosswalk.json"
+      - "config/buddy-workforce-entrepreneurship-bootcamp.json"
+      - "config/buddy-benchmark-index.json"
+      - "config/buddy-benchmark-task-registry.json"
+      - "config/buddy-25m-cpu-architecture-profile.json"
+      - "data/onet/**"
+      - "tools/build_buddy_revenue_playbook_queue.py"
+      - "tools/build_buddy_benchmark_guide_queue.py"
+      - "tools/build_onet_task_index.py"
+      - "buddy/bootcamp/sources/freecodecamp/**"
+      - "tools/audit_buddy_bootcamp_coverage.py"
+      - "tests/test_buddy_bootcamp_coverage_audit.py"
+      - ".github/workflows/buddy-bootcamp-coverage-gate.yml"
+  workflow_dispatch:
+  schedule:
+    - cron: "23 8 * * 1"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: buddy-bootcamp-coverage-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  audit:
+    name: Audit source coverage without claiming mastery
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install test runner
+        run: python -m pip install --disable-pip-version-check pytest
+      - name: Test coverage audit
+        run: python -m pytest -q tests/test_buddy_bootcamp_coverage_audit.py
+      - name: Build coverage report
+        run: python tools/audit_buddy_bootcamp_coverage.py --output bootcamp-coverage-audit.json
+      - name: Upload audit artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: buddy-bootcamp-coverage-audit
+          path: bootcamp-coverage-audit.json
+          if-no-files-found: error
+          retention-days: 30

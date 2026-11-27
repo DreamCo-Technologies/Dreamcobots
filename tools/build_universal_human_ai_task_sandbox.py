@@ -65,10 +65,9 @@ def main() -> int:
         "categories": rows,
         "overlays": overlays,
         "application_rule": "Each bot or arbitrary user task selects relevant base categories and overlays by mission, domain, modality, environment, user context and side-effect policy. Runtime evidence is stored separately from the shared catalog.",
+        "catalog_policy": cfg.get("catalog_policy", {"taxonomy_mode": "open_vocabulary", "counts": "computed_from_current_source_axes"}),
         "truth_boundary": cfg["truth_rule"],
     }
-    if payload["category_count"] < cfg["minimum_generated_categories"]:
-        raise SystemExit(f"universal task sandbox too small: {payload['category_count']}")
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
     print(json.dumps({

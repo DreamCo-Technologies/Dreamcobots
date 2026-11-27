@@ -1,0 +1,65 @@
+name: Buddy Study Evidence Session
+
+on:
+  pull_request:
+    paths:
+      - "tools/run_buddy_study_evidence_session.py"
+      - "tests/test_buddy_study_evidence_session.py"
+      - "buddy/learning/byte_bpe_trainer.py"
+      - "buddy/learning/study_resource_scheduler.py"
+      - "config/generated/division-reconciliation.json"
+      - "config/generated/masterbot-55-domain-crosswalk.json"
+      - "config/division-reconciliation-policy.json"
+      - "config/masterbot-65-registry.json"
+      - "shared/division-production-contract.ts"
+      - "config/buddy-tokenizer-training-curriculum.json"
+      - "docs/BUDDY_BYTE_BPE_TRAINER.md"
+      - "docs/BUDDY_TOKENIZER_TRAINING_STUDY_GUIDE.md"
+      - "data/buddy-authorized-corpora/synthetic-ci-manifest.json"
+      - "data/buddy-authorized-corpora/synthetic-ci-corpus.txt"
+      - ".github/workflows/buddy-study-evidence-session.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: buddy-study-evidence-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  bounded-study:
+    name: Run first-party shared-foundation study and evidence
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      PYTHONHASHSEED: "0"
+    steps:
+      - name: Check out the exact proposed commit
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Test study evidence harness
+        run: python -m unittest discover -s tests -p 'test_buddy_study_evidence_session.py' -v
+
+      - name: Run bounded Buddy study session
+        run: >-
+          python tools/run_buddy_study_evidence_session.py
+          --output-dir artifacts/buddy-study-evidence
+          --max-divisions 55
+          --lesson-limit 5
+          --vocab-size 512
+
+      - name: Upload versioned study evidence and tokenizer artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: buddy-study-evidence-${{ github.run_id }}
+          path: artifacts/buddy-study-evidence/
+          if-no-files-found: warn
+          retention-days: 30

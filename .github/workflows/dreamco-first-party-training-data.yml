@@ -1,0 +1,189 @@
+name: DreamCo First-Party Training Data Factory
+
+on:
+  pull_request:
+    paths:
+      - "config/buddy-government-community-enterprise-curriculum.json"
+      - "config/buddy-workforce-entrepreneurship-bootcamp.json"
+      - "config/freecodecamp-complete-learning-path.json"
+      - "config/buddy-university-curriculum.json"
+      - "data/dreamco_training/**"
+      - "config/dreamco-training-source-registry.json"
+      - "config/dreamco-first-party-training-factory.json"
+      - "config/buddy-training-data-provenance-policy.json"
+      - "schemas/dreamco-training-example.schema.json"
+      - "buddy/datasets/sources.py"
+      - "buddy/datasets/license_policy.py"
+      - "buddy/datasets/ingestion_worker.py"
+      - "buddy/datasets/hub.py"
+      - "tests/test_buddy_dataset_hub_runtime.py"
+      - "tools/build_dreamco_bootcamp_seed_data.py"
+      - "tools/build_dreamco_training_factory.py"
+      - "tests/test_dreamco_bootcamp_seed_data.py"
+      - "tests/test_dreamco_training_factory.py"
+      - "tests/test_buddy_dataset_research_metadata_adapters.py"
+      - "tests/test_buddy_dataset_license_policy.py"
+      - "tests/test_buddy_dataset_ingestion_worker.py"
+      - ".github/workflows/dreamco-first-party-training-data.yml"
+  push:
+    branches: [main]
+    paths:
+      - "config/buddy-government-community-enterprise-curriculum.json"
+      - "config/buddy-workforce-entrepreneurship-bootcamp.json"
+      - "config/freecodecamp-complete-learning-path.json"
+      - "config/buddy-university-curriculum.json"
+      - "data/dreamco_training/**"
+      - "config/dreamco-training-source-registry.json"
+      - "config/dreamco-first-party-training-factory.json"
+      - "config/buddy-training-data-provenance-policy.json"
+      - "schemas/dreamco-training-example.schema.json"
+      - "buddy/datasets/sources.py"
+      - "buddy/datasets/license_policy.py"
+      - "buddy/datasets/ingestion_worker.py"
+      - "buddy/datasets/hub.py"
+      - "tests/test_buddy_dataset_hub_runtime.py"
+      - "tools/build_dreamco_bootcamp_seed_data.py"
+      - "tools/build_dreamco_training_factory.py"
+      - "tests/test_dreamco_bootcamp_seed_data.py"
+      - "tests/test_dreamco_training_factory.py"
+      - "tests/test_buddy_dataset_research_metadata_adapters.py"
+      - "tests/test_buddy_dataset_license_policy.py"
+      - "tests/test_buddy_dataset_ingestion_worker.py"
+      - ".github/workflows/dreamco-first-party-training-data.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: dreamco-first-party-training-data-${{ github.workflow }}-${{ github.ref }}-${{ github.sha }}
+  cancel-in-progress: false
+
+jobs:
+  validate-corpus-and-division-lanes:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout immutable commit
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.11"
+
+      - name: Compile builders, adapters, and tests
+        run: |
+          python -m py_compile \
+            buddy/datasets/sources.py \
+            buddy/datasets/license_policy.py \
+            buddy/datasets/ingestion_worker.py \
+            buddy/datasets/hub.py \
+            tools/build_dreamco_bootcamp_seed_data.py \
+            tools/build_dreamco_training_factory.py \
+            tests/test_dreamco_bootcamp_seed_data.py \
+            tests/test_dreamco_training_factory.py \
+            tests/test_buddy_dataset_research_metadata_adapters.py \
+            tests/test_buddy_dataset_license_policy.py \
+            tests/test_buddy_dataset_ingestion_worker.py \
+            tests/test_buddy_dataset_hub_runtime.py
+
+      - name: Run governed data, rights, and reproducibility tests
+        run: |
+          python -m unittest discover -s tests -p "test_dreamco_bootcamp_seed_data.py" -v
+          python -m unittest discover -s tests -p "test_dreamco_training_factory.py" -v
+          python -m unittest discover -s tests -p "test_buddy_dataset_research_metadata_adapters.py" -v
+          python -m unittest discover -s tests -p "test_buddy_dataset_license_policy.py" -v
+          python -m unittest discover -s tests -p "test_buddy_dataset_ingestion_worker.py" -v
+          python -m unittest discover -s tests -p "test_buddy_dataset_hub_runtime.py" -v
+
+      - name: Materialize all 65 isolated common-foundation candidates
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="${RUNNER_TEMP}/dreamco-bootcamp-candidates"
+          mkdir -p "$out"
+          for masterbot_id in $(seq 1 65); do
+            lane=$(printf "%03d" "$masterbot_id")
+            python tools/build_dreamco_bootcamp_seed_data.py \
+              --masterbot-id "$masterbot_id" \
+              --out "$out/masterbot-${lane}.jsonl" \
+              --manifest-out "$out/masterbot-${lane}.manifest.json" \
+              --card-out "$out/masterbot-${lane}.card.json"
+          done
+          python - "$out" <<'PY'
+          import json, pathlib, sys
+          root = pathlib.Path(sys.argv[1])
+          datasets = sorted(root.glob("masterbot-*.jsonl"))
+          manifests = sorted(root.glob("masterbot-*.manifest.json"))
+          cards = sorted(root.glob("masterbot-*.card.json"))
+          assert len(datasets) == len(manifests) == len(cards) == 65
+          total_examples = 0
+          for dataset_path, manifest_path, card_path in zip(datasets, manifests, cards):
+              manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+              card = json.loads(card_path.read_text(encoding="utf-8"))
+              assert manifest["training_approved"] is False
+              assert manifest["training_started"] is False
+              assert manifest["rights_status"] == "PENDING_HUMAN_REVIEW"
+              assert card["training_approved"] is False
+              assert card["ai_training_allowed"] is False
+              assert card["content_rights_verified"] is False
+              assert card["owner_assignment_verified"] is False
+              assert card["contributor_rights_verified"] is False
+              assert card["license"] == "DREAMCO_INTERNAL_OWNED"
+              assert card["license_url_status"] == "INTERNAL_POLICY_REFERENCE_NOT_A_PUBLIC_LICENSE"
+              assert card["primary_masterbot_id"] == manifest["primary_masterbot_id"]
+              assert manifest["example_count"] == 14
+              total_examples += manifest["example_count"]
+              assert manifest["split_counts"]["train"] > 0
+              assert manifest["split_counts"]["validation"] > 0
+              assert manifest["split_counts"]["test"] > 0
+          assert total_examples == 910, total_examples
+          print(json.dumps({
+              "ok": True,
+              "isolated_division_candidates": 65,
+              "authored_seed_examples_per_lane": 14,
+              "materialized_candidate_rows": total_examples,
+              "training_started": False
+          }))
+          PY
+
+      - name: Build and validate the 65-division factory plan
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="${RUNNER_TEMP}/dreamco-bootcamp-candidates"
+          python tools/build_dreamco_training_factory.py --out "$out/factory-plan.json"
+          python - "$out/factory-plan.json" <<'PY'
+          import json, pathlib, sys
+          plan = json.loads(pathlib.Path(sys.argv[1]).read_text(encoding="utf-8"))
+          assert plan["coverage"]["masterbots"] == 65
+          assert plan["coverage"]["task_families"] == 37
+          assert plan["coverage"]["division_task_assignments"] == 2405
+          assert plan["coverage"]["source_families"] == 9
+          assert plan["coverage"]["university_domains"] == 45
+          assert plan["coverage"]["university_course_blueprints"] == 190
+          assert plan["coverage"]["shared_core_courses"] == 10
+          assert plan["coverage"]["implemented_metadata_adapters"] == 10
+          assert plan["truth_boundary"]["weights_trained"] is False
+          print(json.dumps({
+              "ok": True,
+              "division_task_assignments": 2405,
+              "source_families": 9,
+              "university_domains": 45,
+              "university_course_blueprints": 190,
+              "shared_core_courses": 10,
+              "implemented_metadata_adapters": 10,
+              "training_started": False
+          }))
+          PY
+
+      - name: Preserve generated candidate datasets and manifests
+        uses: actions/upload-artifact@v6
+        with:
+          name: dreamco-bootcamp-candidates-${{ github.sha }}
+          path: ${{ runner.temp }}/dreamco-bootcamp-candidates/
+          if-no-files-found: error
+          retention-days: 30

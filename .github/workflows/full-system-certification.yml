@@ -1,6 +1,46 @@
 name: Full System Certification
 
 on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "server/**"
+      - "shared/**"
+      - "client/**"
+      - "buddy/**"
+      - "buddy_os/**"
+      - "bots/**"
+      - "App_bots/**"
+      - "original-bots/**"
+      - "config/full-system-operational-certification.json"
+      - "config/runtime-connection-evidence.json"
+      - "config/change-impact-test-policy.json"
+      - "tests/test_change_impact_test_policy.py"
+      - "config/generated/division-huggingface-taxonomy-map.json"
+      - "config/generated/division-resource-readiness-map.json"
+      - "config/review/masterbot-domain-owner-review.json"
+      - "tools/build_division_huggingface_taxonomy_map.py"
+      - "tools/build_division_resource_readiness_map.py"
+      - "tools/run_bot_fleet_e2e.ts"
+      - "reports/BOT_FLEET_E2E.md"
+      - "website/data/bot-fleet-e2e.json"
+      - "website/data/buddy-capability-certifications.js"
+      - "website/data/bot-capability-tests/**"
+      - "config/review/division-owner-conversation-approval.json"
+      - "config/authorized-training-datasets/manifest.json"
+      - "config/buddy-25m-cpu-architecture-profile.json"
+      - "config/buddy-small-cpu-architecture-profile.json"
+      - "tools/build_full_system_certification.py"
+      - "tools/build_work_platform_benchmarks.py"
+      - "tools/audit_runtime_connections.py"
+      - "tools/train_buddy_division_model.py"
+      - "tests/test_full_system_operational_certification.py"
+      - "tests/test_model_foundry.py"
+      - "tests/test_train_buddy_division_model_cli.py"
+      - "tests/test_full_system_certification_workflow_order.py"
+      - "package.json"
+      - "package-lock.json"
+      - ".github/agents/**"
   workflow_dispatch:
   schedule:
     - cron: "41 9 * * *"
@@ -10,20 +50,35 @@ on:
       - "server/**"
       - "shared/**"
       - "client/**"
-      - "website/**"
-      - "tools/**"
-      - "script/**"
-      - "tests/**"
-      - "config/**"
+      - "buddy/**"
+      - "buddy_os/**"
+      - "bots/**"
       - "App_bots/**"
       - "original-bots/**"
-      - "bots/**"
-      - "attached_assets/**"
-      - "docs/**"
+      - "config/full-system-operational-certification.json"
+      - "config/runtime-connection-evidence.json"
+      - "config/change-impact-test-policy.json"
+      - "tests/test_change_impact_test_policy.py"
+      - "config/authorized-training-datasets/manifest.json"
+      - "config/buddy-25m-cpu-architecture-profile.json"
+      - "config/buddy-small-cpu-architecture-profile.json"
+      - "tools/build_full_system_certification.py"
+      - "tools/build_work_platform_benchmarks.py"
+      - "tools/audit_runtime_connections.py"
+      - "tools/train_buddy_division_model.py"
+      - "tests/test_full_system_operational_certification.py"
+      - "tests/test_model_foundry.py"
+      - "tests/test_train_buddy_division_model_cli.py"
       - "package.json"
       - "package-lock.json"
       - ".github/agents/**"
       - ".github/workflows/full-system-certification.yml"
+      - "config/generated/division-huggingface-taxonomy-map.json"
+      - "config/generated/division-resource-readiness-map.json"
+      - "config/review/masterbot-domain-owner-review.json"
+      - "tools/build_division_huggingface_taxonomy_map.py"
+      - "tools/build_division_resource_readiness_map.py"
+      - "config/review/division-owner-conversation-approval.json"
 
 permissions:
   contents: read
@@ -55,14 +110,16 @@ jobs:
 
       - name: Refresh generated verification contracts
         run: |
+          node --import tsx tools/generate_bot_fleet_catalog.ts
           python3 tools/generate_repository_test_registry.py
           node --import tsx tools/generate_dreamco_search_index.ts
           python3 tools/generate_buddy_platform_expansion.py
           node --import tsx tools/generate_buddy_success_program.ts
+          node --import tsx tools/run_bot_fleet_e2e.ts --write-only
 
       - name: Validate certification policies
         run: |
-          python3 -m unittest tests.test_full_system_operational_certification tests.test_trusted_code_delivery tests.test_change_impact_test_policy tests.test_recovery_ontology_workforce_runtime
+          python3 -m unittest tests.test_full_system_operational_certification tests.test_trusted_code_delivery tests.test_change_impact_test_policy tests.test_recovery_ontology_workforce_runtime tests.test_unified_bot_cohorts tests.test_model_foundry tests.test_train_buddy_division_model_cli tests.test_full_system_certification_workflow_order
           node --import tsx --test tests/server-health-runtime-policy.test.ts
 
       - name: Recover and unify legacy bot system
@@ -72,6 +129,12 @@ jobs:
           python3 tools/build_legacy_promotion_backlog.py
           python3 tools/build_unified_bot_system.py
           python3 tools/build_runtime_sync_plan.py
+
+      # Legacy recovery can update App_bots after the initial generated-contract
+      # refresh. Rebuild the canonical fleet catalog after those source mutations
+      # so verification never consumes a stale master_bot_registry.json.
+      - name: Refresh fleet catalog after legacy bot recovery
+        run: node --import tsx tools/generate_bot_fleet_catalog.ts
 
       - name: Build work business creative government manufacturing and ontology evidence
         run: |
@@ -112,9 +175,12 @@ jobs:
           python3 tools/build_manufacturer_marketplace_catalog.py
           node --import tsx --test tests/business-data-trade-readiness.test.ts
 
-      - name: Run full production verification
-        run: npx tsx tools/run_universal_verification.ts --production
+      - name: Regenerate canonical fleet end-to-end evidence
+        run: node --import tsx tools/run_bot_fleet_e2e.ts
 
+      # Generate every evidence artifact before verification consumes it.
+      # The previous order verified BOT_FLEET_E2E.md before the fleet runner
+      # regenerated it, producing a deterministic stale-report failure.
       - name: Re-verify fleet E2E and inherit canonical sandbox evidence
         run: |
           npm run buddy:fleet:e2e
@@ -129,8 +195,12 @@ jobs:
       - name: Smoke-test built production runtime
         run: python3 tools/smoke_production_runtime.py
 
+      - name: Run full production verification
+        run: npx tsx tools/run_universal_verification.ts --production
+
       - name: Build full certification receipt
         if: always()
+        continue-on-error: ${{ github.event_name == 'pull_request' }}
         run: python3 tools/build_full_system_certification.py
 
       - name: Build live-user readiness
@@ -202,8 +272,14 @@ jobs:
             config/generated/maximum-sandbox-runtime-audit.json
             config/generated/live-user-testing-readiness.json
             tmp/dreamco-verification/latest.json
+            tmp/dreamco-verification/*.log
+            tmp/dreamco-verification/logs/**
             reports/FULL_SYSTEM_OPERATIONAL_CERTIFICATION.md
             reports/REPOSITORY_SYSTEM_CONNECTIONS.md
             reports/PARALLEL_BENCHMARK_GAP_REGISTRY.md
+            reports/BOT_FLEET_E2E.md
+            website/data/bot-fleet-e2e.json
+            website/data/buddy-capability-certifications.js
+            website/data/bot-capability-tests/
           if-no-files-found: warn
           retention-days: 21

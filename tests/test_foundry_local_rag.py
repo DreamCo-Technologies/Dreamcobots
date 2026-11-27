@@ -22,6 +22,18 @@ class FoundryTest(unittest.TestCase):
         self.assertTrue(hits)
         self.assertIn("Qdrant", hits[0][1].text)
 
+    def test_numeric_only_terms_do_not_create_false_positive_matches(self):
+        store = LocalRagStore()
+        store.add(Chunk("1", "The internal reference is 9481 and the guide covers vector databases.", "guide", "internal"))
+        self.assertEqual(store.query("qzxv 9481", k=1), [])
+
+    def test_single_document_index_still_returns_relevant_evidence(self):
+        store = LocalRagStore()
+        store.add(Chunk("only", "Requests is a Python HTTP client library with sessions and timeouts.", "guide", "Apache-2.0"))
+        hits = store.query("Python HTTP sessions", k=1)
+        self.assertTrue(hits)
+        self.assertEqual(hits[0][1].chunk_id, "only")
+
     def test_lora_plan_does_not_launch(self):
         payload = plan("pack.code", "qlora-sft", "meta-llama/Llama-3.1-8B-Instruct")
         self.assertFalse(payload["launch_in_ci"])

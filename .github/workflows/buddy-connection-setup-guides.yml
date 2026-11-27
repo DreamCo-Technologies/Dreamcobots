@@ -1,0 +1,31 @@
+name: Buddy Connection Setup Guides
+
+on:
+  pull_request:
+    paths:
+      - "config/buddy-universal-connection-catalog.json"
+      - "config/buddy-connection-setup-guides.json"
+      - "tools/validate_buddy_connection_setup_guides.py"
+      - "tests/test_buddy_connection_setup_guides.py"
+      - ".github/workflows/buddy-connection-setup-guides.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: connection-setup-guides-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: python -m pip install --disable-pip-version-check pytest
+      - run: python -m pytest -q tests/test_buddy_connection_setup_guides.py
+      - run: python tools/validate_buddy_connection_setup_guides.py

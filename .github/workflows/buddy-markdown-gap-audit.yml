@@ -1,0 +1,100 @@
+name: Buddy Markdown Implementation Gap Audit
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "41 7 * * *"
+  push:
+    branches: [main]
+    paths:
+      - "**/*.md"
+      - "**/*.mdx"
+      - "config/buddy/markdown-implementation-gap-policy.json"
+      - "tools/audit_markdown_implementation_gaps.py"
+      - ".github/workflows/buddy-markdown-gap-audit.yml"
+      - "tests/test_markdown_gap_audit_workflow_safety.py"
+  pull_request:
+    paths:
+      - "**/*.md"
+      - "**/*.mdx"
+      - "config/buddy/markdown-implementation-gap-policy.json"
+      - "tools/audit_markdown_implementation_gaps.py"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: buddy-markdown-gap-audit-${{ github.run_id }}
+  cancel-in-progress: false
+
+jobs:
+  validate:
+    if: github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && github.ref != 'refs/heads/main')
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
+      - name: Regenerate and validate branch Markdown audit evidence
+        run: |
+          python3 tools/audit_markdown_implementation_gaps.py --write
+          python3 tools/audit_markdown_implementation_gaps.py --check
+          python3 -m unittest tests.test_markdown_implementation_gaps tests.test_markdown_gap_audit_workflow_safety
+      - name: Upload branch-specific audit candidate
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: markdown-gap-audit-pr-${{ github.event.pull_request.number || github.run_id }}
+          path: |
+            config/generated/markdown-implementation-gap-audit.json
+            website/data/markdown-implementation-gap-audit.json
+            reports/MARKDOWN_IMPLEMENTATION_GAP_AUDIT.md
+          if-no-files-found: warn
+          retention-days: 7
+
+  generate:
+    if: github.ref == 'refs/heads/main' && (github.event_name == 'schedule' || github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
+      - name: Generate and validate Markdown-to-code gap inventory
+        run: |
+          python3 tools/audit_markdown_implementation_gaps.py --write
+          python3 tools/audit_markdown_implementation_gaps.py --check
+          python3 -m unittest tests.test_markdown_implementation_gaps tests.test_markdown_gap_audit_workflow_safety
+      - name: Upload generated audit candidate
+        uses: actions/upload-artifact@v7
+        with:
+          name: markdown-gap-audit-${{ github.run_id }}
+          path: |
+            config/generated/markdown-implementation-gap-audit.json
+            website/data/markdown-implementation-gap-audit.json
+            reports/MARKDOWN_IMPLEMENTATION_GAP_AUDIT.md
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Publish manual-review instructions
+        if: success()
+        run: |
+          {
+            echo "## Markdown audit artifact ready for owner review"
+            echo
+            echo "- The audit JSON and report are available in the uploaded workflow artifact."
+            echo "- This workflow intentionally does not create or approve pull requests because repository Actions policy denies that capability."
+            echo "- Review the artifact diff and create a normal human-reviewed pull request when appropriate."
+            echo "- No generated evidence is pushed directly to main."
+          } >> "$GITHUB_STEP_SUMMARY"

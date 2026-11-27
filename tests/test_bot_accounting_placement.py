@@ -47,10 +47,13 @@ class BotAccountingPlacementTests(unittest.TestCase):
         result = audit_bot_accounting(ROOT, program, {})
         self.assertEqual(result["release_blockers"], [])
         self.assertEqual((result["canonical_bot_count"], result["division_count"]), (1051, 45))
-        self.assertEqual((result["supplemental_bot_count"], result["supplemental_division_count"]), (50, 10))
-        self.assertEqual(result["total_profile_count"], 1101)
+        self.assertEqual((result["supplemental_bot_count"], result["supplemental_division_count"]), (69, 10))
+        self.assertEqual(result["total_profile_count"], 1120)
+        self.assertEqual(result["total_division_count"], 55)
+        self.assertEqual(result["supplemental_portfolio_counts"], {"Dream3D": 19})
+        self.assertEqual(result["supplemental_portfolio_mismatches"], [])
         self.assertEqual(result["specialist_agent_count"], 16)
-        self.assertEqual(len(result["supplemental_profiles"]), 50)
+        self.assertEqual(len(result["supplemental_profiles"]), 69)
 
     def test_growth_profiles_are_separate_but_not_ignored(self):
         result = self.audit()

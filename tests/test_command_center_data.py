@@ -25,6 +25,7 @@ class CommandCenterDataTests(unittest.TestCase):
 
     def test_runtime_test_caches_are_not_repository_evidence(self):
         self.assertIn(".pytest_cache", MODULE.IGNORED_PARTS)
+        self.assertIn("data-observability.json", MODULE.GENERATED_NAMES)
 
     def test_repository_inventory_uses_only_git_tracked_files(self):
         tracked = {
@@ -68,6 +69,14 @@ class CommandCenterDataTests(unittest.TestCase):
         self.assertEqual(areas["original-bots"]["preservation"], "preserve_in_place")
         self.assertEqual(areas["original-bots"]["kind"], "legacy_preserved")
         self.assertEqual(areas["buddy_os"]["kind"], "runtime")
+
+    def test_data_observability_tracks_sources_without_exposing_rows(self):
+        payload = self.payloads["data-observability.json"]
+        self.assertEqual(payload["schema"], "dreamco.command_center.data_observability.v1")
+        self.assertGreaterEqual(payload["summary"]["external_sources_with_metadata_adapters"], 4)
+        self.assertFalse(payload["privacy"]["raw_dataset_rows_exposed"])
+        self.assertFalse(payload["privacy"]["credentials_exposed"])
+        self.assertIn("training_job_manifests", payload["summary"])
 
     def test_public_and_canonical_outputs_match(self):
         with tempfile.TemporaryDirectory() as temporary:
