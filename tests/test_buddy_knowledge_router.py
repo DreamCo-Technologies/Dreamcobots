@@ -93,6 +93,8 @@ class BuddyKnowledgeRouterTests(unittest.TestCase):
             )
         )
         self.assertTrue(route["candidate_verification_required"])
+        self.assertTrue(route["external_discovery_requires_explicit_opt_in"])
+        self.assertIn("Ask the user before external research", route["next_action"])
         self.assertFalse(route["external_discovery_performed"])
         self.assertFalse(route["external_model_routing_performed"])
         self.assertFalse(route["mastery_awarded"])
