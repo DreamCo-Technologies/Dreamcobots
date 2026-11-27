@@ -8,6 +8,11 @@ on:
     branches: [main, feat/division-resource-readiness-blueprints-20261124]
     paths:
       - "App_bots/**"
+      - "buddy/**"
+      - "buddy_os/**"
+      - "config/divisions/**"
+      - "config/bots/**"
+      - "config/master_bot_registry.json"
       - "server/seed-bots.ts"
       - "server/seed-codelabs.ts"
       - "server/seed-github-bots.ts"
@@ -68,6 +73,12 @@ jobs:
           python3 -m pip install PyYAML==6.0.2
           python3 tools/build_actions_prospectus.py
 
+      - name: Refresh Buddy learning graph and file prospectus
+        run: |
+          python3 tools/build_buddy_learning_os_connection_graph.py
+          python3 tools/build_file_prospectus.py
+          python3 tools/build_file_prospectus.py --check
+
       - name: Check generated diff formatting
         run: git diff --check
 
@@ -100,6 +111,11 @@ jobs:
             config/generated/actions-health-report.json
             website/data/actions-health-report.json
             reports/ACTIONS_HEALTH_REPORT.md
+            config/generated/buddy-learning-os-connections.json
+            website/data/buddy-learning-os-connections.json
+            config/generated/file-prospectus/**
+            website/data/run-prospectus.json
+            website/data/run-prospectus-bots.json
             config/generated/actions-prospectus.json
             website/data/actions-prospectus.json
             config/buddy/run-with-buddy.generated.json
