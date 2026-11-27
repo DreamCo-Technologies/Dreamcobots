@@ -91,6 +91,10 @@ python scripts/benchmark_vs_baselines.py \
 
 Use the exact division ID from the candidate manifest and fixture set. Run each eligible division independently or through an explicitly bounded orchestration job. Missing candidates, fixtures, artifacts, rights reviews or adapters mean **blocked**, not zero-score and not passed.
 
+## Fleet orchestration
+
+The 65-MasterBot fleet wrapper is `tools/run_institute_fleet_benchmarks.py`. It reads the canonical `config/masterbot-65-registry.json` and looks for each model's release candidate, adapter manifest and division fixture set under owner-controlled local directories. The default roots are outside the Git checkout: `$HOME/DreamCo-models/release-candidates`, `$HOME/DreamCo-model-adapters` and `$HOME/DreamCo-benchmark-fixtures`. Missing artifacts and baseline permissions are reported as `BLOCKED`; the wrapper never fabricates a score. It runs sequentially by default and accepts `--max-candidates` to bound work. Use `npm run institute:fleet-benchmark -- --max-candidates 1` for a bounded first attempt once local artifacts exist. A full-fleet report is not a training result and does not certify the 55 academic divisions or 65 MasterBots as mastered.
+
 ## Future extensions
 
 Only after the local adapter protocol is proven should the Institute add:
