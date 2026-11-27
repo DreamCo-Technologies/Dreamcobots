@@ -25,6 +25,12 @@ jobs:
         run: python3 tools/validate_actions_page.py
       - name: Validate Python syntax for touched intelligence code
         run: python3 -m compileall -q buddy_os tests
+      - name: Validate branch health fail-closed behavior
+        run: python3 -m unittest tests.test_branch_health_fail_closed
+      - name: Validate per-file Markdown requirements audit
+        run: |
+          npm run markdown:audit:check
+          python3 -m unittest tests.test_markdown_requirements_audit
       # Rebuild this generated index in the CI workspace before syntax checks.
       # Artifact freshness remains enforced by the dedicated Pages generator gate.
       - name: Regenerate derived Pages connection index for JSON validation
