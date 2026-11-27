@@ -2,10 +2,13 @@
 from __future__ import annotations
 
 import json
+import tempfile
 from pathlib import Path
 from typing import Any
 
 from buddy.fleet_runtime.router import complete_learning
+from buddy.learning.runtime_bridge import BuddyLearningBridge, PrivateLearningStore
+from buddy.learning.task_runner import BuddyTaskRunner
 from buddy.learning.course_track_registry import plan_next_for_division, resources_for_division
 from buddy.learning.buddy_knowledge_router import route_buddy_learning_query
 from buddy.learning.study_resource_scheduler import Capability
@@ -60,6 +63,18 @@ def run_smoke(root: Path = ROOT) -> dict[str, Any]:
     if len(resources) < 6 or any(resource.url for resource in resources):
         raise AssertionError("CommandCore scheduler resources are incomplete or externally routed")
 
+    with tempfile.TemporaryDirectory(prefix="dreamco-commandcore-smoke-") as temp_dir:
+        store = PrivateLearningStore(Path(temp_dir) / "learning.db")
+        bridge = BuddyLearningBridge(store, BuddyTaskRunner())
+        queue = bridge.bootcamp_learning_queue(division="CommandCore", limit=10)
+        if queue.get("track_ids") != ["dreamco-division-specialist"] or queue.get("available_count") != 6:
+            raise AssertionError("CommandCore runtime bridge did not expose its six DreamCo lessons")
+        if any(item.get("source_url") for item in queue.get("items", [])):
+            raise AssertionError("CommandCore runtime bridge exposed an external learner URL")
+        if any(not item.get("exercise_ids") or not item.get("project_ids") or not item.get("assessment_ids")
+               for item in queue.get("items", [])):
+            raise AssertionError("CommandCore runtime bridge omitted exercises, projects, or assessments")
+
     return {
         "schema": "dreamco.commandcore_bootcamp_smoke.v1",
         "status": "PASS",
@@ -69,6 +84,8 @@ def run_smoke(root: Path = ROOT) -> dict[str, Any]:
         "source_profile_count": len(portfolio.get("bots", [])),
         "course_track_id": "dreamco-division-specialist",
         "course_lesson_count": len(matches),
+        "runtime_queue_lesson_count": queue["returned_count"],
+        "runtime_queue_track_ids": queue["track_ids"],
         "exercise_ids": plan["exercise_ids"],
         "project_ids": plan["project_ids"],
         "assessment_ids": plan["assessment_ids"],
