@@ -20,4 +20,5 @@ class BuddySemanticRouterTests(unittest.TestCase):
  def test_invalid_limits_rejected(self):
   with self.assertRaises(ValueError): route_candidates("pricing",0)
   with self.assertRaises(ValueError): route_candidates("x",11)
+  with self.assertRaises(ValueError): route_candidates("x","5")
 if __name__=="__main__": unittest.main()
