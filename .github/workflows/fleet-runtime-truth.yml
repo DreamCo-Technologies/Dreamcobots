@@ -176,7 +176,7 @@ jobs:
         with:
           python-version: "3.13"
       - run: npm ci
-      - run: python3 -m pip install --quiet pyyaml pytest -r requirements-buddy-learning.txt "soundfile>=0.12,<1" "Pillow>=10,<12"
+      - run: python3 -m pip install --quiet pyyaml pytest -r requirements-buddy-learning.txt "soundfile>=0.12,<1" "Pillow>=10,<12" "scipy>=1.11,<2"
       - name: Refresh generated evidence in the isolated full-audit checkout
         run: |
           python3 tools/generate_bot_manifests.py
@@ -185,6 +185,8 @@ jobs:
           python3 tools/build_buddy_learning_os_connection_graph.py
           npx tsx tools/generate_bot_fleet_catalog.ts
           npx tsx tools/generate_dreamco_search_index.ts
+          python3 tools/audit_actions_health.py
+          python3 tools/build_actions_prospectus.py
           python3 tools/refresh_repository_evidence.py
       - name: Full audit (compile, import, typecheck, folder tests, links)
         run: python3 tools/fleet_runtime_audit.py --check-regressions --summary-json tmp/fleet-summary.json
