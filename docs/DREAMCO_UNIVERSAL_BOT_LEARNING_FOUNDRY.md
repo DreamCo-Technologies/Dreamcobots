@@ -28,11 +28,15 @@ Each bot has a 10,000-example synthetic-data target. This is a target only; the 
 ## Buddy semantic router
 Buddy acts as the Provost. It classifies the task, retrieves approved capability cards, selects the minimum necessary specialists, checks ownership and permissions, runs isolated tasks, validates outputs and evidence, synthesizes passing results and escalates high-impact actions. It does not load every specialist model simultaneously.
 
+## Buddy semantic candidate router
+
+`buddy/fleet_runtime/semantic_router.py` ranks candidates across the canonical fleet, 55 commercial business micro-bots and 212 preserved original-bot records. It uses deterministic metadata matching and delegates division/MasterBot ownership resolution to the existing governed router. It never executes a bot, loads model weights, grants permissions or turns an unresolved ownership proposal into authorization.
+
 ## Generate and validate
 ```bash
 python tools/build_dreamco_universal_bot_learning_manifests.py
 python tools/build_dreamco_universal_bot_learning_manifests.py --materialize
-python -m unittest tests.test_dreamco_universal_bot_learning_manifests -v
+python -m unittest tests.test_dreamco_universal_bot_learning_manifests tests.test_buddy_semantic_router -v
 ```
 
 The default run writes an inventory index. `--materialize` writes a separate JSON file for each canonical, legacy and business bot plus all 120 division learning manifests under `config/generated/dreamco-bot-learning-manifests/`. Generated artifacts should be rebuilt from their source registries, not hand-edited.
