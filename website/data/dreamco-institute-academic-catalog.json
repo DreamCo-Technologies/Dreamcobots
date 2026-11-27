@@ -1,0 +1,811 @@
+{
+  "schema": "dreamco.institute.academic_catalog.v1",
+  "version": "1.0.0",
+  "institution": {
+    "name": "DreamCo Institute of Autonomous Systems",
+    "short_name": "DreamCo Institute",
+    "registrar": "Office of the Buddy Provost",
+    "credential_disclaimer": "DreamCo-issued institutional credentials are internal credentials and are not represented as government-accredited degrees or professional licenses.",
+    "brand": {
+      "palette": [
+        "ivory",
+        "navy",
+        "antique_gold",
+        "slate",
+        "emerald"
+      ],
+      "design_language": "collegiate_registrar"
+    }
+  },
+  "academic_model": {
+    "credit_unit": "DreamCo academic credit",
+    "level_bands": {
+      "100": "Foundations",
+      "200": "Applied study",
+      "300": "Advanced systems",
+      "400": "Research and specialization",
+      "500": "Independent practicum",
+      "600": "Capstone and thesis defense"
+    },
+    "grading_scale": [
+      {
+        "minimum": 90,
+        "letter": "A",
+        "points": 4
+      },
+      {
+        "minimum": 80,
+        "letter": "B",
+        "points": 3
+      },
+      {
+        "minimum": 70,
+        "letter": "C",
+        "points": 2
+      },
+      {
+        "minimum": 0,
+        "letter": "F",
+        "points": 0
+      }
+    ],
+    "credit_award_requires": [
+      "assessment_evidence_id",
+      "practicum_passed",
+      "independent_holdout_passed"
+    ],
+    "degree_requirements": [
+      "all_required_course_credits",
+      "minimum_cumulative_gpa_3_0",
+      "capstone_thesis_record_id",
+      "oral_defense_passed",
+      "registrar_review_id"
+    ],
+    "mastery_is_not_inferred_from": [
+      "lesson_opened",
+      "lesson_completed",
+      "training_loss",
+      "perplexity_only",
+      "self_report"
+    ]
+  },
+  "colleges": [
+    {
+      "id": "cognitive",
+      "code": "CS",
+      "name": "College of Cognitive & Algorithmic Sciences",
+      "dean": "Office of the Dean of Cognitive & Algorithmic Sciences",
+      "mission": "Computation, data architecture, algorithmic reasoning, language systems and model engineering.",
+      "divisions": [
+        "commandcore",
+        "dreamaiinfra",
+        "dreamcodelab",
+        "dreamdata",
+        "dreamscience",
+        "dreamautomation",
+        "dreamdecision"
+      ],
+      "courses": [
+        {
+          "code": "CS-101",
+          "title": "Deterministic Data Contracts & Schema Architecture",
+          "credits": 3,
+          "level": 100,
+          "practicum": "Design and validate a versioned data contract with adversarial fixtures.",
+          "outcomes": [
+            "Specify deterministic input and output contracts",
+            "Validate schema and invariants",
+            "Document failure semantics"
+          ]
+        },
+        {
+          "code": "CS-204",
+          "title": "Custom Vocabulary & Subword Morphology",
+          "credits": 4,
+          "level": 200,
+          "practicum": "Build a tokenizer experiment with vocabulary, coverage and reversibility reports.",
+          "outcomes": [
+            "Explain tokenization trade-offs",
+            "Measure vocabulary coverage",
+            "Version tokenizer artifacts"
+          ]
+        },
+        {
+          "code": "CS-310",
+          "title": "Compact Transformer Systems & Reproducible Training",
+          "credits": 4,
+          "level": 300,
+          "practicum": "Produce a reproducible training manifest for the canonical 45,038,208-parameter architecture.",
+          "outcomes": [
+            "Inspect model configuration",
+            "Preserve tokenizer identity",
+            "Evaluate reproducibility evidence"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "robotics",
+      "code": "ROBO",
+      "name": "College of Autonomous Robotics & Physical Systems",
+      "dean": "Office of the Dean of Autonomous Robotics & Physical Systems",
+      "mission": "Physical-world task reasoning, sensing, actuation, fleet operations and edge deployment.",
+      "divisions": [
+        "dreamagriculture",
+        "dreamconstruction",
+        "dreammaintenance",
+        "dreamproduction",
+        "dreamprotection",
+        "dreamplanetary",
+        "dreammilitary",
+        "dreamtransport",
+        "dreamfood",
+        "dreamrobotics",
+        "dreamtravel"
+      ],
+      "courses": [
+        {
+          "code": "ROBO-101",
+          "title": "Physical & Cognitive Task Decomposition",
+          "credits": 3,
+          "level": 100,
+          "practicum": "Decompose work into human, human-plus-AI, robot and full-AI execution candidates.",
+          "outcomes": [
+            "Separate physical and cognitive work",
+            "Identify authority and safety constraints",
+            "Escalate uncertain task assignments"
+          ]
+        },
+        {
+          "code": "ROBO-215",
+          "title": "Sensor-to-Actuator Telemetry & Fleet Runtime Audits",
+          "credits": 4,
+          "level": 200,
+          "practicum": "Audit a simulated telemetry-to-actuation trace and identify unsafe state transitions.",
+          "outcomes": [
+            "Trace sensor and actuator state",
+            "Define safety bounds",
+            "Produce fleet runtime evidence"
+          ]
+        },
+        {
+          "code": "ROBO-401",
+          "title": "Edge Quantization & Low-Latency Deployment",
+          "credits": 4,
+          "level": 400,
+          "practicum": "Compare an edge deployment candidate against latency, memory and safety budgets.",
+          "outcomes": [
+            "Measure quantization impact",
+            "Set deployment constraints",
+            "Demonstrate rollback readiness"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "trust",
+      "code": "GOV",
+      "name": "College of Systems Security & Trust Governance",
+      "dean": "Office of the Dean of Systems Security & Trust Governance",
+      "mission": "Evidence integrity, rights governance, alignment, safety engineering and adversarial assurance.",
+      "divisions": [
+        "dreamadmin",
+        "dreamcyber",
+        "dreamcustintel",
+        "dreamlegal",
+        "dreamglobal",
+        "dreamintegrations",
+        "dreamlicensing",
+        "dreamfoundry",
+        "dreamops",
+        "dreamstreaming"
+      ],
+      "courses": [
+        {
+          "code": "GOV-102",
+          "title": "Fail-Closed Evidence Gates & Cryptographic Provenance",
+          "credits": 3,
+          "level": 100,
+          "practicum": "Build a fail-closed evidence decision with immutable source hashes and explicit rights status.",
+          "outcomes": [
+            "Distinguish integrity from authorship",
+            "Validate provenance records",
+            "Block missing authorization"
+          ]
+        },
+        {
+          "code": "GOV-305",
+          "title": "Preference Optimization, Alignment & Safety Evaluation",
+          "credits": 4,
+          "level": 300,
+          "practicum": "Evaluate an alignment candidate using permitted preference records and independent safety tests.",
+          "outcomes": [
+            "Describe preference optimization limits",
+            "Protect evaluation holdouts",
+            "Analyze safety regressions"
+          ]
+        },
+        {
+          "code": "GOV-410",
+          "title": "Frontier Claim Trust & Adversarial Red-Team Defense",
+          "credits": 4,
+          "level": 400,
+          "practicum": "Defend a system claim against adversarial evidence and document unresolved risks.",
+          "outcomes": [
+            "Challenge unsupported claims",
+            "Run adversarial scenarios",
+            "Issue evidence-backed findings"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "human",
+      "code": "HMI",
+      "name": "College of Human-Machine Interaction & Design",
+      "dean": "Office of the Dean of Human-Machine Interaction & Design",
+      "mission": "Human-centered systems, interface design, teaching, communication and adaptive interaction.",
+      "divisions": [
+        "dreamarts",
+        "dreamcontent",
+        "dreameducation",
+        "dreamhealth",
+        "dreaminfluence",
+        "dreampersonalcare",
+        "dreamsocial",
+        "gametitan"
+      ],
+      "courses": [
+        {
+          "code": "HMI-110",
+          "title": "Command Center Interface Architecture",
+          "credits": 3,
+          "level": 100,
+          "practicum": "Design an accessible operational dashboard with truthful system states.",
+          "outcomes": [
+            "Structure an information hierarchy",
+            "Design accessible controls",
+            "Represent operational uncertainty"
+          ]
+        },
+        {
+          "code": "HMI-220",
+          "title": "Socratic Tutoring & Adaptive Pedagogy",
+          "credits": 3,
+          "level": 200,
+          "practicum": "Build a tutoring sequence that diagnoses misconceptions and adapts instruction.",
+          "outcomes": [
+            "Use diagnostic questioning",
+            "Adapt feedback to evidence",
+            "Evaluate learner progress"
+          ]
+        },
+        {
+          "code": "HMI-340",
+          "title": "Human Authority, Interaction Safety & Experience Research",
+          "credits": 4,
+          "level": 300,
+          "practicum": "Evaluate a consequential interaction for consent, reversibility and user comprehension.",
+          "outcomes": [
+            "Map human approval boundaries",
+            "Test interaction clarity",
+            "Design safe escalation"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "enterprise",
+      "code": "OPS",
+      "name": "College of Autonomous Enterprise & Operations",
+      "dean": "Office of the Dean of Autonomous Enterprise & Operations",
+      "mission": "Enterprise systems, commerce, finance, supply chains, service operations and strategy.",
+      "divisions": [
+        "dreamagents",
+        "dreambizlaunch",
+        "dreamcrypto",
+        "dreamempire",
+        "dreamentfinance",
+        "dreamfinance",
+        "dreamflow",
+        "dreammarket",
+        "dreamloans",
+        "dreampayments",
+        "dreamproservices",
+        "dreamrealestate",
+        "dreamretail",
+        "dreamsalespro",
+        "dreamtrade",
+        "dreamaffiliate",
+        "dreamagency",
+        "dreamfranchise",
+        "dreamsaas"
+      ],
+      "courses": [
+        {
+          "code": "OPS-105",
+          "title": "Human-Robot-AI Workforce Allocation Economics",
+          "credits": 3,
+          "level": 100,
+          "practicum": "Compare execution lanes using safety, cost, reliability and human authority.",
+          "outcomes": [
+            "Model task allocation trade-offs",
+            "Estimate total operating cost",
+            "Identify escalation thresholds"
+          ]
+        },
+        {
+          "code": "OPS-330",
+          "title": "Automated Ledger & Supply Chain Orchestration",
+          "credits": 4,
+          "level": 300,
+          "practicum": "Design an auditable event flow for inventory, settlement and exception handling.",
+          "outcomes": [
+            "Model operational state transitions",
+            "Reconcile ledger events",
+            "Handle exceptions and reversals"
+          ]
+        },
+        {
+          "code": "OPS-420",
+          "title": "Autonomous Enterprise Strategy & Governance",
+          "credits": 4,
+          "level": 400,
+          "practicum": "Defend a bounded automation business case with measurable controls and downside scenarios.",
+          "outcomes": [
+            "Evaluate operating models",
+            "Define commercial guardrails",
+            "Present a decision-ready thesis"
+          ]
+        }
+      ]
+    }
+  ],
+  "division_crosswalk": {
+    "source": "config/generated/masterbot-55-domain-crosswalk.json",
+    "domain_division_count": 55,
+    "academic_assignments": [
+      {
+        "domain_id": "commandcore",
+        "academic_college_id": "cognitive",
+        "academic_college_code": "CS",
+        "academic_assignment_status": "proposed_academic_home",
+        "operational_masterbot_ownership": "unchanged_from_canonical_crosswalk",
+        "source_crosswalk": "config/generated/masterbot-55-domain-crosswalk.json"
+      },
+      {
+        "domain_id": "dreamaiinfra",
+        "academic_college_id": "cognitive",
+        "academic_college_code": "CS",
+        "academic_assignment_status": "proposed_academic_home",
+        "operational_masterbot_ownership": "unchanged_from_canonical_crosswalk",
+        "source_crosswalk": "config/generated/masterbot-55-domain-crosswalk.json"
+      },
+      {
+        "domain_id": "dreamcodelab",
+        "academic_college_id": "cognitive",
+        "academic_college_code": "CS",
+        "academic_assignment_status": "proposed_academic_home",
+        "operational_masterbot_ownership": "unchanged_from_canonical_crosswalk",
+        "source_crosswalk": "config/generated/masterbot-55-domain-crosswalk.json"
+      },
+      {
+        "domain_id": "dreamdata",
+        "academic_college_id": "cognitive",
+        "academic_college_code": "CS",
+        "academic_assignment_status": "proposed_academic_home",
+        "operational_masterbot_ownership": "unchanged_from_canonical_crosswalk",
+        "source_crosswalk": "config/generated/masterbot-55-domain-crosswalk.json"
+      },
+      {
+        "domain_id": "dreamscience",
+        "academic_college_id": "cognitive",
+        "academic_college_code": "CS",
+        "academic_assignment_status": "proposed_academic_home",
+        "operational_masterbot_ownership": "unchanged_from_canonical_crosswalk",
+        "source_crosswalk": "config/generated/masterbot-55-domain-crosswalk.json"
+      },
+      {
+        "domain_id": "dreamautomation",
+        "academic_college_id": "cognitive",
+        "academic_college_code": "CS",
+        "academic_assignment_status": "proposed_academic_home",
+        "operational_masterbot_ownership": "unchanged_from_canonical_crosswalk",
+        "source_crosswalk": "config/generated/masterbot-55-domain-crosswalk.json"
+      },
+      {
+        "domain_id": "dreamdecision",
+        "academic_college_id": "cognitive",
+        "academic_college_code": "CS",
+        "academic_assignment_status": "proposed_academic_home",
+        "operational_masterbot_ownership": "unchanged_from_canonical_crosswalk",
+        "source_crosswalk": "config/generated/masterbot-55-domain-crosswalk.json"
+      },
+      {
+        "domain_id": "dreamagriculture",
+        "academic_college_id": "robotics",
+        "academic_college_code": "ROBO",
+        "academic_assignment_status": "proposed_academic_home",
+        "operational_masterbot_ownership": "unchanged_from_canonical_crosswalk",
+        "source_crosswalk": "config/generated/masterbot-55-domain-crosswalk.json"
+      },
+      {
+        "domain_id": "dreamconstruction",
+        "academic_college_id": "robotics",
+        "academic_college_code": "ROBO",
+        "academic_assignment_status": "proposed_academic_home",
+        "operational_masterbot_ownership": "unchanged_from_canonical_crosswalk",
+        "source_crosswalk": "config/generated/masterbot-55-domain-crosswalk.json"
+      },
+      {
+        "domain_id": "dreammaintenance",
+        "academic_college_id": "robotics",
+        "academic_college_code": "ROBO",
+        "academic_assignment_status": "proposed_academic_home",
+        "operational_masterbot_ownership": "unchanged_from_canonical_crosswalk",
+        "source_crosswalk": "config/generated/masterbot-55-domain-crosswalk.json"
+      },
+      {
+        "domain_id": "dreamproduction",
+        "academic_college_id": "robotics",
+        "academic_college_code": "ROBO",
+        "academic_assignment_status": "proposed_academic_home",
+        "operational_masterbot_ownership": "unchanged_from_canonical_crosswalk",
+        "source_crosswalk": "config/generated/masterbot-55-domain-crosswalk.json"
+      },
+      {
+        "domain_id": "dreamprotection",
+        "academic_college_id": "robotics",
+        "academic_college_code": "ROBO",
+        "academic_assignment_status": "proposed_academic_home",
+        "operational_masterbot_ownership": "unchanged_from_canonical_crosswalk",
+        "source_crosswalk": "config/generated/masterbot-55-domain-crosswalk.json"
+      },
+      {
+        "domain_id": "dreamplanetary",
+        "academic_college_id": "robotics",
+        "academic_college_code": "ROBO",
+        "academic_assignment_status": "proposed_academic_home",
+        "operational_masterbot_ownership": "unchanged_from_canonical_crosswalk",
+        "source_crosswalk": "config/generated/masterbot-55-domain-crosswalk.json"
+      },
+      {
+        "domain_id": "dreammilitary",
+        "academic_college_id": "robotics",
+        "academic_college_code": "ROBO",
+        "academic_assignment_status": "proposed_academic_home",
+        "operational_masterbot_ownership": "unchanged_from_canonical_crosswalk",
+        "source_crosswalk": "config/generated/masterbot-55-domain-crosswalk.json"
+      },
+      {
+        "domain_id": "dreamtransport",
+        "academic_college_id": "robotics",
+        "academic_college_code": "ROBO",
+        "academic_assignment_status": "proposed_academic_home",
+        "operational_masterbot_ownership": "unchanged_from_canonical_crosswalk",
+        "source_crosswalk": "config/generated/masterbot-55-domain-crosswalk.json"
+      },
+      {
+        "domain_id": "dreamfood",
+        "academic_college_id": "robotics",
+        "academic_college_code": "ROBO",
+        "academic_assignment_status": "proposed_academic_home",
+        "operational_masterbot_ownership": "unchanged_from_canonical_crosswalk",
+        "source_crosswalk": "config/generated/masterbot-55-domain-crosswalk.json"
+      },
+      {
+        "domain_id": "dreamrobotics",
+        "academic_college_id": "robotics",
+        "academic_college_code": "ROBO",
+        "academic_assignment_status": "proposed_academic_home",
+        "operational_masterbot_ownership": "unchanged_from_canonical_crosswalk",
+        "source_crosswalk": "config/generated/masterbot-55-domain-crosswalk.json"
+      },
+      {
+        "domain_id": "dreamtravel",
+        "academic_college_id": "robotics",
+        "academic_college_code": "ROBO",
+        "academic_assignment_status": "proposed_academic_home",
+        "operational_masterbot_ownership": "unchanged_from_canonical_crosswalk",
+        "source_crosswalk": "config/generated/masterbot-55-domain-crosswalk.json"
+      },
+      {
+        "domain_id": "dreamadmin",
+        "academic_college_id": "trust",
+        "academic_college_code": "GOV",
+        "academic_assignment_status": "proposed_academic_home",
+        "operational_masterbot_ownership": "unchanged_from_canonical_crosswalk",
+        "source_crosswalk": "config/generated/masterbot-55-domain-crosswalk.json"
+      },
+      {
+        "domain_id": "dreamcyber",
+        "academic_college_id": "trust",
+        "academic_college_code": "GOV",
+        "academic_assignment_status": "proposed_academic_home",
+        "operational_masterbot_ownership": "unchanged_from_canonical_crosswalk",
+        "source_crosswalk": "config/generated/masterbot-55-domain-crosswalk.json"
+      },
+      {
+        "domain_id": "dreamcustintel",
+        "academic_college_id": "trust",
+        "academic_college_code": "GOV",
+        "academic_assignment_status": "proposed_academic_home",
+        "operational_masterbot_ownership": "unchanged_from_canonical_crosswalk",
+        "source_crosswalk": "config/generated/masterbot-55-domain-crosswalk.json"
+      },
+      {
+        "domain_id": "dreamlegal",
+        "academic_college_id": "trust",
+        "academic_college_code": "GOV",
+        "academic_assignment_status": "proposed_academic_home",
+        "operational_masterbot_ownership": "unchanged_from_canonical_crosswalk",
+        "source_crosswalk": "config/generated/masterbot-55-domain-crosswalk.json"
+      },
+      {
+        "domain_id": "dreamglobal",
+        "academic_college_id": "trust",
+        "academic_college_code": "GOV",
+        "academic_assignment_status": "proposed_academic_home",
+        "operational_masterbot_ownership": "unchanged_from_canonical_crosswalk",
+        "source_crosswalk": "config/generated/masterbot-55-domain-crosswalk.json"
+      },
+      {
+        "domain_id": "dreamintegrations",
+        "academic_college_id": "trust",
+        "academic_college_code": "GOV",
+        "academic_assignment_status": "proposed_academic_home",
+        "operational_masterbot_ownership": "unchanged_from_canonical_crosswalk",
+        "source_crosswalk": "config/generated/masterbot-55-domain-crosswalk.json"
+      },
+      {
+        "domain_id": "dreamlicensing",
+        "academic_college_id": "trust",
+        "academic_college_code": "GOV",
+        "academic_assignment_status": "proposed_academic_home",
+        "operational_masterbot_ownership": "unchanged_from_canonical_crosswalk",
+        "source_crosswalk": "config/generated/masterbot-55-domain-crosswalk.json"
+      },
+      {
+        "domain_id": "dreamfoundry",
+        "academic_college_id": "trust",
+        "academic_college_code": "GOV",
+        "academic_assignment_status": "proposed_academic_home",
+        "operational_masterbot_ownership": "unchanged_from_canonical_crosswalk",
+        "source_crosswalk": "config/generated/masterbot-55-domain-crosswalk.json"
+      },
+      {
+        "domain_id": "dreamops",
+        "academic_college_id": "trust",
+        "academic_college_code": "GOV",
+        "academic_assignment_status": "proposed_academic_home",
+        "operational_masterbot_ownership": "unchanged_from_canonical_crosswalk",
+        "source_crosswalk": "config/generated/masterbot-55-domain-crosswalk.json"
+      },
+      {
+        "domain_id": "dreamstreaming",
+        "academic_college_id": "trust",
+        "academic_college_code": "GOV",
+        "academic_assignment_status": "proposed_academic_home",
+        "operational_masterbot_ownership": "unchanged_from_canonical_crosswalk",
+        "source_crosswalk": "config/generated/masterbot-55-domain-crosswalk.json"
+      },
+      {
+        "domain_id": "dreamarts",
+        "academic_college_id": "human",
+        "academic_college_code": "HMI",
+        "academic_assignment_status": "proposed_academic_home",
+        "operational_masterbot_ownership": "unchanged_from_canonical_crosswalk",
+        "source_crosswalk": "config/generated/masterbot-55-domain-crosswalk.json"
+      },
+      {
+        "domain_id": "dreamcontent",
+        "academic_college_id": "human",
+        "academic_college_code": "HMI",
+        "academic_assignment_status": "proposed_academic_home",
+        "operational_masterbot_ownership": "unchanged_from_canonical_crosswalk",
+        "source_crosswalk": "config/generated/masterbot-55-domain-crosswalk.json"
+      },
+      {
+        "domain_id": "dreameducation",
+        "academic_college_id": "human",
+        "academic_college_code": "HMI",
+        "academic_assignment_status": "proposed_academic_home",
+        "operational_masterbot_ownership": "unchanged_from_canonical_crosswalk",
+        "source_crosswalk": "config/generated/masterbot-55-domain-crosswalk.json"
+      },
+      {
+        "domain_id": "dreamhealth",
+        "academic_college_id": "human",
+        "academic_college_code": "HMI",
+        "academic_assignment_status": "proposed_academic_home",
+        "operational_masterbot_ownership": "unchanged_from_canonical_crosswalk",
+        "source_crosswalk": "config/generated/masterbot-55-domain-crosswalk.json"
+      },
+      {
+        "domain_id": "dreaminfluence",
+        "academic_college_id": "human",
+        "academic_college_code": "HMI",
+        "academic_assignment_status": "proposed_academic_home",
+        "operational_masterbot_ownership": "unchanged_from_canonical_crosswalk",
+        "source_crosswalk": "config/generated/masterbot-55-domain-crosswalk.json"
+      },
+      {
+        "domain_id": "dreampersonalcare",
+        "academic_college_id": "human",
+        "academic_college_code": "HMI",
+        "academic_assignment_status": "proposed_academic_home",
+        "operational_masterbot_ownership": "unchanged_from_canonical_crosswalk",
+        "source_crosswalk": "config/generated/masterbot-55-domain-crosswalk.json"
+      },
+      {
+        "domain_id": "dreamsocial",
+        "academic_college_id": "human",
+        "academic_college_code": "HMI",
+        "academic_assignment_status": "proposed_academic_home",
+        "operational_masterbot_ownership": "unchanged_from_canonical_crosswalk",
+        "source_crosswalk": "config/generated/masterbot-55-domain-crosswalk.json"
+      },
+      {
+        "domain_id": "gametitan",
+        "academic_college_id": "human",
+        "academic_college_code": "HMI",
+        "academic_assignment_status": "proposed_academic_home",
+        "operational_masterbot_ownership": "unchanged_from_canonical_crosswalk",
+        "source_crosswalk": "config/generated/masterbot-55-domain-crosswalk.json"
+      },
+      {
+        "domain_id": "dreamagents",
+        "academic_college_id": "enterprise",
+        "academic_college_code": "OPS",
+        "academic_assignment_status": "proposed_academic_home",
+        "operational_masterbot_ownership": "unchanged_from_canonical_crosswalk",
+        "source_crosswalk": "config/generated/masterbot-55-domain-crosswalk.json"
+      },
+      {
+        "domain_id": "dreambizlaunch",
+        "academic_college_id": "enterprise",
+        "academic_college_code": "OPS",
+        "academic_assignment_status": "proposed_academic_home",
+        "operational_masterbot_ownership": "unchanged_from_canonical_crosswalk",
+        "source_crosswalk": "config/generated/masterbot-55-domain-crosswalk.json"
+      },
+      {
+        "domain_id": "dreamcrypto",
+        "academic_college_id": "enterprise",
+        "academic_college_code": "OPS",
+        "academic_assignment_status": "proposed_academic_home",
+        "operational_masterbot_ownership": "unchanged_from_canonical_crosswalk",
+        "source_crosswalk": "config/generated/masterbot-55-domain-crosswalk.json"
+      },
+      {
+        "domain_id": "dreamempire",
+        "academic_college_id": "enterprise",
+        "academic_college_code": "OPS",
+        "academic_assignment_status": "proposed_academic_home",
+        "operational_masterbot_ownership": "unchanged_from_canonical_crosswalk",
+        "source_crosswalk": "config/generated/masterbot-55-domain-crosswalk.json"
+      },
+      {
+        "domain_id": "dreamentfinance",
+        "academic_college_id": "enterprise",
+        "academic_college_code": "OPS",
+        "academic_assignment_status": "proposed_academic_home",
+        "operational_masterbot_ownership": "unchanged_from_canonical_crosswalk",
+        "source_crosswalk": "config/generated/masterbot-55-domain-crosswalk.json"
+      },
+      {
+        "domain_id": "dreamfinance",
+        "academic_college_id": "enterprise",
+        "academic_college_code": "OPS",
+        "academic_assignment_status": "proposed_academic_home",
+        "operational_masterbot_ownership": "unchanged_from_canonical_crosswalk",
+        "source_crosswalk": "config/generated/masterbot-55-domain-crosswalk.json"
+      },
+      {
+        "domain_id": "dreamflow",
+        "academic_college_id": "enterprise",
+        "academic_college_code": "OPS",
+        "academic_assignment_status": "proposed_academic_home",
+        "operational_masterbot_ownership": "unchanged_from_canonical_crosswalk",
+        "source_crosswalk": "config/generated/masterbot-55-domain-crosswalk.json"
+      },
+      {
+        "domain_id": "dreammarket",
+        "academic_college_id": "enterprise",
+        "academic_college_code": "OPS",
+        "academic_assignment_status": "proposed_academic_home",
+        "operational_masterbot_ownership": "unchanged_from_canonical_crosswalk",
+        "source_crosswalk": "config/generated/masterbot-55-domain-crosswalk.json"
+      },
+      {
+        "domain_id": "dreamloans",
+        "academic_college_id": "enterprise",
+        "academic_college_code": "OPS",
+        "academic_assignment_status": "proposed_academic_home",
+        "operational_masterbot_ownership": "unchanged_from_canonical_crosswalk",
+        "source_crosswalk": "config/generated/masterbot-55-domain-crosswalk.json"
+      },
+      {
+        "domain_id": "dreampayments",
+        "academic_college_id": "enterprise",
+        "academic_college_code": "OPS",
+        "academic_assignment_status": "proposed_academic_home",
+        "operational_masterbot_ownership": "unchanged_from_canonical_crosswalk",
+        "source_crosswalk": "config/generated/masterbot-55-domain-crosswalk.json"
+      },
+      {
+        "domain_id": "dreamproservices",
+        "academic_college_id": "enterprise",
+        "academic_college_code": "OPS",
+        "academic_assignment_status": "proposed_academic_home",
+        "operational_masterbot_ownership": "unchanged_from_canonical_crosswalk",
+        "source_crosswalk": "config/generated/masterbot-55-domain-crosswalk.json"
+      },
+      {
+        "domain_id": "dreamrealestate",
+        "academic_college_id": "enterprise",
+        "academic_college_code": "OPS",
+        "academic_assignment_status": "proposed_academic_home",
+        "operational_masterbot_ownership": "unchanged_from_canonical_crosswalk",
+        "source_crosswalk": "config/generated/masterbot-55-domain-crosswalk.json"
+      },
+      {
+        "domain_id": "dreamretail",
+        "academic_college_id": "enterprise",
+        "academic_college_code": "OPS",
+        "academic_assignment_status": "proposed_academic_home",
+        "operational_masterbot_ownership": "unchanged_from_canonical_crosswalk",
+        "source_crosswalk": "config/generated/masterbot-55-domain-crosswalk.json"
+      },
+      {
+        "domain_id": "dreamsalespro",
+        "academic_college_id": "enterprise",
+        "academic_college_code": "OPS",
+        "academic_assignment_status": "proposed_academic_home",
+        "operational_masterbot_ownership": "unchanged_from_canonical_crosswalk",
+        "source_crosswalk": "config/generated/masterbot-55-domain-crosswalk.json"
+      },
+      {
+        "domain_id": "dreamtrade",
+        "academic_college_id": "enterprise",
+        "academic_college_code": "OPS",
+        "academic_assignment_status": "proposed_academic_home",
+        "operational_masterbot_ownership": "unchanged_from_canonical_crosswalk",
+        "source_crosswalk": "config/generated/masterbot-55-domain-crosswalk.json"
+      },
+      {
+        "domain_id": "dreamaffiliate",
+        "academic_college_id": "enterprise",
+        "academic_college_code": "OPS",
+        "academic_assignment_status": "proposed_academic_home",
+        "operational_masterbot_ownership": "unchanged_from_canonical_crosswalk",
+        "source_crosswalk": "config/generated/masterbot-55-domain-crosswalk.json"
+      },
+      {
+        "domain_id": "dreamagency",
+        "academic_college_id": "enterprise",
+        "academic_college_code": "OPS",
+        "academic_assignment_status": "proposed_academic_home",
+        "operational_masterbot_ownership": "unchanged_from_canonical_crosswalk",
+        "source_crosswalk": "config/generated/masterbot-55-domain-crosswalk.json"
+      },
+      {
+        "domain_id": "dreamfranchise",
+        "academic_college_id": "enterprise",
+        "academic_college_code": "OPS",
+        "academic_assignment_status": "proposed_academic_home",
+        "operational_masterbot_ownership": "unchanged_from_canonical_crosswalk",
+        "source_crosswalk": "config/generated/masterbot-55-domain-crosswalk.json"
+      },
+      {
+        "domain_id": "dreamsaas",
+        "academic_college_id": "enterprise",
+        "academic_college_code": "OPS",
+        "academic_assignment_status": "proposed_academic_home",
+        "operational_masterbot_ownership": "unchanged_from_canonical_crosswalk",
+        "source_crosswalk": "config/generated/masterbot-55-domain-crosswalk.json"
+      }
+    ],
+    "policy": "Academic homes are curriculum routing only. They do not change primary operational ownership, MasterBot ownership, or unresolved owner approvals."
+  }
+}
