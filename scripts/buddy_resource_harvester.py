@@ -170,6 +170,11 @@ def load_sources(path: Path, divisions: dict[str, str]) -> list[dict[str, Any]]:
             raise ValueError(f"source references unknown division: {division}")
         if source.get("source_type") not in ALLOWED_TYPES:
             raise ValueError(f"unsupported source_type for {division}")
+        if not isinstance(source.get("path"), str) or not source["path"].strip():
+            raise ValueError(f"source for {division} needs a repository-relative path")
+        expected_hash = source.get("expected_sha256")
+        if not isinstance(expected_hash, str) or len(expected_hash) != 64 or any(ch not in "0123456789abcdefABCDEF" for ch in expected_hash):
+            raise ValueError(f"source for {division} needs a valid pinned SHA-256")
         if source.get("rights_status") not in ALLOWED_RIGHTS:
             raise PermissionError(f"source for {division} is not rights-cleared for training")
         if source.get("approved_for_training") is not True:
