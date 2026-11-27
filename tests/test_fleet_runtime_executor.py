@@ -185,6 +185,106 @@ class ExecutorTests(unittest.TestCase):
         self.assertTrue(out["result"]["external_model_routing_performed"])
         self.assertEqual(out["result"]["external_fallback"]["text"], "external fallback text")
 
+    def test_learning_gap_uses_governed_learning_plan_before_external_model_fallback(self):
+        gap = {
+            "schema": "dreamco.buddy_internal_first_learning_route.v1",
+            "query": "Build a tested Python API",
+            "route": "internal_knowledge_gap",
+            "external_model_routing_performed": False,
+            "mastery_awarded": False,
+        }
+        learning = {
+            "request": "Build a tested Python API",
+            "skills": ["python", "api"],
+            "resources": [{
+                "id": "python-api-lab",
+                "name": "Python API lab",
+                "url": "https://example.org/python-api",
+                "skills": ["python", "api"],
+                "access": "free",
+                "quality": 0.9,
+                "supports_execution": True,
+            }],
+        }
+        with mock.patch("buddy.learning.buddy_knowledge_router.route_buddy_learning_query", return_value=gap):
+            out = self.ex.run("blog-writer", {
+                "objective": "Learn Python API development",
+                "learning_task": True,
+                "allow_external_learning_fallback": True,
+                "input": {"learning_request": learning},
+            })
+        self.assertEqual(out["status"], "needs_input")
+        self.assertEqual(out["mode"], "learning_plan")
+        self.assertEqual(out["result"]["learning_execution"]["status"], "proposed")
+        self.assertFalse(out["result"]["external_model_routing_performed"])
+        self.assertFalse(out["live_external_action_taken"])
+
+    def test_zero_cost_paid_resource_still_requires_user_approval(self):
+        gap = {
+            "schema": "dreamco.buddy_internal_first_learning_route.v1",
+            "query": "Learn Python",
+            "route": "internal_knowledge_gap",
+            "external_model_routing_performed": False,
+            "mastery_awarded": False,
+        }
+        learning = {
+            "request": "Learn Python",
+            "skills": ["python"],
+            "allow_paid": True,
+            "resources": [{
+                "id": "paid-zero",
+                "name": "Paid resource",
+                "url": "https://example.org/paid",
+                "skills": ["python"],
+                "access": "paid",
+                "cost_per_hour_usd": 0,
+            }],
+        }
+        with mock.patch("buddy.learning.buddy_knowledge_router.route_buddy_learning_query", return_value=gap):
+            out = self.ex.run("blog-writer", {
+                "objective": "Learn Python",
+                "learning_task": True,
+                "allow_external_learning_fallback": True,
+                "input": {"learning_request": learning},
+            })
+        self.assertEqual(out["status"], "approval_required")
+        self.assertIn(
+            "user_approves_paid_learning_resource_or_compute",
+            out["result"]["approval_requirements"],
+        )
+        self.assertFalse(out["live_external_action_taken"])
+
+    def test_learning_request_rejects_string_permission_flags(self):
+        gap = {
+            "schema": "dreamco.buddy_internal_first_learning_route.v1",
+            "query": "Learn Python",
+            "route": "internal_knowledge_gap",
+            "external_model_routing_performed": False,
+            "mastery_awarded": False,
+        }
+        learning = {
+            "request": "Learn Python",
+            "skills": ["python"],
+            "allow_paid": "false",
+            "resources": [{
+                "id": "python-resource",
+                "name": "Python resource",
+                "url": "https://example.org/python",
+                "skills": ["python"],
+                "access": "free",
+            }],
+        }
+        with mock.patch("buddy.learning.buddy_knowledge_router.route_buddy_learning_query", return_value=gap):
+            out = self.ex.run("blog-writer", {
+                "objective": "Learn Python",
+                "learning_task": True,
+                "allow_external_learning_fallback": True,
+                "input": {"learning_request": learning},
+            })
+        self.assertEqual(out["status"], "learning_blocked")
+        self.assertEqual(out["error"]["type"], "invalid_learning_request")
+        self.assertFalse(out["live_external_action_taken"])
+
     def test_permission_gate(self):
         out = self.ex.run("analytics-hub", {"objective": "x", "action_level": "external_side_effect"})
         self.assertEqual(out["status"], "approval_required")
