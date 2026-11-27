@@ -57,7 +57,7 @@ def route_candidates(query: str, top_k: int=5) -> dict[str,Any]:
     clean=" ".join((query or "").split())
     if len(clean)<3:
         raise ValueError("Describe the task in at least three characters")
-    if isinstance(top_k,bool) or not 1<=top_k<=10:
+    if isinstance(top_k,bool) or not isinstance(top_k,int) or not 1<=top_k<=10:
         raise ValueError("top_k must be an integer from 1 through 10")
     q=_tokens(clean)
     ranked=[]
