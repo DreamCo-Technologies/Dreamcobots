@@ -162,7 +162,7 @@ def build_division_curricula(root: Path = ROOT) -> dict[str, Any]:
                     "capture a reproducible trace and do not claim mastery from a successful explanation alone."
                 ),
                 "source_url": "",
-                "guide_path": "",
+                "guide_path": "docs/DREAMCO_UNIVERSAL_CAPABILITY_TAXONOMY.md",
                 "content_status": "authored",
                 "learner_visible": True,
                 "review_status": "draft_needs_owner_review",
