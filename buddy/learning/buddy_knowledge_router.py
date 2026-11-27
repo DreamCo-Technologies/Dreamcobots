@@ -92,16 +92,18 @@ def _course_matches(
     query_tokens = _tokens(query)
     matches: list[dict[str, Any]] = []
     for lesson in _cached_course_lessons(root.resolve()):
+        if not lesson.learner_visible or lesson.source_url:
+            continue
         searchable = " ".join((
             lesson.title, lesson.lesson_id, lesson.track_id, lesson.category,
             lesson.objective, lesson.practice, lesson.assessment, lesson.benchmark,
+            " ".join(lesson.division_targets), " ".join(lesson.capability_tags),
+            " ".join(lesson.tool_tags), " ".join(lesson.learning_modes),
         ))
         overlap = query_tokens & _tokens(searchable)
         if not overlap:
             continue
         track_text = lesson.track_id.replace("-", " ").replace("_", " ")
-        if lesson.track_id == "huggingface-full":
-            track_text += " hugging face"
         track_overlap = query_tokens & _tokens(track_text)
         track_score = round(len(track_overlap) / max(len(query_tokens), 1), 4)
         matches.append({
@@ -120,6 +122,15 @@ def _course_matches(
             "track_match_score": track_score,
             "completion_status": "queued_not_studied",
             "mastery_awarded": False,
+            "division_targets": list(lesson.division_targets),
+            "capability_tags": list(lesson.capability_tags),
+            "tool_tags": list(lesson.tool_tags),
+            "learning_modes": list(lesson.learning_modes),
+            "exercise_ids": list(lesson.exercise_ids),
+            "project_ids": list(lesson.project_ids),
+            "assessment_ids": list(lesson.assessment_ids),
+            "review_status": lesson.review_status,
+            "training_eligibility": lesson.training_eligibility,
         })
     best_track_score = max((row["track_match_score"] for row in matches), default=0.0)
     # Rank explicit track matches first, but retain strong cross-track content
@@ -215,15 +226,14 @@ def route_buddy_learning_query(
                 "seed_candidate_matches": seed_matches,
                 "knowledge_gap": library.get("knowledge_gap"),
                 "external_discovery_available": False,
-                "external_discovery_requires_explicit_opt_in": True,
+                "external_discovery_requires_explicit_opt_in": False,
                 "external_discovery_performed": False,
                 "external_model_routing_performed": False,
                 "study_required": True,
                 "candidate_verification_required": True,
                 "next_action": (
-                    "Ask the user before external research; after approval, verify the candidate against "
-                    "authoritative first-party sources, pin its exact version, review license and rights, "
-                    "then author and assess an original study guide."
+                    "Verify the candidate against DreamCo internal records. If evidence is missing, "
+                    "queue an owner-reviewed original DreamCo lesson; do not route learners to external course websites."
                 ),
                 "mastery_awarded": False,
             }
