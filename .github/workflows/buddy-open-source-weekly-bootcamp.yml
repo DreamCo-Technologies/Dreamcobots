@@ -210,11 +210,16 @@ jobs:
         run: python -m unittest discover -s tests -p 'test_organize_buddy_learning_assets.py' -v
       - name: Run DreamCo summary scheduler adapter tests
         run: python -m unittest discover -s tests -p 'test_dreamco_summary_source.py' -v
+      - name: Explain pull-request discovery boundary
+        if: github.event_name == 'pull_request'
+        run: echo "PR validation uses repository-local fixtures and unit tests; live GitHub, Hugging Face, O*NET, and video-catalog discovery is reserved for scheduled or manual runs." >> "$GITHUB_STEP_SUMMARY"
       - name: Refresh live Hugging Face model, dataset and Space task taxonomy
+        if: github.event_name != 'pull_request'
         run: |
           python tools/discover_huggingface_subject_taxonomy.py \
             --out "$RUNNER_TEMP/buddy-huggingface-taxonomy.json"
       - name: Discover GitHub repositories and Hugging Face subjects
+        if: github.event_name != 'pull_request'
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: |
@@ -223,8 +228,10 @@ jobs:
             --taxonomy-file "$RUNNER_TEMP/buddy-huggingface-taxonomy.json" \
             --hf-limit-per-subject 20
       - name: Download current public O*NET task export and build occupation curricula
+        if: github.event_name != 'pull_request'
         run: python tools/fetch_onet_task_curricula.py --out-dir "$RUNNER_TEMP/buddy-bootcamp-weekly/onet"
       - name: Refresh complete freeCodeCamp public video metadata inventory
+        if: github.event_name != 'pull_request'
         run: |
           mkdir -p "$RUNNER_TEMP/buddy-bootcamp-weekly"
           python tools/sync_freecodecamp_catalog.py --out "$RUNNER_TEMP/buddy-bootcamp-weekly/freecodecamp-catalog.json"
@@ -236,6 +243,7 @@ jobs:
           python -m unittest discover -s tests -p 'test_buddy_course_track_registry.py' -v
 
       - name: Build rights-gated freeCodeCamp detailed video guide queue
+        if: github.event_name != 'pull_request'
         run: |
           python tools/build_freecodecamp_study_guides.py \
             --catalog "$RUNNER_TEMP/buddy-bootcamp-weekly/freecodecamp-catalog.json" \
@@ -243,7 +251,7 @@ jobs:
             --guides-dir buddy/bootcamp/sources/freecodecamp/study-guides \
             --out-dir "$RUNNER_TEMP/buddy-bootcamp-weekly/freecodecamp-study-guides"
       - name: Build rights-gated source study queue
-        if: always()
+        if: always() && github.event_name != 'pull_request'
         run: |
           if [ -f "$RUNNER_TEMP/buddy-bootcamp-weekly/discovery-snapshot.json" ]; then
             python tools/build_buddy_source_study_queue.py \
@@ -253,6 +261,7 @@ jobs:
             echo "Discovery snapshot missing; source study queue not generated."
           fi
       - name: Build O*NET task-by-task sales and procurement playbooks
+        if: github.event_name != 'pull_request'
         run: |
           printf '{"opportunities":[]}\n' > "$RUNNER_TEMP/buddy-bootcamp-weekly/empty-opportunities.json"
           python tools/build_government_sales_pipeline.py \
@@ -260,6 +269,7 @@ jobs:
             --opportunities "$RUNNER_TEMP/buddy-bootcamp-weekly/empty-opportunities.json" \
             --out "$RUNNER_TEMP/buddy-bootcamp-weekly/onet-sales-playbooks.json"
       - name: Build division-specific Buddy self-authoring bootcamp plan
+        if: github.event_name != 'pull_request'
         run: |
           python tools/build_buddy_self_bootcamp.py \
             --division-source shared/division-production-contract.ts \
@@ -279,6 +289,7 @@ jobs:
           python -m unittest discover -s tests -p 'test_buddy_tokenizer_training_curriculum.py' -v
           python -m unittest discover -s tests -p 'test_buddy_tolkien_study_track.py' -v
       - name: Build cross-disciplinary Buddy University curriculum map
+        if: github.event_name != 'pull_request'
         run: |
           python tools/build_buddy_university_curriculum.py \
             --division-source shared/division-production-contract.ts \
@@ -293,6 +304,7 @@ jobs:
             --out-dir "$RUNNER_TEMP/buddy-bootcamp-weekly/university"
 
       - name: Organize approved summaries into division study paths and progress ledger
+        if: github.event_name != 'pull_request'
         run: |
           python tools/organize_buddy_learning_assets.py \
             --guides-dir data/buddy-study-guides \
@@ -301,6 +313,7 @@ jobs:
             --out-dir "$RUNNER_TEMP/buddy-bootcamp-weekly/learning-organization"
 
       - name: Build five-lesson-per-division Buddy University daily plan
+        if: github.event_name != 'pull_request'
         run: |
           python tools/build_buddy_university_daily_plan.py \
             --university-map "$RUNNER_TEMP/buddy-bootcamp-weekly/university/buddy-university-learning-map.json" \
