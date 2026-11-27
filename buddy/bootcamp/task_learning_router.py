@@ -7,6 +7,7 @@ launch paid compute, or claim that a provider integration was executed.
 from __future__ import annotations
 
 from dataclasses import asdict, dataclass
+import math
 import re
 from typing import Iterable, Sequence
 
@@ -48,12 +49,34 @@ def _skill_overlap(requested: Sequence[str], offered: Sequence[str]) -> float:
 
 
 def rank_resources(task: TaskRequest, resources: Iterable[LearningResource]) -> list[dict]:
-    """Rank eligible resources; paid and external access are opt-in."""
+    """Rank eligible resources; paid and external access are opt-in.
+
+    Invalid task budgets are rejected. Invalid resource numeric metadata is
+    excluded so NaN/Infinity cannot bypass the price gate or poison ranking.
+    """
+    try:
+        max_cost = float(task.max_cost_per_hour_usd)
+    except (TypeError, ValueError):
+        raise ValueError("task max_cost_per_hour_usd must be a finite non-negative number")
+    if not math.isfinite(max_cost) or max_cost < 0:
+        raise ValueError("task max_cost_per_hour_usd must be a finite non-negative number")
     ranked = []
     for resource in resources:
-        if resource.cost_per_hour_usd > task.max_cost_per_hour_usd:
+        try:
+            cost = float(resource.cost_per_hour_usd)
+            quality = float(resource.quality)
+        except (TypeError, ValueError):
             continue
-        if resource.cost_per_hour_usd > 0 and not task.allow_paid:
+        if not math.isfinite(cost) or cost < 0:
+            continue
+        if not math.isfinite(quality) or not 0.0 <= quality <= 1.0:
+            continue
+        if cost > max_cost:
+            continue
+        access = str(resource.access).casefold()
+        if access in {"paid", "freemium"} and not task.allow_paid:
+            continue
+        if cost > 0 and not task.allow_paid:
             continue
         if resource.requires_account and not task.allow_external_access:
             continue
@@ -63,7 +86,7 @@ def rank_resources(task: TaskRequest, resources: Iterable[LearningResource]) -> 
         mode_fit = 1.0 if task.preferred_mode in resource.modes else 0.55
         execution_fit = 1.0 if resource.supports_execution else 0.0
         # Quality and task relevance dominate; price is a small tie-breaker.
-        score = (0.55 * overlap) + (0.25 * resource.quality) + (0.15 * mode_fit) + (0.05 * execution_fit)
+        score = (0.55 * overlap) + (0.25 * quality) + (0.15 * mode_fit) + (0.05 * execution_fit)
         ranked.append({
             "resource": asdict(resource),
             "relevance": round(overlap, 4),
