@@ -23,6 +23,8 @@ class UniversalBotLearningFoundryTests(unittest.TestCase):
   self.assertEqual(index["counts"]["domain_learning_divisions"],55)
   self.assertEqual(index["counts"]["division_learning_manifests"],120)
   self.assertEqual(len(division_manifests),120)
+  self.assertEqual(len(index["domain_learning_divisions"]),55)
+  self.assertEqual(len(index["learning_divisions"]),65)
   self.assertTrue(all(len(x["resources"])==100 for x in division_manifests))
   self.assertEqual({x["source_kind"] for x in manifests},{"canonical_fleet","legacy_original_bot_or_system","commercial_business_microbot"})
   self.assertEqual(index["counts"]["legacy_income_bots"],200)
