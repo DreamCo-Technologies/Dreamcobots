@@ -76,7 +76,7 @@ jobs:
         with:
           node-version: 22
       - name: Install test dependencies
-        run: python3 -m pip install --quiet pyyaml pytest
+        run: python3 -m pip install --quiet pyyaml pytest -r requirements-buddy-learning.txt "soundfile>=0.12,<1" "Pillow>=10,<12"
       - name: Regenerate canonical bot manifests for this exact checkout
         run: python3 tools/generate_bot_manifests.py
       - name: Manifest drift check
