@@ -45,29 +45,29 @@ class CompetitiveBenchmarkTests(unittest.TestCase):
             with self.assertRaises(PermissionError):
                 validate_fixtures(path, "dreamcyber")
 
-    def test_candidate_must_have_canonical_parameter_count_and_hashed_checkpoint(self):
+    def test_candidate_must_match_release_candidate_and_hashed_checkpoint(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             checkpoint = root / "weights.bin"
             checkpoint.write_bytes(b"model-weights")
             digest = hashlib.sha256(checkpoint.read_bytes()).hexdigest()
             manifest = {
-                "schema": "dreamco.model_candidate_manifest.v1",
-                "model_id": "dreamcyber-45m", "model_version": "0.1.0", "division_id": "dreamcyber",
-                "training_run_id": "run-1", "training_authorization_reference": "approval-123",
-                "evaluation_authorized": True,
-                "architecture": {"parameter_count": 45038208, "config_sha256": "a" * 64},
-                "tokenizer": {"revision": "tokenizer-v1", "sha256": "b" * 64},
-                "checkpoint": {"path": "weights.bin", "sha256": digest},
-                "adapter": {"command": ["python", "-c", "print('{}')"]}
+                "schema": "dreamco.model_release_candidate.v1",
+                "model_id": "dreamcyber-45m", "version": "0.1.0", "division_id": "dreamcyber",
+                "parameter_count": 45038208, "architecture": {"width": 512},
+                "artifact_integrity": {"checkpoint_sha256": digest, "tokenizer_sha256": "b" * 64, "config_sha256": "a" * 64},
+                "training": {"training_run_id": "run-1", "initialization": "random"},
+                "permissions": {"training": True, "commercial_model_use": True},
+                "evaluation": {"status": "PASSED", "holdout_independent": True}
             }
             path = root / "candidate.json"
             path.write_text(json.dumps(manifest), encoding="utf-8")
-            self.assertEqual(validate_candidate(path, "dreamcyber")["model_id"], "dreamcyber-45m")
-            manifest["architecture"]["parameter_count"] = 45000000
+            adapter = ["python", "-c", "print('{}')"]
+            self.assertEqual(validate_candidate(path, checkpoint, adapter, "dreamcyber")["model_id"], "dreamcyber-45m")
+            manifest["parameter_count"] = 45000000
             path.write_text(json.dumps(manifest), encoding="utf-8")
             with self.assertRaises(ValueError):
-                validate_candidate(path, "dreamcyber")
+                validate_candidate(path, checkpoint, adapter, "dreamcyber")
 
     def test_runner_does_not_send_expected_answer_and_measures_contracts(self):
         case = {
