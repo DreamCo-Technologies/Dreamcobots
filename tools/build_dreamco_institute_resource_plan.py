@@ -8,6 +8,18 @@ from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 DIVISIONS=ROOT/"config/masterbot-65-registry.json"
 RESOURCES=ROOT/"config/dreamco_institute_resource_registry.json"
+EXTRACTION_TARGETS={
+ "workforce_taxonomies":["occupation_skill_graphs","task_decomposition","human_robot_ai_allocation_rules","multilingual_skill_crosswalks"],
+ "curriculum_and_practice":["competency_prerequisites","project_based_lab_patterns","test_assertion_categories","assessment_rubric_structures"],
+ "model_hubs_and_architectures":["architecture_configuration_fields","tokenizer_interfaces","model_card_metadata","evaluation_protocol_patterns"],
+ "datasets_and_pedagogy":["lesson_outline_schemas","task_template_categories","synthetic_exercise_blueprints","dataset_split_and_rubric_patterns"],
+ "training_and_alignment":["trainer_configuration_patterns","optimization_method_categories","checkpoint_and_reproducibility_contracts","alignment_evaluation_structures"],
+ "inference_and_edge":["runtime_interface_patterns","quantization_format_metadata","device_constraint_categories","deployment_test_patterns"],
+ "data_clean_room_tooling":["document_parsing_contracts","deduplication_and_quality_rules","pii_and_secret_scan_requirements","data_lineage_schemas"],
+ "robotics_and_simulation":["simulation_task_graphs","sensor_actuator_contracts","trajectory_safety_constraints","sim_to_real_evaluation_patterns"],
+ "benchmarking_and_trust":["benchmark_task_schemas","metric_and_rubric_definitions","red_team_test_categories","holdout_and_regression_protocols"],
+ "mlops_and_delivery":["ci_cd_gate_patterns","model_and_dataset_versioning","sbom_and_provenance_requirements","release_and_rollback_contracts"]
+}
 ROBOTICS_DIVISIONS={"DreamConstruction","DreamTransport","DreamMaintenance","DreamProduction","DreamProtection","DreamMilitary","DreamAgriculture","DreamScience","DreamPlanetary","DreamWorld","DreamSimulation","DreamVision"}
 def build_plan(divisions_doc,resources_doc):
     divisions=divisions_doc.get("divisions",[]); resources=resources_doc.get("resources",[])
@@ -34,6 +46,9 @@ def build_plan(divisions_doc,resources_doc):
                 "training_permission":resource.get("commercial_training_permission","NOT_ESTABLISHED"),
                 "quarantine_status":resource.get("quarantine_status","BLOCKED_PENDING_REVIEW"),
                 "owner_review_required":True,
+                "extraction_targets":EXTRACTION_TARGETS.get(resource["category"],[]),
+                "output_policy":"DREAMCO_ORIGINAL_AUTHORED_NO_SOURCE_TEXT_REUSE",
+                "source_expression_retained":False,
                 "content_acquired":False,
                 "training_enabled":False
             })
