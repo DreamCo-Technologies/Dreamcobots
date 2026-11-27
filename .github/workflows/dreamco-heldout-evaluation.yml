@@ -1,0 +1,32 @@
+name: DreamCo Held-Out Evaluation Gate
+
+on:
+  pull_request:
+    paths:
+      - "evals/**"
+      - "tools/run_heldout_evaluation.py"
+      - "tools/validate_checkpoint.py"
+      - "tests/test_heldout_evaluation.py"
+      - ".github/workflows/dreamco-heldout-evaluation.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: dreamco-heldout-eval-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  deterministic-heldout-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
+      - name: Compile evaluation tools
+        run: python -m py_compile tools/run_heldout_evaluation.py tools/validate_checkpoint.py
+      - name: Run held-out evaluator and checkpoint evidence tests
+        run: python -m unittest tests.test_heldout_evaluation -v
