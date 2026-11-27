@@ -212,6 +212,9 @@ jobs:
         run: python -m unittest discover -s tests -p 'test_organize_buddy_learning_assets.py' -v
       - name: Run DreamCo summary scheduler adapter tests
         run: python -m unittest discover -s tests -p 'test_dreamco_summary_source.py' -v
+      - name: Explain pull-request discovery boundary
+        if: github.event_name == 'pull_request'
+        run: echo "PR validation uses repository-local fixtures and unit tests; live GitHub, Hugging Face, O*NET, and video-catalog discovery is reserved for scheduled or manual runs." >> "$GITHUB_STEP_SUMMARY"
       - name: Refresh live Hugging Face model, dataset and Space task taxonomy
         if: github.event_name != 'pull_request'
         run: |
