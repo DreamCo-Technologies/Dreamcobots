@@ -96,7 +96,9 @@ class DreamCoSummarySourceTests(unittest.TestCase):
             "DreamAI", [Capability(name="AI", category="DreamAI")], self.organization
         )
         selected_source = plan["source"]
+        self.assertEqual(selected_source["source_id"], "example/guide")
         self.assertEqual(selected_source["url"], "https://example.org/guide")
+        self.assertEqual(selected_source["revision"], "rev-1")
         authorization = StudyAuthorization(
             source_name=selected_source["source_id"],
             source_url=selected_source["url"],
