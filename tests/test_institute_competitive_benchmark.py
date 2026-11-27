@@ -51,11 +51,14 @@ class CompetitiveBenchmarkTests(unittest.TestCase):
             checkpoint = root / "weights.bin"
             checkpoint.write_bytes(b"model-weights")
             digest = hashlib.sha256(checkpoint.read_bytes()).hexdigest()
+            tokenizer = root / "tokenizer.json"
+            tokenizer.write_bytes(b"tokenizer-v1")
+            tokenizer_digest = hashlib.sha256(tokenizer.read_bytes()).hexdigest()
             manifest = {
                 "schema": "dreamco.model_release_candidate.v1",
                 "model_id": "dreamcyber-45m", "version": "0.1.0", "division_id": "dreamcyber",
                 "parameter_count": 45038208, "architecture": {"width": 512},
-                "artifact_integrity": {"checkpoint_sha256": digest, "tokenizer_sha256": "b" * 64, "config_sha256": "a" * 64},
+                "artifact_integrity": {"checkpoint_sha256": digest, "tokenizer_sha256": tokenizer_digest, "config_sha256": "a" * 64},
                 "training": {"training_run_id": "run-1", "initialization": "random"},
                 "permissions": {"training": True, "commercial_model_use": True},
                 "evaluation": {"status": "PASSED", "holdout_independent": True}
@@ -63,7 +66,7 @@ class CompetitiveBenchmarkTests(unittest.TestCase):
             path = root / "candidate.json"
             path.write_text(json.dumps(manifest), encoding="utf-8")
             adapter = ["python", "-c", "print('{}')"]
-            self.assertEqual(validate_candidate(path, checkpoint, adapter, "dreamcyber")["model_id"], "dreamcyber-45m")
+            self.assertEqual(validate_candidate(path, checkpoint, tokenizer, adapter, "dreamcyber")["model_id"], "dreamcyber-45m")
             manifest["parameter_count"] = 45000000
             path.write_text(json.dumps(manifest), encoding="utf-8")
             with self.assertRaises(ValueError):
@@ -76,6 +79,9 @@ class CompetitiveBenchmarkTests(unittest.TestCase):
             evidence = root / "license.txt"
             evidence.write_text("reviewed license terms", encoding="utf-8")
             digest = hashlib.sha256(evidence.read_bytes()).hexdigest()
+            tokenizer = root / "baseline-tokenizer.json"
+            tokenizer.write_text("baseline tokenizer", encoding="utf-8")
+            tokenizer_digest = hashlib.sha256(tokenizer.read_bytes()).hexdigest()
             checkpoint = root / "baseline.bin"
             checkpoint.write_bytes(b"baseline")
             checkpoint_digest = hashlib.sha256(checkpoint.read_bytes()).hexdigest()
@@ -87,6 +93,7 @@ class CompetitiveBenchmarkTests(unittest.TestCase):
                 "license_evidence": {"path": "license.txt", "sha256": digest},
                 "benchmark_permission_evidence": {"path": "license.txt", "sha256": digest},
                 "checkpoint": {"path": "baseline.bin", "sha256": checkpoint_digest},
+                "tokenizer": {"path": "baseline-tokenizer.json", "sha256": tokenizer_digest},
                 "adapter": {"command": ["python", "-c", "print('{}')"]}
             }
             self.assertEqual(validate_baseline(item, root)["model_id"], "publisher/model")
@@ -106,7 +113,7 @@ class CompetitiveBenchmarkTests(unittest.TestCase):
             "output_schema": {"type": "object", "required": ["priority"], "properties": {"priority": {"type": "string"}}}
         }
         command = ["python", "-c", "import json,sys; x=json.load(sys.stdin); assert 'expected_result' not in x and 'repeat_index' not in x and 'model_artifact_path' in x; print(json.dumps({'result':{'priority':'high'},'route':'human_ai'}))"]
-        result = evaluate_model({"model_id": "test", "model_version": "test-v1", "division_id": "dreamcyber", "_checkpoint_path": "/tmp/test-weights.bin", "_command": command}, [case], 2, 3)
+        result = evaluate_model({"model_id": "test", "model_version": "test-v1", "division_id": "dreamcyber", "_checkpoint_path": "/tmp/test-weights.bin", "_tokenizer_path": "/tmp/test-tokenizer.json", "_command": command}, [case], 2, 3)
         self.assertEqual(result["contract_pass_rate"], 1.0)
         self.assertEqual(result["task_exact_match_rate"], 1.0)
         self.assertEqual(result["routing_accuracy"], 1.0)
