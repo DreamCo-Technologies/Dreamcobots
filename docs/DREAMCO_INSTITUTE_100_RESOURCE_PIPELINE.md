@@ -28,3 +28,18 @@ The machine-readable source of truth is `config/dreamco_institute_resource_regis
 ## No false claims
 
 A source registry is not a dataset. A curriculum map is not a trained model. An architecture configuration is not a verified parameter count. A benchmark is not valid until an identified model artifact is run and the results are reproducible. Graduation requires evidence, not a checklist declaration.
+
+## Routing into all 65 divisions
+
+`tools/build_dreamco_institute_resource_plan.py` reads the canonical MasterBot registry and this 100-source catalog. It creates a metadata-only plan with 100 references visible to each of 65 division learning lanes (6,500 division-resource assignments). Each resource carries category-specific extraction targets such as task decomposition, skill graphs, lab/test patterns, architecture metadata, tokenizer interfaces, evaluation protocols, data lineage, robotics safety constraints, CI/CD gates and SBOM requirements.
+
+The routing plan does not fetch source content or grant rights. Each assignment remains owner-review-required, content_acquired=false and training_enabled=false. Specialist categories such as robotics/simulation are recommended to relevant divisions; the entire catalog remains discoverable as metadata.
+
+Generate the plan:
+
+```bash
+python tools/build_dreamco_institute_resource_plan.py --output artifacts/institute-resource-plan.json
+python -m unittest tests.test_dreamco_institute_resource_plan -v
+```
+
+Extraction outputs must be independently authored DreamCo artifacts. Preserve only the permitted abstract structure and provenance; do not copy protected expression, course text, source code or dataset records into DreamCo curriculum or synthetic training data.
