@@ -64,7 +64,7 @@ def load_json(path: Path) -> dict[str, Any]:
     return value
 
 
-def validate_candidate(manifest_path: Path, checkpoint_path: Path, command: list[str], division_id: str) -> dict[str, Any]:
+def validate_candidate(manifest_path: Path, checkpoint_path: Path, tokenizer_path: Path, command: list[str], division_id: str) -> dict[str, Any]:
     manifest = load_json(manifest_path)
     if manifest.get("schema") != "dreamco.model_release_candidate.v1":
         raise ValueError("candidate must be a verified DreamCo model release candidate")
@@ -87,6 +87,9 @@ def validate_candidate(manifest_path: Path, checkpoint_path: Path, command: list
     checkpoint_path = resolve_artifact(manifest_path.parent, str(checkpoint_path))
     if sha256_file(checkpoint_path).lower() != expected_checkpoint_hash.lower():
         raise ValueError("candidate checkpoint does not match release-candidate evidence")
+    tokenizer_path = resolve_artifact(manifest_path.parent, str(tokenizer_path))
+    if sha256_file(tokenizer_path).lower() != integrity["tokenizer_sha256"].lower():
+        raise ValueError("candidate tokenizer does not match release-candidate evidence")
     training = manifest.get("training", {})
     if not isinstance(training.get("training_run_id"), str) or not training["training_run_id"].strip():
         raise ValueError("candidate training run identity is required")
@@ -104,6 +107,7 @@ def validate_candidate(manifest_path: Path, checkpoint_path: Path, command: list
         **manifest,
         "_manifest_path": str(manifest_path.resolve()),
         "_checkpoint_path": str(checkpoint_path),
+        "_tokenizer_path": str(tokenizer_path),
         "_command": command,
         "model_version": manifest["version"],
         "provider": "DreamCo",
@@ -123,10 +127,11 @@ def validate_baseline(entry: dict[str, Any], base_dir: Path) -> dict[str, Any]:
     validate_hashed_artifact(base_dir, entry.get("license_evidence", {}), f"baseline {entry['id']} license evidence")
     validate_hashed_artifact(base_dir, entry.get("benchmark_permission_evidence", {}), f"baseline {entry['id']} benchmark permission evidence")
     checkpoint_path = validate_hashed_artifact(base_dir, entry.get("checkpoint", {}), f"baseline {entry['id']}")
+    tokenizer_path = validate_hashed_artifact(base_dir, entry.get("tokenizer", {}), f"baseline {entry['id']} tokenizer")
     adapter = entry.get("adapter", {}).get("command")
     if not isinstance(adapter, list) or not adapter or not all(isinstance(part, str) and part for part in adapter):
         raise ValueError(f"baseline {entry['id']} adapter.command must be a non-empty argument array")
-    return {**entry, "_checkpoint_path": str(checkpoint_path), "_command": adapter}
+    return {**entry, "_checkpoint_path": str(checkpoint_path), "_tokenizer_path": str(tokenizer_path), "_command": adapter}
 
 
 def validate_fixtures(path: Path, division_id: str) -> list[dict[str, Any]]:
@@ -276,6 +281,7 @@ def evaluate_model(model: dict[str, Any], cases: list[dict[str, Any]], repeats: 
                 "model_id": model["model_id"],
                 "model_version": model.get("model_version", model.get("version", model.get("revision"))),
                 "model_artifact_path": model["_checkpoint_path"],
+                "tokenizer_artifact_path": model["_tokenizer_path"],
             }
             output, latency, error, timed_out = invoke(model["_command"], request, timeout)
             latencies.append(latency)
@@ -345,14 +351,14 @@ def evaluate_model(model: dict[str, Any], cases: list[dict[str, Any]], repeats: 
     }
 
 
-def run_benchmark(candidate_manifest: Path, candidate_checkpoint: Path, candidate_command: list[str],
+def run_benchmark(candidate_manifest: Path, candidate_checkpoint: Path, candidate_tokenizer: Path, candidate_command: list[str],
                   baseline_registry: Path, fixture_path: Path, division_id: str,
                   repeats: int = 3, timeout: float = 10.0) -> dict[str, Any]:
     if repeats < 2 or repeats > 20:
         raise ValueError("repeats must be between 2 and 20")
     if timeout <= 0 or timeout > 300:
         raise ValueError("timeout must be greater than 0 and at most 300 seconds")
-    candidate = validate_candidate(candidate_manifest, candidate_checkpoint, candidate_command, division_id)
+    candidate = validate_candidate(candidate_manifest, candidate_checkpoint, candidate_tokenizer, candidate_command, division_id)
     fixtures = validate_fixtures(fixture_path, division_id)
     baselines_payload = load_json(baseline_registry)
     if baselines_payload.get("schema") != "dreamco.competitive_baseline_registry.v1":
@@ -411,6 +417,7 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--candidate-manifest", type=Path, required=True)
     parser.add_argument("--candidate-checkpoint", type=Path, required=True)
+    parser.add_argument("--candidate-tokenizer", type=Path, required=True)
     parser.add_argument("--candidate-command", required=True, help="JSON array of executable and arguments; no shell expansion is performed")
     parser.add_argument("--baseline-registry", type=Path, default=ROOT / "config" / "institute-competitive-baselines.json")
     parser.add_argument("--fixtures", type=Path, required=True)
@@ -423,7 +430,7 @@ def main() -> int:
         candidate_command = json.loads(args.candidate_command)
     except json.JSONDecodeError as exc:
         raise SystemExit("--candidate-command must be a JSON string array") from exc
-    report = run_benchmark(args.candidate_manifest, args.candidate_checkpoint, candidate_command,
+    report = run_benchmark(args.candidate_manifest, args.candidate_checkpoint, args.candidate_tokenizer, candidate_command,
                            args.baseline_registry, args.fixtures, args.division_id,
                            args.repeats, args.timeout)
     args.output.parent.mkdir(parents=True, exist_ok=True)
