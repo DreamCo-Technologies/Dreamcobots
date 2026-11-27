@@ -54,7 +54,7 @@ The adapter must load the artifact path supplied in the request. An adapter that
 
 ## Candidate requirements
 
-The candidate input is a repository-generated `dreamco.model_release_candidate.v1` manifest produced by the existing Model Foundry release-candidate builder. The runner also requires the actual checkpoint file and a local adapter command.
+The candidate input is a repository-generated `dreamco.model_release_candidate.v1` manifest produced by the existing Model Foundry release-candidate builder. The runner also requires the actual checkpoint file, the exact tokenizer artifact whose hash is recorded in the candidate manifest, and a local adapter command.
 
 Before evaluation it checks:
 - exact division identity and 45,038,208 parameter count;
