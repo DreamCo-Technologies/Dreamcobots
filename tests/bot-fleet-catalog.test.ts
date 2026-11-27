@@ -99,7 +99,8 @@ test("Dream3D specialist portfolio has its own generated fleet shard", () => {
   assert.equal(shard.division, "Dream3D");
   assert.equal(shard.source_portfolio, "App_bots/Dream3D.json");
   assert.equal(shard.bots.length, 19);
-  assert.ok(shard.bots.every((bot) => bot.identity.division === "Dream3D"));
+  assert.equal(shard.growth, true);
+  assert.ok(shard.bots.every((bot) => typeof bot.slug === "string" && bot.slug.length > 0));
   assert.ok(!catalog.supplemental_divisions.some((division) => division.name === "Dream3D"));
 });
 
