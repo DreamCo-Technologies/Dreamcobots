@@ -408,8 +408,9 @@ def run_benchmark(candidate_manifest: Path, candidate_checkpoint: Path, candidat
         "release_claim": "benchmark_evidence_only_not_production_certification",
         "training_performed": False,
         "weights_modified": False,
-        "network_used": False,
-        "paid_compute_used": False,
+        "runner_initiated_network_calls": False,
+        "adapter_network_usage": "NOT_MEASURED_REQUIRES_LOCAL_ADAPTER_REVIEW",
+        "adapter_paid_compute_usage": "NOT_MEASURED_REQUIRES_EXPLICIT_APPROVAL_AND_ADAPTER_REVIEW",
     }
 
 
