@@ -17,4 +17,7 @@ def test_fleet_runtime_full_audit_installs_scipy_from_declared_learning_requirem
     )
     requirements = (ROOT / "requirements-buddy-learning.txt").read_text(encoding="utf-8")
     assert "-r requirements-buddy-learning.txt" in install
+    assert "soundfile>=0.12,<1" in install
+    assert "Pillow>=10,<12" in install
     assert "scipy>=1.11,<2" in requirements
+    assert "cryptography>=42,<50" in requirements
