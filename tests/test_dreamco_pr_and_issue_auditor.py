@@ -123,6 +123,18 @@ class AuditorTests(unittest.TestCase):
         )
         self.assertTrue(any(x["code"] == "UNPINNED_COMPETITOR_REVISION" for x in audit(patch)["gate_findings"]))
 
+    def test_absolute_superiority_claim_is_flagged(self):
+        claim = "un" + "beatable"
+        patch = (
+            "diff --git a/docs/claim.md b/docs/claim.md\n"
+            "@@ -0,0 +1 @@\n"
+            f"+This result is {claim}.\n"
+        )
+        self.assertTrue(any(
+            item["code"] == "ABSOLUTE_SUPERIORITY"
+            for item in audit(patch)["gate_findings"]
+        ))
+
     def test_clean_patch_is_not_auto_approved(self):
         self.assertEqual(audit("diff --git a/README.md b/README.md\n")["review_status"], "REVIEW_REQUIRED")
 
