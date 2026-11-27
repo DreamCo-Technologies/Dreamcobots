@@ -268,7 +268,9 @@ def evaluate_model(model: dict[str, Any], cases: list[dict[str, Any]], repeats: 
                 "task_id": case["task_id"],
                 "input": case["input"],
                 "output_schema": case["output_schema"],
-                "repeat_index": repeat,
+                "model_id": model["model_id"],
+                "model_version": model.get("model_version", model.get("version", model.get("revision"))),
+                "model_artifact_path": model["_checkpoint_path"],
             }
             output, latency, error, timed_out = invoke(model["_command"], request, timeout)
             latencies.append(latency)
