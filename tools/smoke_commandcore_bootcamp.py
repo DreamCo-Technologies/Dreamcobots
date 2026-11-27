@@ -65,15 +65,18 @@ def run_smoke(root: Path = ROOT) -> dict[str, Any]:
 
     with tempfile.TemporaryDirectory(prefix="dreamco-commandcore-smoke-") as temp_dir:
         store = PrivateLearningStore(Path(temp_dir) / "learning.db")
-        bridge = BuddyLearningBridge(store, BuddyTaskRunner())
-        queue = bridge.bootcamp_learning_queue(division="CommandCore", limit=10)
-        if queue.get("track_ids") != ["dreamco-division-specialist"] or queue.get("available_count") != 6:
-            raise AssertionError("CommandCore runtime bridge did not expose its six DreamCo lessons")
-        if any(item.get("source_url") for item in queue.get("items", [])):
-            raise AssertionError("CommandCore runtime bridge exposed an external learner URL")
-        if any(not item.get("exercise_ids") or not item.get("project_ids") or not item.get("assessment_ids")
-               for item in queue.get("items", [])):
-            raise AssertionError("CommandCore runtime bridge omitted exercises, projects, or assessments")
+        try:
+            bridge = BuddyLearningBridge(store, BuddyTaskRunner())
+            queue = bridge.bootcamp_learning_queue(division="CommandCore", limit=10)
+            if queue.get("track_ids") != ["dreamco-division-specialist"] or queue.get("available_count") != 6:
+                raise AssertionError("CommandCore runtime bridge did not expose its six DreamCo lessons")
+            if any(item.get("source_url") for item in queue.get("items", [])):
+                raise AssertionError("CommandCore runtime bridge exposed an external learner URL")
+            if any(not item.get("exercise_ids") or not item.get("project_ids") or not item.get("assessment_ids")
+                   for item in queue.get("items", [])):
+                raise AssertionError("CommandCore runtime bridge omitted exercises, projects, or assessments")
+        finally:
+            store.close()
 
     return {
         "schema": "dreamco.commandcore_bootcamp_smoke.v1",
