@@ -173,7 +173,8 @@ def audit(root: Path = ROOT) -> dict[str, Any]:
     )
     override_entries = overrides.get("entries") if isinstance(overrides.get("entries"), list) else []
     artifact_rows = artifacts.get("artifacts") if isinstance(artifacts.get("artifacts"), list) else []
-    # Keep the contractual target count fixed when source registries are incomplete.\n    expected_targets = 55 + 65
+    # Keep the contractual target count fixed when source registries are incomplete.
+    expected_targets = 55 + 65
     expected_artifacts = expected_targets * len(MODULES)
     artifact_keys = {
         (str(row.get("target_type")), str(row.get("target_id")), str(row.get("module_id")))
