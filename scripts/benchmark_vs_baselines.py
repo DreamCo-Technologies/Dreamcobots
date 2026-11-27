@@ -64,36 +64,52 @@ def load_json(path: Path) -> dict[str, Any]:
     return value
 
 
-def validate_candidate(manifest_path: Path, division_id: str) -> dict[str, Any]:
+def validate_candidate(manifest_path: Path, checkpoint_path: Path, command: list[str], division_id: str) -> dict[str, Any]:
     manifest = load_json(manifest_path)
-    if manifest.get("schema") != "dreamco.model_candidate_manifest.v1":
-        raise ValueError("unsupported candidate manifest schema")
+    if manifest.get("schema") != "dreamco.model_release_candidate.v1":
+        raise ValueError("candidate must be a verified DreamCo model release candidate")
     if manifest.get("division_id") != division_id:
         raise ValueError("candidate division_id does not match requested division")
-    if not all(isinstance(manifest.get(key), str) and manifest[key].strip()
-               for key in ("model_id", "model_version", "training_run_id",
-                           "training_authorization_reference")):
-        raise ValueError("candidate identity, run and training authorization are required")
-    architecture = manifest.get("architecture", {})
-    if architecture.get("parameter_count") != CANONICAL_PARAMETERS:
+    for key in ("model_id", "version"):
+        if not isinstance(manifest.get(key), str) or not manifest[key].strip():
+            raise ValueError(f"candidate {key} is required")
+    if manifest.get("parameter_count") != CANONICAL_PARAMETERS:
         raise ValueError("candidate must match the canonical 45,038,208-parameter blueprint")
-    for key in ("config_sha256",):
-        value = architecture.get(key)
-        if not isinstance(value, str) or len(value) != 64:
-            raise ValueError(f"candidate architecture {key} is required")
-    tokenizer = manifest.get("tokenizer", {})
-    if not isinstance(tokenizer.get("revision"), str) or not tokenizer["revision"].strip():
-        raise ValueError("candidate tokenizer revision must be pinned")
-    if not isinstance(tokenizer.get("sha256"), str) or len(tokenizer["sha256"]) != 64:
+    integrity = manifest.get("artifact_integrity", {})
+    architecture = manifest.get("architecture", {})
+    if not isinstance(integrity.get("config_sha256"), str) or len(integrity["config_sha256"]) != 64:
+        raise ValueError("candidate architecture config SHA-256 is required")
+    if not isinstance(integrity.get("tokenizer_sha256"), str) or len(integrity["tokenizer_sha256"]) != 64:
         raise ValueError("candidate tokenizer SHA-256 is required")
-    if manifest.get("evaluation_authorized") is not True:
-        raise PermissionError("candidate evaluation is not explicitly authorized")
-    checkpoint_path = validate_hashed_artifact(manifest_path.parent, manifest.get("checkpoint", {}), "candidate checkpoint")
-    adapter = manifest.get("adapter", {}).get("command")
-    if not isinstance(adapter, list) or not adapter or not all(isinstance(part, str) and part for part in adapter):
-        raise ValueError("candidate adapter.command must be a non-empty argument array")
-    return {**manifest, "_manifest_path": str(manifest_path.resolve()), "_checkpoint_path": str(checkpoint_path), "_command": adapter}
-
+    expected_checkpoint_hash = integrity.get("checkpoint_sha256") or manifest.get("weights_sha256")
+    if not isinstance(expected_checkpoint_hash, str) or len(expected_checkpoint_hash) != 64:
+        raise ValueError("candidate checkpoint SHA-256 is required")
+    checkpoint_path = resolve_artifact(manifest_path.parent, str(checkpoint_path))
+    if sha256_file(checkpoint_path).lower() != expected_checkpoint_hash.lower():
+        raise ValueError("candidate checkpoint does not match release-candidate evidence")
+    training = manifest.get("training", {})
+    if not isinstance(training.get("training_run_id"), str) or not training["training_run_id"].strip():
+        raise ValueError("candidate training run identity is required")
+    if training.get("initialization") != "random":
+        raise ValueError("candidate must have documented random initialization")
+    permissions = manifest.get("permissions", {})
+    if permissions.get("training") is not True or permissions.get("commercial_model_use") is not True:
+        raise PermissionError("candidate training and commercial-use rights are not approved")
+    evaluation = manifest.get("evaluation", {})
+    if evaluation.get("status") != "PASSED" or evaluation.get("holdout_independent") is not True:
+        raise ValueError("candidate requires a passed independent pre-release evaluation")
+    if not isinstance(command, list) or not command or not all(isinstance(part, str) and part for part in command):
+        raise ValueError("candidate adapter command must be a non-empty argument array")
+    return {
+        **manifest,
+        "_manifest_path": str(manifest_path.resolve()),
+        "_checkpoint_path": str(checkpoint_path),
+        "_command": command,
+        "model_version": manifest["version"],
+        "provider": "DreamCo",
+        "architecture": {"parameter_count": manifest["parameter_count"], **architecture},
+        "quantization": manifest.get("quantization", "full_precision"),
+    }
 
 def validate_baseline(entry: dict[str, Any], base_dir: Path) -> dict[str, Any]:
     for key in ("id", "provider", "model_id", "revision", "license_id", "license_review_reference"):
@@ -322,13 +338,14 @@ def evaluate_model(model: dict[str, Any], cases: list[dict[str, Any]], repeats: 
     }
 
 
-def run_benchmark(candidate_manifest: Path, baseline_registry: Path, fixture_path: Path,
-                  division_id: str, repeats: int = 3, timeout: float = 10.0) -> dict[str, Any]:
+def run_benchmark(candidate_manifest: Path, candidate_checkpoint: Path, candidate_command: list[str],
+                  baseline_registry: Path, fixture_path: Path, division_id: str,
+                  repeats: int = 3, timeout: float = 10.0) -> dict[str, Any]:
     if repeats < 2 or repeats > 20:
         raise ValueError("repeats must be between 2 and 20")
     if timeout <= 0 or timeout > 300:
         raise ValueError("timeout must be greater than 0 and at most 300 seconds")
-    candidate = validate_candidate(candidate_manifest, division_id)
+    candidate = validate_candidate(candidate_manifest, candidate_checkpoint, candidate_command, division_id)
     fixtures = validate_fixtures(fixture_path, division_id)
     baselines_payload = load_json(baseline_registry)
     if baselines_payload.get("schema") != "dreamco.competitive_baseline_registry.v1":
@@ -386,6 +403,8 @@ def run_benchmark(candidate_manifest: Path, baseline_registry: Path, fixture_pat
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--candidate-manifest", type=Path, required=True)
+    parser.add_argument("--candidate-checkpoint", type=Path, required=True)
+    parser.add_argument("--candidate-command", required=True, help="JSON array of executable and arguments; no shell expansion is performed")
     parser.add_argument("--baseline-registry", type=Path, default=ROOT / "config" / "institute-competitive-baselines.json")
     parser.add_argument("--fixtures", type=Path, required=True)
     parser.add_argument("--division-id", required=True)
@@ -393,8 +412,13 @@ def main() -> int:
     parser.add_argument("--timeout", type=float, default=10.0)
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
-    report = run_benchmark(args.candidate_manifest, args.baseline_registry, args.fixtures,
-                           args.division_id, args.repeats, args.timeout)
+    try:
+        candidate_command = json.loads(args.candidate_command)
+    except json.JSONDecodeError as exc:
+        raise SystemExit("--candidate-command must be a JSON string array") from exc
+    report = run_benchmark(args.candidate_manifest, args.candidate_checkpoint, candidate_command,
+                           args.baseline_registry, args.fixtures, args.division_id,
+                           args.repeats, args.timeout)
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
     print(json.dumps({
