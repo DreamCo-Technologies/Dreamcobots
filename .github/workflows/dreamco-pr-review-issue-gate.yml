@@ -22,7 +22,9 @@ jobs:
       - name: Checkout trusted base revision only
         uses: actions/checkout@v7
         with:
-          ref: ${{ github.event.pull_request.base.sha }}
+          # Always run the trusted auditor from the current default branch.
+          # The PR target branch may predate the auditor or omit the trust-gate tool.
+          ref: ${{ github.event.repository.default_branch }}
           fetch-depth: 1
 
       - name: Set up Python
