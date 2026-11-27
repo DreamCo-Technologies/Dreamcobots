@@ -73,6 +73,9 @@ on:
       - ".github/workflows/buddy-safe-repair.yml"
       - "tools/buddy_safe_repair.py"
       - "tests/test_buddy_safe_repair.py"
+      - "config/dreamco-universal-division-mastery-contract.json"
+      - "docs/architecture/DREAMCO_UNIVERSAL_DIVISION_MASTERY_STANDARD.md"
+      - "tests/test_universal_division_mastery_contract.py"
   schedule:
     - cron: "41 13 * * *"
     - cron: "41 1 * * *"
@@ -100,7 +103,9 @@ jobs:
       - name: Verify generated resource and owner-review manifests
         run: python tools/build_division_resource_readiness_map.py --check
       - name: Test 65 division resource bundles and model routing
-        run: python -m unittest tests.test_division_resource_readiness tests.test_division_resource_router tests.test_buddy_dataset_discovery_fleet tests.test_dreamco_division_mastery_orchestrator
+        run: python -m unittest tests.test_division_resource_readiness tests.test_division_resource_router tests.test_buddy_dataset_discovery_fleet tests.test_dreamco_division_mastery_orchestrator tests.test_universal_division_mastery_contract
+      - name: Validate universal division mastery contract JSON
+        run: python -m json.tool config/dreamco-universal-division-mastery-contract.json > /dev/null
       - name: Validate schemas and whitespace
         run: |
           python -m json.tool schemas/division-resource-readiness-map.schema.json > /dev/null
