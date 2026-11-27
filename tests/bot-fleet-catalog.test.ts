@@ -1,5 +1,8 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+import { dirname, join } from "node:path";
 import test from "node:test";
+import { fileURLToPath } from "node:url";
 
 import { buildFleetCatalog } from "../tools/generate_bot_fleet_catalog";
 
@@ -84,4 +87,29 @@ test("Dream3D remains a 19-profile supplemental portfolio, not a domain division
   const dream3d = catalog.supplemental_bots.filter((bot) => bot.identity.division === "Dream3D");
   assert.equal(dream3d.length, 19);
   assert.ok(!catalog.supplemental_divisions.some((division) => division.name === "Dream3D"));
+});
+
+
+test("generated Buddy routing index matches canonical and supplemental fleet sources", () => {
+  const catalog = buildFleetCatalog();
+  const root = dirname(dirname(fileURLToPath(import.meta.url)));
+  const source = readFileSync(join(root, "website", "data", "buddy-routing-index.js"), "utf8");
+  const marker = "window.BUDDY_ROUTING_INDEX=";
+  assert.ok(source.startsWith(marker), "routing index must use the documented browser global");
+  const payload = source.slice(marker.length).trim().replace(/;$/, "");
+  const routing = JSON.parse(payload) as {
+    summary: { profiles: number; canonical_profiles: number; supplemental_profiles: number; divisions: number };
+    bots: Array<[string, ...unknown[]]>;
+  };
+  const canonicalSlugs = catalog.bots.map((bot) => bot.identity.slug);
+  const supplementalSlugs = catalog.supplemental_bots.map((bot) => bot.identity.slug);
+  const routingSlugs = routing.bots.map((bot) => bot[0]);
+  assert.equal(routing.summary.canonical_profiles, canonicalSlugs.length);
+  assert.equal(routing.summary.supplemental_profiles, supplementalSlugs.length);
+  assert.equal(routing.summary.profiles, canonicalSlugs.length + supplementalSlugs.length);
+  assert.equal(routing.summary.divisions, catalog.divisions.length + catalog.supplemental_divisions.length);
+  assert.equal(routing.bots.length, routing.summary.profiles);
+  assert.equal(new Set(routingSlugs).size, routingSlugs.length);
+  assert.ok(canonicalSlugs.every((slug) => routingSlugs.includes(slug)));
+  assert.ok(supplementalSlugs.every((slug) => routingSlugs.includes(slug)));
 });

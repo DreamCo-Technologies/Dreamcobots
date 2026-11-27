@@ -6,16 +6,40 @@ import json
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
+CROSSWALK = ROOT / "config/generated/masterbot-55-domain-crosswalk.json"
 
 
 def check() -> dict:
+    """Inventory canonical divisions only; repository folders are not division records."""
+    if not CROSSWALK.is_file():
+        raise FileNotFoundError(f"canonical division crosswalk is required: {CROSSWALK}")
+    payload = json.loads(CROSSWALK.read_text(encoding="utf-8"))
+    domains = payload.get("domains")
+    if not isinstance(domains, list) or not domains:
+        raise ValueError("canonical division crosswalk has no domains")
     rows = []
-    for path in sorted(ROOT.iterdir()):
-        if not path.is_dir() or path.name.startswith(".") or path.name == "node_modules":
-            continue
-        files = sum(1 for item in path.rglob("*") if item.is_file())
-        market = any("market" in item.name.lower() for item in path.glob("*") if item.is_file())
-        rows.append({"division": path.name, "files": files, "market_data": market, "working": False, "production_ready": False})
+    for domain in sorted(domains, key=lambda item: str(item.get("domain_name", ""))):
+        name = str(domain.get("domain_name", "")).strip()
+        if not name:
+            raise ValueError("canonical division record is missing domain_name")
+        manifest = ROOT / "App_bots" / f"{name}.json"
+        files = 1 if manifest.is_file() else 0
+        if manifest.is_file():
+            try:
+                data = json.loads(manifest.read_text(encoding="utf-8"))
+                files += len(data.get("files", [])) if isinstance(data.get("files"), list) else 0
+            except (OSError, json.JSONDecodeError):
+                pass
+        rows.append({
+            "division": name,
+            "files": files,
+            "market_data": False,
+            "working": False,
+            "production_ready": False,
+            "manifest_present": manifest.is_file(),
+            "mapping_status": domain.get("mapping_status", "unreviewed"),
+            "owner_approval": domain.get("owner_approval"),
+        })
     return {"divisions": rows, "working": 0, "production_ready": False}
 
 

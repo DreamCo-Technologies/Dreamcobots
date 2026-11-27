@@ -10,6 +10,7 @@ import argparse
 import json
 import os
 import subprocess
+import urllib.parse
 import urllib.request
 import urllib.error
 from datetime import datetime, timezone
@@ -49,6 +50,88 @@ def package_json() -> dict:
     if not package_path.exists():
         return {}
     return json.loads(package_path.read_text())
+
+def probe_live_environment(base_url: str | None, opener=None) -> dict:
+    """Probe the real API health endpoint without exposing production secrets to CI."""
+    if not base_url:
+        return {
+            "status": "external_config_required",
+            "evidence": [],
+            "release_blocker": False,
+            "missing_required": ["DREAMCO_PRODUCTION_API_BASE_URL"],
+            "note": "Set the non-secret API base URL as a repository variable; production credentials stay on the deployment host.",
+        }
+    parsed_url = urllib.parse.urlsplit(base_url)
+    if (
+        parsed_url.scheme != "https"
+        or not parsed_url.netloc
+        or parsed_url.username
+        or parsed_url.password
+        or parsed_url.query
+        or parsed_url.fragment
+    ):
+        return {
+            "status": "fail",
+            "evidence": [],
+            "release_blocker": True,
+            "note": "Production API health probes require a clean HTTPS base URL without embedded credentials, query, or fragment.",
+        }
+
+    base_path = parsed_url.path.rstrip("/")
+    health_path = f"{base_path}/health" if base_path.endswith("/api") else f"{base_path}/api/health"
+    health_url = urllib.parse.urlunsplit(("https", parsed_url.netloc, health_path, "", ""))
+    request = urllib.request.Request(
+        health_url,
+        headers={
+            "Accept": "application/json",
+            "User-Agent": "DreamCo-Production-Readiness/1.0",
+        },
+    )
+    open_url = opener or urllib.request.urlopen
+    try:
+        with open_url(request, timeout=10) as response:
+            payload = json.loads(response.read().decode("utf-8"))
+    except Exception as exc:
+        return {
+            "status": "fail",
+            "evidence": [health_url],
+            "release_blocker": True,
+            "error_type": type(exc).__name__,
+            "note": "The configured production API health endpoint could not be reached.",
+        }
+
+    if not isinstance(payload, dict):
+        return {
+            "status": "fail",
+            "evidence": [health_url],
+            "release_blocker": True,
+            "note": "The production API health endpoint returned a non-object JSON payload.",
+        }
+
+    if payload.get("ok") is not True:
+        return {
+            "status": "fail",
+            "evidence": [health_url],
+            "release_blocker": True,
+            "note": "The production API health endpoint did not report a healthy process.",
+        }
+
+    required_flags = (
+        "databaseConfigured",
+        "stripeConfigured",
+        "stripeWebhookConfigured",
+        "openaiConfigured",
+        "configurationReady",
+    )
+    missing_flags = [flag for flag in required_flags if payload.get(flag) is not True]
+    return {
+        "status": "external_config_required" if missing_flags else "pass",
+        "evidence": [health_url],
+        "release_blocker": False,
+        "missing_required": missing_flags,
+        "note": "Only boolean configuration state is read; no secret values are sent to CI.",
+    }
+
 
 def check_runtime_contracts() -> list[dict]:
     env_example = read(".env.example")
@@ -151,30 +234,10 @@ def check_runtime_contracts() -> list[dict]:
         },
     ]
 
-    environment_required = [
-        "DATABASE_URL",
-        "STRIPE_WEBHOOK_SECRET",
-    ]
-    environment_any_of = {
-        "stripe_secret_key": ["STRIPE_SECRET_KEY", "STRIPE_LIVE_SECRET_KEY"],
-        "stripe_publishable_key": ["STRIPE_PUBLISHABLE_KEY", "STRIPE_LIVE_PK"],
-        "openai_key": ["AI_INTEGRATIONS_OPENAI_API_KEY", "OPENAI_API_KEY", "OPENAI_ADMIN_KEY"],
-    }
-    missing_required = [name for name in environment_required if not os.environ.get(name)]
-    missing_any_of = {
-        key: options
-        for key, options in environment_any_of.items()
-        if not any(os.environ.get(option) for option in options)
-    }
     checks.append({
         "id": "live_environment_configured",
-        "label": "Current runner has live production environment variables",
-        "status": "pass" if not missing_required and not missing_any_of else "external_config_required",
-        "evidence": [],
-        "release_blocker": False,
-        "missing_required": missing_required,
-        "missing_any_of": missing_any_of,
-        "note": "CI and local scans do not prove customer readiness until deployment secrets are configured in the production host.",
+        "label": "Live production API health confirms database, Stripe, webhook, and OpenAI configuration",
+        **probe_live_environment(os.getenv("DREAMCO_PRODUCTION_API_BASE_URL")),
     })
     return checks
 
@@ -227,6 +290,7 @@ def build_area_reports(
     if not isinstance(entries, dict):
         raise ValueError("production-readiness area evidence must contain an areas object")
     reports = []
+    check_cache: dict[tuple[str, str, str | None], bool] = {}
     for area in contract.get("areas", []):
         area_id = area["id"]
         entry = entries.get(area_id)
@@ -235,8 +299,12 @@ def build_area_reports(
         verified_refs = []
         if not isinstance(entry, dict):
             errors.append("no evidence entry recorded")
-        elif entry.get("status") != "VERIFIED":
-            errors.append("area evidence status is not VERIFIED")
+        else:
+            resolution_errors = entry.get("resolution_errors", [])
+            if isinstance(resolution_errors, list):
+                errors.extend(str(item) for item in resolution_errors if item)
+            if entry.get("status") != "VERIFIED" and not resolution_errors:
+                errors.append("area evidence status is not VERIFIED")
         if not isinstance(refs, list) or not refs:
             errors.append("no evidence references recorded")
         else:
@@ -264,7 +332,10 @@ def build_area_reports(
                 if not check_id.isdigit():
                     errors.append("check_id must be a GitHub Actions run or check-run ID")
                     continue
-                if not verify_check(repository, check_id, current_sha, token):
+                cache_key = (repository, check_id, token)
+                if cache_key not in check_cache:
+                    check_cache[cache_key] = verify_check(repository, check_id, current_sha, token)
+                if not check_cache[cache_key]:
                     errors.append("linked GitHub check is not successful on the current revision")
                     continue
                 verified_refs.append(ref)
@@ -275,12 +346,17 @@ def build_area_reports(
             and not errors
             and len(verified_refs) == len(refs)
         )
-        status = "verified" if verified else ("partial" if isinstance(entry, dict) else "unknown")
+        if verified:
+            status = "verified"
+        elif isinstance(entry, dict) and verified_refs:
+            status = "partial"
+        else:
+            status = "unknown"
         reports.append({
             "id": area_id,
             "label": area.get("label", area_id),
             "status": status,
-            "evidence": verified_refs if verified else [],
+            "evidence": verified_refs,
             "evidence_errors": errors,
             "revision": current_sha,
             "required_evidence": area.get("required", []),
@@ -356,6 +432,21 @@ def write_markdown(report: dict) -> None:
         "",
         *[f"- `{item}`" for item in report.get("incomplete_areas", [])],
         "",
+        "## Area Evidence Details",
+        "",
+    ]
+    for area in report.get("areas", []):
+        lines.append(f"### {area.get('label', area.get('id'))} — `{area.get('status')}`")
+        evidence = area.get("evidence", [])
+        errors = area.get("evidence_errors", [])
+        if evidence:
+            lines.extend(f"- Verified reference: `{item.get('path')}`" for item in evidence)
+        if errors:
+            lines.extend(f"- Evidence gap: {item}" for item in errors)
+        if not evidence and not errors:
+            lines.append("- No evidence references recorded")
+        lines.append("")
+    lines.extend([
         "## Certification Blockers",
         "",
         *[f"- `{item}`" for item in report.get("certification_blockers", [])],
@@ -364,7 +455,7 @@ def write_markdown(report: dict) -> None:
         "",
         "| Check | Status | Evidence |",
         "|---|---:|---|",
-    ]
+    ])
     for check in report["runtime_checks"]:
         evidence = ", ".join(f"`{item}`" for item in check.get("evidence", [])) or "runtime env"
         lines.append(f"| {check['label']} | `{check['status']}` | {evidence} |")
@@ -384,12 +475,14 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--strict", action="store_true", help="Fail on critical unknowns or release-blocking runtime failures (code gate).")
     parser.add_argument("--certification", action="store_true", help="Fail unless every area is evidence-verified and all runtime/external configuration gates pass.")
+    parser.add_argument("--evidence-manifest", help="Use a revision-bound evidence manifest generated for this exact commit.")
     args = parser.parse_args()
     contract=json.loads(CONTRACT.read_text())
     current_sha = git_sha()
     repository = os.getenv("GITHUB_REPOSITORY", "DreamCo-Technologies/Dreamcobots")
     token = os.getenv("GITHUB_TOKEN") or os.getenv("GH_TOKEN")
-    evidence_manifest = json.loads(AREA_EVIDENCE.read_text()) if AREA_EVIDENCE.exists() else {
+    evidence_path = Path(args.evidence_manifest or os.getenv("DREAMCO_PRODUCTION_EVIDENCE_MANIFEST", str(AREA_EVIDENCE)))
+    evidence_manifest = json.loads(evidence_path.read_text()) if evidence_path.exists() else {
         "schema": AREA_EVIDENCE_SCHEMA, "areas": {}
     }
     reports = build_area_reports(contract, evidence_manifest, current_sha, repository, token)

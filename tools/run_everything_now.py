@@ -11,6 +11,51 @@ MAX_STEPS=[
  ('universal_capability_benchmark',[sys.executable,'tools/build_universal_capability_benchmark.py']),('universal_app_computer_use_benchmarks',[sys.executable,'tools/build_universal_app_computer_use_benchmarks.py']),('buddy_211_government_service_benchmarks',[sys.executable,'tools/build_buddy_211_government_service_benchmarks.py']),('public_sector_ai_work_roles',[sys.executable,'tools/build_public_sector_ai_work_roles.py']),('business_lifecycle_benchmarks',[sys.executable,'tools/build_business_lifecycle_benchmarks.py']),('creative_mastery_benchmarks',[sys.executable,'tools/build_creative_mastery_benchmarks.py']),('government_public_sector_benchmarks',[sys.executable,'tools/build_government_public_sector_benchmarks.py']),('global_government_benchmarks',[sys.executable,'tools/build_global_government_benchmarks.py']),('government_department_improvement',[sys.executable,'tools/build_government_department_improvement_backlog.py']),('public_fiscal_refresh',[sys.executable,'tools/refresh_public_fiscal_data.py','--allow-offline']),('government_needs_spending_watch',[sys.executable,'tools/build_government_needs_spending_watch.py']),('government_signal_gap_backlog',[sys.executable,'tools/build_government_signal_gap_backlog.py']),('public_money_transparency',[sys.executable,'tools/build_public_money_transparency.py']),('continuous_value_discovery',[sys.executable,'tools/build_continuous_value_discovery_backlog.py']),('work_platform_benchmarks',[sys.executable,'tools/build_work_platform_benchmarks.py']),('manufacturing_productivity_benchmarks',[sys.executable,'tools/build_manufacturing_productivity_benchmarks.py']),('parallel_benchmark_gap_registry',[sys.executable,'tools/build_parallel_benchmark_gap_registry.py']),
  ('universal_task_sandbox',[sys.executable,'tools/build_universal_human_ai_task_sandbox.py']),('full_potential_sandbox',[sys.executable,'tools/build_full_potential_sandbox_catalog.py']),('bot_sandbox_curriculum',[sys.executable,'tools/build_bot_sandbox_curriculum.py']),('business_owner_curriculum',[sys.executable,'tools/build_bot_business_owner_curriculum.py']),('github_parity',[sys.executable,'tools/build_github_platform_benchmark.py']),('engineering_gap_plan',[sys.executable,'tools/build_engineering_gap_closure_plan.py']),('notes_to_code',[sys.executable,'tools/build_notes_to_code_backlog.py']),('resource_matrix',[sys.executable,'tools/build_resource_sandbox_matrix.py']),('connection_truth',[sys.executable,'tools/audit_runtime_connections.py']),('repository_connections',[sys.executable,'tools/audit_repository_connections.py']),('ontology_snapshot',[sys.executable,'tools/build_ontology_snapshot.py']),('trusted_code',[sys.executable,'tools/audit_trusted_code_delivery.py']),('maximum_sandbox',[sys.executable,'tools/build_maximum_sandbox_matrix.py']),
  ('production_verification',['node','--import','tsx','tools/run_universal_verification.ts','--production']),('fleet_e2e',['npm','run','buddy:fleet:e2e']),('maximum_sandbox_runtime',[sys.executable,'tools/audit_maximum_sandbox_runtime.py']),('speed_accuracy',[sys.executable,'tools/run_system_speed_accuracy_benchmarks.py']),('production_smoke',[sys.executable,'tools/smoke_production_runtime.py']),('full_certification',[sys.executable,'tools/build_full_system_certification.py']),('live_user_readiness',[sys.executable,'tools/build_live_user_testing_readiness.py']),('system_progress',[sys.executable,'tools/build_system_progress_status.py'])]
+STEP_DEPENDENCIES = {
+    "full_certification": (
+        "production_verification",
+        "speed_accuracy",
+        "production_smoke",
+        "trusted_code",
+        "maximum_sandbox",
+        "maximum_sandbox_runtime",
+    ),
+    "live_user_readiness": ("full_certification",),
+    "system_progress": ("full_certification", "live_user_readiness"),
+}
+
+
+def validate_plan(steps):
+    """Reject plans that execute a certification consumer before its evidence producers."""
+    positions = {name: index for index, (name, _command) in enumerate(steps)}
+    for name, dependencies in STEP_DEPENDENCIES.items():
+        if name not in positions:
+            continue
+        for dependency in dependencies:
+            if dependency not in positions:
+                raise ValueError(f"run plan includes {name} without required step {dependency}")
+            if positions[dependency] >= positions[name]:
+                raise ValueError(f"run plan schedules {name} before required step {dependency}")
+    return steps
+
+
+def select_steps(mode):
+    """Select a mode without omitting evidence prerequisites for downstream certification."""
+    if mode == "quick":
+        # Quick mode is a bounded diagnostic pass, not a certification/readiness run.
+        steps = MAX_STEPS[:23]
+    elif mode == "standard":
+        verification = next(step for step in MAX_STEPS if step[0] == "production_verification")
+        verification_index = MAX_STEPS.index(verification)
+        # Preserve the normal standard workload and explicitly include its evidence producer.
+        steps = MAX_STEPS[:verification_index] + [verification] + MAX_STEPS[-6:]
+    elif mode == "maximum":
+        steps = MAX_STEPS
+    else:
+        raise ValueError(f"unsupported run mode: {mode}")
+    return validate_plan(steps)
+
+
 def run(name,command):
     started=time.perf_counter(); p=subprocess.run(command,cwd=ROOT,capture_output=True,text=True); return {'name':name,'command':command,'exit_code':p.returncode,'duration_seconds':round(time.perf_counter()-started,3),'stdout_tail':p.stdout[-4000:],'stderr_tail':p.stderr[-4000:]}
 
@@ -38,9 +83,7 @@ def write_snapshot(mode, step_count, results, in_progress):
     REPORT.write_text('\n'.join(lines)+'\n')
     return payload
 def main()->int:
-    ap=argparse.ArgumentParser(); ap.add_argument('--mode',choices=['quick','standard','maximum'],default='maximum'); args=ap.parse_args(); steps=MAX_STEPS
-    if args.mode=='quick': steps=MAX_STEPS[:23]+MAX_STEPS[-3:]
-    elif args.mode=='standard': steps=MAX_STEPS[:36]+MAX_STEPS[-6:]
+    ap=argparse.ArgumentParser(); ap.add_argument('--mode',choices=['quick','standard','maximum'],default='maximum'); args=ap.parse_args(); steps=select_steps(args.mode)
     results=[]
     write_snapshot(args.mode, len(steps), results, True)
     for index,(name,command) in enumerate(steps, start=1):

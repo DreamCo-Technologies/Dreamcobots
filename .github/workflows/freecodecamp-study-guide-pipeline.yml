@@ -6,16 +6,48 @@ on:
   pull_request:
     paths:
       - "buddy/bootcamp/sources/freecodecamp/**"
+      - "config/divisions/**"
+      - "config/masterbot-65-registry.json"
+      - "config/generated/masterbot-55-domain-crosswalk.json"
+      - "config/freecodecamp-division-category-profiles.json"
+      - "config/freecodecamp-division-routing-overrides.json"
+      - "config/buddy-division-specialist-course-artifacts.json"
+      - "tools/audit_freecodecamp_division_video_coverage.py"
+      - "tests/test_freecodecamp_division_video_coverage_audit.py"
+      - "tests/test_buddy_learning_runtime_bridge.py"
+      - "tests/test_buddy_course_track_registry.py"
+      - "tests/test_freecodecamp_specialist_routing.py"
+      - "buddy/learning/runtime_bridge.py"
+      - "buddy/learning/course_track_registry.py"
+      - "config/buddy-course-track-registry.json"
+      - "config/freecodecamp-division-routing-overrides.json"
       - "config/authorized-transcripts/**"
       - "config/freecodecamp-complete-learning-path.json"
       - "config/freecodecamp-detailed-video-study-guide.schema.json"
       - "tools/build_freecodecamp_study_guides.py"
+      - "tools/sync_freecodecamp_catalog.py"
       - "tests/test_freecodecamp_study_guides.py"
+      - "tests/test_freecodecamp_catalog_categories.py"
       - ".github/workflows/freecodecamp-study-guide-pipeline.yml"
   push:
     branches: [main]
     paths:
       - "buddy/bootcamp/sources/freecodecamp/**"
+      - "config/divisions/**"
+      - "config/masterbot-65-registry.json"
+      - "config/generated/masterbot-55-domain-crosswalk.json"
+      - "config/freecodecamp-division-category-profiles.json"
+      - "config/freecodecamp-division-routing-overrides.json"
+      - "config/buddy-division-specialist-course-artifacts.json"
+      - "tools/audit_freecodecamp_division_video_coverage.py"
+      - "tests/test_freecodecamp_division_video_coverage_audit.py"
+      - "config/freecodecamp-division-routing-overrides.json"
+      - "config/buddy-course-track-registry.json"
+      - "buddy/learning/course_track_registry.py"
+      - "buddy/learning/runtime_bridge.py"
+      - "tests/test_freecodecamp_specialist_routing.py"
+      - "tests/test_buddy_course_track_registry.py"
+      - "tests/test_buddy_learning_runtime_bridge.py"
       - "config/authorized-transcripts/**"
       - "config/freecodecamp-complete-learning-path.json"
       - "config/freecodecamp-detailed-video-study-guide.schema.json"
@@ -44,6 +76,22 @@ jobs:
           python-version: "3.11"
       - name: Validate guide queue and rights gates
         run: python -m unittest discover -s tests -p 'test_freecodecamp_study_guides.py' -v
+      - name: Validate FreeCodeCamp catalog taxonomy
+        run: python -m unittest discover -s tests -p 'test_freecodecamp_catalog_categories.py' -v
+      - name: Validate specialist division routing and rights-aware authoring backlog
+        run: python -m unittest discover -s tests -p 'test_freecodecamp_specialist_routing.py' -v
+      - name: Test division and video inventory audit
+        run: python -m unittest discover -s tests -p 'test_freecodecamp_division_video_coverage_audit.py' -v
+      - name: Generate truthful division and video coverage report (inventory only)
+        run: python tools/audit_freecodecamp_division_video_coverage.py --output "$RUNNER_TEMP/freecodecamp-division-video-coverage.json"
+      - name: Upload division and video coverage audit
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: freecodecamp-division-video-coverage-${{ github.run_id }}
+          path: ${{ runner.temp }}/freecodecamp-division-video-coverage.json
+          if-no-files-found: warn
+          retention-days: 30
       - name: Build per-video guide queue
         run: python tools/build_freecodecamp_study_guides.py --out-dir "$RUNNER_TEMP/freecodecamp-study-guides"
       - name: Publish coverage truth

@@ -2,12 +2,9 @@ name: Run Everything Now
 on:
   workflow_dispatch:
     inputs:
-      mode: {description: "quick, standard, or maximum", required: false, default: "maximum"}
+      mode: {description: "quick, standard, or maximum", required: false, default: "standard"}
   schedule:
-    - cron: "11 */6 * * *"
-  push:
-    branches: [main]
-    paths: ["App_bots/**","original-bots/**","bots/**","attached_assets/**","config/**","tools/**","tests/**","server/**","shared/**","docs/**",".github/agents/**",".github/workflows/run-everything-now.yml"]
+    - cron: "11 5 * * *"
 permissions: {contents: read, issues: write, actions: read}
 concurrency:
   group: "run-everything-now-${{ github.ref }}-${{ github.event_name == 'workflow_dispatch' && 'manual' || 'automatic' }}"
@@ -28,6 +25,8 @@ jobs:
         run: |
           npm ci
           python3 -m pip install --disable-pip-version-check openpyxl
+      - name: Validate Run Everything mode dependency plans
+        run: python3 -m unittest discover -s tests -p 'test_run_everything_now.py' -v
       - name: Refresh generated verification contracts
         run: |
           python3 tools/generate_repository_test_registry.py

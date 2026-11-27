@@ -17,10 +17,10 @@ test("task discovery helps unclear users without pretending every role is unregu
     constraints: ["keep costs low"],
     preferredOutcome: "",
   });
-  assert.equal(plan.status, "guided_discovery_ready");
-  assert.equal(plan.role.id, "financial_education_assistant");
-  assert.equal(plan.role.buddyIsLicensedProfessional, false);
-  assert.equal(plan.externalActionTaken, false);
+  assert.equal(plan.status, "guided_discovery_ready", `status=${plan.status}; clarity=${plan.clarity}; role=${plan.role.id}`);
+  assert.equal(plan.role.id, "financial_education_assistant", `role=${plan.role.id}`);
+  assert.equal(plan.role.buddyIsLicensedProfessional, false, `licensed=${plan.role.buddyIsLicensedProfessional}`);
+  assert.equal(plan.externalActionTaken, false, `externalActionTaken=${plan.externalActionTaken}`);
   assert.equal(plan.hardBoundaries.userCanDisableTheseBoundaries, false);
   assert.equal(plan.hardBoundaries.externalMoneyActionWithoutExactApprovalAllowed, false);
 });
