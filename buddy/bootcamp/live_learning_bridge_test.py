@@ -132,3 +132,25 @@ def test_completion_rejects_malformed_optional_boolean_evidence():
     assert result["accepted"] is False
     assert result["promote"] is False
     assert result["invalid_fields"] == ["holdout_passed"]
+
+
+def test_external_assistance_can_be_recorded_but_never_promotes_native_mastery():
+    base = {
+        "request_id": "req-external-1",
+        "run_id": "run-external-1",
+        "status": "succeeded",
+        "capability": "python",
+        "success": True,
+        "verified": True,
+        "regression_passed": True,
+        "safety_passed": True,
+        "holdout_passed": True,
+        "artifact_refs": ["artifact://run-external-1/report.json"],
+        "provenance_refs": ["sha256:source-evidence"],
+        "external_assistance": True,
+    }
+    result = evaluate_learning_completion(base)
+    assert result["accepted"] is True
+    assert result["external_assistance"] is True
+    assert result["promote"] is False
+    assert result["promotion_reason"] == "external_assistance_is_not_native_mastery"
