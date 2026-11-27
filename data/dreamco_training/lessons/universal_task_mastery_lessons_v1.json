@@ -1,0 +1,357 @@
+{
+  "schema": "dreamco.original_lesson_library.v1",
+  "library_id": "dreamco-universal-task-mastery-lessons",
+  "version": "1.0.0",
+  "ownership_class": "dreamco_owned",
+  "authoring_policy": "Original DreamCo instructional text and synthetic examples. External links are reference pointers only; no third-party lesson text is reproduced.",
+  "review_status": "draft_needs_independent_review",
+  "training_eligibility": "not_eligible_until_reviewed_and_split",
+  "lessons": [
+    {
+      "lesson_id": "DCO-LESSON-0001",
+      "module_id": "M01",
+      "title": "Turn an Outcome into a Verifiable Plan",
+      "domain": "task_execution",
+      "skills": [
+        "intent_analysis",
+        "requirements",
+        "acceptance_criteria",
+        "planning"
+      ],
+      "learning_objectives": [
+        "Translate a broad goal into observable deliverables.",
+        "Separate known facts, assumptions, constraints, and unknowns.",
+        "Define acceptance tests before execution."
+      ],
+      "lesson_text": "A reliable task begins with an outcome, not a list of activities. Rewrite the request as a statement of what must be true when the work is finished. Then identify the people affected, the resources available, the deadline, and the boundaries that must not be crossed. Mark every statement as a fact, an assumption, or an open question. Do not silently promote an assumption into a requirement. Break the outcome into deliverables small enough to inspect independently. For each deliverable, define an acceptance check that another person could repeat. A useful plan also names dependencies, risks, rollback conditions, and the evidence that will prove completion. If a critical unknown could change the design or safety of the work, pause and ask one focused question rather than inventing an answer. The plan is a living contract: revise it when new evidence arrives, preserve the reason for the revision, and keep completed work distinct from proposed work.",
+      "worked_example": {
+        "scenario": "Create a small inventory API.",
+        "decomposition": [
+          "API contract and data model",
+          "input validation and authorization",
+          "atomic stock update behavior",
+          "automated tests for concurrency and retries",
+          "deployment and rollback notes"
+        ],
+        "acceptance_checks": [
+          "negative stock cannot be created",
+          "duplicate reservation requests are idempotent",
+          "unauthorized callers are rejected",
+          "tests reproduce the key failure cases"
+        ]
+      },
+      "practice_task": "Take a broad request to improve a customer onboarding process. Produce a one-page task brief with deliverables, assumptions, risks, acceptance tests, and one unresolved question.",
+      "common_failure_modes": [
+        "Writing activities without defining the outcome",
+        "Using vague criteria such as 'works well'",
+        "Treating an unverified assumption as a fact",
+        "Starting execution before identifying irreversible actions"
+      ],
+      "assessment_rubric": [
+        {
+          "criterion": "Outcome clarity",
+          "pass": "The end state is observable and unambiguous."
+        },
+        {
+          "criterion": "Traceability",
+          "pass": "Each deliverable maps to at least one acceptance check."
+        },
+        {
+          "criterion": "Risk handling",
+          "pass": "Unknowns, dependencies, and rollback conditions are explicit."
+        }
+      ],
+      "source_refs": [
+        "config/buddy_benchmark_dataset_factory.json"
+      ],
+      "content_provenance": "DreamCo-authored instructional synthesis; no third-party course text copied."
+    },
+    {
+      "lesson_id": "DCO-LESSON-0002",
+      "module_id": "M02",
+      "title": "Build a Rights-Aware Evidence Trail",
+      "domain": "research_and_data_governance",
+      "skills": [
+        "source_evaluation",
+        "provenance",
+        "license_review",
+        "privacy",
+        "deduplication"
+      ],
+      "learning_objectives": [
+        "Distinguish a source pointer from permission to reuse its content.",
+        "Record origin, creator, version, license, and transformation history.",
+        "Keep unknown or restricted assets out of training and public release."
+      ],
+      "lesson_text": "Finding a resource does not grant ownership or training rights. Treat every external page, dataset, course, code sample, and media asset as a separate rights decision. First record where it came from, who created it, when it was collected, which version was reviewed, and the exact license or terms that apply. Separate metadata that describes a resource from the resource's protected content. A link to a course can support discovery without authorizing copying its lessons. When rights are unclear, assign the asset an unknown or reference-only status and do not ingest it into a training corpus. For material that is reusable, preserve required attribution, notices, and license text. Record each transformation: extraction, filtering, deduplication, summarization, synthetic example generation, and dataset splitting. Keep personal data, secrets, credentials, and customer records out unless a specific lawful and approved policy permits their use. Holdout examples must remain sealed from training. A trustworthy catalog makes it possible to answer: where did this item come from, what may we do with it, what did we change, and why is it eligible?",
+      "worked_example": {
+        "asset": "A public course landing page with a syllabus and a link to paid lessons.",
+        "decision": "Store title, URL, provider, and syllabus metadata as reference-only. Do not copy lesson text, slides, quizzes, or videos without explicit reuse rights.",
+        "ledger_fields": [
+          "source URL and retrieval date",
+          "creator/provider and version",
+          "license evidence and attribution obligations",
+          "ownership class and allowed operations",
+          "content ingested flag",
+          "transformation and reviewer history"
+        ]
+      },
+      "practice_task": "Classify five hypothetical resources: an MIT-licensed code sample, a paid course, a public-domain document, an unknown-license dataset, and a DreamCo-authored synthetic exercise. Record allowed uses and blockers.",
+      "common_failure_modes": [
+        "Assuming public access means public reuse",
+        "Applying one license decision to an entire mixed dataset",
+        "Losing attribution during transformation",
+        "Training on locked holdouts or personal data"
+      ],
+      "assessment_rubric": [
+        {
+          "criterion": "Rights classification",
+          "pass": "Each asset has a defensible per-asset status."
+        },
+        {
+          "criterion": "Provenance",
+          "pass": "Origin, version, reviewer, and transformations are recorded."
+        },
+        {
+          "criterion": "Safety",
+          "pass": "Unknown, restricted, private, and holdout data remain excluded."
+        }
+      ],
+      "source_refs": [
+        "config/buddy-training-data-provenance-policy.json"
+      ],
+      "content_provenance": "DreamCo-authored governance lesson; legal review required for specific licenses."
+    },
+    {
+      "lesson_id": "DCO-LESSON-0003",
+      "module_id": "M03",
+      "title": "Debug by Reproduction, Evidence, and Regression",
+      "domain": "software_engineering",
+      "skills": [
+        "programming",
+        "debugging",
+        "testing",
+        "security",
+        "reasoning"
+      ],
+      "learning_objectives": [
+        "Create a minimal reproduction before changing code.",
+        "Use evidence to isolate the root cause.",
+        "Make the smallest safe fix and preserve it with regression tests."
+      ],
+      "lesson_text": "A symptom is not yet a diagnosis. Begin by recording the expected behavior, observed behavior, environment, inputs, and exact failure. Build the smallest reproduction that still fails. Reduce the input or execution path until the responsible condition becomes visible. Read the relevant code and logs, but test hypotheses instead of treating the first plausible explanation as truth. Once the root cause is supported by evidence, change the smallest surface that corrects it. Add a regression test that fails before the fix and passes after it. Then run the focused test, the affected subsystem tests, and the broader regression suite. Check edge cases, permission boundaries, and error paths. If the repair changes data or external state, define a rollback plan and verify the post-change state. Record what was learned so the same failure can become a reusable DreamCo case study. A green test suite is evidence about the tested paths, not proof that the entire system is bug-free.",
+      "worked_example": {
+        "bug": "A function returns the second repeated item instead of the first item to repeat.",
+        "reproduction": "Input [4,2,4,2] should return 4; a flawed implementation that scans distinct values after counting may return an incorrect value.",
+        "repair_method": [
+          "write a test that fails on the reported input",
+          "define first repeated by second-occurrence order",
+          "track seen values while scanning left to right",
+          "add empty, unique, and multiple-repeat tests",
+          "run the module and repository regression tests"
+        ]
+      },
+      "practice_task": "Diagnose a supplied failing function. Submit the reproduction, root-cause explanation, minimal patch, regression test, and verification log.",
+      "common_failure_modes": [
+        "Editing before reproducing",
+        "Fixing the example rather than the underlying rule",
+        "Adding a test that does not fail on the old code",
+        "Claiming full system readiness from one passing test"
+      ],
+      "assessment_rubric": [
+        {
+          "criterion": "Reproduction",
+          "pass": "A deterministic test demonstrates the original defect."
+        },
+        {
+          "criterion": "Root cause",
+          "pass": "The explanation identifies the actual faulty condition."
+        },
+        {
+          "criterion": "Regression",
+          "pass": "The new test fails before and passes after the repair."
+        },
+        {
+          "criterion": "Verification",
+          "pass": "Focused and dependent tests are reported accurately."
+        }
+      ],
+      "source_refs": [],
+      "content_provenance": "DreamCo-authored lesson with original synthetic debugging scenario."
+    },
+    {
+      "lesson_id": "DCO-LESSON-0004",
+      "module_id": "M04",
+      "title": "Make Data Analysis Reproducible and Honest",
+      "domain": "data_analytics",
+      "skills": [
+        "data_cleaning",
+        "sql",
+        "statistics",
+        "visualization",
+        "communication"
+      ],
+      "learning_objectives": [
+        "Check dataset grain, freshness, missingness, duplicates, and joins.",
+        "Define metrics before calculating them.",
+        "Communicate uncertainty and limitations alongside results."
+      ],
+      "lesson_text": "Analysis quality depends on understanding how the data was produced. Before calculating a metric, identify the unit represented by each row, the time window, the source system, and the intended population. Inspect missing values, duplicate keys, invalid ranges, late-arriving records, and changes in schema. Test joins for row multiplication and unmatched records. Write the metric definition in plain language, including inclusions, exclusions, and treatment of refunds or reversals. Keep raw data immutable and make cleaning steps reproducible. Compare totals before and after each transformation so unexpected changes are visible. Choose a visualization that matches the question; do not imply precision that the data cannot support. Distinguish observation from causal explanation. If a trend changes, investigate mix shifts, seasonality, instrumentation changes, and data-quality events before attributing a cause. Deliver the query or script, assumptions, quality checks, result, and limitations together so another analyst can reproduce the conclusion.",
+      "worked_example": {
+        "dataset": "Synthetic monthly sales records containing duplicate order IDs, missing product categories, refunds, and a changing product mix.",
+        "method": [
+          "profile row counts and key uniqueness",
+          "define gross sales, refunds, and net revenue",
+          "resolve duplicate policy before aggregation",
+          "report missing categories separately",
+          "compare monthly net revenue and product mix",
+          "document limitations and reproduce the chart"
+        ]
+      },
+      "practice_task": "Create a reproducible monthly performance report from a synthetic dataset. Include a quality profile, metric definitions, query or script, chart, and caveats.",
+      "common_failure_modes": [
+        "Ignoring duplicate records",
+        "Joining at incompatible grains",
+        "Calling correlation causation",
+        "Hiding missingness or uncertainty"
+      ],
+      "assessment_rubric": [
+        {
+          "criterion": "Data quality",
+          "pass": "Grain, freshness, missingness, duplicates, and joins are checked."
+        },
+        {
+          "criterion": "Metric correctness",
+          "pass": "Definitions and calculations match the stated business question."
+        },
+        {
+          "criterion": "Reproducibility",
+          "pass": "Code and assumptions allow independent recreation."
+        },
+        {
+          "criterion": "Communication",
+          "pass": "Conclusions separate evidence from interpretation."
+        }
+      ],
+      "source_refs": [
+        "config/buddy_benchmark_dataset_factory.json"
+      ],
+      "content_provenance": "DreamCo-authored lesson with synthetic data scenario."
+    },
+    {
+      "lesson_id": "DCO-LESSON-0005",
+      "module_id": "M05",
+      "title": "Recover a Service Without Losing Data",
+      "domain": "cloud_operations",
+      "skills": [
+        "deployment",
+        "observability",
+        "incident_response",
+        "rollback",
+        "cost_control"
+      ],
+      "learning_objectives": [
+        "Assess impact and preserve evidence during an incident.",
+        "Choose rollback or forward-fix based on data and compatibility risks.",
+        "Verify service recovery and document prevention work."
+      ],
+      "lesson_text": "Incident response is a controlled decision process under uncertainty. First establish impact: affected users, failing operations, start time, error rate, and whether data integrity is at risk. Preserve relevant logs and deployment identifiers. Avoid speculative changes that destroy evidence. Compare the current release with the last known good version, including database migrations, feature flags, external dependencies, and configuration. A rollback is not automatically safe: determine whether the new version changed persistent data or whether the old version can read that data. If rollback risks corruption, isolate the affected path and choose a controlled forward fix with explicit approval. After the change, verify health using independent signals: request success, latency, error rate, queue depth, and data consistency. Communicate what is known, what remains uncertain, and the next update time. Finish with a blameless timeline, root cause, contributing factors, recovery evidence, and actions that reduce recurrence.",
+      "worked_example": {
+        "incident": "A release raises API errors and reports a database migration warning.",
+        "decision_steps": [
+          "freeze unrelated deployments",
+          "identify affected endpoints and data writes",
+          "inspect migration compatibility and backup status",
+          "choose rollback only if old code safely reads current schema",
+          "verify API health and representative data invariants",
+          "record evidence and assign prevention actions"
+        ]
+      },
+      "practice_task": "Use synthetic deployment logs to write an incident decision, recovery plan, verification checklist, and post-incident report.",
+      "common_failure_modes": [
+        "Rolling back without checking schema compatibility",
+        "Changing multiple variables at once",
+        "Declaring recovery from one health check",
+        "Failing to preserve evidence and communicate uncertainty"
+      ],
+      "assessment_rubric": [
+        {
+          "criterion": "Impact assessment",
+          "pass": "Scope and data-integrity risks are explicitly identified."
+        },
+        {
+          "criterion": "Recovery decision",
+          "pass": "Rollback or forward-fix choice is justified by compatibility evidence."
+        },
+        {
+          "criterion": "Verification",
+          "pass": "Service and data invariants are checked after recovery."
+        },
+        {
+          "criterion": "Learning loop",
+          "pass": "Prevention actions are testable and assigned."
+        }
+      ],
+      "source_refs": [],
+      "content_provenance": "DreamCo-authored lesson with synthetic incident scenario."
+    },
+    {
+      "lesson_id": "DCO-LESSON-0006",
+      "module_id": "M06",
+      "title": "Respect Safety and Professional Boundaries",
+      "domain": "workplace_and_professional_tasks",
+      "skills": [
+        "hazard_identification",
+        "procedure_following",
+        "risk_communication",
+        "escalation",
+        "quality_control"
+      ],
+      "learning_objectives": [
+        "Recognize when general guidance is insufficient for a site-specific procedure.",
+        "Identify immediate hazards without inventing technical instructions.",
+        "Escalate uncertainty to qualified and authorized personnel."
+      ],
+      "lesson_text": "A useful assistant must know when not to improvise. In safety-critical work, the correct procedure depends on the specific equipment, site conditions, training, and applicable rules. General educational guidance cannot replace the current approved procedure or a qualified professional's judgment. Start by identifying the hazard and the people who could be affected. If there is immediate danger, follow the site's emergency process and contact the designated responsible person. Do not guess at machine isolation steps, electrical work, chemical handling, medical decisions, or other specialized procedures. State what is observed, what is unknown, and which authority must resolve the uncertainty. Preserve labels and evidence without altering equipment. Record the source and version of any approved procedure used. A practice exercise can assess hazard recognition and escalation quality, but it must not claim to certify a learner or authorize real-world work.",
+      "worked_example": {
+        "scenario": "A fictional worker sees an unfamiliar machine guard and an unclear isolation label.",
+        "safe_response": [
+          "keep people clear of the hazard",
+          "do not operate or modify the machine",
+          "notify the supervisor or authorized safety representative",
+          "consult the current site-specific procedure and qualified personnel",
+          "record the uncertainty and do not claim the equipment is safe"
+        ]
+      },
+      "practice_task": "Review three fictional workplace scenarios. Identify immediate hazards, prohibited assumptions, the correct escalation path, and the evidence needed before work resumes.",
+      "common_failure_modes": [
+        "Inventing equipment-specific steps",
+        "Treating a general lesson as certification",
+        "Failing to distinguish observed facts from assumptions",
+        "Continuing work while a critical safety condition is unknown"
+      ],
+      "assessment_rubric": [
+        {
+          "criterion": "Hazard recognition",
+          "pass": "Immediate risks and affected people are identified."
+        },
+        {
+          "criterion": "Boundary setting",
+          "pass": "No unsupported technical procedure is invented."
+        },
+        {
+          "criterion": "Escalation",
+          "pass": "Qualified authority and approved procedure are identified."
+        },
+        {
+          "criterion": "Communication",
+          "pass": "Known facts and uncertainties are clearly separated."
+        }
+      ],
+      "source_refs": [
+        "https://www.osha.gov/training"
+      ],
+      "content_provenance": "DreamCo-authored educational scenario; not official OSHA training or certification."
+    }
+  ]
+}
