@@ -73,10 +73,13 @@ def run_fleet(registry_path: Path, candidate_root: Path, fixture_root: Path,
             if adapter.get("schema") != "dreamco.institute.model_adapter.v1":
                 raise ValueError("unsupported model adapter manifest schema")
             checkpoint = Path(adapter.get("checkpoint_path", ""))
+            tokenizer = Path(adapter.get("tokenizer_path", ""))
             if not checkpoint.is_absolute():
                 checkpoint = item["checkpoint_adapter"].parent / checkpoint
+            if not tokenizer.is_absolute():
+                tokenizer = item["checkpoint_adapter"].parent / tokenizer
             report = run_benchmark(
-                item["candidate_manifest"], checkpoint, adapter.get("command"),
+                item["candidate_manifest"], checkpoint, tokenizer, adapter.get("command"),
                 baseline_registry, item["fixtures"], item["division_id"], repeats, timeout,
             )
             results.append({
