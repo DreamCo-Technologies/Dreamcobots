@@ -115,8 +115,13 @@ def validate_baseline(entry: dict[str, Any], base_dir: Path) -> dict[str, Any]:
     for key in ("id", "provider", "model_id", "revision", "license_id", "license_review_reference"):
         if not isinstance(entry.get(key), str) or not entry[key].strip():
             raise ValueError(f"baseline requires {key}")
+    revision = entry["revision"]
+    if len(revision) != 40 or any(char not in "0123456789abcdefABCDEF" for char in revision):
+        raise ValueError(f"baseline {entry['id']} revision must be an immutable 40-character commit SHA")
     if entry.get("benchmark_authorized") is not True:
         raise PermissionError(f"baseline {entry['id']} lacks explicit benchmark permission")
+    validate_hashed_artifact(base_dir, entry.get("license_evidence", {}), f"baseline {entry['id']} license evidence")
+    validate_hashed_artifact(base_dir, entry.get("benchmark_permission_evidence", {}), f"baseline {entry['id']} benchmark permission evidence")
     checkpoint_path = validate_hashed_artifact(base_dir, entry.get("checkpoint", {}), f"baseline {entry['id']}")
     adapter = entry.get("adapter", {}).get("command")
     if not isinstance(adapter, list) or not adapter or not all(isinstance(part, str) and part for part in adapter):
