@@ -52,5 +52,8 @@ d = json.loads(p.read_text(encoding='utf-8'))
 assert d['kit_count'] == 250, f"expected 250 total SKUs, found {d['kit_count']}"
 assert d['masterbot_kit_count'] == 195, f"expected 195 MasterBot kits, found {d.get('masterbot_kit_count')}"
 assert d['business_profile_kit_count'] == 55, f"expected 55 business-profile kits, found {d.get('business_profile_kit_count')}"
-print('Validated 250 total SKUs: 195 MasterBot + 55 business-profile kits')
+assert len({item['sku'] for item in d['kits']}) == 250, 'catalog SKUs must be unique'
+assert all(item.get('weights_included') is False for item in d['kits']), 'blueprint catalog must not include pretrained weights'
+assert all(item.get('weights_status') == 'UNTRAINED_BLUEPRINT_READY_FOR_TRAINING' for item in d['kits']), 'every catalog SKU must remain explicitly untrained'
+print('Validated 250 unique untrained SKUs: 195 MasterBot + 55 business-profile kits')
 PY
