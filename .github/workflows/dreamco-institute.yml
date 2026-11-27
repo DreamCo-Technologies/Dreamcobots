@@ -12,6 +12,7 @@ on:
       - "tests/test_dreamco_institute_*.py"
       - "tests/test_institute_competitive_benchmark.py"
       - "docs/institute/COMPETITIVE_MODEL_LAB.md"
+      - "package.json"
       - "website/dreamco-institute.*"
       - "website/data/dreamco-institute-academic-catalog.json"
       - ".github/workflows/dreamco-institute.yml"
@@ -36,8 +37,6 @@ jobs:
         with:
           python-version: "3.12"
       - name: Validate registrar and academic credit rules
-        run: python -m unittest tests.test_dreamco_institute_registrar tests.test_dreamco_institute_catalog_build -v
+        run: npm run test:institute
       - name: Validate static catalog synchronization
         run: python tools/build_dreamco_institute_catalog.py --check
-      - name: Validate competitive benchmark contracts
-        run: python -m unittest tests.test_institute_competitive_benchmark -v
