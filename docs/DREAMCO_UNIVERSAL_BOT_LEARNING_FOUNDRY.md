@@ -30,7 +30,7 @@ Buddy acts as the Provost. It classifies the task, retrieves approved capability
 
 ## Buddy semantic candidate router
 
-`buddy/fleet_runtime/semantic_router.py` ranks candidates across the canonical fleet, 55 commercial business micro-bots and 212 preserved original-bot records. It uses deterministic metadata matching and delegates division/MasterBot ownership resolution to the existing governed router. It never executes a bot, loads model weights, grants permissions or turns an unresolved ownership proposal into authorization.
+`buddy/fleet_runtime/semantic_router.py` ranks candidates across the canonical fleet, 55 commercial business micro-bots and 212 preserved original-bot records. It currently uses deterministic lexical/metadata matching (not embedding-based semantic retrieval) and delegates division/MasterBot ownership resolution to the existing governed router. This is a safe first routing layer; embedding reranking can be added only with a measured benchmark and approved local index. It never executes a bot, loads model weights, grants permissions or turns an unresolved ownership proposal into authorization.
 
 ## Generate and validate
 ```bash
