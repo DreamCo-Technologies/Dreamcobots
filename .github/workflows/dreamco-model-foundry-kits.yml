@@ -11,6 +11,8 @@ on:
       - "config/dreamco_institute_resource_registry.json"
       - "scripts/validate_dreamco_resource_registry.py"
       - "tests/test_dreamco_resource_registry.py"
+      - "tools/build_dreamco_institute_resource_plan.py"
+      - "tests/test_dreamco_institute_resource_plan.py"
       - ".github/workflows/dreamco-model-foundry-kits.yml"
   workflow_dispatch:
 permissions:
@@ -35,6 +37,10 @@ jobs:
         run: python scripts/validate_dreamco_resource_registry.py
       - name: Run external resource registry tests
         run: python -m unittest tests.test_dreamco_resource_registry -v
+      - name: Run 65-division resource routing plan tests
+        run: python -m unittest tests.test_dreamco_institute_resource_plan -v
+      - name: Build metadata-only resource routing plan
+        run: python tools/build_dreamco_institute_resource_plan.py --output "$RUNNER_TEMP/dreamco-resource-plan.json"
       - name: Validate catalog count
         run: |
           python scripts/dreamco_model_foundry.py --catalog-only --output "$RUNNER_TEMP/dreamco-commercial-kits"
