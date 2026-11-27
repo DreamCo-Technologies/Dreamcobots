@@ -740,27 +740,41 @@ export function writeFleetCatalog({ check = false } = {}) {
     }),
   ] as const);
 
-  // Specialist portfolios remain distinct from domain divisions but still need a generated fleet shard.
+  // Specialist portfolios remain separate from domain divisions, but get their own source-backed shard.
   const domainDivisionNames = new Set([
     ...catalog.divisions.map((division) => division.name),
     ...catalog.supplemental_divisions.map((division) => division.name),
   ]);
-  const specialistPortfolioBots = new Map<string, typeof catalog.supplemental_bots>();
-  for (const bot of catalog.supplemental_bots) {
-    const name = bot.identity.division;
-    if (domainDivisionNames.has(name)) continue;
-    specialistPortfolioBots.set(name, [...(specialistPortfolioBots.get(name) || []), bot]);
-  }
-  const specialistPortfolioShards = [...specialistPortfolioBots.entries()].map(([name, bots]) => [
-    join(WEBSITE_SHARD_DIR, name + ".json"),
-    JSON.stringify({
-      schema: "dreamco.bot_fleet_portfolio.v1",
-      portfolio_type: "supplemental_specialist_portfolio",
-      division: name,
-      source_portfolio: "App_bots/" + name + ".json",
-      bots,
-    }),
-  ] as const);
+  const specialistPortfolioShards = readdirSync(APP_BOTS_DIR)
+    .filter((filename) => filename.endsWith(".json"))
+    .map((filename) => ({
+      filename,
+      portfolio: JSON.parse(readFileSync(join(APP_BOTS_DIR, filename), "utf8")) as {
+        division?: string;
+        growth?: boolean;
+        total?: number;
+        description?: string;
+        bots?: unknown[];
+      },
+    }))
+    .filter(({ portfolio }) => (
+      portfolio.growth === true &&
+      typeof portfolio.division === "string" &&
+      !domainDivisionNames.has(portfolio.division)
+    ))
+    .map(({ filename, portfolio }) => [
+      join(WEBSITE_SHARD_DIR, portfolio.division + ".json"),
+      JSON.stringify({
+        schema: "dreamco.bot_fleet_portfolio.v1",
+        portfolio_type: "supplemental_specialist_portfolio",
+        division: portfolio.division,
+        source_portfolio: "App_bots/" + filename,
+        description: portfolio.description,
+        growth: portfolio.growth,
+        total: portfolio.total,
+        bots: portfolio.bots || [],
+      }),
+    ] as const);
   const outputs = [
     [MASTER_PATH, stableJson(catalog)],
     [GENERATED_PATH, stableJson(compact)],
