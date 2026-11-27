@@ -53,8 +53,8 @@ def score_task(task: dict[str, Any], output: Any) -> tuple[bool, str]:
 
 
 def evaluate(suite: dict[str, Any], predictions: list[dict[str, Any]], model_version: str) -> dict[str, Any]:
-    if suite.get("split") != "evaluation_only_holdout" or suite.get("training_use") != "NEVER_TRAIN":
-        raise ValueError("suite is not explicitly isolated as evaluation-only")
+    if suite.get("split") not in {"public_evaluation_smoke", "private_independent_holdout"} or suite.get("training_use") != "NEVER_TRAIN":
+        raise ValueError("suite must be explicitly isolated from training")
     tasks = suite.get("tasks", [])
     if not tasks or len({t.get("task_id") for t in tasks}) != len(tasks):
         raise ValueError("suite must contain unique, non-empty tasks")
@@ -90,7 +90,7 @@ def evaluate(suite: dict[str, Any], predictions: list[dict[str, Any]], model_ver
         "lane": suite["lane"],
         "model_version": model_version,
         "evaluated_at": datetime.now(timezone.utc).isoformat(),
-        "split": "evaluation_only_holdout",
+        "split": suite["split"],
         "training_use": "NEVER_TRAIN",
         "total_tasks": total,
         "passed_tasks": passed_count,
