@@ -10,27 +10,34 @@ from buddy.learning.buddy_knowledge_router import route_buddy_learning_query
 
 
 class BuddyKnowledgeRouterTests(unittest.TestCase):
-    def test_track_specific_query_prioritizes_its_named_curriculum_track(self):
-        route = route_buddy_learning_query("hugging face transformers", limit=25)
+    def test_division_specific_query_prioritizes_its_dreamco_curriculum(self):
+        route = route_buddy_learning_query(
+            "CommandCore capability-aware routing and approval-aware orchestration",
+            limit=25,
+        )
         self.assertEqual(route["route"], "internal_bootcamp_lesson")
         self.assertTrue(any(
-            row["track_id"] in {"hugging-face", "huggingface-full"}
+            row["track_id"] == "dreamco-division-specialist"
+            and "CommandCore" in row["division_targets"]
             for row in route["course_lessons"]
         ))
+        self.assertTrue(all(not row["source_url"] for row in route["course_lessons"]))
         self.assertFalse(route["external_discovery_performed"])
         self.assertFalse(route["external_model_routing_performed"])
         self.assertFalse(route["mastery_awarded"])
 
 
-    def test_platform_queries_keep_strong_software_library_candidates_reachable(self):
-        route = route_buddy_learning_query("hugging face transformers", limit=25)
-
-        self.assertEqual(route["route"], "internal_bootcamp_lesson")
-        track_ids = {row["track_id"] for row in route["course_lessons"]}
-        self.assertTrue(track_ids.intersection({"hugging-face", "huggingface-full"}))
-        self.assertIn("universal-software-libraries", track_ids)
+    def test_external_provider_tracks_are_not_exposed_to_learner_routes(self):
+        route = route_buddy_learning_query("Hugging Face FreeCodeCamp O*NET course materials", limit=25)
+        external_tracks = {
+            "onet", "hugging-face", "freecodecamp", "huggingface-full",
+            "freecodecamp-video-catalog", "freecodecamp-specialist-learning-paths",
+            "freecodecamp-metadata-triage",
+        }
+        self.assertFalse(any(row["track_id"] in external_tracks for row in route["course_lessons"]))
+        self.assertTrue(all(not row["source_url"] for row in route["course_lessons"]))
         self.assertFalse(route["external_discovery_performed"])
-        self.assertFalse(route["mastery_awarded"])
+        self.assertFalse(route["external_model_routing_performed"])
 
     def test_approved_internal_guide_precedes_exact_unverified_seed_candidate(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -69,7 +76,7 @@ class BuddyKnowledgeRouterTests(unittest.TestCase):
         self.assertFalse(route["mastery_awarded"])
 
 
-    def test_external_research_requires_explicit_opt_in(self):
+    def test_external_research_is_not_available_from_the_learner_route(self):
         with tempfile.TemporaryDirectory() as directory:
             with patch(
                 "buddy.learning.buddy_knowledge_router.search_internal_library_knowledge",
@@ -87,7 +94,7 @@ class BuddyKnowledgeRouterTests(unittest.TestCase):
                     root=Path(directory),
                 )
         self.assertFalse(route["external_discovery_available"])
-        self.assertTrue(route["external_discovery_requires_explicit_opt_in"])
+        self.assertFalse(route["external_discovery_requires_explicit_opt_in"])
         self.assertFalse(route["external_discovery_performed"])
         self.assertFalse(route["external_model_routing_performed"])
 
@@ -103,8 +110,8 @@ class BuddyKnowledgeRouterTests(unittest.TestCase):
             )
         )
         self.assertTrue(route["candidate_verification_required"])
-        self.assertTrue(route["external_discovery_requires_explicit_opt_in"])
-        self.assertIn("Ask the user before external research", route["next_action"])
+        self.assertFalse(route["external_discovery_requires_explicit_opt_in"])
+        self.assertIn("do not route learners to external course websites", route["next_action"])
         self.assertFalse(route["external_discovery_performed"])
         self.assertFalse(route["external_model_routing_performed"])
         self.assertFalse(route["mastery_awarded"])
