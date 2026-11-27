@@ -32,6 +32,25 @@ class OnetCurriculaTests(unittest.TestCase):
         self.assertEqual(chief["tasks"][0]["task_id"], "8823")
         self.assertIn("financial or budget", chief["tasks"][0]["task"])
 
+    def test_official_json_field_names_are_normalized(self):
+        rows = [
+            {"onetsoc_code": "15-1252.00", "title": "Software Developers",
+             "task_id": 1, "task": "Develop software solutions",
+             "task_type": "Core", "date_updated": "2026-08",
+             "domain_source": "Analyst"},
+            {"onetsoc_code": "15-1252.00", "title": "Software Developers",
+             "task_id": 2, "task": "Test software systems",
+             "task_type": "Supplemental", "date_updated": "2026-08",
+             "domain_source": "Analyst"},
+        ]
+        result = build(rows, "31.0")
+        self.assertEqual(result["inventory"]["task_statements"], 2)
+        self.assertEqual(result["inventory"]["occupations"], 1)
+        occupation = result["occupations"][0]
+        self.assertEqual(occupation["occupation_code"], "15-1252.00")
+        self.assertEqual(occupation["occupation_title"], "Software Developers")
+        self.assertEqual(occupation["tasks"][0]["task_id"], "1")
+
     def test_empty_or_incomplete_rows_do_not_create_fake_tasks(self):
         result=build([{"O*NET-SOC Code":"15-1252.00","Task ID":"","Task":"missing id"}],"31.0")
         self.assertEqual(result["inventory"]["task_statements"],0)
