@@ -82,9 +82,9 @@ def issue_transcript(
         practicum_passed = evidence.get("practicum_passed") is True
         holdout_passed = evidence.get("independent_holdout_passed") is True
         eligible = bool(assessment_id) and practicum_passed and holdout_passed and points >= 2.0
+        weighted_points += points * credits
         if eligible:
             earned_credits += credits
-            weighted_points += points * credits
         records.append({
             "course_code": code,
             "course_title": course["title"],
@@ -99,7 +99,8 @@ def issue_transcript(
             "credit_award_eligible": eligible,
         })
 
-    gpa = round(weighted_points / earned_credits, 2) if earned_credits else 0.0
+    # GPA includes every attempted course, including failed or incomplete work.
+    gpa = round(weighted_points / attempted_credits, 2) if attempted_credits else 0.0
     thesis = thesis_evidence or {}
     thesis_ok = (
         bool(thesis.get("thesis_record_id"))
