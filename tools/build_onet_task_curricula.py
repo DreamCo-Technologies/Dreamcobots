@@ -109,16 +109,21 @@ def read_rows(path: Path) -> list[dict[str, str]]:
 
 
 def pick(row: dict[str, str], *names: str) -> str:
+    def normalize_key(value: str) -> str:
+        # O*NET JSON uses keys such as onetsoc_code while tabular exports
+        # and documentation use labels such as O*NET-SOC Code.
+        # Compare alphanumeric tokens so both official forms map.
+        return re.sub(r"[^a-z0-9]+", "", str(value).casefold())
+
     normalized = {
-        str(key).strip().lower().replace("_", " ").replace("-", " "): str(value or "").strip()
+        normalize_key(key): str(value or "").strip()
         for key, value in row.items()
     }
     for name in names:
-        value = normalized.get(name.lower().replace("_", " ").replace("-", " "))
+        value = normalized.get(normalize_key(name))
         if value:
             return value
     return ""
-
 
 def build(rows: list[dict[str, str]], version: str) -> dict[str, Any]:
     occupations: dict[str, dict[str, Any]] = defaultdict(
