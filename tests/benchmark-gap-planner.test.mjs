@@ -16,6 +16,10 @@ test("planner preserves the 65-MasterBot and 55-domain scopes",()=>{
  const q=JSON.parse(fs.readFileSync(out,"utf8"));
  assert.equal(q.masterbot_count,65);
  assert.equal(q.domain_division_count,55);
+ assert.equal(q.schema,"dreamco.benchmark_gap_queue.v2");
+ assert.equal(q.summary.masterbots_measured,2);
+ assert.equal(q.summary.masterbots_unmeasured,63);
+ assert.ok(q.queue.some(x=>x.scope==="domain_division"&&x.action==="RUN_BENCHMARKS"));
  assert.ok(q.queue.some(x=>x.scope==="masterbot"&&x.masterbot_id===1&&x.action==="CLOSE_GAPS"));
  assert.ok(q.queue.some(x=>x.scope==="masterbot"&&x.masterbot_id===3&&x.action==="RUN_BENCHMARKS"));
  assert.equal(q.queue.filter(x=>x.scope==="masterbot").length,65);
