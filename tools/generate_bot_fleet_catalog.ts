@@ -724,6 +724,28 @@ export function writeFleetCatalog({ check = false } = {}) {
       bots: [...catalog.bots, ...catalog.supplemental_bots].filter((bot) => bot.identity.division === division.name),
     }),
   ] as const);
+
+  // Specialist portfolios remain distinct from domain divisions but still need a generated fleet shard.
+  const domainDivisionNames = new Set([
+    ...catalog.divisions.map((division) => division.name),
+    ...catalog.supplemental_divisions.map((division) => division.name),
+  ]);
+  const specialistPortfolioBots = new Map<string, typeof catalog.supplemental_bots>();
+  for (const bot of catalog.supplemental_bots) {
+    const name = bot.identity.division;
+    if (domainDivisionNames.has(name)) continue;
+    specialistPortfolioBots.set(name, [...(specialistPortfolioBots.get(name) || []), bot]);
+  }
+  const specialistPortfolioShards = [...specialistPortfolioBots.entries()].map(([name, bots]) => [
+    join(WEBSITE_SHARD_DIR, name + ".json"),
+    JSON.stringify({
+      schema: "dreamco.bot_fleet_portfolio.v1",
+      portfolio_type: "supplemental_specialist_portfolio",
+      division: name,
+      source_portfolio: "App_bots/" + name + ".json",
+      bots,
+    }),
+  ] as const);
   const outputs = [
     [MASTER_PATH, stableJson(catalog)],
     [GENERATED_PATH, stableJson(compact)],
@@ -731,6 +753,7 @@ export function writeFleetCatalog({ check = false } = {}) {
     [WEBSITE_ROUTING_PATH, `window.BUDDY_ROUTING_INDEX=${JSON.stringify(routingIndex)};\n`],
     [REPORT_PATH, buildReport(catalog)],
     ...divisionShards,
+    ...specialistPortfolioShards,
   ] as const;
   if (check) {
     for (const [path, expected] of outputs) {

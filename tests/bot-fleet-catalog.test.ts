@@ -90,6 +90,20 @@ test("Dream3D remains a 19-profile supplemental portfolio, not a domain division
 });
 
 
+test("Dream3D specialist portfolio has its own generated fleet shard", () => {
+  const root = dirname(dirname(fileURLToPath(import.meta.url)));
+  const shard = JSON.parse(readFileSync(join(root, "website", "data", "bot-fleet", "Dream3D.json"), "utf8"));
+  const catalog = buildFleetCatalog();
+  assert.equal(shard.schema, "dreamco.bot_fleet_portfolio.v1");
+  assert.equal(shard.portfolio_type, "supplemental_specialist_portfolio");
+  assert.equal(shard.division, "Dream3D");
+  assert.equal(shard.source_portfolio, "App_bots/Dream3D.json");
+  assert.equal(shard.bots.length, 19);
+  assert.ok(shard.bots.every((bot) => bot.identity.division === "Dream3D"));
+  assert.ok(!catalog.supplemental_divisions.some((division) => division.name === "Dream3D"));
+});
+
+
 test("generated Buddy routing index matches canonical and supplemental fleet sources", () => {
   const catalog = buildFleetCatalog();
   const root = dirname(dirname(fileURLToPath(import.meta.url)));
