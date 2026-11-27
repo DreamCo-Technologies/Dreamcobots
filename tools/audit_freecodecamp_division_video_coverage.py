@@ -84,6 +84,12 @@ def audit(root: Path = ROOT) -> dict[str, Any]:
     )
     domain_categories = profiles.get("domain_categories") if isinstance(profiles.get("domain_categories"), dict) else {}
     domain_ids = [str(row.get("domain_id", "")) for row in domains if isinstance(row, dict)]
+    domain_ids_valid = (
+        len(domains) == 55
+        and len(domain_ids) == len(domains)
+        and all(domain_ids)
+        and len(set(domain_ids)) == 55
+    )
     profile_ids = set(domain_categories)
     config_rows: list[dict[str, Any]] = []
     for domain_id in domain_ids:
@@ -167,7 +173,7 @@ def audit(root: Path = ROOT) -> dict[str, Any]:
     )
     override_entries = overrides.get("entries") if isinstance(overrides.get("entries"), list) else []
     artifact_rows = artifacts.get("artifacts") if isinstance(artifacts.get("artifacts"), list) else []
-    expected_targets = len(domains) + len(bot_rows)
+    # Keep the contractual target count fixed when source registries are incomplete.\n    expected_targets = 55 + 65
     expected_artifacts = expected_targets * len(MODULES)
     artifact_keys = {
         (str(row.get("target_type")), str(row.get("target_id")), str(row.get("module_id")))
@@ -182,7 +188,7 @@ def audit(root: Path = ROOT) -> dict[str, Any]:
         )
         for target_id in ids for module in MODULES
     }
-    missing_artifact_count = len(expected_keys - artifact_keys)
+    missing_artifact_count = (expected_artifacts - len(expected_keys)) + len(expected_keys - artifact_keys)
 
     inventory = catalog.get("inventory") if isinstance(catalog.get("inventory"), dict) else {}
     inventory_complete = (
@@ -196,6 +202,8 @@ def audit(root: Path = ROOT) -> dict[str, Any]:
     )
     blockers: list[str] = []
     blockers.extend(f"input_read_error:{error}" for error in errors)
+    if not domain_ids_valid:
+        blockers.append("canonical_domain_ids_missing_or_duplicate")
     if not bot_ids_valid:
         blockers.append("canonical_masterbot_ids_missing_or_duplicate")
     if not crosswalk_masterbot_ids_valid:
