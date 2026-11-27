@@ -8,11 +8,11 @@ The initial catalog is generated from the canonical 65-MasterBot registry with t
 ## Product tiers
 | Tier | Intended environment | Included assets |
 |---|---|---|
-| 45M Edge | CPU experimentation, edge GPU, Raspberry Pi/Jetson exploration | Compact causal-LM config, tokenizer workflow, domain curriculum, contract/routing holdouts |
-| 350M Workstation | Workstation GPU or Apple Silicon; memory-efficient fine-tuning | Mid-size config, multi-division curriculum, SFT/DPO recipes, quantized packaging plan |
-| 1B Sovereign | Larger consumer/pro GPU or multi-GPU | Flagship config, sequence-packing plan, Buddy orchestration curriculum, 65-division holdout plan |
+| 45M Edge | CPU experimentation, edge GPU, Raspberry Pi/Jetson exploration | 45,040,128-parameter target config, tokenizer workflow, domain curriculum, contract/routing holdouts |
+| 350M Workstation | Workstation GPU or Apple Silicon; memory-efficient fine-tuning | 349,996,032-parameter target config, multi-division curriculum, SFT/DPO recipes, quantized packaging plan |
+| 1B Sovereign | Larger consumer/pro GPU or multi-GPU | 1,020,086,272-parameter target config, sequence-packing plan, Buddy orchestration curriculum, 65-division holdout plan |
 
-Hardware labels are guidance, not guarantees. Memory depends on context length, batch size, optimizer states, activation checkpointing, precision, quantization, framework overhead and whether the buyer is pretraining or parameter-efficiently fine-tuning. Full pretraining can require substantially more memory than inference.
+The architecture estimator counts the declared bias-free Llama-style embeddings, attention projections, SwiGLU projections and normalization weights. It is a config-derived estimate; the actual instantiated model tensor count must be independently checked before sale.\n\nHardware labels are guidance, not guarantees. Memory depends on context length, batch size, optimizer states, activation checkpointing, precision, quantization, framework overhead and whether the buyer is pretraining or parameter-efficiently fine-tuning. Full pretraining can require substantially more memory than inference.
 
 ## Rights, clean-room and ownership
 - Blueprint kits contain no pretrained weights. Manifests state weights_included=false and weights_status=UNTRAINED_BLUEPRINT_READY_FOR_TRAINING.
