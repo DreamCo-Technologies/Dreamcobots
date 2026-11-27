@@ -8,12 +8,15 @@ on:
       - "tests/test_dreamco_model_foundry.py"
       - "config/masterbot-65-registry.json"
       - "config/authorized-training-datasets/manifest.json"
+      - "config/dreamco_institute_resource_registry.json"
+      - "scripts/validate_dreamco_resource_registry.py"
+      - "tests/test_dreamco_resource_registry.py"
       - ".github/workflows/dreamco-model-foundry-kits.yml"
   workflow_dispatch:
 permissions:
   contents: read
 concurrency:
-  group: dreamco-model-foundry-kits-${github.ref}
+  group: dreamco-model-foundry-kits-${{ github.ref }}
   cancel-in-progress: true
 jobs:
   buyer-kit-contracts:
@@ -25,9 +28,13 @@ jobs:
         with:
           python-version: "3.11"
       - name: Compile foundry scripts
-        run: python -m compileall -q scripts/dreamco_model_foundry.py scripts/dreamco_hardware_detector.py scripts/train_my_agent.py
+        run: python -m compileall -q scripts/dreamco_model_foundry.py scripts/dreamco_hardware_detector.py scripts/train_my_agent.py scripts/validate_dreamco_resource_registry.py
       - name: Run buyer kit contract tests
         run: python -m unittest tests.test_dreamco_model_foundry -v
+      - name: Validate external resource registry
+        run: python scripts/validate_dreamco_resource_registry.py
+      - name: Run external resource registry tests
+        run: python -m unittest tests.test_dreamco_resource_registry -v
       - name: Validate catalog count
         run: |
           python scripts/dreamco_model_foundry.py --catalog-only --output "$RUNNER_TEMP/dreamco-commercial-kits"
