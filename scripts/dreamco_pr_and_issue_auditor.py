@@ -192,8 +192,12 @@ def audit(patch, pr_number=None):
         if change.get("status") == "deleted":
             continue
         for candidate in (path, change.get("old_path")):
-            normalized_candidate = candidate.replace(chr(92), "/") if candidate else ""
-            if normalized_candidate.startswith("checkpoints/") and Path(normalized_candidate).name not in EVIDENCE_NAMES:
+            normalized_candidate = candidate.replace("\\", "/") if candidate else ""
+            if (
+                normalized_candidate
+                and Path(normalized_candidate).name not in EVIDENCE_NAMES
+                and normalized_candidate.startswith("checkpoints/")
+            ):
                 checkpoint_paths.append(normalized_candidate)
 
     for checkpoint_path in sorted(set(checkpoint_paths)):
