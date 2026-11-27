@@ -123,7 +123,7 @@ def build_bot_manifest(record: dict[str, Any], source_kind: str) -> dict[str, An
         "truth_boundary":"A generated learning manifest is a plan, not evidence of created lessons, trained weights, benchmark mastery, runtime implementation, or production readiness."
     }
 
-def source_records() -> tuple[list[dict[str,Any]], list[dict[str,Any]]]:
+def source_records() -> list[dict[str,Any]]:
     from tools.place_original_bots import parse_category, parse_system
     network=ROOT/"original-bots/autonomous-income-network"
     systems=ROOT/"original-bots/systems"
@@ -136,7 +136,7 @@ def source_records() -> tuple[list[dict[str,Any]], list[dict[str,Any]]]:
         raise ValueError("Original-bot source must resolve to exactly 200 income bots; inspect source tables.")
     if len([x for x in rows if x["kind"]=="major_system"])!=12:
         raise ValueError("Original-bot source must resolve to exactly 12 major systems.")
-    return rows, rows
+    return rows
 
 def build() -> tuple[dict[str,Any], list[dict[str,Any]], list[dict[str,Any]]]:
     fleet=read(FLEET); master=read(MASTERBOTS); reconciliation=read(RECONCILIATION); business=read(BUSINESS); policy=read(POLICY)
@@ -148,18 +148,21 @@ def build() -> tuple[dict[str,Any], list[dict[str,Any]], list[dict[str,Any]]]:
     records=[]
     for item in bots:
         records.append({"bot_id":"FLEET_"+str(item["slug"]),"name":item["name"],"division":item.get("division") or item.get("primary_domain_owner") or "UNASSIGNED_REVIEW",
+            "source_kind":"canonical_fleet",
             "capability_count":int(item.get("caps",0)),"focus_tags":[item.get("category","general"),item.get("engine","unmapped")],
             "source_refs":item.get("sources",[]),"identity_status":"DUPLICATE_REVIEW_REQUIRED" if "duplicate_profile" in item.get("flags",[]) else "CANONICAL_MANIFEST_ENTRY"})
-    old,_=source_records()
+    old=source_records()
     for item in old:
         records.append({"bot_id":"LEGACY_"+slug(item["source"].replace("/","-"))+"_"+str(item.get("index",0) or slug(item["slug"])),
+            "source_kind":"legacy_original_bot_or_system",
             "name":item["display_name"],"division":item["primary_division"],"capability_count":len(item.get("capabilities",[])),
             "focus_tags":[item["kind"],item.get("mission","")[:120]],"source_refs":[item["source"]],"identity_status":"HISTORICAL_SOURCE_NOT_RUNTIME_VERIFIED"})
     for item in business["bots"]:
         records.append({"bot_id":item["bot_id"],"name":item["name"],"division":"Business Bot Foundry / "+item["cluster"],
+            "source_kind":"commercial_business_microbot",
             "capability_count":8,"focus_tags":item["focus_tags"],"source_refs":["config/dreamco-business-bot-55-roster.json"],"identity_status":"OWNER_SPECIFIED_COMMERCIAL_BLUEPRINT"})
     if len({x["bot_id"] for x in records})!=len(records): raise ValueError("Bot IDs collide; preserve identity and resolve duplicates.")
-    manifests=[build_bot_manifest(x,"canonical_or_legacy_or_business") for x in records]
+    manifests=[build_bot_manifest(x,x["source_kind"]) for x in records]
     division_records=[]
     division_manifests=[]
     for item in master["divisions"]:
@@ -187,6 +190,7 @@ def build() -> tuple[dict[str,Any], list[dict[str,Any]], list[dict[str,Any]]]:
         "router":{"name":"Buddy Semantic Router / Provost","loads_all_models_at_once":False,
             "route_policy":"select minimum necessary approved specialists; enforce primary division, permissions, sandbox, output contracts, evidence and human escalation"},
         "learning_divisions":division_records,
+        "domain_learning_divisions":[{"division":x["name"],"learning_division":True,"manifest_path":"config/generated/dreamco-bot-learning-manifests/domain-"+slug(x["name"])+".json"} for x in reconciliation["domain_divisions"]],
         "manifest_paths":[f"config/generated/dreamco-bot-learning-manifests/{slug(x['bot_id'])}.json" for x in records],
         "division_manifest_paths":[f"config/generated/dreamco-bot-learning-manifests/{slug(x['bot_id'])}.json" for x in division_manifests],
         "truth_boundary":"This index is not proof of lessons authored, data ingested, models trained, tests passed, or production deployment."
