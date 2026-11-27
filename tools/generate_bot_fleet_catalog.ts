@@ -611,144 +611,25 @@ export function buildFleetCatalog() {
 
 export function compactCatalog(catalog: ReturnType<typeof buildFleetCatalog>, { includeSupplemental = false } = {}) {
   const allBots = [...catalog.bots, ...catalog.supplemental_bots];
-  const allDivisions = [...catalog.divisions, ...catalog.supplemental_divisions];
-  const compactBot = (bot: ReturnType<typeof buildFleetCatalog>["bots"][number]) => ({
-    identity: bot.identity,
-    logo: bot.logo,
-    mission: bot.prospectus.mission,
-    capability_count: bot.capabilities.length,
-    capability_search: bot.capabilities.map((capability) => capability.name).join(" | "),
-    tool_summary: bot.tools.map((tool) => ({ id: tool.id, name: tool.name, status: tool.status })),
-    api_candidate_count: bot.api_candidates.length,
-    api_candidate_names: bot.api_candidates.map((api) => api.name),
-    approval_required: bot.approvals.approval_required,
-    readiness: bot.readiness,
-    evidence: { catalog_source: bot.evidence.catalog_source, runtime_source_count: bot.evidence.runtime_sources.length },
-    sample_test_prompt: bot.sample_test_prompt,
-    prospectus_ref: `data/bot-fleet/${bot.identity.division}.json#${bot.identity.slug}`,
-  });
-  return {
-    schema: catalog.schema,
-    truth_policy: catalog.truth_policy,
-    summary: includeSupplemental ? {
-      ...catalog.summary,
-      canonical_profiles: catalog.bots.length,
-      canonical_divisions: catalog.divisions.length,
-      profiles: allBots.length,
-      divisions: allDivisions.length,
-      runtime_routed_profiles: allBots.filter((bot) => bot.readiness.buddy_chat_route === 'verified').length,
-      executable_runtime_instances_evidenced: allBots.length,
-      per_bot_sandbox_blueprints: allBots.length,
-      per_bot_logo_identities: allBots.length,
-      per_bot_business_blueprints: allBots.length,
-      per_bot_governed_lead_systems: allBots.length,
-      declared_capability_slots: allBots.reduce((count, bot) => count + bot.capabilities.length, 0),
-    } : catalog.summary,
-    divisions: includeSupplemental ? allDivisions : catalog.divisions,
-    bots: (includeSupplemental ? allBots : catalog.bots).map(compactBot),
-    supplemental_divisions: catalog.supplemental_divisions,
-    supplemental_bots: catalog.supplemental_bots.map(compactBot),
-  };
-}
-
-function browserRoutingIndex(catalog: ReturnType<typeof buildFleetCatalog>) {
-  return {
-    schema: "dreamco.buddy_routing_index.v1",
-    summary: {
-      profiles: catalog.summary.combined_routable_profiles,
-      canonical_profiles: catalog.summary.profiles,
-      supplemental_profiles: catalog.summary.supplemental_profiles,
-      divisions: catalog.summary.divisions + catalog.summary.supplemental_divisions,
-      capabilities: catalog.summary.declared_capability_slots + catalog.summary.supplemental_declared_capability_slots,
-    },
-    bots: [...catalog.bots, ...catalog.supplemental_bots].map((bot) => [
-      bot.identity.slug,
-      bot.identity.display_name,
-      bot.identity.division,
-      bot.identity.category,
-      bot.prospectus.mission,
-      bot.capabilities.map((capability) => capability.name).join(" | "),
-      bot.logo.emoji,
-    ]),
-  };
-}
-
-function stableJson(value: unknown) {
-  return `${JSON.stringify(value, null, 2)}\n`;
-}
-
-function buildReport(catalog: ReturnType<typeof buildFleetCatalog>) {
-  const lines = [
-    "# Buddy Bot Fleet Prospectus",
-    "",
-    "This report is generated from repository evidence. A catalog profile is not counted as an independent production runtime, and an API candidate is not counted as connected.",
-    "",
-    "## Verified Inventory",
-    "",
-    `- Bot profiles: ${catalog.summary.profiles}`,
-    `- Supplemental growth profiles: ${catalog.summary.supplemental_profiles} (separate from the canonical baseline; shared sandbox planning routes only)`,
-    `- Divisions: ${catalog.summary.divisions}`,
-    `- Buddy-routed profiles: ${catalog.summary.runtime_routed_profiles}`,
-    `- Executable governed runtime instances: ${catalog.summary.executable_runtime_instances_evidenced}`,
-    `- Separate standalone processes: ${catalog.summary.standalone_native_runtimes_evidenced}`,
-    `- Configured external APIs evidenced: ${catalog.summary.configured_external_apis_evidenced}`,
-    `- Per-bot sandbox blueprints: ${catalog.summary.per_bot_sandbox_blueprints}`,
-    `- Per-bot logo identities: ${catalog.summary.per_bot_logo_identities}`,
-    `- Per-bot business blueprints: ${catalog.summary.per_bot_business_blueprints}`,
-    `- Permission-gated lead systems: ${catalog.summary.per_bot_governed_lead_systems}`,
-    `- Declared capability slots covered by fleet certification: ${catalog.summary.declared_capability_slots}`,
-    "",
-    "## Production Gate",
-    "",
-    "Every profile now has a health-checkable sandbox runtime instance. Each profile must still configure any required external adapters, pass provider contract tests, use authenticated owner-scoped execution, and emit deployment telemetry before it can be labeled fully production-ready.",
-    "",
-    "## Divisions",
-    "",
-    "| Division | Profiles | API candidates |",
-    "| --- | ---: | ---: |",
-    ...catalog.divisions.map((division) => `| ${division.name} | ${division.profile_count} | ${division.api_candidate_count} |`),
-  ];
-  return `${lines.join("\n")}\n`;
-}
-
-export function writeFleetCatalog({ check = false } = {}) {
-  const catalog = buildFleetCatalog();
-  const compact = compactCatalog(catalog);
-  const publicCatalog = compactCatalog(catalog, { includeSupplemental: true });
-  const routingIndex = browserRoutingIndex(catalog);
-  const allBots = [...catalog.bots, ...catalog.supplemental_bots];
-  const domainDivisionNames = new Set(catalog.divisions.map((division) => division.name));
+  const canonicalDivisionNames = new Set(catalog.divisions.map((division) => division.name));
   const supplementalDivisionNames = new Set(catalog.supplemental_divisions.map((division) => division.name));
-  // Every published identity.division must have a compact shard. Supplemental
-  // portfolios such as Dream3D remain portfolios, not additional domain divisions.
-  const shardNames = new Set([
-    ...domainDivisionNames,
-    ...supplementalDivisionNames,
-    ...allBots.map((bot) => bot.identity.division).filter(Boolean),
-  ]);
-  const divisionShards = [...shardNames].sort().map((name) => [
+  const allDomainDivisionNames = new Set([...canonicalDivisionNames, ...supplementalDivisionNames]);
+
+  const divisionShards = [...allDomainDivisionNames].sort().map((name) => [
     join(WEBSITE_SHARD_DIR, `${name}.json`),
     JSON.stringify({
       schema: "dreamco.bot_fleet_division.v2",
       division: name,
-      group_type: domainDivisionNames.has(name)
-        ? "domain_division"
-        : supplementalDivisionNames.has(name)
-          ? "supplemental_division"
-          : "portfolio_or_shared_group",
+      group_type: canonicalDivisionNames.has(name) ? "domain_division" : "supplemental_division",
       bots: allBots.filter((bot) => bot.identity.division === name),
     }),
   ] as const);
 
   // Specialist portfolios remain distinct from domain divisions but still need a generated fleet shard.
-  const domainDivisionNames = new Set([
-    ...catalog.divisions.map((division) => division.name),
-    ...catalog.supplemental_divisions.map((division) => division.name),
-  ]);
   const specialistPortfolioBots = new Map<string, typeof catalog.supplemental_bots>();
   for (const bot of catalog.supplemental_bots) {
     const name = bot.identity.division;
-    if (domainDivisionNames.has(name)) continue;
+    if (allDomainDivisionNames.has(name)) continue;
     specialistPortfolioBots.set(name, [...(specialistPortfolioBots.get(name) || []), bot]);
   }
   const specialistPortfolioShards = [...specialistPortfolioBots.entries()].map(([name, bots]) => [
