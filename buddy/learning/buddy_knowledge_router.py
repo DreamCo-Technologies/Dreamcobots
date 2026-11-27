@@ -122,13 +122,17 @@ def _course_matches(
             "mastery_awarded": False,
         })
     best_track_score = max((row["track_match_score"] for row in matches), default=0.0)
-    # When the query explicitly names a curriculum track, do not dilute the
-    # result set with unrelated generic tracks that happen to share body words.
+    # Rank explicit track matches first, but retain strong cross-track content
+    # matches (for example, Hugging Face Transformers is both a Hugging Face
+    # topic and a software-library candidate). Exact seed lessons are preserved
+    # independently of ranking so they cannot be hidden by a competing track.
     if best_track_score > 0:
         preserve = preserve_ids or set()
         matches = [
             row for row in matches
-            if row["track_match_score"] == best_track_score or row["lesson_id"] in preserve
+            if row["track_match_score"] == best_track_score
+            or row["lesson_id"] in preserve
+            or row["score"] >= 0.66
         ]
     matches.sort(key=lambda row: (-row["track_match_score"], -row["score"], row["track_id"], row["lesson_id"]))
     return matches[:limit]
