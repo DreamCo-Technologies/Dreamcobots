@@ -76,6 +76,8 @@ on:
       - "config/dreamco-universal-division-mastery-contract.json"
       - "docs/architecture/DREAMCO_UNIVERSAL_DIVISION_MASTERY_STANDARD.md"
       - "tests/test_universal_division_mastery_contract.py"
+      - "tools/build_division_learning_model_kits.py"
+      - "tests/test_division_learning_model_kits.py"
   schedule:
     - cron: "41 13 * * *"
     - cron: "41 1 * * *"
@@ -103,7 +105,7 @@ jobs:
       - name: Verify generated resource and owner-review manifests
         run: python tools/build_division_resource_readiness_map.py --check
       - name: Test 65 division resource bundles and model routing
-        run: python -m unittest tests.test_division_resource_readiness tests.test_division_resource_router tests.test_buddy_dataset_discovery_fleet tests.test_dreamco_division_mastery_orchestrator tests.test_universal_division_mastery_contract
+        run: python -m unittest tests.test_division_resource_readiness tests.test_division_resource_router tests.test_buddy_dataset_discovery_fleet tests.test_dreamco_division_mastery_orchestrator tests.test_universal_division_mastery_contract tests.test_division_learning_model_kits
       - name: Validate universal division mastery contract JSON
         run: python -m json.tool config/dreamco-universal-division-mastery-contract.json > /dev/null
       - name: Validate schemas and whitespace
@@ -141,6 +143,8 @@ jobs:
           python tools/build_division_resource_readiness_map.py --check
           python -m unittest tests.test_division_resource_readiness tests.test_division_resource_router
           python tools/build_buddy_dataset_routes.py
+          python tools/build_division_learning_model_kits.py --write
+          python -m unittest tests.test_division_learning_model_kits
       - name: Preserve canonical division and dataset queues
         uses: actions/upload-artifact@v4
         with:
@@ -150,6 +154,13 @@ jobs:
             artifacts/buddy-dataset-hub/dataset-routes.json
             config/generated/division-resource-readiness-map.json
             config/review/masterbot-domain-crosswalk-owner-review.json
+          if-no-files-found: error
+          retention-days: 90
+      - name: Publish 195 untrained learning-kit manifests as an inspectable artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dreamco-195-division-learning-model-kits-${{ github.run_id }}
+          path: config/generated/division-learning-model-kits/
           if-no-files-found: error
           retention-days: 90
 
