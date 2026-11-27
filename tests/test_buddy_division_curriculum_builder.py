@@ -2,7 +2,8 @@
 import unittest
 from pathlib import Path
 
-from buddy.learning.division_curriculum_builder import ROOT, build_division_curricula
+import json
+from buddy.learning.division_curriculum_builder import ROOT, build_division_curricula, build_manifest
 
 
 class BuddyDivisionCurriculumBuilderTests(unittest.TestCase):
@@ -49,6 +50,10 @@ class BuddyDivisionCurriculumBuilderTests(unittest.TestCase):
             self.assertFalse(policy["mastery_awarded_on_failure"])
             self.assertFalse(course["model_weight_training_authorized"])
             self.assertEqual(course["certification_status"], "not_certified")
+
+    def test_committed_manifest_matches_the_generated_catalog(self):
+        actual = json.loads((ROOT / "config/dreamco-division-curricula-manifest.json").read_text(encoding="utf-8"))
+        self.assertEqual(actual, build_manifest(build_division_curricula()))
 
     def test_all_source_portfolios_exist_and_match_their_division(self):
         catalog = build_division_curricula()
