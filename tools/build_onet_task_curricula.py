@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import csv
 import json
+import re
 from collections import defaultdict
 from pathlib import Path
 from typing import Any
@@ -50,7 +51,7 @@ AGENT_CAPABILITIES = [
 
 def _normalized_json_key(value: Any) -> str:
     text = str(value)
-    text = __import__("re").sub(r"(?<=[a-z0-9])(?=[A-Z])", " ", text)
+    text = re.sub(r"(?<=[a-z0-9])(?=[A-Z])", " ", text)
     return " ".join(text.casefold().replace("_", " ").replace("-", " ").split())
 
 
