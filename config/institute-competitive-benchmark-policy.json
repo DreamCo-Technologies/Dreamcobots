@@ -1,0 +1,46 @@
+{
+  "schema": "dreamco.institute.competitive_benchmark_policy.v1",
+  "version": "1.0.0",
+  "purpose": "Compare version-pinned DreamCo division candidates and external baseline models on identical, rights-cleared, division-specific workloads.",
+  "canonical_architecture": {
+    "parameter_count": 45038208,
+    "status": "architecture_blueprint_until_checkpoint_evidence_exists",
+    "tokenizer_identity_must_be_pinned": true
+  },
+  "comparison_rules": {
+    "same_fixture_ids_and_order": true,
+    "development_and_private_holdout_are_separately_reported": true,
+    "holdout_expected_outputs_are_never_sent_to_model_adapters": true,
+    "candidate_and_baselines_must_have_version_pinned_artifact_hashes": true,
+    "external_baselines_require_license_and_benchmark_permission_review": true,
+    "unknown_metrics_are_null_not_estimated": true,
+    "failed_requests_remain_in_denominators": true,
+    "repeated_identical_requests_measure_output_determinism": true,
+    "no_public_leaderboard_claim_without_reviewed_evidence": true
+  },
+  "target_metrics": {
+    "contract_pass_rate": 0.999,
+    "cpu_latency_p95_ms": 15,
+    "task_exact_match_rate": 0.95,
+    "routing_accuracy": 0.95,
+    "targets_are_aspirational_not_automatic_certification": true
+  },
+  "required_metrics": [
+    "contract_pass_rate",
+    "task_exact_match_rate",
+    "routing_accuracy",
+    "deterministic_repeat_rate",
+    "latency_p50_ms",
+    "latency_p95_ms",
+    "failure_rate",
+    "timeout_rate"
+  ],
+  "not_claimed_without_specialized_measurement": [
+    "accuracy_per_watt",
+    "energy_per_token",
+    "compute_cost_per_million_tokens",
+    "peak_memory_bytes",
+    "real_robot_safety",
+    "production_reliability"
+  ]
+}
