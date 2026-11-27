@@ -1,0 +1,34 @@
+name: DreamCo Model Foundry Buyer Kits
+on:
+  pull_request:
+    paths:
+      - "scripts/dreamco_model_foundry.py"
+      - "scripts/dreamco_hardware_detector.py"
+      - "scripts/train_my_agent.py"
+      - "tests/test_dreamco_model_foundry.py"
+      - "config/masterbot-65-registry.json"
+      - "config/authorized-training-datasets/manifest.json"
+      - ".github/workflows/dreamco-model-foundry-kits.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: dreamco-model-foundry-kits-${github.ref}
+  cancel-in-progress: true
+jobs:
+  buyer-kit-contracts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Compile foundry scripts
+        run: python -m compileall -q scripts/dreamco_model_foundry.py scripts/dreamco_hardware_detector.py scripts/train_my_agent.py
+      - name: Run buyer kit contract tests
+        run: python -m unittest tests.test_dreamco_model_foundry -v
+      - name: Validate catalog count
+        run: |
+          python scripts/dreamco_model_foundry.py --catalog-only --output "$RUNNER_TEMP/dreamco-commercial-kits"
+          python -c "import json, pathlib; p=pathlib.Path('$RUNNER_TEMP/dreamco-commercial-kits/CATALOG.json'); d=json.loads(p.read_text()); assert d['kit_count']==195; print('Validated 195 catalog SKUs')"
