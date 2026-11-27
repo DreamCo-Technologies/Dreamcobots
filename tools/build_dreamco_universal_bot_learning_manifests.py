@@ -155,7 +155,7 @@ def build() -> tuple[dict[str,Any], list[dict[str,Any]], list[dict[str,Any]]]:
     for item in old:
         records.append({"bot_id":"LEGACY_"+slug(item["source"].replace("/","-"))+"_"+str(item.get("index",0) or slug(item["slug"])),
             "source_kind":"legacy_original_bot_or_system",
-            "name":item["display_name"],"division":item["primary_division"],"capability_count":len(item.get("capabilities",[])),
+            "name":item["display_name"],"division":item["primary_division"],"capability_count":12 if item["kind"]=="major_system" else len(item.get("capabilities",[])),
             "focus_tags":[item["kind"],item.get("mission","")[:120]],"source_refs":[item["source"]],"identity_status":"HISTORICAL_SOURCE_NOT_RUNTIME_VERIFIED"})
     for item in business["bots"]:
         records.append({"bot_id":item["bot_id"],"name":item["name"],"division":"Business Bot Foundry / "+item["cluster"],
