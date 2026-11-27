@@ -12,7 +12,7 @@ import urllib.request
 from html.parser import HTMLParser
 from pathlib import Path
 
-from build_onet_task_curricula import build, read_rows
+from build_onet_task_curricula import build, flatten_records, read_rows
 
 SOURCE_PAGE = "https://www.onetcenter.org/database.html"
 USER_AGENT = "DreamCo-Buddy-Bootcamp/1.0 (O*NET attribution preserved)"
