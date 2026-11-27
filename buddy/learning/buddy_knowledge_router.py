@@ -134,8 +134,7 @@ def _course_matches(
         })
     best_track_score = max((row["track_match_score"] for row in matches), default=0.0)
     # Rank explicit track matches first, but retain strong cross-track content
-    # matches (for example, Hugging Face Transformers is both a Hugging Face
-    # topic and a software-library candidate). Exact seed lessons are preserved
+    # matches across capability domains, such as planning and execution. Exact seed lessons are preserved
     # independently of ranking so they cannot be hidden by a competing track.
     if best_track_score > 0:
         preserve = preserve_ids or set()
@@ -265,8 +264,8 @@ def route_buddy_learning_query(
             "study_required": True,
             "next_action": (
                 "Study the repository-local supporting guide and complete the original practice. "
-                "If it does not cover the requested lesson, ask the user before external research; "
-                "then verify a first-party source, release and rights before drafting an original guide."
+                "If it does not cover the requested lesson, record a DreamCo knowledge gap and queue "
+                "original authoring; do not route learners to external course websites."
             ),
             "mastery_awarded": False,
         }
