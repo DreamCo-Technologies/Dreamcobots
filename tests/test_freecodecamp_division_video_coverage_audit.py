@@ -85,6 +85,7 @@ class FreeCodeCampDivisionVideoCoverageAuditTests(unittest.TestCase):
             report = audit(root)
         self.assertIn("canonical_masterbot_ids_missing_or_duplicate", report["blockers"])
         self.assertEqual(report["specialist_curriculum"]["required_artifact_slots"], 960)
+        self.assertEqual(report["specialist_curriculum"]["missing_artifact_slots"], 960)
 
     def test_missing_masterbot_row_does_not_shrink_required_artifact_slots(self):
         with tempfile.TemporaryDirectory() as temp:
