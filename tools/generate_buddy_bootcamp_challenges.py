@@ -81,7 +81,7 @@ def validate_rights(rights: dict[str, Any], source_id: str, source_license: str)
 
 
 def normalize_text(value: Any, field: str, max_length: int = 3000) -> str:
-    text = re.sub(r"\\s+", " ", str(value or "")).strip()
+    text = re.sub(r"\s+", " ", str(value or "")).strip()
     if not text:
         raise ValueError(f"source row is missing {field}")
     if len(text) > max_length:
