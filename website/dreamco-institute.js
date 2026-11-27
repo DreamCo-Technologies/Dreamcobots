@@ -1,4 +1,4 @@
-const CATALOG_URL = "../config/dreamco-institute-academic-catalog.json";
+const CATALOG_URL = "data/dreamco-institute-academic-catalog.json";
 const $ = (selector) => document.querySelector(selector);
 const esc = (value) => String(value ?? "").replace(/[&<>"']/g, (char) => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[char]));
 let catalog;
