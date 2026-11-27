@@ -3,6 +3,10 @@ on:
   pull_request:
     paths:
       - "config/dreamco-institute-academic-catalog.json"
+      - "config/institute-competitive-benchmark-policy.json"
+      - "config/institute-competitive-baselines.json"
+      - "scripts/benchmark_vs_baselines.py"
+      - "tests/test_institute_competitive_benchmark.py"
       - "buddy/registrar/**"
       - "tools/build_dreamco_institute_catalog.py"
       - "tests/test_dreamco_institute_*.py"
@@ -33,3 +37,5 @@ jobs:
         run: python -m unittest tests.test_dreamco_institute_registrar tests.test_dreamco_institute_catalog_build -v
       - name: Validate static catalog synchronization
         run: python tools/build_dreamco_institute_catalog.py --check
+      - name: Validate competitive benchmark contracts
+        run: python -m unittest tests.test_institute_competitive_benchmark -v
