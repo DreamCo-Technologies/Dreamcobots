@@ -186,7 +186,7 @@ def _rows(track: dict, data: dict, root: Path = ROOT, *, include_blueprint: bool
                         "and regression review. Candidate discovery alone is not mastery."
                     ),
                     "benchmark": "Library candidate provenance and study-guide evidence benchmark.",
-                    "source_url": "https://github.com/DreamCo-Technologies/Dreamcobots/blob/main/server/seed-buddy-bot.ts",
+                    "source_url": "",  # Internal DreamCo lesson; provenance stays in the seed catalog.
                     "rights_mode": "metadata_discovery_only_no_download_no_execution",
                 })
         return rows
