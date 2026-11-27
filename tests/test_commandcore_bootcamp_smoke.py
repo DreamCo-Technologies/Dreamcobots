@@ -10,6 +10,8 @@ class CommandCoreBootcampSmokeTests(unittest.TestCase):
         self.assertEqual(report["status"], "PASS")
         self.assertEqual(report["course_track_id"], "dreamco-division-specialist")
         self.assertEqual(report["course_lesson_count"], 6)
+        self.assertEqual(report["runtime_queue_lesson_count"], 6)
+        self.assertEqual(report["runtime_queue_track_ids"], ["dreamco-division-specialist"])
         self.assertTrue(report["exercise_ids"])
         self.assertTrue(report["project_ids"])
         self.assertTrue(report["assessment_ids"])
