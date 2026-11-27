@@ -34,6 +34,20 @@ class DreamCoInstituteRegistrarTests(unittest.TestCase):
         self.assertEqual(transcript["academic_record"][0]["credits_earned"], 0)
         self.assertFalse(transcript["summary"]["graduated"])
 
+    def test_gpa_counts_attempted_credits_even_when_credit_is_not_awarded(self):
+        mixed = dict(self.evidence)
+        first_code = self.college["courses"][0]["code"]
+        mixed[first_code] = {
+            "score_pct": 50,
+            "assessment_evidence_id": "assessment-fail",
+            "practicum_passed": True,
+            "independent_holdout_passed": True,
+        }
+        transcript = issue_transcript("candidate-1", self.college["id"], mixed, catalog=self.catalog)
+        self.assertEqual(transcript["academic_record"][0]["credits_earned"], 0)
+        self.assertLess(transcript["summary"]["cumulative_gpa"], 4.0)
+        self.assertEqual(transcript["summary"]["credits_attempted"], transcript["summary"]["credits_required"])
+
     def test_degree_requires_thesis_defense_and_registrar_review(self):
         without_thesis = issue_transcript("candidate-1", self.college["id"], self.evidence, catalog=self.catalog)
         self.assertFalse(without_thesis["summary"]["graduated"])
