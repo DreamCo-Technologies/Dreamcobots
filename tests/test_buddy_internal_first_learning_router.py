@@ -60,10 +60,12 @@ class BuddyInternalFirstLearningRouterTests(unittest.TestCase):
             with patch("buddy.learning.buddy_knowledge_router.search_internal_library_knowledge", return_value={
                 "matches": [], "seed_candidate_matches": [], "knowledge_gap": {"status": "internal_knowledge_gap"},
             }), patch("buddy.learning.buddy_knowledge_router._course_matches", return_value=[]):
-                result = route_buddy_learning_query("unmapped capability zqv 9842", root=root)
+                result = route_buddy_learning_query("unmapped capability zebra quartz violet", root=root)
             self.assertEqual(result["route"], "internal_knowledge_gap")
             self.assertIsNone(result["gap_event"])
-            self.assertTrue(result["external_discovery_available"])
+            self.assertFalse(result["external_discovery_available"])
+            self.assertTrue(result["external_discovery_requires_explicit_opt_in"])
+            self.assertIn("Ask the user before external research", result["next_action"])
             self.assertFalse(result["external_discovery_performed"])
             self.assertFalse(result["external_model_routing_performed"])
             self.assertFalse((root / ".dreamco/library-knowledge-gaps.jsonl").exists())
