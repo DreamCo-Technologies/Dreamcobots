@@ -1,3 +1,4 @@
+import hashlib
 import tempfile
 import unittest
 from pathlib import Path
@@ -74,8 +75,11 @@ class BenchmarkV2EngineTests(unittest.TestCase):
         def runner(_):
             calls["runner"] += 1
             return RunnerResult(False, 1, 1, stderr="failed", peak_memory_mb=1)
+        def propose_new_test(task, _evidence, attempt):
+            digest = hashlib.sha256(f"regression-test-revision-{attempt}".encode()).hexdigest()
+            return {"revalidated_task": BenchmarkTask(**{**task.__dict__, "test_sha256": digest})}
         result = self_debug_with_reviewed_patch(
-            TASK, runner, lambda *_: {"revalidated_task": TASK}, lambda _: True,
+            TASK, runner, propose_new_test, lambda _: True,
             max_attempts=3, max_duration_ms=10, max_memory_mb=10,
         )
         self.assertEqual(result["status"], "FAIL_CLOSED")
