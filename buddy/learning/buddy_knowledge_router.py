@@ -101,7 +101,11 @@ def _course_matches(
             " ".join(lesson.tool_tags), " ".join(lesson.learning_modes),
         ))
         overlap = query_tokens & _tokens(searchable)
-        if not overlap:
+        # An exact, independently verified seed-candidate ID is a direct match
+        # even when tokenization drops version-only tokens (for example, "19").
+        # Preserve that lesson for the exact-candidate route without broadening
+        # ordinary relevance matching.
+        if not overlap and lesson.lesson_id not in (preserve_ids or set()):
             continue
         track_text = lesson.track_id.replace("-", " ").replace("_", " ")
         track_overlap = query_tokens & _tokens(track_text)
