@@ -1,0 +1,35 @@
+name: DreamCo Training Worker Contract
+on:
+  pull_request:
+    paths:
+      - "buddy/datasets/training_jobs.py"
+      - "buddy/datasets/transformers_runner.py"
+      - "tools/execute_buddy_training_job.py"
+      - "tests/test_buddy_training_job_evidence.py"
+      - "tests/test_execute_buddy_training_job.py"
+      - ".github/workflows/dreamco-training-worker-contract.yml"
+  push:
+    branches: [main]
+    paths:
+      - "buddy/datasets/training_jobs.py"
+      - "buddy/datasets/transformers_runner.py"
+      - "tools/execute_buddy_training_job.py"
+      - "tests/test_buddy_training_job_evidence.py"
+      - "tests/test_execute_buddy_training_job.py"
+permissions:
+  contents: read
+jobs:
+  training-worker-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Test training job lineage and evidence packaging
+        run: |
+          python -m unittest discover -s tests -p 'test_buddy_training_job_evidence.py' -v
+          python -m unittest discover -s tests -p 'test_execute_buddy_training_job.py' -v
+      - name: Compile training worker
+        run: python -m py_compile buddy/datasets/training_jobs.py buddy/datasets/transformers_runner.py tools/execute_buddy_training_job.py

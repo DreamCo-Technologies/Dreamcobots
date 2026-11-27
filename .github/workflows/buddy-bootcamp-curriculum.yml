@@ -1,0 +1,432 @@
+name: Buddy Bootcamp Curriculum
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/buddy-bootcamp-curriculum.yml"
+      - "tools/build_buddy_bootcamp_curriculum.py"
+      - "tests/test_buddy_bootcamp_curriculum.py"
+      - "tools/build_buddy_dataset_routes.py"
+      - "tests/test_buddy_dataset_route_check.py"
+      - "config/masterbot-65-registry.json"
+      - "config/generated/masterbot-55-domain-crosswalk.json"
+      - "config/buddy-continuous-study-policy.json"
+      - "config/freecodecamp-source-policy.json"
+      - "buddy/learning/dataset_profile_builder.py"
+      - "config/buddy-dataset-profile-builder.json"
+      - "schemas/buddy-dataset-profile.schema.json"
+      - "tests/test_buddy_dataset_profile_builder.py"
+      - "tests/test_buddy_dataset_profile_builder_ui.py"
+      - "website/dataset-profile-builder.html"
+      - "tools/validate_buddy_continuous_study_policy.py"
+      - "tests/test_buddy_continuous_study_policy.py"
+      - "config/huggingface-task-taxonomy.json"
+      - "config/hf-capability-download-map.json"
+      - "config/generated/division-huggingface-taxonomy-map.json"
+      - "config/buddy-model-serving-policy.json"
+      - "buddy/bootcamp/buddy_bootcamp.yaml"
+      - "buddy/bootcamp/sources/freecodecamp/**"
+      - "tools/sync_freecodecamp_catalog.py"
+      - "config/freecodecamp-youtube-catalog-policy.json"
+      - "tools/catalog_freecodecamp_youtube.py"
+      - "tests/test_freecodecamp_youtube_catalog.py"
+      - "docs/FREECODECAMP_YOUTUBE_LEARNING_LIBRARY.md"
+      - "docs/BUDDY_HUMAN_CENTRIC_MULTIMODAL_REQUIREMENTS.md"
+      - "tests/test_buddy_bootcamp_workflow_safety.py"
+      - "tests/test_buddy_tolkien_study_track.py"
+      - "tests/test_freecodecamp_catalog.py"
+      - "tools/build_freecodecamp_division_queues.py"
+      - "config/review/freecodecamp-supplemental-domain-learning-approval.json"
+      - "config/freecodecamp-division-category-profiles.json"
+      - "tests/test_freecodecamp_division_queues.py"
+      - "tools/validate_freecodecamp_learning_evidence.py"
+      - "tests/test_freecodecamp_learning_evidence.py"
+      - "buddy/bootcamp/sources/freecodecamp/learning-evidence.schema.json"
+      - "tools/build_freecodecamp_routes.py"
+      - "buddy/learning/freecodecamp_source.py"
+      - "buddy/learning/study_resource_scheduler.py"
+      - "tests/test_study_resource_scheduler.py"
+      - "tests/test_freecodecamp_source_routes.py"
+      - "buddy/learning/study_artifact_cleanup.py"
+      - "tests/test_study_artifact_cleanup.py"
+      - "buddy/learning/permissioned_study_worker.py"
+      - "tests/test_permissioned_study_worker.py"
+      - "tools/build_daily_lesson_plan.py"
+      - "tests/test_daily_lesson_plan.py"
+      - "tools/validate_original_lesson.py"
+      - "tests/test_original_lesson.py"
+      - "buddy/bootcamp/sources/original-lesson.schema.json"
+      - "buddy/bootcamp/templates/original-lesson.md"
+      - "config/buddy-weekly-transcript-evaluation.json"
+      - "config/authorized-transcripts/manifest.json"
+      - "buddy/bootcamp/sources/TRANSCRIPT_EVALUATION.md"
+      - "config/buddy-tolkien-study-track.json"
+      - "config/buddy-course-track-registry.json"
+      - "config/freecodecamp-division-routing-overrides.json"
+      - "tests/test_freecodecamp_specialist_routing.py"
+      - ".github/workflows/freecodecamp-study-guide-pipeline.yml"
+      - "tools/sync_freecodecamp_learning_inventory.py"
+      - "tests/test_freecodecamp_learning_inventory.py"
+      - ".github/workflows/freecodecamp-catalog-refresh.yml"
+      - "config/freecodecamp-complete-learning-path.json"
+      - "docs/FREECODECAMP_COMPLETE_BUDDY_LEARNING_PATH.md"
+      - "config/buddy-huggingface-full-learning-map.json"
+      - "config/buddy-tokenizer-training-curriculum.json"
+      - "config/buddy-25m-cpu-llm-course.json"
+      - "config/buddy-ai-model-course-division-map.json"
+      - "config/buddy-onet-content-model-curriculum.json"
+      - "config/buddy-course-source-resources.json"
+      - "buddy/learning/course_track_registry.py"
+      - "buddy/learning/buddy_knowledge_router.py"
+      - "buddy/learning/runtime_bridge.py"
+      - "tests/test_buddy_learning_runtime_bridge.py"
+      - "buddy/trading/**"
+      - "tests/test_paper_trading_sandbox.py"
+      - "docs/DREAMTRADE_PAPER_TRADING_SANDBOX.md"
+      - "tests/test_buddy_knowledge_router.py"
+      - "tools/build_onet_task_index.py"
+      - "tools/build_onet_task_curricula.py"
+      - "tests/test_buddy_onet_task_index.py"
+      - "tests/test_onet_task_curricula.py"
+      - "tests/fixtures/onet-task-statements-official-shape.json"
+      - ".github/workflows/buddy-onet-task-index-refresh.yml"
+      - "data/onet/**"
+      - "buddy/fleet_runtime/router.py"
+      - "buddy/fleet_runtime/executor.py"
+      - "buddy/fleet_runtime/engines.py"
+      - "tools/generate_bot_manifests.py"
+      - "config/bots/bot-manifests.generated.json"
+      - "tests/test_fleet_runtime_executor.py"
+      - "buddy/learning/universal_library_registry.py"
+      - "buddy/learning/library_registry_discovery.py"
+      - "config/buddy-library-registry-adapters.json"
+      - "config/buddy-library-ecosystem-adapter-coverage.json"
+      - "config/library_ecosystems.json"
+      - "data/buddy-library-study-guides/**"
+      - "data/buddy-library-seed-catalog.json"
+      - "server/seed-buddy-bot.ts"
+      - "tools/build_buddy_library_seed_catalog.py"
+      - "tests/test_buddy_library_seed_catalog.py"
+      - "tests/test_buddy_library_registry_discovery.py"
+      - "tools/buddy_library_knowledge.py"
+      - "tools/create_buddy_library_guide_draft.py"
+      - "tests/test_buddy_library_guide_draft.py"
+      - "tests/test_buddy_universal_library_registry.py"
+      - "tests/test_freecodecamp_learning_inventory.py"
+      - "tools/sync_freecodecamp_learning_inventory.py"
+      - "config/buddy-continuous-study-policy.json"
+      - "tests/test_buddy_course_track_registry.py"
+      - "tests/test_buddy_internal_first_learning_router.py"
+      - "tests/test_buddy_fleet_internal_bootcamp_routing.py"
+      - "config/buddy-universal-library-curriculum.json"
+      - "config/buddy-library-study-guide.schema.json"
+      - "docs/BUDDY_UNIVERSAL_LIBRARY_STUDY_GUIDE_STANDARD.md"
+      - "tests/test_buddy_universal_library_curriculum.py"
+      - "tests/test_buddy_25m_cpu_llm_course.py"
+      - "tests/test_buddy_tokenizer_training_curriculum.py"
+      - "tests/test_buddy_tolkien_study_track.py"
+      - "tools/build_weekly_transcript_evaluation.py"
+      - "tests/test_weekly_transcript_evaluation.py"
+      - ".github/workflows/buddy-weekly-transcript-evaluation.yml"
+  push:
+    branches: [main, feature/buddy-bootcamp-freecodecamp-2026]
+    paths:
+      - ".github/workflows/buddy-bootcamp-curriculum.yml"
+      - "tools/build_buddy_bootcamp_curriculum.py"
+      - "config/masterbot-65-registry.json"
+      - "config/generated/masterbot-55-domain-crosswalk.json"
+      - "config/buddy-continuous-study-policy.json"
+      - "config/freecodecamp-source-policy.json"
+      - "buddy/learning/dataset_profile_builder.py"
+      - "config/buddy-dataset-profile-builder.json"
+      - "schemas/buddy-dataset-profile.schema.json"
+      - "tests/test_buddy_dataset_profile_builder.py"
+      - "tests/test_buddy_dataset_profile_builder_ui.py"
+      - "website/dataset-profile-builder.html"
+      - "tools/validate_buddy_continuous_study_policy.py"
+      - "tests/test_buddy_continuous_study_policy.py"
+      - "config/huggingface-task-taxonomy.json"
+      - "config/hf-capability-download-map.json"
+      - "config/generated/division-huggingface-taxonomy-map.json"
+      - "config/buddy-model-serving-policy.json"
+      - "buddy/bootcamp/buddy_bootcamp.yaml"
+      - "buddy/bootcamp/sources/freecodecamp/**"
+      - "tools/sync_freecodecamp_catalog.py"
+      - "config/freecodecamp-youtube-catalog-policy.json"
+      - "tools/catalog_freecodecamp_youtube.py"
+      - "tests/test_freecodecamp_youtube_catalog.py"
+      - "docs/FREECODECAMP_YOUTUBE_LEARNING_LIBRARY.md"
+      - "docs/BUDDY_HUMAN_CENTRIC_MULTIMODAL_REQUIREMENTS.md"
+      - "tests/test_buddy_bootcamp_workflow_safety.py"
+      - "tests/test_buddy_tolkien_study_track.py"
+      - "tests/test_freecodecamp_catalog.py"
+      - "tools/build_freecodecamp_division_queues.py"
+      - "tests/test_freecodecamp_division_queues.py"
+      - "tools/validate_freecodecamp_learning_evidence.py"
+      - "tests/test_freecodecamp_learning_evidence.py"
+      - "buddy/bootcamp/sources/freecodecamp/learning-evidence.schema.json"
+      - "tools/build_freecodecamp_routes.py"
+      - "buddy/learning/freecodecamp_source.py"
+      - "buddy/learning/study_resource_scheduler.py"
+      - "tests/test_freecodecamp_source_routes.py"
+      - "buddy/learning/study_artifact_cleanup.py"
+      - "tests/test_study_artifact_cleanup.py"
+      - "buddy/learning/permissioned_study_worker.py"
+      - "tests/test_permissioned_study_worker.py"
+      - "tools/build_daily_lesson_plan.py"
+      - "tests/test_daily_lesson_plan.py"
+      - ".github/workflows/buddy-daily-lesson-target.yml"
+      - "tools/validate_original_lesson.py"
+      - "tests/test_original_lesson.py"
+      - "buddy/bootcamp/sources/original-lesson.schema.json"
+      - "buddy/bootcamp/templates/original-lesson.md"
+      - "config/buddy-weekly-transcript-evaluation.json"
+      - "buddy/bootcamp/sources/TRANSCRIPT_EVALUATION.md"
+      - "tools/build_weekly_transcript_evaluation.py"
+      - "tests/test_weekly_transcript_evaluation.py"
+      - ".github/workflows/buddy-weekly-transcript-evaluation.yml"
+      - "config/buddy-universal-library-curriculum.json"
+      - "config/buddy-library-study-guide.schema.json"
+      - "config/buddy-library-registry-adapters.json"
+      - "config/buddy-library-ecosystem-adapter-coverage.json"
+      - "config/library_ecosystems.json"
+      - "data/buddy-library-study-guides/**"
+      - "data/buddy-library-seed-catalog.json"
+      - "server/seed-buddy-bot.ts"
+      - "buddy/learning/universal_library_registry.py"
+      - "buddy/learning/library_registry_discovery.py"
+      - "buddy/learning/course_track_registry.py"
+      - "buddy/learning/buddy_knowledge_router.py"
+      - "buddy/learning/runtime_bridge.py"
+      - "tests/test_buddy_learning_runtime_bridge.py"
+      - "buddy/trading/**"
+      - "tests/test_paper_trading_sandbox.py"
+      - "docs/DREAMTRADE_PAPER_TRADING_SANDBOX.md"
+      - "tests/test_buddy_knowledge_router.py"
+      - "tools/build_onet_task_index.py"
+      - "tools/build_onet_task_curricula.py"
+      - "tests/test_buddy_onet_task_index.py"
+      - "tests/test_onet_task_curricula.py"
+      - "tests/fixtures/onet-task-statements-official-shape.json"
+      - ".github/workflows/buddy-onet-task-index-refresh.yml"
+      - "data/onet/**"
+      - "buddy/fleet_runtime/router.py"
+      - "buddy/fleet_runtime/executor.py"
+      - "buddy/fleet_runtime/engines.py"
+      - "tools/generate_bot_manifests.py"
+      - "config/bots/bot-manifests.generated.json"
+      - "tests/test_fleet_runtime_executor.py"
+      - "tools/buddy_library_knowledge.py"
+      - "tools/create_buddy_library_guide_draft.py"
+      - "tools/build_buddy_library_seed_catalog.py"
+      - "tests/test_buddy_universal_library_curriculum.py"
+      - "tests/test_buddy_universal_library_registry.py"
+      - "tests/test_buddy_library_registry_discovery.py"
+      - "tests/test_buddy_library_guide_draft.py"
+      - "tests/test_buddy_library_seed_catalog.py"
+      - "tests/test_freecodecamp_learning_inventory.py"
+      - "tools/sync_freecodecamp_learning_inventory.py"
+      - "tests/test_buddy_internal_first_learning_router.py"
+      - "tests/test_buddy_fleet_internal_bootcamp_routing.py"
+permissions:
+  contents: read
+concurrency:
+  group: buddy-bootcamp-curriculum-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  weekly-transcript-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Test weekly transcript coverage rules
+        run: python -m unittest discover -s tests -p 'test_weekly_transcript_evaluation.py' -v
+      - name: Build first transcript readiness report
+        run: python tools/build_weekly_transcript_evaluation.py --output /tmp/buddy-weekly-transcript-evaluation.json
+      - name: Print transcript readiness blockers
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          report = json.loads(Path('/tmp/buddy-weekly-transcript-evaluation.json').read_text())
+          print(json.dumps(report, indent=2))
+          if report['status'] == 'blocked':
+              print('::warning::Buddy transcript evaluation is BLOCKED; see blocked_reasons and due_transcripts in the uploaded artifact. No transcript was counted as evaluated.')
+          PY
+      - name: Upload first transcript readiness report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: buddy-weekly-transcript-evaluation-first-run
+          path: /tmp/buddy-weekly-transcript-evaluation.json
+          if-no-files-found: warn
+          retention-days: 90
+
+  generate-curriculum:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install freeCodeCamp metadata enumerator
+        run: python -m pip install --disable-pip-version-check 'yt-dlp==2026.11.23'
+      - name: Validate committed freeCodeCamp catalog before refresh
+        run: |
+          if [ -f buddy/bootcamp/sources/freecodecamp/catalog.json ]; then
+            python tools/sync_freecodecamp_catalog.py --check
+          python tools/sync_freecodecamp_learning_inventory.py
+          python tools/sync_freecodecamp_learning_inventory.py --check
+          else
+            echo "No committed catalog yet; first discovery will create it."
+          fi
+      - name: Discover freeCodeCamp channel videos and categorize
+        run: python tools/sync_freecodecamp_catalog.py
+      - name: Validate freeCodeCamp catalog and tests
+        run: |
+          export PYTHONPATH="$GITHUB_WORKSPACE${PYTHONPATH:+:$PYTHONPATH}"
+          python tools/sync_freecodecamp_catalog.py --check
+          # The catalog refresh above can change the lesson inventory. Rebuild
+          # its derived policy/path manifests before count-sensitive tests.
+          python tools/sync_freecodecamp_learning_inventory.py
+          python tools/sync_freecodecamp_learning_inventory.py --check
+          python -m unittest discover -s tests -p 'test_freecodecamp_catalog.py' -v
+          python -m py_compile tools/catalog_freecodecamp_youtube.py
+          python -m unittest discover -s tests -p 'test_freecodecamp_youtube_catalog.py' -v
+          python tools/validate_buddy_continuous_study_policy.py
+          python -m unittest discover -s tests -p 'test_buddy_continuous_study_policy.py' -v
+          python -m unittest discover -s tests -p 'test_buddy_dataset_profile_builder.py' -v
+          python -m unittest discover -s tests -p 'test_buddy_dataset_profile_builder_ui.py' -v
+          if python - <<'PY'
+          import json
+          from pathlib import Path
+          catalog = json.loads(Path("buddy/bootcamp/sources/freecodecamp/catalog.json").read_text(encoding="utf-8"))
+          videos = catalog.get("videos") or []
+          inventory = catalog.get("inventory") or {}
+          complete = (
+              catalog.get("inventory_status") == "complete"
+              and inventory.get("complete") is True
+              and inventory.get("expected_entry_count") == len(videos)
+              and inventory.get("observed_entry_count") == len(videos)
+              and inventory.get("null_entry_count") == 0
+              and inventory.get("duplicate_video_id_count") == 0
+          )
+          raise SystemExit(0 if complete else 1)
+          PY
+          then
+            echo "Verified complete FreeCodeCamp inventory; candidate queues may be assigned."
+            python tools/build_freecodecamp_division_queues.py --out "$RUNNER_TEMP/freecodecamp-division-learning-queues.json"
+            python tools/build_freecodecamp_division_queues.py --check --out "$RUNNER_TEMP/freecodecamp-division-learning-queues.json"
+            python tools/build_daily_lesson_plan.py --queues "$RUNNER_TEMP/freecodecamp-division-learning-queues.json" --output "$RUNNER_TEMP/daily-lesson-production-plan.json"
+          else
+            echo "Source inventory is partial; build a provisional queue and leave daily candidate assignments blocked."
+            python tools/build_freecodecamp_division_queues.py --allow-partial --out "$RUNNER_TEMP/freecodecamp-provisional-division-learning-queues.json"
+            python tools/build_freecodecamp_division_queues.py --check --allow-partial --out "$RUNNER_TEMP/freecodecamp-provisional-division-learning-queues.json"
+            python tools/build_daily_lesson_plan.py --output "$RUNNER_TEMP/daily-lesson-production-plan.json"
+          fi
+          python -m unittest discover -s tests -p 'test_freecodecamp_division_queues.py' -v
+          python tools/build_freecodecamp_routes.py --out "$RUNNER_TEMP/freecodecamp-source-routes.json"
+          python tools/build_freecodecamp_routes.py --check --out "$RUNNER_TEMP/freecodecamp-source-routes.json"
+          python -m unittest discover -s tests -p 'test_freecodecamp_source_routes.py' -v
+          python -m unittest discover -s tests -p 'test_study_artifact_cleanup.py' -v
+          python -m unittest discover -s tests -p 'test_study_resource_scheduler.py' -v
+          python -m unittest discover -s tests -p 'test_permissioned_study_worker.py' -v
+          python -m unittest discover -s tests -p 'test_daily_lesson_plan.py' -v
+          python -m unittest discover -s tests -p 'test_original_lesson.py' -v
+          python -m unittest discover -s tests -p 'test_freecodecamp_learning_evidence.py' -v
+          python -m unittest discover -s tests -p 'test_paper_trading_sandbox.py' -v
+          python -m unittest discover -s tests -p 'test_weekly_transcript_evaluation.py' -v
+          python -m unittest discover -s tests -p 'test_buddy_tolkien_study_track.py' -v
+          python -m unittest discover -s tests -p 'test_buddy_tokenizer_training_curriculum.py' -v
+          python -m unittest discover -s tests -p 'test_buddy_25m_cpu_llm_course.py' -v
+          python -m unittest discover -s tests -p 'test_buddy_course_track_registry.py' -v
+          python -m unittest discover -s tests -p 'test_buddy_universal_library_registry.py' -v
+          python -m unittest discover -s tests -p 'test_buddy_internal_first_learning_router.py' -v
+          python -m unittest discover -s tests -p 'test_buddy_knowledge_router.py' -v
+          python -m unittest discover -s tests -p 'test_buddy_onet_task_index.py' -v
+          python -m unittest discover -s tests -p 'test_onet_task_curricula.py' -v
+          python -m unittest discover -s tests -p 'test_buddy_fleet_internal_bootcamp_routing.py' -v
+          python -m unittest discover -s tests -p 'test_fleet_runtime_executor.py' -v
+          # Manifest regeneration and drift validation are owned by fleet-runtime-truth.yml.
+          python -m unittest discover -s tests -p 'test_buddy_library_registry_discovery.py' -v
+          python -m unittest discover -s tests -p 'test_freecodecamp_learning_inventory.py' -v
+          python -m unittest discover -s tests -p 'test_freecodecamp_specialist_routing.py' -v
+          python -m unittest discover -s tests -p 'test_buddy_library_guide_draft.py' -v
+          python tools/build_buddy_library_seed_catalog.py --check
+          python -m unittest discover -s tests -p 'test_buddy_library_seed_catalog.py' -v
+          python -m unittest discover -s tests -p 'test_buddy_universal_library_curriculum.py' -v
+          python -m unittest discover -s tests -p 'test_freecodecamp_learning_inventory.py' -v
+          python -m unittest discover -s tests -p 'test_freecodecamp_specialist_routing.py' -v
+          python -m unittest discover -s tests -p 'test_buddy_library_guide_draft.py' -v
+          python tools/build_buddy_library_seed_catalog.py --check
+          python -m unittest discover -s tests -p 'test_buddy_library_seed_catalog.py' -v
+          python tools/build_weekly_transcript_evaluation.py --output /tmp/buddy-weekly-transcript-evaluation.json
+      - name: Publish first weekly transcript coverage report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: buddy-weekly-transcript-evaluation-first-run
+          path: /tmp/buddy-weekly-transcript-evaluation.json
+          if-no-files-found: warn
+          retention-days: 90
+      - name: Build and validate curriculum
+        run: |
+          python tools/build_buddy_bootcamp_curriculum.py
+          python tools/build_buddy_bootcamp_curriculum.py --check
+          python -m unittest discover -s tests -p 'test_buddy_bootcamp_curriculum.py' -v
+          python -m unittest discover -s tests -p 'test_buddy_bootcamp_workflow_safety.py' -v
+          python -m unittest discover -s tests -p 'test_buddy_tolkien_study_track.py' -v
+          python -m unittest discover -s tests -p 'test_buddy_tokenizer_training_curriculum.py' -v
+          python -m unittest discover -s tests -p 'test_buddy_25m_cpu_llm_course.py' -v
+          python -m unittest discover -s tests -p 'test_buddy_course_track_registry.py' -v
+          python -m unittest discover -s tests -p 'test_buddy_universal_library_registry.py' -v
+          python -m unittest discover -s tests -p 'test_buddy_internal_first_learning_router.py' -v
+          python -m unittest discover -s tests -p 'test_buddy_knowledge_router.py' -v
+          python -m unittest discover -s tests -p 'test_buddy_onet_task_index.py' -v
+          python -m unittest discover -s tests -p 'test_onet_task_curricula.py' -v
+          python -m unittest discover -s tests -p 'test_buddy_fleet_internal_bootcamp_routing.py' -v
+          python -m unittest discover -s tests -p 'test_fleet_runtime_executor.py' -v
+          python -m unittest discover -s tests -p 'test_buddy_library_registry_discovery.py' -v
+          python -m unittest discover -s tests -p 'test_freecodecamp_learning_inventory.py' -v
+          python -m unittest discover -s tests -p 'test_freecodecamp_specialist_routing.py' -v
+          python -m unittest discover -s tests -p 'test_buddy_library_guide_draft.py' -v
+          python tools/build_buddy_library_seed_catalog.py --check
+          python -m unittest discover -s tests -p 'test_buddy_library_seed_catalog.py' -v
+          python -m unittest discover -s tests -p 'test_buddy_universal_library_curriculum.py' -v
+          python -m unittest discover -s tests -p 'test_dreamco_bootcamp_seed_data.py' -v
+          python -m unittest discover -s tests -p 'test_dreamco_training_factory.py' -v
+          python -m unittest discover -s tests -p 'test_dreamco_original_training_examples.py' -v
+          python -m py_compile tools/build_dreamco_bootcamp_seed_data.py tools/build_dreamco_training_factory.py tools/build_dreamco_training_examples.py
+          python -m unittest tests.test_buddy_dataset_route_check -v
+      - name: Upload generated study artifacts for review
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: buddy-bootcamp-study-artifacts
+          path: |
+            buddy/bootcamp/sources/freecodecamp/catalog.json
+            ${{ runner.temp }}/freecodecamp-division-learning-queues.json
+            ${{ runner.temp }}/freecodecamp-provisional-division-learning-queues.json
+            ${{ runner.temp }}/daily-lesson-production-plan.json
+            ${{ runner.temp }}/freecodecamp-source-routes.json
+            config/generated/daily-lesson-production-plan.json
+            config/generated/buddy-bootcamp-curriculum.json
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Publish manual-review instructions
+        if: success() && github.event_name != 'pull_request'
+        run: |
+          {
+            echo "## Buddy Bootcamp curriculum artifact ready"
+            echo "- Generated curriculum and study artifacts are available in the workflow artifact."
+            echo "- No dataset downloads, training, certification, or model promotion occurred."
+            echo "- This workflow is read-only; inspect artifacts and create a human-reviewed PR if generated output should be committed."
+          } >> "$GITHUB_STEP_SUMMARY"

@@ -1,0 +1,75 @@
+{
+  "schema": "dreamco.model_studio_marketplace.v1",
+  "status": "product_specification_not_live",
+  "strategic_default": "dreamco_first_party_models",
+  "product": {
+    "studio_name": "DreamCo Model Studio",
+    "marketplace_name": "DreamCo Model Marketplace"
+  },
+  "provider_policy": {
+    "third_party_role": [
+      "temporary_inference_fallback",
+      "baseline_comparison",
+      "permitted_teacher_feedback"
+    ],
+    "replaceable_provider_adapters": true,
+    "first_party_routing_preferred": true,
+    "fallback_requires_explicit_enablement": true,
+    "provider_output_training_requires_terms_review": true,
+    "no_wrapper_misrepresented_as_trained_model": true,
+    "promote_first_party_only_after_quality_safety_privacy_cost_and_reliability_gates": true
+  },
+  "model_lineage_labels": [
+    "dreamco_first_party",
+    "dreamco_derivative",
+    "customer_private_finetune",
+    "customer_marketplace_candidate",
+    "third_party_hosted",
+    "retrieval_or_prompt_package"
+  ],
+  "training": {
+    "division_specific_students": true,
+    "default_strategy": "rights_cleared_data_plus_small_student_or_eligible_base_and_LoRA_or_QLoRA",
+    "teacher_distillation_requires_provider_terms_and_output_rights_review": true,
+    "reproducible_recipe_and_artifact_hashes_required": true,
+    "dataset_provenance_and_license_manifest_required": true,
+    "train_validation_test_splits_required": true,
+    "safety_privacy_and_regression_evaluation_required": true,
+    "scheduled_training_only_when_new_rights_cleared_data_or_measurable_improvement_exists": true,
+    "spend_cap_required": true
+  },
+  "customer_model_lifecycle": {
+    "can_customize_by_category": true,
+    "private_by_default": true,
+    "customer_can_deploy_private_model": true,
+    "marketplace_resale_opt_in": false,
+    "resale_requires_customer_distribution_grant": true,
+    "resale_requires_base_tokenizer_code_and_dataset_license_compatibility": true,
+    "separate_lineage_model_card_benchmarks_and_safety_report": true
+  },
+  "marketplace": {
+    "seller_verification_required": true,
+    "listing_rights_review_required": true,
+    "quality_and_safety_review_required": true,
+    "explicit_purchase_approval": true,
+    "show_exact_deliverable_and_license": true,
+    "supported_purchase_types": [
+      "one_time_license",
+      "hosted_monthly_subscription",
+      "dedicated_endpoint_subscription",
+      "team_license",
+      "enterprise_agreement"
+    ]
+  },
+  "routing_success_metrics": [
+    "first_party_request_share",
+    "third_party_fallback_share",
+    "certified_models_per_division",
+    "quality_parity",
+    "safety_pass_rate",
+    "rights_coverage",
+    "cost_per_successful_task",
+    "inference_latency"
+  ],
+  "delivery_truth": "Architecture specification only; does not mean models have been trained or customer sales are live."
+}

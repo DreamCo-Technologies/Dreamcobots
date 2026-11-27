@@ -1,0 +1,33 @@
+name: Division and MasterBot Specialist Course Readiness
+
+on:
+  pull_request:
+    paths:
+      - "config/masterbot-65-registry.json"
+      - "config/generated/masterbot-55-domain-crosswalk.json"
+      - "config/buddy-25m-cpu-llm-course.json"
+      - "config/buddy-division-specialist-course-artifacts.json"
+      - "tools/audit_division_specialist_course_readiness.py"
+      - "tests/test_division_specialist_course_readiness.py"
+      - ".github/workflows/division-specialist-course-readiness.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: division-specialist-readiness-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: python -m pip install --disable-pip-version-check pytest
+      - run: python -m pytest -q tests/test_division_specialist_course_readiness.py
+      - run: python tools/audit_division_specialist_course_readiness.py

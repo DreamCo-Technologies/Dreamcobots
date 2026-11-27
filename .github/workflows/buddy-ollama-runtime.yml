@@ -1,0 +1,24 @@
+name: Buddy Local Ollama Runtime
+on:
+  pull_request:
+    paths:
+      - "buddy/learning/ollama_runtime.py"
+      - "tests/test_ollama_runtime.py"
+      - ".github/workflows/buddy-ollama-runtime.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: buddy-ollama-runtime-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  test-local-runtime-adapter:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Run loopback and inference adapter tests
+        run: python -m unittest discover -s tests -p 'test_ollama_runtime.py' -v

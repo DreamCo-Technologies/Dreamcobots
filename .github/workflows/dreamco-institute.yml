@@ -1,0 +1,65 @@
+name: DreamCo Institute
+on:
+  pull_request:
+    paths:
+      - "config/dreamco-institute-academic-catalog.json"
+      - "config/masterbot-65-registry.json"
+      - "config/institute-competitive-benchmark-policy.json"
+      - "config/institute-competitive-baselines.json"
+      - "scripts/benchmark_vs_baselines.py"
+      - "tools/run_institute_fleet_benchmarks.py"
+      - "tests/test_institute_competitive_fleet.py"
+      - "scripts/buddy_resource_harvester.py"
+      - "config/buddy-resource-sources.json"
+      - "tests/test_buddy_resource_harvester.py"
+      - "docs/institute/BUDDY_RESOURCE_INTAKE.md"
+      - "scripts/dreamco_pr_and_issue_auditor.py"
+      - "tests/test_dreamco_pr_and_issue_auditor.py"
+      - "docs/governance/PR_REVIEW_AND_MR_TRIAGE.md"
+      - "docs/governance/CI_CD_ENGINEERING_ROADMAP.md"
+      - ".github/workflows/dreamco-pr-review-issue-gate.yml"
+      - "buddy/registrar/**"
+      - "tools/build_dreamco_institute_catalog.py"
+      - "tests/test_dreamco_institute_*.py"
+      - "tests/test_institute_competitive_benchmark.py"
+      - "scripts/buddy_resource_harvester.py"
+      - "config/buddy-resource-sources.json"
+      - "tests/test_buddy_resource_harvester.py"
+      - "docs/institute/BUDDY_RESOURCE_INTAKE.md"
+      - "docs/institute/COMPETITIVE_MODEL_LAB.md"
+      - "package.json"
+      - "website/dreamco-institute.*"
+      - "website/data/dreamco-institute-academic-catalog.json"
+      - ".github/workflows/dreamco-institute.yml"
+  push:
+    branches: [main]
+    paths:
+      - "config/institute-competitive-benchmark-policy.json"
+      - "config/institute-competitive-baselines.json"
+      - "scripts/benchmark_vs_baselines.py"
+      - "tools/run_institute_fleet_benchmarks.py"
+      - "tests/test_institute_competitive_benchmark.py"
+      - "tests/test_institute_competitive_fleet.py"
+      - "docs/institute/COMPETITIVE_MODEL_LAB.md"
+      - "package.json"
+      - "config/dreamco-institute-academic-catalog.json"
+      - "buddy/registrar/**"
+      - "tools/build_dreamco_institute_catalog.py"
+      - "tests/test_dreamco_institute_*.py"
+      - "website/dreamco-institute.*"
+      - "website/data/dreamco-institute-academic-catalog.json"
+      - ".github/workflows/dreamco-institute.yml"
+permissions:
+  contents: read
+jobs:
+  academic-contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Validate registrar and academic credit rules
+        run: npm run test:institute
+      - name: Validate static catalog synchronization
+        run: python tools/build_dreamco_institute_catalog.py --check

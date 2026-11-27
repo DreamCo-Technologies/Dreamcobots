@@ -132,3 +132,14 @@ Do not promote the orchestrator because it looks impressive. Promote it when mea
 - bounded cost;
 - correct escalation;
 - no unacceptable security regressions.
+
+
+## Failure-learning implementation extension
+
+The shared implementation is extended by:
+- `tools/buddy_failure_learning.py` for deterministic fingerprints, risk classification, recurrence matching, and verified-lesson storage.
+- `tests/test_buddy_failure_learning.py` for stable fingerprints, recurrence, risk gates, and rejection of unverified lessons.
+- `.github/workflows/buddy-failure-learning.yml` for workflow-completion intake plus scheduled reconciliation, canonical incident Issues, recurrence comments, and reopening of recurring incidents.
+- `docs/BUDDY_FAILURE_DETECTION_RECOVERY_LEARNING.md` for the full operating contract and honest rollout gates.
+
+This is an intake and learning foundation, not yet proof of autonomous repair across every runtime or MasterBot. The next integration gates are to connect issue incidents to the existing Greenkeeper repair planner, launch only policy-approved isolated repair PRs, persist verified lessons in a durable store, and confirm the loop end-to-end with real failure fixtures.

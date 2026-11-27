@@ -188,8 +188,8 @@ def evaluate_learning_completion(event: Mapping[str, Any]) -> dict[str, Any]:
         "promote": promote,
         "promotion_reason": (
             "verified_success_with_holdout_regression_safety_and_provenance"
-            if promote else "external_assistance_is_not_native_mastery"
-            if external_assistance else decision.reason if not decision.promote
+            if promote else "external_assistance_is_not_native_mastery" if external_assistance
+            else decision.reason if not decision.promote
             else "holdout_execution_or_evidence_blocks_promotion"
         ),
         "artifact_refs": artifact_refs,

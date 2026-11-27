@@ -2,6 +2,8 @@
 
 The bootcamp is a closed-loop learning program for Buddy. It does not claim mastery because a lesson was read; it requires measurable benchmark evidence.
 
+See the [Capability Mastery and Revenue Operations Curriculum](../../docs/BUDDY_CAPABILITY_MASTERY_AND_REVENUE_CURRICULUM.md) for the complete capability map, commercial task playbooks, division model-weight pathway, per-run learning order, resource-summary standard, benchmark-guide requirements, and repository-wide completion gates.
+
 ## Daily cycle
 
 1. Inspect benchmark history.
@@ -23,6 +25,164 @@ A capability graduates when it repeatedly passes its target benchmark, passes an
 ## Efficient learning
 
 The bootcamp favors targeted remediation over broad rereading. It uses benchmark failures as the curriculum driver, tracks which resources improve which capabilities, and can reuse authorized evidence for future learners/models without exposing client data or copying restricted external material.
+
+
+## Task-routed learning across platforms
+
+When a user requests an outcome, Buddy should decompose it into skills and prerequisites, inspect benchmark gaps, and rank eligible learning resources before choosing a lesson. The route must account for relevance, practice mode, source quality, permissions, license review, and cost. See `task_learning_router.py` for deterministic route selection and `learning_source_catalog.yaml` for the initial cross-platform source inventory.
+
+The router emits a plan; it does not claim that a provider was accessed, a course was completed, a task was executed, or model weights were trained. Provider adapters must independently implement authorization, retrieval, execution, evidence capture, and contract tests. See `docs/BUDDY_TASK_TO_LEARNING_PLATFORM_ROADMAP.md` for the platform capability map and phased implementation plan.
+
+A learning route must never bypass account controls, scrape gated courses, copy proprietary course material, launch paid compute without explicit approval, or train on evaluation holdouts.
+
+
+## freeCodeCamp source and division queues
+
+The public freeCodeCamp channel is registered as a metadata-only discovery source at `buddy/bootcamp/sources/freecodecamp/`. The scheduled catalog job discovers public video metadata and assigns multi-label subject tags. It does not download video/audio or scrape transcripts.
+
+Generate deterministic study candidates for the canonical 65 divisions with:
+
+```bash
+python tools/sync_freecodecamp_catalog.py
+python tools/build_freecodecamp_division_queues.py
+python tools/build_freecodecamp_division_queues.py --check
+python -m unittest discover -s tests -p 'test_freecodecamp_division_queues.py' -v
+```
+
+The generated division queue contains up to 30 ranked candidate references per division by default and is retained as a GitHub Actions review artifact rather than a committed 45,000-line duplicate snapshot. Each division receives shared technical foundations plus explicitly mapped specialty tracks. A division without a defensible specialty mapping receives a foundation-only queue and remains flagged for owner review; the planner does not invent a specialty.
+
+Every queued item starts as `queued_not_studied`. Rights review remains required, and media/transcript ingestion and training eligibility remain false. A queue item can advance only after authorized study material is turned into an original lesson or notes, a sandbox exercise is completed, and targeted, holdout, and regression evidence is recorded. Queue generation itself never changes a model or grants mastery.
+
+
+Learning evidence is evaluated by `tools/validate_freecodecamp_learning_evidence.py`. Its result distinguishes rights-pending, study-pending, studied-but-unverified, and mastered. Mastery requires verified rights evidence, a study attestation and original-notes hash, a passed sandbox artifact, and separate target, holdout, and regression run IDs. Even a mastered capability record does not authorize training on the source material; training rights remain a separate review.
+
+
+## Complete freeCodeCamp routing into Buddy's live study scheduler
+
+The full source-route manifest is generated with `python tools/build_freecodecamp_routes.py` for audit/review artifacts. It keeps one route record for every discovered video and grants all 65 divisions catalog access; subject tags add specialty recommendations without hiding the shared catalog. Unclassified items remain discoverable through a review lane.
+
+Buddy's runtime adapter is `buddy.learning.freecodecamp_source`. It reads the canonical FreeCodeCamp catalog directly and validates the complete inventory plus the 65-division registry; it does not depend on a committed generated route snapshot.
+
+- `resources_for_division(division_id)` returns every catalog candidate for that division.
+- `select_next_for_division(division_id, capability_gaps, recent=...)` delegates next-lesson selection to the existing evidence-driven study scheduler.
+- Each resource points to the original official source and prescribes original notes, sandbox practice, target benchmark, holdout, and regression steps.
+
+This is a real route into the scheduler, not an automatic video-watching claim. The scheduler selects a lesson; a worker or learner must open the official source and complete the study and practice steps. Video/audio downloads, transcript ingestion, and model training remain disabled unless separately authorized. The CI workflow regenerates and validates the complete route manifest as an artifact and runs the adapter tests. The committed catalog remains partial until the 1,741-entry verified refresh is reviewed and committed; runtime study remains fail-closed while it is partial.
+
+
+## Temporary study-download cleanup
+
+If an authorized study worker needs temporary files, it must create an attempt-scoped workspace with `buddy.learning.study_artifact_cleanup.study_download_workspace(base_dir)`. The context manager removes that workspace in a `finally` block after success, failure, or cancellation. It refuses paths outside the configured managed root and does not follow symlink workspaces.
+
+Example:
+
+```python
+from pathlib import Path
+from buddy.learning.study_artifact_cleanup import study_download_workspace
+
+with study_download_workspace(Path("/tmp/dreamco-study")) as workspace:
+    # Any permitted, temporary study files live only here.
+    run_authorized_study_step(workspace)
+# The workspace and its temporary files are erased here.
+```
+
+Keep learning evidence, provenance, benchmark results, and original learner-authored notes in the approved evidence store outside this temporary directory. Do not upload media or temporary study files as GitHub Actions artifacts or commit them to the repository. The current freeCodeCamp catalog workflow reads metadata only; it does not download lesson media. GitHub-hosted runner files are also discarded when each job's ephemeral runner is torn down.
+
+The cleanup helper is covered by tests for normal completion, exceptions, idempotence, and refusal to delete paths outside its managed workspace. A study worker must use this context manager for its temporary files; adding the helper does not imply that a video-watching worker is already running.
+
+
+## DreamCo-authored lesson factory
+
+External sources are reference inputs, not the curriculum output. Buddy must create an independently authored DreamCo lesson for each selected division/capability gap. A lesson package includes:
+
+- fresh, plain-language explanation and learning objectives
+- original worked examples and code or domain examples
+- guided, independent, and stretch practice
+- a hands-on project with acceptance criteria
+- quiz questions with original answer explanations
+- sandbox tasks, targeted benchmark, unseen holdout, and regression checks
+- accessibility notes, prerequisites, source provenance, and rights status
+
+The lesson contract is `buddy/bootcamp/sources/original-lesson.schema.json`; use `buddy/bootcamp/templates/original-lesson.md` as the authoring template. Validate JSON lesson packages with:
+
+```bash
+python tools/validate_original_lesson.py path/to/lesson.json
+python -m unittest discover -s tests -p 'test_original_lesson.py' -v
+```
+
+The authoring policy forbids copying transcripts, course text, exercises, or answer keys. Public metadata and source links may identify topics; actual source material may be used only within the applicable permission. Mark every lesson with provenance and rights review. Training DreamCo model weights on source-derived material remains disabled unless a separate rights approval explicitly permits it. Original DreamCo-authored lesson assets can be stored and reused under DreamCo's own content policy, subject to review.
+
+
+## Daily original-lesson production target
+
+The daily target is five original DreamCo lesson packages for each of the 55 domain divisions (45 original plus 10 supplemental; 275 planned slots per UTC day). The 20 shared-platform MasterBots are counted separately in the 65-MasterBot inventory and are not additional domain divisions in this lesson-plan crosswalk. The scheduled workflow builds a metadata-only work plan. A slot remains `queued_not_created` until an actual lesson has original explanations, worked examples, practice, an assessment and answer key, source provenance, a rights review, schema validation, sandbox results, target and holdout benchmarks, and regression evidence. The planner does not count placeholders as lessons and does not claim that a target has been met merely because the workflow ran.
+
+Run locally:
+
+```bash
+python tools/build_daily_lesson_plan.py --lessons-per-domain 5
+python -m unittest discover -s tests -p 'test_daily_lesson_plan.py' -v
+```
+
+## Permissioned study worker and temporary-file lifecycle
+
+All study adapters that create temporary working files must execute through `buddy.learning.permissioned_study_worker.run_study_attempt` (or the source adapter's `execute_study_plan`). The callback receives an attempt-scoped workspace and an explicit allowlist of operations. The workspace is erased in a `finally` block on normal completion, exceptions, and cancellation. The callback must place every temporary download, extracted file, and scratch artifact inside that workspace. Do not write media to the repository, shared caches, workflow artifacts, or persistent runner directories. Keep only original DreamCo-authored lesson content, learner notes intended for retention, rights/provenance records, hashes, and benchmark evidence outside the workspace.
+
+The freeCodeCamp catalog remains metadata-only. Its plans explicitly prohibit media downloads and transcript ingestion. A download or transcript operation is rejected unless the source is rights-approved and a rights evidence reference is supplied. Model training is always a separate permission and remains disabled by this worker. The daily plan artifact contains task metadata only, never course media.
+
+## Ownership and third-party rights
+
+DreamCo should retain records showing who authored each original lesson and when. DreamCo may claim rights in original expression it creates, subject to applicable law, agreements, and the actual authorship of the work. That does not transfer ownership of third-party course materials. Source links, attribution, license terms, permission evidence, and restrictions remain attached to each lesson. Public availability, a YouTube upload, or another creator's reuse does not by itself grant permission to copy, download, redistribute, or train on that material. When source permissions are uncertain, use only permitted metadata and independently written explanations/examples, and leave media, transcript, redistribution, and model-training gates closed until reviewed.
+
+## Complete freeCodeCamp learning path and per-video study guides
+
+The full source map and ordered learning path live in `config/freecodecamp-complete-learning-path.json`. This includes the seven current core full-stack certification tracks, additional language/C# certifications, current and legacy material, specialist electives, the official YouTube library, technical publication and community/open-source references.
+
+The complete video guide contract is `config/freecodecamp-detailed-video-study-guide.schema.json`. Every catalog video receives a work-queue row; every authorized video must receive a detailed independent guide with timestamped chapter notes, learning objectives, concepts, glossary, code patterns, worked examples, original exercises/projects, debugging playbook, knowledge checks/answer key, division applications, citations and human review.
+
+Build and validate the per-video queue:
+
+```bash
+python tools/build_freecodecamp_study_guides.py --out-dir artifacts/freecodecamp-study-guides
+python -m unittest discover -s tests -p 'test_freecodecamp_study_guides.py' -v
+```
+
+The weekly workflow publishes queue coverage as an artifact. Metadata-only videos remain pending; the generator never invents a summary from a title. A transcript must have separately evidenced study, derivative-summary and evaluation permissions before Buddy may author and retain a detailed guide. Model training remains a separate permission.
+
+
+## DreamCo summary library integration
+
+Approved summary packages created by `tools/organize_buddy_learning_assets.py` are consumable by `buddy.learning.dreamco_summary_source`. This adapter uses the existing evidence-driven `buddy.learning.study_resource_scheduler` rather than introducing a second scheduler.
+
+Build the organization artifact first, then use the adapter:
+- `resources_for_division(canonical_division_name, organization_path)` exposes only packages whose study, derivative-summary, and evaluation permissions are explicitly true.
+- `select_next_for_division(...)` returns the chosen DreamCo summary, full study path, assessment, source revision, rights, and ownership record with status `queued_not_studied`.
+- `append_progress_event(...)` writes append-only JSONL evidence events. Training events are checked against the canonical organization artifact for explicit asset-level training permission. Mastery cannot be self-reported through this event writer; it must come from the independent evidence verifier.
+
+The adapter does not create a guide, fetch private user data, execute model training, or award mastery. The organizer artifact must be generated from validated, approved guides. User-owned data remains in its separate registry and is not copied into the summary packages.
+
+
+## User-designated ownership
+
+Original summaries, explanations, exercises, and study-path structure authored for the user's DreamCo library are recorded as user-designated assets, subject to applicable law, contributor agreements, and upstream license terms. Third-party source materials keep their original ownership and license; source links and attribution remain attached to each summary. User-provided data remains user-owned and separately permissioned.
+
+
+## Summary authoring and execution
+
+Use `buddy/bootcamp/prompts/open-source-study-guide-authoring.md` for original multi-source guide authoring. It requires the complete permitted source bundle, pinned revision, item-level rights evidence, original explanations and exercises, defensible division mapping, and human review. It explicitly blocks metadata-only summaries and keeps training permission separate.
+
+The summary adapter exposes `execute_study_plan(...)`, which runs the approved package through the existing permissioned study worker and its temporary-workspace cleanup boundary. It allows read-only source access only. It records study, lesson, quiz, exercise, capstone-submission and remediation events when the callback supplies evidence; lesson and capstone pass events additionally require an independent evaluator identifier. It never performs model-weight training or awards mastery. Mastery remains a separate evidence-verifier decision.
+
+
+## Buddy AI College and cross-platform subject coverage
+
+The curriculum authority is `config/buddy-university-curriculum.json`; the build standard is `docs/BUDDY_AI_COLLEGE_TRAINING_STANDARD.md`. The university builder maps the 45 knowledge domains, all 55 canonical divisions, Hugging Face model/dataset/Space subjects, freeCodeCamp specialist tracks and video categories, and imported O*NET task statements. It also routes source families outside both platforms, including official vendor documentation, open academic research, government/public data, professional standards and community practice.
+
+ChatGPT is the teacher and Buddy is the student. Each course progresses through foundations, practitioner, advanced and specialist/research levels with lectures/original summaries, worked examples, sandbox labs, independent exercises, projects, retrieval checks, unseen transfer, capstones, remediation and teach-back. The existing scheduler and rights-gated summary adapter remain the execution paths; the university map is a crosswalk and does not claim the source has been studied.
+
+For every occupation/task/venture, use the O*NET task-playbook brief to investigate the actual tools and software relevant to that task, including professional/high-end products, open-source and local alternatives, verified pricing/licensing, APIs, integrations, permissions, safety, operating procedures, unit economics, buyer research and sales/delivery workflows. Never invent product capabilities or attach irrelevant software.
+
+Ownership is recorded as user-designated ownership of original DreamCo-authored instructional expression and structure, subject to applicable law, actual authorship, contributor agreements and upstream licenses. User-provided data remains user-owned, private and separately consented for study, summaries, evaluation, retention and training. Third-party source material and model weights retain their original rights and attribution.
 
 
 ## Task-routed learning across platforms

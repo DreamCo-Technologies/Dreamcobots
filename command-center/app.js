@@ -1,4 +1,4 @@
-const tabs = ["Dashboard", "Buddy", "Bots", "Deals", "Capabilities", "Memory", "Schedule", "Vibe", "Legal"];
+const tabs = ["Dashboard", "Data", "Buddy", "Bots", "Deals", "Capabilities", "Memory", "Schedule", "Vibe", "Legal"];
 let current = "Dashboard";
 
 async function api(path, opts) {
@@ -53,6 +53,33 @@ async function render() {
       <div class="card"><h2>Live Buddy</h2><p><a href="https://dreamco-technologies.github.io/Dreamcobots/" target="_blank">Official Pages</a></p><p><a href="buddy.html">Buddy home</a></p><p><a href="https://github.com/DreamCo-Technologies/DreamCo-Command-Center"" >Command Center repo</a></p></div>
       <div class="card"><h2>Investor export</h2><p>Deals scored: ${exportData.dealsScored}</p><p>Memory: ${exportData.memoryItems}</p><p class="warn">Revenue: ${exportData.revenue}</p></div>
     </div>`;
+  }
+  if (current === "Data") {
+    let data;
+    try {
+      let response;
+      for (const path of ["data/command-center/data-observability.json", "command-center/data/data-observability.json"]) {
+        response = await fetch(path, { cache: "no-store" });
+        if (response.ok) break;
+      }
+      if (!response || !response.ok) throw new Error("Data snapshot unavailable");
+      data = await response.json();
+    } catch {
+      app.innerHTML = '<div class="card"><h2>Data observability</h2><p class="warn">No current snapshot. Run the command-center generator and publish its artifacts.</p></div>';
+      return;
+    }
+    const s = data.summary || {};
+    const safe = (value) => String(value ?? "").replace(/[&<>"\']/g, (char) => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","\'":"&#39;"}[char]));
+    app.innerHTML = `<div class="grid">
+      <div class="card"><h2>Dataset files</h2><p class="ok">${s.repository_dataset_files ?? 0}</p></div>
+      <div class="card"><h2>Dataset cards</h2><p>${s.dataset_cards_or_manifests ?? 0}</p></div>
+      <div class="card"><h2>Training requests</h2><p>${s.training_job_manifests ?? 0}</p><p class="warn">Requests are not completed training</p></div>
+      <div class="card"><h2>Model artifacts</h2><p>${s.model_artifact_files ?? 0}</p></div>
+      <div class="card"><h2>Unknown problem routes</h2><p>${s.unknown_problem_route_artifacts ?? 0}</p></div>
+      <div class="card"><h2>Runtime catalog</h2><p>${s.runtime_catalog_available ? "Available to generator" : "Not present in snapshot environment"}</p></div>
+    </div>
+    <div class="card"><h2>Data sources</h2><p>Adapter presence is not proof of a live connection.</p><div class="grid">${(data.sources || []).map(x => `<div class="card"><strong>${safe(x.kind)}</strong><p>${safe(x.files)} repository files</p><p>${safe(x.status)}</p></div>`).join("")}</div></div>
+    <div class="card"><h2>Governance and coverage</h2><p>Raw dataset rows, credentials and private cards are excluded from this public snapshot.</p><p>Training requests, model artifacts and benchmark outcomes are reported separately.</p><ul>${(data.observability_gaps || []).map(x => `<li>${safe(x)}</li>`).join("")}</ul></div>`;
   }
   if (current === "Buddy") {
     app.innerHTML = `<form id="chat"><textarea id="msg" rows="4" placeholder="Ask Buddy to route a task"></textarea><button class="primary">Send</button></form><div class="log" id="log"></div>`;

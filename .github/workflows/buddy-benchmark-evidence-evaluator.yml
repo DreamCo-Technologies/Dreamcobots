@@ -1,0 +1,26 @@
+name: Buddy Benchmark Evidence Evaluator
+on:
+  pull_request:
+    paths:
+      - "config/buddy-core-capability-benchmark-definitions.json"
+      - "schemas/buddy-benchmark-evidence-packet.schema.json"
+      - "tools/evaluate_buddy_benchmark_packet.py"
+      - "tests/test_buddy_benchmark_evidence_evaluator.py"
+      - ".github/workflows/buddy-benchmark-evidence-evaluator.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: buddy-benchmark-evaluator-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: python -m pip install --disable-pip-version-check pytest
+      - run: python -m pytest -q tests/test_buddy_benchmark_evidence_evaluator.py

@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pretrained Model Store | DreamCo</title>
+<link rel="stylesheet" href="styles.css">
+<style>
+.store{max-width:1120px;margin:40px auto;padding:0 20px}.store-hero{padding:30px;border:1px solid var(--border);border-radius:18px;background:var(--card)}.store-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin:22px 0}.store-card{padding:20px;border:1px solid var(--border);border-radius:14px;background:var(--card)}.store-muted{color:var(--text3)}.store-controls{display:flex;gap:14px;flex-wrap:wrap;align-items:end;margin:20px 0}.store-controls label{display:grid;gap:6px}.store-controls input,.store-controls select{padding:10px;border-radius:8px;max-width:220px}.store-pill{display:inline-block;padding:4px 9px;border-radius:99px;background:var(--surface);font-size:.78rem}.store-warning{padding:14px;border-left:3px solid var(--warning);background:var(--surface);border-radius:8px}.store-empty{padding:30px;text-align:center;border:1px dashed var(--border);border-radius:14px}.store-metric{font-size:1.5rem;font-weight:800}.store-button{display:inline-block;padding:9px 13px;border:1px solid var(--border);border-radius:8px;color:inherit;text-decoration:none}
+</style>
+</head>
+<body><div id="nav-placeholder"></div><script src="nav.js"></script>
+<main class="store">
+<section class="store-hero">
+<p class="store-muted">DREAMCO MODEL MARKETPLACE</p><h1>Pretrained models, matched to your hardware</h1>
+<p>Browse DreamCo-trained weights across model sizes and architectures. Choose local ownership and run inference on your own computer or server. Model size is not capped by the catalog; your hardware determines which models can run comfortably.</p>
+<div class="store-warning"><strong>Store status: catalog foundation</strong><br>Checkout and downloadable model packages are not enabled yet. No model is listed for sale until its weights, license, provenance, and evaluation evidence are verified.</div>
+</section>
+<section class="store-controls" aria-label="Hardware estimator">
+<label>Model parameters<input id="params" type="number" min="1000000" step="1000000" value="45000000"></label>
+<label>Weight format<select id="format"><option value="0.5">4-bit quantized</option><option value="1">8-bit</option><option value="2" selected>16-bit</option><option value="4">32-bit</option></select></label>
+<div><div class="store-muted">Approx. weight memory</div><div class="store-metric" id="memory">0 GB</div></div>
+<div><div class="store-muted">Suggested RAM/VRAM budget</div><div class="store-metric" id="budget">0 GB</div></div>
+</section>
+<p class="store-muted">Estimate uses parameter count × bytes per parameter, plus 25% headroom. It excludes runtime overhead, KV cache, context length, batching, and operating-system memory; actual needs depend on architecture and runtime.</p>
+<section id="model-list" class="store-grid" aria-live="polite"></section>
+<section class="store-card">
+<h2>How model purchases will work</h2>
+<ol>
+<li>Choose a model and review its model card, benchmarks, license, and source-data rights summary.</li>
+<li>Check the required memory, runtime, storage, and expected compute for your device.</li>
+<li>Buy a license/download entitlement when checkout launches. The listing will clearly state whether commercial use, modification, and redistribution are permitted.</li>
+<li>Download the signed model package and verify its SHA-256 digest before loading it into Buddy, Ollama, or another supported runtime.</li>
+</ol>
+<p>Local inference uses your own compute and electricity. DreamCo will not charge hosted-inference fees for work performed entirely on your hardware. Hosted inference, if offered, will be priced separately by usage.</p>
+</section>
+</main>
+<script>
+const params=document.getElementById('params'),format=document.getElementById('format');
+function estimate(){const p=Math.max(0,Number(params.value)||0),b=p*Number(format.value),g=b/1e9;document.getElementById('memory').textContent=g.toFixed(2)+' GB';document.getElementById('budget').textContent=(g*1.25).toFixed(2)+' GB+';}
+params.addEventListener('input',estimate);format.addEventListener('change',estimate);estimate();
+fetch('../config/marketplace/pretrained-model-catalog.json').then(r=>{if(!r.ok)throw Error('catalog unavailable');return r.json()}).then(c=>{
+ const host=document.getElementById('model-list');
+ if(!c.models.length){host.innerHTML='<div class="store-empty"><h2>No approved models listed yet</h2><p class="store-muted">The catalog will populate when DreamCo has trained and verified sale-ready weights. The 45M division blueprints are not trained models.</p><span class="store-pill">0 approved listings</span></div>';return;}
+ host.innerHTML=c.models.filter(m=>m.status==='approved_for_sale').map(m=>'<article class="store-card"><span class="store-pill">'+Number(m.parameter_count).toLocaleString()+' parameters</span><h2>'+escapeHtml(m.display_name)+'</h2><p class="store-muted">'+escapeHtml(m.architecture)+' · '+escapeHtml(m.version)+'</p><p>Minimum memory: '+m.minimum_memory_gb+' GB · Recommended: '+m.recommended_memory_gb+' GB</p><p>License: '+escapeHtml(m.model_license)+'</p><a class="store-button" href="'+escapeAttr(m.model_card)+'">Model card</a></article>').join('');
+}).catch(()=>{document.getElementById('model-list').textContent='Catalog could not be loaded.'});
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function escapeAttr(s){return escapeHtml(s);}
+</script></body></html>

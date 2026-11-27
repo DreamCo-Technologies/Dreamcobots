@@ -38,6 +38,13 @@ class ResourceRegistryTest(unittest.TestCase):
         self.assertIn("XAI_API_KEY", summary["secret_names_to_set"])
         self.assertIn("xai_outputs_for_training", summary["blocked"])
 
+    def test_local_rag_is_wired_into_buddy_library_runtime(self):
+        local_rag = next(item for item in REGISTRY["resources"] if item["id"] == "local_rag")
+        self.assertIn("buddy/learning/runtime_bridge.py", local_rag["wired_into"])
+        self.assertIn("buddy/datasets/unknown_router.py", local_rag["wired_into"])
+        self.assertIn("BuddyLearningBridge", local_rag["gives_buddy"])
+        self.assertIn("unknown-problem router", local_rag["gives_buddy"])
+
     def test_xai_router_entry_stays_contract_only_with_training_block(self):
         router = json.loads((ROOT / "config" / "buddy-model-router.json").read_text())
         xai = next(item for item in router["connectors"] if item["id"] == "xai")
@@ -67,6 +74,32 @@ class ResourceRegistryTest(unittest.TestCase):
     def test_missing_wired_path_fails(self):
         with self.assertRaisesRegex(SystemExit, "wired_into path missing"):
             self.summarize(self.mutated("local_rag", wired_into=["foundry/does_not_exist.py"]))
+
+
+class CompactModelRegistryTest(unittest.TestCase):
+    def test_gpt_54_mini_is_listed_as_a_paid_unverified_inference_route(self):
+        registry = json.loads((ROOT / "config" / "buddy-model-selection-registry.json").read_text(encoding="utf-8"))
+        model = next(row for row in registry["models"] if row["id"] == "gpt-5.4-mini")
+        self.assertEqual(model["model_id"], "gpt-5.4-mini")
+        self.assertEqual(model["provider"], "openai")
+        self.assertEqual(model["availability"], "configuration_required")
+        self.assertEqual(model["connection_status"], "unverified")
+        self.assertTrue(model["requires_per_request_paid_approval"])
+        self.assertEqual(model["benchmark_status"], "not_run")
+
+    def test_openai_mini_weight_training_is_not_claimed(self):
+        registry = json.loads((ROOT / "config" / "buddy-model-selection-registry.json").read_text(encoding="utf-8"))
+        model = next(row for row in registry["models"] if row["id"] == "gpt-5.4-mini")
+        self.assertFalse(model["fine_tuning_supported"])
+        self.assertFalse(model["weight_modification"])
+        self.assertFalse(registry["weight_modification"])
+
+    def test_model_pricing_is_recorded_without_claiming_measured_cost(self):
+        registry = json.loads((ROOT / "config" / "buddy-model-selection-registry.json").read_text(encoding="utf-8"))
+        model = next(row for row in registry["models"] if row["id"] == "gpt-5.4-mini")
+        self.assertEqual(model["price_usd_per_million_tokens"]["input"], 0.75)
+        self.assertEqual(model["price_usd_per_million_tokens"]["output"], 4.5)
+        self.assertIsNone(model["cost"])
 
 
 if __name__ == "__main__":

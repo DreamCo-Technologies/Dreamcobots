@@ -1,5 +1,5 @@
-const SHELL_CACHE = 'buddy-shell-v61';
-const RUNTIME_CACHE = 'buddy-runtime-v61';
+const SHELL_CACHE = 'buddy-shell-v64';
+const RUNTIME_CACHE = 'buddy-runtime-v64';
 const APP_SHELL = [
   './',
   './buddy.html',
@@ -80,6 +80,13 @@ const APP_SHELL = [
   './buddy-invention-lab.js',
   './data/buddy-expert-mode.js',
   './data/buddy-resource-connection-catalog.json',
+  './technology-radar.html',
+  './technology-radar.js',
+  './data/buddy-technology-radar.json',
+  './data/technology-discovery-policy.json',
+  './markdown-gap-audit.html',
+  './markdown-gap-audit.js',
+  './data/markdown-implementation-gap-audit.json',
   './data/buddy-connection-catalog.json',
   './data/bot-fleet-catalog.json',
   './data/command-center/divisions.json',
@@ -88,7 +95,7 @@ const APP_SHELL = [
   './security.js',
   './test-center.html',
   './test-center.css?v=4',
-  './test-center.js?v=4',
+  './test-center.js?v=5',
   './styles.css?v=41',
   './styles.css?v=42',
   './nav.js',
@@ -107,7 +114,7 @@ const APP_SHELL = [
   './data/buddy-success-program.js?v=2',
   './data/repository-test-registry.json?v=4',
   './data/buddy-benchmark-index.js?v=1',
-  './data/buddy-fleet-quality-program.js?v=2',
+  './data/buddy-fleet-quality-program.js?v=3',
   './data/buddy-self-improvement.js?v=1',
   './data/buddy-capability-certifications.js',
   './data/buddy-distribution-catalog.json',

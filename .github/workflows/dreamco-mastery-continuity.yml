@@ -1,0 +1,54 @@
+name: DreamCo Mastery Continuity
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "config/dreamco-mastery-continuity-registry.json"
+      - "tools/validate_dreamco_mastery_registry.py"
+      - ".github/workflows/dreamco-mastery-continuity.yml"
+  push:
+    branches: [main]
+    paths:
+      - "config/dreamco-mastery-continuity-registry.json"
+      - "tools/validate_dreamco_mastery_registry.py"
+      - ".github/workflows/dreamco-mastery-continuity.yml"
+  schedule:
+    - cron: "17 13 * * *"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: dreamco-mastery-continuity-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate-and-publish-queue:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
+      - name: Validate canonical goal registry and build daily queue
+        run: python3 tools/validate_dreamco_mastery_registry.py
+      - name: Publish daily queue summary
+        if: always()
+        run: |
+          if [ -f reports/DREAMCO_MASTERY_DAILY_QUEUE.md ]; then
+            cat reports/DREAMCO_MASTERY_DAILY_QUEUE.md >> "$GITHUB_STEP_SUMMARY"
+          fi
+      - name: Preserve queue evidence
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: dreamco-mastery-queue-${{ github.run_id }}
+          path: |
+            reports/DREAMCO_MASTERY_DAILY_QUEUE.md
+            reports/DREAMCO_MASTERY_DAILY_QUEUE.json
+          if-no-files-found: warn
+          retention-days: 90

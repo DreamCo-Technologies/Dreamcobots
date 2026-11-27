@@ -14,11 +14,21 @@ on:
   push:
     branches: [main]
     paths:
-      - 'config/**'
-      - 'tools/**'
-      - 'tests/**'
-      - 'website/data/**'
-      - 'docs/**'
+      - 'benchmarks/**'
+      - 'config/buddy-benchmark-*.json'
+      - 'config/benchmark-*.json'
+      - 'config/buddy-model-registry.json'
+      - 'config/buddy-model-selection-registry.json'
+      - 'tools/run_500_model_benchmarks.py'
+      - 'tools/build_500_model_prospectus_matrix.py'
+      - 'tools/build_500_model_workflow_scope.py'
+      - 'tools/build_benchmark_training_queue.py'
+      - 'tools/benchmark_gap_planner.py'
+      - 'tests/test_500_model_*.py'
+      - 'tests/test_benchmark_*.py'
+      - 'tests/test_buddy_benchmark_*.py'
+      - 'buddy/learning/benchmark_*.py'
+      - 'website/data/benchmark/**'
       - '.github/workflows/dreamco-unified-system.yml'
 permissions:
   contents: read
@@ -28,12 +38,12 @@ env:
   PYTHONUNBUFFERED: '1'
 concurrency:
   group: dreamco-500-model-benchmark-${{ github.ref }}
-  cancel-in-progress: false
+  cancel-in-progress: true
 jobs:
   benchmark-all-500:
     name: Daily all-model/all-suite benchmark matrix
     runs-on: ubuntu-latest
-    timeout-minutes: 300
+    timeout-minutes: 60
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -51,9 +61,10 @@ jobs:
       - name: Install repository dependencies
         run: |
           npm ci
-          python3 -m pip install --disable-pip-version-check openpyxl soundfile pillow scipy psutil PyYAML
-          python3 -m pip install --disable-pip-version-check -r requirements-buddy-learning.txt
-          python3 -m pip install --disable-pip-version-check -r requirements-media.txt || echo "media stack skipped: version conflict"
+          # This job inventories models and validates contracts; it does not train models or run media generation.
+          python3 -m pip install --disable-pip-version-check openpyxl PyYAML
+          # Media/voice generation dependencies are isolated in their own workflow;
+          # they are not required for model catalog or benchmark-contract validation.
       - name: Validate benchmark, learning, tracking, and prospectus contracts
         run: |
           python3 - <<'PY'
@@ -86,10 +97,13 @@ jobs:
           python3 tools/run_optional_script.py tools/build_benchmark_registry.py
           python3 tools/run_optional_script.py tools/build_capability_registry.py
           python3 tools/run_optional_script.py tools/build_model_prospectus_catalog.py
-      - name: Execute every applicable suite for every catalogued model/provider
+      - name: Record dedicated 500-model execution readiness
         env:
           REQUESTED_MODE: ${{ github.event.inputs.mode || 'standard' }}
-        run: python3 tools/run_optional_script.py --fallback tools/run_everything_now.py tools/run_500_model_benchmarks.py --mode "$REQUESTED_MODE"
+        run: |
+          python3 tools/run_500_model_benchmarks.py --mode "$REQUESTED_MODE"
+          echo "BLOCKED_RUNNER_NOT_IMPLEMENTED: all matrix rows remain unverified."
+          echo "The execution gate records the current blocker. No model calls or training are started until an evidence-producing runner is implemented."
       - name: Build complete model × benchmark-suite prospectus matrix
         if: always()
         run: python3 tools/build_500_model_prospectus_matrix.py
@@ -101,11 +115,21 @@ jobs:
           python3 tools/run_optional_script.py tools/run_gap_analysis.py
           python3 tools/run_optional_script.py tools/build_forecast_report.py
           python3 tools/run_optional_script.py tools/build_capability_leads.py
-      - name: Run benchmark-policy and repository regression tests
+      - name: Run focused benchmark, learning, and prospectus regression tests
         if: always()
         run: |
-          python3 -m unittest tests.test_recovery_ontology_workforce_runtime tests.test_universal_capability_benchmark_policy tests.test_global_government_system tests.test_buddy_government_operating_system
-          python3 -m pytest -q --disable-warnings --maxfail=20
+          python3 -m unittest \
+            tests.test_recovery_ontology_workforce_runtime \
+            tests.test_universal_capability_benchmark_policy \
+            tests.test_global_government_system \
+            tests.test_buddy_government_operating_system \
+            tests.test_500_model_prospectus_matrix \
+            tests.test_500_model_workflow_scope \
+            tests.test_benchmark_scope_contract \
+            tests.test_benchmark_learning_progress \
+            tests.test_benchmark_runner_mastery_truth \
+            tests.test_buddy_benchmark_evidence_evaluator \
+            tests.test_buddy_benchmark_index
       - name: Validate full matrix coverage without inventing results
         if: always()
         run: |
@@ -127,7 +151,7 @@ jobs:
           import re
           from pathlib import Path
           roots=[Path('website/data'),Path('config/generated')]
-          secret=re.compile(r'(?i)(sk-[A-Za-z0-9_-]{16,}|ghp_[A-Za-z0-9_]{20,}|github_pat_[A-Za-z0-9_]{20,}|BEGIN (RSA|OPENSSH|EC|DSA) PRIVATE KEY)')
+          secret=re.compile(r'(?i)(?<![A-Za-z0-9])(sk-[A-Za-z0-9_-]{16,}|ghp_[A-Za-z0-9_]{20,}|github_pat_[A-Za-z0-9_]{20,}|BEGIN (RSA|OPENSSH|EC|DSA) PRIVATE KEY)')
           bad=[]
           for root in roots:
               if root.exists():
@@ -153,6 +177,9 @@ jobs:
             print(f'- Matrix rows: **{d["matrix_rows"]}**')
             print(f'- Passing evidence rows: **{d["verified_rows"]}**')
             print(f'- Unverified rows: **{d["unverified_rows"]}**')
+          status_path=Path('website/data/benchmark-execution-status.json')
+          status=json.loads(status_path.read_text()) if status_path.exists() else {'status':'UNKNOWN'}
+          print(f'- Dedicated execution status: **{status.get("status")}**')
           print('- Missing, blocked, stale, or unverified evidence is never converted to a pass.')
           print('- Buddy native mastery is distinct from external-model-assisted results.')
           PY

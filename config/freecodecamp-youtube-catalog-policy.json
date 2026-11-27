@@ -1,0 +1,61 @@
+{
+  "schema": "dreamco.educational_video_catalog_policy.v1",
+  "version": "1.0.0",
+  "source": {
+    "publisher": "freeCodeCamp.org",
+    "channel_id": "UC8butISFwT-Wl7EV0hUK0BQ",
+    "channel_url": "https://www.youtube.com/@freecodecamp",
+    "platform": "YouTube",
+    "discovery_method": "YouTube Data API v3 channel uploads playlist",
+    "api_documentation": [
+      "https://developers.google.com/youtube/v3/docs/channels/list",
+      "https://developers.google.com/youtube/v3/docs/playlistItems/list",
+      "https://developers.google.com/youtube/v3/docs/videos/list"
+    ]
+  },
+  "catalog_scope": {
+    "include_all_public_channel_uploads": true,
+    "paginate_until_exhausted": true,
+    "refresh_mode": "incremental_metadata_refresh",
+    "metadata_fields": ["video_id", "title", "description", "published_at", "duration", "tags", "youtube_category_id", "video_url"],
+    "transcripts": "NOT_FETCHED_BY_DEFAULT",
+    "video_or_audio_download": false,
+    "source_code_or_course_file_download": false
+  },
+  "classification": {
+    "mode": "multi_label_keyword_and_tag_rules",
+    "human_review": "required_for_training_or_certification",
+    "categories": [
+      "programming_foundations", "python", "javascript_typescript", "web_html_css",
+      "frontend", "backend_apis", "databases_sql", "data_engineering",
+      "data_science", "machine_learning", "deep_learning", "generative_ai",
+      "agents_automation", "devops_cloud", "cybersecurity", "computer_science",
+      "algorithms_data_structures", "math_statistics", "mobile_development",
+      "game_development", "design_ux", "career_interview", "business_product",
+      "linux_networking", "other_needs_review"
+    ],
+    "skill_levels": ["beginner", "intermediate", "advanced", "mixed", "unknown"],
+    "division_assignment": "candidate_tags_only_owner_approval_required"
+  },
+  "learning_use": {
+    "default_plane": "third_party_reference_only",
+    "allowed_default_outputs": ["video_link", "title", "metadata", "timestamped_notes_when_lawful", "original_exercises", "original_quizzes", "skill_maps", "citations"],
+    "copy_video_or_transcript_into_training_data": false,
+    "teacher_outputs_training_rights": "separate_review_required",
+    "training_permission": "NOT_GRANTED_BY_CATALOGING",
+    "commercial_redistribution": "NOT_GRANTED_BY_CATALOGING",
+    "attribution_required": true
+  },
+  "privacy_and_safety": {
+    "collect_viewer_personal_data": false,
+    "collect_comments_or_user_profiles": false,
+    "store_api_key_in_repository": false,
+    "api_key_environment_variable": "YOUTUBE_DATA_API_KEY",
+    "respect_youtube_api_terms_and_quota": true
+  },
+  "completion_truth": {
+    "catalog_complete_only_when": ["pagination_exhausted", "all_video_ids_deduplicated", "metadata_fetch_complete_or_individually_recorded_as_unavailable", "catalog_timestamp_and_source_channel_recorded"],
+    "classification_complete_only_when": "every_video_has_one_or_more_categories_or_other_needs_review",
+    "does_not_mean": ["transcripts_were_read", "content_was_training_licensed", "videos_were_downloaded", "models_were_trained", "users_completed_courses"]
+  }
+}

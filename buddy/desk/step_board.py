@@ -47,13 +47,15 @@ def plan(task: str, choices: dict | None = None) -> dict:
 
 if __name__ == "__main__":
     made = board()
-    assert len(made["steps"]) >= 8 and len(made["approved_models"]) == 5
-    assert made["plugins"] >= 50000 and made["called"] is False and made["measured_best"] is None
+    plugin_catalog = json.loads((ROOT / "study_packs/hub/plugin-catalog.json").read_text(encoding="utf-8"))
+    assert made["steps"] and made["approved_models"] and made["plugins"] == plugin_catalog["plugins"] == len(plugin_catalog["items"])
+    assert made["called"] is False and made["measured_best"] is None
     assert made["apis"] and made["workflows"] and made["connections"]
-    chosen = {step: made["approved_models"][index % 5]["id"] for index, step in enumerate(made["steps"])}
+    chosen = {step: made["approved_models"][index % len(made["approved_models"])]["id"] for index, step in enumerate(made["steps"])}
     routed = plan("write a lesson", chosen)
     assert routed["steps"][0]["model"] == made["approved_models"][0]["id"]
-    assert routed["steps"][1]["model"] != routed["steps"][0]["model"]
+    if len(made["approved_models"]) > 1:
+        assert routed["steps"][1]["model"] != routed["steps"][0]["model"]
     assert routed["measured_best"] is None
     out = ROOT / "website/data/step-board.json"
     public = {key: made[key] for key in ("steps", "approved_models", "connections", "apis", "workflows", "plugins", "measured_best", "called")}

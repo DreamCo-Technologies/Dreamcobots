@@ -1,0 +1,314 @@
+{
+  "schema": "dreamco.buddy_library_ecosystem_adapter_coverage.v1",
+  "purpose": "Honest adapter coverage for the existing 38 ecosystem discovery lanes. Manual status means official catalog review is required and no automated search adapter is implemented.",
+  "worldwide_completeness_claimed": false,
+  "ecosystem_count": 38,
+  "ecosystems": [
+    {
+      "id": "python",
+      "registry_source": "https://pypi.org/",
+      "discovery_mode": "exact_lookup",
+      "provider": "pypi-exact",
+      "adapter_status": "implemented_exact_lookup",
+      "limitation": "PyPI API adapter resolves known package names; no global ranked search."
+    },
+    {
+      "id": "javascript",
+      "registry_source": "https://www.npmjs.com/",
+      "discovery_mode": "query_api",
+      "provider": "npm",
+      "adapter_status": "implemented_query_api",
+      "limitation": "Ranked search results; pagination is caller-controlled."
+    },
+    {
+      "id": "java",
+      "registry_source": "https://central.sonatype.com/",
+      "discovery_mode": "query_api",
+      "provider": "maven-central",
+      "adapter_status": "implemented_query_api",
+      "limitation": "Maven Central search metadata only; result ranking and pagination depend on Maven Central's index."
+    },
+    {
+      "id": "dotnet",
+      "registry_source": "https://www.nuget.org/",
+      "discovery_mode": "query_api",
+      "provider": "nuget",
+      "adapter_status": "implemented_query_api",
+      "limitation": "NuGet search metadata only."
+    },
+    {
+      "id": "rust",
+      "registry_source": "https://crates.io/",
+      "discovery_mode": "query_api",
+      "provider": "crates",
+      "adapter_status": "implemented_query_api",
+      "limitation": "crates.io search metadata only."
+    },
+    {
+      "id": "go",
+      "registry_source": "https://pkg.go.dev/",
+      "discovery_mode": "manual_first_party_catalog",
+      "provider": null,
+      "adapter_status": "manual_review_required",
+      "limitation": "No stable public package search adapter is enabled."
+    },
+    {
+      "id": "ruby",
+      "registry_source": "https://rubygems.org/",
+      "discovery_mode": "query_api",
+      "provider": "rubygems",
+      "adapter_status": "implemented_query_api",
+      "limitation": "RubyGems search metadata only."
+    },
+    {
+      "id": "php",
+      "registry_source": "https://packagist.org/",
+      "discovery_mode": "query_api",
+      "provider": "packagist",
+      "adapter_status": "implemented_query_api",
+      "limitation": "Packagist search metadata only."
+    },
+    {
+      "id": "dart",
+      "registry_source": "https://pub.dev/",
+      "discovery_mode": "manual_first_party_catalog",
+      "provider": null,
+      "adapter_status": "manual_review_required",
+      "limitation": "pub.dev metadata integration is not implemented."
+    },
+    {
+      "id": "swift",
+      "registry_source": "https://swift.org/",
+      "discovery_mode": "manual_first_party_catalog",
+      "provider": null,
+      "adapter_status": "manual_review_required",
+      "limitation": "Swift Package Index discovery is not implemented."
+    },
+    {
+      "id": "objective-c",
+      "registry_source": "https://cocoapods.org/",
+      "discovery_mode": "manual_first_party_catalog",
+      "provider": null,
+      "adapter_status": "manual_review_required",
+      "limitation": "CocoaPods index discovery is not implemented."
+    },
+    {
+      "id": "cpp",
+      "registry_source": "https://conan.io/center",
+      "discovery_mode": "manual_first_party_catalog",
+      "provider": null,
+      "adapter_status": "manual_review_required",
+      "limitation": "Conan Center metadata integration is not implemented."
+    },
+    {
+      "id": "r",
+      "registry_source": "https://cran.r-project.org/",
+      "discovery_mode": "manual_first_party_catalog",
+      "provider": null,
+      "adapter_status": "manual_review_required",
+      "limitation": "CRAN index metadata ingestion is not implemented."
+    },
+    {
+      "id": "julia",
+      "registry_source": "https://julialang.org/",
+      "discovery_mode": "manual_first_party_catalog",
+      "provider": null,
+      "adapter_status": "manual_review_required",
+      "limitation": "Julia General registry ingestion is not implemented."
+    },
+    {
+      "id": "perl",
+      "registry_source": "https://www.cpan.org/",
+      "discovery_mode": "query_api",
+      "provider": "metacpan",
+      "adapter_status": "implemented_query_api",
+      "limitation": "MetaCPAN release metadata only; source/license fields may be absent and must be reviewed before guide approval."
+    },
+    {
+      "id": "lua",
+      "registry_source": "https://luarocks.org/",
+      "discovery_mode": "manual_first_party_catalog",
+      "provider": null,
+      "adapter_status": "manual_review_required",
+      "limitation": "LuaRocks search is not implemented."
+    },
+    {
+      "id": "haskell",
+      "registry_source": "https://hackage.haskell.org/",
+      "discovery_mode": "manual_first_party_catalog",
+      "provider": null,
+      "adapter_status": "manual_review_required",
+      "limitation": "Hackage package index adapter is not implemented."
+    },
+    {
+      "id": "elixir",
+      "registry_source": "https://hex.pm/",
+      "discovery_mode": "manual_first_party_catalog",
+      "provider": null,
+      "adapter_status": "manual_review_required",
+      "limitation": "Hex metadata adapter is not implemented."
+    },
+    {
+      "id": "nim",
+      "registry_source": "https://nimble.directory/",
+      "discovery_mode": "manual_first_party_catalog",
+      "provider": null,
+      "adapter_status": "manual_review_required",
+      "limitation": "Nimble package index adapter is not implemented."
+    },
+    {
+      "id": "ocaml",
+      "registry_source": "https://opam.ocaml.org/",
+      "discovery_mode": "manual_first_party_catalog",
+      "provider": null,
+      "adapter_status": "manual_review_required",
+      "limitation": "OPAM package index adapter is not implemented."
+    },
+    {
+      "id": "racket",
+      "registry_source": "https://pkgs.racket-lang.org/",
+      "discovery_mode": "manual_first_party_catalog",
+      "provider": null,
+      "adapter_status": "manual_review_required",
+      "limitation": "Racket package index adapter is not implemented."
+    },
+    {
+      "id": "conda",
+      "registry_source": "https://conda-forge.org/",
+      "discovery_mode": "manual_first_party_catalog",
+      "provider": null,
+      "adapter_status": "manual_review_required",
+      "limitation": "Conda-forge metadata integration is not implemented."
+    },
+    {
+      "id": "docker",
+      "registry_source": "https://hub.docker.com/",
+      "discovery_mode": "manual_first_party_catalog",
+      "provider": null,
+      "adapter_status": "manual_review_required",
+      "limitation": "Docker Hub catalog integration is not implemented."
+    },
+    {
+      "id": "terraform",
+      "registry_source": "https://registry.terraform.io/",
+      "discovery_mode": "manual_first_party_catalog",
+      "provider": null,
+      "adapter_status": "manual_review_required",
+      "limitation": "Terraform Registry metadata integration is not implemented."
+    },
+    {
+      "id": "helm",
+      "registry_source": "https://artifacthub.io/",
+      "discovery_mode": "manual_first_party_catalog",
+      "provider": null,
+      "adapter_status": "manual_review_required",
+      "limitation": "Artifact Hub package search integration is not implemented."
+    },
+    {
+      "id": "github-actions",
+      "registry_source": "https://github.com/marketplace?type=actions",
+      "discovery_mode": "manual_first_party_catalog",
+      "provider": null,
+      "adapter_status": "manual_review_required",
+      "limitation": "GitHub Marketplace action discovery is not implemented."
+    },
+    {
+      "id": "raku",
+      "registry_source": "https://raku.land/",
+      "discovery_mode": "manual_first_party_catalog",
+      "provider": null,
+      "adapter_status": "manual_review_required",
+      "limitation": "Raku ecosystem index integration is not implemented."
+    },
+    {
+      "id": "d",
+      "registry_source": "https://code.dlang.org/",
+      "discovery_mode": "manual_first_party_catalog",
+      "provider": null,
+      "adapter_status": "manual_review_required",
+      "limitation": "DUB package registry integration is not implemented."
+    },
+    {
+      "id": "crystal",
+      "registry_source": "https://shardbox.org/",
+      "discovery_mode": "manual_first_party_catalog",
+      "provider": null,
+      "adapter_status": "manual_review_required",
+      "limitation": "Shardbox discovery integration is not implemented."
+    },
+    {
+      "id": "elm",
+      "registry_source": "https://package.elm-lang.org/",
+      "discovery_mode": "manual_first_party_catalog",
+      "provider": null,
+      "adapter_status": "manual_review_required",
+      "limitation": "Elm package catalog integration is not implemented."
+    },
+    {
+      "id": "clojure",
+      "registry_source": "https://clojars.org/",
+      "discovery_mode": "manual_first_party_catalog",
+      "provider": null,
+      "adapter_status": "manual_review_required",
+      "limitation": "Clojars metadata integration is not implemented."
+    },
+    {
+      "id": "matlab",
+      "registry_source": "https://www.mathworks.com/matlabcentral/fileexchange/",
+      "discovery_mode": "manual_first_party_catalog",
+      "provider": null,
+      "adapter_status": "manual_review_required",
+      "limitation": "MATLAB File Exchange search is not implemented."
+    },
+    {
+      "id": "powershell",
+      "registry_source": "https://www.powershellgallery.com/",
+      "discovery_mode": "manual_first_party_catalog",
+      "provider": null,
+      "adapter_status": "manual_review_required",
+      "limitation": "PowerShell Gallery search is not implemented."
+    },
+    {
+      "id": "solidity",
+      "registry_source": "https://www.npmjs.com/",
+      "discovery_mode": "query_api",
+      "provider": "npm",
+      "adapter_status": "implemented_query_api",
+      "limitation": "npm search can discover JS SDKs; Solidity contract tooling needs additional registry review."
+    },
+    {
+      "id": "move",
+      "registry_source": "https://github.com/",
+      "discovery_mode": "manual_first_party_catalog",
+      "provider": null,
+      "adapter_status": "manual_review_required",
+      "limitation": "Move package ecosystem discovery requires chain-specific official indexes."
+    },
+    {
+      "id": "embedded",
+      "registry_source": "https://registry.platformio.org/",
+      "discovery_mode": "manual_first_party_catalog",
+      "provider": null,
+      "adapter_status": "manual_review_required",
+      "limitation": "PlatformIO registry adapter is not implemented."
+    },
+    {
+      "id": "game-engines",
+      "registry_source": "https://godotengine.org/asset-library/",
+      "discovery_mode": "manual_first_party_catalog",
+      "provider": null,
+      "adapter_status": "manual_review_required",
+      "limitation": "Godot Asset Library discovery is not implemented."
+    },
+    {
+      "id": "ml-model-tools",
+      "registry_source": "https://huggingface.co/docs",
+      "discovery_mode": "query_api",
+      "provider": "huggingface-models;huggingface-datasets",
+      "adapter_status": "implemented_query_api",
+      "limitation": "Model/dataset metadata only; no weight or dataset download."
+    }
+  ],
+  "automated_ecosystem_count": 10,
+  "manual_ecosystem_count": 28
+}

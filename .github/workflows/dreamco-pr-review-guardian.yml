@@ -1,7 +1,6 @@
 name: DreamCo PR Review Guardian
 
 on:
-  push: {}
   pull_request:
     types: [opened, synchronize, reopened, ready_for_review]
   schedule:
@@ -15,7 +14,7 @@ permissions:
 
 concurrency:
   group: dreamco-pr-review-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   review-guardian:

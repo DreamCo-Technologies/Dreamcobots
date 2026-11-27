@@ -1,0 +1,89 @@
+{
+  "schema_version": "dreamco.learning_video_source_catalog.v1",
+  "generated_at": "2026-11-24",
+  "status": "seed_catalog_not_full_video_ingestion",
+  "rights_policy": "Store metadata and links by default. Retrieve captions only when creator-provided, licensed, or owner-authorized. Do not copy full transcripts or course content into training sets without permission.",
+  "sources": [
+    {
+      "source_id": "fcc-glm53-2026-11-14",
+      "provider": "freeCodeCamp.org",
+      "title": "Build and Train a GLM-5.3-Flash Model From Scratch with Python",
+      "article_url": "https://www.freecodecamp.org/news/build-and-train-a-glm-53-flash-model-from-scratch-with-python",
+      "youtube_url": "https://www.youtube.com/watch?v=-gfgQfw2g_E",
+      "youtube_video_id": "-gfgQfw2g_E",
+      "publication_date": "2026-11-14",
+      "duration_minutes": 44,
+      "github_source_repository": "https://github.com/vukrosic/glm-5.3-flash-from-scratch",
+      "source_repository_license": "MIT",
+      "source_repository_license_url": "https://github.com/vukrosic/glm-5.3-flash-from-scratch/blob/main/LICENSE",
+      "metadata_confidence": "high_for_article_and_repo; duration_from_video_description",
+      "captions_status": "not_downloaded; creator authorization not established",
+      "lesson_topics": [
+        "Byte-level tokenization and embeddings",
+        "Linear and sparse attention",
+        "Mixture-of-Experts routing",
+        "Image patch embeddings and 2D positional encoding",
+        "Pretraining data diversity, interleaving and curriculum",
+        "Executable-reward reinforcement learning",
+        "GRPO-style advantage estimation and partial-layer updates",
+        "Multi-seed evaluation and regression analysis"
+      ],
+      "rough_lesson_outline": {
+        "status": "outline_only; full per-video summary is deferred to the final all-video summarization pass",
+        "sections": [
+          "Model goal, scale, and educational limitations",
+          "Tokenizer and embedding design",
+          "Transformer forward path and attention blocks",
+          "Expert routing and shared expert",
+          "Optional image input path",
+          "Pretraining data and experiment design",
+          "Executable test reward and RL post-training",
+          "Held-out evaluation, seed variance, and regressions"
+        ],
+        "original_exercises_to_author": [
+          "Inspect parameter count and architecture configuration",
+          "Run tokenizer round-trip and tensor-shape tests",
+          "Reproduce a small pretraining run with a fixed seed",
+          "Compare interleaved and blocked example orderings",
+          "Run the executable-reward test harness",
+          "Report held-out results and regressions across multiple seeds"
+        ]
+      },
+      "model_reproduction_caveat": "The repository README describes a 25.7M-parameter educational scaled implementation. It explicitly distinguishes its simplified attention, expert, residual-stream and vision components from the full proprietary GLM-5.3-Flash system. Its narrow synthetic coding benchmark is not evidence of general coding competence.",
+      "ingest_status": "metadata_cataloged; repository_reviewed_at_readme_and_license_level; no transcript or model weights ingested"
+    },
+    {
+      "source_id": "fcc-25m-cpu-2026-10-08",
+      "provider": "freeCodeCamp.org",
+      "title": "Build and Train a 25M Parameter LLM From Scratch on Your CPU",
+      "article_url": "https://www.freecodecamp.org/news/build-and-train-a-25m-parameter-llm-from-scratch-on-your-cpu/",
+      "youtube_url": "https://www.youtube.com/watch?v=-gfgQfw2g_E",
+      "youtube_video_id": "-gfgQfw2g_E",
+      "publication_date": "2026-10-08",
+      "duration_minutes": 60,
+      "github_source_repository": null,
+      "metadata_confidence": "high_for_article_and_official_youtube_link; source_repository_not_yet_verified",
+      "captions_status": "not_downloaded; creator authorization not established",
+      "lesson_topics": [
+        "Hybrid linear and sparse attention",
+        "Mixture of Experts",
+        "Tied embedding weights",
+        "Multimodal image patch inputs",
+        "Pretraining from random initialization with cross-entropy",
+        "Executable unit-test rewards for reinforcement learning",
+        "Research hypotheses, temperature and reward design",
+        "Statistical significance across multiple seeds"
+      ],
+      "rough_lesson_outline": {
+        "status": "metadata_topics_only; full per-video summary is deferred to the final all-video summarization pass",
+        "next_actions": [
+          "Resolve the exact source repository from the official video description",
+          "Inspect repository and directory-level licenses",
+          "Compare the code and experiments with DreamCo's independent implementation"
+        ]
+      },
+      "ingest_status": "article_and_youtube_metadata_cataloged; source_repository_resolution_pending; no transcript or model weights ingested",
+      "youtube_resolution_evidence": "Resolved from the official freeCodeCamp article's own YouTube channel link; article link redirects to the exact video."
+    }
+  ]
+}

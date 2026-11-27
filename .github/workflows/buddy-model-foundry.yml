@@ -1,0 +1,83 @@
+name: Buddy Model Foundry
+on:
+  pull_request:
+    paths:
+      - "buddy/learning/model_foundry.py"
+      - "tools/build_division_training_matrix.py"
+      - "tools/train_buddy_division_model.py"
+      - "config/authorized-training-datasets/manifest.json"
+      - "config/masterbot-65-registry.json"
+      - "tests/test_model_foundry.py"
+      - ".github/workflows/buddy-model-foundry.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: buddy-model-foundry-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  test:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Compile Model Foundry source and entry points
+        run: python -m compileall -q buddy/learning/model_foundry.py tools/build_division_training_matrix.py tools/train_buddy_division_model.py
+      - name: Test license gate, hashes and 65-division planner
+        run: python -m unittest discover -s tests -p 'test_model_foundry.py' -v
+  plan:
+    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'
+    runs-on: [self-hosted, dreamco-private-training]
+    environment: dreamco-private-training
+    outputs:
+      matrix: ${{ steps.plan.outputs.matrix }}
+      eligible: ${{ steps.plan.outputs.eligible }}
+      blocked: ${{ steps.plan.outputs.blocked }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Build rights-checked 65-division matrix on private runner
+        id: plan
+        run: python tools/build_division_training_matrix.py
+      - name: Print coverage without exposing dataset contents
+        run: |
+          echo "Eligible division jobs: ${{ steps.plan.outputs.eligible }}"
+          echo "Blocked pending authorized local datasets: ${{ steps.plan.outputs.blocked }}"
+  train:
+    needs: plan
+    if: github.event_name == 'workflow_dispatch' && needs.plan.outputs.eligible != '0'
+    runs-on: [self-hosted, dreamco-private-training]
+    environment: dreamco-private-training
+    timeout-minutes: 240
+    strategy:
+      fail-fast: false
+      max-parallel: 4
+      matrix: ${{ fromJSON(needs.plan.outputs.matrix) }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install CPU training runtime
+        run: python -m pip install --upgrade pip torch
+      - name: Create owner-controlled checkpoint directory
+        run: mkdir -p "$HOME/DreamCo-models"
+      - name: Train division model from random initialization
+        run: |
+          python tools/train_buddy_division_model.py \
+            --division-id "${{ matrix.division_id }}" \
+            --dataset-id "${{ matrix.dataset_id }}" \
+            --dataset-path "${{ matrix.dataset_path }}" \
+            --strategy "${{ matrix.strategy }}" \
+            --seed "${{ matrix.seed }}" \
+            --steps 100 \
+            --output "$HOME/DreamCo-models/division-${{ matrix.division_id }}.pt"
+      - name: Record local-only completion receipt
+        run: |
+          sha256sum "$HOME/DreamCo-models/division-${{ matrix.division_id }}.pt"
+          cat "$HOME/DreamCo-models/division-${{ matrix.division_id }}.pt.json"

@@ -2,14 +2,13 @@ name: Run Everything Now
 on:
   workflow_dispatch:
     inputs:
-      mode: {description: "quick, standard, or maximum", required: false, default: "maximum"}
+      mode: {description: "quick, standard, or maximum", required: false, default: "standard"}
   schedule:
-    - cron: "11 */6 * * *"
-  push:
-    branches: [main]
-    paths: ["App_bots/**","original-bots/**","bots/**","attached_assets/**","config/**","tools/**","tests/**","server/**","shared/**","docs/**",".github/agents/**",".github/workflows/run-everything-now.yml"]
+    - cron: "11 5 * * *"
 permissions: {contents: read, issues: write, actions: read}
-concurrency: {group: "run-everything-now-${{ github.ref }}", cancel-in-progress: false}
+concurrency:
+  group: "run-everything-now-${{ github.ref }}-${{ github.event_name == 'workflow_dispatch' && 'manual' || 'automatic' }}"
+  cancel-in-progress: ${{ github.event_name != 'workflow_dispatch' }}
 jobs:
   run-all:
     runs-on: ubuntu-latest
@@ -26,6 +25,8 @@ jobs:
         run: |
           npm ci
           python3 -m pip install --disable-pip-version-check openpyxl
+      - name: Validate Run Everything mode dependency plans
+        run: python3 -m unittest discover -s tests -p 'test_run_everything_now.py' -v
       - name: Refresh generated verification contracts
         run: |
           python3 tools/generate_repository_test_registry.py
@@ -38,12 +39,17 @@ jobs:
       - name: Build O*NET work and AI specialist catalog
         continue-on-error: true
         run: python3 tools/build_universal_work_ai_catalog.py
+      - name: Refresh current Buddy fleet E2E evidence before full verification
+        run: node --import tsx tools/run_bot_fleet_e2e.ts
       - name: Run everything
         continue-on-error: true
         env: {REQUESTED_MODE: "${{ github.event.inputs.mode }}"}
         run: |
-          mode="${REQUESTED_MODE:-maximum}"
+          mode="${REQUESTED_MODE:-standard}"
           python3 tools/run_everything_now.py --mode "$mode"
+      - name: Refresh final fleet E2E evidence
+        if: always()
+        run: node --import tsx tools/run_bot_fleet_e2e.ts
       - name: Rebuild final progress status
         if: always()
         run: python3 tools/build_system_progress_status.py
@@ -108,6 +114,11 @@ jobs:
             reports/LEGACY_BOT_RECOVERY.md
             reports/LEGACY_BOT_PROMOTION_BACKLOG.md
             reports/LEGACY_CAPABILITY_MERGE_PROPOSALS.md
+            reports/BOT_FLEET_E2E.md
+            website/data/bot-fleet-e2e.json
+            website/data/buddy-capability-certifications.js
+            website/data/bot-capability-tests/**
+            tmp/dreamco-verification/**
           if-no-files-found: warn
           retention-days: 21
       - name: Fail workflow when Run Everything found blockers

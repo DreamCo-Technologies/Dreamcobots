@@ -1,0 +1,36 @@
+name: DreamCo Division Lifecycle Migration Contract
+on:
+  pull_request:
+    paths:
+      - "buddy/datasets/migrate_division_lifecycle.py"
+      - "buddy/datasets/postgres_training_queue.py"
+      - "buddy/datasets/object_store.py"
+      - "buddy/datasets/ingestion_worker.py"
+      - "buddy/datasets/postgres_catalog.py"
+      - "database/migrations/001_division_model_lifecycle.sql"
+      - "tests/test_division_lifecycle_migration.py"
+      - "tests/test_postgres_training_queue.py"
+      - "tests/test_s3_object_store.py"
+      - "tests/test_buddy_dataset_ingestion_worker.py"
+      - "tests/test_buddy_postgres_catalog.py"
+      - "docs/DREAMCO_POSTGRES_DIVISION_LIFECYCLE_MIGRATION.md"
+      - ".github/workflows/dreamco-division-lifecycle-migration.yml"
+  push:
+    branches: [main]
+    paths:
+      - "buddy/datasets/migrate_division_lifecycle.py"
+      - "database/migrations/001_division_model_lifecycle.sql"
+      - "tests/test_division_lifecycle_migration.py"
+permissions:
+  contents: read
+jobs:
+  migration-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Validate guarded 65-schema migration contract
+        run: python -m unittest discover -s tests -p 'test_*training_queue.py' -v && python -m unittest discover -s tests -p 'test_division_lifecycle_migration.py' -v

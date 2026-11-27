@@ -1,0 +1,27 @@
+{
+  "schema": "dreamco.buddy_cpu_llm_architecture_profile.v1",
+  "profile_id": "buddy-25m-byte-level-cpu-decoder-v1",
+  "description": "A roughly 25-million-parameter byte-level decoder architecture for controlled CPU-first experiments. This profile is a sizing specification, not a training run.",
+  "parameter_target": 25000000,
+  "tolerance_fraction": 0.02,
+  "vocab_size": 256,
+  "context_size": 256,
+  "width": 640,
+  "layers": 5,
+  "attention_heads": 10,
+  "feed_forward_size": 2560,
+  "tied_embeddings": true,
+  "bias": true,
+  "training_policy": {
+    "enabled": false,
+    "weight_updates_authorized": false,
+    "paid_compute_authorized": false,
+    "external_data_allowed": false,
+    "requires_rights_cleared_local_dataset": true,
+    "requires_explicit_training_approval": true,
+    "approved_by": null,
+    "authorization_reference": null,
+    "approved_at": null
+  },
+  "execution_note": "The exact parameter count must be rechecked against the instantiated implementation before training. CPU memory and wall-clock requirements must be benchmarked on the selected machine; no hardware-performance claim is implied."
+}

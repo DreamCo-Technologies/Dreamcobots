@@ -23,8 +23,8 @@
       "known_benchmark_contamination",
       "license_or_rights_uncertainty"
     ],
-    "exploration_rate": 0.10,
-    "exploitation_rate": 0.90,
+    "exploration_rate": 0.1,
+    "exploitation_rate": 0.9,
     "revisit_policy": "increase_frequency for sources that changed, predict failures, or close active capability gaps"
   },
   "learning_pipeline": [
@@ -36,12 +36,16 @@
     "map_to_capabilities",
     "map_to_benchmarks",
     "generate_original_bootcamp_lessons",
+    "validate_original_summary_completeness_and_rights",
+    "package_summary_into_division_specific_study_path",
     "generate_sandbox_tasks",
     "practice_on_cheap_executor",
     "evaluate_on_holdout",
     "promote_only_with_evidence",
     "regression_test",
-    "record_provenance"
+    "record_provenance",
+    "append_progress_evidence",
+    "evaluate_mastery_on_independent_capstone"
   ],
   "bootcamp_artifacts": {
     "required_per_learning_event": [
@@ -94,5 +98,22 @@
     "validated": 3,
     "mastered": 4,
     "production_proven": 5
+  },
+  "study_package_contract": {
+    "schema": "dreamco.buddy_learning_package.v1",
+    "organizer": "tools/organize_buddy_learning_assets.py",
+    "runtime_adapter": "buddy.learning.dreamco_summary_source",
+    "existing_scheduler": "buddy.learning.study_resource_scheduler",
+    "owner_designation": "user_designated_owner_for_original_instructional_expression_subject_to_applicable_law_and_upstream_terms",
+    "per_division_target": 5,
+    "review_days": [
+      1,
+      3,
+      7,
+      14,
+      30
+    ],
+    "study_and_training_permissions_are_separate": true,
+    "no_mastery_from_reading_alone": true
   }
 }

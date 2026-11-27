@@ -61,6 +61,20 @@ class ChangeImpactTestPolicyTests(unittest.TestCase):
         for source in ("website/nav.js", "website/desk-chrome.js"):
             self.assertIn("tests/shared-repository-controls.test.mjs", by_source[source])
 
+    def test_colocated_learning_tests_are_explicitly_recognized(self):
+        expected = {
+            "buddy/learning/continuous_learning_controller_test.py",
+            "buddy/learning/registered_runner_test.py",
+            "buddy/learning/workflow_benchmark_readiness_test.py",
+        }
+        self.assertTrue(expected.issubset(set(self.policy["test_paths"])))
+        mappings = self.policy["focused_test_mappings"]
+        self.assertTrue(any(
+            "tools/audit_change_test_coverage.py" in row["sources"]
+            and "tests/test_change_impact_test_policy.py" in row["tests"]
+            for row in mappings
+        ))
+
     def test_silent_test_bypasses_are_explicit_blockers(self):
         blockers = " ".join(self.policy["release_blockers"]).lower()
         self.assertIn("test file deleted", blockers)

@@ -11,7 +11,7 @@ TOKEN = re.compile(r"[a-z0-9]+")
 
 
 def tokenize(text: str) -> list[str]:
-    return TOKEN.findall(text.lower())
+    return [token for token in TOKEN.findall(text.lower()) if any(char.isalpha() for char in token)]
 
 
 @dataclass
@@ -36,7 +36,7 @@ class LocalRagStore:
         tf = Counter(tokens)
         n = max(len(self.chunks), 1)
         return {
-            token: (count / max(len(tokens), 1)) * math.log((n + 1) / (1 + self._df[token]))
+            token: (count / max(len(tokens), 1)) * (math.log((n + 1) / (1 + self._df[token])) + 1.0)
             for token, count in tf.items()
         }
 

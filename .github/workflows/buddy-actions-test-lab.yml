@@ -14,38 +14,6 @@ on:
         required: true
         default: true
         type: boolean
-  push:
-    branches: [main]
-    paths:
-      - "server/**"
-      - "shared/**"
-      - "client/**"
-      - "website/**"
-      - "tools/**"
-      - "tests/**"
-      - "config/**"
-      - "App_bots/**"
-      - "package.json"
-      - "package-lock.json"
-      - ".github/agents/**"
-      - "AGENTS.md"
-      - ".github/workflows/buddy-actions-test-lab.yml"
-  pull_request:
-    paths:
-      - "server/**"
-      - "shared/**"
-      - "client/**"
-      - "website/**"
-      - "tools/**"
-      - "tests/**"
-      - "config/**"
-      - "App_bots/**"
-      - "package.json"
-      - "package-lock.json"
-      - ".github/agents/**"
-      - "AGENTS.md"
-      - ".github/workflows/buddy-actions-test-lab.yml"
-
 permissions:
   contents: read
 
@@ -103,6 +71,12 @@ jobs:
         run: |
           set -o pipefail
           suite="${{ inputs.suite || 'quick' }}"
+          # Keep generated fleet/runtime/search artifacts synchronized before any selected suite.
+          python3 tools/generate_bot_manifests.py
+          python3 tools/generate_repository_test_registry.py
+          npx tsx tools/generate_bot_fleet_catalog.ts
+          npx tsx tools/generate_dreamco_search_index.ts
+          python3 tools/generate_repository_test_registry.py
           case "$suite" in
             quick)
               npx tsx tools/run_universal_verification.ts --quick 2>&1 | tee tmp/buddy-actions/test.log
@@ -189,6 +163,10 @@ jobs:
               echo '```text'
               tail -n 100 tmp/buddy-actions/install.log
               echo '```'
+            fi
+            if [ -d tmp/dreamco-verification/logs ]; then
+              mkdir -p tmp/buddy-actions/verification-logs
+              cp -R tmp/dreamco-verification/logs/. tmp/buddy-actions/verification-logs/
             fi
             if [ -f tmp/dreamco-verification/latest.json ]; then
               echo
