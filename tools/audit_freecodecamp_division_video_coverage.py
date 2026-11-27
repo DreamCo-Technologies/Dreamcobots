@@ -167,7 +167,9 @@ def audit(root: Path = ROOT) -> dict[str, Any]:
     )
     override_entries = overrides.get("entries") if isinstance(overrides.get("entries"), list) else []
     artifact_rows = artifacts.get("artifacts") if isinstance(artifacts.get("artifacts"), list) else []
-    expected_targets = len(domains) + len(bot_rows)
+    # Keep the contract fixed at 55 domains + 65 MasterBots even when
+    # source registries are incomplete; missing identities must not shrink the target.
+    expected_targets = 55 + 65
     expected_artifacts = expected_targets * len(MODULES)
     artifact_keys = {
         (str(row.get("target_type")), str(row.get("target_id")), str(row.get("module_id")))
@@ -182,7 +184,7 @@ def audit(root: Path = ROOT) -> dict[str, Any]:
         )
         for target_id in ids for module in MODULES
     }
-    missing_artifact_count = len(expected_keys - artifact_keys)
+    missing_artifact_count = (expected_artifacts - len(expected_keys)) + len(expected_keys - artifact_keys)
 
     inventory = catalog.get("inventory") if isinstance(catalog.get("inventory"), dict) else {}
     inventory_complete = (
