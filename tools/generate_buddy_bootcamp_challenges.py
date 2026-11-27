@@ -16,7 +16,6 @@ from pathlib import Path
 from typing import Any, Iterable
 
 ROOT = Path(__file__).resolve().parents[1]
-REGISTRY_PATH = ROOT / "config/masterbot-65-registry.json"
 RESOURCE_MANIFEST_PATH = ROOT / "config/buddy-bootcamp-100-resource-manifest.json"
 
 OUTPUT_SCHEMA = {
@@ -171,11 +170,11 @@ def main() -> int:
         raise ValueError("--max-tasks must be between 1 and 10000")
     rights = read_json(args.rights_manifest)
     validate_rights(rights, args.source_id, args.source_license_id)
-    registry = read_json(REGISTRY_PATH)
-    divisions = registry.get("divisions", [])
+    resource_manifest = read_json(RESOURCE_MANIFEST_PATH)
+    divisions = resource_manifest.get("canonical_divisions", [])
     division = next((item for item in divisions if item.get("id") == args.division_id), None)
     if division is None:
-        raise ValueError(f"division id {args.division_id} is not in the canonical 65-MasterBot registry")
+        raise ValueError(f"division id {args.division_id} is not in the canonical 55-domain-division registry")
     output = []
     seen = set()
     for row in read_jsonl(args.input_jsonl):
