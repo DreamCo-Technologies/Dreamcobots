@@ -178,7 +178,8 @@ def build() -> tuple[dict[str,Any], list[dict[str,Any]], list[dict[str,Any]]]:
     index={
         "schema":"dreamco.universal_bot_learning_foundry_index.v1",
         "status":"CURRICULUM_AND_BLUEPRINT_PLAN_ONLY",
-        "source_hashes":{p.relative_to(ROOT).as_posix():hashlib.sha256(p.read_bytes()).hexdigest() for p in [FLEET,MASTERBOTS,RECONCILIATION,BUSINESS,POLICY]},
+        "source_hashes":{p.relative_to(ROOT).as_posix():hashlib.sha256(p.read_bytes()).hexdigest()
+            for p in [FLEET,MASTERBOTS,RECONCILIATION,BUSINESS,POLICY]+[ROOT/x["source"] for x in old]},
         "counts":{"canonical_fleet_entries":len(bots),"legacy_income_bots":200,"legacy_major_systems":12,
             "business_micro_bots":len(business["bots"]),"individual_bot_manifests":len(manifests),
             "masterbot_learning_divisions":len(division_records),"domain_learning_divisions":len(reconciliation["domain_divisions"]),
