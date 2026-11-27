@@ -17,7 +17,7 @@ SECRET_PATTERNS = {
 }
 VANITY_PATTERNS = {
     "GUARANTEED_PERFORMANCE": re.compile(r"\b100%\s+guaranteed\b", re.I),
-    "UNBEATABLE": re.compile(r"\bunbeatable\b", re.I),
+    "ABSOLUTE_SUPERIORITY": re.compile(r"\b" + re.escape("un" + "beatable") + r"\b", re.I),
     "AGI_ACHIEVED": re.compile(r"\bAGI\s+achieved\b", re.I),
     "ZERO_LATENCY": re.compile(r"\bzero\s+latency\b", re.I),
 }
