@@ -144,5 +144,18 @@ class FreeCodeCampDivisionVideoCoverageAuditTests(unittest.TestCase):
         self.assertIn("canonical_masterbot_count_not_65", report["blockers"])
 
 
+    def test_missing_routing_input_is_a_blocker(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            fixture_root(root)
+            (root / "config/freecodecamp-division-routing-overrides.json").unlink()
+            report = audit(root)
+        self.assertEqual(report["status"], "blocked")
+        self.assertTrue(any(
+            blocker.startswith("input_read_error:missing_file:config/freecodecamp-division-routing-overrides.json")
+            for blocker in report["blockers"]
+        ))
+
+
 if __name__ == "__main__":
     unittest.main()
