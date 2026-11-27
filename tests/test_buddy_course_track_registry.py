@@ -67,7 +67,7 @@ class BuddyCourseTrackRegistryTests(unittest.TestCase):
             + len(library_ecosystems["ecosystems"])
             + len(library_seed_catalog["candidates"])
             + sum(len(path["subjects"]) for path in workforce["training_paths"])
-            + len(benchmark_index["programs"]) + len(benchmark_tasks["tasks"])
+            + len(benchmark_index["programs"]) + len(benchmark_tasks["tasks"]) + 330
         )
         self.assertEqual(len(lessons), expected_count)
         fcc_lessons = [lesson for lesson in lessons if lesson.track_id == "freecodecamp"]
@@ -76,26 +76,45 @@ class BuddyCourseTrackRegistryTests(unittest.TestCase):
         self.assertTrue(any(lesson.lesson_id == "fcc-primitive-workshops" for lesson in fcc_lessons))
         self.assertEqual(len({lesson.resource_id for lesson in lessons}), len(lessons))
         self.assertEqual(len({(lesson.track_id, lesson.lesson_id) for lesson in lessons}), len(lessons))
-        expected = {"tolkien", "tokenizer", "cpu-first-llm", "onet", "hugging-face", "freecodecamp", "huggingface-full", "freecodecamp-video-catalog", "freecodecamp-specialist-learning-paths", "freecodecamp-metadata-triage", "universal-software-libraries", "workforce-entrepreneurship", "benchmark-guides"}
+        expected = {"tolkien", "tokenizer", "cpu-first-llm", "onet", "hugging-face", "freecodecamp", "huggingface-full", "freecodecamp-video-catalog", "freecodecamp-specialist-learning-paths", "freecodecamp-metadata-triage", "universal-software-libraries", "workforce-entrepreneurship", "benchmark-guides", "dreamco-division-specialist"}
         self.assertEqual({lesson.track_id for lesson in lessons}, expected)
 
-    def test_every_canonical_division_receives_the_shared_course_queue(self):
+    def test_every_canonical_division_receives_its_own_internal_curriculum(self):
         from pathlib import Path
         import json
         root = Path(__file__).resolve().parents[1]
         crosswalk = json.loads((root / "config/generated/masterbot-55-domain-crosswalk.json").read_text(encoding="utf-8"))
-        expected = sum(lesson.content_status == "authored" for lesson in load_course_lessons())
+        lessons = load_course_lessons()
         for row in crosswalk["domains"]:
-            with self.subTest(division=row["domain_name"]):
-                self.assertEqual(len(resources_for_division(row["domain_name"])), expected)
+            division = row["domain_name"]
+            with self.subTest(division=division):
+                specialist = [
+                    lesson for lesson in lessons
+                    if lesson.track_id == "dreamco-division-specialist"
+                    and division in lesson.division_targets
+                ]
+                self.assertEqual(len(specialist), 6)
+                resources = resources_for_division(division)
+                self.assertTrue(all(resource.url == "" for resource in resources))
+                self.assertTrue(all(
+                    lesson.learner_visible and not lesson.source_url
+                    for lesson in specialist
+                ))
 
-    def test_every_masterbot_lane_receives_shared_foundations(self):
+    def test_every_masterbot_lane_receives_only_its_approved_internal_queue(self):
         from pathlib import Path
         import json
         root = Path(__file__).resolve().parents[1]
         registry = json.loads((root / "config/masterbot-65-registry.json").read_text(encoding="utf-8"))
-        expected = sum(lesson.content_status == "authored" for lesson in load_course_lessons())
+        lessons = load_course_lessons()
         for row in registry["divisions"]:
+            expected = sum(
+                lesson.content_status == "authored"
+                and lesson.learner_visible
+                and not lesson.source_url
+                and (not lesson.masterbot_targets or row["name"] in lesson.masterbot_targets)
+                for lesson in lessons
+            )
             with self.subTest(masterbot=row["name"]):
                 self.assertEqual(len(resources_for_masterbot(row["name"])), expected)
 
@@ -151,16 +170,23 @@ class BuddyCourseTrackRegistryTests(unittest.TestCase):
         video_titles = {lesson.title for lesson in lessons}
         self.assertFalse(any(resource.name in video_titles for resource in resources_for_division("DreamAIInfra")))
 
-    def test_course_scheduler_returns_queued_lesson_not_mastery(self):
+    def test_course_scheduler_queues_division_lesson_with_exercises_and_retraining(self):
         from pathlib import Path
         root = Path(__file__).resolve().parents[1]
         plan = plan_next_for_division(
             "DreamAIInfra",
-            [Capability("LLM architecture", "ai_ml", score=0.1, failed_benchmarks=2)],
+            [Capability("workflow planning", "planning_and_orchestration", score=0.1, failed_benchmarks=2)],
             root,
         )
         self.assertIsNotNone(plan)
-        self.assertEqual(plan["completion_status"], "queued_not_studied")
+        self.assertEqual(plan["track_id"], "dreamco-division-specialist")
+        self.assertEqual(plan["completion_status"], "queued_for_owner_review")
+        self.assertEqual(plan["review_status"], "draft_needs_owner_review")
+        self.assertEqual(plan["training_eligibility"], "internal_sandbox_practice_only")
+        self.assertTrue(plan["exercise_ids"])
+        self.assertTrue(plan["project_ids"])
+        self.assertTrue(plan["assessment_ids"])
+        self.assertTrue(plan["retraining_policy_id"])
         self.assertFalse(plan["mastery_awarded"])
         self.assertFalse(plan["model_weight_training_authorized"])
         self.assertFalse(plan["paid_compute_authorized"])
