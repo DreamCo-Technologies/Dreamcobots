@@ -86,10 +86,13 @@ class BuddyCourseTrackRegistryTests(unittest.TestCase):
             "freecodecamp-metadata-triage",
         }
         lessons = load_course_lessons()
+        external_titles = set()
         for lesson in lessons:
             if lesson.track_id in external_ids:
                 self.assertFalse(lesson.learner_visible)
-                self.assertNotIn(lesson, resources_for_division("CommandCore"))
+                external_titles.add(lesson.title)
+        visible_names = {resource.name for resource in resources_for_division("CommandCore")}
+        self.assertFalse(external_titles.intersection(visible_names))
 
     def test_every_canonical_division_receives_its_own_internal_curriculum(self):
         from pathlib import Path
