@@ -41,6 +41,7 @@ class BuddyResourceHarvesterTests(unittest.TestCase):
                     "division_id": next(iter(divisions)),
                     "source_type": "local_markdown",
                     "path": "README.md",
+                    "expected_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
                     "rights_status": "UNVERIFIED",
                     "approved_for_training": False,
                     "evidence_reference": ""
