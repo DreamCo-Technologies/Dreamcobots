@@ -1,0 +1,39 @@
+{
+  "schema": "dreamco.wikipedia_learning_bridge.v1",
+  "source": {
+    "id": "wikipedia-en",
+    "name": "English Wikipedia",
+    "search_endpoint": "https://en.wikipedia.org/w/rest.php/v1/search/page",
+    "search_page_endpoint": "https://en.wikipedia.org/w/index.php?search=",
+    "article_base": "https://en.wikipedia.org/wiki/",
+    "role": "broad discovery and cross-reference; never sole authority",
+    "text_license_notice": "Most Wikipedia text is CC BY-SA 4.0 and may also be available under GFDL; verify the specific page and obligations before redistribution or training.",
+    "default_training_eligible": false
+  },
+  "connections": {
+    "goal_registry": "reports/goals_to_gates.json",
+    "benchmark_registry": "config/buddy-benchmark-task-registry.json",
+    "learning_event_adapter": "buddy/learning/benchmark_learning_adapter.py",
+    "source_learning_pipeline": "framework/dreamco_source_learning/pipeline.py",
+    "evaluation_policy": "config/buddy_universal_task_evaluation_policy.json"
+  },
+  "flow": ["goal", "wikipedia_discovery", "source_verification", "benchmark", "learning_event", "sandbox_practice", "holdout", "governed_training_review"],
+  "rules": {
+    "each_goal_gets_discovery_query": true,
+    "each_benchmark_gets_discovery_query": true,
+    "benchmark_gap_creates_practice_recommendation": true,
+    "wiki_is_not_ground_truth": true,
+    "preserve_article_title_url_revision_timestamp_and_content_hash": true,
+    "store_article_text_by_default": false,
+    "execute_page_instructions": false,
+    "training_requires_explicit_consent": true,
+    "training_requires_consent_evidence_id": true,
+    "training_requires_page_specific_rights_review": true,
+    "training_requires_rights_review_id": true,
+    "training_requires_isolated_run_and_holdout": true,
+    "training_requires_isolation_run_id_and_holdout_evidence_id": true,
+    "raw_wikipedia_text_in_weights_requires_separate_legal_review": true,
+    "no_mastery_without_repeated_verified_benchmark_evidence": true
+  },
+  "retrieval_limits": {"max_results": 5, "timeout_seconds": 8, "user_agent_required": true, "allowed_hosts": ["en.wikipedia.org"]}
+}
