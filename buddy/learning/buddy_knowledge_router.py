@@ -204,8 +204,9 @@ def route_buddy_learning_query(
                 "study_required": True,
                 "candidate_verification_required": True,
                 "next_action": (
-                    "Verify the candidate against authoritative first-party sources, pin its exact version, "
-                    "review license and rights, then author and assess an original study guide."
+                    "Ask the user before external research; after approval, verify the candidate against "
+                    "authoritative first-party sources, pin its exact version, review license and rights, "
+                    "then author and assess an original study guide."
                 ),
                 "mastery_awarded": False,
             }
