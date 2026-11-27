@@ -6,7 +6,6 @@ train model weights; the existing Buddy runtime remains the execution authority.
 """
 from __future__ import annotations
 
-from dataclasses import asdict
 from typing import Iterable, Mapping, Any
 
 from buddy.bootcamp.task_learning_router import (
@@ -52,7 +51,8 @@ def prepare_learning_execution(
     selected_resource = route["selected_resource"]["resource"]
     if selected_resource.get("requires_account"):
         approvals.add("user_authorizes_external_learning_source_connection")
-    if float(selected_resource.get("cost_per_hour_usd", 0.0)) > 0:
+    access = str(selected_resource.get("access", "free")).casefold()
+    if access in {"paid", "freemium"} or float(selected_resource.get("cost_per_hour_usd", 0.0)) > 0:
         approvals.add("user_approves_paid_learning_resource_or_compute")
     approvals = sorted(approvals)
     return {
@@ -154,7 +154,27 @@ def evaluate_learning_completion(event: Mapping[str, Any]) -> dict[str, Any]:
     )
     decision = evaluate_event(learning_event)
     holdout_passed = event.get("holdout_passed", False)
-    promote = bool(decision.promote and holdout_passed and event["status"] == "succeeded")
+    raw_artifacts = event.get("artifact_refs", [])
+    raw_provenance = event.get("provenance_refs", [])
+    if not isinstance(raw_artifacts, (list, tuple)) or not isinstance(raw_provenance, (list, tuple)):
+        return {
+            "schema": RESULT_SCHEMA,
+            "accepted": False,
+            "promote": False,
+            "reason": "artifact_and_provenance_refs_must_be_lists",
+            "weights_trained": False,
+        }
+    artifact_refs = sorted({item.strip() for item in raw_artifacts if isinstance(item, str) and item.strip()})
+    provenance_refs = sorted({item.strip() for item in raw_provenance if isinstance(item, str) and item.strip()})
+    weights_claimed = event.get("weights_trained", False)
+    weights_trained = bool(weights_claimed and artifact_refs)
+    promotion_evidence_present = bool(artifact_refs and provenance_refs)
+    promote = bool(
+        decision.promote
+        and holdout_passed
+        and event["status"] == "succeeded"
+        and promotion_evidence_present
+    )
     return {
         "schema": RESULT_SCHEMA,
         "accepted": True,
@@ -165,13 +185,18 @@ def evaluate_learning_completion(event: Mapping[str, Any]) -> dict[str, Any]:
         "learn": decision.learn,
         "promote": promote,
         "promotion_reason": (
-            "verified_success_with_holdout_regression_and_safety"
+            "verified_success_with_holdout_regression_safety_and_provenance"
             if promote else decision.reason if not decision.promote
-            else "holdout_or_execution_status_blocks_promotion"
+            else "holdout_execution_or_evidence_blocks_promotion"
         ),
-        "artifact_refs": list(event.get("artifact_refs", [])),
-        "provenance_refs": list(event.get("provenance_refs", [])),
+        "artifact_refs": artifact_refs,
+        "provenance_refs": provenance_refs,
         "external_assistance": bool(event.get("external_assistance", False)),
         "training_job_id": event.get("training_job_id"),
-        "weights_trained": bool(event.get("weights_trained", False)),
+        "weights_trained": weights_trained,
+        "weights_training_claim_verified": weights_trained if weights_claimed else False,
+        "unverified_claims": (
+            ["weights_trained_without_artifact_reference"]
+            if weights_claimed and not artifact_refs else []
+        ),
     }
