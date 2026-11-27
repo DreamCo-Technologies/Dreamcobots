@@ -93,6 +93,23 @@ REFERENCE_SCAN_TYPES = {"python", "typescript", "typescript-react", "javascript"
                         "json", "yaml", "html", "shell", "toml"}
 
 
+TRANSIENT_DIR_NAMES = {
+    "__pycache__", ".pytest_cache", ".mypy_cache", ".ruff_cache", ".tox",
+    ".venv", "venv", "node_modules",
+}
+TRANSIENT_FILE_NAMES = {".coverage", "coverage.xml", ".DS_Store"}
+TRANSIENT_FILE_SUFFIXES = {".pyc", ".pyo"}
+
+
+def is_transient_path(path: str) -> bool:
+    candidate = PurePosixPath(path)
+    return (
+        any(part in TRANSIENT_DIR_NAMES for part in candidate.parts)
+        or candidate.name in TRANSIENT_FILE_NAMES
+        or candidate.suffix.lower() in TRANSIENT_FILE_SUFFIXES
+    )
+
+
 def list_files() -> list[str]:
     out = subprocess.run(["git", "ls-files", "--cached", "--others", "--exclude-standard", "-z"], cwd=ROOT,
                          capture_output=True, text=True, check=True).stdout
@@ -100,7 +117,11 @@ def list_files() -> list[str]:
     # The prospectus cannot index its own generated shards: config.json contains
     # the index.json row and index.json describes config.json, creating a
     # self-referential output that changes on every regeneration.
-    return [p for p in files if not p.startswith("config/generated/file-prospectus/")]
+    # Python/test caches are runtime noise and must never enter the repository index.
+    return [
+        p for p in files
+        if not p.startswith("config/generated/file-prospectus/") and not is_transient_path(p)
+    ]
 
 
 def file_type(path: str) -> str:
