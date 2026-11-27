@@ -14,6 +14,9 @@ on:
       - "buddy/learning/course_track_registry.py"
       - "buddy/learning/buddy_knowledge_router.py"
       - "tools/build_buddy_division_curricula.py"
+      - "tools/smoke_commandcore_bootcamp.py"
+      - "tests/test_commandcore_bootcamp_smoke.py"
+      - "config/divisions/commandcore.json"
       - "tools/build_division_learning_model_kits.py"
       - "tests/test_buddy_division_curriculum_builder.py"
       - "tests/test_buddy_course_track_registry.py"
@@ -159,6 +162,9 @@ on:
       - "buddy/learning/course_track_registry.py"
       - "buddy/learning/buddy_knowledge_router.py"
       - "tools/build_buddy_division_curricula.py"
+      - "tools/smoke_commandcore_bootcamp.py"
+      - "tests/test_commandcore_bootcamp_smoke.py"
+      - "config/divisions/commandcore.json"
       - "tools/build_division_learning_model_kits.py"
       - "tests/test_buddy_division_curriculum_builder.py"
       - "tests/test_buddy_course_track_registry.py"
@@ -420,6 +426,8 @@ jobs:
           python -m unittest tests.test_buddy_division_curriculum_builder -v
           python -m unittest tests.test_buddy_course_track_registry tests.test_buddy_knowledge_router -v
           python -m unittest tests.test_buddy_bootcamp_model_kits_workflow -v
+          python tools/smoke_commandcore_bootcamp.py
+          python -m unittest tests.test_commandcore_bootcamp_smoke -v
           python tools/build_buddy_bootcamp_curriculum.py
           python tools/build_buddy_bootcamp_curriculum.py --check
           python -m unittest discover -s tests -p 'test_buddy_bootcamp_curriculum.py' -v
@@ -463,6 +471,7 @@ jobs:
             config/generated/division-learning-model-kits/
             data/dreamco_training/division_curricula/
             config/buddy-division-specialist-course-artifacts.json
+            config/generated/commandcore-bootcamp-smoke.json
           if-no-files-found: warn
           retention-days: 14
 
