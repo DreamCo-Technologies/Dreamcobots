@@ -70,7 +70,7 @@ class CompetitiveBenchmarkTests(unittest.TestCase):
             manifest["parameter_count"] = 45000000
             path.write_text(json.dumps(manifest), encoding="utf-8")
             with self.assertRaises(ValueError):
-                validate_candidate(path, checkpoint, adapter, "dreamcyber")
+                validate_candidate(path, checkpoint, tokenizer, adapter, "dreamcyber")
 
     def test_public_baseline_requires_pinned_revision_and_rights_evidence(self):
         from scripts.benchmark_vs_baselines import validate_baseline
