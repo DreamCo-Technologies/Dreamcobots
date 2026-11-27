@@ -9,9 +9,13 @@ from __future__ import annotations
 
 import argparse
 import json
+import sys
 from datetime import date, datetime, timezone
 from pathlib import Path
 from typing import Any
+
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
 
 from buddy.learning.dreamco_summary_source import (
     load_organization,

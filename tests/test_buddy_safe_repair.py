@@ -7,12 +7,20 @@ class BuddySafeRepairTests(unittest.TestCase):
   result=subprocess.run([sys.executable,"-m","tools.buddy_safe_repair","--help"],cwd=root,text=True,capture_output=True,check=False)
   self.assertEqual(result.returncode,0,result.stderr)
   self.assertIn("--observation",result.stdout)
+ def test_safe_repair_summary_uses_printf_without_shell_command_substitution(self):
+  workflow=(Path(__file__).resolve().parents[1]/".github/workflows/buddy-ci-safe-repair.yml").read_text(encoding="utf-8")
+  self.assertIn("printf 'Verified generated repairs are available on [%s]",workflow)
+  self.assertNotIn("echo \"Verified generated repairs are available on [`$REPAIR_BRANCH`]",workflow)
+ def test_safe_repair_branch_name_avoids_directory_file_namespace_conflicts(self):
+  workflow=(Path(__file__).resolve().parents[1]/".github/workflows/buddy-ci-safe-repair.yml").read_text(encoding="utf-8")
+  self.assertIn("REPAIR_BRANCH: ${{ format('buddy-ci-repair-{0}', github.event.workflow_run.id || github.run_id) }}",workflow)
+  self.assertNotIn("buddy/ci-repair-",workflow)
  def test_generated_dataset_index_has_exact_allowlisted_rebuild(self):
   p=repair_plan({"workflow":"Buddy Dataset Hub","job":"route-build","failed_step":"generated index mismatch"})
   self.assertEqual(p,[[sys.executable,"tools/build_buddy_dataset_routes.py"]])
  def test_safe_repair_workflow_rebuilds_all_allowlisted_indexes(self):
   p=repair_plan({"workflow":"Buddy CI Safe Generated-Artifact Repair","job":"regenerate-and-verify","failed_step":"Verify repaired indexes and Buddy repair-learning tests"})
-  self.assertEqual([command[1] for command in p],["tools/build_buddy_dataset_routes.py","tools/build_division_model_fleet.py","tools/build_pages_connection_index.py","tools/build_actions_prospectus.py","tools/build_file_prospectus.py"])
+  self.assertEqual([command[1] for command in p],["tools/build_buddy_dataset_routes.py","tools/build_division_model_fleet.py","tools/build_pages_connection_index.py","tools/generate_bot_manifests.py","tools/refresh_repository_evidence.py","tools/generate_command_center_data.py"])
  def test_unrelated_generated_index_failure_is_not_guessed(self):
   self.assertEqual(repair_plan({"workflow":"Repository Inventory","job":"inventory","failed_step":"generated index mismatch"}),[])
  def test_division_fleet_rebuild_is_narrowly_allowlisted(self):
@@ -35,4 +43,15 @@ class BuddySafeRepairTests(unittest.TestCase):
  def test_security_and_unknown_failures_never_run_commands(self):
   self.assertEqual(repair_plan({"failure_class":"security"}),[])
   self.assertEqual(repair_plan({"workflow":"random","job":"job","failed_step":"unknown"}),[])
+ def test_markdown_audit_and_file_prospectus_refresh_after_fleet_evidence(self):
+  workflow=(Path(__file__).resolve().parents[1]/".github/workflows/buddy-ci-safe-repair.yml").read_text(encoding="utf-8")
+  catalog=workflow.index("      - name: Regenerate canonical bot fleet catalog after certification drift")
+  e2e=workflow.index("      - name: Regenerate canonical fleet end-to-end evidence after certification drift")
+  markdown=workflow.index("python tools/audit_markdown_implementation_gaps.py --write")
+  prospectus=workflow.index("      - name: Regenerate file prospectus after all generated source inventories")
+  verify=workflow.index("      - name: Verify repaired indexes and Buddy repair-learning tests")
+  self.assertLess(catalog,markdown)
+  self.assertLess(e2e,markdown)
+  self.assertLess(markdown,prospectus)
+  self.assertLess(prospectus,verify)
 if __name__=="__main__":unittest.main()

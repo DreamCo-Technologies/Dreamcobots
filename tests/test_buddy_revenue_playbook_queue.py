@@ -51,6 +51,9 @@ def test_missing_capstone_is_explicitly_queued_for_definition():
         "training_paths": [{"id": "one", "title": "One", "subjects": ["sales"]}],
     }
     result = build_queue(config)
+    assert result["track_count"] == 1
+    assert result["playbook_work_item_count"] == 1
+    assert result["authored_count"] == 0
+    assert result["playbooks"][0]["status"] == "not_authored"
     assert result["playbooks"][0]["capstone_status"] == "needs_definition"
     assert result["playbooks"][0]["capstone_outcome"] is None
-    assert result["playbooks"][0]["status"] == "not_authored"

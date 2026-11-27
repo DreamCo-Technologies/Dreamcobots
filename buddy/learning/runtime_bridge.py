@@ -7,6 +7,7 @@ data must live outside public Pages and the repository.
 from __future__ import annotations
 
 from dataclasses import asdict
+from functools import lru_cache
 import json
 import os
 import re
@@ -21,6 +22,23 @@ from buddy.learning.evidence_acquisition import (
     Capability, CapabilityRegistry, LearningEvent, LearningLedger, benchmark_gate,
 )
 from dreamco_platform.automation.task_runner import BuddyTaskRunner
+
+
+@lru_cache(maxsize=1)
+def _freecodecamp_division_category_profiles() -> tuple[set[str], dict[str, set[str]]]:
+    """Load the shared subject-category profiles used by the queue builder."""
+    path = Path(__file__).resolve().parents[2] / "config/freecodecamp-division-category-profiles.json"
+    document = json.loads(path.read_text(encoding="utf-8"))
+    if document.get("schema") != "dreamco.freecodecamp_division_category_profiles.v1":
+        raise ValueError("unsupported FreeCodeCamp division category profile schema")
+    shared = set(document.get("shared_foundation_categories", []))
+    profiles = {
+        str(domain_id): set(categories)
+        for domain_id, categories in document.get("domain_categories", {}).items()
+    }
+    if len(profiles) != 55 or not shared:
+        raise ValueError("FreeCodeCamp category profiles must cover all 55 divisions and shared foundation")
+    return shared, profiles
 
 
 class PrivateLearningStore:
@@ -223,6 +241,11 @@ class BuddyLearningBridge:
         lessons = [
             lesson for lesson in load_course_lessons()
             if lesson.track_id == "universal-software-libraries"
+            and (
+                (not lesson.division_targets or division in lesson.division_targets)
+                if division else
+                (not lesson.masterbot_targets or masterbot in lesson.masterbot_targets)
+            )
         ]
         if query.strip():
             terms = {token for token in re.findall(r"[a-z0-9]+", query.lower()) if len(token) > 1}
@@ -244,7 +267,16 @@ class BuddyLearningBridge:
             "assessment": lesson.assessment,
             "benchmark": lesson.benchmark,
             "source_url": lesson.source_url,
+            "source_video_id": lesson.source_video_id,
             "guide_path": lesson.guide_path,
+            "division_targets": list(lesson.division_targets),
+            "masterbot_targets": list(lesson.masterbot_targets),
+            "capability_tags": list(lesson.capability_tags),
+            "tool_tags": list(lesson.tool_tags),
+            "agent_tags": list(lesson.agent_tags),
+            "learning_modes": list(lesson.learning_modes),
+            "implementation_steps": list(lesson.implementation_steps),
+            "buddy_demo": lesson.buddy_demo,
             "rights_mode": lesson.rights_mode,
             "content_status": lesson.content_status,
             "completion_status": (
@@ -253,7 +285,7 @@ class BuddyLearningBridge:
                 else "authoring_backlog"
             ),
             "study_allowed": lesson.content_status == "authored",
-            "authoring_required": lesson.content_status in {"authoring_backlog", "metadata_only"},
+            "authoring_required": lesson.content_status in {"authoring_backlog", "metadata_only", "original_implementation_brief"},
             "mastery_awarded": False,
             "model_weight_training_authorized": False,
             "paid_compute_authorized": False,
@@ -270,12 +302,14 @@ class BuddyLearningBridge:
 
     def bootcamp_learning_queue(self, *, division: str | None = None,
                                 masterbot: str | None = None, query: str = "",
-                                limit: int = 50) -> dict[str, Any]:
+                                limit: int = 50, offset: int = 0) -> dict[str, Any]:
         """Return all shared Bootcamp course tracks for one canonical division or MasterBot lane."""
         if bool(division) == bool(masterbot):
             raise ValueError("provide exactly one canonical division or MasterBot lane")
         if not isinstance(limit, int) or isinstance(limit, bool) or limit < 1 or limit > 100:
             raise ValueError("limit must be an integer between 1 and 100")
+        if not isinstance(offset, int) or isinstance(offset, bool) or offset < 0:
+            raise ValueError("offset must be a non-negative integer")
         if not isinstance(query, str) or len(query) > 1000:
             raise ValueError("query must be a string of at most 1000 characters")
         if division:
@@ -286,31 +320,108 @@ class BuddyLearningBridge:
             owner = {"masterbot": masterbot}
 
         catalog_lessons = load_course_lessons()
-        lessons = list(catalog_lessons)
+        if division:
+            shared_categories, domain_profiles = _freecodecamp_division_category_profiles()
+            domain_categories = domain_profiles.get(division.casefold())
+            if domain_categories is None:
+                raise ValueError(f"no FreeCodeCamp category profile for canonical division: {division}")
+            allowed_video_categories = shared_categories | domain_categories
+
+            def belongs_to_division(lesson: CourseLesson) -> bool:
+                # The general catalog is category-routed to every relevant
+                # division; its explicit targets are discovery hints, not
+                # exclusive ownership. Curated specialist briefs remain scoped
+                # to their explicit division targets.
+                if lesson.track_id == "freecodecamp-video-catalog" and lesson.video_categories:
+                    return bool(set(lesson.video_categories) & allowed_video_categories)
+                if lesson.track_id == "freecodecamp-specialist-learning-paths":
+                    if lesson.division_targets:
+                        return division in lesson.division_targets
+                    if lesson.video_categories:
+                        return bool(set(lesson.video_categories) & allowed_video_categories)
+                if lesson.division_targets:
+                    return division in lesson.division_targets
+                return True
+
+            lessons = [lesson for lesson in catalog_lessons if belongs_to_division(lesson)]
+        else:
+            lessons = [
+                lesson for lesson in catalog_lessons
+                if not lesson.masterbot_targets or masterbot in lesson.masterbot_targets
+            ]
         if query.strip():
-            terms = {
+            terms = list(dict.fromkeys(
                 token.replace("_", "-")
                 for token in re.findall(r"[a-z0-9][a-z0-9_.+-]*", query.lower())
                 if len(token) > 1
-            }
+            ))
+            query_phrase = " ".join(terms)
 
-            def matches_query(lesson: CourseLesson) -> bool:
-                text = (
-                    f"{lesson.title} {lesson.lesson_id} {lesson.track_id} {lesson.category} "
-                    f"{lesson.objective} {lesson.practice} {lesson.assessment} {lesson.benchmark}"
-                ).lower()
-                tokens = {
+            def tokens_for(value: str) -> set[str]:
+                return {
                     token.replace("_", "-")
-                    for token in re.findall(r"[a-z0-9][a-z0-9_.+-]*", text)
+                    for token in re.findall(r"[a-z0-9][a-z0-9_.+-]*", value.lower())
                 }
-                return any(
-                    term == token
-                    or (min(len(term), len(token)) >= 4 and (term.startswith(token) or token.startswith(term)))
-                    for term in terms
-                    for token in tokens
+
+            def token_matches(term: str, token: str) -> bool:
+                return term == token or (
+                    min(len(term), len(token)) >= 4
+                    and (term.startswith(token) or token.startswith(term))
                 )
 
-            lessons = [lesson for lesson in lessons if matches_query(lesson)]
+            def relevance(lesson: CourseLesson) -> int:
+                title = f"{lesson.title} {lesson.lesson_id}".lower()
+                title_tokens = tokens_for(title)
+                searchable = " ".join((
+                    lesson.title, lesson.lesson_id, lesson.track_id, lesson.category,
+                    lesson.objective, lesson.practice, lesson.assessment, lesson.benchmark,
+                    lesson.source_url, lesson.source_video_id,
+                    " ".join(lesson.division_targets), " ".join(lesson.masterbot_targets),
+                    " ".join(lesson.video_categories), " ".join(lesson.capability_tags), " ".join(lesson.tool_tags),
+                    " ".join(lesson.agent_tags), " ".join(lesson.implementation_steps),
+                    lesson.buddy_demo,
+                ))
+                search_tokens = tokens_for(searchable)
+                matched_terms = [
+                    term for term in terms
+                    if any(token_matches(term, token) for token in search_tokens)
+                ]
+                if not matched_terms:
+                    return 0
+                title_matches = [
+                    term for term in terms
+                    if any(token_matches(term, token) for token in title_tokens)
+                ]
+                tag_tokens = tokens_for(" ".join(lesson.capability_tags))
+                tag_matches = [
+                    term for term in terms
+                    if any(token_matches(term, token) for token in tag_tokens)
+                ]
+                score = len(matched_terms) * 5 + len(title_matches) * 20 + len(tag_matches) * 15
+                normalized_title = " ".join(
+                    token.replace("_", "-")
+                    for token in re.findall(r"[a-z0-9][a-z0-9_.+-]*", title.lower())
+                )
+                if query_phrase and query_phrase in normalized_title:
+                    score += 100
+                if terms and len(matched_terms) == len(terms):
+                    score += 25
+                if lesson.source_video_id and any(token_matches(term, lesson.source_video_id.lower()) for term in terms):
+                    score += 50
+                return score
+
+            ranked = [
+                (score, index, lesson)
+                for index, lesson in enumerate(lessons)
+                if (score := relevance(lesson)) > 0
+            ]
+            ranked.sort(key=lambda item: (-item[0], item[1]))
+            lessons = [lesson for _, _, lesson in ranked]
+        total_count = len(lessons)
+        page_lessons = lessons[offset:offset + limit]
+        next_offset = offset + len(page_lessons)
+        if next_offset >= total_count:
+            next_offset = None
         items = [{
             "resource_id": lesson.resource_id,
             "lesson_id": lesson.lesson_id,
@@ -322,7 +433,17 @@ class BuddyLearningBridge:
             "assessment": lesson.assessment,
             "benchmark": lesson.benchmark,
             "source_url": lesson.source_url,
+            "source_video_id": lesson.source_video_id,
+            "video_categories": list(lesson.video_categories),
             "guide_path": lesson.guide_path,
+            "division_targets": list(lesson.division_targets),
+            "masterbot_targets": list(lesson.masterbot_targets),
+            "capability_tags": list(lesson.capability_tags),
+            "tool_tags": list(lesson.tool_tags),
+            "agent_tags": list(lesson.agent_tags),
+            "learning_modes": list(lesson.learning_modes),
+            "implementation_steps": list(lesson.implementation_steps),
+            "buddy_demo": lesson.buddy_demo,
             "rights_mode": lesson.rights_mode,
             "content_status": lesson.content_status,
             "completion_status": (
@@ -331,20 +452,24 @@ class BuddyLearningBridge:
                 else "authoring_backlog"
             ),
             "study_allowed": lesson.content_status == "authored",
-            "authoring_required": lesson.content_status in {"authoring_backlog", "metadata_only"},
+            "authoring_required": lesson.content_status in {"authoring_backlog", "metadata_only", "original_implementation_brief"},
             "mastery_awarded": False,
             "model_weight_training_authorized": False,
             "paid_compute_authorized": False,
-        } for lesson in lessons[:limit]]
+        } for lesson in page_lessons]
         return {
             "schema": "dreamco.buddy_bootcamp_learning_queue.v1",
             **owner,
             "query": query,
-            "scope": "shared_foundation_all_55_canonical_divisions_and_65_masterbot_lanes",
+            "scope": "shared_foundation_plus_specialist_division_and_masterbot_learning_routes",
             "catalog_lesson_count": len(catalog_lessons),
             "study_ready_count": sum(lesson.content_status == "authored" for lesson in lessons),
             "authoring_backlog_count": sum(lesson.content_status != "authored" for lesson in lessons),
-            "available_count": len(lessons),
+            "available_count": total_count,
+            "total_count": total_count,
+            "offset": offset,
+            "next_offset": next_offset,
+            "has_more": next_offset is not None,
             "returned_count": len(items),
             "track_ids": sorted({lesson.track_id for lesson in lessons}),
             "items": items,

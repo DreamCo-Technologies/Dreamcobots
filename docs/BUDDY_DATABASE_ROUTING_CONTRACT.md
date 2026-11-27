@@ -10,7 +10,7 @@
 - config/rag-backend-catalog.json lists local, FAISS, Chroma, Qdrant, Weaviate, Milvus, pgvector, and Pinecone options. Listing a backend is not connection evidence.
 - package.json contains pg and Drizzle dependencies. This scan did not find @supabase/supabase-js or firebase-admin; Firebase specialist documentation is not a connected Firestore integration.
 
-The source registry records these distinctions. Unknown health, residency, latency, freshness, backup/restore, and credential state remain unknown. No credentials or connection strings are stored.
+The source registry records these distinctions. Connector and credential fields contain status only; no credentials or connection strings are stored. Health, residency, latency, freshness, backup/restore, replication, pooling, encryption, observability, and disaster-recovery claims remain NOT_VERIFIED until evidence is attached.
 
 ## Routing contract
 
@@ -51,3 +51,12 @@ The fixtures prove deterministic source selection, permission and residency filt
 - Runtime integration with Buddy's task router.
 
 No live database was contacted. The new route engine is EXECUTABLE against synthetic fixtures, not CONNECTED, VERIFIED against live infrastructure, or PRODUCTION.
+
+
+## Operational evidence and production gate
+
+Every source record must document its provider, environment, owner, purpose, schema version, retention, credential status, backup/restore status, residency, replication, connection pooling, encryption at rest and in transit, observability, and disaster-recovery status. Each verified control must include at least one evidence reference. Empty evidence lists and `NOT_VERIFIED` are valid honest states; they do not imply that a control is absent, only that it has not been demonstrated.
+
+A source cannot claim `PRODUCTION` lifecycle state unless backup/restore, replication, connection pooling, encryption at rest and in transit, observability, disaster recovery, and residency are all marked `VERIFIED`, each with evidence. This is a metadata gate, not a live health probe. The current four registry entries remain non-routable and `DOCUMENTED_NOT_CONNECTED`; no live connection was attempted.
+
+The routing engine remains policy-only. It does not execute writes, transactions, retries, migrations, or failover. The next integration step is to attach approved health and contract-test evidence for one synthetic source before connecting any real service.

@@ -15,28 +15,29 @@ def run(*args: str, check: bool = True) -> subprocess.CompletedProcess[str]:
     return subprocess.run(command, cwd=ROOT, text=True, check=check)
 
 
-def main() -> int:
-    # Downstream inventories consume the outputs of the earlier generators.
-    run("tools/audit_actions_health.py")
-    run("tools/build_actions_prospectus.py")
-    run("tools/audit_pages_features.py")
-
-    # The file prospectus indexes its own generated shards. Iterate to a
-    # bounded fixed point rather than accepting a stale second-order index.
-    for attempt in range(1, 4):
+def converge_prospectuses(max_attempts: int = 5) -> int:
+    """Converge the mutually-referencing file and Actions prospectuses."""
+    for attempt in range(1, max_attempts + 1):
+        # Either generator can affect the other's inputs. Generate both, then
+        # verify both without writes; repeat until they reach a fixed point.
         run("tools/build_file_prospectus.py")
-        result = run("tools/build_file_prospectus.py", "--check", check=False)
-        if result.returncode == 0:
-            print(f"File prospectus converged after {attempt} generation pass(es).")
-            break
-    else:
-        raise SystemExit("File prospectus did not converge after three passes.")
+        run("tools/build_actions_prospectus.py")
+        file_check = run("tools/build_file_prospectus.py", "--check", check=False)
+        actions_check = run(
+            "tools/build_actions_prospectus.py", "--check", "--check-buttons", check=False
+        )
+        if file_check.returncode == 0 and actions_check.returncode == 0:
+            print(f"File and Actions prospectuses converged after {attempt} pass(es).")
+            return attempt
+    raise SystemExit(
+        f"Repository prospectuses did not converge after {max_attempts} passes."
+    )
 
-    # File-prospectus generation can change source inventories consumed by the
-    # public run cards. Rebuild Actions cards after that convergence, then verify.
-    run("tools/build_actions_prospectus.py")
-    # Recheck all derived outputs after the final generator has completed.
-    run("tools/build_actions_prospectus.py", "--check", "--check-buttons")
+
+def main() -> int:
+    run("tools/audit_actions_health.py")
+    run("tools/audit_pages_features.py")
+    converge_prospectuses()
     run("tools/audit_pages_features.py", "--check", "--check-regressions")
     print("Repository evidence inventories are current for this checkout.")
     return 0
