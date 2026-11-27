@@ -296,7 +296,7 @@ def route_buddy_learning_query(
         "knowledge_gap": gap,
         "gap_event": gap_event,
         "external_discovery_available": False,
-        "external_discovery_requires_explicit_opt_in": True,
+        "external_discovery_requires_explicit_opt_in": False,
         "external_discovery_performed": False,
         "external_model_routing_performed": False,
         "next_action": "Ask the user before external research; then verify first-party sources, version and rights, draft an original guide, and review and assess it.",
