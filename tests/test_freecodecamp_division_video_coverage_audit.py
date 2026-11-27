@@ -85,6 +85,33 @@ class FreeCodeCampDivisionVideoCoverageAuditTests(unittest.TestCase):
             report = audit(root)
         self.assertIn("canonical_masterbot_ids_missing_or_duplicate", report["blockers"])
         self.assertEqual(report["specialist_curriculum"]["required_artifact_slots"], 960)
+        self.assertEqual(report["specialist_curriculum"]["missing_artifact_slots"], 960)
+
+    def test_missing_masterbot_row_does_not_shrink_required_artifact_slots(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            fixture_root(root)
+            registry_path = root / "config/masterbot-65-registry.json"
+            registry = json.loads(registry_path.read_text(encoding="utf-8"))
+            registry["divisions"].pop()
+            registry_path.write_text(json.dumps(registry), encoding="utf-8")
+            report = audit(root)
+        self.assertIn("canonical_masterbot_ids_missing_or_duplicate", report["blockers"])
+        self.assertEqual(report["specialist_curriculum"]["required_artifact_slots"], 960)
+        self.assertEqual(report["specialist_curriculum"]["missing_artifact_slots"], 960)
+
+    def test_duplicate_domain_ids_are_blocked_without_shrinking_requirements(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            fixture_root(root)
+            crosswalk_path = root / "config/generated/masterbot-55-domain-crosswalk.json"
+            crosswalk = json.loads(crosswalk_path.read_text(encoding="utf-8"))
+            crosswalk["domains"][-1]["domain_id"] = crosswalk["domains"][0]["domain_id"]
+            crosswalk_path.write_text(json.dumps(crosswalk), encoding="utf-8")
+            report = audit(root)
+        self.assertIn("canonical_domain_ids_missing_or_duplicate", report["blockers"])
+        self.assertEqual(report["specialist_curriculum"]["required_artifact_slots"], 960)
+        self.assertEqual(report["specialist_curriculum"]["missing_artifact_slots"], 960)
 
     def test_missing_masterbot_approval_record_remains_pending(self):
         with tempfile.TemporaryDirectory() as temp:
