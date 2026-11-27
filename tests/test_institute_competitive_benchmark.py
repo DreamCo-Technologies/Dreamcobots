@@ -69,6 +69,35 @@ class CompetitiveBenchmarkTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 validate_candidate(path, checkpoint, adapter, "dreamcyber")
 
+    def test_public_baseline_requires_pinned_revision_and_rights_evidence(self):
+        from scripts.benchmark_vs_baselines import validate_baseline
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            evidence = root / "license.txt"
+            evidence.write_text("reviewed license terms", encoding="utf-8")
+            digest = hashlib.sha256(evidence.read_bytes()).hexdigest()
+            checkpoint = root / "baseline.bin"
+            checkpoint.write_bytes(b"baseline")
+            checkpoint_digest = hashlib.sha256(checkpoint.read_bytes()).hexdigest()
+            item = {
+                "id": "public-small-model", "provider": "Public Hub",
+                "model_id": "publisher/model", "revision": "a" * 40,
+                "license_id": "LICENSE-REVIEWED", "license_review_reference": "rights-review-1",
+                "benchmark_authorized": True,
+                "license_evidence": {"path": "license.txt", "sha256": digest},
+                "benchmark_permission_evidence": {"path": "license.txt", "sha256": digest},
+                "checkpoint": {"path": "baseline.bin", "sha256": checkpoint_digest},
+                "adapter": {"command": ["python", "-c", "print('{}')"]}
+            }
+            self.assertEqual(validate_baseline(item, root)["model_id"], "publisher/model")
+            item["revision"] = "main"
+            with self.assertRaises(ValueError):
+                validate_baseline(item, root)
+            item["revision"] = "a" * 40
+            item["benchmark_authorized"] = False
+            with self.assertRaises(PermissionError):
+                validate_baseline(item, root)
+
     def test_runner_does_not_send_expected_answer_and_measures_contracts(self):
         case = {
             "case_id": "case-1", "division_id": "dreamcyber", "task_id": "triage",
