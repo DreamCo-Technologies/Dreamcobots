@@ -19,6 +19,15 @@ class GeneratedArtifactRefreshWorkflowTests(unittest.TestCase):
         self.assertIn("config/generated/buddy-learning-os-connections.json", text)
         self.assertIn("website/data/buddy-learning-os-connections.json", text)
 
+    def test_refresh_triggers_cover_generated_evidence_builders_and_their_contract_test(self):
+        text = WORKFLOW.read_text(encoding="utf-8")
+        for path in (
+            "tools/build_buddy_learning_os_connection_graph.py",
+            "tools/build_file_prospectus.py",
+            "tests/test_generated_artifact_refresh_workflow.py",
+        ):
+            self.assertIn(path, text)
+
 
 if __name__ == "__main__":
     unittest.main()
