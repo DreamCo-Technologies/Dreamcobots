@@ -1,25 +1,25 @@
 {
   "schema": "dreamco.buddy.markdown_implementation_gap_audit.v1",
-  "generated_at": "2026-11-26T13:27:50Z",
+  "generated_at": "2026-11-27T19:50:08Z",
   "inventory_mode": "all_tracked_markdown_files",
-  "document_count": 1760,
-  "actionable_claim_lines": 12455,
-  "documents_with_count_claims": 129,
-  "numeric_inventory_claim_count": 431,
+  "document_count": 1786,
+  "actionable_claim_lines": 12745,
+  "documents_with_count_claims": 135,
+  "numeric_inventory_claim_count": 444,
   "gap_status_counts": {
-    "broken_path_references": 93,
-    "implementation_and_test_paths_referenced_not_verified": 10,
-    "implementation_reference_missing": 1485,
-    "reference_only": 101,
-    "test_reference_missing": 71
+    "broken_path_references": 95,
+    "implementation_and_test_paths_referenced_not_verified": 9,
+    "implementation_reference_missing": 1503,
+    "reference_only": 103,
+    "test_reference_missing": 76
   },
-  "documents_with_missing_paths": 93,
-  "documents_with_path_templates": 25,
-  "path_template_reference_count": 42,
+  "documents_with_missing_paths": 95,
+  "documents_with_path_templates": 26,
+  "path_template_reference_count": 45,
   "documents_with_external_paths": 7,
   "external_path_reference_count": 111,
-  "documents_without_implementation_references": 1659,
-  "documents_without_test_references": 83,
+  "documents_without_implementation_references": 1680,
+  "documents_without_test_references": 88,
   "documents": [
     {
       "path": ".agents/memory/MEMORY.md",
@@ -23672,10 +23672,34 @@
       "execution_verified": false
     },
     {
+      "path": "buddy/bootcamp/LIVE_LEARNING_BRIDGE.md",
+      "title": "Buddy Live Learning Bridge",
+      "sha256": "eee32d259331f86d61cd99bab0c51138a187a59a4619c9934ca34b4c6fec1f16",
+      "actionable_claim_lines": 2,
+      "numeric_inventory_claims": [],
+      "count_claim_review_required": false,
+      "referenced_paths": [
+        "buddy/fleet_runtime/executor.py"
+      ],
+      "missing_paths": [],
+      "path_templates": [],
+      "external_paths": [],
+      "implementation_paths": [
+        "buddy/fleet_runtime/executor.py"
+      ],
+      "test_paths": [],
+      "workflow_paths": [],
+      "configuration_paths": [],
+      "documentation_paths": [],
+      "gap_status": "test_reference_missing",
+      "next_action": "Add focused tests and acceptance evidence for the referenced implementation.",
+      "execution_verified": false
+    },
+    {
       "path": "buddy/bootcamp/README.md",
       "title": "Buddy Mastery Bootcamp",
-      "sha256": "ec7d5f16aff8857ac50914ecf8e825a52cd834e4e0c25b66f4de7a3c9097ed68",
-      "actionable_claim_lines": 15,
+      "sha256": "b2f96f0b1305096f012cb7587309625aab554970800b6f6112bb252f51a0b7dc",
+      "actionable_claim_lines": 18,
       "numeric_inventory_claims": [
         {
           "line": 34,
@@ -25203,6 +25227,75 @@
       "execution_verified": false
     },
     {
+      "path": "data/dreamco_training/README.md",
+      "title": "DreamCo-owned Bootcamp data and course catalog",
+      "sha256": "728a5d72fce92526cf5dfb501e5de7f19e69af41be8058868a57aab38098b5f9",
+      "actionable_claim_lines": 8,
+      "numeric_inventory_claims": [],
+      "count_claim_review_required": false,
+      "referenced_paths": [
+        "benchmarks/study_courses/course_catalog.json",
+        "buddy/bootcamp/learning_source_catalog.yaml",
+        "buddy/bootcamp/resource_registry.yaml",
+        "config/buddy-training-data-provenance-policy.json",
+        "config/buddy_benchmark_dataset_factory.json",
+        "config/onet-priority-curriculum.json",
+        "config/onet-sandbox-dataset-spec.json",
+        "website/data/free-datasets.json",
+        "website/data/open-platforms.json"
+      ],
+      "missing_paths": [],
+      "path_templates": [
+        "data/dreamco_knowledge/packages/*/*/manifest.json",
+        "study_packs/*/index.json",
+        "study_packs/*/sources.json"
+      ],
+      "external_paths": [],
+      "implementation_paths": [
+        "buddy/bootcamp/learning_source_catalog.yaml",
+        "buddy/bootcamp/resource_registry.yaml",
+        "website/data/free-datasets.json",
+        "website/data/open-platforms.json"
+      ],
+      "test_paths": [],
+      "workflow_paths": [],
+      "configuration_paths": [
+        "config/buddy-training-data-provenance-policy.json",
+        "config/buddy_benchmark_dataset_factory.json",
+        "config/onet-priority-curriculum.json",
+        "config/onet-sandbox-dataset-spec.json"
+      ],
+      "documentation_paths": [],
+      "gap_status": "test_reference_missing",
+      "next_action": "Add focused tests and acceptance evidence for the referenced implementation.",
+      "execution_verified": false
+    },
+    {
+      "path": "data/dreamco_training/catalog/README.md",
+      "title": "DreamCo Training Catalog",
+      "sha256": "040a91ac654470ed72c11bdfd50102fca9762f1bd737e198b619dd7985ee4da2",
+      "actionable_claim_lines": 3,
+      "numeric_inventory_claims": [],
+      "count_claim_review_required": false,
+      "referenced_paths": [
+        "data/dreamco_training/catalog.json"
+      ],
+      "missing_paths": [
+        "../courses/universal_task_mastery_v1.json",
+        "../lessons/universal_task_mastery_lessons_v1.json"
+      ],
+      "path_templates": [],
+      "external_paths": [],
+      "implementation_paths": [],
+      "test_paths": [],
+      "workflow_paths": [],
+      "configuration_paths": [],
+      "documentation_paths": [],
+      "gap_status": "broken_path_references",
+      "next_action": "Repair or explicitly supersede the missing repository path references.",
+      "execution_verified": false
+    },
+    {
       "path": "data/onet/README.md",
       "title": "O*NET task index",
       "sha256": "266648117d6dd144615309b6f3725bf8263c7e065477dce1a298e80732ae24fc",
@@ -26373,6 +26466,26 @@
       "execution_verified": false
     },
     {
+      "path": "docs/BUDDY_BOOTCAMP_FREE_TRAINING_ECOSYSTEM.md",
+      "title": "DreamCo Buddy Bootcamp: Free and Open Model Training Ecosystem",
+      "sha256": "2835f0526c59192d855782692124d6f82d9413708d1586b6f3e84fbdc7b5e2c8",
+      "actionable_claim_lines": 18,
+      "numeric_inventory_claims": [],
+      "count_claim_review_required": false,
+      "referenced_paths": [],
+      "missing_paths": [],
+      "path_templates": [],
+      "external_paths": [],
+      "implementation_paths": [],
+      "test_paths": [],
+      "workflow_paths": [],
+      "configuration_paths": [],
+      "documentation_paths": [],
+      "gap_status": "implementation_reference_missing",
+      "next_action": "Find or build the implementation, or record why the requirement is intentionally documentation-only.",
+      "execution_verified": false
+    },
+    {
       "path": "docs/BUDDY_BOOTCAMP_SANDBOX_SPEC.md",
       "title": "Buddy Bootcamp + Capability Sandbox Specification",
       "sha256": "b03a2bbf7842d8359ec6e8d5a75fd63be324ba09af2ab41ca6e8112b72515bd3",
@@ -26435,13 +26548,13 @@
     {
       "path": "docs/BUDDY_BYTE_BPE_TRAINER.md",
       "title": "Rights-gated byte-level BPE tokenizer trainer",
-      "sha256": "41a6159abe1bc83d7bdef0e23e7dd05207de54ae19d72714f27d872aed7a0d0b",
+      "sha256": "9b3b2a74e3e515d84e796ca9faa87f2f0252ea6b8dd9caead66823472affae89",
       "actionable_claim_lines": 1,
       "numeric_inventory_claims": [
         {
-          "line": 7,
+          "line": 14,
           "match": "256, source",
-          "excerpt": "Prepare a manifest that points only to local files under `data/buddy-authorized-corpora/`. Each entry must include a verified SHA-256, source type, rights evidence, explicit model-training permission, privacy review, and a declaration that the corpus is neither sensitive nor hold",
+          "excerpt": "For any other corpus, prepare a manifest that points only to local files under data/buddy-authorized-corpora/. Each entry must include a verified SHA-256, source type, rights evidence, explicit tokenizer-training permission, privacy review, and a declaration that the corpus is ne",
           "review_required": true
         }
       ],
@@ -26660,8 +26773,8 @@
     {
       "path": "docs/BUDDY_DATABASE_ROUTING_CONTRACT.md",
       "title": "Buddy Database Routing Contract",
-      "sha256": "05773d1b7dc63cec70221fbfc14e7d9b379f22559cfd05a8cd80429cfb2031e4",
-      "actionable_claim_lines": 2,
+      "sha256": "9e4f33e60957216c0d3de23851754d5ba24b91903f0db549921e300e71138223",
+      "actionable_claim_lines": 4,
       "numeric_inventory_claims": [],
       "count_claim_review_required": false,
       "referenced_paths": [],
@@ -28213,6 +28326,26 @@
       "execution_verified": false
     },
     {
+      "path": "docs/BUDDY_TASK_TO_LEARNING_PLATFORM_ROADMAP.md",
+      "title": "DreamCo Buddy: task-to-learning and platform capability roadmap",
+      "sha256": "77e7f0d0405f400e214f9b9cc8c9025c99c83d39eea512ece0a9ce39a6d1b5a5",
+      "actionable_claim_lines": 9,
+      "numeric_inventory_claims": [],
+      "count_claim_review_required": false,
+      "referenced_paths": [],
+      "missing_paths": [],
+      "path_templates": [],
+      "external_paths": [],
+      "implementation_paths": [],
+      "test_paths": [],
+      "workflow_paths": [],
+      "configuration_paths": [],
+      "documentation_paths": [],
+      "gap_status": "implementation_reference_missing",
+      "next_action": "Find or build the implementation, or record why the requirement is intentionally documentation-only.",
+      "execution_verified": false
+    },
+    {
       "path": "docs/BUDDY_TECHNOLOGY_RADAR_PUBLIC_PROJECTION.md",
       "title": "Buddy Technology Radar: Canonical Archive and Public Projection",
       "sha256": "6c732899a122fe5d3f865d0d1859d16d8b6b211062fcd515862e525cfc83417b",
@@ -29716,6 +29849,85 @@
       "execution_verified": false
     },
     {
+      "path": "docs/DREAMCO_INSTITUTE_100_RESOURCE_PIPELINE.md",
+      "title": "DreamCo Institute — 100-Resource Clean-Room Reference Registry",
+      "sha256": "d4484cf5e4e47366834aa127935ad97ff15afac78bd8f3a2dbaab1620873a651",
+      "actionable_claim_lines": 6,
+      "numeric_inventory_claims": [
+        {
+          "line": 36,
+          "match": "65 divisions",
+          "excerpt": "## Routing into all 65 divisions",
+          "review_required": true
+        },
+        {
+          "line": 38,
+          "match": "65 division",
+          "excerpt": "tools/build_dreamco_institute_resource_plan.py reads the canonical MasterBot registry and this 100-source catalog. It creates a metadata-only plan with 100 references visible to each of 65 division learning lanes (6,500 division-resource assignments). Each resource carries catego",
+          "review_required": true
+        },
+        {
+          "line": 38,
+          "match": "6,500 division",
+          "excerpt": "tools/build_dreamco_institute_resource_plan.py reads the canonical MasterBot registry and this 100-source catalog. It creates a metadata-only plan with 100 references visible to each of 65 division learning lanes (6,500 division-resource assignments). Each resource carries catego",
+          "review_required": true
+        }
+      ],
+      "count_claim_review_required": true,
+      "referenced_paths": [],
+      "missing_paths": [],
+      "path_templates": [],
+      "external_paths": [],
+      "implementation_paths": [],
+      "test_paths": [],
+      "workflow_paths": [],
+      "configuration_paths": [],
+      "documentation_paths": [],
+      "gap_status": "implementation_reference_missing",
+      "next_action": "Find or build the implementation, or record why the requirement is intentionally documentation-only.",
+      "execution_verified": false
+    },
+    {
+      "path": "docs/DREAMCO_INSTITUTE_ACADEMIC_MODEL.md",
+      "title": "DreamCo Institute of Autonomous Systems",
+      "sha256": "020b26fc37dd375514606653bdc6dfe5e8a61515187b96727bc756908a9d1a94",
+      "actionable_claim_lines": 2,
+      "numeric_inventory_claims": [],
+      "count_claim_review_required": false,
+      "referenced_paths": [],
+      "missing_paths": [],
+      "path_templates": [],
+      "external_paths": [],
+      "implementation_paths": [],
+      "test_paths": [],
+      "workflow_paths": [],
+      "configuration_paths": [],
+      "documentation_paths": [],
+      "gap_status": "implementation_reference_missing",
+      "next_action": "Find or build the implementation, or record why the requirement is intentionally documentation-only.",
+      "execution_verified": false
+    },
+    {
+      "path": "docs/DREAMCO_INSTITUTE_MODEL_FOUNDRY.md",
+      "title": "DreamCo Institute — Turnkey AI Model Foundry & Curriculum-in-a-Box",
+      "sha256": "4b93500549b3344413ab9c6f7cfd01de290856b2984d9c7f7b3dccade8515d8f",
+      "actionable_claim_lines": 4,
+      "numeric_inventory_claims": [],
+      "count_claim_review_required": false,
+      "referenced_paths": [],
+      "missing_paths": [],
+      "path_templates": [],
+      "external_paths": [],
+      "implementation_paths": [],
+      "test_paths": [],
+      "workflow_paths": [],
+      "configuration_paths": [],
+      "documentation_paths": [],
+      "gap_status": "implementation_reference_missing",
+      "next_action": "Find or build the implementation, or record why the requirement is intentionally documentation-only.",
+      "execution_verified": false
+    },
+    {
       "path": "docs/DREAMCO_MASTERY_CONTINUITY_SYSTEM.md",
       "title": "DreamCo Mastery Continuity System",
       "sha256": "b7282d9b322d51e482c7c643c965d80737e4504a827f95d3446075a1a08da4a1",
@@ -29900,6 +30112,60 @@
       "execution_verified": false
     },
     {
+      "path": "docs/DREAMCO_OWNED_LEARNING_FABRIC.md",
+      "title": "DreamCo-Owned Learning Fabric",
+      "sha256": "d6439a7483c4837de709147de78051e7b316283d05a0da07e99b8e668352e01c",
+      "actionable_claim_lines": 13,
+      "numeric_inventory_claims": [],
+      "count_claim_review_required": false,
+      "referenced_paths": [
+        "buddy/bootcamp/learning_source_catalog.yaml",
+        "buddy/bootcamp/resource_registry.yaml",
+        "buddy/bootcamp/task_learning_router.py",
+        "buddy/frontier/learning_orchestrator.py",
+        "buddy/learning/continuous_learning_controller.py",
+        "buddy/learning/own_training.py",
+        "buddy/learning/study_resource_scheduler.py",
+        "buddy_os/integration/learning_os_connection_graph.py",
+        "config/buddy-1000-source-bootcamp.json",
+        "config/buddy-learning-source-adapters.json",
+        "config/buddy-training-data-provenance-policy.json",
+        "config/dreamco-owned-learning-fabric.json",
+        "config/onet-priority-curriculum.json",
+        "config/onet-sandbox-dataset-spec.json",
+        "config/unified-repository-learning-registry.json",
+        "data/dreamco_training/catalog/repository_asset_inventory_seed.json"
+      ],
+      "missing_paths": [],
+      "path_templates": [],
+      "external_paths": [],
+      "implementation_paths": [
+        "buddy/bootcamp/learning_source_catalog.yaml",
+        "buddy/bootcamp/resource_registry.yaml",
+        "buddy/bootcamp/task_learning_router.py",
+        "buddy/frontier/learning_orchestrator.py",
+        "buddy/learning/continuous_learning_controller.py",
+        "buddy/learning/own_training.py",
+        "buddy/learning/study_resource_scheduler.py",
+        "buddy_os/integration/learning_os_connection_graph.py"
+      ],
+      "test_paths": [],
+      "workflow_paths": [],
+      "configuration_paths": [
+        "config/buddy-1000-source-bootcamp.json",
+        "config/buddy-learning-source-adapters.json",
+        "config/buddy-training-data-provenance-policy.json",
+        "config/dreamco-owned-learning-fabric.json",
+        "config/onet-priority-curriculum.json",
+        "config/onet-sandbox-dataset-spec.json",
+        "config/unified-repository-learning-registry.json"
+      ],
+      "documentation_paths": [],
+      "gap_status": "test_reference_missing",
+      "next_action": "Add focused tests and acceptance evidence for the referenced implementation.",
+      "execution_verified": false
+    },
+    {
       "path": "docs/DREAMCO_POSTGRES_DIVISION_LIFECYCLE_MIGRATION.md",
       "title": "DreamCo PostgreSQL division lifecycle migration",
       "sha256": "fe1af4ef268e1d208a3afb034567b756951107325ed698d3b2f3c4464cbc1644",
@@ -30036,6 +30302,43 @@
       "documentation_paths": [],
       "gap_status": "broken_path_references",
       "next_action": "Repair or explicitly supersede the missing repository path references.",
+      "execution_verified": false
+    },
+    {
+      "path": "docs/DREAMCO_UNIVERSAL_BOT_LEARNING_FOUNDRY.md",
+      "title": "DreamCo Universal Bot Learning Foundry",
+      "sha256": "93837bdbd9b37d30af6c2a9e25efe29d36fd1b0724fd1633fa1ac71e92c77424",
+      "actionable_claim_lines": 4,
+      "numeric_inventory_claims": [
+        {
+          "line": 6,
+          "match": "120 division",
+          "excerpt": "It reads the generated canonical fleet manifest (currently 1,232 entries, including its separately flagged supplemental and teammate entries), preserves the original library's 200 income bots and 12 major systems as historical-source candidates, and includes all 55 business micro",
+          "review_required": true
+        },
+        {
+          "line": 42,
+          "match": "120 division",
+          "excerpt": "The default run writes an inventory index. `--materialize` writes a separate JSON file for each canonical, legacy and business bot plus all 120 division learning manifests under `config/generated/dreamco-bot-learning-manifests/`. Generated artifacts should be rebuilt from their s",
+          "review_required": true
+        }
+      ],
+      "count_claim_review_required": true,
+      "referenced_paths": [
+        "buddy/fleet_runtime/semantic_router.py"
+      ],
+      "missing_paths": [],
+      "path_templates": [],
+      "external_paths": [],
+      "implementation_paths": [
+        "buddy/fleet_runtime/semantic_router.py"
+      ],
+      "test_paths": [],
+      "workflow_paths": [],
+      "configuration_paths": [],
+      "documentation_paths": [],
+      "gap_status": "test_reference_missing",
+      "next_action": "Add focused tests and acceptance evidence for the referenced implementation.",
       "execution_verified": false
     },
     {
@@ -31283,6 +31586,26 @@
       "execution_verified": false
     },
     {
+      "path": "docs/QUALITY/DREAMCO_LEARNING_PR_CICD_STANDARD.md",
+      "title": "DreamCo Learning, Pull Request, and CI/CD Quality Standard",
+      "sha256": "8d9c63ab18ff90bd1c7648f74b38497ffa36b7665965a2eb9ec4be5f071db4e0",
+      "actionable_claim_lines": 19,
+      "numeric_inventory_claims": [],
+      "count_claim_review_required": false,
+      "referenced_paths": [],
+      "missing_paths": [],
+      "path_templates": [],
+      "external_paths": [],
+      "implementation_paths": [],
+      "test_paths": [],
+      "workflow_paths": [],
+      "configuration_paths": [],
+      "documentation_paths": [],
+      "gap_status": "implementation_reference_missing",
+      "next_action": "Find or build the implementation, or record why the requirement is intentionally documentation-only.",
+      "execution_verified": false
+    },
+    {
       "path": "docs/READINESS_GATE_PLAN.md",
       "title": "Readiness gate plan",
       "sha256": "144bfc9446787be879efcea90d86ed0abe052d3d5ae8847596bb92321bc5f1d8",
@@ -32139,6 +32462,46 @@
       "execution_verified": false
     },
     {
+      "path": "docs/architecture/DREAMCO_FREE_GITHUB_EXECUTION_PLAN.md",
+      "title": "DreamCo Free GitHub Execution Plan",
+      "sha256": "1aefddfb3262d5710e042c884646404af63a8b1ddf55000b787cda852d0480dc",
+      "actionable_claim_lines": 9,
+      "numeric_inventory_claims": [
+        {
+          "line": 93,
+          "match": "500 models",
+          "excerpt": "**Status:** This document and the free CI workflow define a free-first operating path. They do not certify the full 10-pillar system, prove that 500 models have been executed, or imply that Buddy's model weights have been trained.",
+          "review_required": true
+        }
+      ],
+      "count_claim_review_required": true,
+      "referenced_paths": [
+        ".github/workflows/dreamco-free-ci.yml",
+        "buddy/datasets/benchmark_jobs.py",
+        "buddy/datasets/benchmark_runner.py",
+        "tools/run_500_model_benchmarks.py",
+        "tools/run_buddy_model_benchmark.py"
+      ],
+      "missing_paths": [],
+      "path_templates": [],
+      "external_paths": [],
+      "implementation_paths": [
+        "buddy/datasets/benchmark_jobs.py",
+        "buddy/datasets/benchmark_runner.py",
+        "tools/run_500_model_benchmarks.py",
+        "tools/run_buddy_model_benchmark.py"
+      ],
+      "test_paths": [],
+      "workflow_paths": [
+        ".github/workflows/dreamco-free-ci.yml"
+      ],
+      "configuration_paths": [],
+      "documentation_paths": [],
+      "gap_status": "test_reference_missing",
+      "next_action": "Add focused tests and acceptance evidence for the referenced implementation.",
+      "execution_verified": false
+    },
+    {
       "path": "docs/architecture/DREAMCO_HUGGINGFACE_DIVISION_TAXONOMY.md",
       "title": "DreamCo Hugging Face Division Taxonomy and Discovery Map",
       "sha256": "fd7001491a230024754e3a39864380e0470b22eb9f3ecb6a403f2316ad464b57",
@@ -32156,6 +32519,43 @@
       "workflow_paths": [],
       "configuration_paths": [
         "config/generated/division-huggingface-taxonomy-map.json"
+      ],
+      "documentation_paths": [],
+      "gap_status": "implementation_reference_missing",
+      "next_action": "Find or build the implementation, or record why the requirement is intentionally documentation-only.",
+      "execution_verified": false
+    },
+    {
+      "path": "docs/architecture/DREAMCO_UNIVERSAL_DIVISION_MASTERY_STANDARD.md",
+      "title": "DreamCo Universal Division Mastery & Autonomous Foundry Standard",
+      "sha256": "57a9a25a4b786c81832fb0b9924c17b80671750f214458369737f3d174a79930",
+      "actionable_claim_lines": 5,
+      "numeric_inventory_claims": [
+        {
+          "line": 67,
+          "match": "195 models",
+          "excerpt": "**Truth status:** This standard defines the contract. It does not claim that 195 models are trained, 65 lanes are mastered, or any division is production-certified.",
+          "review_required": true
+        }
+      ],
+      "count_claim_review_required": true,
+      "referenced_paths": [
+        "config/dreamco-business-bot-55-roster.json",
+        "config/generated/division-reconciliation.json",
+        "config/generated/masterbot-55-domain-crosswalk.json",
+        "config/masterbot-65-registry.json"
+      ],
+      "missing_paths": [],
+      "path_templates": [],
+      "external_paths": [],
+      "implementation_paths": [],
+      "test_paths": [],
+      "workflow_paths": [],
+      "configuration_paths": [
+        "config/dreamco-business-bot-55-roster.json",
+        "config/generated/division-reconciliation.json",
+        "config/generated/masterbot-55-domain-crosswalk.json",
+        "config/masterbot-65-registry.json"
       ],
       "documentation_paths": [],
       "gap_status": "implementation_reference_missing",
@@ -32423,6 +32823,66 @@
       "execution_verified": false
     },
     {
+      "path": "docs/books/README.md",
+      "title": "Buddy Human Books",
+      "sha256": "bbfb0b70fe959c3368505cba9be0b459835c14f14addf6d76cd71a2f7013d091",
+      "actionable_claim_lines": 0,
+      "numeric_inventory_claims": [],
+      "count_claim_review_required": false,
+      "referenced_paths": [],
+      "missing_paths": [],
+      "path_templates": [],
+      "external_paths": [],
+      "implementation_paths": [],
+      "test_paths": [],
+      "workflow_paths": [],
+      "configuration_paths": [],
+      "documentation_paths": [],
+      "gap_status": "reference_only",
+      "next_action": "Find or build the implementation, or record why the requirement is intentionally documentation-only.",
+      "execution_verified": false
+    },
+    {
+      "path": "docs/books/THE_BUDDY_BOOTCAMP_HANDBOOK_HOW_TO_LEARN_ANYTHING.md",
+      "title": "The Buddy Bootcamp Handbook",
+      "sha256": "be4fb6618efb04d53590372f7cf569dcbc1d903c30c6dec873f413a24dd218a8",
+      "actionable_claim_lines": 37,
+      "numeric_inventory_claims": [],
+      "count_claim_review_required": false,
+      "referenced_paths": [],
+      "missing_paths": [],
+      "path_templates": [],
+      "external_paths": [],
+      "implementation_paths": [],
+      "test_paths": [],
+      "workflow_paths": [],
+      "configuration_paths": [],
+      "documentation_paths": [],
+      "gap_status": "implementation_reference_missing",
+      "next_action": "Find or build the implementation, or record why the requirement is intentionally documentation-only.",
+      "execution_verified": false
+    },
+    {
+      "path": "docs/books/THE_BUDDY_USERS_GUIDE_HOW_TO_USE_BUDDY.md",
+      "title": "The Buddy User's Guide",
+      "sha256": "c7152d718b2da20557c0dc2e5790eb475dcdc7d90b9467ad6bf2652d0d6065a0",
+      "actionable_claim_lines": 53,
+      "numeric_inventory_claims": [],
+      "count_claim_review_required": false,
+      "referenced_paths": [],
+      "missing_paths": [],
+      "path_templates": [],
+      "external_paths": [],
+      "implementation_paths": [],
+      "test_paths": [],
+      "workflow_paths": [],
+      "configuration_paths": [],
+      "documentation_paths": [],
+      "gap_status": "implementation_reference_missing",
+      "next_action": "Find or build the implementation, or record why the requirement is intentionally documentation-only.",
+      "execution_verified": false
+    },
+    {
       "path": "docs/bootcamp/COVERAGE_GATE.md",
       "title": "Buddy Bootcamp coverage gate",
       "sha256": "c587a8e4bda795f32096f8beafca2f1eb759a417ddda65c36cad9d176687f6b1",
@@ -32490,6 +32950,80 @@
       "execution_verified": false
     },
     {
+      "path": "docs/bootcamp/DREAMCO_INSTITUTE_100_RESOURCE_FOUNDATION.md",
+      "title": "DreamCo Institute: 100-Resource Foundry & Bootcamp Reference Library",
+      "sha256": "1340d4f020452c0227151a40bb90816c2b9e7a5b5c800149e85ce7a3638bf216",
+      "actionable_claim_lines": 2,
+      "numeric_inventory_claims": [],
+      "count_claim_review_required": false,
+      "referenced_paths": [
+        "config/buddy-resource-sources.json",
+        "scripts/buddy_resource_harvester.py"
+      ],
+      "missing_paths": [],
+      "path_templates": [],
+      "external_paths": [],
+      "implementation_paths": [],
+      "test_paths": [],
+      "workflow_paths": [],
+      "configuration_paths": [
+        "config/buddy-resource-sources.json"
+      ],
+      "documentation_paths": [],
+      "gap_status": "implementation_reference_missing",
+      "next_action": "Find or build the implementation, or record why the requirement is intentionally documentation-only.",
+      "execution_verified": false
+    },
+    {
+      "path": "docs/bootcamp/FREECODECAMP_DREAMCO_ALIGNMENT_PLAN.md",
+      "title": "DreamCo x freeCodeCamp: division, video, repository, and engineering alignment",
+      "sha256": "6907db31cbd4da1a8e96be496074b86827bf309390f8cbe777ebe1324b820d70",
+      "actionable_claim_lines": 30,
+      "numeric_inventory_claims": [
+        {
+          "line": 22,
+          "match": "22 categories",
+          "excerpt": "| Video subject taxonomy | 22 categories | Supports multi-label routing across domains |",
+          "review_required": true
+        },
+        {
+          "line": 84,
+          "match": "22-category",
+          "excerpt": "Use the existing 22-category taxonomy and the 55 curated domain-category profiles as the first routing layer. Use the video title and public description only as discovery metadata. Do not treat title matching as proof that a video teaches every skill in a target division.",
+          "review_required": true
+        },
+        {
+          "line": 99,
+          "match": "22 categories",
+          "excerpt": "The existing `config/freecodecamp-division-category-profiles.json` is the authoritative first-pass mapping from each domain to the relevant categories. The 22 categories are:",
+          "review_required": true
+        },
+        {
+          "line": 224,
+          "match": "198 workflows",
+          "excerpt": "- [#18631 — Actions runtime health](https://github.com/DreamCo-Technologies/Dreamcobots/issues/18631): 198 workflows were statically valid in the recorded report, but runtime status was unknown for all 198.",
+          "review_required": true
+        }
+      ],
+      "count_claim_review_required": true,
+      "referenced_paths": [
+        "config/freecodecamp-division-category-profiles.json"
+      ],
+      "missing_paths": [],
+      "path_templates": [],
+      "external_paths": [],
+      "implementation_paths": [],
+      "test_paths": [],
+      "workflow_paths": [],
+      "configuration_paths": [
+        "config/freecodecamp-division-category-profiles.json"
+      ],
+      "documentation_paths": [],
+      "gap_status": "implementation_reference_missing",
+      "next_action": "Find or build the implementation, or record why the requirement is intentionally documentation-only.",
+      "execution_verified": false
+    },
+    {
       "path": "docs/bootcamp/FREECODECAMP_STUDY_GUIDE_REVIEW_POLICY.md",
       "title": "freeCodeCamp study-guide human review policy",
       "sha256": "059c85e8c279013de3cf516df65ee125a661955d7a14586d420d689bff334c98",
@@ -32534,6 +33068,26 @@
       "title": "Hugging Face module review readiness",
       "sha256": "a6c3ff505af997bffb1a19a67f8ecbe44ed7f25f3e6f0e413bbfe21a4828907b",
       "actionable_claim_lines": 1,
+      "numeric_inventory_claims": [],
+      "count_claim_review_required": false,
+      "referenced_paths": [],
+      "missing_paths": [],
+      "path_templates": [],
+      "external_paths": [],
+      "implementation_paths": [],
+      "test_paths": [],
+      "workflow_paths": [],
+      "configuration_paths": [],
+      "documentation_paths": [],
+      "gap_status": "implementation_reference_missing",
+      "next_action": "Find or build the implementation, or record why the requirement is intentionally documentation-only.",
+      "execution_verified": false
+    },
+    {
+      "path": "docs/bootcamp/HUGGING_FACE_OLLAMA_TRAINING_ACADEMY.md",
+      "title": "Buddy Bootcamp: Hugging Face, Ollama & Open-Model Training Academy",
+      "sha256": "ad016a9c1a01bf5fe17f466772ddfada0779316a6598f1c92d54efca12dc55b3",
+      "actionable_claim_lines": 21,
       "numeric_inventory_claims": [],
       "count_claim_review_required": false,
       "referenced_paths": [],
@@ -33069,8 +33623,8 @@
     {
       "path": "docs/engineering/DREAMCO_PROJECT_CHAT_CORPUS.md",
       "title": "DreamCo Project Conversation and Source-Corpus Reconciliation",
-      "sha256": "9ab9baeab0aa94fa03532c85f3a9a245898e280502f5386d8d9159a137277ffa",
-      "actionable_claim_lines": 26,
+      "sha256": "bdcc0a0205bcb605dc695e0dc848818446c366deaaa1d729437743dd4bd30c52",
+      "actionable_claim_lines": 31,
       "numeric_inventory_claims": [
         {
           "line": 23,
@@ -33142,8 +33696,8 @@
     {
       "path": "docs/engineering/PR_RECONCILIATION_LEDGER.md",
       "title": "DreamCo Pull Request Reconciliation Ledger",
-      "sha256": "578153b6486d12c34565624b962efde898b7864cf4d030ef43edee360cb368fd",
-      "actionable_claim_lines": 26,
+      "sha256": "c0156afc24c3d89e6dd4fd95b92f4998ab8336e53e7b4bd39454f67c8250f189",
+      "actionable_claim_lines": 29,
       "numeric_inventory_claims": [
         {
           "line": 15,
@@ -33192,6 +33746,12 @@
           "match": "### 2026-11",
           "excerpt": "### 2026-11-24 clean-base Bootcamp port — PR #18207 to PR #18216",
           "review_required": true
+        },
+        {
+          "line": 209,
+          "match": "0 division",
+          "excerpt": "- PR #18651 merged at 2026-11-26T15:28:01Z: head `ee60b6cc8b63c3b6ac7f1a9291f4b99aa1bc3872`, merge commit `35cc82fe518b9a993b2ceb9e1df5de1b5532b6ee`. Its exact-head checks completed 11 success / 1 skipped; no submitted review approval was recorded and CodeRabbit was rate-limited.",
+          "review_required": true
         }
       ],
       "count_claim_review_required": true,
@@ -33213,7 +33773,10 @@
         "website/data/command-center/capabilities.json",
         "website/data/dreamco-search-index.js"
       ],
-      "missing_paths": [],
+      "missing_paths": [
+        "markdown-inventory/2026-11-26.json",
+        "pr-inventory-snapshots/2026-11-26.json"
+      ],
       "path_templates": [],
       "external_paths": [],
       "implementation_paths": [
@@ -33242,8 +33805,8 @@
       "documentation_paths": [
         "docs/engineering/pr-inventory-snapshots/2026-11-24.json"
       ],
-      "gap_status": "implementation_and_test_paths_referenced_not_verified",
-      "next_action": "Run the linked tests and attach CI, benchmark, regression, and runtime evidence before promotion.",
+      "gap_status": "broken_path_references",
+      "next_action": "Repair or explicitly supersede the missing repository path references.",
       "execution_verified": false
     },
     {
@@ -33298,6 +33861,46 @@
       "execution_verified": false
     },
     {
+      "path": "docs/governance/CI_CD_ENGINEERING_ROADMAP.md",
+      "title": "DreamCo CI/CD Engineering Roadmap — 100-Hint Review",
+      "sha256": "beac36f84cdd275880a44a47b3b14018b02db4a81d1cb4a9bdb64731e975edc6",
+      "actionable_claim_lines": 12,
+      "numeric_inventory_claims": [],
+      "count_claim_review_required": false,
+      "referenced_paths": [],
+      "missing_paths": [],
+      "path_templates": [],
+      "external_paths": [],
+      "implementation_paths": [],
+      "test_paths": [],
+      "workflow_paths": [],
+      "configuration_paths": [],
+      "documentation_paths": [],
+      "gap_status": "implementation_reference_missing",
+      "next_action": "Find or build the implementation, or record why the requirement is intentionally documentation-only.",
+      "execution_verified": false
+    },
+    {
+      "path": "docs/governance/PR_REVIEW_AND_MR_TRIAGE.md",
+      "title": "DreamCo PR Review and MR Issue Triage",
+      "sha256": "c8c32b0f36f35352c9379eea72fc265356087d6e6f164fa08f7d50b746092199",
+      "actionable_claim_lines": 3,
+      "numeric_inventory_claims": [],
+      "count_claim_review_required": false,
+      "referenced_paths": [],
+      "missing_paths": [],
+      "path_templates": [],
+      "external_paths": [],
+      "implementation_paths": [],
+      "test_paths": [],
+      "workflow_paths": [],
+      "configuration_paths": [],
+      "documentation_paths": [],
+      "gap_status": "implementation_reference_missing",
+      "next_action": "Find or build the implementation, or record why the requirement is intentionally documentation-only.",
+      "execution_verified": false
+    },
+    {
       "path": "docs/hf/HF_PIN_MATRIX.md",
       "title": "HF learning pin matrix",
       "sha256": "9042949d8e4bf67d5fa75f14e0952ad65dc2ad79284586923b7daf934d1bf50e",
@@ -33327,6 +33930,72 @@
       "numeric_inventory_claims": [],
       "count_claim_review_required": false,
       "referenced_paths": [],
+      "missing_paths": [],
+      "path_templates": [],
+      "external_paths": [],
+      "implementation_paths": [],
+      "test_paths": [],
+      "workflow_paths": [],
+      "configuration_paths": [],
+      "documentation_paths": [],
+      "gap_status": "implementation_reference_missing",
+      "next_action": "Find or build the implementation, or record why the requirement is intentionally documentation-only.",
+      "execution_verified": false
+    },
+    {
+      "path": "docs/institute/BUDDY_RESOURCE_INTAKE.md",
+      "title": "Buddy Multi-Division Resource Intake",
+      "sha256": "67735b7b30793ddaa001525cff792e345f3442e6a32cbeae1df837360c9c30f4",
+      "actionable_claim_lines": 5,
+      "numeric_inventory_claims": [],
+      "count_claim_review_required": false,
+      "referenced_paths": [
+        "config/buddy-resource-sources.json"
+      ],
+      "missing_paths": [],
+      "path_templates": [],
+      "external_paths": [],
+      "implementation_paths": [],
+      "test_paths": [],
+      "workflow_paths": [],
+      "configuration_paths": [
+        "config/buddy-resource-sources.json"
+      ],
+      "documentation_paths": [],
+      "gap_status": "implementation_reference_missing",
+      "next_action": "Find or build the implementation, or record why the requirement is intentionally documentation-only.",
+      "execution_verified": false
+    },
+    {
+      "path": "docs/institute/COMPETITIVE_MODEL_LAB.md",
+      "title": "DreamCo Institute Competitive Model Laboratory",
+      "sha256": "510b7fbb1f057d6ae167c800aa38c75c4654dc84510ca852b5466968750ba708",
+      "actionable_claim_lines": 7,
+      "numeric_inventory_claims": [],
+      "count_claim_review_required": false,
+      "referenced_paths": [],
+      "missing_paths": [],
+      "path_templates": [],
+      "external_paths": [],
+      "implementation_paths": [],
+      "test_paths": [],
+      "workflow_paths": [],
+      "configuration_paths": [],
+      "documentation_paths": [],
+      "gap_status": "implementation_reference_missing",
+      "next_action": "Find or build the implementation, or record why the requirement is intentionally documentation-only.",
+      "execution_verified": false
+    },
+    {
+      "path": "docs/institute/VERIFIED_45M_ARTIFACT_CONTRACT.md",
+      "title": "Verified 45M checkpoint and competitor evidence contract",
+      "sha256": "b9f46474f0b8ddf98505fec3fda0c2627549a35b23c34922d7bf4195254ed40e",
+      "actionable_claim_lines": 2,
+      "numeric_inventory_claims": [],
+      "count_claim_review_required": false,
+      "referenced_paths": [
+        "baselines/competitor_registry.json"
+      ],
       "missing_paths": [],
       "path_templates": [],
       "external_paths": [],
@@ -35139,14 +35808,16 @@
       "numeric_inventory_claims": [],
       "count_claim_review_required": false,
       "referenced_paths": [
+        ".github/workflows/buddy-bootcamp-resource-categories.yml",
+        ".github/workflows/buddy-provider-learning-libraries.yml",
         ".github/workflows/buddy-task-store-tests.yml",
-        ".github/workflows/buddy-training-methods-hub.yml"
+        ".github/workflows/buddy-training-methods-hub.yml",
+        ".github/workflows/buddy-training-taxonomy.yml"
       ],
       "missing_paths": [
         ".github/workflows/all-bot-sandbox-campaign.yml",
         ".github/workflows/auto-merge-intake.yml",
         ".github/workflows/benchmark-mastery-distillation.yml",
-        ".github/workflows/buddy-bootcamp-resource-categories.yml",
         ".github/workflows/buddy-custom-training-rewards.yml",
         ".github/workflows/buddy-daily-capability-gap-lab.yml",
         ".github/workflows/buddy-evidence-acquisition-tests.yml",
@@ -35156,12 +35827,10 @@
         ".github/workflows/buddy-navigation-bootcamp.yml",
         ".github/workflows/buddy-preventive-site-audit.yml",
         ".github/workflows/buddy-production-evidence-preflight.yml",
-        ".github/workflows/buddy-provider-learning-libraries.yml",
         ".github/workflows/buddy-recovery-systems.yml",
         ".github/workflows/buddy-safe-repair.yml",
         ".github/workflows/buddy-self-build.yml",
         ".github/workflows/buddy-teacher-coverage-audit.yml",
-        ".github/workflows/buddy-training-taxonomy.yml",
         ".github/workflows/ci-automation.yml",
         ".github/workflows/ci.yml",
         ".github/workflows/codex-scan-only.yml",
@@ -35176,8 +35845,11 @@
       "implementation_paths": [],
       "test_paths": [],
       "workflow_paths": [
+        ".github/workflows/buddy-bootcamp-resource-categories.yml",
+        ".github/workflows/buddy-provider-learning-libraries.yml",
         ".github/workflows/buddy-task-store-tests.yml",
-        ".github/workflows/buddy-training-methods-hub.yml"
+        ".github/workflows/buddy-training-methods-hub.yml",
+        ".github/workflows/buddy-training-taxonomy.yml"
       ],
       "configuration_paths": [],
       "documentation_paths": [],
@@ -36896,7 +37568,7 @@
     {
       "path": "reports/FLEET_RUNTIME_AUDIT.md",
       "title": "Fleet Runtime Truth Audit",
-      "sha256": "bcd8a388c1c5ebdc6802852a7f016fe6a37f3bb9d75c56860ebbb90044796cf2",
+      "sha256": "d2cb1e061b04c1310a7f1b7d8dbab05073717c358f3df7221d80aac76a8458c2",
       "actionable_claim_lines": 4,
       "numeric_inventory_claims": [],
       "count_claim_review_required": false,
@@ -37408,7 +38080,7 @@
     {
       "path": "reports/PAGES_FEATURE_AUDIT.md",
       "title": "Pages Feature Audit",
-      "sha256": "eedcbbd1af4f4dfea56ab0eb0c6383348c3613d023af70535d14d4f9ca38ad80",
+      "sha256": "87475df7d70899ae93f46da5b977c1ad1694903632cbbd2c7cfae973ab7b2a07",
       "actionable_claim_lines": 0,
       "numeric_inventory_claims": [],
       "count_claim_review_required": false,
@@ -37760,6 +38432,53 @@
       "configuration_paths": [],
       "documentation_paths": [],
       "gap_status": "implementation_reference_missing",
+      "next_action": "Find or build the implementation, or record why the requirement is intentionally documentation-only.",
+      "execution_verified": false
+    },
+    {
+      "path": "reports/buddy-study-evidence/2026-11-26/session-45842272031/session-report.md",
+      "title": "Buddy Study Evidence Session — 2026-11-26",
+      "sha256": "7e2e564341ad548b02428c0bd95e4164ae11e0eef026b936a6b3ac5f092b77c5",
+      "actionable_claim_lines": 3,
+      "numeric_inventory_claims": [],
+      "count_claim_review_required": false,
+      "referenced_paths": [],
+      "missing_paths": [],
+      "path_templates": [],
+      "external_paths": [],
+      "implementation_paths": [],
+      "test_paths": [],
+      "workflow_paths": [],
+      "configuration_paths": [],
+      "documentation_paths": [],
+      "gap_status": "implementation_reference_missing",
+      "next_action": "Find or build the implementation, or record why the requirement is intentionally documentation-only.",
+      "execution_verified": false
+    },
+    {
+      "path": "reports/buddy-study-evidence/2026-11-26/session-45846724922/session-report.md",
+      "title": "Buddy Study Evidence Session",
+      "sha256": "bc617a1898fea9869bab1846e85107a1db3f8bb2d359b1de8e4625a50f8eaf12",
+      "actionable_claim_lines": 0,
+      "numeric_inventory_claims": [
+        {
+          "line": 21,
+          "match": "55 divisions",
+          "excerpt": "- Active-recall subactivity blocked: 55 divisions",
+          "review_required": true
+        }
+      ],
+      "count_claim_review_required": true,
+      "referenced_paths": [],
+      "missing_paths": [],
+      "path_templates": [],
+      "external_paths": [],
+      "implementation_paths": [],
+      "test_paths": [],
+      "workflow_paths": [],
+      "configuration_paths": [],
+      "documentation_paths": [],
+      "gap_status": "reference_only",
       "next_action": "Find or build the implementation, or record why the requirement is intentionally documentation-only.",
       "execution_verified": false
     },
