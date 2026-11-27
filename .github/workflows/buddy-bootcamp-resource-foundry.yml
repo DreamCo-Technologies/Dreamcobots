@@ -1,0 +1,32 @@
+name: Buddy Bootcamp Resource Foundry
+
+on:
+  pull_request:
+    paths:
+      - "config/buddy-bootcamp-100-resource-manifest.json"
+      - "tools/generate_buddy_bootcamp_challenges.py"
+      - "tests/test_buddy_bootcamp_resource_foundry.py"
+      - "docs/buddy-bootcamp-resource-foundry.md"
+      - ".github/workflows/buddy-bootcamp-resource-foundry.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: buddy-bootcamp-foundry-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate-foundry:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
+      - name: Compile generator
+        run: python -m py_compile tools/generate_buddy_bootcamp_challenges.py
+      - name: Run resource and rights-gate tests
+        run: python -m unittest tests.test_buddy_bootcamp_resource_foundry -v
