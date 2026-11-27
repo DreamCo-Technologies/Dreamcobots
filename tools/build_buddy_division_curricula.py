@@ -21,7 +21,7 @@ def main() -> int:
     catalog = build_division_curricula()
     manifest = build_manifest(catalog)
     output = ROOT / "data/dreamco_training/division_curricula"
-    manifest_path = ROOT / "config/buddy-division-specialist-course-artifacts.json"
+    manifest_path = ROOT / "config/dreamco-division-curricula-manifest.json"
 
     if args.write:
         output.mkdir(parents=True, exist_ok=True)
