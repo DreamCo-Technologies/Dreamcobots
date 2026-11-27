@@ -299,6 +299,6 @@ def route_buddy_learning_query(
         "external_discovery_requires_explicit_opt_in": False,
         "external_discovery_performed": False,
         "external_model_routing_performed": False,
-        "next_action": "Ask the user before external research; then verify first-party sources, version and rights, draft an original guide, and review and assess it.",
+        "next_action": "Record a DreamCo knowledge gap and queue original authoring; do not route learners to external course websites.",
         "mastery_awarded": False,
     }
