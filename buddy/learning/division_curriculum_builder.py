@@ -180,7 +180,7 @@ def build_division_curricula(root: Path = ROOT) -> dict[str, Any]:
                 "capability_domains": module.get("capability_domains", []),
                 "actor_modes": module.get("actor_modes", actor_modes),
                 "lesson_ids": [lesson_id],
-                "exercise_ids": [item for item in exercise_ids if item.startswith(f"{slug}-{module_id.lower()}")],
+                "exercise_ids": [f"{slug}-{row['id'].lower()}" for row in taxonomy["exercise_types"] if row["module_id"] == module_id],
                 "assessment_ids": assessment_ids,
                 "status": "draft_generated_needs_owner_review",
             })
