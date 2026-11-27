@@ -61,7 +61,7 @@ class BenchmarkV2EngineTests(unittest.TestCase):
             return RunnerResult(calls["runner"] == 2, 0 if calls["runner"] == 2 else 1,
                                 10, peak_memory_mb=20)
         def proposer(task, evidence, attempt):
-            return {"revalidated_task": task}
+            return {"revalidated_task": BenchmarkTask(**{**task.__dict__, "test_sha256": "b" * 64})}
         def reviewer(_):
             calls["review"] += 1
             return True
@@ -80,6 +80,14 @@ class BenchmarkV2EngineTests(unittest.TestCase):
         )
         self.assertEqual(result["status"], "FAIL_CLOSED")
         self.assertEqual(calls["runner"], 3)
+
+    def test_repair_without_new_regression_test_hash_blocks(self):
+        result = self_debug_with_reviewed_patch(
+            TASK, lambda _: RunnerResult(False, 1, 1, peak_memory_mb=1),
+            lambda task, *_: {"revalidated_task": task}, lambda _: True,
+            max_attempts=3, max_duration_ms=10, max_memory_mb=10,
+        )
+        self.assertEqual(result["status"], "BLOCKED_NO_NEW_REGRESSION_TEST")
 
     def test_missing_revalidated_task_blocks(self):
         result = self_debug_with_reviewed_patch(
