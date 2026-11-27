@@ -197,7 +197,8 @@ def route_buddy_learning_query(
                 "missing_supporting_guide_count": missing_supporting_guide_count,
                 "seed_candidate_matches": seed_matches,
                 "knowledge_gap": library.get("knowledge_gap"),
-                "external_discovery_available": missing_supporting_guide_count > 0,
+                "external_discovery_available": False,
+                "external_discovery_requires_explicit_opt_in": True,
                 "external_discovery_performed": False,
                 "external_model_routing_performed": False,
                 "study_required": True,
@@ -229,14 +230,15 @@ def route_buddy_learning_query(
             "missing_supporting_guide_count": missing_supporting_guide_count,
             "seed_candidate_matches": seed_matches,
             "knowledge_gap": library.get("knowledge_gap"),
-            "external_discovery_available": missing_supporting_guide_count > 0,
+            "external_discovery_available": False,
+            "external_discovery_requires_explicit_opt_in": supporting_guide_count == 0,
             "external_discovery_performed": False,
             "external_model_routing_performed": False,
             "study_required": True,
             "next_action": (
                 "Study the repository-local supporting guide and complete the original practice. "
-                "If it does not cover the requested lesson, find an authoritative first-party source, "
-                "verify its release and rights, then draft and review an original guide."
+                "If it does not cover the requested lesson, ask the user before external research; "
+                "then verify a first-party source, release and rights before drafting an original guide."
             ),
             "mastery_awarded": False,
         }
@@ -265,9 +267,10 @@ def route_buddy_learning_query(
         "seed_candidate_matches": seed_matches,
         "knowledge_gap": gap,
         "gap_event": gap_event,
-        "external_discovery_available": True,
+        "external_discovery_available": False,
+        "external_discovery_requires_explicit_opt_in": True,
         "external_discovery_performed": False,
         "external_model_routing_performed": False,
-        "next_action": "Find first-party sources, verify version and rights, draft an original guide, then review and assess it.",
+        "next_action": "Ask the user before external research; then verify first-party sources, version and rights, draft an original guide, and review and assess it.",
         "mastery_awarded": False,
     }
