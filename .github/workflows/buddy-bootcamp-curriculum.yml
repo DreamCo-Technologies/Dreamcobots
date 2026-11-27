@@ -87,6 +87,10 @@ on:
       - "tools/build_onet_task_curricula.py"
       - "tests/test_buddy_onet_task_index.py"
       - "tests/test_onet_task_curricula.py"
+      - "config/dreamco-universal-division-mastery-contract.json"
+      - "tools/build_division_learning_model_kits.py"
+      - "tests/test_division_learning_model_kits.py"
+      - "tests/test_buddy_bootcamp_model_kits_workflow.py"
       - "tests/fixtures/onet-task-statements-official-shape.json"
       - ".github/workflows/buddy-onet-task-index-refresh.yml"
       - "data/onet/**"
@@ -206,6 +210,10 @@ on:
       - "tools/build_onet_task_curricula.py"
       - "tests/test_buddy_onet_task_index.py"
       - "tests/test_onet_task_curricula.py"
+      - "config/dreamco-universal-division-mastery-contract.json"
+      - "tools/build_division_learning_model_kits.py"
+      - "tests/test_division_learning_model_kits.py"
+      - "tests/test_buddy_bootcamp_model_kits_workflow.py"
       - "tests/fixtures/onet-task-statements-official-shape.json"
       - ".github/workflows/buddy-onet-task-index-refresh.yml"
       - "data/onet/**"
@@ -378,6 +386,9 @@ jobs:
           retention-days: 90
       - name: Build and validate curriculum
         run: |
+          python tools/build_division_learning_model_kits.py --write
+          python tools/build_division_learning_model_kits.py --check
+          python -m unittest tests.test_division_learning_model_kits -v
           python tools/build_buddy_bootcamp_curriculum.py
           python tools/build_buddy_bootcamp_curriculum.py --check
           python -m unittest discover -s tests -p 'test_buddy_bootcamp_curriculum.py' -v
@@ -418,6 +429,7 @@ jobs:
             ${{ runner.temp }}/freecodecamp-source-routes.json
             config/generated/daily-lesson-production-plan.json
             config/generated/buddy-bootcamp-curriculum.json
+            config/generated/division-learning-model-kits/
           if-no-files-found: warn
           retention-days: 14
 
