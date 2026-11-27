@@ -422,6 +422,7 @@ jobs:
           retention-days: 90
       - name: Build and validate curriculum
         run: |
+          export PYTHONPATH="$GITHUB_WORKSPACE${PYTHONPATH:+:$PYTHONPATH}"
           python tools/build_division_learning_model_kits.py --write
           python tools/build_division_learning_model_kits.py --check
           python -m unittest tests.test_division_learning_model_kits -v
