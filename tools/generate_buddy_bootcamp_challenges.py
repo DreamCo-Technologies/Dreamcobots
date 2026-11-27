@@ -189,7 +189,7 @@ def main() -> int:
     if not output:
         raise ValueError("no valid source tasks were provided")
     args.output_jsonl.parent.mkdir(parents=True, exist_ok=True)
-    args.output_jsonl.write_text("".join(json.dumps(item, ensure_ascii=False, sort_keys=True) + "\\n" for item in output), encoding="utf-8")
+    args.output_jsonl.write_text("".join(json.dumps(item, ensure_ascii=False, sort_keys=True) + "\n" for item in output), encoding="utf-8")
     print(json.dumps({"status": "CHALLENGES_GENERATED", "count": len(output),
                       "division": division, "source_id": args.source_id,
                       "rights_manifest_sha256": hashlib.sha256(canonical_json(rights).encode()).hexdigest(),
