@@ -37,6 +37,41 @@ class TaskLearningRouterTests(unittest.TestCase):
         ranked = rank_resources(task, self.resources)
         self.assertNotIn("paid-python-course", [x["resource"]["id"] for x in ranked])
 
+    def test_paid_and_freemium_resources_require_opt_in_even_at_zero_cost(self):
+        resources = [
+            LearningResource(id="paid-zero", name="Paid zero-cost listing",
+                url="https://example.org/paid", skills=("Python",), access="paid"),
+            LearningResource(id="freemium-zero", name="Freemium zero-cost listing",
+                url="https://example.org/freemium", skills=("Python",), access="freemium"),
+        ]
+        task = TaskRequest("Learn Python", ("Python",))
+        self.assertEqual(rank_resources(task, resources), [])
+        opted_in = TaskRequest("Learn Python", ("Python",), allow_paid=True)
+        self.assertEqual(len(rank_resources(opted_in, resources)), 2)
+
+    def test_non_finite_or_negative_resource_numbers_are_excluded(self):
+        resources = [
+            LearningResource(id="nan-cost", name="NaN cost", url="https://example.org/a",
+                skills=("Python",), cost_per_hour_usd=float("nan")),
+            LearningResource(id="infinite-cost", name="Infinite cost", url="https://example.org/b",
+                skills=("Python",), cost_per_hour_usd=float("inf")),
+            LearningResource(id="negative-cost", name="Negative cost", url="https://example.org/c",
+                skills=("Python",), cost_per_hour_usd=-1.0),
+            LearningResource(id="nan-quality", name="NaN quality", url="https://example.org/d",
+                skills=("Python",), quality=float("nan")),
+            LearningResource(id="good", name="Valid free resource", url="https://example.org/e",
+                skills=("Python",), quality=0.8),
+        ]
+        ranked = rank_resources(TaskRequest("Learn Python", ("Python",)), resources)
+        self.assertEqual([item["resource"]["id"] for item in ranked], ["good"])
+
+    def test_invalid_task_cost_limit_is_rejected(self):
+        for invalid in (float("nan"), float("inf"), -1.0):
+            with self.subTest(invalid=invalid):
+                task = TaskRequest("Learn Python", ("Python",), max_cost_per_hour_usd=invalid)
+                with self.assertRaisesRegex(ValueError, "finite non-negative"):
+                    rank_resources(task, self.resources)
+
     def test_no_match_returns_discovery_action(self):
         task = TaskRequest("Repair a diesel engine", ("diesel mechanics",))
         route = build_learning_route(task, self.resources)
