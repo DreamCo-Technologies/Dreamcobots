@@ -125,5 +125,24 @@ class FreeCodeCampDivisionVideoCoverageAuditTests(unittest.TestCase):
         self.assertIn("videos_with_unknown_categories:1", report["blockers"])
 
 
+    def test_missing_masterbot_rows_do_not_shrink_the_960_slot_contract(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            fixture_root(root)
+            registry_path = root / "config/masterbot-65-registry.json"
+            registry = json.loads(registry_path.read_text(encoding="utf-8"))
+            registry["divisions"] = registry["divisions"][:-1]
+            registry_path.write_text(json.dumps(registry), encoding="utf-8")
+            crosswalk_path = root / "config/generated/masterbot-55-domain-crosswalk.json"
+            crosswalk = json.loads(crosswalk_path.read_text(encoding="utf-8"))
+            crosswalk["masterbots"] = crosswalk["masterbots"][:-1]
+            crosswalk_path.write_text(json.dumps(crosswalk), encoding="utf-8")
+            report = audit(root)
+        self.assertEqual(report["specialist_curriculum"]["target_count"], 120)
+        self.assertEqual(report["specialist_curriculum"]["required_artifact_slots"], 960)
+        self.assertGreaterEqual(report["specialist_curriculum"]["missing_artifact_slots"], 8)
+        self.assertIn("canonical_masterbot_count_not_65", report["blockers"])
+
+
 if __name__ == "__main__":
     unittest.main()
