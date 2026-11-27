@@ -1,0 +1,121 @@
+name: DreamCo PR Review and MR Issue Gate
+
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened, ready_for_review]
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+concurrency:
+  group: dreamco-pr-trust-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  review-and-triage:
+    name: PR Trust and MR Issue Gate
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Checkout trusted base revision only
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+          fetch-depth: 1
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Fetch PR patch without checking out PR code
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          REPOSITORY: ${{ github.repository }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/pr-audit
+          gh pr diff "$PR_NUMBER" --repo "$REPOSITORY" > artifacts/pr-audit/pr.patch
+
+      - name: Run trusted patch auditor
+        id: audit
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        shell: bash
+        run: |
+          set +e
+          python scripts/dreamco_pr_and_issue_auditor.py \
+            --diff-file artifacts/pr-audit/pr.patch \
+            --pr-number "$PR_NUMBER"
+          code=$?
+          set -e
+          echo "audit_exit_code=$code" >> "$GITHUB_OUTPUT"
+          exit 0
+
+      - name: Update PR audit comment and deduplicated remediation issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          REPOSITORY: ${{ github.repository }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json, os, subprocess
+          from pathlib import Path
+          report = json.loads(Path("artifacts/pr-audit/report.json").read_text())
+          body = "<!-- dreamco-pr-audit -->\n" + Path("artifacts/pr-audit/comment.md").read_text()
+          repo = os.environ["REPOSITORY"]
+          pr = os.environ["PR_NUMBER"]
+          def gh(args):
+              return subprocess.run(["gh", *args], text=True, check=True, capture_output=True).stdout
+          comment_pages = json.loads(gh(["api", f"repos/{repo}/issues/{pr}/comments", "--paginate", "--slurp"]))
+          comments = [item for page in comment_pages for item in page]
+          existing = next((x for x in reversed(comments) if "<!-- dreamco-pr-audit -->" in x.get("body", "")), None)
+          if existing:
+              gh(["api", "--method", "PATCH", f"repos/{repo}/issues/comments/{existing['id']}", "-f", f"body={body}"])
+          else:
+              gh(["api", "--method", "POST", f"repos/{repo}/issues/{pr}/comments", "-f", f"body={body}"])
+          issue_pages = json.loads(gh(["api", f"repos/{repo}/issues?state=open&per_page=100", "--paginate", "--slurp"]))
+          issues = [item for page in issue_pages for item in page]
+          ticket = next((x for x in issues if not x.get("pull_request") and x.get("title", "").startswith(f"[MR-FIX] PR #{pr} ")), None)
+          needs_ticket = bool(report["gate_findings"] or report["mr_issues_queue"])
+          if needs_ticket:
+              title = f"[MR-FIX] PR #{pr} trust and contract remediation"
+              fingerprints = ", ".join(sorted({x["fingerprint"] for x in report["gate_findings"] + report["mr_issues_queue"]}))
+              ticket_body = f"Automatically maintained by DreamCo PR Review Gate.\n\nSource PR: https://github.com/{repo}/pull/{pr}\n\nFinding fingerprints: {fingerprints}\n\n" + body
+              if ticket:
+                  gh(["api", "--method", "PATCH", f"repos/{repo}/issues/{ticket['number']}", "-f", f"title={title}", "-f", f"body={ticket_body}"])
+              else:
+                  gh(["api", "--method", "POST", f"repos/{repo}/issues", "-f", f"title={title}", "-f", f"body={ticket_body}"])
+          elif ticket:
+              gh(["api", "--method", "PATCH", f"repos/{repo}/issues/{ticket['number']}", "-f", "state=closed", "-f", "state_reason=completed"])
+          summary = [
+              "## DreamCo PR Trust and MR Issue Gate",
+              f"- Review status: **{report['review_status']}**",
+              f"- Files reviewed: **{report['files_reviewed']}**",
+              f"- Trust findings: **{len(report['gate_findings'])}**",
+              f"- MR issues: **{len(report['mr_issues_queue'])}**",
+              f"- Report SHA-256: {report['review_sha256']}",
+          ]
+          Path(os.environ["GITHUB_STEP_SUMMARY"]).write_text("\n".join(summary) + "\n")
+          PY
+
+      - name: Enforce fail-closed result
+        if: steps.audit.outputs.audit_exit_code != '0'
+        run: |
+          echo "DreamCo PR trust audit found blockers. See the PR review comment and remediation issue."
+          exit 1
+
+      - name: Upload audit evidence
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: dreamco-pr-audit-${{ github.run_id }}
+          path: artifacts/pr-audit/
+          if-no-files-found: error
+          retention-days: 30

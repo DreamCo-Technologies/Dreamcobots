@@ -1,4 +1,5 @@
 from pathlib import Path
+import re
 import unittest
 from tools.run_500_model_benchmarks import build_status
 
@@ -25,16 +26,34 @@ class FiveHundredModelWorkflowScopeTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             build_status("unapproved")
 
-    def test_benchmark_workflow_does_not_install_unrelated_media_stack(self):
+    def test_contract_only_matrix_does_not_install_training_runtime_or_run_full_repo_pytest(self):
         text = WORKFLOW.read_text(encoding="utf-8")
         self.assertNotIn("requirements-media.txt", text)
-        self.assertIn("requirements-buddy-learning.txt", text)
+        self.assertNotIn("requirements-buddy-learning.txt", text)
+        self.assertNotIn("torch", text.lower())
+        self.assertNotIn("python3 -m pytest -q", text)
+        self.assertIn("tests.test_500_model_prospectus_matrix", text)
+        self.assertIn("tests.test_benchmark_scope_contract", text)
+        self.assertIn("cancel-in-progress: true", text)
+        self.assertIn("timeout-minutes: 60", text)
 
-    def test_missing_career_pathways_source_data_is_reported_as_skipped_not_passed(self):
+    def test_contract_only_matrix_does_not_run_unavailable_career_pathways_suite(self):
         text = WORKFLOW.read_text(encoding="utf-8")
-        self.assertIn("study_packs/career_pathways/raw/task_statements.csv", text)
-        self.assertIn("SKIPPED: study_packs/career_pathways/tests", text)
-        self.assertIn("--ignore=study_packs/career_pathways/tests", text)
+        # The 500-model workflow validates contracts and evidence readiness only.
+        # It does not run the study-pack test suite or claim missing source data passed.
+        self.assertNotIn("study_packs/career_pathways/raw/task_statements.csv", text)
+        self.assertNotIn("study_packs/career_pathways/tests", text)
+        self.assertNotIn("python3 -m pytest -q", text)
+        self.assertIn("BLOCKED_RUNNER_NOT_IMPLEMENTED", text)
+        self.assertIn("all matrix rows remain unverified", text)
+
+    def test_public_secret_scanner_uses_prefix_boundaries(self):
+        pattern = re.compile(r"(?i)(?<![A-Za-z0-9])(sk-[A-Za-z0-9_-]{16,}|ghp_[A-Za-z0-9_]{20,}|github_pat_[A-Za-z0-9_]{20,}|BEGIN (RSA|OPENSSH|EC|DSA) PRIVATE KEY)")
+        self.assertIsNone(pattern.search("task-" + "x" * 24))
+        self.assertIsNone(pattern.search("risk-" + "x" * 24))
+        self.assertIsNotNone(pattern.search(" " + "sk-" + "x" * 24))
+        workflow = WORKFLOW.read_text(encoding="utf-8")
+        self.assertIn("(?<![A-Za-z0-9])", workflow)
 
     def test_laptop_test_key_is_not_key_shaped(self):
         text = LAPTOP_RUNNER.read_text(encoding="utf-8")

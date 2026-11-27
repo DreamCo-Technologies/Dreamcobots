@@ -1,4 +1,6 @@
 import json
+import subprocess
+import sys
 import tempfile
 import unittest
 from pathlib import Path
@@ -86,6 +88,19 @@ class BuddyUniversityDailyPlanTests(unittest.TestCase):
         self.organization.write_text(json.dumps(payload), encoding="utf-8")
         with self.assertRaises(ValueError):
             build_daily_plan(self.university, self.organization, "2026-11-24", 5)
+
+
+    def test_cli_bootstraps_repository_imports_outside_repository_cwd(self):
+        script = Path(__file__).resolve().parents[1] / "tools/build_buddy_university_daily_plan.py"
+        result = subprocess.run(
+            [sys.executable, str(script), "--help"],
+            cwd=self.root,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("--university-map", result.stdout)
 
 
 if __name__ == "__main__":

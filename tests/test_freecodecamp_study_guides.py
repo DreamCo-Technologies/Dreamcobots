@@ -88,6 +88,9 @@ class StudyGuideQueueTests(unittest.TestCase):
                 "debugging_playbook":["debug"],"prerequisites":["prerequisite"],
                 "division_applications":["application"],"knowledge_checks":["1","2","3","4","5"],
                 "answer_key":["1","2","3","4","5"],"references":["https://www.youtube.com/watch?v=v1"],
+                "capstone":{"goal":"Build a tested end-to-end project applying the source concepts safely.",
+                    "acceptance_tests":["unit tests pass","integration tests pass","holdout checks pass"],
+                    "evidence_artifact":"artifacts/capstone-report.json"},
                 "review":{"review_status":"approved"},
             }
             result=build_work_queue(catalog(),manifest([rights]),{"v1":guide},root=root)
@@ -106,6 +109,34 @@ class StudyGuideQueueTests(unittest.TestCase):
             result=build_work_queue(catalog(),manifest([rights]),{"v1":guide},root=root)
             self.assertEqual(result["videos"][0]["guide_status"],"APPROVED")
             self.assertEqual(result["videos"][0]["guide_validation_errors"],[])
+
+
+    def test_capstone_requires_real_acceptance_tests_and_evidence(self):
+        guide = {
+            "schema": "dreamco.freecodecamp_video_study_guide.v1",
+            "video_id": "v1",
+            "source": {"url": "https://www.youtube.com/watch?v=v1", "title": "Python foundations", "transcript_sha256": "a" * 64},
+            "rights": {"evidence_ref": "permission-1"},
+            "summary": {"executive_overview": "x" * 120, "detailed_explanation": "y" * 600},
+            "chapter_summaries": [{"start_seconds": 0, "summary": "intro"}],
+            "learning_objectives": ["one", "two", "three"],
+            "key_concepts": ["one", "two", "three", "four", "five"],
+            "terminology": ["term"], "code_patterns": ["pattern"], "worked_examples": ["example"],
+            "exercises": ["one", "two", "three"], "projects": ["project"], "common_mistakes": ["mistake"],
+            "debugging_playbook": ["debug"], "prerequisites": ["prerequisite"],
+            "division_applications": ["application"], "knowledge_checks": ["1", "2", "3", "4", "5"],
+            "answer_key": ["1", "2", "3", "4", "5"], "references": ["https://www.youtube.com/watch?v=v1"],
+            "review": {"review_status": "draft"},
+            "capstone": {"goal": "Build a tested end-to-end project applying the source concepts safely.",
+                         "acceptance_tests": ["unit tests pass"], "evidence_artifact": ""},
+        }
+        video = catalog()["videos"][0]
+        rights = {"transcript_sha256": "a" * 64, "study_permission": True,
+                  "summary_derivative_permission": True, "evaluation_permission": True,
+                  "rights_evidence_ref": "permission-1"}
+        errors = validate_guide(guide, video, rights)
+        self.assertIn("capstone must include at least three acceptance tests", errors)
+        self.assertIn("capstone must name its evidence artifact", errors)
 
     def test_path_traversal_is_blocked(self):
         with tempfile.TemporaryDirectory() as temp:

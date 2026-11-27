@@ -54,7 +54,16 @@ def validate_source_registry(sources: list[dict[str, Any]]) -> None:
         raise DatabaseRouteError("Database sources must be a list")
     seen: set[str] = set()
     required = {
-        "source_id", "engine", "lifecycle_state", "connector_status", "health",
+        "source_id", "provider", "engine", "environment", "owner", "purpose",
+        "schema_version", "retention", "credential_status", "source_code",
+        "lifecycle_state", "connector_status", "health", "backup_restore_status",
+        "backup_restore_evidence_refs", "replication_status", "replication_evidence_refs",
+        "connection_pooling_status", "connection_pooling_evidence_refs",
+        "encryption_at_rest_status", "encryption_at_rest_evidence_refs",
+        "encryption_in_transit_status", "encryption_in_transit_evidence_refs",
+        "observability_status", "observability_evidence_refs",
+        "disaster_recovery_status", "disaster_recovery_evidence_refs",
+        "residency_status", "residency_evidence_refs",
         "permitted_operations", "data_types", "query_capabilities",
         "max_data_classification", "freshness_seconds", "consistency",
         "latency_ms", "cost_tier", "residency_regions", "write_enabled",
@@ -78,9 +87,50 @@ def validate_source_registry(sources: list[dict[str, Any]]) -> None:
             raise DatabaseRouteError(f"{source_id}: permitted_operations must be a list")
         if not set(source["permitted_operations"]).issubset({"read", "write"}):
             raise DatabaseRouteError(f"{source_id}: unsupported permitted operation")
-        for field in ("data_types", "query_capabilities", "residency_regions", "write_approval_refs"):
+        for field in ("provider", "engine", "environment", "owner", "purpose", "schema_version",
+                      "retention", "credential_status", "source_code"):
+            if not str(source.get(field) or "").strip():
+                raise DatabaseRouteError(f"{source_id}: {field} must be a non-empty string")
+        for field in ("data_types", "query_capabilities", "residency_regions", "write_approval_refs",
+                      "backup_restore_evidence_refs", "replication_evidence_refs",
+                      "connection_pooling_evidence_refs", "encryption_at_rest_evidence_refs",
+                      "encryption_in_transit_evidence_refs", "observability_evidence_refs",
+                      "disaster_recovery_evidence_refs", "residency_evidence_refs"):
             if not isinstance(source.get(field), list):
                 raise DatabaseRouteError(f"{source_id}: {field} must be a list")
+
+        status_fields = {
+            "backup_restore_status", "replication_status", "connection_pooling_status",
+            "encryption_at_rest_status", "encryption_in_transit_status",
+            "observability_status", "disaster_recovery_status", "residency_status",
+        }
+        allowed_statuses = {"NOT_VERIFIED", "NOT_CONFIGURED", "VERIFIED", "NOT_APPLICABLE"}
+        for field in status_fields:
+            if source.get(field) not in allowed_statuses:
+                raise DatabaseRouteError(f"{source_id}: {field} has an invalid evidence status")
+
+        evidence_pairs = {
+            "backup_restore_status": "backup_restore_evidence_refs",
+            "replication_status": "replication_evidence_refs",
+            "connection_pooling_status": "connection_pooling_evidence_refs",
+            "encryption_at_rest_status": "encryption_at_rest_evidence_refs",
+            "encryption_in_transit_status": "encryption_in_transit_evidence_refs",
+            "observability_status": "observability_evidence_refs",
+            "disaster_recovery_status": "disaster_recovery_evidence_refs",
+            "residency_status": "residency_evidence_refs",
+        }
+        for status_field, evidence_field in evidence_pairs.items():
+            if source[status_field] == "VERIFIED" and not source[evidence_field]:
+                raise DatabaseRouteError(f"{source_id}: {status_field} requires at least one evidence reference")
+
+        if source["lifecycle_state"] == "PRODUCTION":
+            unverified = sorted(field for field in status_fields if source[field] != "VERIFIED")
+            if unverified:
+                raise DatabaseRouteError(
+                    f"{source_id}: production source requires verified controls: {', '.join(unverified)}"
+                )
+            if not source["residency_regions"]:
+                raise DatabaseRouteError(f"{source_id}: production source requires a verified residency region")
 
 
 def load_source_registry(path: str | Path = REGISTRY_PATH) -> dict[str, Any]:

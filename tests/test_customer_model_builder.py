@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import sys
 import unittest
+from unittest.mock import patch
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -21,6 +22,8 @@ class CustomerModelBuilderTest(unittest.TestCase):
         self.assertTrue(ow["publishes_weights"])
         self.assertFalse(fr["publishes_weights"])
         self.assertFalse(oss["trained_weights_exist"])
+        with patch("sys.argv", ["build_customer_model_plan.py"]):
+            self.assertEqual(main(), 0)
         self.assertEqual(main([]), 0)
 
 

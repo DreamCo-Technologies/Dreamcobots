@@ -3,6 +3,7 @@ name: Actions Failure Sweep
 on:
   workflow_dispatch:
   push:
+    branches: [main]
     paths:
       - '.github/workflows/actions-failure-sweep.yml'
   schedule:
@@ -13,8 +14,13 @@ permissions:
   contents: read
   issues: write
 
+concurrency:
+  group: actions-failure-sweep-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   sweep:
+    if: github.repository == 'DreamCo-Technologies/Dreamcobots' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
@@ -57,6 +63,8 @@ jobs:
           cutoff=datetime.now(timezone.utc)-timedelta(hours=24)
           bad=[]
           for row in rows:
+              if row.get('head_branch') != 'main' or row.get('name') == 'Actions Failure Sweep':
+                  continue
               if row.get('status')!='completed' or row.get('conclusion') not in {'failure','timed_out','action_required','stale'}:
                   continue
               try: dt=datetime.fromisoformat(row.get('created_at','').replace('Z','+00:00'))
@@ -81,7 +89,7 @@ jobs:
           PY
           while read -r run_id; do
             [ -z "$run_id" ] && continue
-            existing=$(gh issue list --repo "$GITHUB_REPOSITORY" --state open --search "Actions run $run_id in:title" --json number --jq '.[0].number // empty')
+            existing=$(gh issue list --repo "$GITHUB_REPOSITORY" --state all --search "Actions run $run_id in:title" --json number --jq '.[0].number // empty')
             [ -n "$existing" ] && continue
             run=$(gh run view "$run_id" --repo "$GITHUB_REPOSITORY" --json workflowName,conclusion,url,headSha,event,headBranch)
             jobs=$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$run_id/jobs?per_page=100")

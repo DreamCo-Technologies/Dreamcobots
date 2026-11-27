@@ -15,6 +15,7 @@ on:
       - "config/buddy-dataset-profile-builder.json"
       - "schemas/buddy-dataset-profile.schema.json"
       - "tests/test_buddy_dataset_profile_builder.py"
+      - "tests/test_buddy_dataset_profile_builder_ui.py"
       - "website/dataset-profile-builder.html"
       - "tools/validate_buddy_continuous_study_policy.py"
       - "tests/test_buddy_continuous_study_policy.py"
@@ -34,6 +35,8 @@ on:
       - "tests/test_buddy_tolkien_study_track.py"
       - "tests/test_freecodecamp_catalog.py"
       - "tools/build_freecodecamp_division_queues.py"
+      - "config/review/freecodecamp-supplemental-domain-learning-approval.json"
+      - "config/freecodecamp-division-category-profiles.json"
       - "tests/test_freecodecamp_division_queues.py"
       - "tools/validate_freecodecamp_learning_evidence.py"
       - "tests/test_freecodecamp_learning_evidence.py"
@@ -58,6 +61,9 @@ on:
       - "buddy/bootcamp/sources/TRANSCRIPT_EVALUATION.md"
       - "config/buddy-tolkien-study-track.json"
       - "config/buddy-course-track-registry.json"
+      - "config/freecodecamp-division-routing-overrides.json"
+      - "tests/test_freecodecamp_specialist_routing.py"
+      - ".github/workflows/freecodecamp-study-guide-pipeline.yml"
       - "tools/sync_freecodecamp_learning_inventory.py"
       - "tests/test_freecodecamp_learning_inventory.py"
       - ".github/workflows/freecodecamp-catalog-refresh.yml"
@@ -73,8 +79,15 @@ on:
       - "buddy/learning/buddy_knowledge_router.py"
       - "buddy/learning/runtime_bridge.py"
       - "tests/test_buddy_learning_runtime_bridge.py"
+      - "buddy/trading/**"
+      - "tests/test_paper_trading_sandbox.py"
+      - "docs/DREAMTRADE_PAPER_TRADING_SANDBOX.md"
+      - "tests/test_buddy_knowledge_router.py"
       - "tools/build_onet_task_index.py"
+      - "tools/build_onet_task_curricula.py"
       - "tests/test_buddy_onet_task_index.py"
+      - "tests/test_onet_task_curricula.py"
+      - "tests/fixtures/onet-task-statements-official-shape.json"
       - ".github/workflows/buddy-onet-task-index-refresh.yml"
       - "data/onet/**"
       - "buddy/fleet_runtime/router.py"
@@ -127,6 +140,7 @@ on:
       - "config/buddy-dataset-profile-builder.json"
       - "schemas/buddy-dataset-profile.schema.json"
       - "tests/test_buddy_dataset_profile_builder.py"
+      - "tests/test_buddy_dataset_profile_builder_ui.py"
       - "website/dataset-profile-builder.html"
       - "tools/validate_buddy_continuous_study_policy.py"
       - "tests/test_buddy_continuous_study_policy.py"
@@ -184,8 +198,15 @@ on:
       - "buddy/learning/buddy_knowledge_router.py"
       - "buddy/learning/runtime_bridge.py"
       - "tests/test_buddy_learning_runtime_bridge.py"
+      - "buddy/trading/**"
+      - "tests/test_paper_trading_sandbox.py"
+      - "docs/DREAMTRADE_PAPER_TRADING_SANDBOX.md"
+      - "tests/test_buddy_knowledge_router.py"
       - "tools/build_onet_task_index.py"
+      - "tools/build_onet_task_curricula.py"
       - "tests/test_buddy_onet_task_index.py"
+      - "tests/test_onet_task_curricula.py"
+      - "tests/fixtures/onet-task-statements-official-shape.json"
       - ".github/workflows/buddy-onet-task-index-refresh.yml"
       - "data/onet/**"
       - "buddy/fleet_runtime/router.py"
@@ -261,6 +282,8 @@ jobs:
         run: |
           if [ -f buddy/bootcamp/sources/freecodecamp/catalog.json ]; then
             python tools/sync_freecodecamp_catalog.py --check
+          python tools/sync_freecodecamp_learning_inventory.py
+          python tools/sync_freecodecamp_learning_inventory.py --check
           else
             echo "No committed catalog yet; first discovery will create it."
           fi
@@ -268,15 +291,46 @@ jobs:
         run: python tools/sync_freecodecamp_catalog.py
       - name: Validate freeCodeCamp catalog and tests
         run: |
+          export PYTHONPATH="$GITHUB_WORKSPACE${PYTHONPATH:+:$PYTHONPATH}"
           python tools/sync_freecodecamp_catalog.py --check
+          # The catalog refresh above can change the lesson inventory. Rebuild
+          # its derived policy/path manifests before count-sensitive tests.
+          python tools/sync_freecodecamp_learning_inventory.py
+          python tools/sync_freecodecamp_learning_inventory.py --check
           python -m unittest discover -s tests -p 'test_freecodecamp_catalog.py' -v
           python -m py_compile tools/catalog_freecodecamp_youtube.py
           python -m unittest discover -s tests -p 'test_freecodecamp_youtube_catalog.py' -v
           python tools/validate_buddy_continuous_study_policy.py
           python -m unittest discover -s tests -p 'test_buddy_continuous_study_policy.py' -v
           python -m unittest discover -s tests -p 'test_buddy_dataset_profile_builder.py' -v
-          python tools/build_freecodecamp_division_queues.py --out "$RUNNER_TEMP/freecodecamp-division-learning-queues.json"
-          python tools/build_freecodecamp_division_queues.py --check --out "$RUNNER_TEMP/freecodecamp-division-learning-queues.json"
+          python -m unittest discover -s tests -p 'test_buddy_dataset_profile_builder_ui.py' -v
+          if python - <<'PY'
+          import json
+          from pathlib import Path
+          catalog = json.loads(Path("buddy/bootcamp/sources/freecodecamp/catalog.json").read_text(encoding="utf-8"))
+          videos = catalog.get("videos") or []
+          inventory = catalog.get("inventory") or {}
+          complete = (
+              catalog.get("inventory_status") == "complete"
+              and inventory.get("complete") is True
+              and inventory.get("expected_entry_count") == len(videos)
+              and inventory.get("observed_entry_count") == len(videos)
+              and inventory.get("null_entry_count") == 0
+              and inventory.get("duplicate_video_id_count") == 0
+          )
+          raise SystemExit(0 if complete else 1)
+          PY
+          then
+            echo "Verified complete FreeCodeCamp inventory; candidate queues may be assigned."
+            python tools/build_freecodecamp_division_queues.py --out "$RUNNER_TEMP/freecodecamp-division-learning-queues.json"
+            python tools/build_freecodecamp_division_queues.py --check --out "$RUNNER_TEMP/freecodecamp-division-learning-queues.json"
+            python tools/build_daily_lesson_plan.py --queues "$RUNNER_TEMP/freecodecamp-division-learning-queues.json" --output "$RUNNER_TEMP/daily-lesson-production-plan.json"
+          else
+            echo "Source inventory is partial; build a provisional queue and leave daily candidate assignments blocked."
+            python tools/build_freecodecamp_division_queues.py --allow-partial --out "$RUNNER_TEMP/freecodecamp-provisional-division-learning-queues.json"
+            python tools/build_freecodecamp_division_queues.py --check --allow-partial --out "$RUNNER_TEMP/freecodecamp-provisional-division-learning-queues.json"
+            python tools/build_daily_lesson_plan.py --output "$RUNNER_TEMP/daily-lesson-production-plan.json"
+          fi
           python -m unittest discover -s tests -p 'test_freecodecamp_division_queues.py' -v
           python tools/build_freecodecamp_routes.py --out "$RUNNER_TEMP/freecodecamp-source-routes.json"
           python tools/build_freecodecamp_routes.py --check --out "$RUNNER_TEMP/freecodecamp-source-routes.json"
@@ -288,6 +342,7 @@ jobs:
           python -m unittest discover -s tests -p 'test_daily_lesson_plan.py' -v
           python -m unittest discover -s tests -p 'test_original_lesson.py' -v
           python -m unittest discover -s tests -p 'test_freecodecamp_learning_evidence.py' -v
+          python -m unittest discover -s tests -p 'test_paper_trading_sandbox.py' -v
           python -m unittest discover -s tests -p 'test_weekly_transcript_evaluation.py' -v
           python -m unittest discover -s tests -p 'test_buddy_tolkien_study_track.py' -v
           python -m unittest discover -s tests -p 'test_buddy_tokenizer_training_curriculum.py' -v
@@ -295,16 +350,21 @@ jobs:
           python -m unittest discover -s tests -p 'test_buddy_course_track_registry.py' -v
           python -m unittest discover -s tests -p 'test_buddy_universal_library_registry.py' -v
           python -m unittest discover -s tests -p 'test_buddy_internal_first_learning_router.py' -v
+          python -m unittest discover -s tests -p 'test_buddy_knowledge_router.py' -v
+          python -m unittest discover -s tests -p 'test_buddy_onet_task_index.py' -v
+          python -m unittest discover -s tests -p 'test_onet_task_curricula.py' -v
           python -m unittest discover -s tests -p 'test_buddy_fleet_internal_bootcamp_routing.py' -v
           python -m unittest discover -s tests -p 'test_fleet_runtime_executor.py' -v
-          python tools/generate_bot_manifests.py --check
+          # Manifest regeneration and drift validation are owned by fleet-runtime-truth.yml.
           python -m unittest discover -s tests -p 'test_buddy_library_registry_discovery.py' -v
           python -m unittest discover -s tests -p 'test_freecodecamp_learning_inventory.py' -v
+          python -m unittest discover -s tests -p 'test_freecodecamp_specialist_routing.py' -v
           python -m unittest discover -s tests -p 'test_buddy_library_guide_draft.py' -v
           python tools/build_buddy_library_seed_catalog.py --check
           python -m unittest discover -s tests -p 'test_buddy_library_seed_catalog.py' -v
           python -m unittest discover -s tests -p 'test_buddy_universal_library_curriculum.py' -v
           python -m unittest discover -s tests -p 'test_freecodecamp_learning_inventory.py' -v
+          python -m unittest discover -s tests -p 'test_freecodecamp_specialist_routing.py' -v
           python -m unittest discover -s tests -p 'test_buddy_library_guide_draft.py' -v
           python tools/build_buddy_library_seed_catalog.py --check
           python -m unittest discover -s tests -p 'test_buddy_library_seed_catalog.py' -v
@@ -329,11 +389,14 @@ jobs:
           python -m unittest discover -s tests -p 'test_buddy_course_track_registry.py' -v
           python -m unittest discover -s tests -p 'test_buddy_universal_library_registry.py' -v
           python -m unittest discover -s tests -p 'test_buddy_internal_first_learning_router.py' -v
+          python -m unittest discover -s tests -p 'test_buddy_knowledge_router.py' -v
+          python -m unittest discover -s tests -p 'test_buddy_onet_task_index.py' -v
+          python -m unittest discover -s tests -p 'test_onet_task_curricula.py' -v
           python -m unittest discover -s tests -p 'test_buddy_fleet_internal_bootcamp_routing.py' -v
           python -m unittest discover -s tests -p 'test_fleet_runtime_executor.py' -v
-          python tools/generate_bot_manifests.py --check
           python -m unittest discover -s tests -p 'test_buddy_library_registry_discovery.py' -v
           python -m unittest discover -s tests -p 'test_freecodecamp_learning_inventory.py' -v
+          python -m unittest discover -s tests -p 'test_freecodecamp_specialist_routing.py' -v
           python -m unittest discover -s tests -p 'test_buddy_library_guide_draft.py' -v
           python tools/build_buddy_library_seed_catalog.py --check
           python -m unittest discover -s tests -p 'test_buddy_library_seed_catalog.py' -v
@@ -351,6 +414,8 @@ jobs:
           path: |
             buddy/bootcamp/sources/freecodecamp/catalog.json
             ${{ runner.temp }}/freecodecamp-division-learning-queues.json
+            ${{ runner.temp }}/freecodecamp-provisional-division-learning-queues.json
+            ${{ runner.temp }}/daily-lesson-production-plan.json
             ${{ runner.temp }}/freecodecamp-source-routes.json
             config/generated/daily-lesson-production-plan.json
             config/generated/buddy-bootcamp-curriculum.json

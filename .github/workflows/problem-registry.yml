@@ -4,25 +4,16 @@ on:
   workflow_dispatch:
   schedule:
     - cron: '17 * * * *'
-  workflow_run:
-    workflows:
-      - Actions Health
-      - Actions Failure Sweep
-      - Repository Test Matrix
-      - Full System Certification
-    types: [completed]
-    branches: [main]
 
 permissions:
   contents: write
 
 concurrency:
-  group: problem-registry-${{ github.event.workflow_run.id || github.run_id }}
+  group: problem-registry-${{ github.run_id }}
   cancel-in-progress: false
 
 jobs:
   registry:
-    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'failure'
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:

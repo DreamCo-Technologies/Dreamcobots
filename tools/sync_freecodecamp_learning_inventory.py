@@ -7,11 +7,13 @@ from __future__ import annotations
 
 import argparse
 import json
+import sys
 from pathlib import Path
 from typing import Any
 
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
 CATALOG = Path("buddy/bootcamp/sources/freecodecamp/catalog.json")
 LEARNING_PATH = Path("config/freecodecamp-complete-learning-path.json")
 POLICY = Path("config/buddy-continuous-study-policy.json")
