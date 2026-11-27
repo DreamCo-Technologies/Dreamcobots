@@ -48,26 +48,46 @@ AGENT_CAPABILITIES = [
 
 
 
+def _normalized_json_key(value: Any) -> str:
+    text = str(value)
+    text = __import__("re").sub(r"(?<=[a-z0-9])(?=[A-Z])", " ", text)
+    return " ".join(text.casefold().replace("_", " ").replace("-", " ").split())
+
+
 def flatten_records(value: Any) -> list[dict[str, Any]]:
+    """Find task records in O*NET JSON without depending on key casing.
+
+    O*NET exports and mirrors may wrap the same records under different
+    camelCase, snake_case, or title-case container names. Normalize container
+    keys and recursively inspect nested lists rather than silently returning
+    an empty inventory when the wrapper spelling changes.
+    """
     if isinstance(value, list):
-        if value and all(isinstance(item, dict) for item in value):
-            return value
+        records = [item for item in value if isinstance(item, dict)]
+        if records and any(
+            any("task" in _normalized_json_key(key) for key in row)
+            for row in records
+        ):
+            return records
         result: list[dict[str, Any]] = []
         for item in value:
             result.extend(flatten_records(item))
         return result
     if isinstance(value, dict):
-        preferred = ("task statements", "task_statements", "task statements data", "task", "data")
-        for key in preferred:
-            if key in value:
-                found = flatten_records(value[key])
+        preferred = {"task statements", "task statements data", "task", "data"}
+        for key, nested in value.items():
+            if _normalized_json_key(key) in preferred:
+                found = flatten_records(nested)
                 if found:
                     return found
         result: list[dict[str, Any]] = []
-        for item in value.values():
-            if isinstance(item, (dict, list)):
-                found = flatten_records(item)
-                if found and any(any("task" in str(k).lower() for k in row) for row in found):
+        for nested in value.values():
+            if isinstance(nested, (dict, list)):
+                found = flatten_records(nested)
+                if found and any(
+                    any("task" in _normalized_json_key(key) for key in row)
+                    for row in found
+                ):
                     return found
         return result
     return []
