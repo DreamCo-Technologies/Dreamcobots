@@ -63,8 +63,10 @@ class CheckpointGateTests(unittest.TestCase):
             validate_division(self.directory, "dreamcyber")
 
     def test_rejects_checkpoint_hash_mismatch(self) -> None:
-        with (self.directory / "model.safetensors").open("ab") as stream:
-            stream.write(b"x")
+        checkpoint = self.directory / "model.safetensors"
+        with checkpoint.open("r+b") as stream:
+            stream.seek(-1, 2)
+            stream.write(b"\\x02")
         with self.assertRaisesRegex(ValueError, "checkpoint_sha256"):
             validate_division(self.directory, "dreamcyber")
 
