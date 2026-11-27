@@ -78,6 +78,9 @@ on:
       - "tests/test_universal_division_mastery_contract.py"
       - "tools/build_division_learning_model_kits.py"
       - "tests/test_division_learning_model_kits.py"
+      - "config/dreamco-500-model-benchmark-100-upgrade-roadmap.json"
+      - "tools/dreamco_benchmark_v2_engine.py"
+      - "tests/test_dreamco_benchmark_v2_engine.py"
   schedule:
     - cron: "41 13 * * *"
     - cron: "41 1 * * *"
@@ -108,6 +111,12 @@ jobs:
         run: python -m unittest tests.test_division_resource_readiness tests.test_division_resource_router tests.test_buddy_dataset_discovery_fleet tests.test_dreamco_division_mastery_orchestrator tests.test_universal_division_mastery_contract tests.test_division_learning_model_kits
       - name: Validate universal division mastery contract JSON
         run: python -m json.tool config/dreamco-universal-division-mastery-contract.json > /dev/null
+      - name: Validate 100-upgrade benchmark roadmap
+        run: python -m json.tool config/dreamco-500-model-benchmark-100-upgrade-roadmap.json > /dev/null
+      - name: Compile and test evidence-first benchmark primitives
+        run: |
+          python -m py_compile tools/dreamco_benchmark_v2_engine.py tests/test_dreamco_benchmark_v2_engine.py
+          python -m unittest tests.test_dreamco_benchmark_v2_engine
       - name: Validate schemas and whitespace
         run: |
           python -m json.tool schemas/division-resource-readiness-map.schema.json > /dev/null
