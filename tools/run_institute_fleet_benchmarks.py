@@ -118,8 +118,9 @@ def run_fleet(registry_path: Path, candidate_root: Path, fixture_root: Path,
         "results": results,
         "training_performed": False,
         "weights_modified": False,
-        "network_used": False,
-        "paid_compute_used": False,
+        "runner_initiated_network_calls": False,
+        "adapter_network_usage": "NOT_MEASURED_REQUIRES_LOCAL_ADAPTER_REVIEW",
+        "adapter_paid_compute_usage": "NOT_MEASURED_REQUIRES_EXPLICIT_APPROVAL_AND_ADAPTER_REVIEW",
         "production_release_performed": False,
     }
     output_path.parent.mkdir(parents=True, exist_ok=True)
