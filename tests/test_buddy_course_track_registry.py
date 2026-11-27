@@ -79,6 +79,18 @@ class BuddyCourseTrackRegistryTests(unittest.TestCase):
         expected = {"tolkien", "tokenizer", "cpu-first-llm", "onet", "hugging-face", "freecodecamp", "huggingface-full", "freecodecamp-video-catalog", "freecodecamp-specialist-learning-paths", "freecodecamp-metadata-triage", "universal-software-libraries", "workforce-entrepreneurship", "benchmark-guides", "dreamco-division-specialist"}
         self.assertEqual({lesson.track_id for lesson in lessons}, expected)
 
+    def test_external_research_tracks_remain_internal_authoring_only(self):
+        external_ids = {
+            "onet", "hugging-face", "freecodecamp", "huggingface-full",
+            "freecodecamp-video-catalog", "freecodecamp-specialist-learning-paths",
+            "freecodecamp-metadata-triage",
+        }
+        lessons = load_course_lessons()
+        for lesson in lessons:
+            if lesson.track_id in external_ids:
+                self.assertFalse(lesson.learner_visible)
+                self.assertNotIn(lesson, resources_for_division("CommandCore"))
+
     def test_every_canonical_division_receives_its_own_internal_curriculum(self):
         from pathlib import Path
         import json
