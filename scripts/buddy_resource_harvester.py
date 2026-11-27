@@ -181,7 +181,9 @@ def load_sources(path: Path, divisions: dict[str, str]) -> list[dict[str, Any]]:
             raise PermissionError(f"source for {division} lacks explicit training approval")
         if not isinstance(source.get("evidence_reference"), str) or not source["evidence_reference"].strip():
             raise ValueError(f"source for {division} needs a rights evidence reference")
-        if source.get("source_type") == "cached_jsonl" and source.get("approved_for_evaluation") is True:
+        if not isinstance(source.get("license_id"), str) or not source["license_id"].strip():
+            raise ValueError(f"source for {division} needs an explicit license or internal-rights identifier")
+        if source.get("approved_for_evaluation") is True:
             raise PermissionError("training-intake sources cannot be auto-approved as benchmark fixtures")
         key = (division, source.get("path"))
         if key in seen:
