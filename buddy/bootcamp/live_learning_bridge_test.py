@@ -56,9 +56,38 @@ def test_completion_requires_holdout_in_addition_to_controller_gates():
     without_holdout = evaluate_learning_completion(base)
     assert without_holdout["accepted"] is True
     assert without_holdout["promote"] is False
-    with_holdout = evaluate_learning_completion({**base, "holdout_passed": True})
-    assert with_holdout["promote"] is True
-    assert with_holdout["weights_trained"] is False
+    without_evidence = evaluate_learning_completion({**base, "holdout_passed": True})
+    assert without_evidence["promote"] is False
+    with_evidence = evaluate_learning_completion({
+        **base,
+        "holdout_passed": True,
+        "artifact_refs": ["artifact://run-3/report.json"],
+        "provenance_refs": ["sha256:source-evidence"],
+    })
+    assert with_evidence["promote"] is True
+    assert with_evidence["weights_trained"] is False
+
+
+def test_weight_training_claim_without_artifact_is_unverified():
+    base = {
+        "request_id": "req-7",
+        "run_id": "run-7",
+        "status": "succeeded",
+        "capability": "python",
+        "success": True,
+        "verified": True,
+        "regression_passed": True,
+        "safety_passed": True,
+        "holdout_passed": True,
+        "weights_trained": True,
+        "provenance_refs": ["sha256:source-evidence"],
+    }
+    result = evaluate_learning_completion(base)
+    assert result["accepted"] is True
+    assert result["promote"] is False
+    assert result["weights_trained"] is False
+    assert result["weights_training_claim_verified"] is False
+    assert "weights_trained_without_artifact_reference" in result["unverified_claims"]
 
 
 def test_missing_completion_evidence_is_rejected():
