@@ -22,6 +22,16 @@ class BuddyKnowledgeRouterTests(unittest.TestCase):
         self.assertFalse(route["mastery_awarded"])
 
 
+    def test_platform_queries_keep_strong_software_library_candidates_reachable(self):
+        route = route_buddy_learning_query("hugging face transformers", limit=25)
+
+        self.assertEqual(route["route"], "internal_bootcamp_lesson")
+        track_ids = {row["track_id"] for row in route["course_lessons"]}
+        self.assertTrue(track_ids.intersection({"hugging-face", "huggingface-full"}))
+        self.assertIn("universal-software-libraries", track_ids)
+        self.assertFalse(route["external_discovery_performed"])
+        self.assertFalse(route["mastery_awarded"])
+
     def test_approved_internal_guide_precedes_exact_unverified_seed_candidate(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
