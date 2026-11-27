@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import csv
 import json
+import re
 from collections import defaultdict
 from pathlib import Path
 from typing import Any
@@ -48,28 +49,39 @@ AGENT_CAPABILITIES = [
 
 
 
+def _normalized_json_key(value: Any) -> str:
+    text = re.sub(r"(?<=[a-z0-9])(?=[A-Z])", " ", str(value))
+    return " ".join(text.casefold().replace("_", " ").replace("-", " ").split())
+
+
 def flatten_records(value: Any) -> list[dict[str, Any]]:
+    """Find O*NET task records in JSON despite wrapper-key casing differences."""
     if isinstance(value, list):
-        if value and all(isinstance(item, dict) for item in value):
-            return value
+        records = [item for item in value if isinstance(item, dict)]
+        if records and any(
+            any("task" in _normalized_json_key(key) for key in row)
+            for row in records
+        ):
+            return records
         result: list[dict[str, Any]] = []
         for item in value:
             result.extend(flatten_records(item))
         return result
     if isinstance(value, dict):
-        preferred = ("row", "task statements", "task_statements", "task statements data", "task")
-        for key in preferred:
-            if key in value:
-                found = flatten_records(value[key])
+        preferred = {"row", "task statements", "task statements data", "task", "data"}
+        for key, nested in value.items():
+            if _normalized_json_key(key) in preferred:
+                found = flatten_records(nested)
                 if found:
                     return found
-        result: list[dict[str, Any]] = []
-        for item in value.values():
-            if isinstance(item, (dict, list)):
-                found = flatten_records(item)
-                if found and any(any("task" in str(k).lower() for k in row) for row in found):
+        for nested in value.values():
+            if isinstance(nested, (dict, list)):
+                found = flatten_records(nested)
+                if found and any(
+                    any("task" in _normalized_json_key(key) for key in row)
+                    for row in found
+                ):
                     return found
-        return result
     return []
 
 
@@ -89,12 +101,15 @@ def read_rows(path: Path) -> list[dict[str, str]]:
 
 
 def pick(row: dict[str, str], *names: str) -> str:
+    def normalize_key(value: str) -> str:
+        return re.sub(r"[^a-z0-9]+", "", str(value).casefold())
+
     normalized = {
-        str(key).strip().lower().replace("_", " ").replace("-", " "): str(value or "").strip()
+        normalize_key(key): str(value or "").strip()
         for key, value in row.items()
     }
     for name in names:
-        value = normalized.get(name.lower().replace("_", " ").replace("-", " "))
+        value = normalized.get(normalize_key(name))
         if value:
             return value
     return ""
