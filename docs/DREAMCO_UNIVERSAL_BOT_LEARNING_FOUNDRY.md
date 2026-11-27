@@ -3,7 +3,7 @@
 ## Scope: all current and preserved bots
 This program extends individualized training blueprints beyond the 55 commercial business micro-bots to the existing DreamCo inventory.
 
-It reads the generated canonical fleet manifest (currently 1,232 entries, including its separately flagged supplemental and teammate entries), preserves the original library's 200 income bots and 12 major systems as historical-source candidates, and includes all 55 business micro-bot roles supplied by the owner. It also assigns learning pathways to all 65 MasterBot lanes and all 55 domain divisions.
+It reads the generated canonical fleet manifest (currently 1,232 entries, including its separately flagged supplemental and teammate entries), preserves the original library's 200 income bots and 12 major systems as historical-source candidates, and includes all 55 business micro-bot roles supplied by the owner. It also materializes separate 100-slot learning manifests for all 65 MasterBot lanes and all 55 domain divisions (120 division manifests total).
 
 **Accounting rule:** these are different inventories and must not be added into a single "active bot" count. MasterBots and domain divisions are learning/ownership lanes, not additional specialist bots. Legacy records remain separate from current runtime entries until identity reconciliation. Duplicate flags remain review states, not new independent models.
 
@@ -35,7 +35,7 @@ python tools/build_dreamco_universal_bot_learning_manifests.py --materialize
 python -m unittest tests.test_dreamco_universal_bot_learning_manifests -v
 ```
 
-The default run writes an inventory index. `--materialize` writes a separate JSON file for each canonical, legacy and business bot under `config/generated/dreamco-bot-learning-manifests/`. Generated artifacts should be rebuilt from their source registries, not hand-edited.
+The default run writes an inventory index. `--materialize` writes a separate JSON file for each canonical, legacy and business bot plus all 120 division learning manifests under `config/generated/dreamco-bot-learning-manifests/`. Generated artifacts should be rebuilt from their source registries, not hand-edited.
 
 ## Non-negotiable gates
 1. Rights, license, terms, privacy and provenance review before ingesting third-party data.
