@@ -35,7 +35,7 @@ Do not train on private holdouts. The evaluator never includes expected results 
 
 ## Adapter protocol
 
-A local adapter is an executable argument array, not a shell command. For each request it receives one JSON object on stdin with the case ID, division ID, task ID, input, output schema, model ID/version and the pinned local artifact path.
+A local adapter is an executable argument array, not a shell command. For each request it receives one JSON object on stdin with the case ID, division ID, task ID, input, output schema, model ID/version, the pinned checkpoint path and the exact tokenizer artifact path.
 
 It must write one JSON object to stdout:
 
@@ -51,6 +51,8 @@ It must write one JSON object to stdout:
 The `result` object is checked against the fixture's schema and exact expected value. Extra top-level fields are rejected. Adapter stderr is captured and not published as benchmark evidence.
 
 The adapter must load the artifact path supplied in the request. An adapter that ignores the artifact is not a valid model adapter and must be rejected in review.
+
+The runner itself does not train, download, modify or deploy models and does not initiate network calls. Adapter commands are arbitrary local executables and could independently access a network or paid provider. Inspect each adapter, require explicit authorization for any such use, and use an OS-level network-isolated runner when network access must be prohibited. The report marks adapter network and paid-compute usage as unmeasured rather than claiming they did not occur.
 
 ## Candidate requirements
 
