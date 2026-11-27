@@ -1,13 +1,59 @@
 {
-  "schema": "dreamco.division_superbot.v2",
-  "version": "2.0.0",
+  "schema": "dreamco.division_superbot.v3",
+  "version": "3.0.0",
   "identity": {
     "id": "dreameducation",
     "displayName": "DreamEducation Superbot",
     "division": "DreamEducation",
     "cluster": "people_services"
   },
-  "mission": "Coordinate and improve the source-backed capabilities canonically assigned to DreamEducation, while preserving approval and evidence boundaries.",
+  "mission": "Build accessible lessons, courses, practice, tutoring, assessments, and learning simulations.",
+  "domainProfile": {
+    "purpose": "Build accessible lessons, courses, practice, tutoring, assessments, and learning simulations.",
+    "serves": [
+      "students",
+      "parents",
+      "teachers",
+      "training teams"
+    ],
+    "outcome": "Measurable learning experiences adapted to goals, age, accessibility, and evidence.",
+    "boundary": "Minors require protective defaults; grading, credentials, and school decisions remain institution-controlled.",
+    "focusAreas": [
+      "curriculum design",
+      "lesson production",
+      "practice and tutoring",
+      "assessment",
+      "learning analytics"
+    ],
+    "sourcePath": "shared/division-production-contract.ts"
+  },
+  "candidateUserJobAreas": [
+    {
+      "area": "curriculum design",
+      "status": "hypothesis_not_validated",
+      "sourcePath": "shared/division-production-contract.ts"
+    },
+    {
+      "area": "lesson production",
+      "status": "hypothesis_not_validated",
+      "sourcePath": "shared/division-production-contract.ts"
+    },
+    {
+      "area": "practice and tutoring",
+      "status": "hypothesis_not_validated",
+      "sourcePath": "shared/division-production-contract.ts"
+    },
+    {
+      "area": "assessment",
+      "status": "hypothesis_not_validated",
+      "sourcePath": "shared/division-production-contract.ts"
+    },
+    {
+      "area": "learning analytics",
+      "status": "hypothesis_not_validated",
+      "sourcePath": "shared/division-production-contract.ts"
+    }
+  ],
   "userJobs": [],
   "userSegments": [
     "Curriculum directors, department heads",
@@ -29,7 +75,11 @@
     "Teachers, behavior specialists, deans",
     "Teachers, curriculum coordinators",
     "Teachers, principals, communication directors",
-    "Tutoring centers, school districts"
+    "Tutoring centers, school districts",
+    "parents",
+    "students",
+    "teachers",
+    "training teams"
   ],
   "capabilities": [
     {
@@ -3090,6 +3140,47 @@
       "status": "declared_target_not_measured"
     }
   ],
+  "modelTraining": {
+    "status": "planned",
+    "modelId": "dreamco/dreameducation-mini",
+    "modelVersion": "0.0.0",
+    "parameterTarget": 25000000,
+    "tokenizerMode": "shared_per_base_model",
+    "trainingStrategy": "SFT plus LoRA/QLoRA by default; full fine-tuning only after compute benchmarking; DPO only with separately approved preference data",
+    "checkpoint": null,
+    "checkpointSha256": null,
+    "evaluation": {
+      "suite": [
+        "shared_general_capability",
+        "division_domain_tasks",
+        "private_evaluation_only_holdout",
+        "safety_and_policy",
+        "regression_and_failure_replay",
+        "tool_and_runtime_workflows",
+        "latency_throughput_memory_and_cost"
+      ],
+      "last_result": null,
+      "benchmark_status": "NOT_RUN",
+      "test_split_used_for_training": false
+    },
+    "serving": {
+      "endpoint": null,
+      "deployment_revision": null,
+      "runtime_candidates": [
+        "local_open_weight_runtime",
+        "approved_provider_adapter"
+      ],
+      "status": "NOT_DEPLOYED"
+    },
+    "releaseEvidence": {
+      "model_card": null,
+      "license_review": null,
+      "approval_record": null,
+      "independent_review_required": true
+    },
+    "modelManifestSource": "config/generated/division-model-manifest.json",
+    "policySource": "config/division-model-training-policy.json"
+  },
   "commercial": {
     "revenueModels": [
       "Enterprise license",
@@ -3515,6 +3606,13 @@
         "source_bot_slug": "tutoring-matcher",
         "source_path": "App_bots/DreamEducation.json",
         "status": "declared_not_measured"
+      },
+      {
+        "label": "Measurable learning experiences adapted to goals, age, accessibility, and evidence.",
+        "target": null,
+        "source_bot_slug": null,
+        "source_path": "shared/division-production-contract.ts",
+        "status": "domain_outcome_not_measured"
       }
     ],
     "status": "source_declared_not_financially_verified"
@@ -3581,6 +3679,7 @@
       "bots/telehealth-assistant.md",
       "buddy/datasets/benchmark_jobs.py",
       "buddy/datasets/private_holdout_jobs.py",
+      "buddy/learning/srs/service.py",
       "buddy_os/dashboards/dashboard_health_contract.yaml",
       "client/src/pages/PersonalAIBuilderPage.tsx",
       "clients/apple/BuddyOpenRouterService.swift",
@@ -3590,6 +3689,11 @@
       "config/buddy-personality-presets.json",
       "config/buddy_education_universal_engine.json",
       "config/council-bot-career-entrepreneur-program.json",
+      "config/divisions/dreameducation.json",
+      "config/divisions/dreamfood.json",
+      "config/divisions/dreamhealth.json",
+      "config/divisions/dreampersonalcare.json",
+      "config/divisions/dreamproservices.json",
       "config/generated/actions-live-health.json",
       "config/government_services_navigator.json",
       "config/personal-ai-beginner-experience.v1.json",
@@ -3992,6 +4096,7 @@
       "tests/test_actions_live_health.py",
       "tests/test_branch_health_public_report.py",
       "tests/test_buddy_benchmark_runner_main_postcss_vite_audit_actions_health_optional.py",
+      "tests/test_buddy_srs_service.py",
       "tests/test_buddy_training_job_evidence.py",
       "tests/test_execute_buddy_training_job.py",
       "tools/audit_actions_health.py",
@@ -4038,7 +4143,7 @@
   "gaps": [
     {
       "area": "user_jobs",
-      "reason": "No explicit user-job contract was found in source profiles."
+      "reason": "No explicit user-job contract was found; focus areas below are hypotheses, not validated jobs."
     },
     {
       "area": "workflows",
@@ -4049,8 +4154,16 @@
       "reason": "Required tools are profile declarations; adapter availability and health are not verified."
     },
     {
+      "area": "connectors",
+      "reason": "No API or connector contract was found in source profiles."
+    },
+    {
       "area": "benchmarks",
       "reason": "Targets are declared; measured runs, baselines, and holdout evidence are absent."
+    },
+    {
+      "area": "model_training",
+      "reason": "The division model remains planned or experimental; no production checkpoint is certified."
     }
   ],
   "status": "source_mapped_needs_validation",
@@ -4059,6 +4172,8 @@
     "Proposed capabilities are kept separate from canonical ownership and do not grant execution rights.",
     "Tools and connectors are requirements/candidates, not verified connections.",
     "Benchmarks and commercial metrics are declarations, not measured results or verified revenue.",
+    "Candidate user-job areas are hypotheses and require user validation.",
+    "Model registry state is not a claim that weights have been trained or deployed.",
     "No source files are deleted or rewritten by this generator."
   ]
 }

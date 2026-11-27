@@ -1,20 +1,68 @@
 {
-  "schema": "dreamco.division_superbot.v2",
-  "version": "2.0.0",
+  "schema": "dreamco.division_superbot.v3",
+  "version": "3.0.0",
   "identity": {
     "id": "dreammarket",
     "displayName": "DreamMarket Superbot",
     "division": "DreamMarket",
     "cluster": "commerce"
   },
-  "mission": "Coordinate and improve the source-backed capabilities canonically assigned to DreamMarket, while preserving approval and evidence boundaries.",
+  "mission": "Research markets, competitors, customers, demand, pricing, and product opportunities.",
+  "domainProfile": {
+    "purpose": "Research markets, competitors, customers, demand, pricing, and product opportunities.",
+    "serves": [
+      "founders",
+      "product teams",
+      "investors"
+    ],
+    "outcome": "Source-backed market choices that separate observations, assumptions, and forecasts.",
+    "boundary": "No inside information, deceptive research, fabricated demand, or guaranteed commercial outcomes.",
+    "focusAreas": [
+      "market research",
+      "competitive intelligence",
+      "demand validation",
+      "pricing research",
+      "opportunity scoring"
+    ],
+    "sourcePath": "shared/division-production-contract.ts"
+  },
+  "candidateUserJobAreas": [
+    {
+      "area": "market research",
+      "status": "hypothesis_not_validated",
+      "sourcePath": "shared/division-production-contract.ts"
+    },
+    {
+      "area": "competitive intelligence",
+      "status": "hypothesis_not_validated",
+      "sourcePath": "shared/division-production-contract.ts"
+    },
+    {
+      "area": "demand validation",
+      "status": "hypothesis_not_validated",
+      "sourcePath": "shared/division-production-contract.ts"
+    },
+    {
+      "area": "pricing research",
+      "status": "hypothesis_not_validated",
+      "sourcePath": "shared/division-production-contract.ts"
+    },
+    {
+      "area": "opportunity scoring",
+      "status": "hypothesis_not_validated",
+      "sourcePath": "shared/division-production-contract.ts"
+    }
+  ],
   "userJobs": [],
   "userSegments": [
     "Affiliate marketers, content creators",
     "Digital franchise operators, brand owners",
     "Dropshippers, e-commerce entrepreneurs",
     "E-commerce directors, marketplace sellers",
-    "Online arbitrage sellers, resellers"
+    "Online arbitrage sellers, resellers",
+    "founders",
+    "investors",
+    "product teams"
   ],
   "capabilities": [
     {
@@ -795,6 +843,47 @@
       "status": "declared_target_not_measured"
     }
   ],
+  "modelTraining": {
+    "status": "planned",
+    "modelId": "dreamco/dreammarket-mini",
+    "modelVersion": "0.0.0",
+    "parameterTarget": 25000000,
+    "tokenizerMode": "shared_per_base_model",
+    "trainingStrategy": "SFT plus LoRA/QLoRA by default; full fine-tuning only after compute benchmarking; DPO only with separately approved preference data",
+    "checkpoint": null,
+    "checkpointSha256": null,
+    "evaluation": {
+      "suite": [
+        "shared_general_capability",
+        "division_domain_tasks",
+        "private_evaluation_only_holdout",
+        "safety_and_policy",
+        "regression_and_failure_replay",
+        "tool_and_runtime_workflows",
+        "latency_throughput_memory_and_cost"
+      ],
+      "last_result": null,
+      "benchmark_status": "NOT_RUN",
+      "test_split_used_for_training": false
+    },
+    "serving": {
+      "endpoint": null,
+      "deployment_revision": null,
+      "runtime_candidates": [
+        "local_open_weight_runtime",
+        "approved_provider_adapter"
+      ],
+      "status": "NOT_DEPLOYED"
+    },
+    "releaseEvidence": {
+      "model_card": null,
+      "license_review": null,
+      "approval_record": null,
+      "independent_review_required": true
+    },
+    "modelManifestSource": "config/generated/division-model-manifest.json",
+    "policySource": "config/division-model-training-policy.json"
+  },
   "commercial": {
     "revenueModels": [
       "SaaS subscription"
@@ -904,6 +993,13 @@
         "source_bot_slug": "marketplace-manager",
         "source_path": "App_bots/DreamMarket.json",
         "status": "declared_not_measured"
+      },
+      {
+        "label": "Source-backed market choices that separate observations, assumptions, and forecasts.",
+        "target": null,
+        "source_bot_slug": null,
+        "source_path": "shared/division-production-contract.ts",
+        "status": "domain_outcome_not_measured"
       }
     ],
     "status": "source_declared_not_financially_verified"
@@ -966,6 +1062,7 @@
       "bots/shopping-app-bot.md",
       "buddy/capabilities/task_store.py",
       "buddy/datasets/object_store.py",
+      "buddy/learning/srs/store.py",
       "buddy/security/production_checklist.py",
       "buddy/security/secret_store.py",
       "buddy/security/secret_store_test.py",
@@ -984,6 +1081,9 @@
       "config/buddy_subject_productivity_mastery.json",
       "config/dacl-product-tiers.json",
       "config/dataset_product_standard.json",
+      "config/divisions/dreammarket.json",
+      "config/divisions/dreamproduction.json",
+      "config/divisions/dreamretail.json",
       "config/dreamco-dataset-studio-marketplace.json",
       "config/dreamco-model-studio-marketplace.json",
       "config/generated/bot-production-readiness.json",
@@ -992,6 +1092,7 @@
       "config/mastery-data-pack-marketplace-program.json",
       "config/personal-ai-product-spec.v1.json",
       "config/production-readiness-contract.json",
+      "config/production-readiness-evidence-map.json",
       "config/reasoning_learning_marketplace.json",
       "config/universal-business-manufacturing-productivity-program.json",
       "config/us-manufacturer-rfq-marketplace-program.json",
@@ -1044,15 +1145,18 @@
       "tests/test_asset_market.py",
       "tests/test_buddy_object_store.py",
       "tests/test_buddy_production_group.py",
+      "tests/test_buddy_srs_store.py",
       "tests/test_buddy_task_store.py",
       "tests/test_business_manufacturing_productivity_program.py",
       "tests/test_connected_product.py",
       "tests/test_dreamco_production_readiness.py",
       "tests/test_production_evidence_ledger.py",
+      "tests/test_production_readiness_evidence_manifest.py",
       "tests/test_production_readiness_gate.py",
       "tests/test_s3_object_store.py",
       "tools/build_manufacturer_marketplace_catalog.py",
       "tools/build_manufacturing_productivity_benchmarks.py",
+      "tools/build_production_readiness_evidence_manifest.py",
       "tools/dreamco_production_readiness.py",
       "tools/ensure_bots_production_ready.py",
       "tools/generate_production_evidence_ledger.py",
@@ -1097,7 +1201,7 @@
   "gaps": [
     {
       "area": "user_jobs",
-      "reason": "No explicit user-job contract was found in source profiles."
+      "reason": "No explicit user-job contract was found; focus areas below are hypotheses, not validated jobs."
     },
     {
       "area": "workflows",
@@ -1108,8 +1212,16 @@
       "reason": "Required tools are profile declarations; adapter availability and health are not verified."
     },
     {
+      "area": "connectors",
+      "reason": "No API or connector contract was found in source profiles."
+    },
+    {
       "area": "benchmarks",
       "reason": "Targets are declared; measured runs, baselines, and holdout evidence are absent."
+    },
+    {
+      "area": "model_training",
+      "reason": "The division model remains planned or experimental; no production checkpoint is certified."
     }
   ],
   "status": "source_mapped_needs_validation",
@@ -1118,6 +1230,8 @@
     "Proposed capabilities are kept separate from canonical ownership and do not grant execution rights.",
     "Tools and connectors are requirements/candidates, not verified connections.",
     "Benchmarks and commercial metrics are declarations, not measured results or verified revenue.",
+    "Candidate user-job areas are hypotheses and require user validation.",
+    "Model registry state is not a claim that weights have been trained or deployed.",
     "No source files are deleted or rewritten by this generator."
   ]
 }

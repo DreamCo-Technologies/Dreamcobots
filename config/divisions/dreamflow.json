@@ -1,20 +1,68 @@
 {
-  "schema": "dreamco.division_superbot.v2",
-  "version": "2.0.0",
+  "schema": "dreamco.division_superbot.v3",
+  "version": "3.0.0",
   "identity": {
     "id": "dreamflow",
     "displayName": "DreamFlow Superbot",
     "division": "DreamFlow",
     "cluster": "engineering"
   },
-  "mission": "Coordinate and improve the source-backed capabilities canonically assigned to DreamFlow, while preserving approval and evidence boundaries.",
+  "mission": "Map work from request to completion and coordinate handoffs, queues, dependencies, and approvals.",
+  "domainProfile": {
+    "purpose": "Map work from request to completion and coordinate handoffs, queues, dependencies, and approvals.",
+    "serves": [
+      "teams",
+      "project managers",
+      "operations leaders"
+    ],
+    "outcome": "Visible work ownership and predictable completion across people, bots, and systems.",
+    "boundary": "Handoffs preserve original permissions and cannot silently authorize downstream actions.",
+    "focusAreas": [
+      "process mapping",
+      "task queues",
+      "handoff design",
+      "dependency management",
+      "workflow analytics"
+    ],
+    "sourcePath": "shared/division-production-contract.ts"
+  },
+  "candidateUserJobAreas": [
+    {
+      "area": "process mapping",
+      "status": "hypothesis_not_validated",
+      "sourcePath": "shared/division-production-contract.ts"
+    },
+    {
+      "area": "task queues",
+      "status": "hypothesis_not_validated",
+      "sourcePath": "shared/division-production-contract.ts"
+    },
+    {
+      "area": "handoff design",
+      "status": "hypothesis_not_validated",
+      "sourcePath": "shared/division-production-contract.ts"
+    },
+    {
+      "area": "dependency management",
+      "status": "hypothesis_not_validated",
+      "sourcePath": "shared/division-production-contract.ts"
+    },
+    {
+      "area": "workflow analytics",
+      "status": "hypothesis_not_validated",
+      "sourcePath": "shared/division-production-contract.ts"
+    }
+  ],
   "userJobs": [],
   "userSegments": [
     "Automation engineers, data teams",
     "Data analysts, operations teams",
     "Data teams, researchers, analysts",
     "Sales ops, RevOps teams",
-    "Web scraping teams, SEO analysts"
+    "Web scraping teams, SEO analysts",
+    "operations leaders",
+    "project managers",
+    "teams"
   ],
   "capabilities": [
     {
@@ -795,6 +843,47 @@
       "status": "declared_target_not_measured"
     }
   ],
+  "modelTraining": {
+    "status": "planned",
+    "modelId": "dreamco/dreamflow-mini",
+    "modelVersion": "0.0.0",
+    "parameterTarget": 25000000,
+    "tokenizerMode": "shared_per_base_model",
+    "trainingStrategy": "SFT plus LoRA/QLoRA by default; full fine-tuning only after compute benchmarking; DPO only with separately approved preference data",
+    "checkpoint": null,
+    "checkpointSha256": null,
+    "evaluation": {
+      "suite": [
+        "shared_general_capability",
+        "division_domain_tasks",
+        "private_evaluation_only_holdout",
+        "safety_and_policy",
+        "regression_and_failure_replay",
+        "tool_and_runtime_workflows",
+        "latency_throughput_memory_and_cost"
+      ],
+      "last_result": null,
+      "benchmark_status": "NOT_RUN",
+      "test_split_used_for_training": false
+    },
+    "serving": {
+      "endpoint": null,
+      "deployment_revision": null,
+      "runtime_candidates": [
+        "local_open_weight_runtime",
+        "approved_provider_adapter"
+      ],
+      "status": "NOT_DEPLOYED"
+    },
+    "releaseEvidence": {
+      "model_card": null,
+      "license_review": null,
+      "approval_record": null,
+      "independent_review_required": true
+    },
+    "modelManifestSource": "config/generated/division-model-manifest.json",
+    "policySource": "config/division-model-training-policy.json"
+  },
   "commercial": {
     "revenueModels": [
       "SaaS subscription",
@@ -905,6 +994,13 @@
         "source_bot_slug": "web-scraper",
         "source_path": "App_bots/DreamFlow.json",
         "status": "declared_not_measured"
+      },
+      {
+        "label": "Visible work ownership and predictable completion across people, bots, and systems.",
+        "target": null,
+        "source_bot_slug": null,
+        "source_path": "shared/division-production-contract.ts",
+        "status": "domain_outcome_not_measured"
       }
     ],
     "status": "source_declared_not_financially_verified"
@@ -956,6 +1052,8 @@
       ".github/workflows/buddy-pages-mastery-evidence.yml",
       ".github/workflows/buddy-preventive-engineering.yml",
       ".github/workflows/buddy-sandbox-bootcamp.yml",
+      ".github/workflows/buddy-spaced-repetition-tests.yml",
+      ".github/workflows/buddy-study-evidence-session.yml",
       ".github/workflows/buddy-study-resource-expansion.yml",
       ".github/workflows/buddy-task-store-tests.yml",
       ".github/workflows/buddy-technology-radar.yml",
@@ -977,18 +1075,22 @@
       ".github/workflows/division-owner-review-queue.yml",
       ".github/workflows/division-specialist-course-drafts.yml",
       ".github/workflows/division-specialist-course-readiness.yml",
+      ".github/workflows/dreamco-45m-artifact-contract.yml",
       ".github/workflows/dreamco-division-benchmark-evidence.yml",
       ".github/workflows/dreamco-division-lifecycle-migration.yml",
       ".github/workflows/dreamco-division-mastery-engine.yml",
       ".github/workflows/dreamco-division-release-evidence.yml",
       ".github/workflows/dreamco-division-schema-provisioning.yml",
+      ".github/workflows/dreamco-free-ci.yml",
       ".github/workflows/dreamco-global-reconciliation.yml",
+      ".github/workflows/dreamco-institute.yml",
       ".github/workflows/dreamco-live-dashboard.yml",
       ".github/workflows/dreamco-mastery-continuity.yml",
       ".github/workflows/dreamco-model-provider-runtime.yml",
       ".github/workflows/dreamco-platform-evolution.yml",
       ".github/workflows/dreamco-postgres-probe.yml",
       ".github/workflows/dreamco-pr-review-guardian.yml",
+      ".github/workflows/dreamco-pr-review-issue-gate.yml",
       ".github/workflows/dreamco-private-holdout-benchmark.yml",
       ".github/workflows/dreamco-unified-system.yml",
       ".github/workflows/dreamco-verified-goals-contract.yml",
@@ -1835,6 +1937,7 @@
       "buddy/fleet_runtime/permissions.py",
       "buddy/fleet_runtime/router.py",
       "buddy/fleet_runtime/routing.py",
+      "buddy/fleet_runtime/semantic_router.py",
       "buddy/fleet_runtime/smoke.py",
       "buddy/fleet_runtime/sources.py",
       "buddy/learning/freecodecamp_source.py",
@@ -1851,6 +1954,7 @@
       "buddy/learning/workflow_benchmark_readiness_test.py",
       "buddy/models/native_provider_runtime.py",
       "buddy/models/provider_runtime.py",
+      "buddy/trading/backtest.py",
       "buddy_os/actions/actions_runtime_bridge.yaml",
       "buddy_os/actions/agi_action_test_cases.yaml",
       "buddy_os/benchmarks/user_test_handoff.schema.json",
@@ -1882,6 +1986,11 @@
       "config/change-impact-test-exemptions.json",
       "config/change-impact-test-policy.json",
       "config/cross-runtime-contract.json",
+      "config/divisions/dreamautomation.json",
+      "config/divisions/dreamcodelab.json",
+      "config/divisions/dreamflow.json",
+      "config/freecodecamp-division-category-profiles.json",
+      "config/freecodecamp-division-routing-overrides.json",
       "config/freecodecamp-source-policy.json",
       "config/freecodecamp-youtube-catalog-policy.json",
       "config/generated/file-prospectus/automation-tools.json",
@@ -1912,6 +2021,7 @@
       "docs/PR_REVIEW_CODERABBIT_PARITY.md",
       "docs/THREE_RUNTIME_TRACEABILITY_LEDGER.md",
       "docs/UNIVERSAL_BOT_RUNTIME_CONTRACT.md",
+      "docs/bootcamp/FREECODECAMP_DREAMCO_ALIGNMENT_PLAN.md",
       "docs/bootcamp/FREECODECAMP_STUDY_GUIDE_REVIEW_POLICY.md",
       "dreamco_platform/automation/__init__.py",
       "dreamco_platform/automation/task_runner.py",
@@ -1921,6 +2031,7 @@
       "eval/edu_mastery_scorecards/tests/test_cert_gate.py",
       "evidence/plan-business-productivity-programs/manufacturing-productivity/pytest_output.log",
       "fleet-runtime.html",
+      "governance/training-authorizations/dreamco-bootcamp-core-v1-owner-attestation.json",
       "integration/test_validate_pages_index.py",
       "money_os/automation/workflows.json",
       "original-bots/runtime.py",
@@ -1928,7 +2039,10 @@
       "original-bots/systems/saas-automation-bot.md",
       "reports/BOT_TEST.json",
       "reports/BUDDY_USER_TESTING_CATALOG.md",
+      "runtime/__init__.py",
       "runtime/compiled_bots/3d_asset_mgr.py",
+      "runtime/compiled_bots/__init__.py",
+      "runtime/compiled_bots/base.py",
       "server/approval-notifications.ts",
       "server/bot-seed-registry.ts",
       "server/buddy-self-improvement-policy.ts",
@@ -2023,6 +2137,7 @@
       "tests/bot-calculator-engine.test.mjs",
       "tests/bot-fleet-catalog.test.ts",
       "tests/bot-seed-registry.test.ts",
+      "tests/buddy-capability-certifications.test.mjs",
       "tests/buddy-expert-mode-page.test.mjs",
       "tests/buddy-open-core-page.test.mjs",
       "tests/buddy-platform-foundation.test.ts",
@@ -2049,6 +2164,7 @@
       "tests/experiment-sandbox.test.ts",
       "tests/expert-mode-policy.test.ts",
       "tests/family-circle-page.test.mjs",
+      "tests/fixtures/onet-task-statements-official-shape.json",
       "tests/fleet-quality-program.test.ts",
       "tests/fleet-runtime.test.ts",
       "tests/generation-artifacts.test.ts",
@@ -2093,6 +2209,7 @@
       "tests/stripe-checkout.test.ts",
       "tests/supplemental-fleet.test.ts",
       "tests/system-map-organization-page.test.mjs",
+      "tests/test_45m_checkpoint_gates.py",
       "tests/test_500_model_workflow_scope.py",
       "tests/test_accelerate_study_pack.py",
       "tests/test_adaptive_verification.py",
@@ -2103,6 +2220,7 @@
       "tests/test_autonomous_business_and_deployment.py",
       "tests/test_benchmark_gap_closure.py",
       "tests/test_benchmark_runner_mastery_truth.py",
+      "tests/test_benchmark_scope_contract.py",
       "tests/test_bootcamp_discovery.py",
       "tests/test_bootcamp_division_masterbot_coverage.py",
       "tests/test_bootcamp_lesson_planner.py",
@@ -2117,10 +2235,13 @@
       "tests/test_buddy_benchmark_index.py",
       "tests/test_buddy_benchmark_program_guides.py",
       "tests/test_buddy_bootcamp_curriculum.py",
+      "tests/test_buddy_bootcamp_dual_learner_contract.py",
       "tests/test_buddy_bootcamp_workflow_safety.py",
       "tests/test_buddy_bot_calculators.py",
+      "tests/test_buddy_capability_catalog_batch.py",
       "tests/test_buddy_category_system_generator.py",
       "tests/test_buddy_category_system_registry.py",
+      "tests/test_buddy_ci_safe_repair_workflow.py",
       "tests/test_buddy_connection_broker.py",
       "tests/test_buddy_connection_setup_guides.py",
       "tests/test_buddy_continuous_study_policy.py",
@@ -2137,6 +2258,7 @@
       "tests/test_buddy_engineering_capability_contract.py",
       "tests/test_buddy_evidence_acquisition.py",
       "tests/test_buddy_fleet_execution_map.py",
+      "tests/test_buddy_fleet_health_workflow.py",
       "tests/test_buddy_fleet_internal_bootcamp_routing.py",
       "tests/test_buddy_fleet_workflow_safety.py",
       "tests/test_buddy_freecodecamp_category_guides.py",
@@ -2146,6 +2268,7 @@
       "tests/test_buddy_huggingface_task_family_playbooks.py",
       "tests/test_buddy_inference_and_rea.py",
       "tests/test_buddy_intelligence_primitives.py",
+      "tests/test_buddy_knowledge_router.py",
       "tests/test_buddy_laptop_app.py",
       "tests/test_buddy_learning_runtime_bridge.py",
       "tests/test_buddy_library_guide_draft.py",
@@ -2166,11 +2289,19 @@
       "tests/test_buddy_postgres_catalog.py",
       "tests/test_buddy_postgres_probe.py",
       "tests/test_buddy_private_holdout_benchmark.py",
+      "tests/test_buddy_resource_harvester.py",
       "tests/test_buddy_resource_registry.py",
+      "tests/test_buddy_safe_repair_workflow_safety.py",
       "tests/test_buddy_scan_hubs.py",
       "tests/test_buddy_self_bootcamp.py",
+      "tests/test_buddy_semantic_router.py",
       "tests/test_buddy_source_study_queue.py",
+      "tests/test_buddy_srs_anki_classic.py",
+      "tests/test_buddy_srs_fsrs.py",
+      "tests/test_buddy_srs_leitner.py",
       "tests/test_buddy_srs_sm2.py",
+      "tests/test_buddy_srs_workflow.py",
+      "tests/test_buddy_study_evidence_session.py",
       "tests/test_buddy_study_resources.py",
       "tests/test_buddy_system_integrator.py",
       "tests/test_buddy_task_taxonomy_registry.py",
@@ -2202,15 +2333,19 @@
       "tests/test_check_buddy_distill_gate.py",
       "tests/test_check_must_have_study_resources.py",
       "tests/test_check_website_links.py",
+      "tests/test_ci_workflow_fanout_policy.py",
       "tests/test_compile_md_bots.py",
+      "tests/test_compiled_bot_runtime.py",
       "tests/test_composition_engine.py",
       "tests/test_confidence_calibration.py",
       "tests/test_core_capability_benchmarks.py",
+      "tests/test_course_track_registry.py",
       "tests/test_cross_runtime_contract.py",
       "tests/test_decision_engine.py",
       "tests/test_decision_planning.py",
       "tests/test_dependency_reduction_score.py",
       "tests/test_dependency_review_scope.py",
+      "tests/test_deploy_buddy_pages_manual_gate.py",
       "tests/test_digital_asset_registry.py",
       "tests/test_digital_twin.py",
       "tests/test_division_benchmark_contract.py",
@@ -2223,10 +2358,19 @@
       "tests/test_division_resource_router.py",
       "tests/test_division_specialist_course_readiness.py",
       "tests/test_division_superbot_manifests.py",
+      "tests/test_dreamco_benchmark_v2_engine.py",
+      "tests/test_dreamco_buddy_bootcamp_curriculum.py",
       "tests/test_dreamco_division_mastery_orchestrator.py",
+      "tests/test_dreamco_foundry_reference_library.py",
       "tests/test_dreamco_global_reconciliation.py",
+      "tests/test_dreamco_hardware_detector.py",
+      "tests/test_dreamco_institute_catalog_build.py",
+      "tests/test_dreamco_institute_registrar.py",
+      "tests/test_dreamco_institute_resource_plan.py",
+      "tests/test_dreamco_lesson_library.py",
       "tests/test_dreamco_pr_reconcile.py",
       "tests/test_dreamco_pr_review_guardian_safety.py",
+      "tests/test_dreamco_resource_registry.py",
       "tests/test_dreamco_summary_source.py",
       "tests/test_dreamco_verified_goals_2027.py",
       "tests/test_engineering_gap_closure_team.py",
@@ -2245,16 +2389,23 @@
       "tests/test_fleet_runtime_routing.py",
       "tests/test_foundry_local_rag.py",
       "tests/test_freecodecamp_catalog.py",
+      "tests/test_freecodecamp_catalog_categories.py",
       "tests/test_freecodecamp_division_queues.py",
+      "tests/test_freecodecamp_division_video_coverage_audit.py",
       "tests/test_freecodecamp_learning_evidence.py",
       "tests/test_freecodecamp_learning_inventory.py",
       "tests/test_freecodecamp_source_routes.py",
+      "tests/test_freecodecamp_specialist_routing.py",
       "tests/test_freecodecamp_study_guides.py",
       "tests/test_freecodecamp_transcript_intake.py",
       "tests/test_freecodecamp_youtube_catalog.py",
+      "tests/test_frontier_claim_trust_gate_workflow_scope.py",
       "tests/test_full_potential_sandbox.py",
+      "tests/test_full_system_certification_workflow_order.py",
       "tests/test_full_system_operational_certification.py",
+      "tests/test_gateway.py",
       "tests/test_generate_bot_manifests.py",
+      "tests/test_generated_artifact_refresh_workflow.py",
       "tests/test_geometric_frontier.py",
       "tests/test_geometric_reasoning.py",
       "tests/test_github_control_tower.py",
@@ -2267,6 +2418,8 @@
       "tests/test_huggingface_subject_taxonomy.py",
       "tests/test_hypothesis_engine.py",
       "tests/test_hypothesis_revision.py",
+      "tests/test_institute_competitive_benchmark.py",
+      "tests/test_institute_competitive_fleet.py",
       "tests/test_issue_cleaner_read_only.py",
       "tests/test_issue_lifecycle.py",
       "tests/test_legacy_portfolios.py",
@@ -2299,6 +2452,7 @@
       "tests/test_plan_verifier.py",
       "tests/test_planner_arbitration.py",
       "tests/test_platform_evolution.py",
+      "tests/test_production_readiness_workflow.py",
       "tests/test_promote_buddy_verified_incident.py",
       "tests/test_public_development_live_simulation.py",
       "tests/test_reasoning_benchmark.py",
@@ -2311,6 +2465,7 @@
       "tests/test_reasoning_provenance.py",
       "tests/test_reasoning_router_feedback.py",
       "tests/test_recovery_ontology_workforce_runtime.py",
+      "tests/test_refresh_repository_evidence.py",
       "tests/test_register_grok_team.py",
       "tests/test_repository_benchmark_artifact_scanner.py",
       "tests/test_repository_browser.py",
@@ -2333,6 +2488,7 @@
       "tests/test_trusted_code_delivery.py",
       "tests/test_unified_bot_cohorts.py",
       "tests/test_universal_capability_benchmark_policy.py",
+      "tests/test_universal_division_mastery_contract.py",
       "tests/test_user_testing_catalog.py",
       "tests/test_verification_agenda.py",
       "tests/test_verification_selector.py",
@@ -2477,6 +2633,9 @@
       "website/downloads.html",
       "website/dream-search.css",
       "website/dream-search.js",
+      "website/dreamco-institute.css",
+      "website/dreamco-institute.html",
+      "website/dreamco-institute.js",
       "website/easy-code.html",
       "website/easy-code.js",
       "website/ecosystem.html",
@@ -2685,7 +2844,7 @@
   "gaps": [
     {
       "area": "user_jobs",
-      "reason": "No explicit user-job contract was found in source profiles."
+      "reason": "No explicit user-job contract was found; focus areas below are hypotheses, not validated jobs."
     },
     {
       "area": "workflows",
@@ -2696,8 +2855,16 @@
       "reason": "Required tools are profile declarations; adapter availability and health are not verified."
     },
     {
+      "area": "connectors",
+      "reason": "No API or connector contract was found in source profiles."
+    },
+    {
       "area": "benchmarks",
       "reason": "Targets are declared; measured runs, baselines, and holdout evidence are absent."
+    },
+    {
+      "area": "model_training",
+      "reason": "The division model remains planned or experimental; no production checkpoint is certified."
     }
   ],
   "status": "source_mapped_needs_validation",
@@ -2706,6 +2873,8 @@
     "Proposed capabilities are kept separate from canonical ownership and do not grant execution rights.",
     "Tools and connectors are requirements/candidates, not verified connections.",
     "Benchmarks and commercial metrics are declarations, not measured results or verified revenue.",
+    "Candidate user-job areas are hypotheses and require user validation.",
+    "Model registry state is not a claim that weights have been trained or deployed.",
     "No source files are deleted or rewritten by this generator."
   ]
 }

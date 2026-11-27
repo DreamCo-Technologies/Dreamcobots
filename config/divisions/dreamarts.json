@@ -1,13 +1,58 @@
 {
-  "schema": "dreamco.division_superbot.v2",
-  "version": "2.0.0",
+  "schema": "dreamco.division_superbot.v3",
+  "version": "3.0.0",
   "identity": {
     "id": "dreamarts",
     "displayName": "DreamArts Superbot",
     "division": "DreamArts",
     "cluster": "content_media"
   },
-  "mission": "Coordinate and improve the source-backed capabilities canonically assigned to DreamArts, while preserving approval and evidence boundaries.",
+  "mission": "Help creators plan, produce, document, license, present, and sell original visual and performing arts.",
+  "domainProfile": {
+    "purpose": "Help creators plan, produce, document, license, present, and sell original visual and performing arts.",
+    "serves": [
+      "artists",
+      "studios",
+      "galleries"
+    ],
+    "outcome": "Professional creative projects with clear provenance, rights, production steps, and audience paths.",
+    "boundary": "Real-person likenesses, protected works, and commercial assets require documented rights and consent.",
+    "focusAreas": [
+      "creative direction",
+      "visual production",
+      "performance planning",
+      "portfolio management",
+      "rights and licensing"
+    ],
+    "sourcePath": "shared/division-production-contract.ts"
+  },
+  "candidateUserJobAreas": [
+    {
+      "area": "creative direction",
+      "status": "hypothesis_not_validated",
+      "sourcePath": "shared/division-production-contract.ts"
+    },
+    {
+      "area": "visual production",
+      "status": "hypothesis_not_validated",
+      "sourcePath": "shared/division-production-contract.ts"
+    },
+    {
+      "area": "performance planning",
+      "status": "hypothesis_not_validated",
+      "sourcePath": "shared/division-production-contract.ts"
+    },
+    {
+      "area": "portfolio management",
+      "status": "hypothesis_not_validated",
+      "sourcePath": "shared/division-production-contract.ts"
+    },
+    {
+      "area": "rights and licensing",
+      "status": "hypothesis_not_validated",
+      "sourcePath": "shared/division-production-contract.ts"
+    }
+  ],
   "userJobs": [],
   "userSegments": [
     "3D artists, game studios, VFX houses",
@@ -27,7 +72,10 @@
     "Professional photographers, studio managers",
     "VFX supervisors, post-production houses",
     "Video editors, content creators, filmmakers",
-    "XR studios, immersive experience designers"
+    "XR studios, immersive experience designers",
+    "artists",
+    "galleries",
+    "studios"
   ],
   "capabilities": [
     {
@@ -2784,6 +2832,47 @@
       "status": "declared_target_not_measured"
     }
   ],
+  "modelTraining": {
+    "status": "planned",
+    "modelId": "dreamco/dreamarts-mini",
+    "modelVersion": "0.0.0",
+    "parameterTarget": 25000000,
+    "tokenizerMode": "shared_per_base_model",
+    "trainingStrategy": "SFT plus LoRA/QLoRA by default; full fine-tuning only after compute benchmarking; DPO only with separately approved preference data",
+    "checkpoint": null,
+    "checkpointSha256": null,
+    "evaluation": {
+      "suite": [
+        "shared_general_capability",
+        "division_domain_tasks",
+        "private_evaluation_only_holdout",
+        "safety_and_policy",
+        "regression_and_failure_replay",
+        "tool_and_runtime_workflows",
+        "latency_throughput_memory_and_cost"
+      ],
+      "last_result": null,
+      "benchmark_status": "NOT_RUN",
+      "test_split_used_for_training": false
+    },
+    "serving": {
+      "endpoint": null,
+      "deployment_revision": null,
+      "runtime_candidates": [
+        "local_open_weight_runtime",
+        "approved_provider_adapter"
+      ],
+      "status": "NOT_DEPLOYED"
+    },
+    "releaseEvidence": {
+      "model_card": null,
+      "license_review": null,
+      "approval_record": null,
+      "independent_review_required": true
+    },
+    "modelManifestSource": "config/generated/division-model-manifest.json",
+    "policySource": "config/division-model-training-policy.json"
+  },
   "commercial": {
     "revenueModels": [
       "Enterprise license",
@@ -3167,6 +3256,13 @@
         "source_bot_slug": "video-editor-ai",
         "source_path": "App_bots/DreamArts.json",
         "status": "declared_not_measured"
+      },
+      {
+        "label": "Professional creative projects with clear provenance, rights, production steps, and audience paths.",
+        "target": null,
+        "source_bot_slug": null,
+        "source_path": "shared/division-production-contract.ts",
+        "status": "domain_outcome_not_measured"
       }
     ],
     "status": "source_declared_not_financially_verified"
@@ -3268,6 +3364,9 @@
       "config/buddy_video_package_compiler.json",
       "config/buddy_video_release_manifest.json",
       "config/buddy_video_scan_benchmark.json",
+      "config/divisions/dreamarts.json",
+      "config/divisions/dreamcontent.json",
+      "config/divisions/gametitan.json",
       "config/freecodecamp-detailed-video-study-guide.schema.json",
       "config/media-creation-capability-lab.json",
       "config/media-frontier-benchmark-plan.json",
@@ -3277,6 +3376,7 @@
       "docs/BUDDY_ONET_FULL_CONTENT_MODEL_AND_TASK_PLAYBOOKS.md",
       "docs/FREECODECAMP_VIDEO_SOURCE_SEED_2026-11-24.json",
       "docs/MEDIA_GAME_CAPABILITY_ROADMAP.md",
+      "docs/architecture/BUDDY_BOOTCAMP_VIDEO_STUDY_AND_MASTERY_SYSTEM.md",
       "docs/buddy-vibe-coding-game-engine.md",
       "docs/buddy-vibe-game-engine.md",
       "docs/media-to-game-mastery.md",
@@ -3309,6 +3409,7 @@
       "tests/test_media_cloning_gate.py",
       "tests/test_media_consent_gate.py",
       "tests/test_process_authorized_bootcamp_media.py",
+      "tools/audit_freecodecamp_division_video_coverage.py",
       "tools/generate_buddy_local_media_catalog.py",
       "tools/generate_buddy_media_quality_lab.py",
       "tools/process_authorized_bootcamp_media.py",
@@ -3352,7 +3453,7 @@
   "gaps": [
     {
       "area": "user_jobs",
-      "reason": "No explicit user-job contract was found in source profiles."
+      "reason": "No explicit user-job contract was found; focus areas below are hypotheses, not validated jobs."
     },
     {
       "area": "workflows",
@@ -3363,8 +3464,16 @@
       "reason": "Required tools are profile declarations; adapter availability and health are not verified."
     },
     {
+      "area": "connectors",
+      "reason": "No API or connector contract was found in source profiles."
+    },
+    {
       "area": "benchmarks",
       "reason": "Targets are declared; measured runs, baselines, and holdout evidence are absent."
+    },
+    {
+      "area": "model_training",
+      "reason": "The division model remains planned or experimental; no production checkpoint is certified."
     }
   ],
   "status": "source_mapped_needs_validation",
@@ -3373,6 +3482,8 @@
     "Proposed capabilities are kept separate from canonical ownership and do not grant execution rights.",
     "Tools and connectors are requirements/candidates, not verified connections.",
     "Benchmarks and commercial metrics are declarations, not measured results or verified revenue.",
+    "Candidate user-job areas are hypotheses and require user validation.",
+    "Model registry state is not a claim that weights have been trained or deployed.",
     "No source files are deleted or rewritten by this generator."
   ]
 }

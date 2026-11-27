@@ -1,13 +1,58 @@
 {
-  "schema": "dreamco.division_superbot.v2",
-  "version": "2.0.0",
+  "schema": "dreamco.division_superbot.v3",
+  "version": "3.0.0",
   "identity": {
     "id": "dreamdata",
     "displayName": "DreamData Superbot",
     "division": "DreamData",
     "cluster": "ai_infra"
   },
-  "mission": "Coordinate and improve the source-backed capabilities canonically assigned to DreamData, while preserving approval and evidence boundaries.",
+  "mission": "Collect, clean, govern, analyze, document, and exchange data with ownership and quality evidence.",
+  "domainProfile": {
+    "purpose": "Collect, clean, govern, analyze, document, and exchange data with ownership and quality evidence.",
+    "serves": [
+      "analysts",
+      "data teams",
+      "business operators"
+    ],
+    "outcome": "Trusted data products with provenance, access controls, quality tests, and deletion paths.",
+    "boundary": "Credentials, unlawfully obtained data, sensitive profiles, and unlicensed resale packages are blocked.",
+    "focusAreas": [
+      "data ingestion",
+      "data quality",
+      "analytics",
+      "data governance",
+      "data products"
+    ],
+    "sourcePath": "shared/division-production-contract.ts"
+  },
+  "candidateUserJobAreas": [
+    {
+      "area": "data ingestion",
+      "status": "hypothesis_not_validated",
+      "sourcePath": "shared/division-production-contract.ts"
+    },
+    {
+      "area": "data quality",
+      "status": "hypothesis_not_validated",
+      "sourcePath": "shared/division-production-contract.ts"
+    },
+    {
+      "area": "analytics",
+      "status": "hypothesis_not_validated",
+      "sourcePath": "shared/division-production-contract.ts"
+    },
+    {
+      "area": "data governance",
+      "status": "hypothesis_not_validated",
+      "sourcePath": "shared/division-production-contract.ts"
+    },
+    {
+      "area": "data products",
+      "status": "hypothesis_not_validated",
+      "sourcePath": "shared/division-production-contract.ts"
+    }
+  ],
   "userJobs": [],
   "userSegments": [
     "Analysts, content teams",
@@ -24,7 +69,10 @@
     "Location analysts, logistics teams",
     "ML engineers, data scientists",
     "Marketing ops, growth teams",
-    "Privacy officers, legal teams"
+    "Privacy officers, legal teams",
+    "analysts",
+    "business operators",
+    "data teams"
   ],
   "capabilities": [
     {
@@ -2477,6 +2525,47 @@
       "status": "declared_target_not_measured"
     }
   ],
+  "modelTraining": {
+    "status": "planned",
+    "modelId": "dreamco/dreamdata-mini",
+    "modelVersion": "0.0.0",
+    "parameterTarget": 25000000,
+    "tokenizerMode": "shared_per_base_model",
+    "trainingStrategy": "SFT plus LoRA/QLoRA by default; full fine-tuning only after compute benchmarking; DPO only with separately approved preference data",
+    "checkpoint": null,
+    "checkpointSha256": null,
+    "evaluation": {
+      "suite": [
+        "shared_general_capability",
+        "division_domain_tasks",
+        "private_evaluation_only_holdout",
+        "safety_and_policy",
+        "regression_and_failure_replay",
+        "tool_and_runtime_workflows",
+        "latency_throughput_memory_and_cost"
+      ],
+      "last_result": null,
+      "benchmark_status": "NOT_RUN",
+      "test_split_used_for_training": false
+    },
+    "serving": {
+      "endpoint": null,
+      "deployment_revision": null,
+      "runtime_candidates": [
+        "local_open_weight_runtime",
+        "approved_provider_adapter"
+      ],
+      "status": "NOT_DEPLOYED"
+    },
+    "releaseEvidence": {
+      "model_card": null,
+      "license_review": null,
+      "approval_record": null,
+      "independent_review_required": true
+    },
+    "modelManifestSource": "config/generated/division-model-manifest.json",
+    "policySource": "config/division-model-training-policy.json"
+  },
   "commercial": {
     "revenueModels": [
       "Enterprise license",
@@ -2820,6 +2909,13 @@
         "source_bot_slug": "streaming-engine",
         "source_path": "App_bots/DreamData.json",
         "status": "declared_not_measured"
+      },
+      {
+        "label": "Trusted data products with provenance, access controls, quality tests, and deletion paths.",
+        "target": null,
+        "source_bot_slug": null,
+        "source_path": "shared/division-production-contract.ts",
+        "status": "domain_outcome_not_measured"
       }
     ],
     "status": "source_declared_not_financially_verified"
@@ -2903,6 +2999,7 @@
       ".github/workflows/dreamco-division-model-registry.yml",
       ".github/workflows/dreamco-division-training-execution.yml",
       ".github/workflows/dreamco-first-party-training-data.yml",
+      ".github/workflows/dreamco-model-foundry-kits.yml",
       ".github/workflows/dreamco-native-teacher-model-adapters.yml",
       ".github/workflows/dreamco-postgres-dataset-catalog.yml",
       ".github/workflows/dreamco-training-worker-contract.yml",
@@ -3099,11 +3196,21 @@
       "buddy/accounts/training_sources.json",
       "buddy/accounts/training_sources.py",
       "buddy/autonomy/model_fleet_policy.json",
+      "buddy/bootcamp/LIVE_LEARNING_BRIDGE.md",
+      "buddy/bootcamp/learning_execution_contract.json",
+      "buddy/bootcamp/learning_policy.py",
+      "buddy/bootcamp/learning_source_catalog.yaml",
+      "buddy/bootcamp/live_learning_bridge.py",
+      "buddy/bootcamp/live_learning_bridge_test.py",
+      "buddy/bootcamp/model_capability_parity.py",
       "buddy/bootcamp/professional_training.py",
       "buddy/bootcamp/sources/DREAMCO_MODEL_FOUNDRY_ROADMAP.md",
       "buddy/bootcamp/sources/MULTI_SOURCE_STUDY_AND_MODEL_BUILD.md",
       "buddy/bootcamp/sources/freecodecamp/learning-evidence.schema.json",
+      "buddy/bootcamp/task_learning_router.py",
+      "buddy/bootcamp/task_learning_router_test.py",
       "buddy/bootcamp/training_methods_hub.py",
+      "buddy/bootcamp/universal_model_quality_curriculum.yaml",
       "buddy/builder/ai_terms.py",
       "buddy/builder/ai_terms_test.py",
       "buddy/builder/bot_learning_scan.py",
@@ -3205,6 +3312,9 @@
       "buddy/learning/self_train.py",
       "buddy/learning/sourced_perspective.py",
       "buddy/learning/srs/__init__.py",
+      "buddy/learning/srs/anki_classic.py",
+      "buddy/learning/srs/fsrs.py",
+      "buddy/learning/srs/leitner.py",
       "buddy/learning/srs/sm2.py",
       "buddy/learning/study_artifact_cleanup.py",
       "buddy/learning/study_data_schema.json",
@@ -3336,9 +3446,17 @@
       "config/division-model-competitiveness-policy.json",
       "config/division-model-lifecycle-policy.json",
       "config/division-model-training-policy.json",
+      "config/divisions/dreamagents.json",
+      "config/divisions/dreamaiinfra.json",
+      "config/divisions/dreamdata.json",
+      "config/divisions/dreamscience.json",
+      "config/dreamco-500-model-benchmark-100-upgrade-roadmap.json",
       "config/dreamco-first-party-model-factory.json",
       "config/dreamco-first-party-training-factory.json",
+      "config/dreamco-model-capability-bootcamp.json",
+      "config/dreamco-owned-learning-fabric.json",
       "config/dreamco-training-source-registry.json",
+      "config/dreamco-universal-bot-learning-foundry-policy.json",
       "config/failure_restart_playbook.json",
       "config/freecodecamp-complete-learning-path.json",
       "config/frontier-memory-f0-suite.json",
@@ -3354,6 +3472,7 @@
       "config/generated/file-prospectus/agents.json",
       "config/generated/file-prospectus/data.json",
       "config/generated/file-prospectus/database.json",
+      "config/generated/file-prospectus/models.json",
       "config/generated/masterbot-45-domain-crosswalk.json",
       "config/generated/masterbot-55-domain-crosswalk.json",
       "config/global-government-operating-model.json",
@@ -3372,6 +3491,7 @@
       "config/open_model_advancement_scorecard.json",
       "config/proprietary-division-model-program.json",
       "config/public-lab-learning-methods.json",
+      "config/review/freecodecamp-supplemental-domain-learning-approval.json",
       "config/review/masterbot-domain-crosswalk-owner-review.json",
       "config/unified-repository-learning-registry.json",
       "config/universal-capability-domains.json",
@@ -3435,7 +3555,13 @@
       "data/dreamco_knowledge/packages/DP-ONET-OCC-SYN/0.0.2/quality_report.json",
       "data/dreamco_knowledge/packages/DP-ONET-OCC-SYN/0.0.2/sample/occupation_cards.md",
       "data/dreamco_knowledge/packages/DP-ONET-OCC-SYN/0.0.2/sample/occupations.jsonl",
+      "data/dreamco_training/README.md",
       "data/dreamco_training/bootcamp/core_lessons.v1.jsonl",
+      "data/dreamco_training/catalog.json",
+      "data/dreamco_training/catalog/repository_asset_inventory_seed.json",
+      "data/dreamco_training/courses/universal_task_mastery_v1.json",
+      "data/dreamco_training/lessons/universal_task_mastery_lessons_v1.json",
+      "data/dreamco_training/records/core_tasks_v1.jsonl",
       "data/onet/README.md",
       "database/migrations/001_division_model_lifecycle.sql",
       "database/migrations/README_DIVISION_DATASET_CATALOG.md",
@@ -3446,6 +3572,7 @@
       "docs/BUDDY_ACTION_MEMORY_AND_CONTEXT.md",
       "docs/BUDDY_AGI_STYLE_REPAIR_ARCHITECTURE.md",
       "docs/BUDDY_AI_COLLEGE_TRAINING_STANDARD.md",
+      "docs/BUDDY_BOOTCAMP_FREE_TRAINING_ECOSYSTEM.md",
       "docs/BUDDY_BYTE_BPE_TRAINER.md",
       "docs/BUDDY_CI_REPAIR_DATASETS_DATABASES_BENCHMARKS_AND_DISTILLATION.md",
       "docs/BUDDY_CONTINUOUS_LEARNING_OPERATING_MODEL.md",
@@ -3469,6 +3596,7 @@
       "docs/BUDDY_REPAIR_ORCHESTRATOR_SPEC.md",
       "docs/BUDDY_REPOSITORY_REPAIR_DATASETS_BENCHMARKS_AND_DISTILLATION.md",
       "docs/BUDDY_SANDBOX_BOOTCAMP_DATA_PACKAGE.md",
+      "docs/BUDDY_TASK_TO_LEARNING_PLATFORM_ROADMAP.md",
       "docs/BUDDY_THREE_QUEUE_OPERATING_MODEL.md",
       "docs/BUDDY_TINY_GPT_BASELINE_MODEL_CARD.md",
       "docs/BUDDY_TRAINING_METHODS_AND_COMPUTE_HUB.md",
@@ -3489,8 +3617,12 @@
       "docs/DREAMCO_FIRST_PARTY_TRAINING_FACTORY_AND_BOOTCAMP.md",
       "docs/DREAMCO_GOVERNED_DATASET_INGESTION.md",
       "docs/DREAMCO_INDEPENDENT_DIVISION_MODEL_LIFECYCLE.md",
+      "docs/DREAMCO_INSTITUTE_ACADEMIC_MODEL.md",
+      "docs/DREAMCO_INSTITUTE_MODEL_FOUNDRY.md",
       "docs/DREAMCO_MODEL_PROVIDER_DATA_GOVERNANCE.md",
       "docs/DREAMCO_NATIVE_TEACHER_MODEL_ADAPTERS.md",
+      "docs/DREAMCO_OWNED_LEARNING_FABRIC.md",
+      "docs/DREAMCO_UNIVERSAL_BOT_LEARNING_FOUNDRY.md",
       "docs/FREECODECAMP_COMPLETE_BUDDY_LEARNING_PATH.md",
       "docs/FREECODECAMP_YOUTUBE_LEARNING_LIBRARY.md",
       "docs/FREE_FIRST_LEARNING_POLICY.md",
@@ -3501,6 +3633,7 @@
       "docs/MODEL_LAB_BENCHMARK_SCHEMA.md",
       "docs/MODEL_LAB_FOR_USERS.md",
       "docs/MODEL_PROSPECTUS_AND_COMPARISON_PLAN.md",
+      "docs/QUALITY/DREAMCO_LEARNING_PR_CICD_STANDARD.md",
       "docs/REASONING_EFFICIENCY_AND_AI_COURSE_SYSTEM.md",
       "docs/SUPERBOT_AGENT_ECONOMY.md",
       "docs/SUPERBOT_COGNITIVE_MATURITY_MODEL.md",
@@ -3511,10 +3644,13 @@
       "docs/architecture/DREAMCO_FIRST_PARTY_MODEL_FACTORY_AND_BUDDY_BOOTCAMP.md",
       "docs/architecture/PROPRIETARY_DIVISION_MODEL_PROGRAM.md",
       "docs/benchmark-dataset-factory.md",
+      "docs/bootcamp/HUGGING_FACE_OLLAMA_TRAINING_ACADEMY.md",
       "docs/buddy-multimodal-trainer/GATES.md",
       "docs/buddy-multimodal-trainer/NEXT_STEPS.md",
       "docs/buddy-multimodal-trainer/SCOPE_MAP.md",
       "docs/engineering/DREAMCO_ENTERPRISE_REPAIR_PLAN_2026-11-25.md",
+      "docs/institute/COMPETITIVE_MODEL_LAB.md",
+      "docs/learning/BUDDY_ADAPTIVE_SPACED_REPETITION.md",
       "docs/multimodal-learning-fabric.md",
       "docs/security/MODEL_TRAINING_AUTHORIZATION.md",
       "docs/training-methodology/BUDDY_BOOTCAMP_1000_SITE_CURRICULUM.md",
@@ -3556,6 +3692,7 @@
       "learning-process.html",
       "lesson-agent.html",
       "licenses/DREAMCO-FIRST-PARTY-TRAINING-DATA-LICENSE-TEMPLATE.md",
+      "migrations/0001_learning_srs.sql",
       "models.html",
       "models/buddy-tiny-gpt/README.md",
       "original-bots/autonomous-income-network/category-5-ai-robotics.md",
@@ -3589,6 +3726,8 @@
       "schemas/dataset-manifest.schema.json",
       "schemas/division-model-manifest.schema.json",
       "schemas/dreamco-training-example.schema.json",
+      "scripts/dreamco_model_foundry.py",
+      "scripts/train_my_agent.py",
       "server/buddy-model-policy.ts",
       "server/data-rights-policy.ts",
       "server/demand-model-policy.ts",
@@ -3658,7 +3797,9 @@
       "tests/openai-config.test.ts",
       "tests/task-and-data-policy.test.ts",
       "tests/test_500_model_prospectus_matrix.py",
+      "tests/test_actions_failure_sweep_safety.py",
       "tests/test_benchmark_learning_progress.py",
+      "tests/test_bootcamp_learning_policy.py",
       "tests/test_branching_world_model.py",
       "tests/test_buddy_byte_bpe_trainer.py",
       "tests/test_buddy_conversation_learning_policy.py",
@@ -3670,6 +3811,7 @@
       "tests/test_buddy_dataset_ingestion_worker.py",
       "tests/test_buddy_dataset_license_policy.py",
       "tests/test_buddy_dataset_profile_builder.py",
+      "tests/test_buddy_dataset_profile_builder_ui.py",
       "tests/test_buddy_dataset_research_metadata_adapters.py",
       "tests/test_buddy_dataset_route_check.py",
       "tests/test_buddy_dataset_routing.py",
@@ -3691,17 +3833,22 @@
       "tests/test_build_buddy_failure_observations.py",
       "tests/test_command_center_data.py",
       "tests/test_command_center_data_observability.py",
+      "tests/test_convert_daily_division_benchmark.py",
       "tests/test_daily_bot_study_scan.py",
       "tests/test_daily_lesson_plan.py",
       "tests/test_division_45m_model_blueprints.py",
+      "tests/test_division_learning_model_kits.py",
       "tests/test_division_model_fleet.py",
       "tests/test_division_model_manifest.py",
       "tests/test_division_model_registry.py",
       "tests/test_dreamco_bootcamp_seed_data.py",
+      "tests/test_dreamco_model_foundry.py",
       "tests/test_dreamco_original_training_examples.py",
       "tests/test_dreamco_training_factory.py",
+      "tests/test_dreamco_universal_bot_learning_manifests.py",
       "tests/test_information_gain.py",
       "tests/test_learning_history.py",
+      "tests/test_model_capability_parity.py",
       "tests/test_model_foundry.py",
       "tests/test_model_foundry_training_smoke.py",
       "tests/test_model_release_candidate.py",
@@ -3710,12 +3857,15 @@
       "tests/test_pretrained_model_catalog.py",
       "tests/test_professional_training.py",
       "tests/test_prove_buddy_learning.py",
+      "tests/test_public_fiscal_data_refresh.py",
       "tests/test_reasoning_memory.py",
       "tests/test_reasoning_uncertainty.py",
       "tests/test_score_data_package_dataset.py",
       "tests/test_study_buddy_repair_history.py",
       "tests/test_study_pack_datasets.py",
       "tests/test_train_buddy_division_model_cli.py",
+      "tests/test_train_my_agent.py",
+      "tests/test_train_my_agent_backend_guard.py",
       "tests/test_universal_human_ai_task_sandbox.py",
       "tests/test_world_model.py",
       "tests/test_world_model_confidence.py",
@@ -3738,11 +3888,14 @@
       "tools/build_command_center_data_observability.py",
       "tools/build_daily_lesson_plan.py",
       "tools/build_division_45m_model_blueprints.py",
+      "tools/build_division_learning_model_kits.py",
       "tools/build_division_model_fleet.py",
       "tools/build_division_training_matrix.py",
       "tools/build_dreamco_bootcamp_seed_data.py",
+      "tools/build_dreamco_training_catalog.py",
       "tools/build_dreamco_training_examples.py",
       "tools/build_dreamco_training_factory.py",
+      "tools/build_dreamco_universal_bot_learning_manifests.py",
       "tools/build_model_release_candidate.py",
       "tools/build_public_sector_ai_work_roles.py",
       "tools/build_sellable_data_package.py",
@@ -3813,6 +3966,7 @@
       "website/data/benchmarks.json",
       "website/data/blocked-bots.json",
       "website/data/bot-calculators.json",
+      "website/data/bot-capability-tests/Dream3D.json",
       "website/data/bot-capability-tests/DreamAIInfra.json",
       "website/data/bot-capability-tests/DreamAgency.json",
       "website/data/bot-capability-tests/DreamAgents.json",
@@ -3913,6 +4067,7 @@
       "website/data/distill-benchmarks.json",
       "website/data/divisions-live.json",
       "website/data/downloads.json",
+      "website/data/dreamco-institute-academic-catalog.json",
       "website/data/dreamco-search-index.js",
       "website/data/expert-scan.json",
       "website/data/failure-lessons.json",
@@ -4020,7 +4175,7 @@
   "gaps": [
     {
       "area": "user_jobs",
-      "reason": "No explicit user-job contract was found in source profiles."
+      "reason": "No explicit user-job contract was found; focus areas below are hypotheses, not validated jobs."
     },
     {
       "area": "workflows",
@@ -4031,8 +4186,16 @@
       "reason": "Required tools are profile declarations; adapter availability and health are not verified."
     },
     {
+      "area": "connectors",
+      "reason": "No API or connector contract was found in source profiles."
+    },
+    {
       "area": "benchmarks",
       "reason": "Targets are declared; measured runs, baselines, and holdout evidence are absent."
+    },
+    {
+      "area": "model_training",
+      "reason": "The division model remains planned or experimental; no production checkpoint is certified."
     }
   ],
   "status": "source_mapped_needs_validation",
@@ -4041,6 +4204,8 @@
     "Proposed capabilities are kept separate from canonical ownership and do not grant execution rights.",
     "Tools and connectors are requirements/candidates, not verified connections.",
     "Benchmarks and commercial metrics are declarations, not measured results or verified revenue.",
+    "Candidate user-job areas are hypotheses and require user validation.",
+    "Model registry state is not a claim that weights have been trained or deployed.",
     "No source files are deleted or rewritten by this generator."
   ]
 }

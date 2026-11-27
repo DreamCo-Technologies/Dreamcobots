@@ -1,13 +1,58 @@
 {
-  "schema": "dreamco.division_superbot.v2",
-  "version": "2.0.0",
+  "schema": "dreamco.division_superbot.v3",
+  "version": "3.0.0",
   "identity": {
     "id": "dreamdecision",
     "displayName": "DreamDecision Superbot",
     "division": "DreamDecision",
     "cluster": "command"
   },
-  "mission": "Coordinate and improve the source-backed capabilities canonically assigned to DreamDecision, while preserving approval and evidence boundaries.",
+  "mission": "Structure complex decisions using evidence, alternatives, uncertainty, consequences, and accountable review.",
+  "domainProfile": {
+    "purpose": "Structure complex decisions using evidence, alternatives, uncertainty, consequences, and accountable review.",
+    "serves": [
+      "leaders",
+      "operators",
+      "individual users"
+    ],
+    "outcome": "Better decisions with visible assumptions, tradeoffs, dissent, and follow-up measurements.",
+    "boundary": "Buddy supports decisions but does not replace accountable human or licensed professional judgment.",
+    "focusAreas": [
+      "decision framing",
+      "evidence synthesis",
+      "scenario analysis",
+      "risk comparison",
+      "decision review"
+    ],
+    "sourcePath": "shared/division-production-contract.ts"
+  },
+  "candidateUserJobAreas": [
+    {
+      "area": "decision framing",
+      "status": "hypothesis_not_validated",
+      "sourcePath": "shared/division-production-contract.ts"
+    },
+    {
+      "area": "evidence synthesis",
+      "status": "hypothesis_not_validated",
+      "sourcePath": "shared/division-production-contract.ts"
+    },
+    {
+      "area": "scenario analysis",
+      "status": "hypothesis_not_validated",
+      "sourcePath": "shared/division-production-contract.ts"
+    },
+    {
+      "area": "risk comparison",
+      "status": "hypothesis_not_validated",
+      "sourcePath": "shared/division-production-contract.ts"
+    },
+    {
+      "area": "decision review",
+      "status": "hypothesis_not_validated",
+      "sourcePath": "shared/division-production-contract.ts"
+    }
+  ],
   "userJobs": [],
   "userSegments": [
     "Analysts, project managers, executives",
@@ -34,7 +79,10 @@
     "Risk officers, strategic planners",
     "Startup founders, product leaders",
     "Strategic planners, investment committees",
-    "Strategy executives, M&A teams"
+    "Strategy executives, M&A teams",
+    "individual users",
+    "leaders",
+    "operators"
   ],
   "capabilities": [
     {
@@ -3855,6 +3903,47 @@
       "status": "declared_target_not_measured"
     }
   ],
+  "modelTraining": {
+    "status": "planned",
+    "modelId": "dreamco/dreamdecision-mini",
+    "modelVersion": "0.0.0",
+    "parameterTarget": 25000000,
+    "tokenizerMode": "shared_per_base_model",
+    "trainingStrategy": "SFT plus LoRA/QLoRA by default; full fine-tuning only after compute benchmarking; DPO only with separately approved preference data",
+    "checkpoint": null,
+    "checkpointSha256": null,
+    "evaluation": {
+      "suite": [
+        "shared_general_capability",
+        "division_domain_tasks",
+        "private_evaluation_only_holdout",
+        "safety_and_policy",
+        "regression_and_failure_replay",
+        "tool_and_runtime_workflows",
+        "latency_throughput_memory_and_cost"
+      ],
+      "last_result": null,
+      "benchmark_status": "NOT_RUN",
+      "test_split_used_for_training": false
+    },
+    "serving": {
+      "endpoint": null,
+      "deployment_revision": null,
+      "runtime_candidates": [
+        "local_open_weight_runtime",
+        "approved_provider_adapter"
+      ],
+      "status": "NOT_DEPLOYED"
+    },
+    "releaseEvidence": {
+      "model_card": null,
+      "license_review": null,
+      "approval_record": null,
+      "independent_review_required": true
+    },
+    "modelManifestSource": "config/generated/division-model-manifest.json",
+    "policySource": "config/division-model-training-policy.json"
+  },
   "commercial": {
     "revenueModels": [
       "Enterprise license",
@@ -4386,6 +4475,13 @@
         "source_bot_slug": "tradeoff-analyzer",
         "source_path": "App_bots/DreamDecision.json",
         "status": "declared_not_measured"
+      },
+      {
+        "label": "Better decisions with visible assumptions, tradeoffs, dissent, and follow-up measurements.",
+        "target": null,
+        "source_bot_slug": null,
+        "source_path": "shared/division-production-contract.ts",
+        "status": "domain_outcome_not_measured"
       }
     ],
     "status": "source_declared_not_financially_verified"
@@ -4535,6 +4631,7 @@
       "attached_assets/Pasted-no-repeat-must-have-set-for-your-DreamCo-autonomous-emp_1771462894246.txt",
       "attached_assets/Pasted-of-Build-every-niche-bot-for-every-division-We-build-1-_1771394751670.txt",
       "backend-status.json",
+      "baselines/competitor_registry.json",
       "beginner-100.html",
       "benchmarks.html",
       "benchmarks/README.md",
@@ -4615,6 +4712,7 @@
       "buddy/bootcamp/buddy_bootcamp.yaml",
       "buddy/bootcamp/prompts/buddy-university-teacher-authoring.md",
       "buddy/bootcamp/prompts/open-source-study-guide-authoring.md",
+      "buddy/bootcamp/resource_registry.yaml",
       "buddy/bootcamp/sources/TRANSCRIPT_EVALUATION.md",
       "buddy/bootcamp/sources/original-lesson.schema.json",
       "buddy/bootcamp/templates/original-lesson.md",
@@ -4676,6 +4774,8 @@
       "buddy/picture/draw.py",
       "buddy/plans/run.py",
       "buddy/plugins/generate.py",
+      "buddy/registrar/__init__.py",
+      "buddy/registrar/registrar.py",
       "buddy/resources/division_resource_router.py",
       "buddy/safety/gateway.py",
       "buddy/sandbox/buddy_sandbox.py",
@@ -4895,6 +4995,9 @@
       "config/buddy-world-lens-voice-commands.json",
       "config/buddy/control-plane.json",
       "config/buddy_benchmark_orchestrator.json",
+      "config/divisions/commandcore.json",
+      "config/divisions/dreamadmin.json",
+      "config/divisions/dreamdecision.json",
       "config/fleet-growth-policy.json",
       "config/generated/buddy_fleet_quality_program.json",
       "config/generated/file-prospectus/command-center.json",
@@ -5032,9 +5135,13 @@
       "scoring-criteria.html",
       "scoring-criteria.md",
       "script/build.ts",
+      "scripts/benchmark_vs_baselines.py",
+      "scripts/buddy_resource_harvester.py",
       "scripts/dreamco",
+      "scripts/dreamco_hardware_detector.py",
       "scripts/post-merge.sh",
       "scripts/sync-github.sh",
+      "scripts/validate_dreamco_resource_registry.py",
       "secret-options.html",
       "server/user-control-center-policy.ts",
       "settings/README.md",
@@ -5249,6 +5356,8 @@
       "tools/build_division_superbot_manifests.py",
       "tools/build_dp_onet_occ_syn_sample.py",
       "tools/build_dream_systems.py",
+      "tools/build_dreamco_institute_catalog.py",
+      "tools/build_dreamco_institute_resource_plan.py",
       "tools/build_engineering_gap_closure_plan.py",
       "tools/build_file_prospectus.py",
       "tools/build_fleet_shared_improvement_adoption_map.py",
@@ -5306,6 +5415,7 @@
       "tools/create_buddy_library_guide_draft.py",
       "tools/discover_huggingface_subject_taxonomy.py",
       "tools/discover_open_source_bootcamp_sources.py",
+      "tools/dreamco_benchmark_v2_engine.py",
       "tools/dreamco_command_center.sh",
       "tools/dreamco_division_mastery_orchestrator.py",
       "tools/dreamco_doctor.py",
@@ -5385,7 +5495,9 @@
       "tools/run_bot_fleet_e2e.ts",
       "tools/run_buddy_gpt_baseline.py",
       "tools/run_buddy_laptop_app.mjs",
+      "tools/run_buddy_study_evidence_session.py",
       "tools/run_everything_now.py",
+      "tools/run_institute_fleet_benchmarks.py",
       "tools/run_optional_script.py",
       "tools/run_system_speed_accuracy_benchmarks.py",
       "tools/run_tiny_gpt_baseline.py",
@@ -5415,6 +5527,7 @@
       "tools/validate_original_lesson.py",
       "tools/validate_startup_factory.py",
       "tools/validate_vibe_coding_taxonomy.py",
+      "tools/verify_45m_checkpoints.py",
       "tools/verify_actions_page_browser.mjs",
       "tools/verify_frontier_evidence.py",
       "tsconfig.json",
@@ -5472,7 +5585,7 @@
   "gaps": [
     {
       "area": "user_jobs",
-      "reason": "No explicit user-job contract was found in source profiles."
+      "reason": "No explicit user-job contract was found; focus areas below are hypotheses, not validated jobs."
     },
     {
       "area": "workflows",
@@ -5483,8 +5596,16 @@
       "reason": "Required tools are profile declarations; adapter availability and health are not verified."
     },
     {
+      "area": "connectors",
+      "reason": "No API or connector contract was found in source profiles."
+    },
+    {
       "area": "benchmarks",
       "reason": "Targets are declared; measured runs, baselines, and holdout evidence are absent."
+    },
+    {
+      "area": "model_training",
+      "reason": "The division model remains planned or experimental; no production checkpoint is certified."
     }
   ],
   "status": "source_mapped_needs_validation",
@@ -5493,6 +5614,8 @@
     "Proposed capabilities are kept separate from canonical ownership and do not grant execution rights.",
     "Tools and connectors are requirements/candidates, not verified connections.",
     "Benchmarks and commercial metrics are declarations, not measured results or verified revenue.",
+    "Candidate user-job areas are hypotheses and require user validation.",
+    "Model registry state is not a claim that weights have been trained or deployed.",
     "No source files are deleted or rewritten by this generator."
   ]
 }

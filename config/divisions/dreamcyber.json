@@ -1,13 +1,58 @@
 {
-  "schema": "dreamco.division_superbot.v2",
-  "version": "2.0.0",
+  "schema": "dreamco.division_superbot.v3",
+  "version": "3.0.0",
   "identity": {
     "id": "dreamcyber",
     "displayName": "DreamCyber Superbot",
     "division": "DreamCyber",
     "cluster": "security_governance"
   },
-  "mission": "Coordinate and improve the source-backed capabilities canonically assigned to DreamCyber, while preserving approval and evidence boundaries.",
+  "mission": "Help owners assess, monitor, harden, and recover their authorized systems with defensive security evidence.",
+  "domainProfile": {
+    "purpose": "Help owners assess, monitor, harden, and recover their authorized systems with defensive security evidence.",
+    "serves": [
+      "business owners",
+      "security teams",
+      "developers"
+    ],
+    "outcome": "Reduced attack surface and better recovery readiness through authorized, non-destructive testing.",
+    "boundary": "No unauthorized access, credential attacks, destructive testing, persistence, evasion, or denial of service.",
+    "focusAreas": [
+      "attack surface review",
+      "application security",
+      "identity security",
+      "cloud hardening",
+      "incident readiness"
+    ],
+    "sourcePath": "shared/division-production-contract.ts"
+  },
+  "candidateUserJobAreas": [
+    {
+      "area": "attack surface review",
+      "status": "hypothesis_not_validated",
+      "sourcePath": "shared/division-production-contract.ts"
+    },
+    {
+      "area": "application security",
+      "status": "hypothesis_not_validated",
+      "sourcePath": "shared/division-production-contract.ts"
+    },
+    {
+      "area": "identity security",
+      "status": "hypothesis_not_validated",
+      "sourcePath": "shared/division-production-contract.ts"
+    },
+    {
+      "area": "cloud hardening",
+      "status": "hypothesis_not_validated",
+      "sourcePath": "shared/division-production-contract.ts"
+    },
+    {
+      "area": "incident readiness",
+      "status": "hypothesis_not_validated",
+      "sourcePath": "shared/division-production-contract.ts"
+    }
+  ],
   "userJobs": [],
   "userSegments": [
     "AI security researchers, ML engineers, CISOs",
@@ -34,7 +79,10 @@
     "Threat intelligence analysts, SOC teams",
     "Threat intelligence teams, CISOs",
     "Vulnerability management teams, SOC leads",
-    "Vulnerability researchers, security teams"
+    "Vulnerability researchers, security teams",
+    "business owners",
+    "developers",
+    "security teams"
   ],
   "capabilities": [
     {
@@ -3855,6 +3903,47 @@
       "status": "declared_target_not_measured"
     }
   ],
+  "modelTraining": {
+    "status": "planned",
+    "modelId": "dreamco/dreamcyber-mini",
+    "modelVersion": "0.0.0",
+    "parameterTarget": 25000000,
+    "tokenizerMode": "shared_per_base_model",
+    "trainingStrategy": "SFT plus LoRA/QLoRA by default; full fine-tuning only after compute benchmarking; DPO only with separately approved preference data",
+    "checkpoint": null,
+    "checkpointSha256": null,
+    "evaluation": {
+      "suite": [
+        "shared_general_capability",
+        "division_domain_tasks",
+        "private_evaluation_only_holdout",
+        "safety_and_policy",
+        "regression_and_failure_replay",
+        "tool_and_runtime_workflows",
+        "latency_throughput_memory_and_cost"
+      ],
+      "last_result": null,
+      "benchmark_status": "NOT_RUN",
+      "test_split_used_for_training": false
+    },
+    "serving": {
+      "endpoint": null,
+      "deployment_revision": null,
+      "runtime_candidates": [
+        "local_open_weight_runtime",
+        "approved_provider_adapter"
+      ],
+      "status": "NOT_DEPLOYED"
+    },
+    "releaseEvidence": {
+      "model_card": null,
+      "license_review": null,
+      "approval_record": null,
+      "independent_review_required": true
+    },
+    "modelManifestSource": "config/generated/division-model-manifest.json",
+    "policySource": "config/division-model-training-policy.json"
+  },
   "commercial": {
     "revenueModels": [
       "Enterprise license",
@@ -4385,6 +4474,13 @@
         "source_bot_slug": "zero-day-alert",
         "source_path": "App_bots/DreamCyber.json",
         "status": "declared_not_measured"
+      },
+      {
+        "label": "Reduced attack surface and better recovery readiness through authorized, non-destructive testing.",
+        "target": null,
+        "source_bot_slug": null,
+        "source_path": "shared/division-production-contract.ts",
+        "status": "domain_outcome_not_measured"
       }
     ],
     "status": "source_declared_not_financially_verified"
@@ -4591,6 +4687,7 @@
       "config/buddy-professional-bootcamp.json",
       "config/buddy-reference-benchmark-execution.json",
       "config/buddy-resource-connection-sandbox-program.json",
+      "config/buddy-resource-sources.json",
       "config/buddy-resources/rea.json",
       "config/buddy-sandbox-bootcamp-package.json",
       "config/buddy-self-improvement.json",
@@ -4662,15 +4759,31 @@
       "config/creative-studio-mastery-benchmarks.json",
       "config/division-reconciliation-policy.json",
       "config/division-strengthening-placement-program.json",
+      "config/divisions/dreamcustintel.json",
+      "config/divisions/dreamcyber.json",
+      "config/divisions/dreamempire.json",
+      "config/divisions/dreamflow.json",
+      "config/divisions/dreamglobal.json",
+      "config/divisions/dreamlegal.json",
+      "config/divisions/dreammilitary.json",
+      "config/divisions/dreamops.json",
+      "config/divisions/dreamplanetary.json",
+      "config/divisions/dreamprotection.json",
+      "config/divisions/dreamrealestate.json",
+      "config/dreamco-buddy-bootcamp-curriculum.json",
       "config/dreamco-chat-gap-registry.json",
       "config/dreamco-generator-factory.json",
+      "config/dreamco-institute-academic-catalog.json",
+      "config/dreamco-institute-reference-library-100.json",
       "config/dreamco-master-capability-plan.json",
       "config/dreamco-mastery-continuity-registry.json",
       "config/dreamco-operational-ontology.json",
       "config/dreamco-search-engine.json",
       "config/dreamco-studio-benchmark-contract.json",
+      "config/dreamco-universal-division-mastery-contract.json",
       "config/dreamco-verified-goals-2027.json",
       "config/dreamco_innovation_policy.json",
+      "config/dreamco_institute_resource_registry.json",
       "config/engineering-gap-closure-team.json",
       "config/evidence_provenance_schema.json",
       "config/frontier-evidence-suite.json",
@@ -4692,6 +4805,7 @@
       "config/generated/buddy_success_program.json",
       "config/generated/buddy_workforce_system.json",
       "config/generated/division-huggingface-taxonomy-map.json",
+      "config/generated/division-owner-review-queue.json",
       "config/generated/division-reconciliation.json",
       "config/generated/division-resource-readiness-map.json",
       "config/generated/dreamco_search_index.json",
@@ -4717,6 +4831,8 @@
       "config/generated/file-prospectus/huggingface.json",
       "config/generated/file-prospectus/index.json",
       "config/generated/file-prospectus/integration.json",
+      "config/generated/file-prospectus/licenses.json",
+      "config/generated/file-prospectus/migrations.json",
       "config/generated/file-prospectus/original-bots.json",
       "config/generated/file-prospectus/plans.json",
       "config/generated/file-prospectus/reports.json",
@@ -4749,6 +4865,8 @@
       "config/huggingface-capability-packs.json",
       "config/huggingface-task-taxonomy.json",
       "config/huggingface-two-week-study.json",
+      "config/institute-competitive-baselines.json",
+      "config/institute-competitive-benchmark-policy.json",
       "config/k12_curriculum_map_v0.json",
       "config/legacy-bot-lineage-schema.json",
       "config/legacy-bot-recovery-program.json",
@@ -4920,6 +5038,7 @@
       "docs/DREAMCO_DIVISION_SCHEMA_PROVISIONING.md",
       "docs/DREAMCO_ENGINEERING_OPERATING_SYSTEM.md",
       "docs/DREAMCO_GLOBAL_RECONCILIATION.md",
+      "docs/DREAMCO_INSTITUTE_100_RESOURCE_PIPELINE.md",
       "docs/DREAMCO_MASTERY_CONTINUITY_SYSTEM.md",
       "docs/DREAMCO_MASTER_PLAN.md",
       "docs/DREAMCO_MASTER_ROADMAP_2026.md",
@@ -4974,16 +5093,22 @@
       "docs/VIBE_CODING_CATEGORY_MAP.md",
       "docs/VOICE_CLONING_PLAN.md",
       "docs/architecture/DREAMCO_DIVISION_RESOURCE_READINESS.md",
+      "docs/architecture/DREAMCO_FREE_GITHUB_EXECUTION_PLAN.md",
       "docs/architecture/DREAMCO_HUGGINGFACE_DIVISION_TAXONOMY.md",
+      "docs/architecture/DREAMCO_UNIVERSAL_DIVISION_MASTERY_STANDARD.md",
       "docs/benchmark-candidate-selection.md",
       "docs/benchmark-evolution-loop.md",
       "docs/benchmarks/BENCHMARKS_801_1000.md",
       "docs/benchmarks/BENCHMARK_RUNNER_TRUTH_BOUNDARY.md",
       "docs/benchmarks/BUDDY_UNIVERSAL_1000.md",
       "docs/benchmarks/CORE_CAPABILITY_BENCHMARKS.md",
+      "docs/books/README.md",
+      "docs/books/THE_BUDDY_BOOTCAMP_HANDBOOK_HOW_TO_LEARN_ANYTHING.md",
+      "docs/books/THE_BUDDY_USERS_GUIDE_HOW_TO_USE_BUDDY.md",
       "docs/bootcamp/COVERAGE_GATE.md",
       "docs/bootcamp/DIVISION_MASTERBOT_COVERAGE_AUDIT.md",
       "docs/bootcamp/DIVISION_SPECIALIST_COURSE_READINESS.md",
+      "docs/bootcamp/DREAMCO_INSTITUTE_100_RESOURCE_FOUNDATION.md",
       "docs/bootcamp/HUGGINGFACE_BOOTCAMP_COVERAGE.md",
       "docs/bootcamp/HUGGINGFACE_MODULE_REVIEW_READINESS.md",
       "docs/bootcamp/LIBRARY_CANDIDATE_VERIFICATION_QUEUE.md",
@@ -4998,9 +5123,16 @@
       "docs/dreamco-lite/UPGRADE_LADDER.md",
       "docs/engineering/DREAMCO_PROJECT_CHAT_CORPUS.md",
       "docs/engineering/PR_RECONCILIATION_LEDGER.md",
+      "docs/engineering/PR_RECONCILIATION_LEDGER_2026-11-26.md",
+      "docs/engineering/markdown-inventory/2026-11-26.json",
       "docs/engineering/pr-inventory-snapshots/2026-11-24.json",
+      "docs/engineering/pr-inventory-snapshots/2026-11-26.json",
+      "docs/governance/CI_CD_ENGINEERING_ROADMAP.md",
+      "docs/governance/PR_REVIEW_AND_MR_TRIAGE.md",
       "docs/hf/HF_PIN_MATRIX.md",
       "docs/index.md",
+      "docs/institute/BUDDY_RESOURCE_INTAKE.md",
+      "docs/institute/VERIFIED_45M_ARTIFACT_CONTRACT.md",
       "docs/k12/K12_CURRICULUM_MAP_README.md",
       "docs/plans/plan-study-skills-os.md",
       "docs/public_development/BUDDY_PUBLIC_DEVELOPMENT.md",
@@ -5087,6 +5219,13 @@
       "reports/THREEJS_SCORE.json",
       "reports/UNMERGED_PR_VAULT.md",
       "reports/WEIGHTED_SCORES.json",
+      "reports/buddy-study-evidence/2026-11-26/session-45842272031/division-hashes.json",
+      "reports/buddy-study-evidence/2026-11-26/session-45842272031/session-index.json",
+      "reports/buddy-study-evidence/2026-11-26/session-45842272031/session-report.md",
+      "reports/buddy-study-evidence/2026-11-26/session-45843586487/division-hashes.json",
+      "reports/buddy-study-evidence/2026-11-26/session-45843586487/session-index.json",
+      "reports/buddy-study-evidence/2026-11-26/session-45846724922/session-index.json",
+      "reports/buddy-study-evidence/2026-11-26/session-45846724922/session-report.md",
       "reports/conflict-team-last.json",
       "reports/goals_to_gates.json",
       "reports/master-roadmap-crosswalk.json",
@@ -5094,6 +5233,7 @@
       "reports/prod-connectivity-scan.json",
       "reports/schema/os-observability-metrics.schema.json",
       "runtime/compiled_bots/5s_audit_tool.py",
+      "scripts/dreamco_pr_and_issue_auditor.py",
       "study_packs/hub/day1_audit.py",
       "study_packs/hub/drills/drill_05_inventory_audit.py",
       "study_packs/hub/evidence/drill_05_inventory_audit.json",
@@ -5106,6 +5246,7 @@
       "tests/test_buddy_preventive_site_audit.py",
       "tests/test_buddy_universal_learning_governance.py",
       "tests/test_chat_implementation_audit.py",
+      "tests/test_dreamco_pr_and_issue_auditor.py",
       "tests/test_frontier_claim_trust_gates.py",
       "tests/test_pages_feature_audit.py",
       "tools/audit_actions_live.py",
@@ -5161,7 +5302,7 @@
   "gaps": [
     {
       "area": "user_jobs",
-      "reason": "No explicit user-job contract was found in source profiles."
+      "reason": "No explicit user-job contract was found; focus areas below are hypotheses, not validated jobs."
     },
     {
       "area": "workflows",
@@ -5172,8 +5313,16 @@
       "reason": "Required tools are profile declarations; adapter availability and health are not verified."
     },
     {
+      "area": "connectors",
+      "reason": "No API or connector contract was found in source profiles."
+    },
+    {
       "area": "benchmarks",
       "reason": "Targets are declared; measured runs, baselines, and holdout evidence are absent."
+    },
+    {
+      "area": "model_training",
+      "reason": "The division model remains planned or experimental; no production checkpoint is certified."
     }
   ],
   "status": "source_mapped_needs_validation",
@@ -5182,6 +5331,8 @@
     "Proposed capabilities are kept separate from canonical ownership and do not grant execution rights.",
     "Tools and connectors are requirements/candidates, not verified connections.",
     "Benchmarks and commercial metrics are declarations, not measured results or verified revenue.",
+    "Candidate user-job areas are hypotheses and require user validation.",
+    "Model registry state is not a claim that weights have been trained or deployed.",
     "No source files are deleted or rewritten by this generator."
   ]
 }
