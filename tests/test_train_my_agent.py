@@ -26,5 +26,16 @@ class TrainMyAgentTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "weights"):
                 preflight(kit)
 
+    def test_train_my_agent_preflight_reports_disabled_backend_explicitly(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            kit = build_buyer_foundry_kit("45m-edge", load_divisions()[0], Path(tmp))
+            result = preflight(kit, execute=True)
+            self.assertEqual(result["status"], "BLOCKED")
+            self.assertFalse(result["training_started"])
+            self.assertTrue(
+                any("backend adapter" in blocker.lower() for blocker in result["blockers"])
+            )
+
+
 if __name__ == "__main__":
     unittest.main()
