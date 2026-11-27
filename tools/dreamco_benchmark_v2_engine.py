@@ -196,5 +196,7 @@ def self_debug_with_reviewed_patch(
         next_task = proposal.get("revalidated_task")
         if not isinstance(next_task, BenchmarkTask):
             return {"status": "BLOCKED_MISSING_REVALIDATED_TASK", "attempts": attempt, "history": history}
+        if next_task.test_sha256 == current_task.test_sha256:
+            return {"status": "BLOCKED_NO_NEW_REGRESSION_TEST", "attempts": attempt, "history": history}
         current_task = next_task
     return {"status": "FAIL_CLOSED", "attempts": len(history), "history": history}
