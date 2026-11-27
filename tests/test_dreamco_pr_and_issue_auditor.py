@@ -3,7 +3,13 @@ from scripts.dreamco_pr_and_issue_auditor import audit
 
 class AuditorTests(unittest.TestCase):
  def test_added_secret_blocks(self):
-  p="diff --git a/app.py b/app.py\n+++ b/app.py\n@@ -0,0 +1 @@\n+token = 'ghp_abcdefghijklmnopqrstuvwxyz1234567890'\n"
+  # Assemble the fake credential at runtime so the repository-wide secret scan
+  # does not mistake this intentional negative-test fixture for a real secret.
+  credential = "ghp_" + "abcdefghijklmnopqrstuvwxyz1234567890"
+  p=(
+   "diff --git a/app.py b/app.py\n+++ b/app.py\n@@ -0,0 +1 @@\n"
+   f"+token = '{credential}'\n"
+  )
   self.assertEqual(audit(p)["review_status"],"CHANGES_REQUESTED")
  def test_quarantine_and_conflict_are_reported(self):
   p="diff --git a/resource_staging/a.jsonl b/resource_staging/a.jsonl\n+++ b/resource_staging/a.jsonl\n@@ -0,0 +1 @@\n+<<<<<<< HEAD\n"
