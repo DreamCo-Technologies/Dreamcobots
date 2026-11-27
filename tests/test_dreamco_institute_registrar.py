@@ -59,7 +59,7 @@ class DreamCoInstituteRegistrarTests(unittest.TestCase):
     def test_seal_detects_transcript_tampering_and_is_not_signature(self):
         transcript = issue_transcript("candidate-1", self.college["id"], self.evidence, catalog=self.catalog)
         self.assertTrue(verify_transcript_seal(transcript))
-        transcript["summary"]["cumulative_gpa"] = 4.0
+        transcript["summary"]["cumulative_gpa"] = 3.5
         self.assertFalse(verify_transcript_seal(transcript))
         self.assertEqual(transcript["seal_type"], "integrity_checksum_not_digital_signature")
 
