@@ -16,3 +16,11 @@ def test_github_pages_deploy_requires_manual_dispatch_on_main():
         "tools/check_frontier_claim_trust_gates.py" in str(step.get("run", ""))
         for step in build_steps
     )
+
+def test_production_evidence_ledger_is_refreshed_after_validation_before_pages_checks():
+    workflow = yaml.safe_load((ROOT / ".github/workflows/deploy-buddy-pages.yml").read_text(encoding="utf-8"))
+    commands = "\n".join(str(step.get("run", "")) for step in workflow["jobs"]["build"]["steps"])
+    check_position = commands.index("generate_production_evidence_ledger.py --check")
+    refresh_position = commands.index("generate_production_evidence_ledger.py", check_position + 1)
+    downstream_position = commands.index("build_manufacturer_marketplace_catalog.py")
+    assert check_position < refresh_position < downstream_position
