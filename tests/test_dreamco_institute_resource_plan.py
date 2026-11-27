@@ -7,6 +7,7 @@ class InstituteResourcePlanTests(unittest.TestCase):
   self.assertEqual(plan["division_count"],65);self.assertEqual(plan["source_count"],100);self.assertEqual(plan["assignment_count"],6500)
   self.assertTrue(all(d["resource_count"]==100 for d in plan["divisions"]))
   self.assertTrue(all(not r["content_acquired"] and not r["training_enabled"] for d in plan["divisions"] for r in d["resources"]))
+  self.assertTrue(all(r["extraction_targets"] and r["output_policy"]=="DREAMCO_ORIGINAL_AUTHORED_NO_SOURCE_TEXT_REUSE" for d in plan["divisions"] for r in d["resources"]))
  def test_unknown_rights_remain_blocked(self):
   plan=build_plan(json.loads(DIVISIONS.read_text()),json.loads(RESOURCES.read_text()))
   self.assertTrue(all(r["quarantine_status"]=="BLOCKED_PENDING_REVIEW" for d in plan["divisions"] for r in d["resources"]))
