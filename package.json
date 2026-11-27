@@ -39,6 +39,8 @@
     "buddy:category-systems": "python3 tools/generate_buddy_category_system_registry.py --check && python3 tools/validate_buddy_category_system_registry.py --check && npm run buddy:additional-taxonomies && python3 tools/validate_vibe_coding_taxonomy.py && npm run buddy:task-taxonomies",
     "buddy:expert-mode": "python3 tools/generate_buddy_expert_mode.py --check",
     "test:expert-mode": "python3 tools/generate_resource_connection_catalog.py && python3 tools/generate_buddy_expert_mode.py && node --import tsx --test tests/expert-mode-policy.test.ts tests/buddy-expert-mode-page.test.mjs && node --check website/buddy-expert-mode.js && node --check website/buddy-invention-lab.js",
+    "test:institute": "python3 -m unittest tests.test_dreamco_institute_registrar tests.test_dreamco_institute_catalog_build tests.test_institute_competitive_benchmark",
+    "institute:benchmark": "python3 scripts/benchmark_vs_baselines.py",
     "test:professional-bootcamp": "python3 tools/generate_professional_bootcamp.py --check && python3 -m unittest tests.test_professional_training && node --test tests/professional-bootcamp-page.test.mjs && node --check website/professional-bootcamp.js",
     "test:production-evidence": "python3 tools/generate_production_evidence_ledger.py --check && python3 -m unittest tests.test_production_evidence_ledger tests.test_frontier_claim_trust_gates tests.test_build_user_money_map && node --test tests/production-evidence-page.test.mjs && node --check website/production-evidence.js",
     "buddy:learning-os-connections": "python3 tools/build_buddy_learning_os_connection_graph.py && python3 -m unittest tests.test_buddy_learning_os_connections",
