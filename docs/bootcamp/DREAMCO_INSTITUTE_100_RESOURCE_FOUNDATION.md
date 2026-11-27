@@ -39,3 +39,18 @@ Buddy is DreamCo's orchestration, learning, routing, governance and evidence lay
 ```bash
 python -m unittest tests.test_dreamco_foundry_reference_library -v
 ```
+
+
+## All 65 DreamCo divisions are Learning Divisions
+
+The ten categories above are shared foundational resource collections, **not** the division structure. DreamCo's canonical registry contains 65 MasterBot divisions, and every one is a full Learning Division with its own curriculum, research, teaching, practicum, assessment, remediation, certification and continuous-improvement loop.
+
+Every division must maintain:
+- Foundations, domain knowledge, tools/workflows, applied projects, safety/quality, advanced practice and teaching tracks.
+- Approved, division-relevant sources plus shared foundational references; unknown rights remain blocked.
+- Original lessons, hands-on labs, division-specific deterministic tests and independent holdouts.
+- A skill-gap and remediation queue, with retesting after remediation.
+- Evidence-backed mastery records, reviewer sign-off and versioned learning history.
+- Human/Robot/AI task-routing exercises appropriate to its domain.
+
+Buddy coordinates shared learning and cross-division collaboration, while each MasterBot retains ownership of its own curriculum, tests and mastery evidence. Course completion alone never means mastery.
