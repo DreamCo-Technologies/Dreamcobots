@@ -16,6 +16,13 @@ class BuddyFleetWorkflowSafetyTests(unittest.TestCase):
         self.assertIn("persist-credentials: false", text)
         self.assertIn("cancel-in-progress: false", text)
 
+    def test_generated_job_installs_node_dependencies_before_typescript_tools(self):
+        text = WORKFLOW.read_text(encoding="utf-8")
+        generated = text.split("  propose-generated:\n", 1)[1]
+        self.assertIn("actions/setup-node@v4", generated)
+        self.assertIn("npm ci --ignore-scripts", generated)
+        self.assertLess(generated.index("npm ci --ignore-scripts"), generated.index("node --import tsx"))
+
     def test_pr_validation_is_read_only_and_outputs_are_artifacts(self):
         text = WORKFLOW.read_text(encoding="utf-8")
         self.assertIn("permissions:\n  contents: read", text)
