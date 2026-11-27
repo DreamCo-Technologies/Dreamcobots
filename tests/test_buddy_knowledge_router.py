@@ -58,6 +58,29 @@ class BuddyKnowledgeRouterTests(unittest.TestCase):
         self.assertEqual(route["guide_documents"], [{"title": "Approved React guide"}])
         self.assertFalse(route["mastery_awarded"])
 
+
+    def test_external_research_requires_explicit_opt_in(self):
+        with tempfile.TemporaryDirectory() as directory:
+            with patch(
+                "buddy.learning.buddy_knowledge_router.search_internal_library_knowledge",
+                return_value={
+                    "matches": [],
+                    "seed_candidate_matches": [],
+                    "knowledge_gap": {"status": "internal_knowledge_gap"},
+                },
+            ), patch(
+                "buddy.learning.buddy_knowledge_router._course_matches",
+                return_value=[],
+            ):
+                route = route_buddy_learning_query(
+                    "unmapped capability zebra quartz violet",
+                    root=Path(directory),
+                )
+        self.assertFalse(route["external_discovery_available"])
+        self.assertTrue(route["external_discovery_requires_explicit_opt_in"])
+        self.assertFalse(route["external_discovery_performed"])
+        self.assertFalse(route["external_model_routing_performed"])
+
     def test_exact_seed_candidate_routes_to_its_bootcamp_discovery_lesson(self):
         route = route_buddy_learning_query("React 19")
 
