@@ -138,7 +138,7 @@ def source_records() -> tuple[list[dict[str,Any]], list[dict[str,Any]]]:
         raise ValueError("Original-bot source must resolve to exactly 12 major systems.")
     return rows, rows
 
-def build() -> tuple[dict[str,Any], list[dict[str,Any]]]:
+def build() -> tuple[dict[str,Any], list[dict[str,Any]], list[dict[str,Any]]]:
     fleet=read(FLEET); master=read(MASTERBOTS); reconciliation=read(RECONCILIATION); business=read(BUSINESS); policy=read(POLICY)
     bots=fleet.get("bots",[])
     if len(bots)!=fleet.get("summary",{}).get("bots"): raise ValueError("Fleet manifest count does not match its summary.")
