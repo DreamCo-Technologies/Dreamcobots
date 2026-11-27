@@ -29,6 +29,14 @@ class TrainMyAgentPreflightTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "weight status"):
                 preflight(kit, execute=True)
 
+    def test_preflight_never_claims_training_or_customer_data_upload(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            kit = build_buyer_foundry_kit("45m-edge", load_divisions()[0], Path(tmp))
+            result = preflight(kit, execute=False)
+            self.assertFalse(result["training_started"])
+            self.assertFalse(result["paid_compute_requested"])
+            self.assertFalse(result["customer_data_uploaded"])
+
     def test_incomplete_kit_is_rejected(self):
         with tempfile.TemporaryDirectory() as tmp:
             with self.assertRaisesRegex(ValueError, "Incomplete buyer kit"):
