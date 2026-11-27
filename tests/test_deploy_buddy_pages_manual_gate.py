@@ -28,3 +28,13 @@ def test_production_evidence_ledger_is_regenerated_before_consistency_check():
     check_position = commands.index("python3 tools/generate_production_evidence_ledger.py --check")
     downstream_position = commands.index("python3 tools/build_manufacturer_marketplace_catalog.py")
     assert refresh_position < check_position < downstream_position
+
+def test_pages_preflight_regenerates_production_evidence_then_checks_it():
+    workflow = yaml.safe_load((ROOT / ".github/workflows/deploy-buddy-pages.yml").read_text(encoding="utf-8"))
+    build_steps = workflow["jobs"]["build"]["steps"]
+    preflight = next(step for step in build_steps if step.get("name") == "Run deployment preflight")
+    commands = preflight["run"].splitlines()
+    generate = commands.index("python3 tools/generate_production_evidence_ledger.py")
+    check = commands.index("python3 tools/generate_production_evidence_ledger.py --check")
+    downstream = commands.index("python3 tools/build_manufacturer_marketplace_catalog.py")
+    assert generate < check < downstream
