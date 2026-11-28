@@ -44,6 +44,10 @@ def main():
     if not checkpoint_manifest_path.is_file():
         raise PermissionError("adapter checkpoint provenance manifest is required")
     checkpoint_manifest=json.loads(checkpoint_manifest_path.read_text(encoding="utf-8"))
+    adapter_config_path=a.adapter/"adapter_config.json"
+    if not adapter_config_path.is_file():
+        raise PermissionError("LoRA adapter_config.json is required")
+    adapter_config=json.loads(adapter_config_path.read_text(encoding="utf-8"))
     report=json.loads(a.holdout_report.read_text(encoding="utf-8"))
     if (report.get("schema")!="dreamco.foundry.holdout_evaluation.v1"
             or report.get("promotion_eligible") is not True
@@ -60,6 +64,10 @@ def main():
         and checkpoint_manifest.get("source_manifest_sha256")==sha256_file(a.manifest)
         and checkpoint_manifest.get("base_model_id")==a.base_model
         and checkpoint_manifest.get("base_model_revision")==a.base_revision
+        and adapter_config.get("base_model_name_or_path")==a.base_model
+        and report.get("candidate_base_model_id")==a.base_model
+        and report.get("candidate_base_model_revision")==a.base_revision
+        and report.get("candidate_base_model_license_evidence_id")==model_auth.get("license_evidence_id")
         and checkpoint_manifest.get("license_evidence_id")==model_auth.get("license_evidence_id")
         and checkpoint_manifest.get("tokenizer_sha256")==tokenizer_digest(a.adapter)
         and checkpoint_manifest.get("training_split")=="train"
