@@ -186,7 +186,11 @@ class FoundryGuardrailTests(unittest.TestCase):
         self.assertFalse(module.public_cache_allowed({"datasets":[
             {"cache_visibility":"private","redistribution_allowed":False}
         ]}))
-        self.assertFalse(module.public_cache_allowed({"datasets":[]}))
+        self.assertFalse(module.public_cache_allowed({"datasets":[]} ))
+        self.assertFalse(module.public_cache_allowed({
+            "datasets":[{"cache_visibility":"public","redistribution_allowed":True}],
+            "models":[{"cache_visibility":"private","redistribution_allowed":False}],
+        }))
 
     def test_self_play_pairs_require_same_prompt_for_all_candidates(self):
         path = ROOT / "stages" / "05_model_foundry" / "generate_self_play_pairs.py"
