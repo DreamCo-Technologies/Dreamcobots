@@ -74,7 +74,10 @@ def main():
         raise ValueError("not enough authorized tokens to form one training sequence")
 
     # Validation is a separate evaluation-only shard, never mixed into train data.
-    validation_rows = list(iter_authorized_records(manifest, splits={"validation"}))
+    validation_categories = {"study_guides", "verified_trajectories", "general_replay"}
+    validation_rows = list(iter_authorized_records(
+        manifest, categories=validation_categories, splits={"validation"}
+    ))
     validation_tokens = _token_pool(validation_rows, tokenizer)
     validation_shard = _write_shard(validation_tokens, args.output, "validation", args.sequence_length)
     report = {
