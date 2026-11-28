@@ -66,5 +66,18 @@ def test_static_parsers_cover_openapi_har_and_csv():
     assert openapi=={"endpoints":[{"method":"GET","path":"/items"},{"method":"POST","path":"/items"}]}
     har=parse('{"log":{"entries":[{"request":{"method":"GET","url":"https://example.test/orders?token=secret"},"response":{"status":200}}]}}',"har")
     assert har["endpoints"]==[{"method":"GET","path":"/orders","status":200}]
-    csv=parse("id,name\\n1,A\\n2,B\\n","csv")
+    csv=parse("id,name\n1,A\n2,B\n","csv")
     assert csv["row_count"]==2 and csv["columns"][0]["name"]=="field_1"
+
+def test_local_onet_catalog_is_read_only_and_deterministic(tmp_path):
+    import sqlite3
+    from importlib import import_module
+    database=tmp_path/"onet.sqlite"
+    connection=sqlite3.connect(database)
+    connection.execute("CREATE TABLE onet_tasks (soc_code TEXT, task_id TEXT, task TEXT)")
+    connection.execute("INSERT INTO onet_tasks VALUES (?,?,?)",("15-1252.00","task-1","Develop software applications and analyze user requirements"))
+    connection.commit(); connection.close()
+    match=import_module("stages.03_spec_and_onet.onet").match_onet_tasks
+    result=match("software applications user requirements",str(database))
+    assert result[0]["onet_soc_code"]=="15-1252.00"
+    assert result[0]["human_required"] is True
