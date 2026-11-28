@@ -26,7 +26,7 @@ Every push to main runs the mainline health check. A failure opens or updates an
 
 The Promote Validated Repair Branch workflow is manually dispatched from the Actions tab. Supply an existing repair branch name. It compares that branch with origin/main and checks only Git metadata and diff text; it does not check out or execute code from the candidate branch.
 
-The validator is fail-closed. It permits only added or modified files under buddy/, server/, client/, shared/, or tools/, with a 20-file and 1,500-changed-line limit. It blocks workflow, contract, policy, security, migration, secret, and test paths; deletions and renames; credential-like additions; and changes to the validator itself.
+The validator is fail-closed. It permits only added or modified files under buddy/, server/, client/, shared/, or tools/, with a 20-file and 1,500-changed-line limit. It blocks workflow, contract, policy, security, migration, and secret paths; modifications or deletions of existing tests; sensitive security/policy/auth tests; deletions and renames; credential-like additions; and changes to the validator itself. New non-security Python test modules may be added.
 
 Passing this structural check does not mean the code is correct. The resulting PR must pass all required checks and receive human review before merge.
 
