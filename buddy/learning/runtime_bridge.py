@@ -284,12 +284,14 @@ class BuddyLearningBridge:
 
         lessons = [
             lesson for lesson in load_course_lessons()
-            if lesson.learner_visible and not lesson.source_url
+            if lesson.track_id == "dreamco-division-specialist"
+            and lesson.learner_visible
+            and not lesson.source_url
             and lesson.content_status == "authored"
             and (
-                (not lesson.division_targets or division in lesson.division_targets)
+                division in lesson.division_targets
                 if division else
-                (not lesson.masterbot_targets or masterbot in lesson.masterbot_targets)
+                masterbot in lesson.masterbot_targets
             )
         ]
         if query.strip():
@@ -340,17 +342,19 @@ class BuddyLearningBridge:
 
         catalog_lessons = [
             lesson for lesson in load_course_lessons()
-            if lesson.learner_visible and not lesson.source_url
+            if lesson.track_id == "dreamco-division-specialist"
+            and lesson.learner_visible
+            and not lesson.source_url
         ]
         if division:
             lessons = [
                 lesson for lesson in catalog_lessons
-                if not lesson.division_targets or division in lesson.division_targets
+                if division in lesson.division_targets
             ]
         else:
             lessons = [
                 lesson for lesson in catalog_lessons
-                if not lesson.masterbot_targets or masterbot in lesson.masterbot_targets
+                if masterbot in lesson.masterbot_targets
             ]
 
         if query.strip():

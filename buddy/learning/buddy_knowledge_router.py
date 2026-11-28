@@ -101,6 +101,16 @@ def _course_matches(
             " ".join(lesson.tool_tags), " ".join(lesson.learning_modes),
         ))
         overlap = query_tokens & _tokens(searchable)
+        title_overlap = query_tokens & _tokens(lesson.title)
+        # Avoid turning one generic token (for example, "capability") into a
+        # false positive for an unrelated lesson. Exact seed candidates and
+        # exact single-token titles remain eligible.
+        if (
+            lesson.lesson_id not in (preserve_ids or set())
+            and len(overlap) < 2
+            and not (len(query_tokens) == 1 and title_overlap == query_tokens)
+        ):
+            continue
         # An exact, independently verified seed-candidate ID is a direct match
         # even when tokenization drops version-only tokens (for example, "19").
         # Preserve that lesson for the exact-candidate route without broadening
