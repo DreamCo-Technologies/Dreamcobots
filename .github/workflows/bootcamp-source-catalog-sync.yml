@@ -1,0 +1,52 @@
+name: Bootcamp Source Catalog Weekly Sync
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "41 8 * * 1"
+permissions:
+  contents: write
+  pull-requests: write
+concurrency:
+  group: bootcamp-source-catalog-weekly
+  cancel-in-progress: false
+jobs:
+  sync-metadata:
+    if: github.repository == 'DreamCo-Technologies/Dreamcobots'
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install pinned metadata tools
+        run: |
+          python -m pip install --disable-pip-version-check "PyYAML==6.0.3"
+          python -m pip install --disable-pip-version-check "yt-dlp==2026.11.23"
+      - name: Incrementally sync registered official sources
+        run: |
+          python -m stages.00_catalog_sync.catalog_sync --source freecodecamp=https://www.youtube.com/@freecodecamp
+      - name: Verify append-only JSONL ledger
+        run: |
+          python -c 'import json; from pathlib import Path; p=Path("data/manifests/source_catalog.jsonl"); rows=[json.loads(x) for x in p.read_text().splitlines() if x.strip()]; keys=[(r["source_id"],r["video_id"],r["content_sha256"]) for r in rows]; assert len(keys)==len(set(keys)), "duplicate identical ledger records"; assert all(len(r["content_sha256"])==64 and r["transcript_status"]=="NOT_FETCHED" for r in rows)'
+      - name: Open catalog refresh PR
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: automation/bootcamp-source-catalog-refresh
+          delete-branch: true
+          commit-message: "chore(bootcamp): refresh source metadata ledger"
+          title: "chore(bootcamp): refresh source metadata catalog"
+          body: |
+            ## Summary
+            - Incrementally enumerate registered official source metadata.
+            - Append new or changed records to the immutable JSONL ledger.
+            - Preserve source hashes and item-level rights status.
+
+            ## Safety
+            - Metadata only; no video, audio, captions, or transcripts are fetched.
+            - No source is granted transcript or model-training rights by catalog inclusion.
+          add-paths: |
+            data/manifests/source_catalog.jsonl
