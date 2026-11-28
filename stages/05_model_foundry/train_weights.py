@@ -99,6 +99,8 @@ def _load_model(recipe: dict[str, Any], tokenizer, checkpoint: Path | None = Non
             model_id, revision=revision, trust_remote_code=False,
             use_safetensors=True, torch_dtype="auto",
         )
+        if len(tokenizer) != base_model.get_input_embeddings().weight.shape[0]:
+            base_model.resize_token_embeddings(len(tokenizer), mean_resizing=True)
         from peft import PeftModel
         model = PeftModel.from_pretrained(base_model, checkpoint, is_trainable=True)
     elif checkpoint:
@@ -263,13 +265,28 @@ def execute_stage(stage: str, recipe: dict[str, Any], manifest: dict[str, Any],
             from peft import LoraConfig, get_peft_model
         except ImportError as exc:
             raise RuntimeError("LoRA recipe requires peft") from exc
-        model = get_peft_model(model, LoraConfig(
-            r=int(recipe["architecture"].get("rank", 16)),
-            lora_alpha=int(recipe["architecture"].get("alpha", 32)),
-            lora_dropout=float(recipe["architecture"].get("dropout", 0.05)),
-            bias="none", task_type="CAUSAL_LM",
-            target_modules=["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"],
-        ))
+        tokenizer_manifest_path = tokenizer_path / "foundry-tokenizer-manifest.json"
+        tokenizer_manifest = json.loads(tokenizer_manifest_path.read_text(encoding="utf-8")) if tokenizer_manifest_path.exists() else {}
+        trainable_token_ids = tokenizer_manifest.get("trainable_token_ids", [])
+        lora_kwargs = {
+            "r": int(recipe["architecture"].get("rank", 16)),
+            "lora_alpha": int(recipe["architecture"].get("alpha", 32)),
+            "lora_dropout": float(recipe["architecture"].get("dropout", 0.05)),
+            "bias": "none", "task_type": "CAUSAL_LM",
+            "target_modules": ["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"],
+        }
+        if trainable_token_ids:
+            lora_kwargs["trainable_token_indices"] = {
+                "embed_tokens": trainable_token_ids,
+                "lm_head": trainable_token_ids,
+            }
+        try:
+            lora_config = LoraConfig(**lora_kwargs)
+        except TypeError as exc:
+            if trainable_token_ids:
+                raise RuntimeError("installed PEFT lacks sparse trainable-token support; refusing to freeze new domain embeddings") from exc
+            raise
+        model = get_peft_model(model, lora_config)
 
     output.mkdir(parents=True, exist_ok=True)
     if stage == "pretrain":
