@@ -142,3 +142,50 @@ def test_repair_plan_cannot_inject_an_unregistered_script(monkeypatch, tmp_path)
         assert "fixed command allowlist" in str(exc)
     else:
         raise AssertionError("unregistered scripts must never execute")
+
+
+def test_candidate_validation_rejects_binary_changes():
+    prefixes = MODULE.allowed_prefixes(None)
+    status = MODULE.validate_candidate(
+        ["config/generated/model.bin"],
+        "diff --git a/config/generated/model.bin b/config/generated/model.bin\n"
+        "Binary files a/config/generated/model.bin and b/config/generated/model.bin differ\n",
+        prefixes,
+    )
+    assert status == "BLOCKED_BINARY_CHANGE"
+
+
+def test_candidate_validation_rejects_file_mode_changes():
+    prefixes = MODULE.allowed_prefixes(None)
+    status = MODULE.validate_candidate(
+        ["config/generated/index.json"],
+        "diff --git a/config/generated/index.json b/config/generated/index.json\n"
+        "old mode 100644\nnew mode 100755\n@@ -1 +1 @@\n-old\n+new\n",
+        prefixes,
+    )
+    assert status == "BLOCKED_FILE_MODE_CHANGE"
+
+
+def test_candidate_validation_enforces_file_limit():
+    prefixes = MODULE.allowed_prefixes(None)
+    paths = [f"config/generated/item-{index}.json" for index in range(21)]
+    assert MODULE.validate_candidate(paths, "", prefixes) == "BLOCKED_FILE_LIMIT"
+
+
+def test_candidate_validation_counts_plus_prefixed_added_lines_inside_hunks():
+    prefixes = MODULE.allowed_prefixes(None)
+    added = "\n".join("+++ generated content" for _ in range(1501))
+    patch = (
+        "diff --git a/config/generated/index.json b/config/generated/index.json\n"
+        "@@ -0,0 +1,1501 @@\n" + added + "\n"
+    )
+    assert MODULE.validate_candidate(["config/generated/index.json"], patch, prefixes) == "BLOCKED_CHANGE_LIMIT"
+
+
+def test_candidate_validation_accepts_bounded_generated_text_patch():
+    prefixes = MODULE.allowed_prefixes(None)
+    patch = (
+        "diff --git a/config/generated/index.json b/config/generated/index.json\n"
+        "@@ -1 +1 @@\n-old\n+new\n"
+    )
+    assert MODULE.validate_candidate(["config/generated/index.json"], patch, prefixes) is None
