@@ -1,0 +1,1 @@
+"""Stage 5: isolated execution and evidence gating."""
