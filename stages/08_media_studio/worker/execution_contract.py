@@ -123,8 +123,15 @@ def validate_execution_request(
     workspace_root: str | Path,
 ) -> Path:
     validate_worker_spec(worker)
-    if not JOB_ID_RE.fullmatch(request.job_id):
+    if not isinstance(request.resources, ResourceRequest):
+        raise ExecutionContractError("invalid_resource_request")
+    if not isinstance(request.job_id, str) or not JOB_ID_RE.fullmatch(request.job_id):
         raise ExecutionContractError("invalid_job_id")
+    if not isinstance(request.output_dir, str) or not request.output_dir:
+        raise ExecutionContractError("invalid_output_directory")
+    output_path = Path(request.output_dir)
+    if output_path.is_absolute() or any(part in {"", ".", ".."} for part in output_path.parts):
+        raise ExecutionContractError("unsafe_output_directory")
     if request.backend != worker.backend:
         raise ExecutionContractError("backend_mismatch")
     if request.media_type not in worker.supported_media_types:
@@ -136,6 +143,8 @@ def validate_execution_request(
         raise ExecutionContractError("timeout_out_of_range")
     if not 0 <= resources.gpu_count <= 8 or not 0 <= resources.gpu_memory_mb <= 1_048_576:
         raise ExecutionContractError("gpu_request_out_of_range")
+    if (resources.gpu_count == 0) != (resources.gpu_memory_mb == 0):
+        raise ExecutionContractError("gpu_count_and_memory_must_be_requested_together")
     if worker.gpu_required and resources.gpu_count < 1:
         raise ExecutionContractError("worker_requires_gpu")
     if not worker.gpu_required and resources.gpu_count != 0:
