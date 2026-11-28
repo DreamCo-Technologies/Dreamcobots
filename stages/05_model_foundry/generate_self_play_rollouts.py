@@ -171,6 +171,7 @@ def main() -> None:
                 **evidence, "prompt": prompt, "response": response,
                 "sandbox_run_id": str(uuid.uuid4()),
                 "grader_attestation_sha256": evidence_sha,
+                "grader_attestation_type": "unsigned_local_evidence_fingerprint",
                 "teach_back_status": "NOT_VERIFIED",
                 "eligible_for_training": False,
                 "source_dataset_id": task.get("_dataset_id"),
@@ -180,14 +181,15 @@ def main() -> None:
             }
             records.append(row)
             task_rollouts.append(row)
-        if len({row["sandbox_status"] for row in task_rollouts}) > 1:
+        scored_rollouts = [row for row in task_rollouts if row["sandbox_status"] in {"LAB_PASSED", "LAB_FAILED"}]
+        if len({row["sandbox_status"] for row in scored_rollouts}) > 1:
             grpo_groups.append({
                 "task_id": task_id, "prompt": prompt,
                 "rollouts": [{"candidate_id": row["candidate_id"],
                               "response": row["response"],
                               "reward": 1.0 if row["sandbox_status"] == "LAB_PASSED" else 0.0,
                               "sandbox_status": row["sandbox_status"]}
-                             for row in task_rollouts],
+                             for row in scored_rollouts],
                 "eligible_for_training": False, "review_required": True,
             })
         passed = [row for row in task_rollouts if row["sandbox_status"] == "LAB_PASSED"]
