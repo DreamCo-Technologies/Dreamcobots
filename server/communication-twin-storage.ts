@@ -126,6 +126,15 @@ export async function getMobileBridgeDevice(ownerId: string, deviceId: string) {
   });
 }
 
+export async function listMobileBridgeRegistrations(ownerId: string): Promise<MobileBridgeRegistration[]> {
+  return withOwner(ownerId, async (tx) => {
+    const rows = await tx.select().from(mobileBridgeDevices)
+      .where(eq(mobileBridgeDevices.ownerId, ownerId))
+      .orderBy(desc(mobileBridgeDevices.createdAt));
+    return rows.map(toRegistration);
+  });
+}
+
 export async function listMobileBridgeDevices(ownerId: string) {
   return withOwner(ownerId, async (tx) => {
     const rows = await tx.select().from(mobileBridgeDevices)
@@ -462,6 +471,38 @@ export async function markCommunicationTwinDraftDeliveryUnknown(ownerId: string,
       eq(communicationTwinDrafts.status, "sending"),
     )).returning();
     return row;
+  });
+}
+
+export async function updateCommunicationTwinDraftBody(
+  ownerId: string, draftId: string, draftBody: string,
+) {
+  const safeDraftId = draftIdSchema.parse(draftId);
+  const safeBody = z.string().trim().min(1).max(12_000).parse(draftBody);
+  return withOwner(ownerId, async (tx) => {
+    const [row] = await tx.update(communicationTwinDrafts).set({
+      draftBody: safeBody, updatedAt: new Date(),
+    }).where(and(
+      eq(communicationTwinDrafts.ownerId, ownerId),
+      eq(communicationTwinDrafts.draftId, safeDraftId),
+      eq(communicationTwinDrafts.status, "pending_approval"),
+      gt(communicationTwinDrafts.expiresAt, new Date()),
+    )).returning({ draftId: communicationTwinDrafts.draftId });
+    return Boolean(row);
+  });
+}
+
+export async function resetCommunicationTwinDraftSendClaim(ownerId: string, draftId: string) {
+  const safeDraftId = draftIdSchema.parse(draftId);
+  return withOwner(ownerId, async (tx) => {
+    const [row] = await tx.update(communicationTwinDrafts).set({
+      status: "pending_approval", updatedAt: new Date(),
+    }).where(and(
+      eq(communicationTwinDrafts.ownerId, ownerId),
+      eq(communicationTwinDrafts.draftId, safeDraftId),
+      eq(communicationTwinDrafts.status, "sending"),
+    )).returning({ draftId: communicationTwinDrafts.draftId });
+    return Boolean(row);
   });
 }
 
