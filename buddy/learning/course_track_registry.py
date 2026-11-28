@@ -314,7 +314,7 @@ def _rows(track: dict, data: dict, root: Path = ROOT, *, include_blueprint: bool
                 "title": name,
                 "objective": f"Understand the O*NET subject {name} and apply its occupational evidence without inferring qualification or authority.",
                 "practice": "Build an original subject guide, connect relevant tasks and tools, and classify AI/human responsibilities.",
-                "assessment": "Pass a source-grounded subject assessment and task-specific suitability review.",
+                "assessment": "Pass a source-grounded subject assessment, unseen assessment on an independent task, and task-specific suitability review.",
                 "content_status": "authoring_backlog",
                 "capability_tags": worker_requirement_tags,
             })
