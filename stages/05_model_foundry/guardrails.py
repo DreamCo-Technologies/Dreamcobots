@@ -35,6 +35,7 @@ def verify_signed_manifest(manifest_path: Path, signature_path: Path, public_key
     """Verify Ed25519 signature over canonical manifest JSON, then all data hashes."""
     try:
         from cryptography.hazmat.primitives.serialization import load_pem_public_key
+        from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PublicKey
     except ImportError as exc:
         raise RuntimeError("Install cryptography to verify foundry signatures") from exc
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
@@ -42,7 +43,7 @@ def verify_signed_manifest(manifest_path: Path, signature_path: Path, public_key
         raise ValueError(f"manifest schema must be {SCHEMA}")
     signature = base64.b64decode(signature_path.read_text(encoding="ascii").strip(), validate=True)
     key = load_pem_public_key(public_key_path.read_bytes())
-    if key.__class__.__name__ != "_Ed25519PublicKey":
+    if not isinstance(key, Ed25519PublicKey):
         raise ValueError("trusted policy key must be Ed25519")
     key.verify(signature, canonical_json(manifest))
     entries = manifest.get("datasets")
