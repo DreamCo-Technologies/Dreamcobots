@@ -67,7 +67,7 @@ class MediaDirectorTests(unittest.TestCase):
             DIRECTOR.authorize_render_assets([{"asset_id": "unknown", "ownership_class": "unknown_do_not_publish"}])
 
     def test_asset_without_explicit_commercial_permission_is_blocked(self):
-        asset = {"asset_id": "asset-no-commercial", "source_type": "generated",
+        asset = {"asset_id": "asset-no-commercial", "source_type": "generated", "subject_type": "synthetic",
             "source": "test", "collection_date": "2026-11-27", "owner": "DreamCo",
             "license": "DREAMCO_INTERNAL_OWNED", "ownership_class": "synthetic_generated_by_dreamco",
             "commercial_redistribution_allowed": False, "attribution_required": False,
@@ -76,8 +76,18 @@ class MediaDirectorTests(unittest.TestCase):
         with self.assertRaises(DIRECTOR.MediaRightsError):
             DIRECTOR.authorize_render_assets([asset])
 
+    def test_asset_requires_explicit_subject_classification(self):
+        asset = {"asset_id": "unclassified", "source_type": "generated",
+            "source": "test", "collection_date": "2026-11-27", "owner": "DreamCo",
+            "license": "DREAMCO_INTERNAL_OWNED", "ownership_class": "synthetic_generated_by_dreamco",
+            "commercial_redistribution_allowed": True, "attribution_required": False,
+            "share_alike_required": False, "transformation_history": [],
+            "provenance_hash": "sha256:test", "review_status": "approved"}
+        with self.assertRaises(DIRECTOR.MediaRightsError):
+            DIRECTOR.authorize_render_assets([asset])
+
     def test_render_uses_adapter_after_rights_gate(self):
-        asset = {"asset_id": "dreamco-asset-1", "source_type": "generated",
+        asset = {"asset_id": "dreamco-asset-1", "source_type": "generated", "subject_type": "synthetic",
             "source": "DreamCo original generation", "collection_date": "2026-11-27",
             "owner": "DreamCo", "license": "DREAMCO_INTERNAL_OWNED",
             "ownership_class": "synthetic_generated_by_dreamco",
