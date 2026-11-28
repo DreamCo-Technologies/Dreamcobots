@@ -79,6 +79,14 @@ class BuddyBootcampGeneratorTests(unittest.TestCase):
                             for item in manifest["resources"]))
         self.assertTrue(all(item["training_permission"] == "NOT_GRANTED_BY_CATALOG_ENTRY"
                             for item in manifest["resources"]))
+        self.assertTrue(all(
+            all(url.startswith("https://") for url in item["upstream_urls"])
+            for item in manifest["resources"]
+        ))
+        self.assertEqual(
+            next(item for item in manifest["resources"] if item["id"] == 89)["reference_status"],
+            "SELECT_AND_REVIEW_A_SPECIFIC_IMPLEMENTATION",
+        )
 
 
 if __name__ == "__main__":
