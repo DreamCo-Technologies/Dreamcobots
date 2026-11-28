@@ -12,6 +12,12 @@ on:
         description: Owner approval or change-control reference for weight updates
         required: false
         type: string
+      stage:
+        description: Training stage
+        type: choice
+        required: true
+        options: [pretrain, sft, dpo, all]
+        default: all
       recipe_path:
         description: Foundry recipe
         required: true
@@ -75,12 +81,14 @@ jobs:
           test -f "$RECIPE"
           test -d "$BASELINE"
           ARTIFACT_DIR=$(python -c 'import yaml,os; print(yaml.safe_load(open(os.environ["RECIPE"]))["artifact_dir"])')
+          case "${{ inputs.stage }}" in all|dpo) FINAL_STAGE=dpo ;; sft) FINAL_STAGE=sft ;; pretrain) FINAL_STAGE=pretrain ;; esac
           TOKENIZER="$ARTIFACT_DIR/tokenizer"
           SHARDS="$ARTIFACT_DIR/token_shards"
           test -d "$TOKENIZER"
           test -d "$SHARDS"
           test -f "$SHARDS/manifest.json"
           echo "artifact_dir=$ARTIFACT_DIR" >> "$GITHUB_OUTPUT"
+          echo "final_stage=$FINAL_STAGE" >> "$GITHUB_OUTPUT"
           echo "tokenizer=$TOKENIZER" >> "$GITHUB_OUTPUT"
           echo "shards=$SHARDS" >> "$GITHUB_OUTPUT"
       - name: Verify signed source and shard manifests
@@ -92,7 +100,10 @@ jobs:
           python - <<'PY'
           import os
           from pathlib import Path
-          from stages.05_model_foundry.guardrails import verify_signed_manifest, verify_signed_shard_manifest
+          import importlib
+          guardrails = importlib.import_module("stages.05_model_foundry.guardrails")
+          verify_signed_manifest = guardrails.verify_signed_manifest
+          verify_signed_shard_manifest = guardrails.verify_signed_shard_manifest
           manifest = Path(os.environ["MANIFEST"])
           signature = Path(os.environ["SIGNATURE"])
           public_key = Path(os.environ["PUBLIC_KEY"])
@@ -111,7 +122,7 @@ jobs:
           SHARDS: ${{ steps.paths.outputs.shards }}
         run: |
           python stages/05_model_foundry/train_weights.py \
-            --stage all --manifest "$MANIFEST" --signature "$SIGNATURE" --public-key "$PUBLIC_KEY" \
+            --stage "${{ inputs.stage }}" --manifest "$MANIFEST" --signature "$SIGNATURE" --public-key "$PUBLIC_KEY" \
             --recipe "$RECIPE" --tokenizer "$TOKENIZER" --token-shards "$SHARDS" \
             --shard-manifest "$SHARDS/manifest.json" --shard-signature "$SHARD_SIGNATURE"
       - name: Enforce explicit training approval
@@ -142,16 +153,21 @@ jobs:
           PUBLIC_KEY: ${{ runner.temp }}/dreamco-foundry/policy-public.pem
           TOKENIZER: ${{ steps.paths.outputs.tokenizer }}
           ARTIFACT_DIR: ${{ steps.paths.outputs.artifact_dir }}
+          FINAL_STAGE: ${{ steps.paths.outputs.final_stage }}
           MAX_TOKENS: ${{ inputs.max_holdout_tokens }}
         run: |
+          BASE_MODEL=$(python -c 'import yaml,os; print((yaml.safe_load(open(os.environ["RECIPE"])).get("base_model") or {}).get("id", ""))')
+          BASE_REVISION=$(python -c 'import yaml,os; print((yaml.safe_load(open(os.environ["RECIPE"])).get("base_model") or {}).get("revision", ""))')
+          BASE_ARGS=()
+          if [ -n "$BASE_MODEL" ]; then BASE_ARGS+=(--base-model "$BASE_MODEL" --base-revision "$BASE_REVISION"); fi
           python stages/05_model_foundry/run_holdout_eval.py \
             --manifest "$MANIFEST" --signature "$SIGNATURE" --public-key "$PUBLIC_KEY" \
             --checkpoint "$BASELINE" --tokenizer "$TOKENIZER" \
-            --max-new-tokens "$MAX_TOKENS" --output "$RUNNER_TEMP/baseline-holdout.json"
+            --max-new-tokens "$MAX_TOKENS" --output "$RUNNER_TEMP/baseline-holdout.json" "${BASE_ARGS[@]}"
           python stages/05_model_foundry/run_holdout_eval.py \
             --manifest "$MANIFEST" --signature "$SIGNATURE" --public-key "$PUBLIC_KEY" \
-            --checkpoint "$ARTIFACT_DIR/checkpoints/dpo" --tokenizer "$TOKENIZER" \
-            --max-new-tokens "$MAX_TOKENS" --output "$RUNNER_TEMP/candidate-holdout.json"
+            --checkpoint "$ARTIFACT_DIR/checkpoints/$FINAL_STAGE" --tokenizer "$TOKENIZER" \
+            --max-new-tokens "$MAX_TOKENS" --output "$RUNNER_TEMP/candidate-holdout.json" "${BASE_ARGS[@]}"
           python stages/05_model_foundry/eval_holdout.py \
             --manifest "$MANIFEST" --signature "$SIGNATURE" --public-key "$PUBLIC_KEY" \
             --baseline "$RUNNER_TEMP/baseline-holdout.json" \
