@@ -1,15 +1,26 @@
 """Fail-closed source rights gate used before transcript or derivative processing."""
 from pathlib import Path
 from datetime import datetime
+import hashlib
 import re
 from typing import Any
 from urllib.parse import urlparse
 VALID_TIERS={"PUBLIC_DOMAIN","PERMISSIVE_COMMERCIAL","FACT_EXTRACTION_ONLY","BLOCKED"}
+EVIDENCE_ROOT=Path(__file__).resolve().parents[2]
 SHA256_RE=re.compile(r"^[0-9a-f]{64}$")
 def _item_license_evidence_valid(source:dict[str,Any])->bool:
     if source.get("license_record_verified") is not True or not str(source.get("license_tag") or "").strip() or source.get("license_tag")=="UNKNOWN_UNVERIFIED": return False
     if not str(source.get("license_evidence_url") or "").startswith("https://"): return False
-    if not SHA256_RE.fullmatch(str(source.get("license_evidence_sha256") or "").lower()): return False
+    evidence_path=Path(str(source.get("license_evidence_path") or ""))
+    if not evidence_path.parts or evidence_path.is_absolute() or ".." in evidence_path.parts: return False
+    snapshot=(EVIDENCE_ROOT/evidence_path).resolve()
+    if not snapshot.is_relative_to(EVIDENCE_ROOT.resolve()) or not snapshot.is_file(): return False
+    expected_hash=str(source.get("license_evidence_sha256") or "").lower()
+    if not SHA256_RE.fullmatch(expected_hash): return False
+    try:
+        if hashlib.sha256(snapshot.read_bytes()).hexdigest()!=expected_hash: return False
+    except OSError:
+        return False
     if source.get("license_review_status")!="approved" or not str(source.get("license_reviewer_id") or "").strip(): return False
     try: datetime.fromisoformat(str(source.get("license_reviewed_at") or "").replace("Z","+00:00"))
     except ValueError: return False
