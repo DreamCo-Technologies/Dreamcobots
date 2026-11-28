@@ -626,6 +626,56 @@ class FoundryGuardrailTests(unittest.TestCase):
             self.assertEqual(len(rows), 1)
             self.assertEqual(rows[0]["content"], "authorized")
 
+    def test_training_holdout_and_merge_artifact_digests_match(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            tokenizer = root / "tokenizer"
+            weights = root / "weights"
+            tokenizer.mkdir()
+            weights.mkdir()
+            (tokenizer / "tokenizer.json").write_text('{"vocab":{}}', encoding="utf-8")
+            (tokenizer / "foundry-tokenizer-manifest.json").write_text('{"schema":"test"}', encoding="utf-8")
+            (weights / "model-00002.safetensors").write_bytes(b"second-shard")
+            (weights / "model-00001.safetensors").write_bytes(b"first-shard")
+            self.assertEqual(
+                TRAIN_WEIGHTS.tokenizer_digest(tokenizer),
+                HOLDOUT_RUNNER.tokenizer_digest(tokenizer),
+            )
+            self.assertEqual(
+                TRAIN_WEIGHTS.tokenizer_digest(tokenizer),
+                MERGE_MODULE.tokenizer_digest(tokenizer),
+            )
+            expected_weights = TRAIN_WEIGHTS.safetensors_digest(weights)
+            self.assertEqual(expected_weights, HOLDOUT_RUNNER.checkpoint_digest(weights))
+            self.assertEqual(expected_weights, MERGE_MODULE.safetensors_digest(weights))
+
+    def test_study_guide_sft_rows_use_real_line_breaks(self):
+        rows = TRAIN_WEIGHTS.study_guide_sft_rows([{
+            "title": "Safe API Design",
+            "learning_objectives": ["Validate input", "Protect credentials"],
+            "core_concepts": "Use explicit trust boundaries.",
+            "worked_examples": "Reject invalid tokens.",
+            "common_pitfalls": "Never log secrets.",
+        }])
+        self.assertEqual(len(rows), 1)
+        assistant = rows[0]["messages"][-1]["content"]
+        self.assertIn("Learning objectives:\n- Validate input\n- Protect credentials", assistant)
+        self.assertNotIn(r"\n", assistant)
+
+    def test_tokenizer_corpus_uses_real_field_separators(self):
+        record = {
+            "title": "Safe API Design",
+            "core_concepts": "Use explicit trust boundaries.",
+            "learning_objectives": ["Validate input", "Protect credentials"],
+        }
+        with unittest.mock.patch.object(
+            TOKENIZER_MODULE, "iter_authorized_records", return_value=iter([record])
+        ):
+            corpus = list(TOKENIZER_MODULE.corpus({}))
+        self.assertEqual(len(corpus), 1)
+        self.assertNotIn(r"\n", corpus[0])
+        self.assertIn("safe api design", corpus[0])
+
     def test_reused_manifest_rechecks_dataset_hash_after_mutation(self):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
