@@ -62,7 +62,7 @@ jobs:
         with:
           python-version: "3.13"
       - name: Run shard planner contract tests
-        run: python -m unittest tests.test_500_model_shard_planner
+        run: python -m unittest tests.test_500_model_shard_planner tests.test_500_model_prospectus_matrix
       - name: Generate aggregate readiness plan
         run: |
           python tools/plan_500_model_shards.py \
