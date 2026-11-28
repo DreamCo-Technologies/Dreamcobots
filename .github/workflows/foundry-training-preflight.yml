@@ -175,8 +175,22 @@ jobs:
           python -m stages.05_model_foundry.run_holdout_eval \
             --manifest "$DATA/manifest.json" --signature "$DATA/manifest.sig" \
             --public-key "$DATA/policy-public.pem" --checkpoint "$ARTIFACT_DIR/checkpoints/dpo" \
-            --tokenizer "$ARTIFACT_DIR/tokenizer" --output "$ARTIFACT_DIR/evaluation/holdout.json" \
+            --tokenizer "$ARTIFACT_DIR/tokenizer" --output "$ARTIFACT_DIR/evaluation/candidate.json" \
             "${EVAL_ARGS[@]}"
+          if [ -n "$BASELINE_CHECKPOINT_PATH" ] && [ -d "$BASELINE_CHECKPOINT_PATH" ]; then
+            python -m stages.05_model_foundry.run_holdout_eval \
+              --manifest "$DATA/manifest.json" --signature "$DATA/manifest.sig" \
+              --public-key "$DATA/policy-public.pem" --checkpoint "$BASELINE_CHECKPOINT_PATH" \
+              --tokenizer "$ARTIFACT_DIR/tokenizer" --output "$ARTIFACT_DIR/evaluation/baseline.json"
+            python -m stages.05_model_foundry.eval_holdout \
+              --manifest "$DATA/manifest.json" --signature "$DATA/manifest.sig" \
+              --public-key "$DATA/policy-public.pem" \
+              --baseline "$ARTIFACT_DIR/evaluation/baseline.json" \
+              --candidate "$ARTIFACT_DIR/evaluation/candidate.json" \
+              --output "$ARTIFACT_DIR/evaluation/holdout-promotion.json"
+          else
+            echo "Baseline checkpoint not configured; candidate evaluation recorded, promotion remains blocked."
+          fi
       - name: Upload foundry checkpoint and run manifests
         uses: actions/upload-artifact@v4
         with:
