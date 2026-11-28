@@ -92,9 +92,13 @@ def _course_matches(
     query_tokens = _tokens(query)
     matches: list[dict[str, Any]] = []
     for lesson in _cached_course_lessons(root.resolve()):
+        if not lesson.learner_visible or lesson.source_url:
+            continue
         searchable = " ".join((
             lesson.title, lesson.lesson_id, lesson.track_id, lesson.category,
             lesson.objective, lesson.practice, lesson.assessment, lesson.benchmark,
+            " ".join(lesson.division_targets), " ".join(lesson.capability_tags),
+            " ".join(lesson.tool_tags), " ".join(lesson.learning_modes),
         ))
         overlap = query_tokens & _tokens(searchable)
         if not overlap:
@@ -118,7 +122,13 @@ def _course_matches(
             "rights_mode": lesson.rights_mode,
             "score": round(len(overlap) / max(len(query_tokens), 1), 4),
             "track_match_score": track_score,
-            "completion_status": "queued_not_studied",
+            "review_status": lesson.review_status,
+            "training_eligibility": lesson.training_eligibility,
+            "exercise_ids": list(lesson.exercise_ids),
+            "project_ids": list(lesson.project_ids),
+            "assessment_ids": list(lesson.assessment_ids),
+            "retraining_policy_id": lesson.retraining_policy_id,
+            "completion_status": "queued_for_owner_review" if lesson.review_status != "approved" else "queued_not_studied",
             "mastery_awarded": False,
         })
     best_track_score = max((row["track_match_score"] for row in matches), default=0.0)
