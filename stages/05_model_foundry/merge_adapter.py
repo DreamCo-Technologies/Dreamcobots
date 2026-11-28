@@ -12,7 +12,6 @@ def checkpoint_digest(directory: Path) -> str:
         raise ValueError("adapter directory contains no safetensors checkpoint")
     digest = hashlib.sha256()
     for path in files:
-        digest.update(path.name.encode("utf-8"))
         digest.update(path.read_bytes())
     return digest.hexdigest()
 
