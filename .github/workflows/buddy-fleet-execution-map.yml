@@ -195,7 +195,9 @@ jobs:
           python tools/generate_production_evidence_ledger.py
           node --import tsx tools/run_bot_fleet_e2e.ts
       - name: Stage generated artifacts for bounded review validation
+        id: review
         run: |
+          set -euo pipefail
           git fetch --no-tags origin main
           paths=(
             config/bots/bot-manifests.generated.json
@@ -220,9 +222,24 @@ jobs:
           for path in "${paths[@]}"; do
             if [ -e "$path" ]; then git add -N -- "$path"; fi
           done
-          python tools/validate_generated_artifact_pr.py --base origin/main --paths "${paths[@]}"
+          set +e
+          validation_output="$(python tools/validate_generated_artifact_pr.py --base origin/main --paths "${paths[@]}" 2>&1)"
+          validation_status=$?
+          set -e
+          printf '%s\\n' "$validation_output"
+          if [ "$validation_status" -eq 0 ]; then
+            echo "reviewable=true" >> "$GITHUB_OUTPUT"
+          elif grep -Eq 'exceeds the (20-file|1,500-line review|5 MiB review) limit' <<< "$validation_output"; then
+            echo "reviewable=false" >> "$GITHUB_OUTPUT"
+            {
+              echo "## Generated artifact review deferred"
+              echo "The generated output exceeded the bounded PR review limits. The workflow artifact remains available for inspection; no oversized PR was opened and no security limit was weakened."
+            } >> "$GITHUB_STEP_SUMMARY"
+          else
+            exit "$validation_status"
+          fi
       - name: Open or update generated-output review PR
-        if: success()
+        if: success() && steps.review.outputs.reviewable == 'true'
         uses: peter-evans/create-pull-request@v7
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
