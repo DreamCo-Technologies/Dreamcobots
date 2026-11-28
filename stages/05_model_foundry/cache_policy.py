@@ -47,14 +47,14 @@ def main() -> None:
 
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(
-        json.dumps({"cache_allowed": allowed, "cache_key": key}, sort_keys=True) + "\\n",
+        json.dumps({"cache_allowed": allowed, "cache_key": key}, sort_keys=True) + "\n",
         encoding="utf-8",
     )
     output = os.environ.get("GITHUB_OUTPUT")
     if output:
         with open(output, "a", encoding="utf-8") as stream:
-            stream.write(f"cache_allowed={'true' if allowed else 'false'}\\n")
-            stream.write(f"cache_key={key}\\n")
+            stream.write(f"cache_allowed={'true' if allowed else 'false'}\n")
+            stream.write(f"cache_key={key}\n")
     print(json.dumps({"cache_allowed": allowed, "cache_key": key}, sort_keys=True))
 
 
