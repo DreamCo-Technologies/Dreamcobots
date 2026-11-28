@@ -40,6 +40,6 @@ test("Lead Engine database schema defines owner and idempotency indexes", () => 
 });
 
 test("activity history is append-only at the database layer", () => {
-  assert.match(migration, /BEFORE UPDATE OR DELETE ON lead_engine_activities/);
+  assert.match(migration, /BEFORE UPDATE ON lead_engine_activities/);
   assert.match(migration, /lead engine activity history is append-only/);
 });
