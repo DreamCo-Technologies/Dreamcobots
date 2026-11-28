@@ -22,6 +22,7 @@ from tools.dreamco_10pillar_extensions import (
     update_curriculum_state,
 )
 from tools.leaderboard_math import pareto_frontier, update_glicko2
+from tools.dreamco_patch_ast_guard import inspect_source
 from tools.plan_500_model_shards import build_plan
 
 
@@ -90,6 +91,8 @@ def run(command: str, payload: dict[str, Any]) -> Any:
         )
     if command == "plan-500":
         return build_plan(payload)
+    if command == "ast-guard":
+        return inspect_source(payload["source"], filename=payload.get("filename", "<candidate>"))
     raise ValueError(f"unsupported command: {command}")
 
 
@@ -98,7 +101,7 @@ def main() -> int:
     parser.add_argument(
         "command",
         choices=("glicko2", "pareto", "curriculum", "distill", "swarm",
-                 "regression", "buyer-readiness", "upgrade-101", "plan-500"),
+                 "regression", "buyer-readiness", "upgrade-101", "plan-500", "ast-guard"),
     )
     parser.add_argument("--input", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
