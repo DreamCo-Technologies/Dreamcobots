@@ -9,7 +9,7 @@ SPECIAL_TOKENS = ["<|pad|>", "<|bos|>", "<|eos|>", "<|unk|>", "<|system|>",
                   "<|sandbox_stdout|>", "<|teach_back|>", "<|rubric_pass|>"]
 
 def corpus(manifest):
-    for row in iter_authorized_records(manifest, splits={"train"}):
+    for row in iter_authorized_records(manifest, categories={"study_guides", "verified_trajectories", "general_replay"}, splits={"train"}):
         fields = [row.get("title", ""), row.get("core_concepts", ""),
                   row.get("worked_examples", ""), row.get("content", "")]
         objectives = row.get("learning_objectives", [])
