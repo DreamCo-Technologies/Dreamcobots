@@ -38,7 +38,7 @@ A high score does not override missing permission, suppression, or required huma
 
 This module is a deterministic policy layer. It does not discover or scrape prospects, persist CRM records, send email/SMS/voice/social messages, book calendar events, create contracts, or process payments. `leadEngineReadiness()` reports these dependencies honestly.
 
-The existing `/api/buddy/lead-plan` endpoint remains the governed outreach planning entry point. This change does not bypass its policy checks or create a second dispatch route.
+The existing `/api/buddy/lead-plan` endpoint remains the governed outreach planning entry point. The new qualification policy is not exposed through a new HTTP route in this PR because the repository's API authentication gate must be verified first. This change does not create a second dispatch route.
 
 ## Production completion checklist
 
