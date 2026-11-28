@@ -9,7 +9,7 @@ Use an owner-installed Buddy Android companion or approved gateway. Grant only t
 ## Shared security contract
 - HMAC-SHA256 signs `timestampSeconds.rawRequestBody`; reject stale signatures (five-minute default).
 - Event IDs are replay-protected. The included in-memory store is for tests/development only; production must inject a durable atomic replay store.
-- Device ID, platform, provider, contact mapping, source consent, and owner/contact permissions are checked before Buddy receives message content.
+- Device ID, platform, provider, source consent, and owner/contact permissions are checked before Buddy receives message content. Provider contact IDs are resolved to Buddy contact IDs by a server-side mapping callback; the webhook payload cannot nominate its own internal contact ID.
 - Unknown and non-allowlisted contacts are denied.
 - Inbound message bodies are returned for ephemeral processing and are not persisted by this module.
 - Outbound messages reuse the communication-twin policy. Draft-only is the default; sends require explicit approval. Autonomous replies require allowlisted-routine mode, explicit contact permissions, and a low-stakes classification.
