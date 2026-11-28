@@ -16,7 +16,7 @@ def main():
     p.add_argument("--threshold",type=float,default=.25); p.add_argument("--timeout",type=int,default=10)
     p.add_argument("--image",default="dreamco-verifier:local"); args=p.parse_args()
     if not 1<=args.timeout<=10 or not 0<args.threshold<=1: raise ValueError("Timeout must be 1..10 seconds and threshold must be in (0,1].")
-    module=read_json(args.input); files=module["reference_implementation"]["files"]+module["tests"]
+    module=read_json(args.input); validate(module,"course_module.schema.json")\n    files=module["reference_implementation"]["files"]+module["tests"]
     if len(files)>100 or sum(len(item.get("content","").encode("utf-8")) for item in files)>5*1024*1024:
         raise ValueError("Generated artifact exceeds sandbox file or size limits.")
     report={"schema_version":"dreamco.eval_report.v1","job_id":module["job_id"],"status":"BLOCKED","tests_passed":False,"similarity_score":1.0,"policy_check":"FAIL","sandbox":{"network_disabled":True,"rootless_requested":True,"timed_out":False,"exit_code":None}}
