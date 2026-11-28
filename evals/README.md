@@ -7,7 +7,7 @@ This directory is an evaluation-only plane. Its task suites and answer keys MUST
 - Lane: MasterBot 41, DreamCodeLab
 - Public smoke suite: `evals/suites/dreamcodelab_execution_v1.json`
 - Private certification suite: supplied at evaluation time from an access-controlled store; set `split` to `private_independent_holdout` and `training_use` to `NEVER_TRAIN`.
-- Public smoke results cannot be used to sign or promote a checkpoint.
+- Public smoke results cannot be used to authenticate or promote a checkpoint.
 - Minimum passing accuracy: 0.85
 - Evaluation inputs: one JSONL prediction per task, with `task_id` and `output`.
 - The model adapter/inference runner is deliberately separate: export predictions from the candidate checkpoint, then pass them to the evaluator.
@@ -29,7 +29,8 @@ The evaluator is deterministic and offline. Missing, duplicate, or unknown predi
 After training is separately authorized and a checkpoint exists, validate it with:
 
 ```bash
-export DREAMCO_CHECKPOINT_SIGNING_KEY='a-long-random-secret-from-your-secret-manager'
+export DREAMCO_CHECKPOINT_HMAC_KEY='a-long-random-secret-from-your-secret-manager'
+export DREAMCO_CHECKPOINT_HMAC_KEY_ID='dreamco-checkpoint-prod-2026'
 python tools/validate_checkpoint.py \
   --checkpoint /path/to/model.safetensors \
   --evaluation /path/to/evaluation-report.json \
@@ -39,8 +40,8 @@ python tools/validate_checkpoint.py \
   --expected-parameters 45000000
 ```
 
-The validator requires an approved dataset manifest, a passing held-out report, reproducible training configuration, measured parameter count, finite validation perplexity, positive token throughput, measured RAM, and an HMAC-SHA256 signing key. It signs evidence; it does not train a model or certify a model's quality beyond the supplied measurements.
+The validator requires an approved dataset manifest, a passing held-out report, reproducible training configuration, measured parameter count, finite validation perplexity, positive token throughput, measured RAM, and an HMAC-SHA256 authentication key. It authenticates evidence with a shared-secret MAC (not a public-key digital signature); it does not train a model or certify a model's quality beyond the supplied measurements.
 
 ## Promotion policy
 
-A lane is not `MASTERED` merely because a curriculum or blueprint exists. Promotion requires a trained checkpoint, verified artifact hash, signed evidence manifest, independent held-out pass, regression review, safety review, and human release approval. A single small starter suite is a proof-of-concept gate, not enterprise-grade certification.
+A lane is not `MASTERED` merely because a curriculum or blueprint exists. Promotion requires a trained checkpoint, verified artifact hash, HMAC-authenticated evidence manifest, independent held-out pass, regression review, safety review, and human release approval. A single small starter suite is a proof-of-concept gate, not enterprise-grade certification.
