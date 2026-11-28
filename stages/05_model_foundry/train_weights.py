@@ -14,9 +14,9 @@ from pathlib import Path
 from typing import Any
 
 try:
-    from .guardrails import assert_training_split, iter_authorized_records, verify_signed_manifest
+    from .guardrails import assert_training_split, iter_authorized_records, verify_signed_manifest, verify_signed_shard_manifest
 except ImportError:  # direct script invocation from this directory
-    from guardrails import assert_training_split, iter_authorized_records, verify_signed_manifest
+    from guardrails import assert_training_split, iter_authorized_records, verify_signed_manifest, verify_signed_shard_manifest
 
 
 def load_recipe(path: Path) -> dict[str, Any]:
@@ -355,6 +355,8 @@ def main():
     parser.add_argument("--recipe", type=Path, required=True)
     parser.add_argument("--tokenizer", type=Path, required=True)
     parser.add_argument("--token-shards", type=Path)
+    parser.add_argument("--shard-manifest", type=Path)
+    parser.add_argument("--shard-signature", type=Path)
     parser.add_argument("--input-checkpoint", type=Path)
     parser.add_argument("--output", type=Path)
     parser.add_argument("--execute", action="store_true", help="actually run optimizer steps")
@@ -376,6 +378,16 @@ def main():
     }
     if any(counts[stage] == 0 for stage in stages):
         raise ValueError(f"no signed, authorized train records for requested stages: {counts}")
+    if "pretrain" in stages:
+        if not args.shard_manifest or not args.shard_signature or not args.token_shards:
+            raise PermissionError("pretraining requires a policy-signed shard manifest and --token-shards directory")
+        shard_payload = verify_signed_shard_manifest(
+            args.shard_manifest, args.shard_signature, args.manifest, args.signature, args.public_key
+        )
+        if args.token_shards.resolve() != args.shard_manifest.parent.resolve():
+            raise PermissionError("--token-shards must be the directory containing the verified signed shard manifest")
+        if not shard_payload.get("train"):
+            raise ValueError("signed shard manifest has no train shard")
 
     if not args.execute:
         summary = {
