@@ -128,9 +128,6 @@ jobs:
           python3 -m unittest tests.test_repository_guide tests.test_repository_master_map
           python3 tools/generate_dreamco_repository_master_map.py
           python3 tools/generate_master_directive_status.py
-          node --import tsx tools/generate_bot_fleet_catalog.ts
-          node --import tsx tools/generate_dreamco_search_index.ts
-          node --import tsx tools/run_bot_fleet_e2e.ts --write-only
           python3 tools/generate_command_center_data.py
           python3 tools/generate_command_center_data.py --check
           python3 tools/generate_github_control_tower.py --check
@@ -146,6 +143,7 @@ jobs:
           python3 tools/generate_buddy_open_model_lab.py --check
           python3 tools/generate_buddy_learning_strategies.py --check
           python3 tools/generate_professional_bootcamp.py --check
+# regenerate evidence from the validated current source inputs, then assert it is reproducible.
           python3 tools/generate_production_evidence_ledger.py
           python3 tools/generate_production_evidence_ledger.py --check
           python3 tools/build_manufacturer_marketplace_catalog.py
