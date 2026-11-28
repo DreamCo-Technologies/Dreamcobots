@@ -65,6 +65,41 @@ test("high-impact content cannot be sent or auto-replied", () => {
   }
 });
 
+test("multiline financial and contractual instructions remain blocked in routine auto-replies", () => {
+  const settings = communicationTwinSettingsSchema.parse({
+    ...baseSettings,
+    autonomyMode: "allowlisted_routine",
+  });
+  for (const content of ["Please wire\npayment funds today.", "I agree\nto the terms of this contract."]) {
+    const result = assessCommunicationAction({
+      action: "auto_reply", channel: "email", contactId: "contact-1",
+      content, lowStakesRoutine: true, ...consent,
+    }, settings);
+    assert.equal(result.allowed, false);
+    assert.match(result.reason, /High-impact/);
+  }
+});
+
+test("voice-channel send and auto-reply cannot bypass disclosed voice safeguards", () => {
+  const settings = communicationTwinSettingsSchema.parse({
+    ...baseSettings,
+    autonomyMode: "allowlisted_routine",
+  });
+  for (const action of ["send", "auto_reply"] as const) {
+    const result = assessCommunicationAction({
+      action, channel: "voice", contactId: "contact-1", content: "Thanks.",
+      explicitOwnerApproval: true, lowStakesRoutine: true, ...consent,
+    }, settings);
+    assert.equal(result.allowed, false);
+    assert.match(result.reason, /Voice-channel/);
+  }
+  const disclosedCall = assessCommunicationAction({
+    action: "answer_call", channel: "voice", contactId: "contact-1",
+    aiDisclosureDelivered: true, ...consent,
+  }, settings);
+  assert.equal(disclosedCall.allowed, true);
+});
+
 test("routine auto-replies require the autonomy mode and explicit contact allowlist", () => {
   const settings = communicationTwinSettingsSchema.parse({
     ...baseSettings,
