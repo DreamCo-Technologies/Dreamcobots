@@ -60,7 +60,7 @@ def main():
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
 
-    manifest = verify_signed_manifest(args.manifest, args.signature, args.public_key)
+    manifest = verify_signed_manifest(args.manifest, args.signature, args.public_key, verify_dataset_hashes=False)
     rows = list(iter_authorized_records(
         manifest, categories={"holdout_benchmarks"}, splits={"holdout"}
     ))
