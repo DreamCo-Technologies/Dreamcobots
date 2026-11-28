@@ -16,6 +16,7 @@ from typing import Any
 
 ROOT = Path(__file__).resolve().parents[2]
 POLICY_GATE_PATH = ROOT / "stages" / "01_policy_gate" / "policy_gate.py"
+CATALOG_SYNC_PATH = ROOT / "stages" / "00_catalog_sync" / "catalog_sync.py"
 REQUIRED = ("guide_id", "title", "learning_objectives", "lesson", "practice_lab", "assessment", "safety_notes")
 HEX_64 = re.compile(r"^[a-f0-9]{64}$")
 TOKEN_RE = re.compile(r"[a-z0-9_]+")
@@ -25,6 +26,15 @@ def _load_policy_gate():
     spec = importlib.util.spec_from_file_location("dreamco_stage01_policy_gate", POLICY_GATE_PATH)
     if spec is None or spec.loader is None:
         raise RuntimeError("Stage 01 policy gate could not be loaded")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def _load_catalog_sync():
+    spec = importlib.util.spec_from_file_location("dreamco_stage00_catalog_sync", CATALOG_SYNC_PATH)
+    if spec is None or spec.loader is None:
+        raise RuntimeError("Stage 00 catalog sync module could not be loaded")
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     return module
@@ -105,6 +115,8 @@ def build_guide(
     metadata_fingerprint = str(source_record.get("metadata_sha256") or source_record.get("content_sha256") or "").lower()
     if not HEX_64.fullmatch(metadata_fingerprint):
         raise ValueError("catalog record must include a valid metadata SHA-256 fingerprint")
+    if _load_catalog_sync().canonical_hash(source_record) != metadata_fingerprint:
+        raise ValueError("catalog metadata fingerprint does not match the supplied record")
     if source_record.get("license_record_verified") is not True:
         raise PermissionError("BLOCKED_MISSING_ITEM_LICENSE_EVIDENCE")
     if not isinstance(similarity_references, list) or not similarity_references:
