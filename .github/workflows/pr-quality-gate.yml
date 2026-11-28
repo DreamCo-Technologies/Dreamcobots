@@ -21,14 +21,19 @@ jobs:
           cache: pip
           cache-dependency-path: requirements-reverse-engineer.txt
       - name: Install test dependencies
-        run: python -m pip install --disable-pip-version-check "pytest>=8,<10" "jsonschema>=4.22,<5"
+        run: python -m pip install --disable-pip-version-check "pytest>=8,<10" "jsonschema>=4.22,<5" "pytest-json-report>=1.5,<2"
       - name: Run full test suite and create sanitized report
         shell: bash
         run: |
           mkdir -p reports
           set +e
-          make test-all 2>&1 | tee "$RUNNER_TEMP/dreamco-test.log"
+          PYTEST_ADDOPTS="--json-report --json-report-file=reports/pytest-report.json" make test-all 2>&1 | tee "$RUNNER_TEMP/dreamco-test.log"
           test_status=${PIPESTATUS[0]}
+          if [ -f reports/pytest-report.json ]; then
+            python stages/06_repo_repair/__main__.py --report reports/pytest-report.json --output reports/repo-repair-plan.json --trajectory-dir reports/repo-repair-trajectories
+            echo "## Keyless Stage 06 repair triage" >> "$GITHUB_STEP_SUMMARY"
+            python -c 'import json; d=json.load(open("reports/repo-repair-plan.json")); print("- Status: **" + d["status"] + "**"); print("- Automatic model calls: 0"); print("- Source edits: disabled on pull requests")' >> "$GITHUB_STEP_SUMMARY"
+          fi
           python tools/ci_failure_report.py --log "$RUNNER_TEMP/dreamco-test.log" --output reports/ci-failure-report.json --exit-code "$test_status"
           report_status=$?
           if [ "$report_status" -ne 0 ]; then exit "$report_status"; fi
@@ -38,6 +43,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: dreamco-pr-ci-report-${{ github.run_id }}
-          path: reports/ci-failure-report.json
+          path: |
+            reports/ci-failure-report.json
+            reports/pytest-report.json
+            reports/repo-repair-plan.json
           if-no-files-found: ignore
           retention-days: 14
