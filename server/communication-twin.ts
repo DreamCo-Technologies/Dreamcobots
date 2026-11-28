@@ -49,9 +49,9 @@ export type CommunicationTwinSettings = z.infer<typeof communicationTwinSettings
 export type CommunicationActionRequest = z.input<typeof communicationActionRequestSchema>;
 
 const HIGH_IMPACT_PATTERNS = [
-  /\b(send|transfer|wire|pay)\b.{0,50}\b(money|payment|funds|cash)\b/i,
+  /\b(send|transfer|wire|pay)\b.{0,50}\b(money|payment|funds|cash)\b/is,
   /\b(password|passcode|one.time.code|verification code|api key|secret)\b/i,
-  /\b(i agree|accept|sign|execute)\b.{0,60}\b(contract|agreement|settlement|terms)\b/i,
+  /\b(i agree|accept|sign|execute)\b.{0,60}\b(contract|agreement|settlement|terms)\b/is,
   /\b(diagnosis|medical advice|prescription|legal advice|lawsuit)\b/i,
 ];
 
@@ -86,11 +86,13 @@ export function assessCommunicationAction(
         ? allow("draft_only", "A draft may be prepared; sending remains a separate action.", true)
         : deny("Draft access is not granted for this contact.");
     case "send":
+      if (request.channel === "voice") return deny("Voice-channel sending must use the disclosed voice-operation path.");
       if (!contact.canSend) return deny("Send permission is not granted for this contact.");
       if (isHighImpact(request.content)) return deny("High-impact or sensitive content always requires direct owner handling.");
       if (!request.explicitOwnerApproval) return deny("Every send action requires explicit owner approval.");
       return allow("allowed", "Owner-approved message may be sent through an authorized provider.", false);
     case "auto_reply":
+      if (request.channel === "voice") return deny("Voice-channel auto-replies must use the disclosed voice-operation path.");
       if (settings.autonomyMode !== "allowlisted_routine") return deny("Autonomous replies are disabled by the current autonomy mode.");
       if (!contact.canAutoReply || !contact.canSend) return deny("This contact is not allowlisted for autonomous replies.");
       if (!request.lowStakesRoutine) return deny("Only explicitly classified low-stakes routine replies may be automated.");
