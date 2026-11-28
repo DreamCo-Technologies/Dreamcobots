@@ -35,6 +35,8 @@ jobs:
         run: python -m unittest discover -s tests -p 'test_repo_sentinel.py' -v
       - name: Test curriculum factory offline
         run: python -m unittest discover -s tests -p 'test_curriculum_factory.py' -v
+      - name: Test catalog and policy gates offline
+        run: python -m unittest discover -s tests -p 'test_bootcamp_catalog_policy_stages.py' -v
       - name: Generate audit report without rewriting files or accessing the network
         run: python stages/08_repo_sentinel/sentinel.py --strict-ast --report reports/repo-sentinel/sentinel_report.json
       - uses: actions/upload-artifact@v4
