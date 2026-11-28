@@ -29,14 +29,14 @@ function signedEvent(overrides: Record<string, unknown> = {}) {
   const rawBody = JSON.stringify({
     schema: "dreamco.mobile_message_event.v1", eventId: "event-12345678", deviceId: "iphone-relay-1",
     platform: "ios", provider: "bluebubbles_mac_relay", channel: "messaging",
-    providerContactId: "bluebubbles:handle-1", contactId: "contact-1", messageId: "message-1",
+    providerContactId: "bluebubbles:handle-1", messageId: "message-1",
     body: "Hey, are we still meeting at six?", receivedAt: new Date(now).toISOString(), ...overrides,
   });
   return { rawBody, headers: { timestamp: String(timestamp), signature: signMobileWebhook(rawBody, timestamp, secret) } };
 }
 
 test("accepts signed iOS relay messages without retaining content", async () => {
-  const result = await acceptInboundMobileMessage({ ...signedEvent(), registration: ios, settings, secret, replayStore: new InMemoryReplayClaimStore(), nowMs: now });
+  const result = await acceptInboundMobileMessage({ ...signedEvent(), registration: ios, settings, secret, replayStore: new InMemoryReplayClaimStore(), resolveContactId: () => "contact-1", nowMs: now });
   assert.equal(result.accepted, true);
   if (result.accepted) {
     assert.equal(result.platform, "ios"); assert.equal(result.channel, "messaging");
@@ -46,7 +46,7 @@ test("accepts signed iOS relay messages without retaining content", async () => 
 
 test("accepts Android companion SMS using the shared contact policy", async () => {
   const event = signedEvent({ eventId: "android-event-12345678", deviceId: "android-1", platform: "android", provider: "android_companion", channel: "sms" });
-  const result = await acceptInboundMobileMessage({ ...event, registration: android, settings, secret, replayStore: new InMemoryReplayClaimStore(), nowMs: now });
+  const result = await acceptInboundMobileMessage({ ...event, registration: android, settings, secret, replayStore: new InMemoryReplayClaimStore(), resolveContactId: () => "contact-1", nowMs: now });
   assert.equal(result.accepted, true);
   if (result.accepted) assert.equal(result.platform, "android");
 });
@@ -54,13 +54,13 @@ test("accepts Android companion SMS using the shared contact policy", async () =
 test("rejects invalid, stale, and tampered signatures", async () => {
   const event = signedEvent();
   const invalid = await acceptInboundMobileMessage({ ...event, headers: { ...event.headers, signature: "0".repeat(64) }, registration: ios, settings, secret, replayStore: new InMemoryReplayClaimStore(), nowMs: now });
-  const stale = await acceptInboundMobileMessage({ ...event, registration: ios, settings, secret, replayStore: new InMemoryReplayClaimStore(), nowMs: now + 600_000 });
+  const stale = await acceptInboundMobileMessage({ ...event, registration: ios, settings, secret, replayStore: new InMemoryReplayClaimStore(), resolveContactId: () => "contact-1", nowMs: now + 600_000 });
   assert.equal(invalid.accepted, false); assert.equal(stale.accepted, false);
 });
 
 test("rejects duplicate event IDs", async () => {
   const event = signedEvent(), replayStore = new InMemoryReplayClaimStore();
-  const input = { ...event, registration: ios, settings, secret, replayStore, nowMs: now };
+  const input = { ...event, registration: ios, settings, secret, replayStore, resolveContactId: () => "contact-1", nowMs: now };
   assert.equal((await acceptInboundMobileMessage(input)).accepted, true);
   const replay = await acceptInboundMobileMessage(input);
   assert.equal(replay.accepted, false); assert.equal(replay.status, "duplicate");
