@@ -10,6 +10,7 @@ import subprocess
 import sys
 
 ALLOWED_PREFIXES = ("buddy/", "server/", "client/", "shared/", "tools/")
+SENSITIVE_TEST_MARKERS = ("security", "policy", "auth", "permission", "credential", "secret")
 BLOCKED_PARTS = {".github", "contracts", "security", "policy", "secrets", "host-secrets", "workflows", "migrations"}
 BLOCKED_NAMES = {".env", ".env.example", "package-lock.json", "pnpm-lock.yaml", "yarn.lock", "poetry.lock", "Pipfile.lock"}
 MAX_FILES = 20
@@ -37,7 +38,14 @@ def validate_changes(name_status: str, diff_text: str) -> list[str]:
             continue
         path = entry[1]
         parts = path.split("/")
-        if not path.startswith(ALLOWED_PREFIXES):
+        if path.startswith("tests/"):
+            if status != "A":
+                errors.append(f"Only new test files may be added; existing tests cannot be modified: {path}")
+            if not path.endswith(".py") or not path.rsplit("/", 1)[-1].startswith("test_"):
+                errors.append(f"Only new Python test modules are allowed under tests/: {path}")
+            if any(marker in path.lower() for marker in SENSITIVE_TEST_MARKERS):
+                errors.append(f"Security, policy, authorization, and credential tests are protected: {path}")
+        elif not path.startswith(ALLOWED_PREFIXES):
             errors.append(f"Path is outside the source-code allowlist: {path}")
         if any(part in BLOCKED_PARTS for part in parts):
             errors.append(f"Protected path cannot be changed: {path}")
