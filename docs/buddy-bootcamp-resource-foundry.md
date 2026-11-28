@@ -7,7 +7,7 @@
 
 ## Canonical division count
 
-The current `config/masterbot-65-registry.json` contains 65 canonical division/MasterBot entries. The proposal mentions 55 divisions and 65 MasterBot lanes. This implementation maps against the repository's current 65-entry registry and records that discrepancy instead of silently omitting ten lanes.
+DreamCo's current curriculum model distinguishes 55 business/domain divisions from 65 MasterBot learning lanes. The manifest keeps these registries separate: resource-to-domain mapping uses the 55 division curriculum list, while cross-cutting execution references the 65 MasterBot lanes. This avoids treating shared platform services as additional business divisions.
 
 ## Resource and ownership policy
 
