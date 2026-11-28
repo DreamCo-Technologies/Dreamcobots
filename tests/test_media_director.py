@@ -39,6 +39,10 @@ class MediaDirectorTests(unittest.TestCase):
         request = self.request(); request["shots"][0]["duration_sec"] = 0
         with self.assertRaises(DIRECTOR.MediaPlanError): DIRECTOR.build_production_plan(request)
 
+    def test_rejects_nonfinite_duration(self):
+        request = self.request(); request["shots"][0]["duration_sec"] = float("nan")
+        with self.assertRaises(DIRECTOR.MediaPlanError): DIRECTOR.build_production_plan(request)
+
     def test_rejects_unknown_media_type(self):
         request = self.request(); request["media_type"] = "unbounded"
         with self.assertRaises(DIRECTOR.MediaPlanError): DIRECTOR.build_production_plan(request)
@@ -52,9 +56,11 @@ class MediaDirectorTests(unittest.TestCase):
 
     def test_render_requires_explicit_rights_manifest(self):
         plan = DIRECTOR.build_production_plan(self.request())
-        with self.assertRaises(DIRECTOR.MediaRightsError):
-            DIRECTOR.render_production(plan, assets=[], adapters={"fake": FakeAdapter()},
-                                       context={"default_backend": "fake"})
+        with tempfile.TemporaryDirectory() as folder:
+            with self.assertRaises(DIRECTOR.MediaRightsError):
+                DIRECTOR.render_production(plan, assets=[], model_records=[],
+                    license_evidence_root=folder, adapters={"fake": FakeAdapter()},
+                    context={"default_backend": "fake"})
 
     def test_unknown_rights_asset_is_blocked(self):
         with self.assertRaises(DIRECTOR.MediaRightsError):
@@ -71,8 +77,25 @@ class MediaDirectorTests(unittest.TestCase):
         request = self.request()
         for shot in request["shots"]: shot["video_backend"] = "fake"
         plan = DIRECTOR.build_production_plan(request, job_id="job-render")
-        result = DIRECTOR.render_production(plan, assets=[asset], adapters={"fake": FakeAdapter()})
+        with tempfile.TemporaryDirectory() as folder:
+            evidence = Path(folder) / "license.txt"
+            evidence.write_text("SPDX-License-Identifier: MIT\\n", encoding="utf-8")
+            import hashlib
+            model_record = {
+                "model_id": "test/fake-renderer",
+                "checkpoint_sha256": "b" * 64,
+                "license_id": "MIT",
+                "license_evidence_path": "license.txt",
+                "license_evidence_sha256": hashlib.sha256(evidence.read_bytes()).hexdigest(),
+                "model_card_url": "https://example.invalid/model-card",
+                "commercial_use_allowed": True,
+                "redistribution_allowed": True,
+                "dependencies": [{"name": "fake-runtime", "license_id": "Apache-2.0", "reviewed": True}],
+            }
+            result = DIRECTOR.render_production(plan, assets=[asset], model_records=[model_record],
+                license_evidence_root=folder, adapters={"fake": FakeAdapter()})
         self.assertEqual(result["status"], "rendered")
+        self.assertEqual(len(result["models"]), 1)
         self.assertEqual(len(result["shots"]), 2)
         self.assertTrue(result["plan_sha256"])
 
