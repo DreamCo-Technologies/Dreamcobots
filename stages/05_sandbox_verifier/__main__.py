@@ -1,5 +1,5 @@
 import argparse,subprocess,tempfile,pathlib,shutil,re,sys,uuid
-from ..common import read_json,write_json,validate
+from ..common import read_json,write_json,validate,safe_stage_path
 
 def similarity(a,b):
     tokens=lambda value:set(re.findall(r"[A-Za-z_][A-Za-z0-9_]*|\d+",value))
@@ -24,7 +24,7 @@ def main():
     if not args.reference:
         report["sandbox"]["error"]="authorized_similarity_reference_required"
     else:
-        reference=pathlib.Path(args.reference).read_text(encoding="utf-8")
+        reference=safe_stage_path(args.reference).read_text(encoding="utf-8")
         generated="\n".join(item["content"] for item in module["reference_implementation"]["files"])
         report["similarity_score"]=similarity(reference,generated)
         report["policy_check"]="PASS" if report["similarity_score"]<args.threshold else "FAIL"
