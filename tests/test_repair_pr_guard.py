@@ -42,7 +42,8 @@ def test_repair_guard_blocks_workflows_contracts_and_security_tests():
 def test_repair_guard_blocks_deletions_and_secret_like_additions():
     errors = validate_changes(
         "D\tserver/handlers/orders.py\nM\ttools/helper.py",
-        "+api_key=abcdefghijklmnopqrstuvwxyz123456\n",
+        "diff --git a/tools/helper.py b/tools/helper.py\n"
+        "@@ -0,0 +1 @@\n+api_key=abcdefghijklmnopqrstuvwxyz123456\n",
     )
     assert any("Only added or modified" in item for item in errors)
     assert any("credential" in item for item in errors)
