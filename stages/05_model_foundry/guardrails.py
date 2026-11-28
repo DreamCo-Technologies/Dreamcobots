@@ -4,7 +4,7 @@ A boolean field in a data row is never an authorization. The caller must supply
 an Ed25519-signed manifest and a trusted public key obtained out-of-band.
 """
 from __future__ import annotations
-import base64, hashlib, json
+import base64, hashlib, json, tempfile
 from pathlib import Path
 from typing import Any, Iterator
 
@@ -93,15 +93,21 @@ def iter_authorized_records(manifest: dict, *, categories: set[str] | None = Non
         if categories and dataset.get("category") not in categories:
             continue
         path = Path(dataset["_resolved_path"])
-        # Re-hash on every read. A previous successful pass must not authorize
-        # later reads after the underlying file has changed.
-        if sha256_file(path) != dataset.get("sha256"):
-            raise ValueError(f"{dataset['dataset_id']}: dataset SHA-256 mismatch")
-        with path.open(encoding="utf-8") as stream:
-            for line_no, line in enumerate(stream, 1):
-                if not line.strip():
+        expected_sha256 = str(dataset.get("sha256", "")).lower()
+        # Hash into a private spool, then parse that exact byte snapshot. This
+        # avoids a verify-then-reopen race if the source path changes mid-read.
+        with path.open("rb") as source, tempfile.TemporaryFile(mode="w+b") as verified:
+            digest = hashlib.sha256()
+            for chunk in iter(lambda: source.read(1024 * 1024), b""):
+                digest.update(chunk)
+                verified.write(chunk)
+            if digest.hexdigest() != expected_sha256:
+                raise ValueError(f"{dataset['dataset_id']}: dataset SHA-256 mismatch")
+            verified.seek(0)
+            for line_no, raw_line in enumerate(verified, 1):
+                if not raw_line.strip():
                     continue
-                row = json.loads(line)
+                row = json.loads(raw_line.decode("utf-8"))
                 rid = str(row.get("task_id") or row.get("id") or "")
                 actual = split_name(rid)
                 if actual not in requested:
@@ -118,7 +124,7 @@ def verify_manifest_dataset_hashes(manifest: dict, *, categories: set[str]) -> N
         if dataset.get("category") not in categories:
             continue
         path = Path(dataset["_resolved_path"])
-        if sha256_file(path) != dataset.get("sha256"):
+        if sha256_file(path) != str(dataset.get("sha256", "")).lower():
             raise ValueError(f"{dataset['dataset_id']}: dataset SHA-256 mismatch")
         dataset["_hash_verified"] = True
 
