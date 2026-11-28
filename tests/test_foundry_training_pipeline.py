@@ -27,6 +27,8 @@ HOLDOUT_GATE = importlib.import_module("stages.05_model_foundry.eval_holdout")
 TOKENIZER_MODULE = importlib.import_module("stages.05_model_foundry.train_tokenizer")
 PACKER_MODULE = importlib.import_module("stages.05_model_foundry.pack_tokens")
 MERGE_MODULE = importlib.import_module("stages.05_model_foundry.merge_adapter")
+SIGN_MANIFEST = importlib.import_module("stages.01_policy_gate.sign_training_manifest")
+SIGN_SHARDS = importlib.import_module("stages.01_policy_gate.sign_token_shards")
 
 
 class FoundryGuardrailTests(unittest.TestCase):
@@ -173,6 +175,81 @@ class FoundryGuardrailTests(unittest.TestCase):
         )
         self.assertIn("<|tool_call|>", tokenizer.seen)
         self.assertNotIn("<|tool|>", tokenizer.seen)
+
+    def test_policy_signers_bind_dataset_and_shard_bytes(self):
+        from unittest.mock import patch
+        from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
+        from cryptography.hazmat.primitives.serialization import (
+            Encoding, PrivateFormat, NoEncryption, PublicFormat,
+        )
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            private = Ed25519PrivateKey.generate()
+            private_path, public_path = root / "private.pem", root / "public.pem"
+            private_path.write_bytes(private.private_bytes(
+                Encoding.PEM, PrivateFormat.PKCS8, NoEncryption()
+            ))
+            public_path.write_bytes(private.public_key().public_bytes(
+                Encoding.PEM, PublicFormat.SubjectPublicKeyInfo
+            ))
+            task_id = next(f"signer-{i}" for i in range(10000)
+                           if GUARDRAILS.split_bucket(f"signer-{i}") < 90)
+            dataset = root / "study_guides.jsonl"
+            dataset.write_text(json.dumps({"task_id": task_id, "title": "Guide"}) + "\\n", encoding="utf-8")
+            attestation = root / "owner-attestation.txt"
+            attestation.write_text("DreamCo owns this original study guide.", encoding="utf-8")
+            manifest = root / "manifest.json"
+            signature = root / "manifest.sig"
+            payload = {
+                "schema": "dreamco.foundry.authorization.v1",
+                "datasets": [{
+                    "dataset_id": "guide-1", "path": dataset.name,
+                    "sha256": hashlib.sha256(dataset.read_bytes()).hexdigest(),
+                    "license_tier": "DREAMCO_ORIGINAL", "commercial_use": True,
+                    "category": "study_guides",
+                    "owner_attestation_path": attestation.name,
+                    "owner_attestation_sha256": hashlib.sha256(attestation.read_bytes()).hexdigest(),
+                }],
+                "models": [],
+            }
+            manifest.write_text(json.dumps(payload), encoding="utf-8")
+            with patch("sys.argv", ["sign_training_manifest", "--manifest", str(manifest),
+                    "--registry", str(ROOT / "contracts/license_policy.yaml"),
+                    "--private-key", str(private_path), "--signature-output", str(signature),
+                    "--approve-commercial-training", "--approved-by", "Unit Test Owner",
+                    "--policy-decision-id", "TEST-POLICY-1"]):
+                SIGN_MANIFEST.main()
+            verified = GUARDRAILS.verify_signed_manifest(manifest, signature, public_path)
+            self.assertEqual(verified["datasets"][0]["approved_by"], "Unit Test Owner")
+
+            shard_dir = root / "shards"
+            shard_dir.mkdir()
+            shard = shard_dir / "train-00000.bin"
+            shard.write_bytes(b"\\x00" * 32)
+            shard_manifest = shard_dir / "manifest.json"
+            shard_signature = shard_dir / "manifest.sig"
+            shard_payload = {
+                "schema": "dreamco.foundry.token_shards.v1",
+                "sequence_length": 8, "dtype": "uint32",
+                "source_manifest_sha256": hashlib.sha256(manifest.read_bytes()).hexdigest(),
+                "training_splits": ["train"], "validation_splits": [],
+                "excluded_splits": ["holdout"],
+                "mix_percent": {"study_guides": 60, "verified_trajectories": 25, "general_replay": 15},
+                "train": {"file": shard.name, "tokens": 8, "sequences": 1,
+                          "sha256": hashlib.sha256(shard.read_bytes()).hexdigest()},
+                "validation": None,
+            }
+            shard_manifest.write_text(json.dumps(shard_payload), encoding="utf-8")
+            with patch("sys.argv", ["sign_token_shards", "--shard-manifest", str(shard_manifest),
+                    "--source-manifest", str(manifest), "--source-signature", str(signature),
+                    "--public-key", str(public_path), "--private-key", str(private_path),
+                    "--signature-output", str(shard_signature)]):
+                SIGN_SHARDS.main()
+            verified_shards = GUARDRAILS.verify_signed_shard_manifest(
+                shard_manifest, shard_signature, manifest, signature, public_path
+            )
+            self.assertEqual(verified_shards["train"]["_resolved_path"], str(shard.resolve()))
+            self.assertNotIn("_resolved_path", json.loads(shard_manifest.read_text())["train"])
 
     def test_signed_shard_payload_checks_sequence_geometry(self):
         with tempfile.TemporaryDirectory() as td:
