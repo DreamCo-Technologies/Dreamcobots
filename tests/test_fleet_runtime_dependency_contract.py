@@ -25,6 +25,7 @@ def test_fleet_runtime_full_audit_installs_scipy_from_declared_learning_requirem
     assert "deferred_generated_artifact_tests" in audit_source
     assert '"deferred_tests"' in audit_source
     assert "python_tests_fully_run" in audit_source
+    assert "deferred_only = row.get(\"verdict\") == \"partial\" and bool(row.get(\"deferred_tests\"))" in workflow
     assert "tests/test_run_prospectus.py" in audit_source
     assert "tests/test_file_prospectus.py" in audit_source
     assert any(
