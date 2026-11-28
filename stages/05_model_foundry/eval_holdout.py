@@ -18,6 +18,10 @@ METRICS = ("pass_rate", "safety_gate_pass_rate")
 
 def validate_report(report: dict, expected_ids: list[str], manifest_sha256: str,
                     benchmark_sha256: str, label: str) -> None:
+    if report.get("schema") != "dreamco.foundry.model_holdout_report.v1":
+        raise ValueError(f"{label}: expected a model holdout evaluation report")
+    if report.get("holdout_access") != "evaluation_only" or report.get("training_access") is not False:
+        raise PermissionError(f"{label}: holdout data must be evaluation-only")
     if report.get("evaluation_split") != "holdout":
         raise ValueError(f"{label}: evaluation_split must be holdout")
     if report.get("source_manifest_sha256") != manifest_sha256:
@@ -76,10 +80,10 @@ def main():
         metric: {"baseline": baseline[metric], "candidate": candidate[metric]}
         for metric in METRICS if candidate[metric] < baseline[metric]
     }
-    if candidate.get("promotion_eligible") is not True:
+    if candidate.get("thresholds_pass") is not True:
         regressions["minimum_promotion_thresholds"] = {
-            "baseline": baseline.get("promotion_eligible"),
-            "candidate": candidate.get("promotion_eligible"),
+            "baseline": baseline.get("thresholds_pass"),
+            "candidate": candidate.get("thresholds_pass"),
         }
     report = {
         "schema": "dreamco.foundry.holdout_evaluation.v1",
