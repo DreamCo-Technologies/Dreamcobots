@@ -188,6 +188,22 @@ class FoundryGuardrailTests(unittest.TestCase):
             self.assertTrue(any("allowed guide" in item for item in corpus))
             self.assertFalse(any("holdout benchmark" in item for item in corpus))
 
+    def test_packer_emits_signed_bin_and_index_metadata(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            entry = PACKER_MODULE._write_shard(list(range(16)), root, "train", 8)
+            self.assertEqual(entry["tokens"], 16)
+            self.assertEqual(entry["sequences"], 2)
+            self.assertTrue((root / entry["file"]).is_file())
+            self.assertTrue((root / entry["index_file"]).is_file())
+            index = json.loads((root / entry["index_file"]).read_text(encoding="utf-8"))
+            self.assertEqual(index["sequence_stride_tokens"], 8)
+            self.assertEqual(index["sequence_count"], 2)
+            self.assertEqual(
+                entry["index_sha256"],
+                hashlib.sha256((root / entry["index_file"]).read_bytes()).hexdigest(),
+            )
+
     def test_packer_uses_reserved_tool_call_token(self):
         class DummyTokenizer:
             eos_token_id = 2
