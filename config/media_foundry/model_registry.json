@@ -1,0 +1,170 @@
+{
+  "schema": "dreamco.media.model_registry.v1",
+  "policy": "Candidate inventory only. No model is deployment-approved until repository code, exact checkpoint weights, tokenizer/base models, dependencies, commercial permissions, and output terms are separately reviewed.",
+  "models": [
+    {
+      "model_id": "chatterbox",
+      "name": "Chatterbox TTS",
+      "role": [
+        "text_to_speech",
+        "voice_conditioning"
+      ],
+      "repository": "https://github.com/resemble-ai/chatterbox",
+      "code_license": "MIT",
+      "code_license_status": "source_verified",
+      "weights_license_status": "unverified",
+      "commercial_use_allowed": false,
+      "training_allowed": false,
+      "dependencies_reviewed": false,
+      "status": "quarantined_pending_asset_level_review",
+      "restrictions": [
+        "checkpoint and dependency licenses require independent verification",
+        "voice cloning requires explicit subject consent and disclosure"
+      ]
+    },
+    {
+      "model_id": "flux2-klein-4b",
+      "name": "FLUX.2 Klein 4B",
+      "role": [
+        "text_to_image",
+        "image_editing",
+        "character_keyframes"
+      ],
+      "repository": "https://github.com/black-forest-labs/flux2",
+      "model_card": "https://huggingface.co/black-forest-labs/FLUX.2-klein-4B",
+      "code_license": "Apache-2.0",
+      "code_license_status": "source_verified",
+      "weights_license": "Apache-2.0",
+      "weights_license_status": "source_verified",
+      "commercial_use_allowed": true,
+      "training_allowed": false,
+      "dependencies_reviewed": false,
+      "status": "candidate_requires_dependency_and_output_review",
+      "restrictions": [
+        "verify exact downloaded checkpoint revision and full dependency licenses",
+        "commercial license permission does not transfer rights in input assets or generated content"
+      ]
+    },
+    {
+      "model_id": "wan-2.2",
+      "name": "Wan 2.2",
+      "role": [
+        "text_to_video",
+        "image_to_video",
+        "character_animation"
+      ],
+      "repository": "https://github.com/Wan-Video/Wan2.2",
+      "model_card": "https://huggingface.co/Wan-AI/Wan2.2-T2V-A14B",
+      "code_license": "Apache-2.0",
+      "code_license_status": "source_verified",
+      "weights_license": "Apache-2.0",
+      "weights_license_status": "source_verified",
+      "commercial_use_allowed": true,
+      "training_allowed": false,
+      "dependencies_reviewed": false,
+      "status": "candidate_requires_dependency_and_output_review",
+      "restrictions": [
+        "verify exact task-specific checkpoint and dependency licenses",
+        "large GPU memory requirement; no CPU-only render claim"
+      ]
+    },
+    {
+      "model_id": "longcat-video",
+      "name": "LongCat-Video",
+      "role": [
+        "text_to_video",
+        "image_to_video",
+        "long_video"
+      ],
+      "repository": "https://github.com/meituan-longcat/LongCat-Video",
+      "code_license": "MIT",
+      "code_license_status": "source_verified",
+      "weights_license_status": "unverified",
+      "commercial_use_allowed": false,
+      "training_allowed": false,
+      "dependencies_reviewed": false,
+      "status": "quarantined_pending_asset_level_review",
+      "restrictions": [
+        "checkpoint license must be verified separately from repository license"
+      ]
+    },
+    {
+      "model_id": "ace-step-1.5",
+      "name": "ACE-Step 1.5",
+      "role": [
+        "music_generation",
+        "music_editing"
+      ],
+      "repository": "https://github.com/ace-step/ACE-Step-1.5",
+      "code_license": "MIT",
+      "code_license_status": "source_verified",
+      "weights_license_status": "unverified",
+      "commercial_use_allowed": false,
+      "training_allowed": false,
+      "dependencies_reviewed": false,
+      "status": "quarantined_pending_asset_level_review",
+      "restrictions": [
+        "DiT and language-model checkpoints and their upstream base weights require separate review",
+        "review output similarity and rights before commercial delivery"
+      ]
+    },
+    {
+      "model_id": "whisper",
+      "name": "Whisper",
+      "role": [
+        "speech_recognition",
+        "transcription"
+      ],
+      "repository": "https://github.com/openai/whisper",
+      "code_license": "MIT",
+      "code_license_status": "source_verified",
+      "weights_license_status": "unverified",
+      "commercial_use_allowed": false,
+      "training_allowed": false,
+      "dependencies_reviewed": false,
+      "status": "quarantined_pending_asset_level_review",
+      "restrictions": [
+        "exact checkpoint and dependency licenses must be recorded"
+      ]
+    },
+    {
+      "model_id": "f5-tts",
+      "name": "F5-TTS",
+      "role": [
+        "text_to_speech",
+        "voice_cloning"
+      ],
+      "repository": "https://github.com/SWivid/F5-TTS",
+      "code_license": "CC-BY-NC",
+      "code_license_status": "source_reported_noncommercial",
+      "weights_license_status": "unverified",
+      "commercial_use_allowed": false,
+      "training_allowed": false,
+      "dependencies_reviewed": false,
+      "status": "excluded",
+      "restrictions": [
+        "non-commercial restriction; do not use for DreamCo commercial production"
+      ]
+    },
+    {
+      "model_id": "flux2-klein-9b",
+      "name": "FLUX.2 Klein 9B",
+      "role": [
+        "text_to_image",
+        "image_editing"
+      ],
+      "repository": "https://github.com/black-forest-labs/flux2",
+      "code_license": "FLUX-Non-Commercial",
+      "code_license_status": "source_verified",
+      "weights_license": "FLUX-Non-Commercial",
+      "weights_license_status": "source_verified",
+      "commercial_use_allowed": false,
+      "training_allowed": false,
+      "dependencies_reviewed": false,
+      "status": "excluded",
+      "restrictions": [
+        "non-commercial license; do not use for DreamCo commercial production"
+      ]
+    }
+  ]
+}
