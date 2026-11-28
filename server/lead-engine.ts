@@ -34,6 +34,7 @@ export const leadEngineRecordSchema = z.object({
   timelineScore: z.number().finite().min(0).max(100).default(0),
   engagementScore: z.number().finite().min(0).max(100).default(0),
   useCase: safeLabel.optional(),
+  humanReviewEvidenceRef: z.string().trim().min(3).max(240).optional(),
   buyingTimeline: z.enum(["now", "within_30_days", "this_quarter", "next_quarter", "researching", "unknown"]).default("unknown"),
   budgetConfirmed: z.boolean().default(false),
   lastEngagedAt: z.string().datetime({ offset: true }).optional(),
@@ -162,6 +163,44 @@ export function buildLeadStagePlan(input: LeadEngineRecord): LeadStagePlan {
     qualification,
     externalActionTaken: false,
   };
+}
+
+
+/** Enforces one-stage-at-a-time progression and explicit gates for nurture/convert. */
+export function assertLeadStageTransition(
+  existing: LeadEngineRecord | undefined,
+  nextInput: LeadEngineRecord,
+): LeadEngineRecord {
+  const next = leadEngineRecordSchema.parse(nextInput);
+  const nextIndex = STAGE_ORDER.indexOf(next.stage);
+  if (!existing) {
+    if (nextIndex > 1) throw new Error("lead_engine_initial_stage_must_be_attract_or_capture");
+    return next;
+  }
+  const current = leadEngineRecordSchema.parse(existing);
+  const currentIndex = STAGE_ORDER.indexOf(current.stage);
+  if (nextIndex < currentIndex) throw new Error("lead_engine_stage_regression_forbidden");
+  if (nextIndex > currentIndex + 1) throw new Error("lead_engine_stage_skip_forbidden");
+  if (nextIndex === currentIndex + 1 && next.stage === "nurture") {
+    if (next.consentBasis === "none" || !next.consentEvidenceRef || next.suppressionStatus !== "active") {
+      throw new Error("lead_engine_nurture_requires_current_permission_and_active_contact");
+    }
+  }
+  if (nextIndex === currentIndex + 1 && next.stage === "convert") {
+    const qualification = qualifyLead(next);
+    if (
+      qualification.tier !== "hot" ||
+      !next.budgetConfirmed ||
+      !next.useCase ||
+      !next.humanReviewEvidenceRef ||
+      next.consentBasis === "none" ||
+      !next.consentEvidenceRef ||
+      next.suppressionStatus !== "active"
+    ) {
+      throw new Error("lead_engine_conversion_requires_hot_lead_budget_use_case_permission_and_human_review");
+    }
+  }
+  return next;
 }
 
 export function leadEngineReadiness() {
