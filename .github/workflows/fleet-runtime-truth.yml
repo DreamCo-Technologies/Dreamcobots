@@ -47,6 +47,8 @@ on:
       - "docs/FLEET_ONE_WEEK_BUILD_PLAN.md"
       - "tools/audit_pages_features.py"
       - "tools/refresh_repository_evidence.py"
+      - "tools/build_pages_connection_index.py"
+      - "tools/sync_freecodecamp_learning_inventory.py"
       - "tests/buddy-run-page.test.mjs"
       - "tests/actions-page.test.mjs"
   schedule:
@@ -187,6 +189,8 @@ jobs:
           python3 tools/build_buddy_learning_os_connection_graph.py
           npx tsx tools/generate_bot_fleet_catalog.ts
           npx tsx tools/generate_dreamco_search_index.ts
+          python3 tools/sync_freecodecamp_learning_inventory.py
+          python3 tools/build_pages_connection_index.py
           python3 tools/refresh_repository_evidence.py
       - name: Refresh generated evidence in isolated full-audit checkout
         run: |
@@ -196,6 +200,8 @@ jobs:
           python3 tools/build_buddy_learning_os_connection_graph.py
           npx tsx tools/generate_bot_fleet_catalog.ts
           npx tsx tools/generate_dreamco_search_index.ts
+          python3 tools/sync_freecodecamp_learning_inventory.py
+          python3 tools/build_pages_connection_index.py
           python3 tools/audit_actions_health.py
           python3 tools/build_actions_prospectus.py
           python3 tools/refresh_repository_evidence.py
