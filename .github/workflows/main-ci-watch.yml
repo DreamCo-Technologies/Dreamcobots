@@ -20,6 +20,7 @@ jobs:
         with:
           python-version: "3.11"
           cache: pip
+          cache-dependency-path: requirements-reverse-engineer.txt
       - name: Install test dependencies
         run: python -m pip install --disable-pip-version-check "pytest>=8,<10" "jsonschema>=4.22,<5"
       - name: Run mainline verification and create sanitized report
