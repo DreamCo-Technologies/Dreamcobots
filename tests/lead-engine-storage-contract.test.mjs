@@ -81,3 +81,10 @@ test("conversion requires a persisted owner approval event that ordinary activit
   assert.match(routes, /records\/:leadId\/approve-conversion/);
   assert.match(routes, /approveLeadConversion\(identity\.ownerId, req\.params\.leadId\)/);
 });
+
+test("nurture and conversion require timestamped, current, channel-specific consent", () => {
+  assert.match(storage, /hasCurrentLeadConsent\(lead\)/);
+  assert.match(storage, /lead_engine_conversion_not_eligible_for_owner_approval/);
+  assert.match(storage, /consentExpiresAt/);
+  assert.match(storage, /consentObtainedAt/);
+});
