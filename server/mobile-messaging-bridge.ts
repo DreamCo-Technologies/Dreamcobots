@@ -103,7 +103,7 @@ export async function acceptInboundMobileMessage(input: {
     return { accepted: false as const, status: "blocked" as const, reason: "Webhook body must be valid JSON." };
   }
   const parsed = mobileInboundEventSchema.safeParse(payload);
-  if (!parsed.success) return { accepted: false as const, status: "blocked" as const, reason: "Webhook event does not match the mobile messaging contract." };
+  if (!parsed.success) return { accepted: false as const, status: "blocked" as const, reason: parsed.error.issues[0]?.message ?? "Webhook event does not match the mobile messaging contract." };
   const event = parsed.data;
   if (event.deviceId !== registration.deviceId || event.platform !== registration.platform || event.provider !== registration.provider) {
     return { accepted: false as const, status: "blocked" as const, reason: "Event device identity does not match the registered bridge." };
