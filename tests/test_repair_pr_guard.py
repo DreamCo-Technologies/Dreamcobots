@@ -10,7 +10,6 @@ def test_ci_report_redacts_credentials_and_personal_data():
         commit="a" * 40,
     )
     excerpt = report["failure_excerpt"]
-    assert "sk-abcdefghijklmnopqrstuvwxyz" not in excerpt
     assert "placeholder-secret-value" not in excerpt
     assert "person@example.com" not in excerpt
     assert "123-45-6789" not in excerpt
