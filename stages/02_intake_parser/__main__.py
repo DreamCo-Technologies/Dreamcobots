@@ -3,7 +3,7 @@ from urllib.parse import urlsplit
 from ..common import parser,read_json,write_json,validate
 
 def parse(text,kind):
- if kind in {"python","python_source"}:
+ if kind in {"python","python_source","javascript_source","typescript_source","java_source","go_source","rust_source"}:
   tree=ast.parse(text)
   return {"language":"python","functions":[{"arity":len(node.args.args),"async":isinstance(node,ast.AsyncFunctionDef)} for node in ast.walk(tree) if isinstance(node,(ast.FunctionDef,ast.AsyncFunctionDef))],"control_flow":[type(node).__name__ for node in ast.walk(tree) if isinstance(node,(ast.If,ast.For,ast.While,ast.Try,ast.Match))],"imports":sorted({node.module or "" for node in ast.walk(tree) if isinstance(node,ast.ImportFrom)}|{alias.name for node in ast.walk(tree) if isinstance(node,ast.Import) for alias in node.names})}
  if kind in {"json","openapi_json","har"}:
@@ -37,6 +37,11 @@ def parse(text,kind):
    types={"integer" if value.isdigit() else "string" for value in values if value not in ("",None)}
    columns.append({"name":"field_"+str(index+1),"inferred_types":sorted(types),"null_count":sum(value in ("",None) for value in values),"unique_count":len(set(value for value in values if value not in ("",None))),"candidate_primary_key":bool(values) and len(set(values))==len(values) and all(value not in ("",None) for value in values)})
   return {"row_count":len(rows),"columns":columns}
+ if kind in {"javascript_source","typescript_source","java_source","go_source","rust_source"}:
+  language={"javascript_source":"javascript","typescript_source":"typescript","java_source":"java","go_source":"go","rust_source":"rust"}[kind]
+  from reverse_engineer.parsers.treesitter import parse_tree_sitter
+  parsed=parse_tree_sitter(text,language); facts=parsed["facts"]
+  return {"language":language,"functions":[{"arity":function.get("parameter_node_count") or 0} for function in facts.get("functions",[])],"control_flow":[item.get("control_constructs",[]) for item in facts.get("control_flow",[])],"imports":facts.get("dependencies",[])}
  raise ValueError("Unsupported artifact type; parser fails closed.")
 
 def main():
