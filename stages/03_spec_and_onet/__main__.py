@@ -12,7 +12,7 @@ def build(parsed,task_description="",onet_db=None):
  elif artifact_type=="api":
   endpoints=facts.get("endpoints",[])
   inputs=[{"operation":"endpoint_"+str(index+1),"method":endpoint.get("method","UNKNOWN"),"path_template":"/abstract/endpoint_"+str(index+1)} for index,endpoint in enumerate(endpoints)]
-  outputs=[{"operation":"endpoint_"+str(index+1),"status_code":endpoint.get("status")} for index,endpoint in enumerate(endpoints)]
+  outputs=[{"operation":"endpoint_"+str(index+1),"response_codes":endpoint.get("response_codes",[]),"status_code":endpoint.get("status")} for index,endpoint in enumerate(endpoints)]\n  rules=[{"rule":"Respect documented authentication and rate limits.","verification":"contract_fixture_required","rate_limit_hints":[endpoint.get("rate_limit_extensions",endpoint.get("response_header_names",[])) for endpoint in endpoints]}]
   rules=[{"rule":"Implement documented public contract only.","verification":"contract_fixture_required"}]
  else:
   columns=facts.get("columns",[])
