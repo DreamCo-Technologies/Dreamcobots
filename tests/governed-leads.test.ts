@@ -335,9 +335,9 @@ test("validates consent evidence, unique channels, and prohibited targeting", ()
 });
 
 test("recommends only the next eligible stage without skipping pipeline steps", () => {
-  assert.equal(buildLeadStagePlan(leadRecord).recommendedStage, "qualify");
+  const captured = buildLeadStagePlan(leadRecord);\n  assert.equal(captured.recommendedStage, "qualify");\n  assert.equal(captured.stageActions.find((item) => item.stage === "qualify")?.status, "ready");
   const qualified = { ...leadRecord, stage: "qualify" as const };
-  assert.equal(buildLeadStagePlan(qualified).recommendedStage, "nurture");
+  const qualifiedPlan = buildLeadStagePlan(qualified);\n  assert.equal(qualifiedPlan.recommendedStage, "nurture");\n  assert.equal(qualifiedPlan.stageActions.find((item) => item.stage === "nurture")?.status, "ready");
   const nurtured = { ...leadRecord, stage: "nurture" as const };
   assert.equal(buildLeadStagePlan(nurtured).recommendedStage, "nurture");
   assert.equal(buildLeadStagePlan({
