@@ -26,3 +26,10 @@ test('the public sign-in page does not claim Pages itself can authenticate users
   assert.match(browser, /\/api\/auth\/\$\{provider\.provider\}\/start/);
   assert.match(browser, /\/api\/auth\/providers/);
 });
+
+test('authenticated API identity is derived from an unexpired signed OAuth session', () => {
+  assert.match(source, /export function getAuthenticatedOAuthIdentity/);
+  assert.match(source, /session\.exp <= Math\.floor\(Date\.now\(\) \/ 1000\)/);
+  assert.match(source, /createHash\("sha256"\)/);
+  assert.match(source, /ownerId: `oauth_\$\{ownerDigest\}`/);
+});
