@@ -1,0 +1,54 @@
+{
+  "schema": "dreamco.phase1_execution_policy.v1",
+  "status": "EVALUATION_HARNESS_IMPLEMENTED_TRAINING_NOT_AUTHORIZED",
+  "flagship_lane": {
+    "masterbot_id": 41,
+    "name": "DreamCodeLab",
+    "target_parameters": 45000000,
+    "target_status": "TARGET_ONLY_NOT_INSTANTIATED"
+  },
+  "holdout": {
+    "public_smoke_suite": "evals/suites/dreamcodelab_execution_v1.json",
+    "certification_suite": "private_independent_holdout",
+    "training_use": "NEVER_TRAIN",
+    "minimum_accuracy": 0.85,
+    "unknown_or_duplicate_predictions": "FAIL_CLOSED"
+  },
+  "checkpoint_requirements": [
+    "non-empty checkpoint artifact",
+    "measured parameter count exactly matches approved target",
+    "training config includes seed, code revision and base model",
+    "dataset manifest explicitly marks training_authorized=true and rights_review_status=APPROVED",
+    "passing independent held-out evaluation",
+    "validation perplexity",
+    "tokens per second",
+    "peak RAM and optional VRAM",
+    "SHA-256 artifact and provenance hashes",
+    "HMAC-SHA256 authentication with managed secret and explicit key ID",
+    "held-out report matches candidate model version and exact evaluator code SHA-256"
+  ],
+  "promotion": {
+    "mastery_status_requires": [
+      "trained_checkpoint",
+      "hmac_authenticated_checkpoint_manifest",
+      "private_independent_holdout_pass",
+      "regression_review",
+      "safety_review",
+      "human_release_approval"
+    ],
+    "automatic_promotion": false
+  },
+  "training_boundary": "No training starts from this policy, suite, synthetic fixture, or generated blueprint. A separate approved worker must verify rights, consent, compute budget, base-model license and training authorization.",
+  "security": {
+    "holdout_answer_keys_in_training_paths": false,
+    "default_network_access": false,
+    "authentication_secret_in_repository": false
+  },
+  "authentication": {
+    "algorithm": "HMAC-SHA256",
+    "require_managed_key_id": true,
+    "secret_environment_variable": "DREAMCO_CHECKPOINT_HMAC_KEY",
+    "key_id_environment_variable": "DREAMCO_CHECKPOINT_HMAC_KEY_ID",
+    "description": "Shared-secret message authentication code; it is not a public-key digital signature."
+  }
+}

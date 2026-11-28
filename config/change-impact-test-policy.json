@@ -570,6 +570,37 @@
         "tests/test_buddy_fleet_health_workflow.py"
       ],
       "reason": "Fleet health must refresh its deterministic E2E report before the strict generated-evidence check."
+    },
+    {
+      "sources": [
+        "tools/validate_checkpoint.py",
+        "tools/run_heldout_evaluation.py"
+      ],
+      "tests": [
+        "tests/test_heldout_evaluation.py"
+      ],
+      "reason": "Held-out evaluator provenance, candidate binding, dataset rights, and HMAC authentication"
+    },
+    {
+      "sources": [
+        "tools/build_500_model_prospectus_matrix.py"
+      ],
+      "tests": [
+        "tests/test_500_model_prospectus_matrix.py"
+      ],
+      "reason": "Verified-only model prospectus; prevent placeholder slot expansion"
+    },
+    {
+      "sources": [
+        "tools/plan_500_model_shards.py",
+        "config/verified-model-inventory.json",
+        ".github/workflows/benchmark_500_matrix.yml"
+      ],
+      "tests": [
+        "tests/test_500_model_shard_planner.py",
+        "tests/test_500_model_prospectus_matrix.py"
+      ],
+      "reason": "Fail-closed 10x50 sharded readiness planning and no model execution"
     }
   ],
   "evidence_rules": {

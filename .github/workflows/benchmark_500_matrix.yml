@@ -1,0 +1,74 @@
+name: DreamCo 500-Model Sharded Readiness Matrix
+
+on:
+  pull_request:
+    paths:
+      - "config/verified-model-inventory.json"
+      - "tools/plan_500_model_shards.py"
+      - "tests/test_500_model_shard_planner.py"
+      - ".github/workflows/benchmark_500_matrix.yml"
+  push:
+    branches: [main, feat/dreamco-phase1-heldout-eval-checkpoint-gates]
+    paths:
+      - "config/verified-model-inventory.json"
+      - "tools/plan_500_model_shards.py"
+      - "tests/test_500_model_shard_planner.py"
+      - ".github/workflows/benchmark_500_matrix.yml"
+  schedule:
+    - cron: "0 2 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: dreamco-500-model-shard-readiness-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  shard-readiness:
+    name: Validate shard ${{ matrix.shard }} (no model execution)
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    strategy:
+      fail-fast: false
+      max-parallel: 10
+      matrix:
+        shard: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
+      - name: Plan shard ${{ matrix.shard }}
+        run: |
+          python tools/plan_500_model_shards.py \
+            --shard ${{ matrix.shard }} \
+            --output "$RUNNER_TEMP/shard-${{ matrix.shard }}.json"
+      - name: Upload shard readiness record
+        uses: actions/upload-artifact@v7
+        with:
+          name: dreamco-500-model-shard-${{ matrix.shard }}
+          path: "$RUNNER_TEMP/shard-${{ matrix.shard }}.json"
+
+  aggregate-plan:
+    name: Publish full 10-shard readiness plan
+    needs: shard-readiness
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
+      - name: Run shard planner contract tests
+        run: python -m unittest tests.test_500_model_shard_planner tests.test_500_model_prospectus_matrix
+      - name: Generate aggregate readiness plan
+        run: |
+          python tools/plan_500_model_shards.py \
+            --output "$RUNNER_TEMP/dreamco-500-model-shard-plan.json"
+      - name: Upload aggregate plan
+        uses: actions/upload-artifact@v7
+        with:
+          name: dreamco-500-model-shard-plan
+          path: "$RUNNER_TEMP/dreamco-500-model-shard-plan.json"
