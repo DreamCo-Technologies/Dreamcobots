@@ -56,9 +56,10 @@ def main():
     for row in prepared:
         encoded=tokenizer(row["prompt"],return_tensors="pt")
         encoded={k:v.to(device) for k,v in encoded.items()}
+        pad_id=tokenizer.pad_token_id if tokenizer.pad_token_id is not None else tokenizer.eos_token_id
         with torch.inference_mode():
             generated=model.generate(**encoded,max_new_tokens=a.max_new_tokens,do_sample=False,
-                pad_token_id=tokenizer.pad_token_id or tokenizer.eos_token_id,
+                pad_token_id=pad_id,
                 eos_token_id=tokenizer.eos_token_id)
         answer=tokenizer.decode(generated[0][encoded["input_ids"].shape[1]:],skip_special_tokens=True).strip()
         exact=normalized(answer)==normalized(row["expected_answer"])
