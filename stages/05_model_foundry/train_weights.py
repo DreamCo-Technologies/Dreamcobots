@@ -509,6 +509,8 @@ def main():
         if not train_entries:
             raise ValueError("signed shard manifest has no train shard")
         shard_limit = int(recipe["packing"].get("shard_size_tokens", 5_000_000))
+        if int(shard_payload.get("shard_size_tokens", 0)) != shard_limit:
+            raise ValueError("signed shard manifest shard_size_tokens does not match the recipe")
         if any(int(item.get("tokens", 0)) > shard_limit for item in all_shard_entries):
             raise ValueError("signed token shard exceeds the recipe shard_size_tokens limit")
 
