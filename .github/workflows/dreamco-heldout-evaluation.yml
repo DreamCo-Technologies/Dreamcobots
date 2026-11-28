@@ -13,6 +13,8 @@ on:
       - "tests/test_dreamco_10pillar_extensions.py"
       - "tools/dreamco_10pillar_orchestrator.py"
       - "tests/test_dreamco_10pillar_orchestrator.py"
+      - "tools/dreamco_patch_ast_guard.py"
+      - "tests/test_dreamco_patch_ast_guard.py"
       - ".github/workflows/dreamco-heldout-evaluation.yml"
   workflow_dispatch:
 
@@ -33,6 +35,6 @@ jobs:
         with:
           python-version: "3.13"
       - name: Compile evaluation tools
-        run: python -m py_compile tools/run_heldout_evaluation.py tools/validate_checkpoint.py tools/leaderboard_math.py tools/dreamco_10pillar_extensions.py tools/dreamco_10pillar_orchestrator.py
+        run: python -m py_compile tools/run_heldout_evaluation.py tools/validate_checkpoint.py tools/leaderboard_math.py tools/dreamco_10pillar_extensions.py tools/dreamco_10pillar_orchestrator.py tools/dreamco_patch_ast_guard.py
       - name: Run held-out evaluator and checkpoint evidence tests
-        run: python -m unittest tests.test_heldout_evaluation tests.test_leaderboard_math tests.test_dreamco_10pillar_extensions tests.test_dreamco_10pillar_orchestrator -v
+        run: python -m unittest tests.test_heldout_evaluation tests.test_leaderboard_math tests.test_dreamco_10pillar_extensions tests.test_dreamco_10pillar_orchestrator tests.test_dreamco_patch_ast_guard -v
