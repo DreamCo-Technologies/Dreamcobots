@@ -74,7 +74,9 @@ CREATE TABLE IF NOT EXISTS communication_twin_drafts (
   message_id TEXT NOT NULL,
   contact_id TEXT NOT NULL,
   channel TEXT NOT NULL CHECK (channel IN ('sms','messaging')),
-  draft_body TEXT NOT NULL CHECK (length(draft_body) BETWEEN 1 AND 12000),
+  draft_body_ciphertext TEXT NOT NULL,
+  draft_body_iv TEXT NOT NULL,
+  draft_body_tag TEXT NOT NULL,
   status TEXT NOT NULL DEFAULT 'pending_approval'
     CHECK (status IN ('pending_approval','sending','sent','rejected','delivery_unknown','expired')),
   expires_at TIMESTAMPTZ NOT NULL,
