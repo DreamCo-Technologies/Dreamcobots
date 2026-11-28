@@ -99,5 +99,46 @@ class RepoSentinelTests(unittest.TestCase):
             self.assertFalse(sentinel.catalog_freshness(ledger, 24)["stale"])
 
 
+    def test_multiple_same_file_definitions_are_left_untouched(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "stages/a").mkdir(parents=True)
+            (root / "tools").mkdir()
+            canonical = "def calculate(x):\n    return x + 1\n"
+            (root / "stages/a/core.py").write_text(canonical)
+            duplicate = root / "tools/legacy.py"
+            original = canonical + "\ndef calculate(y):\n    return y + 1\n"
+            duplicate.write_text(original)
+            scan = ast_tool.scan_duplicate_symbols(root, ["stages", "tools"])
+            result = ast_tool.consolidate_exact_duplicates(
+                root, scan["duplicates"], {"calculate": "stages/a/core.py"},
+                apply=True, backup_dir=root / "backup",
+            )
+            self.assertEqual(result[0]["status"], "conflict")
+            self.assertEqual(duplicate.read_text(), original)
+            self.assertFalse((root / "backup/tools/legacy.py").exists())
+
+    def test_symlinked_duplicate_is_never_rewritten(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            outside = Path(tmp).parent / (Path(tmp).name + "-outside.py")
+            try:
+                (root / "stages/a").mkdir(parents=True)
+                (root / "tools").mkdir()
+                code = "def calculate(x):\n    return x + 1\n"
+                (root / "stages/a/core.py").write_text(code)
+                outside.write_text(code)
+                (root / "tools/legacy.py").symlink_to(outside)
+                scan = ast_tool.scan_duplicate_symbols(root, ["stages", "tools"])
+                result = ast_tool.consolidate_exact_duplicates(
+                    root, scan["duplicates"], {"calculate": "stages/a/core.py"},
+                    apply=True, backup_dir=root / "backup",
+                )
+                self.assertEqual(result[0]["status"], "conflict")
+                self.assertEqual(outside.read_text(), code)
+            finally:
+                outside.unlink(missing_ok=True)
+
+
 if __name__ == "__main__":
     unittest.main()
