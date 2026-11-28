@@ -9,3 +9,4 @@ compile:
 	$(PYTHON) -m compileall -q stages
 build-sandbox:
 	docker build --network=default -f stages/05_sandbox_verifier/Dockerfile -t dreamco-verifier:local .
+\n.PHONY: test-sandbox-integration\ntest-sandbox-integration:\n\tDREAMCO_RUN_ROOTLESS_DOCKER_TESTS=1 $(PYTHON) -m pytest -q tests/test_rootless_docker_integration.py\n
