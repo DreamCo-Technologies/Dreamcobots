@@ -31,8 +31,9 @@ def split_name(record_id: str) -> str:
     n = split_bucket(record_id)
     return "train" if n < 90 else "validation" if n < 95 else "holdout"
 
-def verify_signed_manifest(manifest_path: Path, signature_path: Path, public_key_path: Path) -> dict:
-    """Verify Ed25519 signature over canonical manifest JSON, then all data hashes."""
+def verify_signed_manifest(manifest_path: Path, signature_path: Path, public_key_path: Path,
+                           *, verify_dataset_hashes: bool = True) -> dict:
+    """Verify manifest signature and paths; optionally hash all dataset contents."""
     try:
         from cryptography.hazmat.primitives.serialization import load_pem_public_key
         from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PublicKey
@@ -70,9 +71,13 @@ def verify_signed_manifest(manifest_path: Path, signature_path: Path, public_key
         if not p.is_file():
             raise FileNotFoundError(p)
         expected = str(item.get("sha256", "")).lower()
-        if len(expected) != 64 or sha256_file(p) != expected:
-            raise ValueError(f"{dataset_id}: dataset SHA-256 mismatch")
+        if len(expected) != 64:
+            raise ValueError(f"{dataset_id}: invalid dataset SHA-256")
         item["_resolved_path"] = str(p)
+        if verify_dataset_hashes:
+            if sha256_file(p) != expected:
+                raise ValueError(f"{dataset_id}: dataset SHA-256 mismatch")
+            item["_hash_verified"] = True
     manifest["_source_manifest_sha256"] = sha256_file(manifest_path)
     return manifest
 
@@ -88,6 +93,10 @@ def iter_authorized_records(manifest: dict, *, categories: set[str] | None = Non
         if categories and dataset.get("category") not in categories:
             continue
         path = Path(dataset["_resolved_path"])
+        if not dataset.get("_hash_verified"):
+            if sha256_file(path) != dataset.get("sha256"):
+                raise ValueError(f"{dataset['dataset_id']}: dataset SHA-256 mismatch")
+            dataset["_hash_verified"] = True
         with path.open(encoding="utf-8") as stream:
             for line_no, line in enumerate(stream, 1):
                 if not line.strip():
@@ -102,6 +111,16 @@ def iter_authorized_records(manifest: dict, *, categories: set[str] | None = Non
                 yield {**row, "_split": actual, "_dataset_id": dataset["dataset_id"],
                        "_license_tier": dataset["license_tier"],
                        "_policy_decision_id": dataset["policy_decision_id"]}
+
+def verify_manifest_dataset_hashes(manifest: dict, *, categories: set[str]) -> None:
+    """Hash only selected dataset categories, leaving holdout contents untouched."""
+    for dataset in manifest["datasets"]:
+        if dataset.get("category") not in categories:
+            continue
+        path = Path(dataset["_resolved_path"])
+        if sha256_file(path) != dataset.get("sha256"):
+            raise ValueError(f"{dataset['dataset_id']}: dataset SHA-256 mismatch")
+        dataset["_hash_verified"] = True
 
 def assert_training_split(rows):
     for row in rows:
@@ -161,7 +180,10 @@ def verify_signed_shard_manifest(shard_manifest_path: Path, shard_signature_path
                                   source_manifest_path: Path, source_signature_path: Path,
                                   public_key_path: Path) -> dict:
     """Verify source authorization, Ed25519 shard signature, and shard bytes."""
-    verify_signed_manifest(source_manifest_path, source_signature_path, public_key_path)
+    verify_signed_manifest(
+        source_manifest_path, source_signature_path, public_key_path,
+        verify_dataset_hashes=False
+    )
     try:
         from cryptography.hazmat.primitives.serialization import load_pem_public_key
         from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PublicKey
