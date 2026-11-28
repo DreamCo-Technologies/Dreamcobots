@@ -74,7 +74,7 @@ class WatchtowerEngineTests(unittest.TestCase):
             validate_public_https_url("https://127.0.0.1/feed.json")
         with self.assertRaises(ValueError):
             validate_public_https_url("https://user:pass@example.com/feed.json")
-        with patch("stages.09_watchtower.adapters.socket.getaddrinfo", return_value=[
+        with patch.object(_adapters.socket, "getaddrinfo", return_value=[
             (None, None, None, None, ("10.0.0.5", 443))
         ]):
             with self.assertRaises(ValueError):
