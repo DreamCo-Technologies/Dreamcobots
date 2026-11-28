@@ -8,7 +8,7 @@ from typing import Any
 
 from buddy.fleet_runtime.router import complete_learning
 from buddy.learning.runtime_bridge import BuddyLearningBridge, PrivateLearningStore
-from buddy.learning.task_runner import BuddyTaskRunner
+from dreamco_platform.automation.task_runner import BuddyTaskRunner
 from buddy.learning.course_track_registry import plan_next_for_division, resources_for_division
 from buddy.learning.buddy_knowledge_router import route_buddy_learning_query
 from buddy.learning.study_resource_scheduler import Capability
