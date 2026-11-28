@@ -42,9 +42,9 @@ def test_sanitizer_redacts_complete_multiline_pem_block():
     begin = "-----BEGIN RSA " + "PRIVATE KEY-----"
     end = "-----END RSA " + "PRIVATE KEY-----"
     pem = (
-        "before\\n" + begin + "\\n"
-        "private-key-body-line-one\\nprivate-key-body-line-two\\n"
-        + end + "\\nafter"
+        "before\n" + begin + "\n"
+        "private-key-body-line-one\nprivate-key-body-line-two\n"
+        + end + "\nafter"
     )
     cleaned = sanitize(pem)
     assert "private-key-body-line-one" not in cleaned
@@ -55,6 +55,7 @@ def test_sanitizer_redacts_complete_multiline_pem_block():
 
 def test_sanitizer_redacts_unterminated_private_key_to_end_of_input():
     begin = "-----BEGIN " + "PRIVATE KEY-----"
-    cleaned = sanitize("prefix\\n" + begin + "\\nsecret-material-without-footer")
+    cleaned = sanitize("prefix\n" + begin + "\nsecret-material-without-footer")
     assert "secret-material-without-footer" not in cleaned
     assert "[REDACTED_PRIVATE_KEY]" in cleaned
+
