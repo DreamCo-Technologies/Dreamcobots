@@ -20,7 +20,7 @@ def main():
     files=module["reference_implementation"]["files"]+module["tests"]
     if len(files)>100 or sum(len(item.get("content","").encode("utf-8")) for item in files)>5*1024*1024:
         raise ValueError("Generated artifact exceeds sandbox file or size limits.")
-    report={"schema_version":"dreamco.eval_report.v1","job_id":module["job_id"],"status":"BLOCKED","tests_passed":False,"similarity_score":1.0,"policy_check":"FAIL","sandbox":{"network_disabled":True,"rootless_requested":True,"timed_out":False,"exit_code":None}}
+    report={"schema_version":"dreamco.eval_report.v1","job_id":module["job_id"],"status":"BLOCKED","tests_passed":False,"similarity_score":1.0,"policy_check":"FAIL","sandbox":{"network_disabled":True,"rootless_requested":True,"timed_out":False,"exit_code":None,"output_omitted":True}}
     if not args.reference:
         report["sandbox"]["error"]="authorized_similarity_reference_required"
     else:
@@ -49,8 +49,6 @@ def main():
                         report["sandbox"]["exit_code"]=proc.returncode
                         report["tests_passed"]=proc.returncode==0
                         report["status"]="PASS" if proc.returncode==0 else "FAIL"
-                        report["sandbox"]["stdout_tail"]=proc.stdout[-2000:]
-                        report["sandbox"]["stderr_tail"]=proc.stderr[-2000:]
                     except subprocess.TimeoutExpired:
                         report["sandbox"]["timed_out"]=True; report["status"]="FAIL"
                         subprocess.run(["docker","kill",container_name],capture_output=True,text=True,timeout=3)
