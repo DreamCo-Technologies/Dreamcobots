@@ -44,7 +44,17 @@ This module is a deterministic policy and persistence foundation. It does not di
 
 Apply `migrations/0002_lead_engine_crm.sql` to the target PostgreSQL database using the deployment's reviewed migration process. The application database role must not be a superuser or have `BYPASSRLS`. Every repository operation sets `app.owner_id` transaction-locally; PostgreSQL RLS then restricts reads and writes to that owner. Callers must derive `ownerId` from a verified authenticated identity, never from request-body input. Activity events are not editable; authorized deletion remains possible through a future data-rights workflow and the parent lead's cascade.
 
-Repository functions: `saveLeadEngineRecord`, `getLeadEngineRecord`, `listLeadEngineRecords`, `appendLeadEngineActivity`, and `listLeadEngineActivities`. The repository rejects owner mismatches and stage regression; duplicate activity event IDs are idempotent.
+Repository functions: `saveLeadEngineRecord`, `getLeadEngineRecord`, `listLeadEngineRecords`, `appendLeadEngineActivity`, and `listLeadEngineActivities`. The repository rejects owner mismatches, stage regression, and stage skipping. Nurture requires current documented permission and an active contact; conversion requires a hot score, confirmed budget, documented use case, permission, active contact status, and a human-review evidence reference. Duplicate activity event IDs are idempotent. Activity metadata rejects raw email addresses, phone numbers, and credential-like values.
+
+### Authenticated CRM endpoints
+
+- `GET /api/buddy/lead-engine/records` — list the signed-in owner's records.
+- `POST /api/buddy/lead-engine/records` — create/update a record; the server overwrites any supplied owner ID with the verified OAuth identity.
+- `GET /api/buddy/lead-engine/records/:leadId` — read one owner-scoped record.
+- `GET /api/buddy/lead-engine/records/:leadId/activities` — read activity history.
+- `POST /api/buddy/lead-engine/records/:leadId/activities` — append an idempotent activity event.
+
+These endpoints require a valid signed Google or Apple OAuth session. Write requests require a same-host Origin header and are rate-limited. The API does not send campaigns, book meetings, or execute payments.
 
 The existing `/api/buddy/lead-plan` endpoint remains the governed outreach planning entry point. The qualification and CRM routes now use the repository's signed, expiring Google/Apple OAuth session. The server derives a stable opaque owner key from the verified provider subject; the request body cannot select a tenant. CRM writes require a same-origin Origin header and are rate-limited. This change does not create a second dispatch route.
 
@@ -60,7 +70,8 @@ The existing `/api/buddy/lead-plan` endpoint remains the governed outreach plann
 - [x] Owner-scoped PostgreSQL CRM repository and tenant-isolation migration authored
 - [x] Consent evidence and suppression state included in persisted lead records
 - [ ] Apply migration in staging/production and verify RLS using the actual non-superuser application role
-- [x] OAuth-protected CRM HTTP routes with server-derived owner identity and same-origin write checks
+- [x] OAuth-protected CRM HTTP routes with server-derived owner identity, same-origin write checks, and rate limiting
+- [x] Nurture and conversion stage transitions gated by permission, suppression, qualification, budget, use case, and human-review evidence
 - [ ] Consent evidence lifecycle, expiry checks, and durable suppression update workflows
 - [ ] Owner-configured lead magnet/form integration
 - [ ] Approved content and signal-source adapters with provenance
