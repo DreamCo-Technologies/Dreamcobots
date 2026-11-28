@@ -17,23 +17,22 @@ BLOCKED_NAMES = {".env", ".env.example", "package-lock.json", "pnpm-lock.yaml", 
 MAX_FILES = 20
 MAX_CHANGED_LINES = 1500
 SECRET_PATTERNS = (
-    re.compile(r"(?i)\\b(?:gh[pousr]_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,})\\b"),
-    re.compile(r"\\bAKIA[0-9A-Z]{16}\\b"),
-    re.compile(r"\\bsk-[A-Za-z0-9_-]{20,}\\b"),
+    re.compile(r"(?i)\b(?:gh[pousr]_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,})\b"),
+    re.compile(r"\bAKIA[0-9A-Z]{16}\b"),
+    re.compile(r"\bsk-[A-Za-z0-9_-]{20,}\b"),
     re.compile(r"-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----"),
-    re.compile(r"""(?i)(?:api[_-]?key|secret|password|access_token)\\s*[:=]\\s*(?:"[^"\\r\\n]*"?|'[^'\\r\\n]*'?|[A-Za-z0-9_./+=-]{20,})"""),
+    re.compile(r"""(?i)(?:api[_-]?key|secret|password|access_token)\s*[:=]\s*(?:"[^"\r\n]*"?|'[^'\r\n]*'?|[A-Za-z0-9_./+=-]{20,})"""),
 )
 
 
 def validate_changes(name_status: str, diff_text: str) -> list[str]:
     errors = []
-    entries = [line.split("\\t") for line in name_status.splitlines() if line.strip()]
+    entries = [line.split("\t") for line in name_status.splitlines() if line.strip()]
     if not entries:
         errors.append("No changed files were found.")
     if len(entries) > MAX_FILES:
         errors.append(f"Change set exceeds the {MAX_FILES}-file limit.")
 
-    # Binary patches cannot be inspected by the text-only credential scanner.
     if "GIT binary patch" in diff_text or re.search(r"(?m)^Binary files .+ differ$", diff_text):
         errors.append("Binary changes are not allowed because their contents cannot be inspected.")
 
@@ -72,8 +71,6 @@ def validate_changes(name_status: str, diff_text: str) -> list[str]:
             continue
         if not in_hunk:
             continue
-        # Once inside a hunk, even lines beginning with +++ or --- are actual
-        # added/deleted content and must count toward limits and secret scanning.
         if line.startswith(("+", "-")):
             changed_lines += 1
         if line.startswith("+") and any(pattern.search(line[1:]) for pattern in SECRET_PATTERNS):
