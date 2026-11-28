@@ -30,6 +30,7 @@ class ReportFormattingTests(unittest.TestCase):
                 "flags": {}, "missing_pieces": {}, "by_engine": {}, "by_division": {},
             },
             "engine_unit_tests_passed": True,
+            "deferred_generated_artifact_tests": list(audit.DEFERRED_GENERATED_ARTIFACT_TESTS),
             "divisions": [],
             "code_folders": [],
             "bot_folders": [],
@@ -40,6 +41,8 @@ class ReportFormattingTests(unittest.TestCase):
         }
         report = audit.render_report(status, [])
         self.assertTrue(all(line == line.rstrip() for line in report.splitlines()))
+        self.assertIn("tests/test_run_prospectus.py", report)
+        self.assertIn("tests/test_file_prospectus.py", report)
 
 
 class BotStateTests(unittest.TestCase):
@@ -127,6 +130,37 @@ class FolderVerdictTests(unittest.TestCase):
     def test_unit_test_runner_reports_failure(self):
         with mock.patch.object(audit, "run", return_value={"code": 1}):
             self.assertFalse(audit.unit_tests_pass(skip=False))
+
+    def test_deferred_generated_artifact_tests_prevent_fully_tested_verdict(self):
+        entry = {
+            "code_files": 4,
+            "tests": {"ran": True, "passed": 8, "failed": 0},
+            "deferred_tests": ["tests/test_run_prospectus.py", "tests/test_file_prospectus.py"],
+        }
+        self.assertEqual(audit.verdict(entry), "partial")
+
+    def test_report_discloses_deferred_generated_artifact_tests(self):
+        status = {
+            "summary": {
+                "by_state": {}, "bots": 0, "duplicates": 0, "placeholders": 0,
+                "flags": {}, "missing_pieces": {}, "by_engine": {}, "by_division": {},
+            },
+            "engine_unit_tests_passed": True,
+            "divisions": [],
+            "code_folders": [{
+                "folder": "tools", "verdict": "partial", "code_files": 4,
+                "deferred_tests": ["tests/test_run_prospectus.py", "tests/test_file_prospectus.py"],
+            }],
+            "bot_folders": [],
+            "links": {
+                "files_scanned": 0, "links_checked": 0, "broken_count": 0,
+                "server_api_refs": [], "broken": [],
+            },
+        }
+        report = audit.render_report(status, [])
+        self.assertIn("deferred tests not run", report)
+        self.assertIn("tests/test_run_prospectus.py", report)
+        self.assertIn("tests/test_file_prospectus.py", report)
 
     def test_verdicts(self):
         v = audit.verdict
