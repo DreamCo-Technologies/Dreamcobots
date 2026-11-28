@@ -22,7 +22,9 @@ class BuddyInternalFirstLearningRouterTests(unittest.TestCase):
 
     def test_huggingface_onet_and_freecodecamp_tracks_are_reachable_internally(self):
         cases = [
-            ("hugging face transformers", {"hugging-face", "huggingface-full"}),
+            # Third-party course catalogs are research inputs, not learner-facing
+            # curriculum. Buddy should answer with DreamCo-authored skill lessons.
+            ("hugging face transformers", {"universal-software-libraries"}),
             ("onet occupations skills", {"onet"}),
             ("freecodecamp javascript algorithms", {"freecodecamp", "freecodecamp-video-catalog"}),
         ]
@@ -35,6 +37,9 @@ class BuddyInternalFirstLearningRouterTests(unittest.TestCase):
                     [row["track_id"] for row in result["course_lessons"]],
                 )
                 self.assertFalse(result["external_model_routing_performed"])
+                if query == "hugging face transformers":
+                    self.assertTrue(all(not row.get("source_url") for row in result["course_lessons"]))
+                    self.assertTrue(all(row["track_id"] == "universal-software-libraries" for row in result["course_lessons"]))
 
     def test_approved_guide_is_retrieved_before_course_matching(self):
         with tempfile.TemporaryDirectory() as tmp:
