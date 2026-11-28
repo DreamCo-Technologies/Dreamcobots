@@ -25,9 +25,9 @@ class BuddyFleetWorkflowSafetyTests(unittest.TestCase):
 
     def test_generated_pr_diff_is_validated_before_pr_creation(self):
         text = WORKFLOW.read_text(encoding="utf-8")
-        generated = text.split("  propose-generated:\\n", 1)[1]
+        generated = text.split("  propose-generated:\n", 1)[1]
         self.assertIn("git add -N --", generated)
-        self.assertIn("tools/validate_generated_artifact_pr.py --base origin/main", generated)
+        self.assertIn("tools/validate_generated_artifact_pr.py --base origin/main --paths", generated)
         self.assertLess(generated.index("validate_generated_artifact_pr.py"), generated.index("peter-evans/create-pull-request@v7"))
 
     def test_pr_validation_is_read_only_and_outputs_are_artifacts(self):
