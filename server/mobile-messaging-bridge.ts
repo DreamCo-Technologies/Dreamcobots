@@ -135,6 +135,8 @@ export class SignedMobileWebhookTransport implements MobileOutboundTransport {
     private readonly webhook: SecureJsonWebhookAdapter,
   ) {}
   async send(input: MobileOutboundPayload) {
+    if (this.provider === "bluebubbles_mac_relay" && input.channel !== "messaging") throw new Error("BlueBubbles transport supports iMessage only; use a separately authorized SMS gateway for carrier SMS.");
+    if (this.provider === "android_companion" && input.channel !== "sms") throw new Error("Android companion transport currently supports SMS only.");
     const result = await this.webhook.send({ schema: "dreamco.mobile_outbound_message.v1", provider: this.provider, ...input }, input.idempotencyKey);
     return { providerMessageId: result.providerMessageId };
   }
