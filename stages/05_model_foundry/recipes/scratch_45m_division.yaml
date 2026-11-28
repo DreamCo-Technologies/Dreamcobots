@@ -13,10 +13,11 @@ packing:
   mix_percent: {study_guides: 60, verified_trajectories: 25, general_replay: 15}
 architecture:
   parameters_target: 45000000
-  hidden_size: 512
+  hidden_size: 608
   layers: 8
   attention_heads: 8
-  intermediate_size: 1376
+  intermediate_size: 1600
+  estimated_parameters: 45148864
 pretrain: {enabled: true, epochs: 2, learning_rate: 0.0006, warmup_ratio: 0.05}
 sft: {enabled: true, epochs: 2, learning_rate: 0.0001, assistant_and_tool_loss_only: true}
 dpo: {enabled: true, epochs: 1, beta: 0.1}
