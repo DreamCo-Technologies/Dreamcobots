@@ -1,0 +1,27 @@
+name: Bootcamp Completion Stages
+on:
+  pull_request:
+    paths:
+      - "stages/02_clean_room_synth/**"
+      - "stages/03_learning_engine/**"
+      - "stages/04_division_matrix/**"
+      - "stages/05_model_foundry/**"
+      - "stages/07_dashboard/**"
+      - "contracts/study_guide.schema.json"
+      - "tests/test_bootcamp_completion_stages.py"
+      - ".github/workflows/bootcamp-completion-stages.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Compile new stages
+        run: python -m py_compile stages/02_clean_room_synth/clean_room.py stages/03_learning_engine/learning_engine.py stages/04_division_matrix/division_matrix.py stages/05_model_foundry/holdout.py stages/07_dashboard/dashboard.py
+      - name: Test completion stages
+        run: python -m unittest discover -s tests -p 'test_bootcamp_completion_stages.py' -v
