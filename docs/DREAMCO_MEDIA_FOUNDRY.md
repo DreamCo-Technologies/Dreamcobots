@@ -42,3 +42,8 @@ Open weights are not a blanket grant of rights to outputs, training data, voices
 ## Model license verification
 
 The candidate registry at `config/buddy-media-model-registry.example.json` is intentionally unapproved. Candidate names are discovery leads, not license conclusions. Before commercial deployment, create a reviewed record for the exact checkpoint and supply a checkpoint file path contained within the evidence root and verify its actual bytes against the checkpoint SHA-256, plus the SPDX license identifier, local license evidence file and hash, model-card HTTPS URL, explicit commercial-use and redistribution permissions, and a non-empty dependency inventory. The gate hashes the checkpoint file itself on every verification; a declared hash without the corresponding file is not sufficient. `buddy.media.model_license_gate.verify_model_record` fails closed unless all required evidence is present and every dependency has a reviewed MIT or Apache-2.0 license record. This gate does not clear training datasets, likenesses, outputs, trademarks, or customer content; those remain separate rights decisions.
+
+
+## Isolated execution contract
+
+The worker-side `execution_contract.py` defines a provider-neutral boundary for future GPU executors. It validates worker capabilities, bounded resource requests, the plan file's location and SHA-256, job-state transitions, and returned artifact paths, MIME types, sizes, and hashes. Symlinks and path traversal are rejected. This module does not provision GPUs or execute workloads. Concrete providers must run in isolated workers and call the canonical rights, consent, and checkpoint-license gates before generation.
