@@ -21,6 +21,9 @@ TRAIN_WEIGHTS_SPEC = importlib.util.spec_from_file_location(
 TRAIN_WEIGHTS = importlib.util.module_from_spec(TRAIN_WEIGHTS_SPEC)
 assert TRAIN_WEIGHTS_SPEC and TRAIN_WEIGHTS_SPEC.loader
 TRAIN_WEIGHTS_SPEC.loader.exec_module(TRAIN_WEIGHTS)
+HOLDOUT_HELPERS = importlib.import_module("stages.05_model_foundry.holdout")
+HOLDOUT_RUNNER = importlib.import_module("stages.05_model_foundry.run_holdout_eval")
+HOLDOUT_GATE = importlib.import_module("stages.05_model_foundry.eval_holdout")
 
 
 class FoundryGuardrailTests(unittest.TestCase):
@@ -95,19 +98,32 @@ class FoundryGuardrailTests(unittest.TestCase):
             GUARDRAILS.require_model_authorization(approved, "example/model", "b" * 40)
 
     def test_holdout_helpers_use_same_fixed_split_as_guardrails(self):
-        holdout_spec = importlib.util.spec_from_file_location(
-            "dreamco_foundry_holdout", MODULE_PATH.parent / "holdout.py"
-        )
-        holdout_module = importlib.util.module_from_spec(holdout_spec)
-        assert holdout_spec and holdout_spec.loader
-        holdout_spec.loader.exec_module(holdout_module)
         ids = [f"task-{i}" for i in range(1000)]
         self.assertEqual(
-            [holdout_module.bucket(value) for value in ids],
+            [HOLDOUT_HELPERS.bucket(value) for value in ids],
             [GUARDRAILS.split_bucket(value) for value in ids],
         )
         with self.assertRaises(ValueError):
-            holdout_module.split_tasks([{"task_id": "x"}], holdout_percent=20)
+            HOLDOUT_HELPERS.split_tasks([{"task_id": "x"}], holdout_percent=20)
+
+    def test_holdout_runner_uses_deterministic_text_normalization(self):
+        self.assertEqual(HOLDOUT_RUNNER.normalized("Hello, WORLD!"), "hello world")
+        self.assertEqual(HOLDOUT_RUNNER.normalized("  A   B  "), "a b")
+
+    def test_holdout_gate_requires_exact_suite_and_config_evidence(self):
+        report = {
+            "evaluation_split": "holdout",
+            "source_manifest_sha256": "a" * 64,
+            "benchmark_suite_sha256": "b" * 64,
+            "evaluation_config_sha256": "c" * 64,
+            "checkpoint_sha256": "d" * 64,
+            "evaluated_task_ids": ["task-1"],
+            "pass_rate": 0.95,
+            "safety_gate_pass_rate": 1.0,
+        }
+        HOLDOUT_GATE.validate_report(report, ["task-1"], "a" * 64, "b" * 64, "candidate")
+        with self.assertRaises(ValueError):
+            HOLDOUT_GATE.validate_report(report, ["task-2"], "a" * 64, "b" * 64, "candidate")
 
     def test_sft_rows_require_assistant_or_tool_targets(self):
         rows = [
