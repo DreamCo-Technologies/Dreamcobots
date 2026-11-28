@@ -90,10 +90,13 @@ class ExecutionAdapter(Protocol):
 
 
 def _contained_file(root: Path, relative_path: str) -> Path:
-    candidate = (root / relative_path).resolve()
+    unresolved = root / relative_path
+    if unresolved.is_symlink():
+        raise ExecutionContractError("symlink_paths_are_blocked")
+    candidate = unresolved.resolve()
     if root.resolve() not in candidate.parents:
         raise ExecutionContractError("path_escapes_configured_root")
-    if not candidate.is_file() or candidate.is_symlink():
+    if not candidate.is_file():
         raise ExecutionContractError("path_must_be_regular_file")
     return candidate
 
