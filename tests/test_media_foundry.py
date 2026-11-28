@@ -71,7 +71,7 @@ class MediaFoundryTests(unittest.TestCase):
             )
 
     def test_no_renderer_never_claims_rendered(self):
-        result = render.execute_render({"status": "planned_not_rendered"})
+        result = render.execute_render({"schema": "dreamco.media.production_packet.v1", "status": "planned_not_rendered", "rights_decisions": [], "model_decisions": [], "commercial_use": False})
         self.assertEqual(result["render_status"], "planned_not_rendered")
         self.assertIsNone(result["renderer_id"])
 
