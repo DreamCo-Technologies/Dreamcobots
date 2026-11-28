@@ -56,6 +56,7 @@ import {
 } from "./governed-leads";
 import { leadEngineReadiness, leadEngineRecordSchema } from "./lead-engine";
 import {
+  approveLeadConversion,
   appendLeadEngineActivity,
   getLeadEngineRecord,
   listLeadEngineActivities,
@@ -1785,6 +1786,24 @@ export async function registerRoutes(
       res.json(record);
     } catch (error) {
       if (error instanceof z.ZodError) return res.status(400).json(zodValidationError(error));
+      throw error;
+    }
+  });
+
+  app.post("/api/buddy/lead-engine/records/:leadId/approve-conversion", leadEngineRateLimit, async (req, res) => {
+    const identity = leadEngineIdentity(req, res);
+    if (!identity) return;
+    if (!leadEngineSameOrigin(req)) return res.status(403).json({ error: "Same-origin request required." });
+    try {
+      res.status(201).json(await approveLeadConversion(identity.ownerId, req.params.leadId));
+    } catch (error) {
+      if (error instanceof z.ZodError) return res.status(400).json(zodValidationError(error));
+      if (error instanceof Error && error.message === "lead_engine_record_not_found") {
+        return res.status(404).json({ error: error.message });
+      }
+      if (error instanceof Error && error.message.startsWith("lead_engine_")) {
+        return res.status(409).json({ error: error.message });
+      }
       throw error;
     }
   });
