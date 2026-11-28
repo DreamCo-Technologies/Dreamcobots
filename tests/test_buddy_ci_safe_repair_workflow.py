@@ -7,13 +7,18 @@ ROOT = Path(__file__).resolve().parents[1]
 class BuddyCISafeRepairWorkflowTests(unittest.TestCase):
     def test_node_setup_and_npm_install_cover_every_fleet_generator_event(self):
         workflow = (ROOT / ".github/workflows/buddy-ci-safe-repair.yml").read_text(encoding="utf-8")
-        condition = "github.event_name == 'push' || (github.event_name == 'workflow_run' && github.event.workflow_run.name == 'Full System Certification')"
         setup = workflow.index("      - name: Install Node for canonical fleet regeneration")
         install = workflow.index("      - name: Install locked Node dependencies for fleet regeneration")
         generator = workflow.index("      - name: Regenerate canonical fleet end-to-end evidence after certification drift")
-        self.assertIn(condition, workflow[setup:install])
-        self.assertIn(condition, workflow[install:generator])
-        self.assertIn("run: npm ci", workflow[install:generator])
+        setup_block = workflow[setup:install]
+        install_block = workflow[install:generator]
+        self.assertIn("github.event_name == 'push'", setup_block)
+        self.assertIn("github.event_name == 'push'", install_block)
+        for workflow_name in ("Full System Certification", "DreamCo Live Dashboard", "Deploy Buddy Website"):
+            event = f"github.event.workflow_run.name == '{workflow_name}'"
+            self.assertIn(event, setup_block)
+            self.assertIn(event, install_block)
+        self.assertIn("run: npm ci", install_block)
 
     def test_generator_events_match_dependency_install_events(self):
         workflow = (ROOT / ".github/workflows/buddy-ci-safe-repair.yml").read_text(encoding="utf-8")
