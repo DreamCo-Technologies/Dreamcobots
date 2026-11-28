@@ -28,7 +28,8 @@ def build_pairs(records: list[dict[str, Any]], max_candidates: int = 8) -> tuple
     seen: set[tuple[str, str]] = set()
     for row in records:
         task_id, candidate_id, response = row.get("task_id"), row.get("candidate_id"), row.get("response")
-        if not all(isinstance(value, str) and value.strip() for value in (task_id, candidate_id, response)):
+        prompt = row.get("prompt")
+        if not all(isinstance(value, str) and value.strip() for value in (task_id, candidate_id, response, prompt)):
             continue
         identity = (task_id, candidate_id)
         if identity in seen:
@@ -57,7 +58,7 @@ def build_pairs(records: list[dict[str, Any]], max_candidates: int = 8) -> tuple
             (row["test_suite_sha256"], row["rubric_sha256"], row["grader_version"])
             for row in candidates
         }
-        if len(suite_versions) != 1:
+        if len(suite_versions) != 1 or len({row["prompt"] for row in candidates}) != 1:
             continue
         chosen = [
             row for row in candidates
@@ -90,6 +91,7 @@ def build_pairs(records: list[dict[str, Any]], max_candidates: int = 8) -> tuple
                     "test_suite_sha256": good["test_suite_sha256"],
                     "rubric_sha256": good["rubric_sha256"],
                     "grader_attestation_sha256": good["grader_attestation_sha256"],
+                    "rejected_grader_attestation_sha256": bad["grader_attestation_sha256"],
                 })
     report = {
         "schema": "dreamco.foundry.self_play_pairs.v1",
