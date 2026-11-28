@@ -92,6 +92,7 @@ class CurriculumFactoryTests(unittest.TestCase):
     def test_missing_item_license_evidence_fails_closed(self):
         record = source_record()
         record["license_record_verified"] = False
+        record["metadata_sha256"] = factory._load_catalog_sync().canonical_hash(record)
         with self.assertRaises(PermissionError):
             factory.build_guide(source_record=record, policy_registry=policy_registry(),
                                 authored_content=guide(), similarity_references=["A sufficiently long unrelated reference."])
