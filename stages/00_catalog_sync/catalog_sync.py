@@ -8,7 +8,7 @@ ROOT=Path(__file__).resolve().parents[2]
 DEFAULT_POLICY=ROOT/"contracts/license_policy.yaml"
 DEFAULT_LEDGER=ROOT/"data/manifests/source_catalog.jsonl"
 def canonical_hash(record:dict[str,Any])->str:
-    payload={k:v for k,v in record.items() if k not in {"content_sha256","observed_at"}}
+    payload={k:v for k,v in record.items() if k not in {"metadata_sha256","content_sha256","observed_at"}}
     return hashlib.sha256(json.dumps(payload,sort_keys=True,separators=(",",":"),ensure_ascii=False).encode()).hexdigest()
 def load_policy(path:Path)->dict[str,Any]:
     import yaml
@@ -62,7 +62,7 @@ def read_ledger(path:Path)->dict[str,str]:
         if line.strip():
             try: row=json.loads(line)
             except json.JSONDecodeError as exc: raise ValueError(f"invalid ledger JSON at line {n}") from exc
-            latest[f"{row.get('source_id')}:{row.get('video_id')}"]=str(row.get("content_sha256") or "")
+            latest[f"{row.get('source_id')}:{row.get('video_id')}"]=str(row.get("metadata_sha256") or row.get("content_sha256") or "")
     return latest
 def sync_sources(sources:list[dict[str,str]],ledger:Path=DEFAULT_LEDGER,policy_path:Path=DEFAULT_POLICY,enumerator=enumerate_source)->dict[str,Any]:
     policy=load_policy(policy_path); ledger.parent.mkdir(parents=True,exist_ok=True); latest=read_ledger(ledger); pending=[]; seen=set(); enumerated_total=0
@@ -79,7 +79,7 @@ def sync_sources(sources:list[dict[str,str]],ledger:Path=DEFAULT_LEDGER,policy_p
             if key in seen: continue
             seen.add(key); digest=canonical_hash(row)
             if latest.get(key)==digest: continue
-            row["content_sha256"]=digest; pending.append(row)
+            row["metadata_sha256"]=digest; pending.append(row)
     with ledger.open("a",encoding="utf-8") as stream:
         for row in pending: stream.write(json.dumps(row,sort_keys=True,ensure_ascii=False)+"\n")
     return {"schema":"dreamco.source_catalog_sync_report.v1","sources_scanned":len(sources),"enumerated_items":enumerated_total,"new_or_updated_records":len(pending),
