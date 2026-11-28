@@ -5,9 +5,18 @@ from pathlib import Path
 from .guardrails import require_model_authorization, sha256_file, verify_signed_manifest
 
 def safetensors_digest(folder: Path) -> str:
-    files=sorted(folder.glob("*.safetensors"),key=lambda item:item.name)
-    if not files: raise ValueError("adapter directory has no .safetensors weights")
-    return hashlib.sha256(b"".join(path.read_bytes() for path in files)).hexdigest()
+    files = sorted(folder.glob("*.safetensors"), key=lambda item: item.name)
+    if not files:
+        raise ValueError("adapter directory has no .safetensors weights")
+    digest = hashlib.sha256()
+    for item in files:
+        digest.update(item.name.encode("utf-8"))
+        digest.update(b"\0")
+        with item.open("rb") as stream:
+            for chunk in iter(lambda: stream.read(1024 * 1024), b""):
+                digest.update(chunk)
+        digest.update(b"\0")
+    return digest.hexdigest()
 
 def tokenizer_digest(folder: Path) -> str:
     names={"tokenizer.json","tokenizer_config.json","special_tokens_map.json",
@@ -19,9 +28,9 @@ def tokenizer_digest(folder: Path) -> str:
     digest=hashlib.sha256()
     for item in files:
         digest.update(item.relative_to(folder).as_posix().encode("utf-8"))
-        digest.update(b"\\0")
+        digest.update(b"\0")
         digest.update(item.read_bytes())
-        digest.update(b"\\0")
+        digest.update(b"\0")
     return digest.hexdigest()
 
 def main():
