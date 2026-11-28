@@ -45,7 +45,24 @@ def validated_preferences(records: list[dict[str, Any]]) -> list[dict[str, str]]
             and row.get("teach_back_verified") is True
         )
         rejected_ok = row.get("rejected_status") == "LAB_FAILED"
-        if chosen_ok and rejected_ok:
+        evidence_fields = (
+            "sandbox_run_id", "rejected_sandbox_run_id", "grader_version",
+            "test_suite_sha256", "rubric_sha256",
+            "grader_attestation_sha256", "rejected_grader_attestation_sha256",
+        )
+        evidence_ok = all(
+            isinstance(row.get(key), str) and row[key].strip()
+            for key in evidence_fields
+        )
+        digest_fields = (
+            "test_suite_sha256", "rubric_sha256",
+            "grader_attestation_sha256", "rejected_grader_attestation_sha256",
+        )
+        evidence_ok = evidence_ok and all(
+            len(row[key]) == 64 and all(char in "0123456789abcdef" for char in row[key])
+            for key in digest_fields
+        )
+        if chosen_ok and rejected_ok and evidence_ok:
             result.append({
                 "prompt": row["prompt"],
                 "chosen": row["chosen"],
