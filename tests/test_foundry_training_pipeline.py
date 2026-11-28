@@ -189,6 +189,10 @@ class FoundryGuardrailTests(unittest.TestCase):
             self.assertFalse(any("holdout benchmark" in item for item in corpus))
 
     def test_packer_emits_signed_bin_and_index_metadata(self):
+        try:
+            import numpy  # noqa: F401
+        except ImportError:
+            self.skipTest("NumPy is installed by the Foundry CPU preflight workflow")
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
             entry = PACKER_MODULE._write_shard(list(range(16)), root, "train", 8)
