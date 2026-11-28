@@ -13,6 +13,23 @@ on:
       - "tests/test_dreamco_resource_registry.py"
       - "tools/build_dreamco_institute_resource_plan.py"
       - "tests/test_dreamco_institute_resource_plan.py"
+      - "tests/test_dreamco_model_foundry_workflow.py"
+      - ".github/workflows/dreamco-model-foundry-kits.yml"
+  push:
+    branches: [main]
+    paths:
+      - "scripts/dreamco_model_foundry.py"
+      - "scripts/dreamco_hardware_detector.py"
+      - "scripts/train_my_agent.py"
+      - "tests/test_dreamco_model_foundry.py"
+      - "config/masterbot-65-registry.json"
+      - "config/authorized-training-datasets/manifest.json"
+      - "config/dreamco_institute_resource_registry.json"
+      - "scripts/validate_dreamco_resource_registry.py"
+      - "tests/test_dreamco_resource_registry.py"
+      - "tools/build_dreamco_institute_resource_plan.py"
+      - "tests/test_dreamco_institute_resource_plan.py"
+      - "tests/test_dreamco_model_foundry_workflow.py"
       - ".github/workflows/dreamco-model-foundry-kits.yml"
   workflow_dispatch:
 permissions:
@@ -45,15 +62,15 @@ jobs:
         run: |
           python scripts/dreamco_model_foundry.py --catalog-only --output "$RUNNER_TEMP/dreamco-commercial-kits"
           python - <<'PY'
-import json, os
-from pathlib import Path
-p = Path(os.environ['RUNNER_TEMP']) / 'dreamco-commercial-kits' / 'CATALOG.json'
-d = json.loads(p.read_text(encoding='utf-8'))
-assert d['kit_count'] == 250, f"expected 250 total SKUs, found {d['kit_count']}"
-assert d['masterbot_kit_count'] == 195, f"expected 195 MasterBot kits, found {d.get('masterbot_kit_count')}"
-assert d['business_profile_kit_count'] == 55, f"expected 55 business-profile kits, found {d.get('business_profile_kit_count')}"
-assert len({item['sku'] for item in d['kits']}) == 250, 'catalog SKUs must be unique'
-assert all(item.get('weights_included') is False for item in d['kits']), 'blueprint catalog must not include pretrained weights'
-assert all(item.get('weights_status') == 'UNTRAINED_BLUEPRINT_READY_FOR_TRAINING' for item in d['kits']), 'every catalog SKU must remain explicitly untrained'
-print('Validated 250 unique untrained SKUs: 195 MasterBot + 55 business-profile kits')
-PY
+          import json, os
+          from pathlib import Path
+          p = Path(os.environ['RUNNER_TEMP']) / 'dreamco-commercial-kits' / 'CATALOG.json'
+          d = json.loads(p.read_text(encoding='utf-8'))
+          assert d['kit_count'] == 250, f"expected 250 total SKUs, found {d['kit_count']}"
+          assert d['masterbot_kit_count'] == 195, f"expected 195 MasterBot kits, found {d.get('masterbot_kit_count')}"
+          assert d['business_profile_kit_count'] == 55, f"expected 55 business-profile kits, found {d.get('business_profile_kit_count')}"
+          assert len({item['sku'] for item in d['kits']}) == 250, 'catalog SKUs must be unique'
+          assert all(item.get('weights_included') is False for item in d['kits']), 'blueprint catalog must not include pretrained weights'
+          assert all(item.get('weights_status') == 'UNTRAINED_BLUEPRINT_READY_FOR_TRAINING' for item in d['kits']), 'every catalog SKU must remain explicitly untrained'
+          print('Validated 250 unique untrained SKUs: 195 MasterBot + 55 business-profile kits')
+          PY
