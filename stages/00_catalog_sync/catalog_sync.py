@@ -15,6 +15,11 @@ def load_policy(path:Path)->dict[str,Any]:
     data=yaml.safe_load(path.read_text(encoding="utf-8")) or {}
     if data.get("schema")!="dreamco.source_license_policy.v1": raise ValueError("unsupported policy schema")
     return data
+def _url_matches_prefix(url:str,prefix:str)->bool:
+    url=url.strip(); prefix=prefix.strip()
+    if prefix.endswith("="): return url.startswith(prefix) and len(url)>len(prefix)
+    base=prefix.rstrip("/")
+    return url==base or url.startswith(base+"/") or url.startswith(base+"?")
 def registered_source(source_id:str,url:str,policy:dict[str,Any])->dict[str,Any]|None:
     from urllib.parse import urlparse
     host=(urlparse(url).hostname or "").lower()
@@ -22,7 +27,7 @@ def registered_source(source_id:str,url:str,policy:dict[str,Any])->dict[str,Any]
         domains=[str(x).lower() for x in row.get("domains",[])]
         domain_match=any(host==d or host.endswith("."+d) for d in domains)
         id_match=source_id in row.get("catalog_source_ids",[])
-        url_match=any(url.startswith(prefix) for prefix in row.get("allowed_url_prefixes",[]))
+        url_match=any(_url_matches_prefix(url,prefix) for prefix in row.get("allowed_url_prefixes",[]))
         if domain_match and id_match and url_match and row.get("catalog_metadata_allowed") is True:
             return row
     return None
