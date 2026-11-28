@@ -46,7 +46,7 @@ export const communicationActionRequestSchema = z.object({
 }).strict();
 
 export type CommunicationTwinSettings = z.infer<typeof communicationTwinSettingsSchema>;
-export type CommunicationActionRequest = z.infer<typeof communicationActionRequestSchema>;
+export type CommunicationActionRequest = z.input<typeof communicationActionRequestSchema>;
 
 const HIGH_IMPACT_PATTERNS = [
   /\b(send|transfer|wire|pay)\b.{0,50}\b(money|payment|funds|cash)\b/i,
