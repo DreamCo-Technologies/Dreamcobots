@@ -110,10 +110,13 @@ class MediaDirectorTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as folder:
             evidence = Path(folder) / "license.txt"
             evidence.write_text("SPDX-License-Identifier: MIT\\n", encoding="utf-8")
+            checkpoint = Path(folder) / "fake-checkpoint.bin"
+            checkpoint.write_bytes(b"test checkpoint")
             import hashlib
             model_record = {
                 "model_id": "test/fake-renderer",
-                "checkpoint_sha256": "b" * 64,
+                "checkpoint_path": "fake-checkpoint.bin",
+                "checkpoint_sha256": hashlib.sha256(checkpoint.read_bytes()).hexdigest(),
                 "license_id": "MIT",
                 "license_evidence_path": "license.txt",
                 "license_evidence_sha256": hashlib.sha256(evidence.read_bytes()).hexdigest(),
