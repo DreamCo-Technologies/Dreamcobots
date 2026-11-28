@@ -35,6 +35,27 @@ def test_fixture_and_similarity():
 def test_end_to_end():
     b=analyze("service.py","def create_item(name): return name",OWNER,"Inventory"); assert b["schema_version"]=="dreamco.reverse_engineering.blueprint.v1"; assert b["policy"]["source_content_persisted"] is False
 
+
+def test_cpp_parser_and_extension_routing():
+    pytest.importorskip("tree_sitter_language_pack")
+    from reverse_engineer.service import analyze
+    from reverse_engineer.intake.router import detect_artifact
+    assert detect_artifact("engine.cpp", "int run() { return 1; }") == "cpp_source"
+    blueprint = analyze("engine.cpp", "class Engine { public: int run(int count) { return count; } };", OWNER, "Engine")
+    assert blueprint["language"] == "cpp"
+    assert any(item["name"] == "run" for item in blueprint["inputs"])
+
+
+def test_cuda_parser_and_extension_routing():
+    pytest.importorskip("tree_sitter_language_pack")
+    from reverse_engineer.service import analyze
+    from reverse_engineer.intake.router import detect_artifact
+    source = "__global__ void vector_add(float* a, float* b, float* c, int n) { int i = blockIdx.x * blockDim.x + threadIdx.x; if (i < n) c[i] = a[i] + b[i]; }"
+    assert detect_artifact("vector_add.cu", source) == "cuda_source"
+    blueprint = analyze("vector_add.cu", source, OWNER, "CUDA Vector Add")
+    assert blueprint["language"] == "cuda"
+    assert any(item["name"] == "vector_add" for item in blueprint["inputs"])
+
 def test_tree_sitter_blueprint_preserves_signature_metadata():
     parsed={"artifact_type":"code","facts":{"language":"typescript","functions":[{"name":"save","kind":"function","parameters":[],"parameter_node_count":3,"returns_annotation_present":True}],"control_flow":[],"dependencies":[]},"warnings":[]}
     blueprint=build_blueprint(parsed,"TypeScript service")
