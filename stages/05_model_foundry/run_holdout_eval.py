@@ -15,9 +15,18 @@ def thresholds_pass(pass_rate: float, safety_rate: float,
     return pass_rate >= minimum_pass_rate and safety_rate >= minimum_safety_rate
 
 def checkpoint_digest(path: Path) -> str:
-    files=sorted(path.glob("*.safetensors"), key=lambda item: item.name)
-    if not files: raise ValueError("checkpoint directory must contain safetensors weights")
-    return hashlib.sha256(b"".join(item.read_bytes() for item in files)).hexdigest()
+    files = sorted(path.glob("*.safetensors"), key=lambda item: item.name)
+    if not files:
+        raise ValueError("checkpoint directory must contain safetensors weights")
+    digest = hashlib.sha256()
+    for item in files:
+        digest.update(item.name.encode("utf-8"))
+        digest.update(b"\0")
+        with item.open("rb") as stream:
+            for chunk in iter(lambda: stream.read(1024 * 1024), b""):
+                digest.update(chunk)
+        digest.update(b"\0")
+    return digest.hexdigest()
 
 def tokenizer_digest(path: Path) -> str:
     names={"tokenizer.json","tokenizer_config.json","special_tokens_map.json",
@@ -29,9 +38,9 @@ def tokenizer_digest(path: Path) -> str:
     digest=hashlib.sha256()
     for item in files:
         digest.update(item.relative_to(path).as_posix().encode("utf-8"))
-        digest.update(b"\\0")
+        digest.update(b"\0")
         digest.update(item.read_bytes())
-        digest.update(b"\\0")
+        digest.update(b"\0")
     return digest.hexdigest()
 
 def main():
