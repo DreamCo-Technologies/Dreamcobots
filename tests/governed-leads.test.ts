@@ -7,7 +7,7 @@ import {
   buildGovernedLeadPlan,
   type LeadCampaignRequest,
 } from "../server/governed-leads";
-import { buildLeadStagePlan, leadEngineReadiness, leadEngineRecordSchema, qualifyLead } from "../server/lead-engine";
+import { assertLeadStageTransition, buildLeadStagePlan, leadEngineReadiness, leadEngineRecordSchema, qualifyLead } from "../server/lead-engine";
 
 const now = new Date("2026-07-22T15:00:00.000Z");
 
@@ -332,6 +332,38 @@ test("validates consent evidence, unique channels, and prohibited targeting", ()
     ...leadRecord,
     sensitiveTargeting: true,
   }));
+});
+
+test("allows only one-stage-at-a-time progression and blocks skipped stages", () => {
+  assert.throws(() => assertLeadStageTransition(undefined, { ...leadRecord, stage: "nurture" }), /initial_stage/);
+  assert.equal(assertLeadStageTransition(undefined, leadRecord).stage, "capture");
+  assert.equal(assertLeadStageTransition(leadRecord, { ...leadRecord, stage: "qualify" }).stage, "qualify");
+  assert.throws(() => assertLeadStageTransition(leadRecord, { ...leadRecord, stage: "nurture" }), /stage_skip/);
+});
+
+test("requires permission for nurture and human-reviewed evidence for conversion", () => {
+  const qualified = { ...leadRecord, stage: "qualify" as const };
+  assert.throws(() => assertLeadStageTransition(
+    qualified,
+    { ...qualified, stage: "nurture", consentBasis: "none", consentEvidenceRef: undefined, consentChannels: [] },
+  ), /nurture_requires_current_permission/);
+
+  const nurtured = { ...qualified, stage: "nurture" as const };
+  assert.throws(() => assertLeadStageTransition(
+    nurtured,
+    { ...nurtured, stage: "convert" },
+  ), /human review evidence/);
+  const converted = assertLeadStageTransition(nurtured, {
+    ...nurtured,
+    stage: "convert",
+    humanReviewEvidenceRef: "review:owner-approval-001",
+  });
+  assert.equal(converted.stage, "convert");
+});
+
+test("prevents CRM stage regression", () => {
+  const qualified = { ...leadRecord, stage: "qualify" as const };
+  assert.throws(() => assertLeadStageTransition(qualified, leadRecord), /stage_regression/);
 });
 
 test("exposes five-stage readiness without enabling external actions", () => {
