@@ -385,7 +385,12 @@ def main():
 
     recipe = load_recipe(args.recipe)
     manifest = verify_signed_manifest(args.manifest, args.signature, args.public_key)
-    stages = ["pretrain", "sft", "dpo"] if args.stage == "all" else [args.stage]
+    stages = (
+        [name for name in ("pretrain", "sft", "dpo") if recipe.get(name, {}).get("enabled", True)]
+        if args.stage == "all" else [args.stage]
+    )
+    if not stages:
+        raise ValueError("recipe has no enabled training stages")
     categories = {
         "pretrain": {"study_guides", "verified_trajectories", "general_replay"},
         "sft": {"verified_trajectories"},
