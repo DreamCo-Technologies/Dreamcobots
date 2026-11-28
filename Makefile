@@ -4,7 +4,7 @@ test-all: test-contracts test-stages compile
 test-contracts:
 	$(PYTHON) -m pytest -q tests/test_pipeline_contracts.py
 test-stages:
-	$(PYTHON) -m pytest -q tests/test_pipeline_stages.py tests/test_pipeline_sandbox.py
+	$(PYTHON) -m pytest -q tests/test_pipeline_stages.py tests/test_pipeline_sandbox.py tests/test_intake_parser_stage.py tests/test_sandbox_verifier_stage.py
 compile:
 	$(PYTHON) -m compileall -q stages reverse_engineer
 build-sandbox:
