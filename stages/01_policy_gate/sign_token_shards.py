@@ -14,17 +14,7 @@ def main():
     a=p.parse_args()
     g.verify_signed_manifest(a.source_manifest,a.source_signature,a.public_key)
     data=json.loads(a.shard_manifest.read_text(encoding="utf-8"))
-    if data.get("schema")!="dreamco.foundry.token_shards.v1": raise ValueError("unsupported token-shard manifest")
-    if data.get("source_manifest_sha256")!=g.sha256_file(a.source_manifest): raise PermissionError("source manifest digest mismatch")
-    if data.get("training_splits")!=["train"] or "holdout" not in data.get("excluded_splits",[]): raise PermissionError("shards must be train-only and exclude holdout")
-    root=a.shard_manifest.parent.resolve()
-    for name in ("train","validation"):
-        entry=data.get(name)
-        if entry is None and name=="validation": continue
-        if not isinstance(entry,dict): raise ValueError(f"missing {name} shard entry")
-        path=(root/str(entry.get("file",""))).resolve()
-        if path==root or root not in path.parents or not path.is_file(): raise ValueError(f"invalid {name} shard path")
-        if g.sha256_file(path)!=entry.get("sha256"): raise ValueError(f"{name} shard hash mismatch")
+    g.validate_shard_payload(data, a.shard_manifest.parent, a.source_manifest)
     try:
         from cryptography.hazmat.primitives.serialization import load_pem_private_key
         from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
