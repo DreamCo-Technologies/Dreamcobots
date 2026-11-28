@@ -76,6 +76,14 @@ jobs:
           fi
       - name: Refresh stale FreeCodeCamp metadata catalog
         run: python stages/08_repo_sentinel/sentinel.py --sync-fcc --report reports/repo-sentinel/sentinel_report.json
+      - name: Validate catalog and policy regression suite
+        run: python -m unittest discover -s tests -p 'test_bootcamp_catalog_policy_stages.py' -v
+      - name: Validate Sentinel and curriculum regression suites
+        run: |
+          python -m unittest discover -s tests -p 'test_repo_sentinel.py' -v
+          python -m unittest discover -s tests -p 'test_curriculum_factory.py' -v
+      - name: Run strict AST audit after catalog refresh
+        run: python stages/08_repo_sentinel/sentinel.py --strict-ast --report reports/repo-sentinel/sentinel_report.json
       - name: Open or update catalog review pull request
         env:
           GH_TOKEN: ${{ github.token }}
