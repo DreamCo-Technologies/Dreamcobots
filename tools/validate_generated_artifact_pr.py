@@ -112,15 +112,20 @@ def validate_changes(name_status: str, diff_text: str) -> list[str]:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--base", default="origin/main")
+    parser.add_argument("--paths", nargs="+", required=True)
     args = parser.parse_args()
     if not re.fullmatch(r"(?:origin/)?[A-Za-z0-9][A-Za-z0-9._/-]{0,127}", args.base) or ".." in args.base:
         parser.error("--base must be a valid bounded Git ref.")
+    for path in args.paths:
+        if (path.startswith("/") or "\\" in path or ".." in path.split("/")
+                or not path.startswith(ALLOWED_PREFIXES)):
+            parser.error("--paths must be repository-relative generated artifact paths.")
     name_status = subprocess.run(
-        ["git", "diff", "--name-status", "--no-renames", args.base],
+        ["git", "diff", "--name-status", "--no-renames", args.base, "--", *args.paths],
         check=True, capture_output=True, text=True,
     ).stdout
     diff_text = subprocess.run(
-        ["git", "diff", "--no-ext-diff", "--unified=0", args.base],
+        ["git", "diff", "--no-ext-diff", "--unified=0", args.base, "--", *args.paths],
         check=True, capture_output=True, text=True,
     ).stdout
     errors = validate_changes(name_status, diff_text)
