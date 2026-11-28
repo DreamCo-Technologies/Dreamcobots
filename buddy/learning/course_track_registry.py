@@ -681,10 +681,11 @@ def resources_for_division(division: str, root: Path = ROOT) -> list[Resource]:
                           "complete_project", "complete_assessment", "run_independent_benchmark",
                           "record_evidence", "trigger_targeted_retraining"))
         for lesson in load_course_lessons(root)
-        if lesson.content_status == "authored"
+        if lesson.track_id == "dreamco-division-specialist"
+        and lesson.content_status == "authored"
         and lesson.learner_visible
         and not lesson.source_url
-        and (not lesson.division_targets or division in lesson.division_targets)
+        and division in lesson.division_targets
     ]
 
 
