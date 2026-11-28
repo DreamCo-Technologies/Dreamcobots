@@ -32,6 +32,13 @@ class CatalogPolicyTests(unittest.TestCase):
             catalog.normalize_item({"id":"x","channel_id":"UC_NOT_THE_OFFICIAL_CHANNEL"},
                 "https://www.youtube.com/@freecodecamp","freecodecamp","UC8butISFwT-Wl7EV0hUK0BQ")
 
+    def test_registered_source_url_prefix_is_enforced(self):
+        source={"source_id":"freecodecamp","source_url":"https://www.youtube.com/watch?v=unlisted",
+                "license_tag":"CC-BY-4.0","license_record_verified":True}
+        result=policy.evaluate_source(source,self.registry,"fact_extraction")
+        self.assertFalse(result["allowed"])
+        self.assertEqual(result["reason"],"BLOCKED_SOURCE_URL_NOT_ALLOWLISTED")
+
     def test_unknown_domain_fails_closed(self):
         source={"source_url":"https://unknown.example/item","license_tag":"MIT","license_record_verified":True}
         result=policy.evaluate_source(source,self.registry)
