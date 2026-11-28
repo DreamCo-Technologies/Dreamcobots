@@ -130,7 +130,7 @@ def validate_execution_request(
     if not isinstance(request.output_dir, str) or not request.output_dir:
         raise ExecutionContractError("invalid_output_directory")
     output_path = Path(request.output_dir)
-    if output_path.is_absolute() or any(part in {"", ".", ".."} for part in output_path.parts):
+    if output_path.is_absolute() or not output_path.parts or any(part in {"", ".", ".."} for part in output_path.parts):
         raise ExecutionContractError("unsafe_output_directory")
     if request.backend != worker.backend:
         raise ExecutionContractError("backend_mismatch")
