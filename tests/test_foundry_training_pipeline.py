@@ -146,6 +146,28 @@ class FoundryGuardrailTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             HOLDOUT_GATE.validate_report(report, ["task-2"], "a" * 64, "b" * 64, "candidate")
 
+    def test_lora_holdout_report_binds_adapter_configuration(self):
+        report = {
+            "schema": "dreamco.foundry.model_holdout_report.v1",
+            "evaluation_split": "holdout",
+            "holdout_access": "evaluation_only",
+            "training_access": False,
+            "source_manifest_sha256": "a" * 64,
+            "benchmark_suite_sha256": "b" * 64,
+            "evaluation_config_sha256": "c" * 64,
+            "tokenizer_sha256": "e" * 64,
+            "checkpoint_sha256": "d" * 64,
+            "base_model_id": "Qwen/Qwen2.5-Coder-1.5B",
+            "evaluated_task_ids": ["task-1"],
+            "evaluated_count": 1,
+            "pass_rate": 0.95,
+            "safety_gate_pass_rate": 1.0,
+        }
+        with self.assertRaises(ValueError):
+            HOLDOUT_GATE.validate_report(report, ["task-1"], "a" * 64, "b" * 64, "candidate")
+        report["adapter_config_sha256"] = "f" * 64
+        HOLDOUT_GATE.validate_report(report, ["task-1"], "a" * 64, "b" * 64, "candidate")
+
     def test_tokenizer_corpus_excludes_holdout_benchmark_category(self):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
