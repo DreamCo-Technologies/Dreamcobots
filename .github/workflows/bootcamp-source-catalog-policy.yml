@@ -1,0 +1,29 @@
+name: Bootcamp Source Catalog and Policy Gates
+on:
+  pull_request:
+    paths:
+      - "stages/00_catalog_sync/**"
+      - "stages/01_policy_gate/**"
+      - "contracts/license_policy.yaml"
+      - "tests/test_bootcamp_catalog_policy_stages.py"
+      - ".github/workflows/bootcamp-source-catalog-policy.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install pinned policy parser
+        run: python -m pip install --disable-pip-version-check "PyYAML==6.0.3"
+      - name: Compile modules
+        run: python -m compileall -q stages
+      - name: Run stage tests
+        run: python -m unittest tests.test_bootcamp_catalog_policy_stages -v
