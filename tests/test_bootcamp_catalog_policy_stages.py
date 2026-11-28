@@ -1,4 +1,5 @@
 import importlib.util
+import hashlib
 import json
 import tempfile
 import unittest
@@ -45,6 +46,19 @@ class CatalogPolicyTests(unittest.TestCase):
         source["source_url"]="https://www.youtube.com/@freecodecamp.evil"
         result=policy.evaluate_source(source,self.registry,"fact_extraction")
         self.assertFalse(result["allowed"])
+
+    def test_license_snapshot_hash_is_verified(self):
+        evidence_path=ROOT/"tests/fixtures/license-evidence.txt"
+        source={"source_id":"freecodecamp","source_url":"https://www.youtube.com/@freecodecamp",
+                "license_tag":"CC-BY-4.0","license_record_verified":True,
+                "license_evidence_url":"https://www.youtube.com/watch?v=example",
+                "license_evidence_path":"tests/fixtures/license-evidence.txt",
+                "license_evidence_sha256":hashlib.sha256(evidence_path.read_bytes()).hexdigest(),
+                "license_review_status":"approved","license_reviewer_id":"test-reviewer",
+                "license_reviewed_at":"2026-11-27T12:00:00+00:00"}
+        self.assertTrue(policy.evaluate_source(source,self.registry,"fact_extraction")["allowed"])
+        source["license_evidence_sha256"]="0"*64
+        self.assertFalse(policy.evaluate_source(source,self.registry,"fact_extraction")["allowed"])
 
     def test_missing_item_license_snapshot_fails_closed(self):
         source={"source_id":"freecodecamp","source_url":"https://www.youtube.com/@freecodecamp",
