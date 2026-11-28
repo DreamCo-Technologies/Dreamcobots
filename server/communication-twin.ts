@@ -104,6 +104,7 @@ export function assessCommunicationAction(
       return allow("allowed", "Disclosed AI call handling is permitted with human takeover available.", false);
     case "synthesize_owner_voice":
       if (request.channel !== "voice") return deny("Voice synthesis is only valid on the voice channel.");
+      if (!contact.canReceiveVoiceCalls) return deny("Voice use is not authorized for this contact.");
       if (!settings.ownerVoiceCloneConsent || !request.ownerVoiceCloneConsent) return deny("The owner's explicit voice-cloning consent is required.");
       if (!settings.aiDisclosureEnabled || !request.aiDisclosureDelivered) return deny("Synthetic voice use requires clear AI disclosure.");
       return allow("allowed", "Owner-authorized synthetic voice may be used only with AI disclosure.", false);
