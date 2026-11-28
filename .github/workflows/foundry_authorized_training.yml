@@ -1,0 +1,170 @@
+name: DreamCo Foundry Authorized Training and Holdout Gate
+
+on:
+  workflow_dispatch:
+    inputs:
+      execute_training:
+        description: Explicitly authorize optimizer steps (false runs preflight only)
+        type: boolean
+        required: true
+        default: false
+      approval_reference:
+        description: Owner approval or change-control reference for weight updates
+        required: false
+        type: string
+      recipe_path:
+        description: Foundry recipe
+        required: true
+        default: stages/05_model_foundry/recipes/scratch_45m_division.yaml
+      baseline_checkpoint:
+        description: Existing baseline checkpoint directory on the runner
+        required: true
+        type: string
+      max_holdout_tokens:
+        description: Maximum generated tokens per holdout task
+        required: true
+        default: "256"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: dreamco-authorized-foundry-training
+  cancel-in-progress: false
+
+jobs:
+  train-evaluate:
+    runs-on: [self-hosted, linux, x64, dreamco-foundry]
+    timeout-minutes: 360
+    env:
+      PYTHONUNBUFFERED: "1"
+      RECIPE: ${{ inputs.recipe_path }}
+      MANIFEST: data/clean_room/authorization_manifest.json
+      ARTIFACT_DIR: artifacts/foundry/buddy-division-45m-v1
+      BASELINE: ${{ inputs.baseline_checkpoint }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: requirements-foundry-training.txt
+      - name: Install training dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements-foundry-training.txt
+      - name: Provision signed authorization evidence
+        env:
+          SOURCE_SIGNATURE_B64: ${{ secrets.DREAMCO_SOURCE_MANIFEST_SIGNATURE_B64 }}
+          SHARD_SIGNATURE_B64: ${{ secrets.DREAMCO_TOKEN_SHARD_SIGNATURE_B64 }}
+          POLICY_PUBLIC_KEY_PEM: ${{ secrets.DREAMCO_POLICY_PUBLIC_KEY_PEM }}
+        run: |
+          test -n "$SOURCE_SIGNATURE_B64"
+          test -n "$SHARD_SIGNATURE_B64"
+          test -n "$POLICY_PUBLIC_KEY_PEM"
+          mkdir -p "$RUNNER_TEMP/dreamco-foundry"
+          printf '%s' "$SOURCE_SIGNATURE_B64" | base64 --decode > "$RUNNER_TEMP/dreamco-foundry/source.sig"
+          printf '%s' "$SHARD_SIGNATURE_B64" | base64 --decode > "$RUNNER_TEMP/dreamco-foundry/shards.sig"
+          printf '%s' "$POLICY_PUBLIC_KEY_PEM" > "$RUNNER_TEMP/dreamco-foundry/policy-public.pem"
+          test -s "$RUNNER_TEMP/dreamco-foundry/source.sig"
+          test -s "$RUNNER_TEMP/dreamco-foundry/shards.sig"
+          test -s "$RUNNER_TEMP/dreamco-foundry/policy-public.pem"
+      - name: Resolve recipe paths and verify local inputs
+        id: paths
+        run: |
+          test -f "$RECIPE"
+          test -d "$BASELINE"
+          ARTIFACT_DIR=$(python -c 'import yaml,os; print(yaml.safe_load(open(os.environ["RECIPE"]))["artifact_dir"])')
+          TOKENIZER="$ARTIFACT_DIR/tokenizer"
+          SHARDS="$ARTIFACT_DIR/token_shards"
+          test -d "$TOKENIZER"
+          test -d "$SHARDS"
+          test -f "$SHARDS/manifest.json"
+          echo "artifact_dir=$ARTIFACT_DIR" >> "$GITHUB_OUTPUT"
+          echo "tokenizer=$TOKENIZER" >> "$GITHUB_OUTPUT"
+          echo "shards=$SHARDS" >> "$GITHUB_OUTPUT"
+      - name: Verify signed source and shard manifests
+        env:
+          SIGNATURE: ${{ runner.temp }}/dreamco-foundry/source.sig
+          SHARD_SIGNATURE: ${{ runner.temp }}/dreamco-foundry/shards.sig
+          PUBLIC_KEY: ${{ runner.temp }}/dreamco-foundry/policy-public.pem
+        run: |
+          python - <<'PY'
+          import os
+          from pathlib import Path
+          from stages.05_model_foundry.guardrails import verify_signed_manifest, verify_signed_shard_manifest
+          manifest = Path(os.environ["MANIFEST"])
+          signature = Path(os.environ["SIGNATURE"])
+          public_key = Path(os.environ["PUBLIC_KEY"])
+          shard_manifest = Path(os.environ["SHARDS"]) / "manifest.json"
+          shard_signature = Path(os.environ["SHARD_SIGNATURE"])
+          verify_signed_manifest(manifest, signature, public_key)
+          verify_signed_shard_manifest(shard_manifest, shard_signature, manifest, signature, public_key)
+          print("Signed source and token-shard manifests verified.")
+          PY
+      - name: Run training preflight (no weight updates)
+        env:
+          SIGNATURE: ${{ runner.temp }}/dreamco-foundry/source.sig
+          PUBLIC_KEY: ${{ runner.temp }}/dreamco-foundry/policy-public.pem
+          SHARD_SIGNATURE: ${{ runner.temp }}/dreamco-foundry/shards.sig
+          TOKENIZER: ${{ steps.paths.outputs.tokenizer }}
+          SHARDS: ${{ steps.paths.outputs.shards }}
+        run: |
+          python stages/05_model_foundry/train_weights.py \
+            --stage all --manifest "$MANIFEST" --signature "$SIGNATURE" --public-key "$PUBLIC_KEY" \
+            --recipe "$RECIPE" --tokenizer "$TOKENIZER" --token-shards "$SHARDS" \
+            --shard-manifest "$SHARDS/manifest.json" --shard-signature "$SHARD_SIGNATURE"
+      - name: Enforce explicit training approval
+        if: ${{ inputs.execute_training }}
+        env:
+          APPROVAL_REFERENCE: ${{ inputs.approval_reference }}
+        run: |
+          test -n "$APPROVAL_REFERENCE" || { echo "approval_reference is required"; exit 1; }
+      - name: Execute PT/CPT, SFT and DPO
+        if: ${{ inputs.execute_training }}
+        env:
+          SIGNATURE: ${{ runner.temp }}/dreamco-foundry/source.sig
+          PUBLIC_KEY: ${{ runner.temp }}/dreamco-foundry/policy-public.pem
+          SHARD_SIGNATURE: ${{ runner.temp }}/dreamco-foundry/shards.sig
+          TOKENIZER: ${{ steps.paths.outputs.tokenizer }}
+          SHARDS: ${{ steps.paths.outputs.shards }}
+          APPROVAL_REFERENCE: ${{ inputs.approval_reference }}
+        run: |
+          python stages/05_model_foundry/train_weights.py \
+            --stage all --manifest "$MANIFEST" --signature "$SIGNATURE" --public-key "$PUBLIC_KEY" \
+            --recipe "$RECIPE" --tokenizer "$TOKENIZER" --token-shards "$SHARDS" \
+            --shard-manifest "$SHARDS/manifest.json" --shard-signature "$SHARD_SIGNATURE" \
+            --execute --authorize-weight-updates --authorization-reference "$APPROVAL_REFERENCE"
+      - name: Evaluate baseline and candidate on isolated holdout
+        if: ${{ inputs.execute_training }}
+        env:
+          SIGNATURE: ${{ runner.temp }}/dreamco-foundry/source.sig
+          PUBLIC_KEY: ${{ runner.temp }}/dreamco-foundry/policy-public.pem
+          TOKENIZER: ${{ steps.paths.outputs.tokenizer }}
+          ARTIFACT_DIR: ${{ steps.paths.outputs.artifact_dir }}
+          MAX_TOKENS: ${{ inputs.max_holdout_tokens }}
+        run: |
+          python stages/05_model_foundry/run_holdout_eval.py \
+            --manifest "$MANIFEST" --signature "$SIGNATURE" --public-key "$PUBLIC_KEY" \
+            --checkpoint "$BASELINE" --tokenizer "$TOKENIZER" \
+            --max-new-tokens "$MAX_TOKENS" --output "$RUNNER_TEMP/baseline-holdout.json"
+          python stages/05_model_foundry/run_holdout_eval.py \
+            --manifest "$MANIFEST" --signature "$SIGNATURE" --public-key "$PUBLIC_KEY" \
+            --checkpoint "$ARTIFACT_DIR/checkpoints/dpo" --tokenizer "$TOKENIZER" \
+            --max-new-tokens "$MAX_TOKENS" --output "$RUNNER_TEMP/candidate-holdout.json"
+          python stages/05_model_foundry/eval_holdout.py \
+            --manifest "$MANIFEST" --signature "$SIGNATURE" --public-key "$PUBLIC_KEY" \
+            --baseline "$RUNNER_TEMP/baseline-holdout.json" \
+            --candidate "$RUNNER_TEMP/candidate-holdout.json" \
+            --output "$ARTIFACT_DIR/reports/holdout-promotion.json"
+      - name: Upload checkpoint and holdout evidence
+        if: ${{ inputs.execute_training && always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: dreamco-foundry-training-${{ github.run_id }}
+          path: |
+            artifacts/foundry/
+            ${{ runner.temp }}/baseline-holdout.json
+            ${{ runner.temp }}/candidate-holdout.json
+          if-no-files-found: warn
+          retention-days: 30
