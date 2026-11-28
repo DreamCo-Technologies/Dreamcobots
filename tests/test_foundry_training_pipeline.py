@@ -237,7 +237,7 @@ class FoundryGuardrailTests(unittest.TestCase):
         spec = importlib.util.spec_from_file_location("dreamco_self_play_pairs_mismatch", path)
         module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(module)
-        common = {"task_id":"t","grader_version":"v1","rubric_sha256":"b"*64,
+        common = {"task_id":"task-1","grader_version":"v1","rubric_sha256":"b"*64,
                   "grader_attestation_sha256":"c"*64}
         rows = [
             {**common,"candidate_id":"a","response":"good","sandbox_status":"LAB_PASSED",
@@ -247,6 +247,23 @@ class FoundryGuardrailTests(unittest.TestCase):
         ]
         pairs, _ = module.build_pairs(rows)
         self.assertEqual(pairs, [])
+
+    def test_self_play_pairs_exclude_holdout_tasks(self):
+        path = ROOT / "stages" / "05_model_foundry" / "generate_self_play_pairs.py"
+        spec = importlib.util.spec_from_file_location("dreamco_self_play_holdout", path)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        common = {"task_id":"t","grader_version":"v1","test_suite_sha256":"a"*64,
+                  "rubric_sha256":"b"*64,"grader_attestation_sha256":"c"*64,"prompt":"p"}
+        rows = [
+            {**common,"candidate_id":"a","response":"good","sandbox_status":"LAB_PASSED",
+             "teach_back_status":"TEACH_BACK_VERIFIED","sandbox_run_id":"1"},
+            {**common,"candidate_id":"b","response":"bad","sandbox_status":"LAB_FAILED",
+             "teach_back_status":"NOT_VERIFIED","sandbox_run_id":"2"},
+        ]
+        pairs, report = module.build_pairs(rows)
+        self.assertEqual(pairs, [])
+        self.assertEqual(report["excluded_non_train_records"], 2)
 
     def test_shared_cache_requires_explicit_public_redistribution(self):
         path = ROOT / "stages" / "05_model_foundry" / "cache_policy.py"
@@ -268,7 +285,7 @@ class FoundryGuardrailTests(unittest.TestCase):
         spec = importlib.util.spec_from_file_location("dreamco_self_play_prompt_check", path)
         module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(module)
-        common = {"task_id":"t","grader_version":"v1","test_suite_sha256":"a"*64,
+        common = {"task_id":"task-1","grader_version":"v1","test_suite_sha256":"a"*64,
                   "rubric_sha256":"b"*64,"grader_attestation_sha256":"c"*64}
         rows = [
             {**common,"candidate_id":"a","prompt":"prompt one","response":"good",
