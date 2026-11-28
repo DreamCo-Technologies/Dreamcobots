@@ -79,7 +79,7 @@ def propose_learning_jobs(failures: Iterable[EvaluationFailure]) -> list[Learnin
                     "Diagnose with a small reproducible experiment and an unchanged held-out evaluation set.",
                     "Prepare a candidate distillation or training run only for a user-owned student and explicitly licensed/consented data and teacher outputs.",
                     "Do not start training until the separate approval, compute, budget, and data-permission gates pass.",
-                    "Compare repeated evaluations, holdout, safety, regression, latency, and cost before proposing promotion.",
+                    "Compare three repeated evaluations, holdout, safety, regression, latency, and cost before proposing promotion.",
                 ]
             elif mode.startswith("tool"):
                 action = LearningAction.TOOL
