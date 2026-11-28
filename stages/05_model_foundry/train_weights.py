@@ -252,7 +252,7 @@ def _training_args(output: Path, stage_cfg: dict[str, Any], recipe: dict[str, An
 
 def execute_stage(stage: str, recipe: dict[str, Any], manifest: dict[str, Any],
                   tokenizer_path: Path, shard_dir: Path | None, checkpoint: Path | None,
-                  output: Path) -> Path:
+                  output: Path, shard_payload: dict[str, Any] | None = None) -> Path:
     torch, _, AutoModelForCausalLM, AutoTokenizer, _, _, Trainer, _ = _load_runtime()
     tokenizer = AutoTokenizer.from_pretrained(tokenizer_path, trust_remote_code=False)
     model = _load_model(recipe, tokenizer, checkpoint, manifest)
@@ -274,11 +274,14 @@ def execute_stage(stage: str, recipe: dict[str, Any], manifest: dict[str, Any],
     if stage == "pretrain":
         if shard_dir is None:
             raise ValueError("pretrain requires --token-shards pointing to pack_tokens.py output")
-        shard_paths = sorted(shard_dir.glob("train-*.bin"))
-        if not shard_paths:
-            raise ValueError("no train-*.bin shards found")
+        if not shard_payload or not shard_payload.get("train", {}).get("_resolved_path"):
+            raise PermissionError("pretraining requires a verified signed train-shard entry")
+        shard_paths = [Path(shard_payload["train"]["_resolved_path"])]
+        if not shard_paths[0].is_file():
+            raise FileNotFoundError("verified train shard is missing")
         dataset = _PackedDataset(shard_paths, int(recipe["packing"]["sequence_length"]))
-        validation_paths = sorted(shard_dir.glob("validation-*.bin"))
+        validation_entry = (shard_payload or {}).get("validation")
+        validation_paths = [Path(validation_entry["_resolved_path"])] if validation_entry and validation_entry.get("_resolved_path") else []
         validation_dataset = (
             _PackedDataset(validation_paths, int(recipe["packing"]["sequence_length"]))
             if validation_paths else None
@@ -376,6 +379,7 @@ def main():
     }
     if any(counts[stage] == 0 for stage in stages):
         raise ValueError(f"no signed, authorized train records for requested stages: {counts}")
+    shard_payload = None
     if "pretrain" in stages:
         if not args.shard_manifest or not args.shard_signature or not args.token_shards:
             raise PermissionError("pretraining requires a policy-signed shard manifest and --token-shards directory")
@@ -415,7 +419,7 @@ def main():
             target = args.output / stage
         else:
             target = args.output or (Path(recipe["artifact_dir"]) / "checkpoints" / stage)
-        active = execute_stage(stage, recipe, manifest, args.tokenizer, args.token_shards, active, target)
+        active = execute_stage(stage, recipe, manifest, args.tokenizer, args.token_shards, active, target, shard_payload=shard_payload)
     print(json.dumps({"stages_completed": stages, "final_checkpoint": str(active)}, sort_keys=True))
 
 
