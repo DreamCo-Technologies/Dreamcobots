@@ -334,7 +334,7 @@ def execute_stage(stage: str, recipe: dict[str, Any], manifest: dict[str, Any],
         "stage": stage,
         "checkpoint_dir": str(output),
         "checkpoint_sha256": hashlib.sha256(
-            b"".join(sorted(path.read_bytes() for path in output.glob("*.safetensors")))
+            b"".join(path.read_bytes() for path in sorted(output.glob("*.safetensors"), key=lambda item: item.name))
         ).hexdigest() if list(output.glob("*.safetensors")) else None,
         "source_manifest_sha256": hashlib.sha256(
             json.dumps(manifest, sort_keys=True, default=str).encode()
