@@ -35,6 +35,10 @@ def validate_report(report: dict, expected_ids: list[str], manifest_sha256: str,
     tokenizer_sha = report.get("tokenizer_sha256")
     if not isinstance(tokenizer_sha, str) or not re.fullmatch(r"[0-9a-f]{64}", tokenizer_sha):
         raise ValueError(f"{label}: tokenizer_sha256 is required")
+    if report.get("base_model_id") is not None:
+        adapter_sha = report.get("adapter_config_sha256")
+        if not isinstance(adapter_sha, str) or not re.fullmatch(r"[0-9a-f]{64}", adapter_sha):
+            raise ValueError(f"{label}: adapter_config_sha256 is required for LoRA checkpoints")
     checkpoint_sha = report.get("checkpoint_sha256")
     if not isinstance(checkpoint_sha, str) or not re.fullmatch(r"[0-9a-f]{64}", checkpoint_sha):
         raise ValueError(f"{label}: checkpoint_sha256 is required")
@@ -105,6 +109,7 @@ def main():
         "candidate_base_model_id": candidate.get("base_model_id"),
         "candidate_base_model_revision": candidate.get("base_model_revision"),
         "candidate_base_model_license_evidence_id": candidate.get("base_model_license_evidence_id"),
+        "candidate_adapter_config_sha256": candidate.get("adapter_config_sha256"),
         "evaluation_split": "holdout",
         "holdout_access": "evaluation_only",
         "training_access": False,
