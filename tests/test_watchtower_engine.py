@@ -4,9 +4,14 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from stages.09_watchtower.adapters import validate_public_https_url
-from stages.09_watchtower.cli import _atomic_write
-from stages.09_watchtower.engine import Observation, WatchRule, evaluate
+import importlib
+
+_adapters = importlib.import_module("stages.09_watchtower.adapters")
+_cli = importlib.import_module("stages.09_watchtower.cli")
+_engine = importlib.import_module("stages.09_watchtower.engine")
+validate_public_https_url = _adapters.validate_public_https_url
+_atomic_write = _cli._atomic_write
+Observation, WatchRule, evaluate = _engine.Observation, _engine.WatchRule, _engine.evaluate
 
 
 class WatchtowerEngineTests(unittest.TestCase):
