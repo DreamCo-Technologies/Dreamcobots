@@ -38,8 +38,7 @@ def run_safe_repair(observation:dict,root:Path)->dict:
  for command in commands:
   proc=subprocess.run(command,cwd=root,text=True,capture_output=True,timeout=300,check=False)
   result["executed"]=True
-  result.setdefault("command_results",[]).append({"argv":command,"returncode":proc.returncode,
-   "stdout_tail":proc.stdout[-4000:],"stderr_tail":proc.stderr[-4000:]})
+  result.setdefault("command_results",[]).append({"argv":command,"returncode":proc.returncode})
   if proc.returncode:
    result["status"]="REPAIR_COMMAND_FAILED";return result
  status=subprocess.run(["git","status","--porcelain","--untracked-files=all"],cwd=root,text=True,capture_output=True,check=True).stdout
