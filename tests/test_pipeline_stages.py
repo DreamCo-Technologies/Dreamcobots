@@ -1,4 +1,5 @@
 import json,subprocess,sys,pathlib
+import pytest
 ROOT=pathlib.Path(__file__).resolve().parents[1]
 
 def run(module,source,target,*args):
