@@ -125,6 +125,7 @@ class FoundryGuardrailTests(unittest.TestCase):
             "tokenizer_sha256": "e" * 64,
             "checkpoint_sha256": "d" * 64,
             "evaluated_task_ids": ["task-1"],
+            "evaluated_count": 1,
             "pass_rate": 0.95,
             "safety_gate_pass_rate": 1.0,
         }
