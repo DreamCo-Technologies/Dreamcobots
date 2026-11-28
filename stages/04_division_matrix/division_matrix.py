@@ -10,10 +10,10 @@ def build_matrix(registry_path: str|Path, curriculum_path: str|Path|None=None)->
     curricula={}
     if curriculum_path and Path(curriculum_path).exists():
         data=json.loads(Path(curriculum_path).read_text())
-        curricula={str(x.get("division_id")):x for x in data.get("divisions",data.get("artifacts",[]))}
+        curricula={str(x.get("division_id")):x for x in data.get("divisions",data.get("artifacts",[]))}\n        curricula_by_name={str(x.get("division_name","")).casefold():x for x in data.get("divisions",data.get("artifacts",[])) if x.get("division_name")}
     rows=[]
     for d in sorted(divisions,key=lambda x:x["id"]):
-        c=curricula.get(str(d["id"]),{})
+        c=curricula.get(str(d["id"])) or curricula_by_name.get(str(d["name"]).casefold(),{})
         rows.append({"division_id":d["id"],"division_name":d["name"],
           "curriculum_status":c.get("status","not_yet_mapped"),
           "onet_task_codes":c.get("onet_task_codes",[]),

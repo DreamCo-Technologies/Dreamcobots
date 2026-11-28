@@ -22,8 +22,8 @@ class TestCompletionStages(unittest.TestCase):
    self.assertEqual(e.record_teach_back("l","g",.9,{"reviewer":"r","unseen_question_id":"q"}),"TEACH_BACK_VERIFIED")
    e.close()
  def test_division_matrix_uses_canonical_65_and_never_fabricates_onet(self):
-  out=matrix.build_matrix(ROOT/"config/masterbot-65-registry.json")
-  self.assertEqual(out["division_count"],65); self.assertEqual(out["verified_onet_mappings"],0)
+  out=matrix.build_matrix(ROOT/"config/masterbot-65-registry.json",ROOT/"config/dreamco-division-curricula-manifest.json")
+  self.assertEqual(out["division_count"],65); self.assertGreater(out["mapped_curricula"],0); self.assertEqual(out["verified_onet_mappings"],0)
   self.assertTrue(all(x["onet_mapping_status"]=="unverified_not_mapped" for x in out["divisions"]))
  def test_holdout_is_deterministic_and_disjoint(self):
   tasks=[{"task_id":f"t{i}","prompt":str(i)} for i in range(100)]

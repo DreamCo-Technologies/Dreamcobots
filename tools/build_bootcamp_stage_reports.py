@@ -11,7 +11,7 @@ def main():
  matrix=load("division_matrix","stages/04_division_matrix/division_matrix.py")
  dashboard=load("dashboard","stages/07_dashboard/dashboard.py")
  registry=ROOT/"config/masterbot-65-registry.json"
- matrix_data=matrix.build_matrix(registry)
+ matrix_data=matrix.build_matrix(registry,ROOT/"config/dreamco-division-curricula-manifest.json")
  (out/"division-matrix.json").write_text(json.dumps(matrix_data,indent=2)+"\n")
  db=out/"learner-progress.sqlite3"
  con=sqlite3.connect(db); con.execute("""CREATE TABLE IF NOT EXISTS learner_progress(learner_id TEXT,guide_id TEXT,state TEXT,lab_score REAL,teach_back_score REAL,evidence_json TEXT,updated_at INTEGER,PRIMARY KEY(learner_id,guide_id))"""); con.commit(); con.close()
