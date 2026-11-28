@@ -12,6 +12,7 @@ tokenizer:
   mean_initialize_new_embeddings: true
 packing:
   sequence_length: 2048
+  shard_size_tokens: 5000000
   dtype: uint32
   mix_percent: {study_guides: 60, verified_trajectories: 25, general_replay: 15}
 architecture: {adapter: lora, rank: 16, alpha: 32, dropout: 0.05, use_dora: true}
