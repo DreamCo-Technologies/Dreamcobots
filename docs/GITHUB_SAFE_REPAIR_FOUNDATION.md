@@ -46,3 +46,24 @@ Do not make a new required status check mandatory until it has completed success
 ## Cost and credentials
 
 No model provider, model endpoint, API key, paid runner, or external repair service is required. The workflows use GitHub-hosted runners and GitHub's built-in token with job-scoped permissions.
+
+## Stage 06 keyless repair planning
+
+Stage 06 (`stages/06_repo_repair/__main__.py`) consumes a `pytest-json-report` file or a trusted mainline failure observation. It records only bounded test IDs and summary counts; it does not copy traceback text or raw logs into its result.
+
+- Pull-request runs are **dry-run only**. The PR Quality Gate publishes a repair plan alongside the sanitized CI report; it never edits the contributor's branch.
+- Only five known generated-index test families can map to fixed, repository-owned builder commands. Unknown, ambiguous, security, permissions, billing, dependency, source-code, and policy failures return `NO_ALLOWLISTED_AUTOMATIC_REPAIR` for human triage.
+- The path allowlist is hard-coded to generated artifacts under `artifacts/`, `command-center/data/`, `config/bots/`, `config/generated/`, `reports/`, and `website/data/`. A caller cannot expand it to source, tests, workflows, contracts, or secrets.
+- `--apply` is blocked in pull-request and non-main GitHub contexts. It requires a clean trusted `main` checkout and runs fixed commands in a detached temporary Git worktree. The resulting patch is an unmerged review artifact; it does not commit, push, open, approve, or merge a PR.
+- Attempt history is capped at three per failure fingerprint. No model is called and no API key is needed.
+
+Run the report and planner locally without applying changes:
+
+```bash
+make test-report
+python stages/06_repo_repair/__main__.py --report reports/pytest-report.json
+```
+
+Local execution requires an explicit `--apply --allow-local-apply` on a clean `main` checkout. The post-merge `Buddy CI Safe Generated-Artifact Repair` workflow records the Stage 06 plan and continues to use the existing deterministic generated-artifact repair lane. Its repair branch still requires a human to open/review the PR because repository policy blocks automatic PR creation by `GITHUB_TOKEN`.
+
+The canonical dependency file for this pipeline is `requirements-reverse-engineer.txt`; this repository does not use a root `requirements.txt`.
