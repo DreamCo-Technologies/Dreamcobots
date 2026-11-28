@@ -1,0 +1,357 @@
+{
+  "schema": "dreamco.universal_capability_taxonomy.v1",
+  "version": "1.0.0",
+  "owner": "DreamCo",
+  "ownership_class": "dreamco_owned",
+  "purpose": "An extensible DreamCo taxonomy for human, AI-model, robotic, and combined capabilities. Categories are authored and governed by DreamCo; this registry is not an exhaustive claim that every possible capability has already been cataloged.",
+  "actor_modes": [
+    {
+      "id": "human_only",
+      "label": "Human-led capability",
+      "actors": [
+        "human"
+      ]
+    },
+    {
+      "id": "ai_model_only",
+      "label": "AI-model capability",
+      "actors": [
+        "ai_model"
+      ]
+    },
+    {
+      "id": "robot_only",
+      "label": "Robotic capability",
+      "actors": [
+        "robot"
+      ]
+    },
+    {
+      "id": "human_ai",
+      "label": "Human and AI collaboration",
+      "actors": [
+        "human",
+        "ai_model"
+      ]
+    },
+    {
+      "id": "human_robot",
+      "label": "Human and robot collaboration",
+      "actors": [
+        "human",
+        "robot"
+      ]
+    },
+    {
+      "id": "ai_robot",
+      "label": "AI and robot collaboration",
+      "actors": [
+        "ai_model",
+        "robot"
+      ]
+    },
+    {
+      "id": "human_ai_robot",
+      "label": "Human, AI, and robot collaboration",
+      "actors": [
+        "human",
+        "ai_model",
+        "robot"
+      ]
+    }
+  ],
+  "capability_domains": [
+    {
+      "id": "discovery_and_research",
+      "label": "Discovery and research"
+    },
+    {
+      "id": "information_and_memory",
+      "label": "Information, context, and memory"
+    },
+    {
+      "id": "reasoning_and_decision",
+      "label": "Reasoning and decision-making"
+    },
+    {
+      "id": "planning_and_orchestration",
+      "label": "Planning and orchestration"
+    },
+    {
+      "id": "communication_and_collaboration",
+      "label": "Communication and collaboration"
+    },
+    {
+      "id": "creation_and_design",
+      "label": "Creation and design"
+    },
+    {
+      "id": "software_and_systems",
+      "label": "Software and systems"
+    },
+    {
+      "id": "physical_action_and_manipulation",
+      "label": "Physical action and manipulation"
+    },
+    {
+      "id": "operations_and_maintenance",
+      "label": "Operations and maintenance"
+    },
+    {
+      "id": "evaluation_and_quality",
+      "label": "Evaluation and quality"
+    },
+    {
+      "id": "safety_and_governance",
+      "label": "Safety and governance"
+    },
+    {
+      "id": "learning_and_adaptation",
+      "label": "Learning and adaptation"
+    }
+  ],
+  "capability_operations": [
+    "discover",
+    "intake",
+    "research",
+    "design",
+    "build",
+    "simulate",
+    "evaluate",
+    "integrate",
+    "operate",
+    "improve"
+  ],
+  "curriculum_modules": [
+    {
+      "id": "M01",
+      "title": "Domain understanding and task intake",
+      "category": "task_understanding",
+      "capability_domains": [
+        "discovery_and_research",
+        "information_and_memory",
+        "reasoning_and_decision"
+      ],
+      "actor_modes": [
+        "human_only",
+        "ai_model_only",
+        "human_ai"
+      ]
+    },
+    {
+      "id": "M02",
+      "title": "Planning, decomposition, and workflow design",
+      "category": "planning_and_orchestration",
+      "capability_domains": [
+        "reasoning_and_decision",
+        "planning_and_orchestration"
+      ],
+      "actor_modes": [
+        "human_only",
+        "ai_model_only",
+        "human_ai",
+        "human_ai_robot"
+      ]
+    },
+    {
+      "id": "M03",
+      "title": "Tools, systems, and sandbox execution",
+      "category": "execution_and_integration",
+      "capability_domains": [
+        "software_and_systems",
+        "physical_action_and_manipulation",
+        "operations_and_maintenance"
+      ],
+      "actor_modes": [
+        "ai_model_only",
+        "robot_only",
+        "human_ai",
+        "ai_robot"
+      ]
+    },
+    {
+      "id": "M04",
+      "title": "Human, AI, and robotic collaboration",
+      "category": "communication_and_collaboration",
+      "capability_domains": [
+        "communication_and_collaboration",
+        "planning_and_orchestration"
+      ],
+      "actor_modes": [
+        "human_ai",
+        "human_robot",
+        "ai_robot",
+        "human_ai_robot"
+      ]
+    },
+    {
+      "id": "M05",
+      "title": "Safety, governance, and quality control",
+      "category": "safety_and_quality",
+      "capability_domains": [
+        "safety_and_governance",
+        "evaluation_and_quality"
+      ],
+      "actor_modes": [
+        "human_only",
+        "ai_model_only",
+        "robot_only",
+        "human_ai_robot"
+      ]
+    },
+    {
+      "id": "M06",
+      "title": "Benchmarking, learning, and targeted improvement",
+      "category": "evaluation_and_adaptation",
+      "capability_domains": [
+        "evaluation_and_quality",
+        "learning_and_adaptation"
+      ],
+      "actor_modes": [
+        "human_only",
+        "ai_model_only",
+        "human_ai",
+        "human_ai_robot"
+      ]
+    }
+  ],
+  "exercise_types": [
+    {
+      "id": "E01",
+      "title": "Task decomposition exercise",
+      "category": "task_understanding",
+      "module_id": "M01",
+      "actor_modes": [
+        "human_only",
+        "ai_model_only",
+        "human_ai"
+      ]
+    },
+    {
+      "id": "E02",
+      "title": "Workflow and tool-selection exercise",
+      "category": "planning_and_orchestration",
+      "module_id": "M02",
+      "actor_modes": [
+        "human_only",
+        "ai_model_only",
+        "human_ai"
+      ]
+    },
+    {
+      "id": "E03",
+      "title": "Sandbox execution exercise",
+      "category": "execution_and_integration",
+      "module_id": "M03",
+      "actor_modes": [
+        "ai_model_only",
+        "robot_only",
+        "human_ai",
+        "ai_robot"
+      ]
+    },
+    {
+      "id": "E04",
+      "title": "Collaborative handoff exercise",
+      "category": "communication_and_collaboration",
+      "module_id": "M04",
+      "actor_modes": [
+        "human_ai",
+        "human_robot",
+        "ai_robot",
+        "human_ai_robot"
+      ]
+    },
+    {
+      "id": "E05",
+      "title": "Failure diagnosis and retraining exercise",
+      "category": "evaluation_and_adaptation",
+      "module_id": "M06",
+      "actor_modes": [
+        "human_only",
+        "ai_model_only",
+        "human_ai"
+      ]
+    }
+  ],
+  "project_types": [
+    {
+      "id": "P01",
+      "title": "Division end-to-end capability project",
+      "actor_modes": [
+        "human_only",
+        "ai_model_only",
+        "robot_only",
+        "human_ai",
+        "human_robot",
+        "ai_robot",
+        "human_ai_robot"
+      ]
+    },
+    {
+      "id": "P02",
+      "title": "Cross-division collaboration project",
+      "actor_modes": [
+        "human_ai",
+        "human_robot",
+        "ai_robot",
+        "human_ai_robot"
+      ]
+    }
+  ],
+  "assessment_types": [
+    {
+      "id": "A01",
+      "title": "Baseline capability diagnostic",
+      "kind": "diagnostic",
+      "pass_threshold": 0.7
+    },
+    {
+      "id": "A02",
+      "title": "Practical task execution benchmark",
+      "kind": "performance",
+      "pass_threshold": 0.8
+    },
+    {
+      "id": "A03",
+      "title": "Unseen transfer and holdout assessment",
+      "kind": "holdout",
+      "pass_threshold": 0.8
+    },
+    {
+      "id": "A04",
+      "title": "Safety, permissions, and governance assessment",
+      "kind": "safety",
+      "pass_threshold": 1
+    }
+  ],
+  "mastery_policy": {
+    "minimum_task_accuracy": 0.8,
+    "minimum_holdout_accuracy": 0.8,
+    "safety_gate_required": true,
+    "safety_gate_score": 1,
+    "consecutive_passes_required": 2,
+    "mastery_awarded_by": "verified_evidence_gate_only",
+    "training_weight_updates_authorized": false
+  },
+  "retraining_policy": {
+    "trigger": "any_required_assessment_or_benchmark_failure",
+    "steps": [
+      "classify_failure_by_capability_domain",
+      "select_the_weakest_related_lesson",
+      "assign_a_targeted_exercise",
+      "repeat_in_a_sandbox_with_new_inputs",
+      "run_an_unseen_holdout_assessment",
+      "record_before_and_after_evidence"
+    ],
+    "failure_routes": {
+      "task_understanding": "M01",
+      "planning_and_orchestration": "M02",
+      "execution_and_integration": "M03",
+      "communication_and_collaboration": "M04",
+      "safety_and_quality": "M05",
+      "evaluation_and_adaptation": "M06"
+    },
+    "mastery_awarded_on_failure": false
+  }
+}
