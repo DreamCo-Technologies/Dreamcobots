@@ -78,3 +78,38 @@ Every open PR has a documented disposition. Required checks pass on the exact co
 
 ## Per-task evidence fields
 Owner; PR/issue; dependency; status; exact commit SHA; workflow/run ID and attempt; artifact/evidence URI; test result; security/rights review; blocker; next action; completion approver.
+
+
+## Live repository progress snapshot — 2026-11-28
+
+This section records a verified snapshot during execution; it does not change the completion criteria above.
+
+### Current mainline
+- Default branch: `main`
+- Observed main SHA: `83c2afa47ce83f4c3ddb4bf71bf51f5780fa6aad`
+- Latest live PR inventory at this snapshot: 36 open PRs, including active work and legacy drafts.
+
+### Verified merged work
+- #18819 — Media Foundry Stage 10 foundation
+- #18820 — clean-room parser routing
+- #18829 — Markdown implementation inventory refresh
+- #18830 — 65-division capability-gap inventory
+- #18831 — curriculum workflow import repair
+- #18832 — Watchtower DNS resolver test repair
+- #18833 — master completion plan
+- #18845 — governed five-stage Lead Engine foundation
+
+### Canonical active implementation PRs
+- #18857 — Buddy Personal Communication Twin and mobile messaging bridge
+- #18858 — Model Foundry signed shard provenance and holdout isolation; depends on #18859
+- #18859 — Bootcamp item-level source rights and catalog integrity
+- #18860 — Sentinel AST rewrite safety
+- #18861 — generated-artifact credential detection regression tests
+
+The earlier #18816 Foundry PR is closed unmerged; #18858 is its current-main replacement. Duplicate PRs #18854, #18855, #18856, and #18862 were closed in favor of the canonical replacements.
+
+### Production governance blocker
+A read-only GitHub API check reported `main` as `protected: false`. The only repository ruleset returned was ruleset `19392992`, named `Code Quality Copilot review for default branch`, with enforcement `disabled`. Issue #18863 tracks enabling an active default-branch ruleset and required CI checks. The connected GitHub actions in this session can inspect rulesets but cannot create or update them.
+
+### Verification truth
+The active implementation PR checks were queued at this snapshot; queued checks are not passes. No full production certification, real GPU training, checkpoint promotion, external messaging integration, or live deployment certification is claimed.
