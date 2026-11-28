@@ -37,6 +37,7 @@ export const mobileInboundEventSchema = z.object({
 }).strict().superRefine((value, ctx) => {
   if (value.platform === "ios" && value.provider !== "bluebubbles_mac_relay") ctx.addIssue({ code: z.ZodIssueCode.custom, message: "iOS events must originate from the authorized Mac relay.", path: ["provider"] });
   if (value.platform === "android" && value.provider !== "android_companion") ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Android events must originate from the Android companion.", path: ["provider"] });
+  if (value.platform === "ios" && value.channel !== "messaging") ctx.addIssue({ code: z.ZodIssueCode.custom, message: "BlueBubbles supports iMessage here; iPhone carrier SMS requires a separate SMS gateway.", path: ["channel"] });
   if (value.platform === "android" && value.channel !== "sms") ctx.addIssue({ code: z.ZodIssueCode.custom, message: "The Android companion bridge currently supports SMS only.", path: ["channel"] });
 });
 
@@ -156,6 +157,8 @@ export async function sendMobileMessage(input: {
     return { sent: false as const, status: "blocked" as const, reason: "The device bridge and owner source consent must both be enabled." };
   }
   if (!registration.allowedContactIds.includes(input.contactId)) return { sent: false as const, status: "blocked" as const, reason: "Contact is not allowlisted for this device bridge." };
+  if (registration.platform === "ios" && input.channel !== "messaging") return { sent: false as const, status: "blocked" as const, reason: "BlueBubbles transport is for iMessage; use a separately authorized SMS gateway for carrier SMS." };
+  if (registration.platform === "android" && input.channel !== "sms") return { sent: false as const, status: "blocked" as const, reason: "The Android companion transport currently supports SMS only." };
   if (!input.body.trim() || input.body.length > 12_000) return { sent: false as const, status: "blocked" as const, reason: "Message body must contain 1–12,000 characters." };
   const decision = assessCommunicationAction({
     action: input.action, channel: input.channel, contactId: input.contactId, content: input.body,
