@@ -3,7 +3,7 @@ import test from "node:test";
 import {
   AndroidCompanionTransport, BlueBubblesMacRelayTransport,
   InMemoryReplayClaimStore, acceptInboundMobileMessage, mobileBridgeReadiness,
-  mobileBridgeRegistrationSchema, sendMobileMessage, signMobileWebhook,
+  mobileBridgeRegistrationSchema, sendMobileMessage, signMobileWebhook, verifyMobileWebhookSignature,
   type MobileOutboundPayload,
 } from "../server/mobile-messaging-bridge";
 import { communicationTwinSettingsSchema } from "../server/communication-twin";
