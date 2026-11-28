@@ -495,8 +495,24 @@ class BuddyLearningBridge:
             "query": query,
             "scope": "shared_foundation_plus_specialist_division_and_masterbot_learning_routes",
             "catalog_lesson_count": len(catalog_lessons),
-            "study_ready_count": sum(lesson.content_status == "authored" for lesson in lessons),
-            "authoring_backlog_count": sum(lesson.content_status != "authored" for lesson in lessons),
+            "study_ready_count": sum(
+                lesson.content_status == "authored"
+                and lesson.review_status == "approved"
+                and lesson.training_eligibility in {"internal_sandbox_practice_only", "approved_for_training"}
+                and lesson.learner_visible
+                and not lesson.source_url
+                for lesson in lessons
+            ),
+            "authoring_backlog_count": sum(
+                not (
+                    lesson.content_status == "authored"
+                    and lesson.review_status == "approved"
+                    and lesson.training_eligibility in {"internal_sandbox_practice_only", "approved_for_training"}
+                    and lesson.learner_visible
+                    and not lesson.source_url
+                )
+                for lesson in lessons
+            ),
             "available_count": total_count,
             "total_count": total_count,
             "offset": offset,
