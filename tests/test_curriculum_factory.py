@@ -20,6 +20,7 @@ def policy_registry():
             "source_id": "youtube-platform",
             "catalog_source_ids": ["freecodecamp"],
             "domains": ["youtube.com"],
+            "allowed_url_prefixes": ["https://www.youtube.com/@freecodecamp", "https://www.youtube.com/playlist?list="],
             "tier": "FACT_EXTRACTION_ONLY",
             "verified": True,
             "fact_extraction_allowed": True,
@@ -33,7 +34,7 @@ def source_record():
     return {
         "schema": "dreamco.source_catalog_record.v1",
         "source_id": "freecodecamp",
-        "source_url": "https://www.youtube.com/watch?v=example",
+        "source_url": "https://www.youtube.com/@freecodecamp",
         "video_id": "example",
         "license_tag": "CC-BY-4.0",
         "license_record_verified": True,
@@ -108,6 +109,14 @@ class CurriculumFactoryTests(unittest.TestCase):
         with self.assertRaises(PermissionError):
             factory.build_guide(source_record=record, policy_registry=policy_registry(),
                                 authored_content=guide(), similarity_references=["An unrelated reference with enough words for comparison."])
+
+    def test_short_candidate_guide_fails_closed(self):
+        short = {"guide_id": "short", "title": "One", "learning_objectives": ["Two"],
+                 "lesson": "Three", "practice_lab": "Four", "assessment": "Five",
+                 "safety_notes": ["Six"]}
+        with self.assertRaises(ValueError):
+            factory.build_guide(source_record=source_record(), policy_registry=policy_registry(),
+                                authored_content=short, similarity_references=["An unrelated reference with enough words for comparison."])
 
     def test_missing_originality_references_fails_closed(self):
         with self.assertRaises(PermissionError):
