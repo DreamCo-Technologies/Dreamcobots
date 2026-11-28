@@ -62,7 +62,6 @@ import {
   BlueBubblesMacRelayTransport,
   mobileBridgeReadiness,
   mobileBridgeRegistrationSchema,
-  PostgresMobileReplayClaimStore,
   sendMobileMessage,
 } from "./mobile-messaging-bridge";
 import {
@@ -76,7 +75,7 @@ import {
   listCommunicationTwinDrafts,
   listMobileBridgeDevices,
   markCommunicationTwinDraftDeliveryUnknown,
-  PostgresMobileReplayClaimStore as _UnusedReplayStore,
+  PostgresMobileReplayClaimStore,
   registerMobileBridgeDevice,
   rejectCommunicationTwinDraft,
   releaseMobileReplayEvent,
