@@ -89,7 +89,18 @@ def _load_runtime():
 
 def _load_model(recipe: dict[str, Any], tokenizer, checkpoint: Path | None = None):
     torch, _, AutoModelForCausalLM, _, LlamaConfig, LlamaForCausalLM, _, _ = _load_runtime()
-    if checkpoint:
+    if checkpoint and (checkpoint / "adapter_config.json").exists():
+        base = recipe.get("base_model", {})
+        model_id, revision = base.get("id"), base.get("revision")
+        if not model_id or not isinstance(revision, str) or not re.fullmatch(r"[0-9a-f]{40}", revision):
+            raise PermissionError("loading a LoRA checkpoint requires the pinned base model revision")
+        base_model = AutoModelForCausalLM.from_pretrained(
+            model_id, revision=revision, trust_remote_code=False,
+            use_safetensors=True, torch_dtype="auto",
+        )
+        from peft import PeftModel
+        model = PeftModel.from_pretrained(base_model, checkpoint, is_trainable=True)
+    elif checkpoint:
         model = AutoModelForCausalLM.from_pretrained(
             checkpoint, trust_remote_code=False, use_safetensors=True
         )
@@ -229,7 +240,7 @@ def _training_args(output: Path, stage_cfg: dict[str, Any], recipe: dict[str, An
         weight_decay=float(stage_cfg.get("weight_decay", 0.01)),
         logging_steps=10,
         save_strategy="epoch",
-        evaluation_strategy="no",
+        eval_strategy="epoch" if eval_enabled else "no",
         report_to="none",
         seed=int(recipe.get("seed", 42)),
         remove_unused_columns=False,
@@ -244,7 +255,7 @@ def execute_stage(stage: str, recipe: dict[str, Any], manifest: dict[str, Any],
     tokenizer = AutoTokenizer.from_pretrained(tokenizer_path, trust_remote_code=False)
     model = _load_model(recipe, tokenizer, checkpoint)
     adapter = recipe.get("architecture", {}).get("adapter")
-    if adapter == "lora" and stage in {"pretrain", "sft", "dpo"}:
+    if adapter == "lora" and stage in {"pretrain", "sft", "dpo"} and not hasattr(model, "peft_config"):
         try:
             from peft import LoraConfig, get_peft_model
         except ImportError as exc:
@@ -265,10 +276,16 @@ def execute_stage(stage: str, recipe: dict[str, Any], manifest: dict[str, Any],
         if not shard_paths:
             raise ValueError("no train-*.bin shards found")
         dataset = _PackedDataset(shard_paths, int(recipe["packing"]["sequence_length"]))
+        validation_paths = sorted(shard_dir.glob("validation-*.bin"))
+        validation_dataset = (
+            _PackedDataset(validation_paths, int(recipe["packing"]["sequence_length"]))
+            if validation_paths else None
+        )
         cfg = recipe.get("pretrain", {})
         trainer = Trainer(
-            model=model, args=_training_args(output, cfg, recipe),
-            train_dataset=dataset, data_collator=lambda batch: _collate(batch, tokenizer),
+            model=model, args=_training_args(output, cfg, recipe, eval_enabled=validation_dataset is not None),
+            train_dataset=dataset, eval_dataset=validation_dataset,
+            data_collator=lambda batch: _collate(batch, tokenizer),
         )
     elif stage == "sft":
         records = list(iter_authorized_records(manifest, categories={"verified_trajectories"}, splits={"train"}))
@@ -372,8 +389,18 @@ def main():
         raise PermissionError("authorization reference must be non-empty")
 
     active = args.input_checkpoint
+    if stages[0] in {"sft", "dpo"} and active is None:
+        previous = "pretrain" if stages[0] == "sft" else "sft"
+        candidate = Path(recipe["artifact_dir"]) / "checkpoints" / previous
+        if candidate.exists():
+            active = candidate
+        else:
+            raise ValueError(f"{stages[0]} requires --input-checkpoint or an existing {previous} checkpoint")
     for stage in stages:
-        target = args.output or (Path(recipe["artifact_dir"]) / "checkpoints" / stage)
+        if args.output and len(stages) > 1:
+            target = args.output / stage
+        else:
+            target = args.output or (Path(recipe["artifact_dir"]) / "checkpoints" / stage)
         active = execute_stage(stage, recipe, manifest, args.tokenizer, args.token_shards, active, target)
     print(json.dumps({"stages_completed": stages, "final_checkpoint": str(active)}, sort_keys=True))
 
