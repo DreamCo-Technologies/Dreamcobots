@@ -50,8 +50,8 @@ def run(command: str, payload: dict[str, Any]) -> Any:
             scope_type=payload["scope_type"],
             scope_id=payload["scope_id"],
             pass_rate=payload["pass_rate"],
-            difficulty=payload.get("difficulty", 1.0),
-            interval_days=payload.get("interval_days", 1),
+            difficulty=payload.get("difficulty"),
+            interval_days=payload.get("interval_days"),
             evidence_split=payload.get("evidence_split", "practice"),
         )
     if command == "distill":
