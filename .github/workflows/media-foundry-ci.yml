@@ -9,6 +9,7 @@ on:
       - "tests/test_media_director.py"
       - "tests/test_media_model_license_gate.py"
       - "tests/test_media_worker.py"
+      - "tests/test_media_execution_contract.py"
       - "docs/DREAMCO_MEDIA_FOUNDRY.md"
       - ".github/workflows/media-foundry-ci.yml"
   push:
@@ -50,12 +51,15 @@ jobs:
             tests/test_media_director.py \
             tests/test_media_model_license_gate.py \
             tests/test_media_worker.py \
-            stages/08_media_studio/worker/server.py
+            tests/test_media_execution_contract.py \
+            stages/08_media_studio/worker/server.py \
+            stages/08_media_studio/worker/execution_contract.py
       - name: Run CPU-only tests
         run: |
           python -m unittest discover -s tests -p "test_media_model_license_gate.py" -v
           python -m unittest discover -s tests -p "test_media_director.py" -v
           python -m unittest discover -s tests -p "test_media_worker.py" -v
+          python -m unittest discover -s tests -p "test_media_execution_contract.py" -v
       - name: Validate sample production plan
         run: |
           python stages/08_media_studio/director.py \
