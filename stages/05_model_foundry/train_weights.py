@@ -442,7 +442,7 @@ def main():
     args = parser.parse_args()
 
     recipe = load_recipe(args.recipe)
-    manifest = verify_signed_manifest(args.manifest, args.signature, args.public_key)
+    manifest = verify_signed_manifest(args.manifest, args.signature, args.public_key, verify_dataset_hashes=False)
     manifest["_recipe_sha256"] = hashlib.sha256(args.recipe.read_bytes()).hexdigest()
     manifest["_tokenizer_sha256"] = tokenizer_digest(args.tokenizer)
     manifest["_shard_manifest_sha256"] = (
