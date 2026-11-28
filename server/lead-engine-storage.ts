@@ -3,7 +3,7 @@ import { z } from "zod";
 import { db } from "./db";
 import { leadEngineActivities, leadEngineRecords } from "@shared/schema";
 import {
-  LEAD_ENGINE_STAGES,
+  assertLeadStageTransition,
   buildLeadStagePlan,
   leadEngineRecordSchema,
   qualifyLead,
@@ -39,10 +39,6 @@ function assertOwnerRecord(ownerId: string, record: LeadEngineRecord) {
 
 type LeadEngineTx = Parameters<Parameters<typeof db.transaction>[0]>[0];
 
-function stageIndex(stage: LeadEngineRecord["stage"]) {
-  return LEAD_ENGINE_STAGES.indexOf(stage);
-}
-
 /**
  * Every database operation runs in a transaction that sets a transaction-local
  * owner context. PostgreSQL RLS is the final isolation boundary; caller code
@@ -73,33 +69,34 @@ export async function saveLeadEngineRecord(ownerId: string, input: LeadEngineRec
       ))
       .limit(1);
 
-    if (existing && stageIndex(record.stage) < stageIndex(existing.stage as LeadEngineRecord["stage"])) {
-      throw new Error("lead_engine_stage_regression_forbidden");
-    }
+    const previous = existing ? leadEngineRecordSchema.parse(existing.payload) : undefined;
+    const validatedRecord = assertLeadStageTransition(previous, record);
+    const validatedQualification = qualifyLead(validatedRecord);
+    const validatedStagePlan = buildLeadStagePlan(validatedRecord);
 
     const [saved] = await tx.insert(leadEngineRecords).values({
       ownerId: safeOwnerId,
-      leadId: record.leadId,
-      organizationName: record.organizationName,
-      stage: record.stage,
-      qualificationScore: qualification.score,
-      qualificationTier: qualification.tier,
-      suppressionStatus: record.suppressionStatus,
-      payload: record,
+      leadId: validatedRecord.leadId,
+      organizationName: validatedRecord.organizationName,
+      stage: validatedRecord.stage,
+      qualificationScore: validatedQualification.score,
+      qualificationTier: validatedQualification.tier,
+      suppressionStatus: validatedRecord.suppressionStatus,
+      payload: validatedRecord,
     }).onConflictDoUpdate({
       target: [leadEngineRecords.ownerId, leadEngineRecords.leadId],
       set: {
-        organizationName: record.organizationName,
-        stage: record.stage,
-        qualificationScore: qualification.score,
-        qualificationTier: qualification.tier,
-        suppressionStatus: record.suppressionStatus,
-        payload: record,
+        organizationName: validatedRecord.organizationName,
+        stage: validatedRecord.stage,
+        qualificationScore: validatedQualification.score,
+        qualificationTier: validatedQualification.tier,
+        suppressionStatus: validatedRecord.suppressionStatus,
+        payload: validatedRecord,
         updatedAt: new Date(),
       },
     }).returning();
 
-    return { record: saved, qualification, stagePlan };
+    return { record: saved, qualification: validatedQualification, stagePlan: validatedStagePlan };
   });
 }
 
