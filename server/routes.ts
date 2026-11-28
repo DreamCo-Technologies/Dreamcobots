@@ -49,7 +49,46 @@ import {
   fleetExecutionRequestSchema,
   getFleetRuntimeRegistry,
 } from "./fleet-runtime";
-import { outboundAdapterReadiness } from "./outbound-adapters";
+import { outboundAdapterReadiness, SecureJsonWebhookAdapter } from "./outbound-adapters";
+import { buildCommunicationPlan } from "./communication-behavior";
+import {
+  assessCommunicationAction,
+  communicationTwinSettingsSchema,
+  type CommunicationTwinSettings,
+} from "./communication-twin";
+import {
+  acceptInboundMobileMessage,
+  AndroidCompanionTransport,
+  BlueBubblesMacRelayTransport,
+  mobileBridgeReadiness,
+  mobileBridgeRegistrationSchema,
+  mobileChannelSchema,
+  sendMobileMessage,
+} from "./mobile-messaging-bridge";
+import {
+  appendCommunicationTwinAudit,
+  claimCommunicationTwinDraftForSend,
+  completeCommunicationTwinDraftSend,
+  createCommunicationTwinDraft,
+  getCommunicationTwinDraft,
+  getCommunicationTwinSettings,
+  getMobileBridgeDevice,
+  listCommunicationTwinDrafts,
+  listMobileBridgeDevices,
+  listMobileBridgeRegistrations,
+  markCommunicationTwinDraftDeliveryUnknown,
+  PostgresMobileReplayClaimStore,
+  registerMobileBridgeDevice,
+  rejectCommunicationTwinDraft,
+  resetCommunicationTwinDraftSendClaim,
+  releaseMobileReplayEvent,
+  resolveMobileContactId,
+  resolveMobileProviderContactId,
+  revokeMobileBridgeDevice,
+  saveCommunicationTwinSettings,
+  saveMobileBridgeContactMapping,
+  updateCommunicationTwinDraftBody,
+} from "./communication-twin-storage";
 import {
   buildGovernedLeadPlan,
   leadCampaignRequestSchema,
@@ -1747,6 +1786,345 @@ export async function registerRoutes(
       return false;
     }
   };
+
+  // ===== GOVERNED PERSONAL COMMUNICATION TWIN + MOBILE BRIDGES =====
+  const mobileWebhookRateLimit = rateLimit({
+    windowMs: 60_000,
+    limit: 120,
+    standardHeaders: "draft-8",
+    legacyHeaders: false,
+  });
+
+  app.get("/api/buddy/communication-twin/settings", leadEngineRateLimit, async (req, res) => {
+    const identity = leadEngineIdentity(req, res);
+    if (!identity) return;
+    res.setHeader("Cache-Control", "no-store");
+    res.json(await getCommunicationTwinSettings(identity.ownerId));
+  });
+
+  app.put("/api/buddy/communication-twin/settings", leadEngineRateLimit, async (req, res) => {
+    const identity = leadEngineIdentity(req, res);
+    if (!identity) return;
+    if (!leadEngineSameOrigin(req)) return res.status(403).json({ error: "Same-origin request required." });
+    try {
+      const settings = communicationTwinSettingsSchema.parse(req.body?.settings ?? req.body);
+      const saved = await saveCommunicationTwinSettings(identity.ownerId, settings);
+      res.json(saved);
+    } catch (error) {
+      if (error instanceof z.ZodError) return res.status(400).json(zodValidationError(error));
+      throw error;
+    }
+  });
+
+  app.get("/api/buddy/mobile-bridge/registrations", leadEngineRateLimit, async (req, res) => {
+    const identity = leadEngineIdentity(req, res);
+    if (!identity) return;
+    res.setHeader("Cache-Control", "no-store");
+    res.json({ registrations: await listMobileBridgeDevices(identity.ownerId) });
+  });
+
+  app.post("/api/buddy/mobile-bridge/registrations", leadEngineRateLimit, async (req, res) => {
+    const identity = leadEngineIdentity(req, res);
+    if (!identity) return;
+    if (!leadEngineSameOrigin(req)) return res.status(403).json({ error: "Same-origin request required." });
+    try {
+      const registration = await registerMobileBridgeDevice(identity.ownerId, req.body);
+      if (!registration) return res.status(500).json({ error: "Device registration could not be stored." });
+      res.status(201).json({
+        deviceId: registration.deviceId,
+        platform: registration.platform,
+        provider: registration.provider,
+        enabled: registration.enabled,
+        sourceConsentGranted: registration.sourceConsentGranted,
+        allowedContactIds: registration.allowedContactIds,
+      });
+    } catch (error) {
+      if (error instanceof z.ZodError) return res.status(400).json(zodValidationError(error));
+      const message = error instanceof Error ? error.message : "Device registration failed.";
+      if (/secret|BUDDY_CONTACT_MAPPING_ENCRYPTION_KEY/i.test(message)) return res.status(503).json({ error: message });
+      return res.status(400).json({ error: message });
+    }
+  });
+
+  app.delete("/api/buddy/mobile-bridge/registrations/:deviceId", leadEngineRateLimit, async (req, res) => {
+    const identity = leadEngineIdentity(req, res);
+    if (!identity) return;
+    if (!leadEngineSameOrigin(req)) return res.status(403).json({ error: "Same-origin request required." });
+    const revoked = await revokeMobileBridgeDevice(identity.ownerId, req.params.deviceId);
+    if (!revoked) return res.status(404).json({ error: "Device registration not found." });
+    res.status(204).end();
+  });
+
+  app.post("/api/buddy/mobile-bridge/registrations/:deviceId/contact-mappings", leadEngineRateLimit, async (req, res) => {
+    const identity = leadEngineIdentity(req, res);
+    if (!identity) return;
+    if (!leadEngineSameOrigin(req)) return res.status(403).json({ error: "Same-origin request required." });
+    try {
+      const input = z.object({
+        providerContactId: z.string().trim().min(1).max(200),
+        contactId: z.string().trim().min(1).max(160),
+      }).strict().parse(req.body);
+      const result = await saveMobileBridgeContactMapping({
+        ownerId: identity.ownerId,
+        deviceId: req.params.deviceId,
+        ...input,
+      });
+      res.status(201).json(result);
+    } catch (error) {
+      if (error instanceof z.ZodError) return res.status(400).json(zodValidationError(error));
+      const message = error instanceof Error ? error.message : "Contact mapping failed.";
+      if (/BUDDY_CONTACT_MAPPING_ENCRYPTION_KEY/i.test(message)) return res.status(503).json({ error: message });
+      return res.status(400).json({ error: message });
+    }
+  });
+
+  app.get("/api/buddy/mobile-bridge/readiness", leadEngineRateLimit, async (req, res) => {
+    const identity = leadEngineIdentity(req, res);
+    if (!identity) return;
+    const registrations = await listMobileBridgeRegistrations(identity.ownerId);
+    res.setHeader("Cache-Control", "no-store");
+    res.json({
+      ...mobileBridgeReadiness(registrations),
+      productionConfiguration: {
+        contactMappingEncryptionKeyConfigured: /^[A-Za-z0-9_-]{43}$/.test(process.env.BUDDY_CONTACT_MAPPING_ENCRYPTION_KEY ?? ""),
+        iosRelayConfigured: Boolean(process.env.BUDDY_IOS_RELAY_URL),
+        androidRelayConfigured: Boolean(process.env.BUDDY_ANDROID_RELAY_URL),
+        durableReplayStore: "postgresql",
+        ownerAuthentication: "verified_oauth_session",
+      },
+    });
+  });
+
+  app.get("/api/buddy/mobile-bridge/drafts", leadEngineRateLimit, async (req, res) => {
+    const identity = leadEngineIdentity(req, res);
+    if (!identity) return;
+    const limit = req.query.limit === undefined ? 50 : Number(req.query.limit);
+    try {
+      res.setHeader("Cache-Control", "no-store");
+      res.json({ drafts: await listCommunicationTwinDrafts(identity.ownerId, limit) });
+    } catch (error) {
+      if (error instanceof z.ZodError) return res.status(400).json(zodValidationError(error));
+      throw error;
+    }
+  });
+
+  app.patch("/api/buddy/mobile-bridge/drafts/:draftId", leadEngineRateLimit, async (req, res) => {
+    const identity = leadEngineIdentity(req, res);
+    if (!identity) return;
+    if (!leadEngineSameOrigin(req)) return res.status(403).json({ error: "Same-origin request required." });
+    try {
+      const body = z.object({ draftBody: z.string().trim().min(1).max(12_000) }).strict().parse(req.body);
+      const updated = await updateCommunicationTwinDraftBody(identity.ownerId, req.params.draftId, body.draftBody);
+      if (!updated) return res.status(409).json({ error: "Only unexpired drafts awaiting owner approval can be edited." });
+      res.json({ updated: true });
+    } catch (error) {
+      if (error instanceof z.ZodError) return res.status(400).json(zodValidationError(error));
+      throw error;
+    }
+  });
+
+  app.post("/api/buddy/mobile-bridge/drafts/:draftId/reject", leadEngineRateLimit, async (req, res) => {
+    const identity = leadEngineIdentity(req, res);
+    if (!identity) return;
+    if (!leadEngineSameOrigin(req)) return res.status(403).json({ error: "Same-origin request required." });
+    const rejected = await rejectCommunicationTwinDraft(identity.ownerId, req.params.draftId);
+    if (!rejected) return res.status(409).json({ error: "Only a pending draft can be rejected." });
+    res.json({ rejected: true });
+  });
+
+  app.post("/api/buddy/mobile-bridge/drafts/:draftId/send", leadEngineRateLimit, async (req, res) => {
+    const identity = leadEngineIdentity(req, res);
+    if (!identity) return;
+    if (!leadEngineSameOrigin(req)) return res.status(403).json({ error: "Same-origin request required." });
+    const approval = z.object({ explicitOwnerApproval: z.literal(true) }).strict().safeParse(req.body);
+    if (!approval.success) return res.status(400).json({ error: "Explicit owner approval is required for every send." });
+
+    const draft = await getCommunicationTwinDraft(identity.ownerId, req.params.draftId);
+    if (!draft || draft.status !== "pending_approval" || draft.expiresAt <= new Date()) {
+      return res.status(404).json({ error: "Pending communication draft not found or expired." });
+    }
+    const registration = await getMobileBridgeDevice(identity.ownerId, draft.deviceId);
+    if (!registration || !registration.enabled || !registration.sourceConsentGranted) {
+      return res.status(409).json({ error: "The associated device bridge is disabled or lacks owner consent." });
+    }
+    const settings = await getCommunicationTwinSettings(identity.ownerId);
+    const endpoint = registration.platform === "ios"
+      ? process.env.BUDDY_IOS_RELAY_URL
+      : process.env.BUDDY_ANDROID_RELAY_URL;
+    const secret = process.env[registration.secretReference];
+    if (!endpoint || !secret || Buffer.byteLength(secret, "utf8") < 32) {
+      return res.status(503).json({ error: "The platform relay URL and 32-byte referenced secret must be configured before sending." });
+    }
+
+    let webhook: SecureJsonWebhookAdapter;
+    try {
+      webhook = new SecureJsonWebhookAdapter({
+        id: `buddy-mobile-${registration.deviceId}`,
+        endpoint,
+        secretReference: registration.secretReference,
+      }, (reference) => process.env[reference]);
+    } catch (error) {
+      return res.status(503).json({ error: error instanceof Error ? error.message : "Relay configuration is invalid." });
+    }
+
+    const claimed = await claimCommunicationTwinDraftForSend(identity.ownerId, draft.draftId);
+    if (!claimed) return res.status(409).json({ error: "Draft is already being sent or is no longer pending." });
+    try {
+      const transport = registration.platform === "ios"
+        ? new BlueBubblesMacRelayTransport(webhook)
+        : new AndroidCompanionTransport(webhook);
+      const result = await sendMobileMessage({
+        registration,
+        settings,
+        transport,
+        action: "send",
+        contactId: draft.contactId,
+        resolveProviderContactId: resolveMobileProviderContactId,
+        channel: mobileChannelSchema.parse(draft.channel),
+        body: draft.draftBody,
+        idempotencyKey: `buddy-mobile-draft:${draft.draftId}`,
+        sourceConsentGranted: true,
+        explicitOwnerApproval: true,
+      });
+      if (!result.sent) {
+        await resetCommunicationTwinDraftSendClaim(identity.ownerId, draft.draftId);
+        return res.status(409).json({ error: result.reason, status: result.status });
+      }
+      await completeCommunicationTwinDraftSend({
+        ownerId: identity.ownerId,
+        draftId: draft.draftId,
+        providerMessageId: result.providerMessageId,
+        idempotencyKey: `buddy-mobile-draft:${draft.draftId}`,
+      });
+      await appendCommunicationTwinAudit(identity.ownerId, draft.deviceId, {
+        action: "send", channel: mobileChannelSchema.parse(draft.channel),
+        contactId: draft.contactId, decision: "allowed",
+        reason: "Owner explicitly approved this draft; relay accepted the idempotent send.",
+      });
+      res.json({ sent: true, providerMessageId: result.providerMessageId, messageContentStored: false });
+    } catch (error) {
+      await markCommunicationTwinDraftDeliveryUnknown(identity.ownerId, draft.draftId);
+      await appendCommunicationTwinAudit(identity.ownerId, draft.deviceId, {
+        action: "send", channel: mobileChannelSchema.parse(draft.channel),
+        contactId: draft.contactId, decision: "blocked",
+        reason: "Provider delivery outcome is unknown; automatic retry is disabled pending reconciliation.",
+      }).catch(() => undefined);
+      res.status(202).json({
+        sent: false, status: "delivery_unknown",
+        message: "The relay outcome could not be confirmed. Do not resend until delivery is reconciled.",
+      });
+    }
+  });
+
+  app.post("/api/buddy/mobile-bridge/:ownerId/:deviceId/webhook", mobileWebhookRateLimit, async (req, res) => {
+    if (!Buffer.isBuffer(req.rawBody) || req.rawBody.byteLength > 32 * 1024) {
+      return res.status(413).json({ error: "Signed webhook body must be a raw JSON buffer no larger than 32 KB." });
+    }
+    const ownerId = req.params.ownerId;
+    const deviceId = req.params.deviceId;
+    let eventId = "";
+    let messageId = "";
+    const rawBody = req.rawBody.toString("utf8");
+    try {
+      const metadata = JSON.parse(rawBody) as { eventId?: unknown; messageId?: unknown };
+      eventId = typeof metadata.eventId === "string" ? metadata.eventId : "";
+      messageId = typeof metadata.messageId === "string" ? metadata.messageId : "";
+    } catch {
+      return res.status(400).json({ error: "Webhook body must be valid JSON." });
+    }
+    const registration = await getMobileBridgeDevice(ownerId, deviceId);
+    if (!registration) return res.status(404).json({ error: "Registered mobile bridge not found." });
+    const secret = process.env[registration.secretReference];
+    if (!secret || Buffer.byteLength(secret, "utf8") < 32) {
+      return res.status(503).json({ error: "The registered webhook secret is not configured." });
+    }
+    const settings = await getCommunicationTwinSettings(ownerId);
+    const replayStore = new PostgresMobileReplayClaimStore(ownerId, deviceId);
+    const accepted = await acceptInboundMobileMessage({
+      rawBody,
+      headers: {
+        timestamp: req.header("x-buddy-timestamp") ?? "",
+        signature: req.header("x-buddy-signature") ?? "",
+      },
+      registration,
+      settings,
+      secret,
+      replayStore,
+      resolveContactId: resolveMobileContactId,
+    });
+    if (!accepted.accepted) {
+      const status = accepted.status === "duplicate" ? 409
+        : accepted.reason.includes("signature") ? 401 : 403;
+      return res.status(status).json({ accepted: false, status: accepted.status, reason: accepted.reason });
+    }
+
+    let persistedDraft = false;
+    try {
+      const permission = assessCommunicationAction({
+        action: "draft", channel: accepted.channel, contactId: accepted.contactId,
+        sourceConsentGranted: true,
+      }, settings);
+      if (!permission.allowed) {
+        await replayStore.release(eventId);
+        await appendCommunicationTwinAudit(ownerId, deviceId, {
+          action: "draft", channel: accepted.channel, contactId: accepted.contactId,
+          decision: "blocked", reason: permission.reason,
+        });
+        return res.status(403).json({ accepted: false, reason: permission.reason });
+      }
+      const contact = settings.contacts.find((item) => item.contactId === accepted.contactId);
+      const context = contact && ["professional", "vip"].includes(contact.relationship) ? "professional" : "casual";
+      const plan = buildCommunicationPlan({
+        objective: "Prepare a concise, grounded draft reply for owner review. Never send or take action.",
+        context,
+        profile: settings.communicationProfile,
+      });
+      const completion = await openai.chat.completions.create({
+        model: "gpt-4.1-mini",
+        messages: [
+          {
+            role: "system",
+            content: "You prepare a message draft for the account owner to review. Do not send it. Do not claim that an action has been completed. Do not invent facts, promises, dates, amounts, or commitments. Ask a concise clarifying question if the inbound message is ambiguous. Preserve the owner's voice preferences without impersonating them in any external action. Return JSON only with a single string property named draft.",
+          },
+          {
+            role: "user",
+            content: JSON.stringify({
+              inboundMessage: accepted.body,
+              channel: accepted.channel,
+              relationship: contact?.relationship ?? "unknown",
+              styleProfile: plan.profile,
+              conversationGuidance: plan.conversationModel,
+            }),
+          },
+        ],
+        response_format: { type: "json_object" },
+        max_completion_tokens: 600,
+        temperature: 0.25,
+      });
+      const modelText = completion.choices[0]?.message?.content ?? "{}";
+      const generated = JSON.parse(modelText) as { draft?: unknown };
+      const draftBody = z.string().trim().min(1).max(12_000).parse(generated.draft);
+      const draft = await createCommunicationTwinDraft({
+        ownerId, deviceId, messageId, contactId: accepted.contactId,
+        channel: accepted.channel, draftBody,
+      });
+      persistedDraft = true;
+      await appendCommunicationTwinAudit(ownerId, deviceId, {
+        action: "draft", channel: accepted.channel, contactId: accepted.contactId,
+        decision: "draft_only", reason: "Signed inbound message was processed ephemerally; generated draft awaits explicit owner approval.",
+      });
+      res.status(202).json({
+        accepted: true, draftId: draft.draftId, requiresOwnerApproval: true,
+        rawMessageRetained: false, modelTrainingAuthorized: false,
+      });
+    } catch (error) {
+      if (!persistedDraft && eventId) await replayStore.release(eventId).catch(() => undefined);
+      res.status(503).json({
+        accepted: false,
+        error: "Draft generation or persistence is temporarily unavailable; the signed relay may retry.",
+      });
+    }
+  });
 
   app.get("/api/buddy/lead-engine/records", leadEngineRateLimit, async (req, res) => {
     const identity = leadEngineIdentity(req, res);
