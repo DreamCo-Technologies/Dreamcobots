@@ -10,4 +10,4 @@ def append_verified_record(record,path=None):
     target=path or os.environ.get("DREAMCO_TRAINING_EXPORT_PATH")
     if not target: raise RuntimeError("Training export is disabled until DREAMCO_TRAINING_EXPORT_PATH is explicitly configured.")
     p=Path(target); p.parent.mkdir(parents=True,exist_ok=True)
-    with p.open("a",encoding="utf-8") as f:f.write(json.dumps(record,sort_keys=True)+"\\n")
+    with p.open("a",encoding="utf-8") as f:f.write(json.dumps(record,sort_keys=True)+"\n")
