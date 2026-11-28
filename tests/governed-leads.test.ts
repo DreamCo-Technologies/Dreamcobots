@@ -7,6 +7,7 @@ import {
   buildGovernedLeadPlan,
   type LeadCampaignRequest,
 } from "../server/governed-leads";
+import { assertLeadStageTransition, buildLeadStagePlan, leadEngineReadiness, leadEngineRecordSchema, qualifyLead } from "../server/lead-engine";
 
 const now = new Date("2026-07-22T15:00:00.000Z");
 
@@ -243,4 +244,202 @@ test("keeps a bounded suppression ledger using opaque references", () => {
     () => fullLedger.suppress("contact_ref:example_002", "owner_block", now),
     /persist the ledger/,
   );
+});
+
+const leadRecord = {
+  leadId: "lead-engine-0001",
+  ownerUserId: "owner-1",
+  organizationName: "Example Systems",
+  sourceType: "inbound_request" as const,
+  sourceReference: "form:workflow-audit",
+  sourceTermsConfirmed: true as const,
+  stage: "capture" as const,
+  consentBasis: "explicit_opt_in" as const,
+  consentEvidenceRef: "consent:form-001",
+  consentObtainedAt: "2026-11-01T12:00:00.000Z",
+  consentChannels: ["email"],
+  fitScore: 100,
+  intentScore: 100,
+  budgetFitScore: 100,
+  timelineScore: 100,
+  engagementScore: 100,
+  useCase: "Automate customer onboarding",
+  buyingTimeline: "now" as const,
+  budgetConfirmed: true,
+  suppressionStatus: "active" as const,
+  sensitiveTargeting: false as const,
+  includesMinor: false as const,
+};
+
+test("scores a fully qualified lead as hot with an explainable 100-point breakdown", () => {
+  const result = qualifyLead(leadRecord);
+  assert.equal(result.score, 100);
+  assert.equal(result.tier, "hot");
+  assert.equal(result.nextStep, "human_sales_handoff");
+  assert.deepEqual(result.breakdown, {
+    buyingIntent: 30,
+    budgetFit: 25,
+    timeline: 20,
+    businessFit: 15,
+    engagement: 10,
+  });
+});
+
+test("keeps public-directory research leads out of nurture and conversion", () => {
+  const result = qualifyLead({
+    ...leadRecord,
+    sourceType: "public_business_directory",
+    consentBasis: "none",
+    consentEvidenceRef: undefined,
+    consentChannels: [],
+  });
+  assert.equal(result.score, 100);
+  assert.equal(result.nextStep, "research_only");
+  const plan = buildLeadStagePlan({
+    ...leadRecord,
+    sourceType: "public_business_directory",
+    consentBasis: "none",
+    consentEvidenceRef: undefined,
+    consentChannels: [],
+  });
+  assert.equal(plan.externalActionTaken, false);
+  assert.equal(plan.stageActions.find((item) => item.stage === "nurture")?.status, "blocked");
+  assert.equal(plan.stageActions.find((item) => item.stage === "convert")?.status, "blocked");
+});
+
+test("does not recommend conversion without confirmed budget and documented use case", () => {
+  const result = buildLeadStagePlan({ ...leadRecord, budgetConfirmed: false, useCase: undefined });
+  assert.notEqual(result.recommendedStage, "convert");
+  assert.equal(result.stageActions.find((item) => item.stage === "convert")?.status, "blocked");
+});
+
+test("suppression overrides a high score and blocks nurture", () => {
+  const result = buildLeadStagePlan({ ...leadRecord, suppressionStatus: "opted_out" });
+  assert.equal(result.qualification.tier, "hot");
+  assert.equal(result.qualification.nextStep, "research_only");
+  assert.equal(result.stageActions.find((item) => item.stage === "nurture")?.status, "blocked");
+});
+
+test("validates consent evidence, unique channels, and prohibited targeting", () => {
+  assert.throws(() => leadEngineRecordSchema.parse({
+    ...leadRecord,
+    consentEvidenceRef: undefined,
+  }));
+  assert.throws(() => leadEngineRecordSchema.parse({
+    ...leadRecord,
+    consentChannels: ["email", "email"],
+  }));
+  assert.throws(() => leadEngineRecordSchema.parse({
+    ...leadRecord,
+    sensitiveTargeting: true,
+  }));
+});
+
+test("does not clear suppression without a new explicit opt-in", () => {
+  const optedOut = { ...leadRecord, suppressionStatus: "opted_out" as const };
+  assert.throws(
+    () => assertLeadStageTransition(optedOut, { ...optedOut, suppressionStatus: "active" }),
+    /suppression_cannot_be_cleared/,
+  );
+  const resubscribed = assertLeadStageTransition(optedOut, {
+    ...optedOut,
+    suppressionStatus: "active",
+    consentBasis: "explicit_opt_in",
+    consentEvidenceRef: "consent:new-opt-in-002",
+    consentObtainedAt: "2026-11-28T12:00:00.000Z",
+  });
+  assert.equal(resubscribed.suppressionStatus, "active");
+
+  const neverConsentedOptOut = {
+    ...leadRecord,
+    suppressionStatus: "opted_out" as const,
+    consentBasis: "none" as const,
+    consentEvidenceRef: undefined,
+    consentObtainedAt: undefined,
+    consentChannels: [],
+  };
+  const firstOptIn = assertLeadStageTransition(neverConsentedOptOut, {
+    ...neverConsentedOptOut,
+    suppressionStatus: "active",
+    consentBasis: "explicit_opt_in",
+    consentEvidenceRef: "consent:first-opt-in-003",
+    consentObtainedAt: "2026-11-28T12:00:00.000Z",
+    consentChannels: ["email"],
+  });
+  assert.equal(firstOptIn.suppressionStatus, "active");
+});
+
+test("requires timestamped unexpired channel consent and explicit SMS opt-in", () => {
+  assert.throws(() => leadEngineRecordSchema.parse({
+    ...leadRecord,
+    consentObtainedAt: undefined,
+  }), /timestamped consent evidence/);
+
+  assert.throws(() => leadEngineRecordSchema.parse({
+    ...leadRecord,
+    consentBasis: "inbound_request",
+    consentChannels: ["sms"],
+  }), /SMS and voice calls require explicit opt-in/);
+
+  const expired = {
+    ...leadRecord,
+    stage: "qualify" as const,
+    consentExpiresAt: "2026-11-02T12:00:00.000Z",
+  };
+  assert.equal(qualifyLead(expired).nextStep, "research_only");
+  assert.equal(buildLeadStagePlan(expired).stageActions.find((item) => item.stage === "nurture")?.status, "blocked");
+});
+
+test("recommends only the next eligible stage without skipping pipeline steps", () => {
+  const captured = buildLeadStagePlan(leadRecord);
+  assert.equal(captured.recommendedStage, "qualify");
+  assert.equal(captured.stageActions.find((item) => item.stage === "qualify")?.status, "ready");
+  const qualified = { ...leadRecord, stage: "qualify" as const };
+  const qualifiedPlan = buildLeadStagePlan(qualified);
+  assert.equal(qualifiedPlan.recommendedStage, "nurture");
+  assert.equal(qualifiedPlan.stageActions.find((item) => item.stage === "nurture")?.status, "ready");
+  const nurtured = { ...leadRecord, stage: "nurture" as const };
+  assert.equal(buildLeadStagePlan(nurtured).recommendedStage, "nurture");
+  assert.equal(buildLeadStagePlan({
+    ...nurtured,
+    humanReviewEvidenceRef: "review:owner-approval-001",
+  }).recommendedStage, "convert");
+});
+
+test("allows only one-stage-at-a-time progression and blocks skipped stages", () => {
+  assert.throws(() => assertLeadStageTransition(undefined, { ...leadRecord, stage: "nurture" }), /initial_stage/);
+  assert.equal(assertLeadStageTransition(undefined, leadRecord).stage, "capture");
+  assert.equal(assertLeadStageTransition(leadRecord, { ...leadRecord, stage: "qualify" }).stage, "qualify");
+  assert.throws(() => assertLeadStageTransition(leadRecord, { ...leadRecord, stage: "nurture" }), /stage_skip/);
+});
+
+test("requires permission for nurture and human-reviewed evidence for conversion", () => {
+  const qualified = { ...leadRecord, stage: "qualify" as const };
+  assert.throws(() => assertLeadStageTransition(
+    qualified,
+    { ...qualified, stage: "nurture", consentBasis: "none", consentEvidenceRef: undefined, consentChannels: [] },
+  ), /nurture_requires_current_permission/);
+
+  const nurtured = { ...qualified, stage: "nurture" as const };
+  assert.throws(() => assertLeadStageTransition(
+    nurtured,
+    { ...nurtured, stage: "convert" },
+  ), /human review evidence/);
+  const converted = assertLeadStageTransition(nurtured, {
+    ...nurtured,
+    stage: "convert",
+    humanReviewEvidenceRef: "review:owner-approval-001",
+  });
+  assert.equal(converted.stage, "convert");
+});
+
+test("prevents CRM stage regression", () => {
+  const qualified = { ...leadRecord, stage: "qualify" as const };
+  assert.throws(() => assertLeadStageTransition(qualified, leadRecord), /stage_regression/);
+});
+
+test("exposes five-stage readiness without enabling external actions", () => {
+  const readiness = leadEngineReadiness();
+  assert.deepEqual(readiness.stages, ["attract", "capture", "qualify", "nurture", "convert"]);
+  assert.equal(readiness.externalActionsEnabled, false);
 });

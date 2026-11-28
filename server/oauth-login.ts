@@ -1,6 +1,6 @@
 import type { Express, Request, Response } from "express";
 import { rateLimit } from "express-rate-limit";
-import { createHmac, randomBytes, timingSafeEqual, verify } from "node:crypto";
+import { createHash, createHmac, randomBytes, timingSafeEqual, verify } from "node:crypto";
 
 type Provider = "google" | "apple";
 type Claims = { sub: string; email?: string; name?: string; nonce?: string; iss?: string; aud?: string | string[]; exp?: number };
@@ -60,6 +60,42 @@ const unseal = <T>(value?: string): T | undefined => {
   try { return parseJson<T>(body); } catch { return undefined; }
 };
 const cookies = (request: Request) => Object.fromEntries((request.headers.cookie || "").split(";").map((part) => part.trim().split(/=(.*)/s)).filter(([name]) => name));
+
+export type AuthenticatedOAuthIdentity = {
+  provider: Provider;
+  subject: string;
+  ownerId: string;
+  email?: string;
+  name?: string;
+};
+
+/** Resolves a verified, unexpired signed OAuth session to a stable opaque owner key. */
+export function getAuthenticatedOAuthIdentity(request: Request): AuthenticatedOAuthIdentity | undefined {
+  const session = unseal<{ provider: Provider; sub: string; email?: string; name?: string; exp: number }>(
+    cookies(request)[COOKIE_SESSION],
+  );
+  if (
+    !session ||
+    (session.provider !== "google" && session.provider !== "apple") ||
+    typeof session.sub !== "string" ||
+    !session.sub ||
+    !Number.isInteger(session.exp) ||
+    session.exp <= Math.floor(Date.now() / 1000)
+  ) return undefined;
+
+  const ownerDigest = createHash("sha256")
+    .update(`${session.provider}:${session.sub}`)
+    .digest("hex")
+    .slice(0, 48);
+  return {
+    provider: session.provider,
+    subject: session.sub,
+    ownerId: `oauth_${ownerDigest}`,
+    email: session.email,
+    name: session.name,
+  };
+}
+
 const secure = () => process.env.NODE_ENV === "production" ? "; Secure" : "";
 const setCookie = (response: Response, name: string, value: string, seconds: number) => response.append("Set-Cookie", `${name}=${value}; HttpOnly; SameSite=Lax; Path=/; Max-Age=${seconds}${secure()}`);
 const clearCookie = (response: Response, name: string) => setCookie(response, name, "", 0);

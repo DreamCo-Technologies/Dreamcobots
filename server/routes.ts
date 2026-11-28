@@ -7,6 +7,7 @@ import type { ChatCompletionMessageParam } from "openai/resources/chat/completio
 import { z } from "zod";
 import { sql } from "drizzle-orm";
 import multer from "multer";
+import { rateLimit } from "express-rate-limit";
 import { storage } from "./storage";
 import { api } from "@shared/routes";
 import { ALL_BOTS } from "./bot-seed-registry";
@@ -23,7 +24,7 @@ import { db } from "./db";
 import { batchProcessWithSSE } from "./provider_integrations/batch";
 import { registerAudioRoutes } from "./provider_integrations/audio";
 import { registerImageRoutes } from "./provider_integrations/image";
-import { registerOAuthLoginRoutes } from "./oauth-login";
+import { getAuthenticatedOAuthIdentity, registerOAuthLoginRoutes } from "./oauth-login";
 import {
   connectionPlanRequestSchema,
   connectionStatusUpdateSchema,
@@ -53,6 +54,15 @@ import {
   buildGovernedLeadPlan,
   leadCampaignRequestSchema,
 } from "./governed-leads";
+import { leadEngineReadiness, leadEngineRecordSchema } from "./lead-engine";
+import {
+  approveLeadConversion,
+  appendLeadEngineActivity,
+  getLeadEngineRecord,
+  listLeadEngineActivities,
+  listLeadEngineRecords,
+  saveLeadEngineRecord,
+} from "./lead-engine-storage";
 import {
   createDeviceActionPlan,
   deviceActionPlanRequestSchema,
@@ -1654,7 +1664,9 @@ export async function registerRoutes(
       res.json({
         schema: "dreamco.governed_lead_capabilities.v1",
         botProfiles: catalog.summary?.per_bot_governed_lead_systems ?? 0,
-        engine: "server/governed-leads.ts",
+        engine: "server/lead-engine.ts + server/lead-engine-storage.ts + server/governed-leads.ts",
+        pipeline: ["attract", "capture", "qualify", "nurture", "convert"],
+        crm: { authenticated: true, ownerScoped: true, persistence: "postgresql_rls", activityHistory: true },
         workflow: ["research", "deduplicate", "qualify", "verify permission", "draft", "owner approval", "configured adapter", "follow-up", "stop and report"],
         guardrails: {
           recipientPermissionRequired: true,
@@ -1703,6 +1715,123 @@ export async function registerRoutes(
       res.status(201).json(buildGovernedLeadPlan(campaign));
     } catch (error) {
       if (error instanceof z.ZodError) return res.status(400).json(zodValidationError(error));
+      throw error;
+    }
+  });
+
+  app.get("/api/buddy/lead-engine/readiness", (_req, res) => {
+    res.json(leadEngineReadiness());
+  });
+
+  const leadEngineRateLimit = rateLimit({
+    windowMs: 60_000,
+    limit: 60,
+    standardHeaders: "draft-8",
+    legacyHeaders: false,
+  });
+  const leadEngineIdentity = (req: Request, res: Response) => {
+    const identity = getAuthenticatedOAuthIdentity(req);
+    if (!identity) {
+      res.status(401).json({ error: "Verified Google or Apple sign-in is required." });
+      return undefined;
+    }
+    return identity;
+  };
+  const leadEngineSameOrigin = (req: Request) => {
+    const origin = req.get("origin");
+    const host = req.get("host");
+    if (!origin || !host) return false;
+    try {
+      return new URL(origin).host.toLowerCase() === host.toLowerCase();
+    } catch {
+      return false;
+    }
+  };
+
+  app.get("/api/buddy/lead-engine/records", leadEngineRateLimit, async (req, res) => {
+    const identity = leadEngineIdentity(req, res);
+    if (!identity) return;
+    try {
+      const limit = req.query.limit === undefined ? 100 : Number(req.query.limit);
+      res.json(await listLeadEngineRecords(identity.ownerId, limit));
+    } catch (error) {
+      if (error instanceof z.ZodError) return res.status(400).json(zodValidationError(error));
+      throw error;
+    }
+  });
+
+  app.post("/api/buddy/lead-engine/records", leadEngineRateLimit, async (req, res) => {
+    const identity = leadEngineIdentity(req, res);
+    if (!identity) return;
+    if (!leadEngineSameOrigin(req)) return res.status(403).json({ error: "Same-origin request required." });
+    try {
+      const record = leadEngineRecordSchema.parse({ ...req.body, ownerUserId: identity.ownerId });
+      const result = await saveLeadEngineRecord(identity.ownerId, record);
+      res.status(201).json(result);
+    } catch (error) {
+      if (error instanceof z.ZodError) return res.status(400).json(zodValidationError(error));
+      if (error instanceof Error && error.message.startsWith("lead_engine_")) {
+        return res.status(409).json({ error: error.message });
+      }
+      throw error;
+    }
+  });
+
+  app.get("/api/buddy/lead-engine/records/:leadId", leadEngineRateLimit, async (req, res) => {
+    const identity = leadEngineIdentity(req, res);
+    if (!identity) return;
+    try {
+      const record = await getLeadEngineRecord(identity.ownerId, req.params.leadId);
+      if (!record) return res.status(404).json({ error: "Lead not found." });
+      res.json(record);
+    } catch (error) {
+      if (error instanceof z.ZodError) return res.status(400).json(zodValidationError(error));
+      throw error;
+    }
+  });
+
+  app.post("/api/buddy/lead-engine/records/:leadId/approve-conversion", leadEngineRateLimit, async (req, res) => {
+    const identity = leadEngineIdentity(req, res);
+    if (!identity) return;
+    if (!leadEngineSameOrigin(req)) return res.status(403).json({ error: "Same-origin request required." });
+    try {
+      res.status(201).json(await approveLeadConversion(identity.ownerId, req.params.leadId));
+    } catch (error) {
+      if (error instanceof z.ZodError) return res.status(400).json(zodValidationError(error));
+      if (error instanceof Error && error.message === "lead_engine_record_not_found") {
+        return res.status(404).json({ error: error.message });
+      }
+      if (error instanceof Error && error.message.startsWith("lead_engine_")) {
+        return res.status(409).json({ error: error.message });
+      }
+      throw error;
+    }
+  });
+
+  app.get("/api/buddy/lead-engine/records/:leadId/activities", leadEngineRateLimit, async (req, res) => {
+    const identity = leadEngineIdentity(req, res);
+    if (!identity) return;
+    try {
+      const limit = req.query.limit === undefined ? 100 : Number(req.query.limit);
+      res.json(await listLeadEngineActivities(identity.ownerId, req.params.leadId, limit));
+    } catch (error) {
+      if (error instanceof z.ZodError) return res.status(400).json(zodValidationError(error));
+      throw error;
+    }
+  });
+
+  app.post("/api/buddy/lead-engine/records/:leadId/activities", leadEngineRateLimit, async (req, res) => {
+    const identity = leadEngineIdentity(req, res);
+    if (!identity) return;
+    if (!leadEngineSameOrigin(req)) return res.status(403).json({ error: "Same-origin request required." });
+    try {
+      const activity = await appendLeadEngineActivity(identity.ownerId, req.params.leadId, req.body);
+      res.status(201).json(activity);
+    } catch (error) {
+      if (error instanceof z.ZodError) return res.status(400).json(zodValidationError(error));
+      if (error instanceof Error && error.message.startsWith("lead_engine_")) {
+        return res.status(404).json({ error: error.message });
+      }
       throw error;
     }
   });
