@@ -7,15 +7,15 @@ import re
 from pathlib import Path
 
 REDACTIONS = (
-    (re.compile(r"(?i)(authorization:\\s*bearer\\s+)[^\\s]+"), r"\\1[REDACTED]"),
-    (re.compile(r"(?i)([?&](?:access_token|api_key|apikey|token|secret|password)=)[^&\\s]+"), r"\\1[REDACTED]"),
-    (re.compile(r"(?i)\\b(?:gh[pousr]_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,})\\b"), "[REDACTED_TOKEN]"),
-    (re.compile(r"\\bAKIA[0-9A-Z]{16}\\b"), "[REDACTED_AWS_KEY]"),
-    (re.compile(r"\\bsk-[A-Za-z0-9_-]{20,}\\b"), "[REDACTED_API_KEY]"),
+    (re.compile(r"(?i)(authorization:\s*bearer\s+)[^\s]+"), r"\1[REDACTED]"),
+    (re.compile(r"(?i)([?&](?:access_token|api_key|apikey|token|secret|password)=)[^&\s]+"), r"\1[REDACTED]"),
+    (re.compile(r"(?i)\b(?:gh[pousr]_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,})\b"), "[REDACTED_TOKEN]"),
+    (re.compile(r"\bAKIA[0-9A-Z]{16}\b"), "[REDACTED_AWS_KEY]"),
+    (re.compile(r"\bsk-[A-Za-z0-9_-]{20,}\b"), "[REDACTED_API_KEY]"),
     (re.compile(r"-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----"), "[REDACTED_PRIVATE_KEY]"),
-    (re.compile(r"(?i)\\b([A-Z0-9._%+-]+)@([A-Z0-9.-]+\\.[A-Z]{2,})\\b"), "[REDACTED_EMAIL]"),
-    (re.compile(r"\\b\\d{3}-\\d{2}-\\d{4}\\b"), "[REDACTED_SSN]"),
-    (re.compile(r"(?<!\\d)(?:\\+?1[ .-]?)?\\(?\\d{3}\\)?[ .-]\\d{3}[ .-]\\d{4}(?!\\d)"), "[REDACTED_PHONE]"),
+    (re.compile(r"(?i)\b([A-Z0-9._%+-]+)@([A-Z0-9.-]+\.[A-Z]{2,})\b"), "[REDACTED_EMAIL]"),
+    (re.compile(r"\b\d{3}-\d{2}-\d{4}\b"), "[REDACTED_SSN]"),
+    (re.compile(r"(?<!\d)(?:\+?1[ .-]?)?\(?\d{3}\)?[ .-]\d{3}[ .-]\d{4}(?!\d)"), "[REDACTED_PHONE]"),
 )
 def sanitize(value: str) -> str:
     for pattern, replacement in REDACTIONS:
@@ -23,7 +23,7 @@ def sanitize(value: str) -> str:
     return value
 
 def build_report(log_text: str, exit_code: int, *, commit: str = "", run_id: str = "") -> dict:
-    excerpt = "\\n".join(sanitize(log_text).splitlines()[-100:])[-12000:]
+    excerpt = "\n".join(sanitize(log_text).splitlines()[-100:])[-12000:]
     return {
         "schema_version": "dreamco.ci_failure_report.v1",
         "status": "PASS" if exit_code == 0 else "FAIL",
@@ -48,7 +48,7 @@ def main() -> int:
     )
     output = Path(args.output)
     output.parent.mkdir(parents=True, exist_ok=True)
-    output.write_text(json.dumps(report, indent=2) + "\\n", encoding="utf-8")
+    output.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
     return 0
 
 if __name__ == "__main__":
