@@ -12,7 +12,7 @@ class TestCompletionStages(unittest.TestCase):
  def test_clean_room_contract_and_similarity(self):
   guide={"guide_id":"g1","title":"Original lesson","learning_objectives":["Explain a process"],"lesson":"Write a new explanation.","practice_lab":"Use synthetic data.","assessment":"Solve a new case.","safety_notes":["No live actions"]}
   self.assertEqual(clean.validate_guide(guide),[])
-  self.assertFalse(clean.clean_room_gate(guide,["Write a new explanation. Use synthetic data. Solve a new case."])["accepted"])
+  self.assertFalse(clean.clean_room_gate(guide,["g1 Original lesson Explain a process Write a new explanation. Use synthetic data. Solve a new case. No live actions"])["accepted"])
   self.assertTrue(clean.clean_room_gate(guide,[])["accepted"])
  def test_learning_requires_lab_and_teachback_evidence(self):
   with tempfile.TemporaryDirectory() as d:
