@@ -96,6 +96,7 @@ jobs:
           SIGNATURE: ${{ runner.temp }}/dreamco-foundry/source.sig
           SHARD_SIGNATURE: ${{ runner.temp }}/dreamco-foundry/shards.sig
           PUBLIC_KEY: ${{ runner.temp }}/dreamco-foundry/policy-public.pem
+          SHARDS: ${{ steps.paths.outputs.shards }}
         run: |
           python - <<'PY'
           import os
