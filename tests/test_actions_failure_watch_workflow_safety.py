@@ -12,7 +12,7 @@ def test_failure_watch_observes_every_main_workflow_completion():
     trigger = workflow["on"]["workflow_run"]
     assert trigger["types"] == ["completed"]
     assert trigger["branches"] == ["main"]
-    assert trigger["workflows"] == ["*"]
+    assert "workflows" not in trigger
 
 
 def test_failure_watch_excludes_itself_and_only_captures_real_failures():
