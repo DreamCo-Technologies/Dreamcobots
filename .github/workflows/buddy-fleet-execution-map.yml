@@ -194,6 +194,19 @@ jobs:
           python tools/build_actions_prospectus.py
           python tools/generate_production_evidence_ledger.py
           node --import tsx tools/run_bot_fleet_e2e.ts
+      - name: Stage generated artifacts for bounded review validation
+        run: |
+          git fetch --no-tags origin main
+          for path in \
+            config/bots \
+            config/generated \
+            config/buddy \
+            website/data \
+            reports; do
+            if [ -e "$path" ]; then git add -N -- "$path"; fi
+          done
+      - name: Validate generated artifact diff before opening PR
+        run: python tools/validate_generated_artifact_pr.py --base origin/main
       - name: Open or update generated-output review PR
         if: success()
         uses: peter-evans/create-pull-request@v7
