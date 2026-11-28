@@ -4,6 +4,7 @@
 
 - `config/buddy-bootcamp-100-resource-manifest.json`: 100 catalog entries grouped into ten foundry layers, mapped to the canonical DreamCo 65-MasterBot registry and five delivery stages.
 - `tools/generate_buddy_bootcamp_challenges.py`: deterministic challenge-spec generator that accepts staged O*NET-like task records and emits original DreamCo challenge framing, a JSON Schema contract, pytest grading assertions, and provenance metadata.
+- Each resource record includes official upstream reference links where a specific project or specification is identifiable. Reference links help discovery; they do not grant license, training, redistribution, or commercial rights. Resource 89 deliberately requires choosing and reviewing a specific MCTS/tree-search implementation before adoption.
 
 ## Canonical division count
 
