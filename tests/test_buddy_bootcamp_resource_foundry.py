@@ -74,6 +74,11 @@ class BuddyBootcampGeneratorTests(unittest.TestCase):
             layer_counts[item["layer_id"]] = layer_counts.get(item["layer_id"], 0) + 1
         self.assertEqual(len(layer_counts), 10)
         self.assertEqual(set(layer_counts.values()), {10})
+        self.assertEqual(len({item["slug"] for item in manifest["canonical_divisions"]}), 55)
+        self.assertTrue(all(item["license_verification_status"] == "REVIEW_REQUIRED_BEFORE_USE"
+                            for item in manifest["resources"]))
+        self.assertTrue(all(item["training_permission"] == "NOT_GRANTED_BY_CATALOG_ENTRY"
+                            for item in manifest["resources"]))
 
 
 if __name__ == "__main__":
