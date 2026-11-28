@@ -1,0 +1,115 @@
+name: Buddy Teacher Coverage Audit
+
+on:
+  pull_request:
+    paths:
+      - "tools/audit_buddy_teacher_coverage.py"
+      - "tests/test_audit_buddy_teacher_coverage.py"
+      - "tools/score_buddy_dev_fixtures.py"
+      - "tools/run_buddy_ollama_dev_baseline.py"
+      - "tests/test_run_buddy_ollama_dev_baseline.py"
+      - "tools/score_buddy_tool_call_dev.py"
+      - "tests/test_score_buddy_tool_call_dev.py"
+      - "tools/validate_buddy_open_weight_candidates.py"
+      - "tools/buddy_local_compute_preflight.py"
+      - "tests/test_buddy_local_compute_preflight.py"
+      - "tests/test_validate_buddy_open_weight_candidates.py"
+      - "config/buddy-open-weight-candidate-research.json"
+      - "tools/validate_buddy_lora_proposal.py"
+      - "tools/validate_buddy_dataset_splits.py"
+      - "tools/validate_buddy_evaluation_receipt.py"
+      - "tools/validate_buddy_receipt_binding.py"
+      - "tests/test_validate_buddy_evaluation_receipt.py"
+      - "tests/test_validate_buddy_receipt_binding.py"
+      - "tests/test_validate_buddy_dataset_splits.py"
+      - "tests/test_validate_buddy_lora_proposal.py"
+      - "config/buddy-lora-experiment-proposal.json"
+      - "tests/test_score_buddy_dev_fixtures.py"
+      - "buddy/bootcamp/professional_training.py"
+      - "tests/test_professional_training.py"
+      - "config/buddy-benchmark-task-registry.json"
+      - "config/buddy-model-benchmarks.json"
+      - "config/buddy-model-selection-registry.json"
+      - "config/buddy-student-adapter-registry.json"
+      - "config/buddy-distill-contract.json"
+      - "config/generated/production-evidence-ledger.json"
+      - "config/masterbot-65-registry.json"
+      - ".github/workflows/buddy-teacher-coverage-audit.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: buddy-teacher-coverage-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      # Stdlib-only, read-only; never downloads or trains weights.
+      - name: Verify synthetic audit tests
+        run: python3 -m unittest tests.test_audit_buddy_teacher_coverage tests.test_professional_training tests.test_score_buddy_dev_fixtures tests.test_run_buddy_ollama_dev_baseline tests.test_score_buddy_tool_call_dev tests.test_validate_buddy_lora_proposal tests.test_validate_buddy_dataset_splits tests.test_validate_buddy_evaluation_receipt tests.test_validate_buddy_receipt_binding tests.test_validate_buddy_open_weight_candidates tests.test_buddy_local_compute_preflight -v
+      - name: Preflight disabled LoRA proposal (no training or model downloads)
+        run: |
+          python3 tools/validate_buddy_lora_proposal.py --proposal config/buddy-lora-experiment-proposal.json > buddy-lora-preflight.json
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          report = json.loads(Path("buddy-lora-preflight.json").read_text())
+          assert report["missing_evidence_count"] > 0
+          assert report["training_authorized"] is False
+          assert report["eligible_for_model_promotion"] is False
+          print("LoRA preflight remains blocked; no training authorized.")
+          PY
+      - name: Validate research-only open-weight shortlist (no downloads or training)
+        run: |
+          python3 tools/validate_buddy_open_weight_candidates.py --registry config/buddy-open-weight-candidate-research.json > buddy-model-candidates-preflight.json
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          report = json.loads(Path("buddy-model-candidates-preflight.json").read_text())
+          assert report["candidate_count"] > 0
+          assert report["training_authorized"] is False
+          assert report["production_ready"] is False
+          assert report["commercial_and_derivative_rights_verified"] is False
+          print("Research shortlist remains blocked; no model claims authorized.")
+          PY
+      - name: Verify read-only local compute preflight CLI (runner hardware only)
+        run: |
+          python3 tools/buddy_local_compute_preflight.py --output /tmp/buddy-compute-preflight.json
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          data = json.loads(Path("/tmp/buddy-compute-preflight.json").read_text())
+          assert data["training_authorized"] is False
+          assert data["model_runs"] == 0
+          assert data["hardware_suitability_verified"] is False
+          print("Runner memory inventory only; not a user-device readiness claim.")
+          PY
+      - name: Inventory divisions, benchmark gaps and model catalog aliases
+        run: python3 tools/audit_buddy_teacher_coverage.py --output buddy-teacher-coverage.json
+      - name: Validate report is a registry audit, not an evaluation receipt
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          report = json.loads(Path("buddy-teacher-coverage.json").read_text())
+          assert report["schema"] == "dreamco.buddy_teacher_coverage_audit.v1"
+          assert report["summary"]["actual_divisions"] == len(report["division_coverage"])
+          assert report["summary"]["independent_holdout_receipts_in_this_audit"] == 0
+          assert all(not row["independently_verified_model_ids"] for row in report["task_routes"])
+          print("Audit shape valid; no model readiness claimed.")
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: buddy-teacher-coverage-audit
+          path: buddy-teacher-coverage.json
+          if-no-files-found: ignore
+          retention-days: 7
