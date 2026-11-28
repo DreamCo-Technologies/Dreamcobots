@@ -1,6 +1,6 @@
 """Merge a LoRA adapter only after signed holdout evaluation passes."""
 from __future__ import annotations
-import argparse, hashlib, json, re
+import argparse, hashlib, json, shutil, re
 from pathlib import Path
 from .guardrails import require_model_authorization, sha256_file, verify_signed_manifest
 
@@ -111,6 +111,7 @@ def main():
     payload={"schema":"dreamco.foundry.merged_checkpoint.v1","base_model":a.base_model,
       "base_revision":a.base_revision,"license_evidence_id":model_auth["license_evidence_id"],
       "checkpoint_manifest_sha256":sha256_file(checkpoint_manifest_path),
+      "tokenizer_sha256":tokenizer_digest(a.adapter),
       "source_manifest_sha256":sha256_file(a.manifest),"adapter_sha256":adapter_hash,
       "holdout_report_sha256":sha256_file(a.holdout_report),"merged_weights_sha256":weights,
       "promotion_gate":"passed","merge_started":True}
