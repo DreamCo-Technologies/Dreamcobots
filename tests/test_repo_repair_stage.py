@@ -63,3 +63,14 @@ def test_path_guard_rejects_traversal_and_accepts_generated_artifacts():
     assert not MODULE.path_is_allowed("../.github/workflows/ci.yml", prefixes)
     assert not MODULE.path_is_allowed("server/app.py", prefixes)
     assert MODULE.path_is_allowed("config/generated/index.json", prefixes)
+
+
+def test_apply_guard_rejects_pull_request_context(monkeypatch, tmp_path):
+    monkeypatch.setenv("GITHUB_EVENT_NAME", "pull_request")
+    monkeypatch.setenv("GITHUB_REF", "refs/pull/1/merge")
+    try:
+        MODULE.assert_trusted_main(tmp_path, local_ok=True)
+    except PermissionError:
+        pass
+    else:
+        raise AssertionError("pull-request code must never execute a repair")
