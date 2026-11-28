@@ -78,6 +78,7 @@ def main():
         )
         domain_tokenizer.train_from_iterator(corpus(manifest), trainer=domain_trainer)
         base_vocab = base_tokenizer.get_vocab()
+        added_special_tokens = [token for token in SPECIAL_TOKENS if token not in base_vocab]
         domain_vocab = domain_tokenizer.get_vocab()
         domain_tokens = [
             token for token, _ in sorted(domain_vocab.items(), key=lambda pair: pair[1])
@@ -100,6 +101,8 @@ def main():
 
     hf_tokenizer.save_pretrained(args.output)
     added_domain_tokens = locals().get("added_domain_tokens", [])
+    added_special_tokens = locals().get("added_special_tokens", [])
+    trainable_tokens = added_domain_tokens + added_special_tokens
     metadata = {
         "schema": "dreamco.foundry.tokenizer_artifact.v1", "mode": args.mode,
         "vocab_size": len(hf_tokenizer),
@@ -110,9 +113,10 @@ def main():
         "policy_decisions": sorted({item["policy_decision_id"] for item in manifest["datasets"]}),
         "special_tokens": SPECIAL_TOKENS,
         "added_domain_tokens": added_domain_tokens,
+        "added_special_tokens": added_special_tokens,
         "trainable_token_ids": sorted({
             int(hf_tokenizer.convert_tokens_to_ids(token))
-            for token in added_domain_tokens
+            for token in trainable_tokens
             if hf_tokenizer.convert_tokens_to_ids(token) is not None
         }),\n        "added_domain_tokens": added_domain_tokens if args.mode == "extend" else None,\n        "mean_initialize_new_embeddings": args.mode == "extend",
     }
