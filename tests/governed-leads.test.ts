@@ -349,6 +349,24 @@ test("does not clear suppression without a new explicit opt-in", () => {
     consentObtainedAt: "2026-11-28T12:00:00.000Z",
   });
   assert.equal(resubscribed.suppressionStatus, "active");
+
+  const neverConsentedOptOut = {
+    ...leadRecord,
+    suppressionStatus: "opted_out" as const,
+    consentBasis: "none" as const,
+    consentEvidenceRef: undefined,
+    consentObtainedAt: undefined,
+    consentChannels: [],
+  };
+  const firstOptIn = assertLeadStageTransition(neverConsentedOptOut, {
+    ...neverConsentedOptOut,
+    suppressionStatus: "active",
+    consentBasis: "explicit_opt_in",
+    consentEvidenceRef: "consent:first-opt-in-003",
+    consentObtainedAt: "2026-11-28T12:00:00.000Z",
+    consentChannels: ["email"],
+  });
+  assert.equal(firstOptIn.suppressionStatus, "active");
 });
 
 test("requires timestamped unexpired channel consent and explicit SMS opt-in", () => {
