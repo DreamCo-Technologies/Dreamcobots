@@ -284,6 +284,15 @@ class FoundryGuardrailTests(unittest.TestCase):
             shard_dir.mkdir()
             shard = shard_dir / "train-00000.bin"
             shard.write_bytes(b"\\x00" * 32)
+            shard_index = shard_dir / "train-00000.idx"
+            index_payload = {
+                "schema": "dreamco.foundry.token_shard_index.v1",
+                "bin_file": shard.name, "dtype": "uint32",
+                "sequence_length": 8, "sequence_count": 1, "token_count": 8,
+                "offset_unit": "tokens", "first_token_offset": 0,
+                "sequence_stride_tokens": 8,
+            }
+            shard_index.write_text(json.dumps(index_payload, sort_keys=True, separators=(",", ":")) + "\\n", encoding="utf-8")
             shard_manifest = shard_dir / "manifest.json"
             shard_signature = shard_dir / "manifest.sig"
             shard_payload = {
@@ -294,7 +303,9 @@ class FoundryGuardrailTests(unittest.TestCase):
                 "excluded_splits": ["holdout"],
                 "mix_percent": {"study_guides": 60, "verified_trajectories": 25, "general_replay": 15},
                 "train": {"file": shard.name, "tokens": 8, "sequences": 1,
-                          "sha256": hashlib.sha256(shard.read_bytes()).hexdigest()},
+                          "sha256": hashlib.sha256(shard.read_bytes()).hexdigest(),
+                          "index_file": shard_index.name,
+                          "index_sha256": hashlib.sha256(shard_index.read_bytes()).hexdigest()},
                 "validation": None,
             }
             shard_manifest.write_text(json.dumps(shard_payload), encoding="utf-8")
@@ -307,6 +318,7 @@ class FoundryGuardrailTests(unittest.TestCase):
                 shard_manifest, shard_signature, manifest, signature, public_path
             )
             self.assertEqual(verified_shards["train"]["_resolved_path"], str(shard.resolve()))
+            self.assertEqual(verified_shards["train"]["_resolved_index_path"], str(shard_index.resolve()))
             self.assertNotIn("_resolved_path", json.loads(shard_manifest.read_text())["train"])
 
     def test_signed_shard_payload_checks_sequence_geometry(self):
@@ -324,7 +336,9 @@ class FoundryGuardrailTests(unittest.TestCase):
                 "mix_percent": {"study_guides": 60, "verified_trajectories": 25, "general_replay": 15},
                 "source_manifest_sha256": hashlib.sha256(source.read_bytes()).hexdigest(),
                 "train": {"file": shard.name, "tokens": 8, "sequences": 1,
-                          "sha256": hashlib.sha256(shard.read_bytes()).hexdigest()},
+                          "sha256": hashlib.sha256(shard.read_bytes()).hexdigest(),
+                          "index_file": shard_index.name,
+                          "index_sha256": hashlib.sha256(shard_index.read_bytes()).hexdigest()},
                 "validation": None,
             }
             validated = GUARDRAILS.validate_shard_payload(payload, root, source)
