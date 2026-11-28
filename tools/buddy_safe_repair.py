@@ -16,6 +16,16 @@ REPAIR_ALLOWED_FILES = {
  "config/buddy-continuous-study-policy.json",
 }
 OUTPUT_PREFIX = "artifacts/buddy-safe-repair/"
+REPAIR_ALLOWED_COMMANDS = {
+ "tools/build_buddy_dataset_routes.py",
+ "tools/build_division_model_fleet.py",
+ "tools/build_pages_connection_index.py",
+ "tools/generate_bot_manifests.py",
+ "tools/refresh_repository_evidence.py",
+ "tools/generate_command_center_data.py",
+ "tools/build_actions_prospectus.py",
+ "tools/build_file_prospectus.py",
+}
 
 
 def repair_path_allowed(path:str)->bool:
@@ -26,6 +36,19 @@ def repair_path_allowed(path:str)->bool:
      or p.suffix.lower() in {".pem", ".key", ".p12", ".pfx"}):
   return False
  return path in REPAIR_ALLOWED_FILES or any(p.as_posix().startswith(prefix) for prefix in REPAIR_ALLOWED_PREFIXES)
+
+
+def safe_observation_path(root:Path,value:str)->Path:
+ p=PurePosixPath(value)
+ if (not p.parts or p.is_absolute() or "\\" in value or ".." in p.parts
+     or not p.as_posix().startswith(OUTPUT_PREFIX)):
+  raise ValueError("Observation must remain under artifacts/buddy-safe-repair/.")
+ out=(root/Path(*p.parts)).resolve()
+ try: relative=out.relative_to(root.resolve()).as_posix()
+ except ValueError: raise ValueError("Observation resolves outside the repository.")
+ if not relative.startswith(OUTPUT_PREFIX):
+  raise ValueError("Observation resolves outside artifacts/buddy-safe-repair/.")
+ return out
 
 
 def safe_output_path(root:Path,value:str)->Path:
@@ -74,7 +97,9 @@ def run_safe_repair(observation:dict,root:Path)->dict:
  if not commands:
   result["status"]="NO_ALLOWLISTED_AUTOMATIC_REPAIR";return result
  for command in commands:
-  proc=subprocess.run(command,cwd=root,text=True,capture_output=True,timeout=300,check=False)
+  if len(command)!=2 or command[0]!=sys.executable or command[1] not in REPAIR_ALLOWED_COMMANDS:
+   result["status"]="BLOCKED_UNSAFE_COMMAND";return result
+  proc=subprocess.run([sys.executable,command[1]],cwd=root,text=True,capture_output=True,timeout=300,check=False)
   result["executed"]=True
   result.setdefault("command_results",[]).append({"argv":command,"returncode":proc.returncode})
   if proc.returncode:
@@ -97,7 +122,13 @@ def run_safe_repair(observation:dict,root:Path)->dict:
 def main():
  p=argparse.ArgumentParser();p.add_argument("--observation",required=True);p.add_argument("--out",default="artifacts/buddy-safe-repair/result.json")
  a=p.parse_args();root=Path(__file__).resolve().parents[1]
- obs=json.loads(Path(a.observation).read_text(encoding="utf-8"))
+ try:
+  observation_path=safe_observation_path(root,a.observation)
+  if observation_path.stat().st_size>5*1024*1024: raise ValueError("Observation exceeds the 5 MiB safety limit.")
+  obs=json.loads(observation_path.read_text(encoding="utf-8"))
+  if not isinstance(obs,dict): raise ValueError("Observation must be a JSON object.")
+ except (OSError,ValueError,json.JSONDecodeError) as exc:
+  p.error(str(exc))
  result=run_safe_repair(obs,root)
  out=safe_output_path(root,a.out);out.parent.mkdir(parents=True,exist_ok=True);out.write_text(json.dumps(result,indent=2)+"\n",encoding="utf-8")
  output=Path(__import__("os").environ.get("GITHUB_OUTPUT","/dev/null"))
