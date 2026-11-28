@@ -23,3 +23,16 @@ The default bind address is loopback (`127.0.0.1`). Set `DREAMCO_WORKER_HOST=0.0
 ## Container
 
 The adjacent Dockerfile runs as a non-root user, has no model weights, and exposes port 8080. Supply `DREAMCO_WORKER_TOKEN` at runtime. Mount a persistent writable volume at `/var/lib/dreamco-media`.
+
+
+## Isolated GPU execution contract
+
+`execution_contract.py` defines the boundary for future GPU/provider workers:
+
+- worker capability declarations and bounded CPU, RAM, GPU, and timeout requests
+- plan-file containment and SHA-256 verification before execution
+- an explicit job lifecycle with terminal states that cannot be reopened
+- output manifests restricted to allowlisted media types, regular files, and verified byte size/hash
+- symlink and path traversal rejection
+
+This is an interface and validator, not a GPU executor. A provider implementation must run in a separate isolated process/container, invoke the canonical Media Director rights/consent and model-license gates before generation, and return artifact metadata for verification. It must not accept a user-supplied shell command or arbitrary host path. No GPU is provisioned by this repository change.
