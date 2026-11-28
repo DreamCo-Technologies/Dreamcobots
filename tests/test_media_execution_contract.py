@@ -78,6 +78,18 @@ class ExecutionContractTests(unittest.TestCase):
                 "size_bytes": outside.stat().st_size, "mime_type": "video/mp4",
             }], out)
 
+    def test_artifact_symlink_is_blocked(self):
+        out = self.root / "outputs"
+        out.mkdir()
+        outside = self.root / "outside.mp4"
+        outside.write_bytes(b"external")
+        (out / "linked.mp4").symlink_to(outside)
+        with self.assertRaises(ExecutionContractError):
+            verify_artifacts([{
+                "path": "linked.mp4", "sha256": hashlib.sha256(outside.read_bytes()).hexdigest(),
+                "size_bytes": outside.stat().st_size, "mime_type": "video/mp4",
+            }], out)
+
     def test_artifact_hash_mismatch_is_blocked(self):
         out = self.root / "outputs"
         out.mkdir()
