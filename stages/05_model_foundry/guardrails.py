@@ -159,6 +159,8 @@ def require_model_authorization(manifest: dict, model_id: str, revision: str) ->
     item = matches[0]
     if item.get("license_tier") not in ALLOWED_TIERS or item.get("commercial_use") is not True:
         raise PermissionError("base model is not approved for commercial training")
-    if not str(item.get("policy_decision_id", "")).strip() or not str(item.get("license_evidence_id", "")).strip():
-        raise PermissionError("base model requires signed policy decision and license evidence references")
+    if (not str(item.get("policy_decision_id", "")).strip()
+            or not str(item.get("license_evidence_id", "")).strip()
+            or not str(item.get("approved_by", "")).strip()):
+        raise PermissionError("base model requires signed policy decision, owner and license evidence references")
     return item
