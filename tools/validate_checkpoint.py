@@ -7,6 +7,7 @@ import hmac
 import json
 import math
 import os
+import re
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -45,9 +46,30 @@ def build_manifest(checkpoint: Path, evaluation_path: Path, training_config_path
     config = read_json(training_config_path)
     dataset = read_json(dataset_manifest_path)
     metrics = read_json(metrics_path)
+    if evaluation.get("schema") != "dreamco.heldout_evaluation_report.v1":
+        raise ValueError("evaluation report must come from the DreamCo held-out evaluator")
+    evaluator = evaluation.get("evaluator")
+    expected_evaluator_hash = sha256_file(Path(__file__).with_name("run_heldout_evaluation.py"))
+    if not isinstance(evaluator, dict) or evaluator.get("tool") != "tools/run_heldout_evaluation.py":
+        raise ValueError("evaluation report is missing evaluator provenance")
+    if evaluator.get("sha256") != expected_evaluator_hash:
+        raise ValueError("evaluation report evaluator code hash does not match this checkout")
     if evaluation.get("split") != "private_independent_holdout" or evaluation.get("training_use") != "NEVER_TRAIN":
         raise ValueError("checkpoint promotion requires a private independent holdout report; public smoke suites are insufficient")
-    if evaluation.get("passed") is not True or float(evaluation.get("accuracy", 0)) < float(evaluation.get("required_accuracy", 0.85)):
+    suite_hash = evaluation.get("suite_sha256")
+    if not isinstance(suite_hash, str) or not re.fullmatch(r"[0-9a-f]{64}", suite_hash):
+        raise ValueError("held-out suite SHA-256 must be a 64-character lowercase hex digest")
+    if not evaluation.get("suite_id") or not evaluation.get("model_version"):
+        raise ValueError("held-out report must identify its suite and evaluated model version")
+    if not config.get("candidate_model_version") or evaluation.get("model_version") != config.get("candidate_model_version"):
+        raise ValueError("held-out evaluation model version must match the training candidate")
+    total_tasks = int(evaluation.get("total_tasks", 0))
+    passed_tasks = int(evaluation.get("passed_tasks", 0))
+    if total_tasks <= 0 or passed_tasks != total_tasks:
+        raise ValueError("checkpoint promotion requires every held-out task to pass")
+    accuracy = finite_positive(evaluation.get("accuracy"), "held-out accuracy", allow_zero=True)
+    required_accuracy = finite_positive(evaluation.get("required_accuracy", 0.85), "required_accuracy", allow_zero=True)
+    if accuracy > 1 or required_accuracy > 1 or evaluation.get("passed") is not True or accuracy < required_accuracy:
         raise ValueError("held-out evaluation did not pass")
     if dataset.get("training_authorized") is not True or dataset.get("rights_review_status") != "APPROVED":
         raise ValueError("dataset rights and explicit training authorization are not approved")
@@ -74,8 +96,9 @@ def build_manifest(checkpoint: Path, evaluation_path: Path, training_config_path
                      "training_config_sha256": sha256_file(training_config_path),
                      "dataset_manifest_sha256": sha256_file(dataset_manifest_path)},
         "evaluation": {"report_sha256": sha256_file(evaluation_path), "suite_id": evaluation["suite_id"],
-                       "suite_sha256": evaluation["suite_sha256"], "accuracy": evaluation["accuracy"],
-                       "required_accuracy": evaluation["required_accuracy"], "passed": True},
+                       "suite_sha256": evaluation["suite_sha256"], "model_version": evaluation["model_version"],
+                       "evaluator_sha256": evaluation["evaluator"]["sha256"], "accuracy": accuracy,
+                       "required_accuracy": required_accuracy, "total_tasks": total_tasks, "passed_tasks": passed_tasks, "passed": True},
         "metrics": {"validation_perplexity": perplexity, "tokens_per_second": throughput,
                     "peak_ram_mb": peak_ram, "peak_vram_mb": peak_vram},
         "authentication": {"algorithm": "HMAC-SHA256", "key_id": key_id.strip(), "value": ""},
