@@ -95,7 +95,6 @@ def _load_model(recipe: dict[str, Any], tokenizer, checkpoint: Path | None = Non
         if not model_id or not isinstance(revision, str) or not re.fullmatch(r"[0-9a-f]{40}", revision):
             raise PermissionError("loading a LoRA checkpoint requires the pinned base model revision")
         require_model_authorization(manifest or {}, model_id, revision)
-        require_model_authorization(manifest or {}, model_id, revision)
         base_model = AutoModelForCausalLM.from_pretrained(
             model_id, revision=revision, trust_remote_code=False,
             use_safetensors=True, torch_dtype="auto",
