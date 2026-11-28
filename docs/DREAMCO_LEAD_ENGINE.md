@@ -67,6 +67,7 @@ The existing `/api/buddy/lead-plan` endpoint remains the governed outreach plann
 - [x] Reuse of existing governed outreach and suppression policies
 - [x] Focused qualification regression tests added to the existing governed-leads test suite
 - [x] Storage contract tests added to the governed test suite
+- [x] Dedicated `.github/workflows/lead-engine-validation.yml` runs full-app TypeScript checking and focused lead/OAuth/outbound regression tests
 - [x] Owner-scoped PostgreSQL CRM repository and tenant-isolation migration authored
 - [x] Consent evidence and suppression state included in persisted lead records
 - [ ] Apply migration in staging/production and verify RLS using the actual non-superuser application role
@@ -78,7 +79,7 @@ The existing `/api/buddy/lead-plan` endpoint remains the governed outreach plann
 - [ ] Calendar integration for owner-authorized booking
 - [ ] Human-reviewed proposal and conversion handoff
 - [ ] End-to-end tests against configured staging integrations
-- [ ] Exact-head CI and security checks passing
+- [ ] Exact-head dedicated validation workflow and repository security checks passing
 
 ## Release truth
 
