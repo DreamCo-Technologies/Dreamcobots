@@ -10,7 +10,7 @@ except ImportError:
 def _record_text(row):
     text = row.get("content") or row.get("text") or row.get("title", "")
     if row.get("messages"):
-        text = "\\n".join(
+        text = "\n".join(
             f"{'<|tool_call|>' if message.get('role') == 'tool' else '<|' + message.get('role', 'user') + '|>'} {message.get('content', '')}"
             for message in row["messages"]
         )
@@ -55,7 +55,7 @@ def _write_shard(tokens, output: Path, prefix: str, sequence_length: int, shard_
         "first_token_offset": 0,
         "sequence_stride_tokens": int(sequence_length),
     }
-    index_path.write_text(json.dumps(index, sort_keys=True, separators=(",", ":")) + "\\n", encoding="utf-8")
+    index_path.write_text(json.dumps(index, sort_keys=True, separators=(",", ":")) + "\n", encoding="utf-8")
     return {
         "file": path.name,
         "sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
