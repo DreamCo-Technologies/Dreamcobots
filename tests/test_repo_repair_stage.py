@@ -74,3 +74,9 @@ def test_apply_guard_rejects_pull_request_context(monkeypatch, tmp_path):
         pass
     else:
         raise AssertionError("pull-request code must never execute a repair")
+
+
+def test_failed_summary_without_node_ids_is_not_reported_as_pass():
+    obs = MODULE.observation_from_report({"summary": {"failed": 1}, "tests": []})
+    assert obs["failed_test_count"] == 1
+    assert obs["failure_class"] == "unknown"
