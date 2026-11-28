@@ -15,9 +15,18 @@ def thresholds_pass(pass_rate: float, safety_rate: float,
     return pass_rate >= minimum_pass_rate and safety_rate >= minimum_safety_rate
 
 def checkpoint_digest(path: Path) -> str:
-    files=sorted(path.glob("*.safetensors"), key=lambda item: item.name)
-    if not files: raise ValueError("checkpoint directory must contain safetensors weights")
-    return hashlib.sha256(b"".join(item.read_bytes() for item in files)).hexdigest()
+    files = sorted(path.glob("*.safetensors"), key=lambda item: item.name)
+    if not files:
+        raise ValueError("checkpoint directory must contain safetensors weights")
+    digest = hashlib.sha256()
+    for item in files:
+        digest.update(item.name.encode("utf-8"))
+        digest.update(b"\0")
+        with item.open("rb") as stream:
+            for chunk in iter(lambda: stream.read(1024 * 1024), b""):
+                digest.update(chunk)
+        digest.update(b"\0")
+    return digest.hexdigest()
 
 def tokenizer_digest(path: Path) -> str:
     names={"tokenizer.json","tokenizer_config.json","special_tokens_map.json",
@@ -29,9 +38,9 @@ def tokenizer_digest(path: Path) -> str:
     digest=hashlib.sha256()
     for item in files:
         digest.update(item.relative_to(path).as_posix().encode("utf-8"))
-        digest.update(b"\\0")
+        digest.update(b"\0")
         digest.update(item.read_bytes())
-        digest.update(b"\\0")
+        digest.update(b"\0")
     return digest.hexdigest()
 
 def main():
@@ -47,7 +56,7 @@ def main():
     if a.max_new_tokens<1 or a.max_new_tokens>2048: raise ValueError("max-new-tokens must be 1..2048")
     if not 0 <= a.minimum_pass_rate <= 1 or not 0 <= a.minimum_safety_gate_pass_rate <= 1:
         raise ValueError("holdout minimum rates must be between 0 and 1")
-    manifest=verify_signed_manifest(a.manifest,a.signature,a.public_key)
+    manifest=verify_signed_manifest(a.manifest,a.signature,a.public_key,verify_dataset_hashes=False)
     rows=list(iter_authorized_records(manifest,categories={"holdout_benchmarks"},splits={"holdout"}))
     if not rows: raise ValueError("signed holdout split is empty")
     task_ids=[]; prepared=[]
@@ -101,6 +110,10 @@ def main():
            for r in prepared]
     suite_digest=hashlib.sha256(canonical_json(suite)).hexdigest()
     tokenizer_sha=tokenizer_digest(a.tokenizer)
+    adapter_config_sha=(
+        hashlib.sha256((a.checkpoint/"adapter_config.json").read_bytes()).hexdigest()
+        if base_model_auth else None
+    )
     eval_config={"max_new_tokens":a.max_new_tokens,"answer_metric":"normalized_exact_match_v1",
                  "safety_evaluator":"deterministic_refusal_marker_v1",
                  "minimum_pass_rate":a.minimum_pass_rate,
@@ -113,6 +126,10 @@ def main():
     report={"schema":"dreamco.foundry.model_holdout_report.v1","evaluation_split":"holdout",
       "source_manifest_sha256":manifest_sha,"benchmark_suite_sha256":suite_digest,
       "evaluation_config_sha256":eval_config_digest,"tokenizer_sha256":tokenizer_sha,
+      "base_model_id":a.base_model if base_model_auth else None,
+      "base_model_revision":a.base_revision if base_model_auth else None,
+      "base_model_license_evidence_id":base_model_auth.get("license_evidence_id") if base_model_auth else None,
+      "adapter_config_sha256":adapter_config_sha,
       "candidate_checkpoint_sha256":candidate_digest,"checkpoint_sha256":candidate_digest,
       "evaluated_task_ids":sorted(task_ids),
       "pass_rate":pass_rate,"safety_gate_pass_rate":safety_rate,

@@ -5,9 +5,18 @@ from pathlib import Path
 from .guardrails import require_model_authorization, sha256_file, verify_signed_manifest
 
 def safetensors_digest(folder: Path) -> str:
-    files=sorted(folder.glob("*.safetensors"),key=lambda item:item.name)
-    if not files: raise ValueError("adapter directory has no .safetensors weights")
-    return hashlib.sha256(b"".join(path.read_bytes() for path in files)).hexdigest()
+    files = sorted(folder.glob("*.safetensors"), key=lambda item: item.name)
+    if not files:
+        raise ValueError("adapter directory has no .safetensors weights")
+    digest = hashlib.sha256()
+    for item in files:
+        digest.update(item.name.encode("utf-8"))
+        digest.update(b"\0")
+        with item.open("rb") as stream:
+            for chunk in iter(lambda: stream.read(1024 * 1024), b""):
+                digest.update(chunk)
+        digest.update(b"\0")
+    return digest.hexdigest()
 
 def tokenizer_digest(folder: Path) -> str:
     names={"tokenizer.json","tokenizer_config.json","special_tokens_map.json",
@@ -19,9 +28,9 @@ def tokenizer_digest(folder: Path) -> str:
     digest=hashlib.sha256()
     for item in files:
         digest.update(item.relative_to(folder).as_posix().encode("utf-8"))
-        digest.update(b"\\0")
+        digest.update(b"\0")
         digest.update(item.read_bytes())
-        digest.update(b"\\0")
+        digest.update(b"\0")
     return digest.hexdigest()
 
 def main():
@@ -38,7 +47,7 @@ def main():
     a=p.parse_args()
     if not re.fullmatch(r"[0-9a-f]{40}",a.base_revision):
         raise PermissionError("base model revision must be a pinned 40-character commit SHA")
-    manifest=verify_signed_manifest(a.manifest,a.signature,a.public_key)
+    manifest=verify_signed_manifest(a.manifest,a.signature,a.public_key,verify_dataset_hashes=False)
     model_auth=require_model_authorization(manifest,a.base_model,a.base_revision)
     checkpoint_manifest_path=a.adapter/"checkpoint_manifest.json"
     if not checkpoint_manifest_path.is_file():
@@ -48,6 +57,7 @@ def main():
     if not adapter_config_path.is_file():
         raise PermissionError("LoRA adapter_config.json is required")
     adapter_config=json.loads(adapter_config_path.read_text(encoding="utf-8"))
+    adapter_config_sha=sha256_file(adapter_config_path)
     report=json.loads(a.holdout_report.read_text(encoding="utf-8"))
     if (report.get("schema")!="dreamco.foundry.holdout_evaluation.v1"
             or report.get("promotion_eligible") is not True
@@ -65,6 +75,8 @@ def main():
         and checkpoint_manifest.get("base_model_id")==a.base_model
         and checkpoint_manifest.get("base_model_revision")==a.base_revision
         and adapter_config.get("base_model_name_or_path")==a.base_model
+        and checkpoint_manifest.get("adapter_config_sha256")==adapter_config_sha
+        and report.get("candidate_adapter_config_sha256")==adapter_config_sha
         and report.get("candidate_base_model_id")==a.base_model
         and report.get("candidate_base_model_revision")==a.base_revision
         and report.get("candidate_base_model_license_evidence_id")==model_auth.get("license_evidence_id")
@@ -112,6 +124,7 @@ def main():
       "base_revision":a.base_revision,"license_evidence_id":model_auth["license_evidence_id"],
       "checkpoint_manifest_sha256":sha256_file(checkpoint_manifest_path),
       "tokenizer_sha256":tokenizer_digest(a.adapter),
+      "adapter_config_sha256":adapter_config_sha,
       "source_manifest_sha256":sha256_file(a.manifest),"adapter_sha256":adapter_hash,
       "holdout_report_sha256":sha256_file(a.holdout_report),"merged_weights_sha256":weights,
       "promotion_gate":"passed","merge_started":True}

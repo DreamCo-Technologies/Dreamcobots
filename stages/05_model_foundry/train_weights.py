@@ -32,10 +32,26 @@ def tokenizer_digest(path: Path) -> str:
     digest=hashlib.sha256()
     for item in files:
         digest.update(item.relative_to(path).as_posix().encode("utf-8"))
-        digest.update(b"\\0")
+        digest.update(b"\0")
         digest.update(item.read_bytes())
-        digest.update(b"\\0")
+        digest.update(b"\0")
     return digest.hexdigest()
+
+def safetensors_digest(folder: Path) -> str | None:
+    """Hash a stable, unambiguous ordered list of weight filenames and bytes."""
+    files = sorted(folder.glob("*.safetensors"), key=lambda item: item.name)
+    if not files:
+        return None
+    digest = hashlib.sha256()
+    for item in files:
+        digest.update(item.name.encode("utf-8"))
+        digest.update(b"\0")
+        with item.open("rb") as stream:
+            for chunk in iter(lambda: stream.read(1024 * 1024), b""):
+                digest.update(chunk)
+        digest.update(b"\0")
+    return digest.hexdigest()
+
 
 def load_recipe(path: Path) -> dict[str, Any]:
     text = path.read_text(encoding="utf-8")
@@ -87,6 +103,44 @@ def validated_preferences(records: list[dict[str, Any]]) -> list[dict[str, str]]
                 "rejected": row["rejected"],
             })
     return result
+
+
+def study_guide_sft_rows(records: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Convert signed clean-room lessons into user/assistant teaching examples."""
+    rows = []
+    for row in records:
+        title = str(row.get("title") or "").strip()
+        if not title:
+            continue
+        objectives = row.get("learning_objectives", [])
+        if not isinstance(objectives, list):
+            objectives = [str(objectives)]
+        objectives_text = "\n".join(
+            f"- {str(item).strip()}" for item in objectives if str(item).strip()
+        )
+        sections = [
+            ("Learning objectives", objectives_text),
+            ("Core concepts", str(row.get("core_concepts") or "").strip()),
+            ("Worked examples", str(row.get("worked_examples") or "").strip()),
+            ("Common pitfalls", str(row.get("common_pitfalls") or "").strip()),
+        ]
+        answer = "\n\n".join(
+            f"{heading}:\n{content}" for heading, content in sections if content
+        )
+        if not answer:
+            continue
+        rows.append({"messages": [
+            {
+                "role": "system",
+                "content": "You are Buddy, a careful technical instructor. Teach only from the supplied clean-room lesson and do not invent unsupported facts.",
+            },
+            {
+                "role": "user",
+                "content": f"Teach me {title}. Explain the objectives, core concepts, worked examples, and common pitfalls.",
+            },
+            {"role": "assistant", "content": answer},
+        ]})
+    return rows
 
 
 def sft_rows(records: list[dict[str, Any]]) -> list[dict[str, Any]]:
@@ -340,14 +394,26 @@ def execute_stage(stage: str, recipe: dict[str, Any], manifest: dict[str, Any],
     if stage == "pretrain":
         if shard_dir is None:
             raise ValueError("pretrain requires --token-shards pointing to pack_tokens.py output")
-        if not shard_payload or not shard_payload.get("train", {}).get("_resolved_path"):
+        if not shard_payload:
             raise PermissionError("pretraining requires a verified signed train-shard entry")
-        shard_paths = [Path(shard_payload["train"]["_resolved_path"])]
-        if not shard_paths[0].is_file():
-            raise FileNotFoundError("verified train shard is missing")
+        train_entries = shard_payload.get("train")
+        if isinstance(train_entries, dict):
+            train_entries = [train_entries]
+        if not isinstance(train_entries, list) or not train_entries or any(
+            not item.get("_resolved_path") for item in train_entries
+        ):
+            raise PermissionError("pretraining requires verified signed train-shard entries")
+        shard_paths = [Path(item["_resolved_path"]) for item in train_entries]
+        if any(not path.is_file() for path in shard_paths):
+            raise FileNotFoundError("one or more verified train shards are missing")
         dataset = _PackedDataset(shard_paths, int(recipe["packing"]["sequence_length"]))
-        validation_entry = (shard_payload or {}).get("validation")
-        validation_paths = [Path(validation_entry["_resolved_path"])] if validation_entry and validation_entry.get("_resolved_path") else []
+        validation_entries = shard_payload.get("validation")
+        if isinstance(validation_entries, dict):
+            validation_entries = [validation_entries]
+        validation_paths = [
+            Path(item["_resolved_path"]) for item in (validation_entries or [])
+            if item.get("_resolved_path")
+        ]
         validation_dataset = (
             _PackedDataset(validation_paths, int(recipe["packing"]["sequence_length"]))
             if validation_paths else None
@@ -359,8 +425,9 @@ def execute_stage(stage: str, recipe: dict[str, Any], manifest: dict[str, Any],
             data_collator=lambda batch: _collate(batch, tokenizer),
         )
     elif stage == "sft":
-        records = list(iter_authorized_records(manifest, categories={"verified_trajectories"}, splits={"train"}))
-        rows = sft_rows(records)
+        guide_records = list(iter_authorized_records(manifest, categories={"study_guides"}, splits={"train"}))
+        trajectory_records = list(iter_authorized_records(manifest, categories={"verified_trajectories"}, splits={"train"}))
+        rows = study_guide_sft_rows(guide_records) + sft_rows(trajectory_records)
         dataset = _sft_dataset(rows, tokenizer, int(recipe.get("sft", {}).get("max_seq_length", 2048)))
         cfg = recipe.get("sft", {})
         trainer = Trainer(
@@ -402,9 +469,11 @@ def execute_stage(stage: str, recipe: dict[str, Any], manifest: dict[str, Any],
         "schema": "dreamco.foundry.checkpoint.v1",
         "stage": stage,
         "checkpoint_dir": str(output),
-        "checkpoint_sha256": hashlib.sha256(
-            b"".join(path.read_bytes() for path in sorted(output.glob("*.safetensors"), key=lambda item: item.name))
-        ).hexdigest() if list(output.glob("*.safetensors")) else None,
+        "checkpoint_sha256": safetensors_digest(output),
+        "adapter_config_sha256": (
+            hashlib.sha256((output / "adapter_config.json").read_bytes()).hexdigest()
+            if (output / "adapter_config.json").is_file() else None
+        ),
         "source_manifest_sha256": manifest.get("_source_manifest_sha256"),
         "recipe_sha256": manifest.get("_recipe_sha256"),
         "tokenizer_sha256": manifest.get("_tokenizer_sha256"),
@@ -442,7 +511,7 @@ def main():
     args = parser.parse_args()
 
     recipe = load_recipe(args.recipe)
-    manifest = verify_signed_manifest(args.manifest, args.signature, args.public_key)
+    manifest = verify_signed_manifest(args.manifest, args.signature, args.public_key, verify_dataset_hashes=False)
     manifest["_recipe_sha256"] = hashlib.sha256(args.recipe.read_bytes()).hexdigest()
     manifest["_tokenizer_sha256"] = tokenizer_digest(args.tokenizer)
     manifest["_shard_manifest_sha256"] = (
@@ -463,7 +532,7 @@ def main():
         raise ValueError("recipe has no enabled training stages")
     categories = {
         "pretrain": {"study_guides", "verified_trajectories", "general_replay"},
-        "sft": {"verified_trajectories"},
+        "sft": {"study_guides", "verified_trajectories"},
         "dpo": {"verified_preferences"},
     }
     counts = {
@@ -483,8 +552,20 @@ def main():
             raise ValueError("signed token-shard sequence_length does not match the selected training recipe")
         if args.token_shards.resolve() != args.shard_manifest.parent.resolve():
             raise PermissionError("--token-shards must be the directory containing the verified signed shard manifest")
-        if not shard_payload.get("train"):
+        train_entries = shard_payload.get("train")
+        if isinstance(train_entries, dict):
+            train_entries = [train_entries]
+        validation_entries = shard_payload.get("validation")
+        if isinstance(validation_entries, dict):
+            validation_entries = [validation_entries]
+        all_shard_entries = list(train_entries or []) + list(validation_entries or [])
+        if not train_entries:
             raise ValueError("signed shard manifest has no train shard")
+        shard_limit = int(recipe["packing"].get("shard_size_tokens", 5_000_000))
+        if int(shard_payload.get("shard_size_tokens", 0)) != shard_limit:
+            raise ValueError("signed shard manifest shard_size_tokens does not match the recipe")
+        if any(int(item.get("tokens", 0)) > shard_limit for item in all_shard_entries):
+            raise ValueError("signed token shard exceeds the recipe shard_size_tokens limit")
 
     if not args.execute:
         summary = {

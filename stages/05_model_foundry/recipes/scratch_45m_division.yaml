@@ -9,6 +9,7 @@ tokenizer:
   special_tokens: [<|pad|>, <|bos|>, <|eos|>, <|unk|>, <|system|>, <|user|>, <|assistant|>, <|tool_call|>, <|division_id|>, <|sandbox_stdout|>, <|teach_back|>, <|rubric_pass|>]
 packing:
   sequence_length: 1024
+  shard_size_tokens: 5000000
   dtype: uint32
   mix_percent: {study_guides: 60, verified_trajectories: 25, general_replay: 15}
 architecture:

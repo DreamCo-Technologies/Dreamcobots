@@ -37,7 +37,9 @@ python -m stages.01_policy_gate.sign_training_manifest \
   --policy-decision-id "POLICY-REVIEW-REFERENCE"
 ```
 
-Third-party datasets and base models require item-level `source_evidence` that passes the existing commercial-training policy gate. DreamCo-original data requires a matching owner attestation and SHA-256.
+Third-party datasets and base models require item-level `source_evidence` that passes the exact source-URL and commercial-training policy gate. Each evidence record must include `source_id`, `source_url`, `license_tag`, `license_record_verified: true`, `license_evidence_url`, `license_evidence_path` (a local snapshot path relative to the repository root), `license_evidence_sha256`, `license_review_status: approved`, `license_reviewer_id`, `license_reviewed_at`, `commercial_training_permission: true`, and `commercial_training_evidence_ref`. The signer verifies the evidence snapshot hash; it does not trust a platform license badge by itself. DreamCo-original data requires a matching owner attestation and SHA-256.
+
+The default open-weight recipe uses `Qwen/Qwen2.5-Coder-1.5B`. The policy registry exception is limited to that exact repository and Apache-2.0; other Hugging Face models remain blocked from commercial training by default. The official [Qwen model card](https://huggingface.co/Qwen/Qwen2.5-Coder-1.5B) declares Apache-2.0, and the [repository LICENSE](https://huggingface.co/Qwen/Qwen2.5-Coder-1.5B/blob/main/LICENSE) contains the Apache 2.0 terms. Still pin a 40-character model revision and provide a reviewed LICENSE snapshot for that exact revision before signing.
 
 ## Tokenizer and token shards
 

@@ -4,7 +4,7 @@ A boolean field in a data row is never an authorization. The caller must supply
 an Ed25519-signed manifest and a trusted public key obtained out-of-band.
 """
 from __future__ import annotations
-import base64, hashlib, json
+import base64, hashlib, json, tempfile
 from pathlib import Path
 from typing import Any, Iterator
 
@@ -31,8 +31,9 @@ def split_name(record_id: str) -> str:
     n = split_bucket(record_id)
     return "train" if n < 90 else "validation" if n < 95 else "holdout"
 
-def verify_signed_manifest(manifest_path: Path, signature_path: Path, public_key_path: Path) -> dict:
-    """Verify Ed25519 signature over canonical manifest JSON, then all data hashes."""
+def verify_signed_manifest(manifest_path: Path, signature_path: Path, public_key_path: Path,
+                           *, verify_dataset_hashes: bool = True) -> dict:
+    """Verify manifest signature and paths; optionally hash all dataset contents."""
     try:
         from cryptography.hazmat.primitives.serialization import load_pem_public_key
         from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PublicKey
@@ -70,9 +71,13 @@ def verify_signed_manifest(manifest_path: Path, signature_path: Path, public_key
         if not p.is_file():
             raise FileNotFoundError(p)
         expected = str(item.get("sha256", "")).lower()
-        if len(expected) != 64 or sha256_file(p) != expected:
-            raise ValueError(f"{dataset_id}: dataset SHA-256 mismatch")
+        if len(expected) != 64:
+            raise ValueError(f"{dataset_id}: invalid dataset SHA-256")
         item["_resolved_path"] = str(p)
+        if verify_dataset_hashes:
+            if sha256_file(p) != expected:
+                raise ValueError(f"{dataset_id}: dataset SHA-256 mismatch")
+            item["_hash_verified"] = True
     manifest["_source_manifest_sha256"] = sha256_file(manifest_path)
     return manifest
 
@@ -88,11 +93,21 @@ def iter_authorized_records(manifest: dict, *, categories: set[str] | None = Non
         if categories and dataset.get("category") not in categories:
             continue
         path = Path(dataset["_resolved_path"])
-        with path.open(encoding="utf-8") as stream:
-            for line_no, line in enumerate(stream, 1):
-                if not line.strip():
+        expected_sha256 = str(dataset.get("sha256", "")).lower()
+        # Hash into a private spool, then parse that exact byte snapshot. This
+        # avoids a verify-then-reopen race if the source path changes mid-read.
+        with path.open("rb") as source, tempfile.TemporaryFile(mode="w+b") as verified:
+            digest = hashlib.sha256()
+            for chunk in iter(lambda: source.read(1024 * 1024), b""):
+                digest.update(chunk)
+                verified.write(chunk)
+            if digest.hexdigest() != expected_sha256:
+                raise ValueError(f"{dataset['dataset_id']}: dataset SHA-256 mismatch")
+            verified.seek(0)
+            for line_no, raw_line in enumerate(verified, 1):
+                if not raw_line.strip():
                     continue
-                row = json.loads(line)
+                row = json.loads(raw_line.decode("utf-8"))
                 rid = str(row.get("task_id") or row.get("id") or "")
                 actual = split_name(rid)
                 if actual not in requested:
@@ -103,6 +118,16 @@ def iter_authorized_records(manifest: dict, *, categories: set[str] | None = Non
                        "_license_tier": dataset["license_tier"],
                        "_policy_decision_id": dataset["policy_decision_id"]}
 
+def verify_manifest_dataset_hashes(manifest: dict, *, categories: set[str]) -> None:
+    """Hash only selected dataset categories, leaving holdout contents untouched."""
+    for dataset in manifest["datasets"]:
+        if dataset.get("category") not in categories:
+            continue
+        path = Path(dataset["_resolved_path"])
+        if sha256_file(path) != str(dataset.get("sha256", "")).lower():
+            raise ValueError(f"{dataset['dataset_id']}: dataset SHA-256 mismatch")
+        dataset["_hash_verified"] = True
+
 def assert_training_split(rows):
     for row in rows:
         if row.get("_split") != "train":
@@ -110,12 +135,15 @@ def assert_training_split(rows):
 
 def validate_shard_payload(payload: dict, root: Path, source_manifest_path: Path,
                            *, attach_paths: bool = True) -> dict:
-    """Validate signed shard metadata, containment, sequence geometry and bytes."""
+    """Validate signed multi-shard metadata, containment, sequence geometry and bytes."""
     if payload.get("schema") != "dreamco.foundry.token_shards.v1":
         raise ValueError("unsupported token-shard manifest schema")
     sequence_length = payload.get("sequence_length")
     if not isinstance(sequence_length, int) or sequence_length < 8:
         raise ValueError("invalid token-shard sequence_length")
+    shard_size_tokens = payload.get("shard_size_tokens")
+    if not isinstance(shard_size_tokens, int) or shard_size_tokens < sequence_length:
+        raise ValueError("invalid token-shard size limit")
     if payload.get("dtype") != "uint32":
         raise ValueError("token shards must use uint32 storage")
     if payload.get("training_splits") != ["train"] or "holdout" not in payload.get("excluded_splits", []):
@@ -127,41 +155,88 @@ def validate_shard_payload(payload: dict, root: Path, source_manifest_path: Path
     validation_expected = payload.get("validation_splits") == ["validation"]
     if payload.get("validation_splits") not in ([], ["validation"]):
         raise ValueError("validation_splits must be empty or contain only validation")
+
+    def entries_for(name: str) -> list[dict]:
+        raw = payload.get(name)
+        if name == "train" and raw is None:
+            raise ValueError("missing train shard entries")
+        if raw is None:
+            return []
+        if isinstance(raw, dict):
+            return [raw]
+        if isinstance(raw, list) and all(isinstance(item, dict) for item in raw):
+            return raw
+        raise ValueError(f"{name} shard entries must be an object or list of objects")
+
     root = root.resolve()
+    seen_files = set()
     for name in ("train", "validation"):
-        entry = payload.get(name)
-        if entry is None and name == "validation" and not validation_expected:
-            continue
-        if not isinstance(entry, dict):
-            raise ValueError(f"missing {name} shard manifest entry")
-        relative = str(entry.get("file", ""))
-        if not relative or Path(relative).is_absolute():
-            raise ValueError(f"invalid {name} shard path")
-        path = (root / relative).resolve()
-        if path == root or root not in path.parents or not path.is_file():
-            raise ValueError(f"invalid {name} shard path")
-        tokens = entry.get("tokens")
-        sequences = entry.get("sequences")
-        if not isinstance(tokens, int) or tokens <= 0 or tokens % sequence_length:
-            raise ValueError(f"{name} shard token count is not sequence-aligned")
-        if sequences != tokens // sequence_length or path.stat().st_size != tokens * 4:
-            raise ValueError(f"{name} shard size/sequence metadata mismatch")
-        expected_prefix = f"{name}-"
-        if not Path(relative).name.startswith(expected_prefix):
-            raise ValueError(f"{name} shard filename must start with {expected_prefix}")
-        if sha256_file(path) != entry.get("sha256"):
-            raise ValueError(f"{name} shard SHA-256 mismatch")
-        if attach_paths:
-            entry["_resolved_path"] = str(path)
-    if validation_expected != (payload.get("validation") is not None):
-        raise ValueError("validation split declaration and validation shard entry disagree")
+        entries = entries_for(name)
+        if name == "train" and not entries:
+            raise ValueError("at least one train shard is required")
+        if name == "validation" and validation_expected != bool(entries):
+            raise ValueError("validation split declaration and validation shard entries disagree")
+        for entry in entries:
+            relative = str(entry.get("file", ""))
+            if not relative or Path(relative).is_absolute():
+                raise ValueError(f"invalid {name} shard path")
+            path = (root / relative).resolve()
+            if path == root or root not in path.parents or not path.is_file():
+                raise ValueError(f"invalid {name} shard path")
+            if relative in seen_files:
+                raise ValueError("duplicate token shard file path")
+            seen_files.add(relative)
+            tokens = entry.get("tokens")
+            sequences = entry.get("sequences")
+            if not isinstance(tokens, int) or tokens <= 0 or tokens % sequence_length:
+                raise ValueError(f"{name} shard token count is not sequence-aligned")
+            if tokens > shard_size_tokens:
+                raise ValueError(f"{name} shard exceeds the signed shard_size_tokens limit")
+            if sequences != tokens // sequence_length or path.stat().st_size != tokens * 4:
+                raise ValueError(f"{name} shard size/sequence metadata mismatch")
+            expected_prefix = f"{name}-"
+            if not Path(relative).name.startswith(expected_prefix):
+                raise ValueError(f"{name} shard filename must start with {expected_prefix}")
+            if sha256_file(path) != entry.get("sha256"):
+                raise ValueError(f"{name} shard SHA-256 mismatch")
+            index_relative = str(entry.get("index_file", ""))
+            if not index_relative or Path(index_relative).is_absolute():
+                raise ValueError(f"{name} shard requires a relative .idx path")
+            index_path = (root / index_relative).resolve()
+            if index_path == root or root not in index_path.parents or not index_path.is_file():
+                raise ValueError(f"invalid {name} shard .idx path")
+            if index_relative in seen_files:
+                raise ValueError("duplicate token shard index path")
+            seen_files.add(index_relative)
+            if sha256_file(index_path) != entry.get("index_sha256"):
+                raise ValueError(f"{name} shard .idx SHA-256 mismatch")
+            index = json.loads(index_path.read_text(encoding="utf-8"))
+            expected_index = {
+                "schema": "dreamco.foundry.token_shard_index.v1",
+                "bin_file": path.name,
+                "dtype": "uint32",
+                "sequence_length": sequence_length,
+                "sequence_count": sequences,
+                "token_count": tokens,
+                "offset_unit": "tokens",
+                "first_token_offset": 0,
+                "sequence_stride_tokens": sequence_length,
+            }
+            if index != expected_index:
+                raise ValueError(f"{name} shard .idx geometry mismatch")
+            if attach_paths:
+                entry["_resolved_path"] = str(path)
+                entry["_resolved_index_path"] = str(index_path)
     return payload
 
 def verify_signed_shard_manifest(shard_manifest_path: Path, shard_signature_path: Path,
                                   source_manifest_path: Path, source_signature_path: Path,
                                   public_key_path: Path) -> dict:
     """Verify source authorization, Ed25519 shard signature, and shard bytes."""
-    verify_signed_manifest(source_manifest_path, source_signature_path, public_key_path)
+    verify_signed_manifest(
+        source_manifest_path, source_signature_path, public_key_path,
+        verify_dataset_hashes=False
+    )
     try:
         from cryptography.hazmat.primitives.serialization import load_pem_public_key
         from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PublicKey
