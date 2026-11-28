@@ -1,0 +1,61 @@
+{
+  "schema": "dreamco.hf_eval_evidence.v1",
+  "run_id": "nlp-cls-sst2-20261013-r1",
+  "pin_source": "PR #14396 reports/HF_TOMORROW_SWARM_STATUS.md",
+  "model_id": "distilbert/distilbert-base-uncased-finetuned-sst-2-english",
+  "model_revision": "714eb0fa89d2f80546fda750413ed43d93601a13",
+  "dataset_id": "stanfordnlp/sst2",
+  "dataset_revision": "8d51e7e4887a4caaa95b3fbebbf53c0490b58bbb",
+  "split": "validation",
+  "dataset_use": "eval-only (license unknown)",
+  "command": "python study_packs/nlp-tasks/classification/tools/run_sst2_pin.py nlp-cls-sst2-20261013-r1",
+  "started_ct": "2026-10-13T09:56:13.977605-05:00",
+  "finished_ct": "2026-10-13T09:56:27.911769-05:00",
+  "git_sha": "28598f7d839b5f15bb9aa4674a36ef990fae3354",
+  "env": {
+    "python": "3.13.5",
+    "torch": "2.14.1+cpu",
+    "transformers": "5.19.0",
+    "datasets": "5.1.0",
+    "huggingface_hub": "2.2.0",
+    "platform": "Linux-6.12.94+-x86_64-with-glibc2.41",
+    "cpu": "Intel(R) Xeon(R) Processor",
+    "cpu_count": 8,
+    "torch_threads": 8,
+    "device": "cpu",
+    "seed": 0,
+    "deterministic_algorithms": true,
+    "batch_size": 32,
+    "truncation": true
+  },
+  "metrics": {
+    "n": 872,
+    "correct": 794,
+    "accuracy": 0.9105504587155964,
+    "tp": 413,
+    "tn": 381,
+    "fp": 47,
+    "fn": 31,
+    "precision_pos": 0.8978260869565218,
+    "recall_pos": 0.9301801801801802,
+    "f1_pos": 0.9137168141592922,
+    "computed_from": [
+      "predictions.jsonl",
+      "gold_labels.jsonl"
+    ]
+  },
+  "pass_floor": {
+    "accuracy_min": 0.85,
+    "meets_floor": true
+  },
+  "artifacts": {
+    "predictions.jsonl": "study_packs/nlp-tasks/classification/evidence/sst2/nlp-cls-sst2-20261013-r1/predictions.jsonl",
+    "gold_labels.jsonl": "study_packs/nlp-tasks/classification/evidence/sst2/nlp-cls-sst2-20261013-r1/gold_labels.jsonl",
+    "metrics.json": "study_packs/nlp-tasks/classification/evidence/sst2/nlp-cls-sst2-20261013-r1/metrics.json",
+    "env.json": "study_packs/nlp-tasks/classification/evidence/sst2/nlp-cls-sst2-20261013-r1/env.json",
+    "run.log": "study_packs/nlp-tasks/classification/evidence/sst2/nlp-cls-sst2-20261013-r1/run.log"
+  },
+  "claimable": false,
+  "production_ready": false,
+  "mastered": false
+}
