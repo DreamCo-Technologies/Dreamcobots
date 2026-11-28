@@ -1,6 +1,6 @@
 import unittest,sys,subprocess
 from pathlib import Path
-from tools.buddy_safe_repair import repair_plan,run_safe_repair,safe_observation_path
+from tools.buddy_safe_repair import repair_plan,run_safe_repair,safe_observation_path,safe_output_path
 class BuddySafeRepairTests(unittest.TestCase):
  def test_repair_module_imports_from_repository_root(self):
   root=Path(__file__).resolve().parents[1]
@@ -81,6 +81,16 @@ class BuddySafeRepairTests(unittest.TestCase):
    result=run_safe_repair({"failure_class":"generated-index"},Path("."))
   self.assertEqual(result["status"],"BLOCKED_UNSAFE_COMMAND")
   self.assertFalse(result["executed"])
+
+
+ def test_safe_output_path_accepts_only_dedicated_repair_artifact_directory(self):
+  root=Path(__file__).resolve().parents[1]
+  self.assertEqual(
+   safe_output_path(root,"artifacts/buddy-safe-repair/result.json"),
+   root/"artifacts/buddy-safe-repair/result.json",
+  )
+  with self.assertRaises(ValueError):
+   safe_output_path(root,"../../outside.json")
 
 if __name__=="__main__":unittest.main()
 
