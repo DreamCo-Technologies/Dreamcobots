@@ -133,7 +133,12 @@ def build_challenge(row: dict[str, Any], division: dict[str, Any], rights: dict[
         "schema": "dreamco.buddy_bootcamp_challenge.v1",
         "challenge_id": challenge_id,
         "ordinal": ordinal,
-        "division": {"id": division["id"], "name": division["name"]},
+        "division": {
+            "id": division["id"],
+            "slug": division.get("slug"),
+            "name": division["name"],
+            "masterbot_targets": division.get("masterbot_targets", []),
+        },
         "source": source_record,
         "rights": {
             "status": "APPROVED_FOR_THIS_SOURCE_AND_PURPOSE",
