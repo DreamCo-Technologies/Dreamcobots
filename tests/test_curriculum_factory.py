@@ -106,6 +106,7 @@ class CurriculumFactoryTests(unittest.TestCase):
     def test_tampered_license_snapshot_fails_closed(self):
         record = source_record()
         record["license_evidence_sha256"] = "0" * 64
+        record["metadata_sha256"] = factory._load_catalog_sync().canonical_hash(record)
         with self.assertRaises(PermissionError):
             factory.build_guide(source_record=record, policy_registry=policy_registry(),
                                 authored_content=guide(), similarity_references=["An unrelated reference with enough words for comparison."])
@@ -113,6 +114,7 @@ class CurriculumFactoryTests(unittest.TestCase):
     def test_missing_license_snapshot_evidence_fails_closed(self):
         record = source_record()
         record.pop("license_evidence_sha256")
+        record["metadata_sha256"] = factory._load_catalog_sync().canonical_hash(record)
         with self.assertRaises(PermissionError):
             factory.build_guide(source_record=record, policy_registry=policy_registry(),
                                 authored_content=guide(), similarity_references=["An unrelated reference with enough words for comparison."])
@@ -134,6 +136,7 @@ class CurriculumFactoryTests(unittest.TestCase):
     def test_unregistered_source_id_on_allowed_domain_is_blocked(self):
         record = source_record()
         record["source_id"] = "unregistered-channel"
+        record["metadata_sha256"] = factory._load_catalog_sync().canonical_hash(record)
         with self.assertRaises(PermissionError):
             factory.build_guide(source_record=record, policy_registry=policy_registry(),
                                 authored_content=guide(), similarity_references=["An unrelated reference with enough words for comparison."])
