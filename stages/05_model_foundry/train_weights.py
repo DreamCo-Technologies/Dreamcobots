@@ -10,6 +10,7 @@ import argparse
 import hashlib
 import json
 import re
+import shutil
 from pathlib import Path
 from typing import Any
 
@@ -385,6 +386,9 @@ def execute_stage(stage: str, recipe: dict[str, Any], manifest: dict[str, Any],
     trainer.train()
     trainer.save_model(str(output))
     tokenizer.save_pretrained(output)
+    tokenizer_manifest_source = tokenizer_path / "foundry-tokenizer-manifest.json"
+    if tokenizer_manifest_source.is_file():
+        shutil.copy2(tokenizer_manifest_source, output / tokenizer_manifest_source.name)
     summary = {
         "schema": "dreamco.foundry.checkpoint.v1",
         "stage": stage,
