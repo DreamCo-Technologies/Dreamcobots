@@ -11,6 +11,7 @@ from tools.plan_500_model_shards import (
 def approved_inventory():
     return {
         "status": "VERIFIED",
+        "expected_model_count": EXPECTED_MODELS,
         "models": [{
             "model_id": f"provider/model-{i:03d}",
             "provider": "ExampleProvider",
@@ -62,6 +63,13 @@ class FiveHundredModelShardPlannerTests(unittest.TestCase):
         self.assertEqual(plan["status"], "BLOCKED_NO_VERIFIED_500_MODEL_INVENTORY")
         self.assertTrue(any("duplicate model_id" in item for item in plan["blockers"]))
         self.assertTrue(any("license_review_status" in item for item in plan["blockers"]))
+
+    def test_wrong_declared_inventory_count_is_rejected(self):
+        inventory = approved_inventory()
+        inventory["expected_model_count"] = 499
+        plan = build_plan(inventory)
+        self.assertEqual(plan["status"], "BLOCKED_NO_VERIFIED_500_MODEL_INVENTORY")
+        self.assertTrue(any("expected_model_count must equal 500" in item for item in plan["blockers"]))
 
     def test_mutable_model_revisions_are_rejected(self):
         inventory = approved_inventory()
