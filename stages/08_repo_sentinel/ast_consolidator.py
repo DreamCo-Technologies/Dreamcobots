@@ -7,9 +7,6 @@ canonical owner is explicitly registered. All other overlaps remain findings.
 from __future__ import annotations
 
 import ast
-import importlib
-import json
-import shutil
 from pathlib import Path
 from typing import Any
 
