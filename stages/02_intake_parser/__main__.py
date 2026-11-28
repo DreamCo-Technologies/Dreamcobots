@@ -3,7 +3,7 @@ from urllib.parse import urlsplit
 from ..common import parser,read_json,write_json,validate
 
 def parse(text,kind):
- if kind in {"python","python_source","javascript_source","typescript_source","java_source","go_source","rust_source"}:
+ if kind in {"python","python_source"}:
   tree=ast.parse(text)
   return {"language":"python","functions":[{"arity":len(node.args.args),"async":isinstance(node,ast.AsyncFunctionDef)} for node in ast.walk(tree) if isinstance(node,(ast.FunctionDef,ast.AsyncFunctionDef))],"control_flow":[type(node).__name__ for node in ast.walk(tree) if isinstance(node,(ast.If,ast.For,ast.While,ast.Try,ast.Match))],"imports":sorted({node.module or "" for node in ast.walk(tree) if isinstance(node,ast.ImportFrom)}|{alias.name for node in ast.walk(tree) if isinstance(node,ast.Import) for alias in node.names})}
  if kind in {"json","openapi_json","har"}:
@@ -57,6 +57,6 @@ def main():
    lines=manifest["sanitized_text"].splitlines()
    kind="python" if "def " in manifest["sanitized_text"] else "csv" if lines and "," in lines[0] else "unknown"
  facts=parse(manifest["sanitized_text"],kind)
- result={"schema_version":"dreamco.parsed_facts.v1","job_id":manifest["job_id"],"artifact_type":"code" if kind in {"python","python_source"} else "api" if kind in {"openapi_json","har"} else "data","source_sha256":manifest["sha256"],"facts":facts,"warnings":["Static parsing only; no user code was imported or executed. Header values, query values and request/response bodies are not retained."]}
+ result={"schema_version":"dreamco.parsed_facts.v1","job_id":manifest["job_id"],"artifact_type":"code" if kind in {"python","python_source","javascript_source","typescript_source","java_source","go_source","rust_source"} else "api" if kind in {"openapi_json","har"} else "data","source_sha256":manifest["sha256"],"facts":facts,"warnings":["Static parsing only; no user code was imported or executed. Header values, query values and request/response bodies are not retained."]}
  validate(result,"parsed_facts.schema.json"); write_json(args.output,result)
 if __name__=="__main__": main()
