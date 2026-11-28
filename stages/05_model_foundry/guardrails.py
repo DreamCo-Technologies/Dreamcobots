@@ -143,3 +143,22 @@ def verify_signed_shard_manifest(shard_manifest_path: Path, shard_signature_path
             raise ValueError(f"{name} shard SHA-256 mismatch")
         entry["_resolved_path"] = str(path)
     return payload
+
+def require_model_authorization(manifest: dict, model_id: str, revision: str) -> dict:
+    """Require signed, item-level commercial permission for an exact model revision."""
+    if not isinstance(model_id, str) or not model_id.strip():
+        raise ValueError("base model ID is required")
+    if not isinstance(revision, str) or len(revision) != 40 or any(c not in "0123456789abcdef" for c in revision):
+        raise ValueError("base model revision must be a pinned 40-character commit SHA")
+    matches = [
+        item for item in manifest.get("models", [])
+        if item.get("model_id") == model_id and item.get("revision") == revision
+    ]
+    if len(matches) != 1:
+        raise PermissionError("signed policy manifest must authorize this exact base model revision")
+    item = matches[0]
+    if item.get("license_tier") not in ALLOWED_TIERS or item.get("commercial_use") is not True:
+        raise PermissionError("base model is not approved for commercial training")
+    if not str(item.get("policy_decision_id", "")).strip() or not str(item.get("license_evidence_id", "")).strip():
+        raise PermissionError("base model requires signed policy decision and license evidence references")
+    return item
