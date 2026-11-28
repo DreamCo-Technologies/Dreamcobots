@@ -119,7 +119,6 @@ def main():
             for token in trainable_tokens
             if hf_tokenizer.convert_tokens_to_ids(token) is not None
         }),
-        "added_domain_tokens": added_domain_tokens if args.mode == "extend" else None,
         "mean_initialize_new_embeddings": args.mode == "extend",
     }
     (args.output / "foundry-tokenizer-manifest.json").write_text(
