@@ -10,6 +10,10 @@ class Renderer(Protocol):
 
 def execute_render(packet: dict[str, Any], *, renderer: Renderer | None = None,
                    output_dir: str = "", models: list[dict[str, Any]] | None = None) -> dict[str, Any]:
+    if packet.get("schema") != "dreamco.media.production_packet.v1" or packet.get("status") != "planned_not_rendered":
+        raise PermissionError("Only a valid, not-yet-rendered production packet can be rendered.")
+    if any(row.get("allowed") is not True for row in packet.get("rights_decisions", [])):
+        raise PermissionError("Production packet contains a blocked asset rights decision.")
     if renderer is None:
         return {**packet, "render_status": "planned_not_rendered", "renderer_id": None}
     model_map = {str(row.get("model_id")): row for row in (models or [])}
