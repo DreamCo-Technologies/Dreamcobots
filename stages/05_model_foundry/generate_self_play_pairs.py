@@ -14,6 +14,11 @@ from collections import defaultdict
 from pathlib import Path
 from typing import Any
 
+try:
+    from .guardrails import split_name
+except ImportError:
+    from guardrails import split_name
+
 REQUIRED_HASHES = ("test_suite_sha256", "rubric_sha256", "grader_attestation_sha256")
 
 
@@ -30,6 +35,9 @@ def build_pairs(records: list[dict[str, Any]], max_candidates: int = 8) -> tuple
         task_id, candidate_id, response = row.get("task_id"), row.get("candidate_id"), row.get("response")
         prompt = row.get("prompt")
         if not all(isinstance(value, str) and value.strip() for value in (task_id, candidate_id, response, prompt)):
+            continue
+        # Preference construction is a training consumer: only train buckets are eligible.
+        if split_name(task_id) != "train":
             continue
         identity = (task_id, candidate_id)
         if identity in seen:
@@ -96,6 +104,10 @@ def build_pairs(records: list[dict[str, Any]], max_candidates: int = 8) -> tuple
     report = {
         "schema": "dreamco.foundry.self_play_pairs.v1",
         "input_records": len(records),
+        "excluded_non_train_records": sum(
+            1 for row in records
+            if isinstance(row.get("task_id"), str) and split_name(row["task_id"]) != "train"
+        ),
         "tasks_with_verified_preferences": tasks_with_preferences,
         "preference_pairs": len(pairs),
         "max_candidates_per_task": max_candidates,
