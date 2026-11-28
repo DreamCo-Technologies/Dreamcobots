@@ -12,7 +12,7 @@ import importlib.util
 import json
 import re
 from pathlib import Path
-from typing import Any, Callable
+from typing import Any
 
 ROOT = Path(__file__).resolve().parents[2]
 POLICY_GATE_PATH = ROOT / "stages" / "01_policy_gate" / "policy_gate.py"
@@ -129,6 +129,8 @@ def build_guide(
         [guide["title"], *guide["learning_objectives"], guide["lesson"],
          guide["practice_lab"], guide["assessment"], *guide["safety_notes"]]
     )
+    if len(_tokens(candidate_text)) < 8:
+        raise ValueError("candidate guide must contain at least eight tokens for originality screening")
     scores = [ngram_containment(candidate_text, ref, n=8) for ref in similarity_references]
     max_score = max(scores, default=1.0)
     originality_passed = max_score < similarity_threshold
