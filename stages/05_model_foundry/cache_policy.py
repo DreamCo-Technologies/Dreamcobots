@@ -8,9 +8,9 @@ import os
 from pathlib import Path
 
 try:
-    from .guardrails import verify_signed_manifest
+    from .guardrails import verify_signed_manifest, verify_manifest_dataset_hashes
 except ImportError:
-    from guardrails import verify_signed_manifest
+    from guardrails import verify_signed_manifest, verify_manifest_dataset_hashes
 
 
 def public_cache_allowed(manifest: dict) -> bool:
@@ -33,7 +33,12 @@ def main() -> None:
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
 
-    manifest = verify_signed_manifest(args.manifest, args.signature, args.public_key)
+    manifest = verify_signed_manifest(
+        args.manifest, args.signature, args.public_key, verify_dataset_hashes=False
+    )
+    verify_manifest_dataset_hashes(
+        manifest, categories={"study_guides", "verified_trajectories", "general_replay"}
+    )
     allowed = public_cache_allowed(manifest)
     digest = hashlib.sha256()
     source_paths = [
@@ -42,6 +47,8 @@ def main() -> None:
         Path("stages/05_model_foundry/train_tokenizer.py"),
         Path("stages/05_model_foundry/pack_tokens.py"),
         Path("stages/05_model_foundry/cache_policy.py"),
+        Path("stages/05_model_foundry/guardrails.py"),
+        Path("stages/05_model_foundry/requirements-foundry.txt"),
     ]
     for path in source_paths:
         digest.update(path.name.encode("utf-8"))
