@@ -36,14 +36,20 @@ def validate_changes(name_status: str, diff_text: str) -> list[str]:
     if "GIT binary patch" in diff_text or re.search(r"(?m)^Binary files .+ differ$", diff_text):
         errors.append("Binary changes are not allowed because their contents cannot be inspected.")
 
+    statuses = {}
     for entry in entries:
         status = entry[0]
         if status not in {"A", "M"} or len(entry) != 2:
             errors.append(f"Only added or modified files are allowed: {entry!r}")
             continue
         path = entry[1]
+        if path in statuses:
+            errors.append(f"Duplicate changed-file metadata: {path}")
+        statuses[path] = status
         parts = path.split("/")
         basename = parts[-1]
+        if path.startswith("/") or "\\" in path or any(part in {".", "..", ""} for part in parts):
+            errors.append(f"Unsafe or non-normalized repository path: {path}")
         if path.startswith("tests/"):
             if status != "A":
                 errors.append(f"Only new test files may be added; existing tests cannot be modified: {path}")
@@ -60,12 +66,37 @@ def validate_changes(name_status: str, diff_text: str) -> list[str]:
         if path == "tools/validate_repair_pr.py":
             errors.append("The repair validator cannot modify itself.")
 
-    changed_lines = 0
+    # Bind each diff section to the exact name-status inventory. This prevents
+    # a safe diff for one file from being paired with a different changed path.
+    diff_paths = []
+    current_path = None
     in_hunk = False
+    changed_lines = 0
     for line in diff_text.splitlines():
         if line.startswith("diff --git "):
             in_hunk = False
+            match = re.fullmatch(r"diff --git a/(\S+) b/(\S+)", line)
+            if not match:
+                errors.append("Diff contains an unsupported or ambiguously quoted file path.")
+                current_path = None
+                continue
+            old_path, new_path = match.groups()
+            if old_path != new_path:
+                errors.append(f"Renames are not allowed: {old_path} -> {new_path}")
+            current_path = new_path
+            diff_paths.append(new_path)
+            if new_path not in statuses:
+                errors.append(f"Diff contains a file absent from changed-file metadata: {new_path}")
             continue
+
+        if line.startswith(("old mode ", "new mode ", "deleted file mode ")):
+            errors.append("File mode changes are not allowed.")
+        elif line.startswith("new file mode ") and line != "new file mode 100644":
+            errors.append("Only regular non-executable files may be added.")
+        elif line.startswith(("--- ", "+++ ")) and current_path:
+            marker_path = line[4:]
+            if marker_path not in ("/dev/null", f"a/{current_path}", f"b/{current_path}"):
+                errors.append(f"Diff header does not match its file section: {current_path}")
         if line.startswith("@@"):
             in_hunk = True
             continue
@@ -76,10 +107,14 @@ def validate_changes(name_status: str, diff_text: str) -> list[str]:
         if line.startswith("+") and any(pattern.search(line[1:]) for pattern in SECRET_PATTERNS):
             errors.append("Added diff content appears to contain a credential.")
 
+    if len(diff_paths) != len(set(diff_paths)):
+        errors.append("Diff contains duplicate file sections.")
+    missing = sorted(set(statuses) - set(diff_paths))
+    if missing:
+        errors.append("Changed-file metadata has no corresponding inspected diff section: " + ", ".join(missing))
     if changed_lines > MAX_CHANGED_LINES:
-        errors.append(f"Change set exceeds the {MAX_CHANGED_LINES}-line limit.")
+        errors.append(f"Change set exceeds the {MAX_CHANGED_LINES:,}-line limit.")
     return sorted(set(errors))
-
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
