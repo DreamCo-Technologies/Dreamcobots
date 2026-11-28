@@ -50,7 +50,10 @@ def normalize_item(item:dict[str,Any],url:str,source_id:str,expected_channel_id:
     lic=str(item.get("license") or "").strip()
     return {"schema":"dreamco.source_catalog_record.v1","source_id":source_id,"source_url":url,"video_id":video_id,
       "published_at":item.get("release_date") or item.get("upload_date") or item.get("timestamp"),"duration":item.get("duration"),
-      "license_tag":lic or "UNKNOWN_UNVERIFIED","license_record_verified":False,\n      "license_evidence_url":None,"license_evidence_path":None,"license_evidence_sha256":None,"license_review_status":"needs_human",\n      "license_reviewer_id":None,"license_reviewed_at":None,"commercial_training_evidence_ref":None,\n      "transcript_status":"NOT_FETCHED",
+      "license_tag":lic or "UNKNOWN_UNVERIFIED","license_record_verified":False,
+      "license_evidence_url":None,"license_evidence_path":None,"license_evidence_sha256":None,"license_review_status":"needs_human",
+      "license_reviewer_id":None,"license_reviewed_at":None,"commercial_training_evidence_ref":None,
+      "transcript_status":"NOT_FETCHED",
       "catalog_policy_status":"METADATA_ONLY_PENDING_ITEM_RIGHTS","observed_at":datetime.now(timezone.utc).isoformat()}
 def read_ledger(path:Path)->dict[str,str]:
     latest={}
