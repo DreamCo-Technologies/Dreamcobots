@@ -10,6 +10,7 @@ import {
   doublePrecision,
   index,
   uniqueIndex,
+  foreignKey,
 } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
@@ -712,6 +713,11 @@ export const leadEngineActivities = pgTable("lead_engine_activities", {
 }, (table) => ({
   ownerEventUnique: uniqueIndex("lead_engine_activities_owner_event_uq").on(table.ownerId, table.eventId),
   ownerLeadTimeIdx: index("lead_engine_activities_owner_lead_time_idx").on(table.ownerId, table.leadId, table.createdAt),
+  ownerLeadFk: foreignKey({
+    columns: [table.ownerId, table.leadId],
+    foreignColumns: [leadEngineRecords.ownerId, leadEngineRecords.leadId],
+    name: "lead_engine_activities_owner_lead_fk",
+  }).onDelete("cascade"),
 }));
 
 export type LeadEngineRecordRow = typeof leadEngineRecords.$inferSelect;
