@@ -15,16 +15,16 @@ BLOCKED_NAMES = {".env", ".env.example", "package-lock.json", "pnpm-lock.yaml", 
 MAX_FILES = 20
 MAX_CHANGED_LINES = 1500
 SECRET_PATTERNS = (
-    re.compile(r"(?i)\\b(?:gh[pousr]_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,})\\b"),
-    re.compile(r"\\bAKIA[0-9A-Z]{16}\\b"),
-    re.compile(r"\\bsk-[A-Za-z0-9_-]{20,}\\b"),
+    re.compile(r"(?i)\b(?:gh[pousr]_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,})\b"),
+    re.compile(r"\bAKIA[0-9A-Z]{16}\b"),
+    re.compile(r"\bsk-[A-Za-z0-9_-]{20,}\b"),
     re.compile(r"-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----"),
-    re.compile(r"(?i)(?:api[_-]?key|secret|password|access_token)\\s*[:=]\\s*['\"]?[A-Za-z0-9_./+=-]{20,}"),
+    re.compile(r"(?i)(?:api[_-]?key|secret|password|access_token)\s*[:=]\s*['\"]?[A-Za-z0-9_./+=-]{20,}"),
 )
 
 def validate_changes(name_status: str, diff_text: str) -> list[str]:
     errors = []
-    entries = [line.split("\\t") for line in name_status.splitlines() if line.strip()]
+    entries = [line.split("\t") for line in name_status.splitlines() if line.strip()]
     if not entries:
         errors.append("No changed files were found.")
     if len(entries) > MAX_FILES:
