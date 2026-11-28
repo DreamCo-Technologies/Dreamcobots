@@ -80,10 +80,18 @@ def main():
         base_vocab = base_tokenizer.get_vocab()
         added_special_tokens = [token for token in SPECIAL_TOKENS if token not in base_vocab]
         domain_vocab = domain_tokenizer.get_vocab()
-        domain_tokens = [
-            token for token, _ in sorted(domain_vocab.items(), key=lambda pair: pair[1])
-            if token not in base_vocab and token not in SPECIAL_TOKENS
-        ]
+        domain_tokens = []
+        seen_domain_tokens = set()
+        for token, _ in sorted(domain_vocab.items(), key=lambda pair: pair[1]):
+            # ByteLevel BPE uses Ġ for a leading space. Store the plain lexical
+            # token so the base tokenizer can match it after whitespace handling.
+            candidate = token.removeprefix("Ġ")
+            if (len(candidate) < 2 or candidate in SPECIAL_TOKENS
+                    or not re.fullmatch(r"[A-Za-z0-9_./:+#@*()\\-]+", candidate)):
+                continue
+            if candidate not in base_vocab and candidate not in seen_domain_tokens:
+                domain_tokens.append(candidate)
+                seen_domain_tokens.add(candidate)
         if domain_tokens:
             base_tokenizer.add_tokens(domain_tokens)
         base_tokenizer.add_special_tokens({
