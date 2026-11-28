@@ -317,7 +317,7 @@ class FoundryGuardrailTests(unittest.TestCase):
             shard_signature = shard_dir / "manifest.sig"
             shard_payload = {
                 "schema": "dreamco.foundry.token_shards.v1",
-                "sequence_length": 8, "dtype": "uint32",
+                "sequence_length": 8, "shard_size_tokens": 8, "dtype": "uint32",
                 "source_manifest_sha256": hashlib.sha256(manifest.read_bytes()).hexdigest(),
                 "training_splits": ["train"], "validation_splits": [],
                 "excluded_splits": ["holdout"],
@@ -359,7 +359,7 @@ class FoundryGuardrailTests(unittest.TestCase):
             source.write_text("{}", encoding="utf-8")
             payload = {
                 "schema": "dreamco.foundry.token_shards.v1",
-                "sequence_length": 8, "dtype": "uint32",
+                "sequence_length": 8, "shard_size_tokens": 8, "dtype": "uint32",
                 "training_splits": ["train"], "validation_splits": [],
                 "excluded_splits": ["holdout"],
                 "mix_percent": {"study_guides": 60, "verified_trajectories": 25, "general_replay": 15},
@@ -405,7 +405,7 @@ class FoundryGuardrailTests(unittest.TestCase):
                 })
             payload = {
                 "schema": "dreamco.foundry.token_shards.v1",
-                "sequence_length": 8, "dtype": "uint32",
+                "sequence_length": 8, "shard_size_tokens": 8, "dtype": "uint32",
                 "training_splits": ["train"], "validation_splits": [],
                 "excluded_splits": ["holdout"],
                 "mix_percent": {"study_guides": 60, "verified_trajectories": 25, "general_replay": 15},
