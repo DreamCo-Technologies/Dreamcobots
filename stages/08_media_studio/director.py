@@ -4,7 +4,7 @@ No model, GPU, network, or API dependency is required. The control plane validat
 plans jobs on CPU runners; provider adapters are injected by workers at execution time.
 """
 from __future__ import annotations
-import hashlib, json, re, uuid
+import hashlib, json, math, re, uuid
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any, Mapping, Protocol, Sequence
@@ -52,8 +52,8 @@ class Shot:
         duration = value["duration_sec"]
         if isinstance(duration, bool) or not isinstance(duration, (int, float)):
             raise MediaPlanError("duration_sec must be a number")
-        if duration <= 0 or duration > 1800:
-            raise MediaPlanError("duration_sec must be greater than 0 and at most 1800")
+        if not math.isfinite(float(duration)) or duration <= 0 or duration > 1800:
+            raise MediaPlanError("duration_sec must be finite, greater than 0 and at most 1800")
         for name in ("shot_id", "visual_prompt"):
             if not isinstance(value[name], str) or not value[name].strip():
                 raise MediaPlanError(f"{name} must be a non-empty string")
@@ -139,8 +139,10 @@ def authorize_render_assets(assets: Sequence[Mapping[str, Any]], *, purpose: str
             raise MediaRightsError("Every rights manifest entry must be an object")
         result = dict(_rights_decision(asset))
         decision = result["decision"]
-        if purpose == "commercial_render" and decision != "sellable":
-            raise MediaRightsError(f"Asset {asset.get('asset_id', '<unknown>')} is {decision}, not sellable")
+        if decision != "sellable":
+            raise MediaRightsError(
+                f"Asset {asset.get('asset_id', '<unknown>')} is {decision}; render inputs must be sellable"
+            )
         if asset.get("subject_type") == "real_person":
             reference_path, registry_path = asset.get("reference_path"), asset.get("consent_registry_path")
             consent_purpose = asset.get("consent_purpose", purpose)
@@ -155,11 +157,36 @@ def authorize_render_assets(assets: Sequence[Mapping[str, Any]], *, purpose: str
                            "purpose": purpose, "reasons": result.get("reasons", [])})
     return authorized
 
+def authorize_model_checkpoints(
+    model_records: Sequence[Mapping[str, Any]], evidence_root: str | Path
+) -> list[dict[str, Any]]:
+    """Require every model checkpoint and dependency to pass the commercial license gate."""
+    if not isinstance(model_records, (list, tuple)) or not model_records:
+        raise MediaRightsError("Rendering requires an explicit, non-empty model checkpoint manifest")
+    try:
+        from buddy.media.model_license_gate import verify_model_record
+    except Exception as exc:
+        raise MediaRightsError(f"Model license gate unavailable: {exc}") from exc
+    results = []
+    for record in model_records:
+        if not isinstance(record, Mapping):
+            raise MediaRightsError("Every model manifest entry must be an object")
+        result = verify_model_record(record, evidence_root)
+        if result.get("decision") != "approved":
+            raise MediaRightsError(
+                f"Model {record.get('model_id', '<unknown>')} blocked: {result.get('reasons')}"
+            )
+        results.append(result)
+    return results
+
+
 def render_production(plan: ProductionPlan, *, assets: Sequence[Mapping[str, Any]],
+                      model_records: Sequence[Mapping[str, Any]], license_evidence_root: str | Path,
                       adapters: Mapping[str, RenderAdapter], context: Mapping[str, Any] | None = None,
                       purpose: str = "commercial_render") -> dict[str, Any]:
-    """Render via injected adapters only after all assets pass the rights gate."""
+    """Render only after asset rights and exact model checkpoint licenses pass."""
     rights = authorize_render_assets(assets, purpose=purpose)
+    models = authorize_model_checkpoints(model_records, license_evidence_root)
     outputs, context = [], dict(context or {})
     context.update({"job_id": plan.job_id, "media_type": plan.media_type, "title": plan.title})
     for shot in plan.shots:
@@ -171,7 +198,7 @@ def render_production(plan: ProductionPlan, *, assets: Sequence[Mapping[str, Any
             raise MediaPlanError(f"Adapter {backend!r} returned no asset_uri for shot {shot.shot_id!r}")
         outputs.append({"shot_id": shot.shot_id, "backend": backend, **dict(result)})
     digest = hashlib.sha256(json.dumps(plan.to_dict(), sort_keys=True, default=list).encode()).hexdigest()
-    return {"job_id": plan.job_id, "status": "rendered", "rights": rights, "shots": outputs, "plan_sha256": digest}
+    return {"job_id": plan.job_id, "status": "rendered", "rights": rights, "models": models, "shots": outputs, "plan_sha256": digest}
 
 def write_plan(plan: ProductionPlan, destination: str | Path) -> Path:
     """Persist a plan atomically; it is not rendered media."""
