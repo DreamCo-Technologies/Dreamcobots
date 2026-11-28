@@ -12,6 +12,10 @@ def test_permission_and_bypass():
     gate=PolicyGate(); assert not gate.authorize_and_scrub("x",{}).allowed; assert not gate.authorize_and_scrub("x",{**OWNER,"bypass_requested":True}).allowed
 def test_redaction():
     r=PolicyGate().authorize_and_scrub("api_key='sk-abcdefghijklmnopqrstuvwxyz' email a@b.com 123-45-6789",OWNER); assert r.allowed; assert "sk-abcdefghijklmnopqrstuvwxyz" not in r.sanitized_content; assert "a@b.com" not in r.sanitized_content; assert "123-45-6789" not in r.sanitized_content
+def test_open_source_license_gate():
+    gate=PolicyGate(); assert not gate.authorize_and_scrub("x",{"authorized":True,"target_kind":"open_source"}).allowed
+    assert gate.authorize_and_scrub("x",{"authorized":True,"target_kind":"open_source","license_id":"MIT"}).allowed
+    assert not gate.authorize_and_scrub("x",{"authorized":True,"target_kind":"open_source","license_id":"UNKNOWN"}).allowed
 def test_detection():
     assert detect_artifact("a.py","def f(): pass")=="python_source"; assert detect_artifact("api.json",'{"openapi":"3.0.0","paths":{}}')=="openapi_json"; assert detect_artifact("x.csv","id,name\n1,A")=="csv"
 def test_python_ast():
@@ -30,3 +34,9 @@ def test_fixture_and_similarity():
     g=PolicyGate(); assert g.verify_equivalence([{"ok":True}],[{"ok":True}]).allowed; assert not g.verify_equivalence([1],[2]).allowed; assert not g.similarity_audit("def a(): return 1","def a(): return 1").allowed
 def test_end_to_end():
     b=analyze("service.py","def create_item(name): return name",OWNER,"Inventory"); assert b["schema_version"]=="dreamco.reverse_engineering.blueprint.v1"; assert b["policy"]["source_content_persisted"] is False
+
+def test_tree_sitter_blueprint_preserves_signature_metadata():
+    parsed={"artifact_type":"code","facts":{"language":"typescript","functions":[{"name":"save","kind":"function","parameters":[],"parameter_node_count":3,"returns_annotation_present":True}],"control_flow":[],"dependencies":[]},"warnings":[]}
+    blueprint=build_blueprint(parsed,"TypeScript service")
+    assert blueprint["language"]=="typescript"
+    assert blueprint["inputs"][0]["parameter_count"]==3

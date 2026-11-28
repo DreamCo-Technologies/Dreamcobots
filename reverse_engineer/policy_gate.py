@@ -1,4 +1,4 @@
-"""Fail-closed permission, redaction, fixture and similarity checks."""
+"""Fail-closed permission, redaction, fixture, license and similarity checks."""
 import re
 from dataclasses import dataclass,field
 from typing import Any
@@ -12,10 +12,15 @@ class PolicyResult:
     reason:str=""
 class PolicyGate:
     ALLOWED={"user_owned","public_api","open_source","user_authorized_logs","user_authorized_workflow","user_authorized_schema"}
+    PERMISSIVE_LICENSES={"MIT","Apache-2.0","BSD-2-Clause","BSD-3-Clause","ISC","0BSD"}
     def authorize_and_scrub(self,content:str,permission:dict[str,Any])->PolicyResult:
         if permission.get("authorized") is not True:return PolicyResult(False,findings=["permission_missing"],reason="Explicit owner authorization required.")
-        if permission.get("target_kind") not in self.ALLOWED:return PolicyResult(False,findings=["target_not_allowed"],reason="Target category is not permitted.")
+        kind=permission.get("target_kind")
+        if kind not in self.ALLOWED:return PolicyResult(False,findings=["target_not_allowed"],reason="Target category is not permitted.")
         if permission.get("bypass_requested") is True or permission.get("behind_login_without_authorization") is True:return PolicyResult(False,findings=["prohibited_access"],reason="Access-control bypass is prohibited.")
+        if kind=="open_source":
+            result=self.license_audit(permission.get("license_id"))
+            if not result.allowed:return result
         clean=content; findings=[]
         for pattern in SECRET:
             clean,n=pattern.subn("[REDACTED_SECRET]",clean)
@@ -24,6 +29,11 @@ class PolicyGate:
             clean,n=pattern.subn("[REDACTED_PII]",clean)
             if n:findings.append("pii_redacted")
         return PolicyResult(True,clean,sorted(set(findings)),"Authorized; heuristic redaction completed.")
+    @classmethod
+    def license_audit(cls,license_id):
+        if not license_id:return PolicyResult(False,findings=["license_missing"],reason="Open-source intake requires an explicit SPDX license identifier.")
+        if license_id not in cls.PERMISSIVE_LICENSES:return PolicyResult(False,findings=["license_requires_review"],reason="License is not in the configured permissive allowlist; obtain legal review.")
+        return PolicyResult(True,findings=["permissive_license_recorded"],reason="SPDX identifier is on the configured allowlist; preserve all required notices.")
     @staticmethod
     def verify_equivalence(expected,observed):
         if len(expected)!=len(observed):return PolicyResult(False,findings=["fixture_count_mismatch"],reason="Fixture counts differ.")
