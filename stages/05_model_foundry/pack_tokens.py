@@ -7,16 +7,29 @@ try:
 except ImportError:
     from guardrails import assert_training_split, iter_authorized_records, verify_signed_manifest
 
+def _record_text(row):
+    text = row.get("content") or row.get("text") or row.get("title", "")
+    if row.get("messages"):
+        text = "\\n".join(
+            f"{'<|tool_call|>' if message.get('role') == 'tool' else '<|' + message.get('role', 'user') + '|>'} {message.get('content', '')}"
+            for message in row["messages"]
+        )
+    return " ".join(str(text).casefold().split())
+
+
 def _token_pool(records, tokenizer):
+    """Tokenize unique normalized examples once; preserve first-seen order."""
     tokens = []
+    seen = set()
     for row in records:
-        text = row.get("content") or row.get("text") or row.get("title", "")
-        if row.get("messages"):
-            text = "\n".join(
-                f"{'<|tool_call|>' if message.get('role') == 'tool' else '<|' + message.get('role', 'user') + '|>'} {message.get('content', '')}"
-                for message in row["messages"]
-            )
-        encoded = tokenizer.encode(str(text), add_special_tokens=False)
+        normalized = _record_text(row)
+        if not normalized:
+            continue
+        digest = hashlib.sha256(normalized.encode("utf-8")).digest()
+        if digest in seen:
+            continue
+        seen.add(digest)
+        encoded = tokenizer.encode(normalized, add_special_tokens=False)
         if encoded:
             tokens.extend(encoded)
             tokens.append(tokenizer.eos_token_id)
@@ -67,9 +80,15 @@ def main():
     for category in sorted(weights, key=lambda key: raw[key] - per_sequence[key], reverse=True)[:remainder]:
         per_sequence[category] += 1
     sequence_count = min(
-        max(1, len(pools[category]) // per_sequence[category])
+        len(pools[category]) // per_sequence[category]
         for category in weights
     )
+    if sequence_count < 1:
+        available = {category: len(pools[category]) for category in weights}
+        raise ValueError(
+            f"not enough unique tokens for one complete 60/25/15 sequence; "
+            f"available={available}, required={per_sequence}"
+        )
     train_tokens = []
     cursors = {category: 0 for category in weights}
     for _ in range(sequence_count):
