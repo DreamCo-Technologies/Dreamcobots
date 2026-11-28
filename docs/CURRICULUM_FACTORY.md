@@ -6,7 +6,7 @@ The factory assembles deterministic study-guide draft artifacts from independent
 
 ## Rights boundary
 
-The factory calls the existing Stage 01 `evaluate_source(..., purpose="fact_extraction")` policy gate for the exact catalog record. The catalog record must include a verified item-level license tag and SHA-256 fingerprint. The current FreeCodeCamp registry is `FACT_EXTRACTION_ONLY`: this can permit carefully bounded fact extraction when item-level evidence exists, but it does not grant transcript extraction or commercial training rights. Missing or unknown item-level evidence fails closed.
+The factory calls the existing Stage 01 `evaluate_source(..., purpose="fact_extraction")` policy gate for the exact catalog record. The catalog record must include an approved item-level license tag, HTTPS evidence URL, repository-relative evidence snapshot path, SHA-256 matching the snapshot bytes, reviewer ID, and review timestamp. Stage 01 rejects path traversal, snapshots outside the repository, missing files, and hash mismatches. Catalog synchronization never fills these review fields automatically; new items remain `needs_human` and blocked until an owner reviews the exact item. The current FreeCodeCamp registry is `FACT_EXTRACTION_ONLY`: approved fact extraction does not grant transcript extraction or commercial training rights. Missing or unknown item-level evidence fails closed.
 
 Every output remains a draft. Commercial release is explicitly false. Owner review and separate commercial rights evidence are still required before publication.
 
