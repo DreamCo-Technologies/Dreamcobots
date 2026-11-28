@@ -256,6 +256,7 @@ const leadRecord = {
   stage: "capture" as const,
   consentBasis: "explicit_opt_in" as const,
   consentEvidenceRef: "consent:form-001",
+  consentObtainedAt: "2026-11-01T12:00:00.000Z",
   consentChannels: ["email"],
   fitScore: 100,
   intentScore: 100,
@@ -332,6 +333,27 @@ test("validates consent evidence, unique channels, and prohibited targeting", ()
     ...leadRecord,
     sensitiveTargeting: true,
   }));
+});
+
+test("requires timestamped unexpired channel consent and explicit SMS opt-in", () => {
+  assert.throws(() => leadEngineRecordSchema.parse({
+    ...leadRecord,
+    consentObtainedAt: undefined,
+  }), /timestamped consent evidence/);
+
+  assert.throws(() => leadEngineRecordSchema.parse({
+    ...leadRecord,
+    consentBasis: "inbound_request",
+    consentChannels: ["sms"],
+  }), /SMS and voice calls require explicit opt-in/);
+
+  const expired = {
+    ...leadRecord,
+    stage: "qualify" as const,
+    consentExpiresAt: "2026-11-02T12:00:00.000Z",
+  };
+  assert.equal(qualifyLead(expired).nextStep, "research_only");
+  assert.equal(buildLeadStagePlan(expired).stageActions.find((item) => item.stage === "nurture")?.status, "blocked");
 });
 
 test("recommends only the next eligible stage without skipping pipeline steps", () => {
