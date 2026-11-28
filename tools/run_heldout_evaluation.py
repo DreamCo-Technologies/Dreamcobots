@@ -85,6 +85,10 @@ def evaluate(suite: dict[str, Any], predictions: list[dict[str, Any]], model_ver
     suite_hash = hashlib.sha256(canonical(suite).encode("utf-8")).hexdigest()
     return {
         "schema": "dreamco.heldout_evaluation_report.v1",
+        "evaluator": {
+            "tool": "tools/run_heldout_evaluation.py",
+            "sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
+        },
         "suite_id": suite["suite_id"],
         "suite_sha256": suite_hash,
         "lane": suite["lane"],
