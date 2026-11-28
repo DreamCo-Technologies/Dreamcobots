@@ -7,8 +7,11 @@ explicit DreamCo-original owner attestation. Keep private keys off GitHub.
 from __future__ import annotations
 import argparse, base64, hashlib, json
 from pathlib import Path
-from stages.01_policy_gate.policy_gate import load_registry, evaluate_source
-from stages.05_model_foundry.guardrails import canonical_json, sha256_file
+from .policy_gate import load_registry, evaluate_source
+import importlib
+_guard=importlib.import_module("stages.05_model_foundry.guardrails")
+canonical_json=_guard.canonical_json
+sha256_file=_guard.sha256_file
 
 def main():
     ap=argparse.ArgumentParser()
@@ -45,10 +48,11 @@ def main():
                     raise PermissionError(f"policy gate rejected source: {result['reason']}")
     try:
         from cryptography.hazmat.primitives.serialization import load_pem_private_key
+        from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
     except ImportError as exc:
         raise RuntimeError("Install cryptography to sign foundry manifests") from exc
     key=load_pem_private_key(a.private_key.read_bytes(),password=None)
-    if key.__class__.__name__!="_Ed25519PrivateKey":
+    if not isinstance(key, Ed25519PrivateKey):
         raise ValueError("policy signing key must be Ed25519")
     signature=key.sign(canonical_json(data))
     a.signature_output.parent.mkdir(parents=True,exist_ok=True)
