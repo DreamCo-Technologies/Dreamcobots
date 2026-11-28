@@ -43,7 +43,7 @@ def restricted_url(value):
     parsed=urlparse(value)
     if parsed.scheme not in {"http","https"} or not parsed.hostname: return True
     host=parsed.hostname.lower().rstrip(".")
-    if host in BLOCKED_HOSTS or host=="localhost" or host.endswith(".local"): return True
+    if host in BLOCKED_HOSTS or any(host.endswith("."+blocked) for blocked in BLOCKED_HOSTS) or host=="localhost" or host.endswith(".local"): return True
     try:
         address=ipaddress.ip_address(host)
         if not address.is_global: return True
