@@ -69,9 +69,11 @@ jobs:
           test -f "$RECIPE"
           DATA_HASH=$(sha256sum "$MANIFEST" | cut -d ' ' -f 1)
           RECIPE_HASH=$(sha256sum "$RECIPE" | cut -d ' ' -f 1)
+          CODE_HASH=$(cat stages/05_model_foundry/train_tokenizer.py stages/05_model_foundry/pack_tokens.py requirements-foundry.txt | sha256sum | cut -d ' ' -f 1)
           ARTIFACT_DIR=$(python -c 'import yaml,os; print(yaml.safe_load(open(os.environ["RECIPE"]))["artifact_dir"])')
           echo "data_hash=$DATA_HASH" >> "$GITHUB_OUTPUT"
           echo "recipe_hash=$RECIPE_HASH" >> "$GITHUB_OUTPUT"
+          echo "code_hash=$CODE_HASH" >> "$GITHUB_OUTPUT"
           echo "artifact_dir=$ARTIFACT_DIR" >> "$GITHUB_OUTPUT"
       - name: Restore tokenizer and token-shard cache
         id: cache-foundry
@@ -80,7 +82,7 @@ jobs:
           path: |
             ${{ steps.hashes.outputs.artifact_dir }}/tokenizer
             ${{ steps.hashes.outputs.artifact_dir }}/token_shards
-          key: dreamco-foundry-${{ steps.hashes.outputs.recipe_hash }}-${{ steps.hashes.outputs.data_hash }}
+          key: dreamco-foundry-${{ steps.hashes.outputs.recipe_hash }}-${{ steps.hashes.outputs.data_hash }}-${{ steps.hashes.outputs.code_hash }}
       - name: Build tokenizer and pack signed-source shards on cache miss
         if: steps.cache-foundry.outputs.cache-hit != 'true'
         env:
