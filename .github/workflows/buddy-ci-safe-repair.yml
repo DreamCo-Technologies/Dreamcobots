@@ -86,6 +86,13 @@ jobs:
             fs.mkdirSync("artifacts/buddy-safe-repair", {recursive: true});
             fs.writeFileSync("artifacts/buddy-safe-repair/observation.json", JSON.stringify(observation, null, 2) + "\n");
             core.setOutput("has_failed_job", failed ? "true" : "false");
+      - name: Build keyless Stage 06 repair plan from trusted failure observation
+        if: github.event_name == 'workflow_run'
+        run: >-
+          python stages/06_repo_repair/__main__.py
+          --observation artifacts/buddy-safe-repair/observation.json
+          --output artifacts/buddy-safe-repair/stage06-plan.json
+          --trajectory-dir artifacts/buddy-safe-repair/trajectories
       - name: Run exact allowlisted repair for a failed default-branch workflow
         if: github.event_name == 'workflow_run'
         run: python -m tools.buddy_safe_repair --observation artifacts/buddy-safe-repair/observation.json --out artifacts/buddy-safe-repair/result.json
