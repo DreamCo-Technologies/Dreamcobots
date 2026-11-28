@@ -1,11 +1,13 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import {
+  AndroidCompanionTransport, BlueBubblesMacRelayTransport,
   InMemoryReplayClaimStore, acceptInboundMobileMessage, mobileBridgeReadiness,
   mobileBridgeRegistrationSchema, sendMobileMessage, signMobileWebhook,
   type MobileOutboundPayload,
 } from "../server/mobile-messaging-bridge";
 import { communicationTwinSettingsSchema } from "../server/communication-twin";
+import { SecureJsonWebhookAdapter } from "../server/outbound-adapters";
 
 const secret = "test-mobile-webhook-secret";
 const now = 1_800_000_000_000;
@@ -109,4 +111,34 @@ test("replay claims reject duplicates and are bounded", async () => {
   const store = new InMemoryReplayClaimStore(2);
   assert.equal(await store.claim("event-1", now + 60_000), true);
   assert.equal(await store.claim("event-1", now + 60_000), false);
+});
+
+test("provider transports deliver only through configured HTTPS relay adapters", async () => {
+  const requests: Array<{ url: string; body: string }> = [];
+  const fakeFetch: typeof fetch = async (input, init) => {
+    requests.push({ url: String(input), body: String(init?.body ?? "") });
+    return new Response(JSON.stringify({ providerMessageId: "relay-accepted" }), { status: 202 });
+  };
+  const iosWebhook = new SecureJsonWebhookAdapter(
+    { id: "ios-relay", endpoint: "https://relay.example.com/ios", secretReference: "BUDDY_IOS_RELAY_SECRET" },
+    () => "test-secret",
+    fakeFetch,
+  );
+  const androidWebhook = new SecureJsonWebhookAdapter(
+    { id: "android-relay", endpoint: "https://relay.example.com/android", secretReference: "BUDDY_ANDROID_RELAY_SECRET" },
+    () => "test-secret",
+    fakeFetch,
+  );
+  const payload: MobileOutboundPayload = {
+    deviceId: "device-1", contactId: "contact-1", providerContactId: "provider-contact-1",
+    channel: "sms", body: "Approved test message", idempotencyKey: "mobile-outbound-1",
+  };
+  const iosResult = await new BlueBubblesMacRelayTransport(iosWebhook).send(payload);
+  const androidResult = await new AndroidCompanionTransport(androidWebhook).send(payload);
+  assert.equal(iosResult.providerMessageId, "relay-accepted");
+  assert.equal(androidResult.providerMessageId, "relay-accepted");
+  assert.equal(JSON.parse(requests[0].body).provider, "bluebubbles_mac_relay");
+  assert.equal(JSON.parse(requests[1].body).provider, "android_companion");
+  assert.equal(requests[0].url, "https://relay.example.com/ios");
+  assert.equal(requests[1].url, "https://relay.example.com/android");
 });
