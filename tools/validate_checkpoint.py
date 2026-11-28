@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Fail-closed checkpoint evidence validator and HMAC signer; does not train models."""
+"""Fail-closed checkpoint evidence validator with HMAC authentication; does not train models."""
 from __future__ import annotations
 import argparse
 import hashlib
@@ -36,9 +36,11 @@ def finite_positive(value: Any, name: str, allow_zero: bool = False) -> float:
 
 def build_manifest(checkpoint: Path, evaluation_path: Path, training_config_path: Path,
                    dataset_manifest_path: Path, metrics_path: Path, expected_parameters: int,
-                   signing_key: str) -> dict[str, Any]:
-    if not signing_key or len(signing_key) < 32:
-        raise ValueError("DREAMCO_CHECKPOINT_SIGNING_KEY must contain at least 32 characters")
+                   hmac_key: str, key_id: str) -> dict[str, Any]:
+    if not hmac_key or len(hmac_key) < 32:
+        raise ValueError("DREAMCO_CHECKPOINT_HMAC_KEY must contain at least 32 characters")
+    if not key_id or not key_id.strip():
+        raise ValueError("DREAMCO_CHECKPOINT_HMAC_KEY_ID must identify the managed key")
     evaluation = read_json(evaluation_path)
     config = read_json(training_config_path)
     dataset = read_json(dataset_manifest_path)
@@ -63,7 +65,7 @@ def build_manifest(checkpoint: Path, evaluation_path: Path, training_config_path
     if peak_vram is not None:
         peak_vram = finite_positive(peak_vram, "peak_vram_mb", allow_zero=True)
     payload = {
-        "schema": "dreamco.signed_checkpoint_manifest.v1",
+        "schema": "dreamco.checkpoint_evidence.v1",
         "status": "VERIFIED_CHECKPOINT_EVIDENCE",
         "created_at": datetime.now(timezone.utc).isoformat(),
         "checkpoint": {"path_name": checkpoint.name, "sha256": sha256_file(checkpoint), "bytes": checkpoint.stat().st_size},
@@ -76,11 +78,39 @@ def build_manifest(checkpoint: Path, evaluation_path: Path, training_config_path
                        "required_accuracy": evaluation["required_accuracy"], "passed": True},
         "metrics": {"validation_perplexity": perplexity, "tokens_per_second": throughput,
                     "peak_ram_mb": peak_ram, "peak_vram_mb": peak_vram},
-        "signature": {"algorithm": "HMAC-SHA256", "key_id": os.environ.get("DREAMCO_CHECKPOINT_SIGNING_KEY_ID", "local-unmanaged"),
-                      "value": ""},
+        "authentication": {"algorithm": "HMAC-SHA256", "key_id": key_id.strip(), "value": ""},
     }
-    payload["signature"]["value"] = hmac.new(signing_key.encode(), json.dumps(payload, sort_keys=True, separators=(",", ":")).encode(), hashlib.sha256).hexdigest()
+    payload["authentication"]["value"] = hmac.new(
+        hmac_key.encode("utf-8"),
+        json.dumps(payload, sort_keys=True, separators=(",", ":")).encode("utf-8"),
+        hashlib.sha256,
+    ).hexdigest()
     return payload
+
+
+def verify_manifest_authentication(manifest: dict[str, Any], hmac_key: str, expected_key_id: str | None = None) -> bool:
+    """Verify the shared-secret MAC; this is not a public-key digital signature."""
+    if not hmac_key or len(hmac_key) < 32:
+        raise ValueError("HMAC key must contain at least 32 characters")
+    authentication = manifest.get("authentication")
+    if not isinstance(authentication, dict) or authentication.get("algorithm") != "HMAC-SHA256":
+        return False
+    key_id = authentication.get("key_id")
+    supplied = authentication.get("value")
+    if not isinstance(key_id, str) or not key_id or not isinstance(supplied, str) or not supplied:
+        return False
+    if expected_key_id is not None and key_id != expected_key_id:
+        return False
+    payload = dict(manifest)
+    payload_authentication = dict(authentication)
+    payload_authentication["value"] = ""
+    payload["authentication"] = payload_authentication
+    expected = hmac.new(
+        hmac_key.encode("utf-8"),
+        json.dumps(payload, sort_keys=True, separators=(",", ":")).encode("utf-8"),
+        hashlib.sha256,
+    ).hexdigest()
+    return hmac.compare_digest(supplied, expected)
 
 
 def main() -> int:
@@ -95,11 +125,12 @@ def main() -> int:
     args = parser.parse_args()
     manifest = build_manifest(args.checkpoint, args.evaluation, args.training_config,
                               args.dataset_manifest, args.metrics, args.expected_parameters,
-                              os.environ.get("DREAMCO_CHECKPOINT_SIGNING_KEY", ""))
+                              os.environ.get("DREAMCO_CHECKPOINT_HMAC_KEY", ""),
+                              os.environ.get("DREAMCO_CHECKPOINT_HMAC_KEY_ID", ""))
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     print(json.dumps({"status": manifest["status"], "checkpoint_sha256": manifest["checkpoint"]["sha256"],
-                      "signature_algorithm": manifest["signature"]["algorithm"]}))
+                      "authentication_algorithm": manifest["authentication"]["algorithm"], "key_id": manifest["authentication"]["key_id"]}))
     return 0
 
 
