@@ -53,8 +53,8 @@ CREATE POLICY lead_engine_activities_owner_isolation ON lead_engine_activities
   USING (owner_id = NULLIF(current_setting('app.owner_id', true), ''))
   WITH CHECK (owner_id = NULLIF(current_setting('app.owner_id', true), ''));
 
--- Activity history is append-only. Retention/deletion is handled by a separately
--- authorized data-rights workflow, not by normal CRM activity updates.
+-- Activity events cannot be edited. Owner-authorized deletion remains available
+-- through the data-rights workflow and the parent lead's cascading deletion.
 CREATE OR REPLACE FUNCTION reject_lead_engine_activity_mutation()
 RETURNS TRIGGER AS $$
 BEGIN
@@ -64,5 +64,5 @@ $$ LANGUAGE plpgsql;
 
 DROP TRIGGER IF EXISTS lead_engine_activities_append_only ON lead_engine_activities;
 CREATE TRIGGER lead_engine_activities_append_only
-  BEFORE UPDATE OR DELETE ON lead_engine_activities
+  BEFORE UPDATE ON lead_engine_activities
   FOR EACH ROW EXECUTE FUNCTION reject_lead_engine_activity_mutation();
