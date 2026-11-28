@@ -42,5 +42,14 @@
     "holdout_answer_keys_in_training_paths": false,
     "signing_secret_in_repository": false,
     "default_network_access": false
-  }
+  },
+  "signing": {
+    "algorithm": "HMAC-SHA256",
+    "require_managed_key_id": true,
+    "secret_environment_variable": "DREAMCO_CHECKPOINT_HMAC_KEY",
+    "key_id_environment_variable": "DREAMCO_CHECKPOINT_HMAC_KEY_ID",
+    "description": "Shared-secret message authentication; not a public-key digital signature."
+  },
+  "required_evidence": [],
+  "checks": []
 }
