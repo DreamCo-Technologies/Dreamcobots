@@ -64,6 +64,7 @@ export class InMemoryReplayClaimStore implements ReplayClaimStore {
 export type MobileSignatureHeaders = { timestamp: string; signature: string };
 
 export function signMobileWebhook(rawBody: string, timestampSeconds: number, secret: string) {
+  if (Buffer.byteLength(secret, "utf8") < 32) throw new Error("Mobile webhook secrets must contain at least 32 bytes.");
   return createHmac("sha256", secret).update(`${timestampSeconds}.${rawBody}`).digest("hex");
 }
 
@@ -72,6 +73,7 @@ export function verifyMobileWebhookSignature(input: {
 }) {
   const nowMs = input.nowMs ?? Date.now();
   const toleranceSeconds = input.toleranceSeconds ?? 300;
+  if (Buffer.byteLength(input.secret, "utf8") < 32) return false;
   const timestamp = Number(input.headers.timestamp);
   if (!Number.isInteger(timestamp) || timestamp <= 0) return false;
   if (Math.abs(nowMs - timestamp * 1000) > toleranceSeconds * 1000) return false;
