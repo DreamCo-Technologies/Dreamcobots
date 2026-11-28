@@ -66,6 +66,10 @@ CODE_FOLDERS: dict[str, dict[str, Any]] = {
     "systems": {"kind": "python"},
 }
 CODE_EXT = {".py", ".ts", ".tsx", ".js", ".mjs", ".cjs"}
+DEFERRED_GENERATED_ARTIFACT_TESTS = (
+    "tests/test_run_prospectus.py",
+    "tests/test_file_prospectus.py",
+)
 
 
 # --------------------------------------------------------------------- utils
@@ -385,13 +389,13 @@ def python_checks(folder: str, timeout: int, skip_tests: bool) -> dict[str, Any]
     pat = re.compile(rf"^\s*(from|import)\s+{re.escape(folder)}(\.|\s|$)", re.M)
     tests = sorted({rel(p) for p in (ROOT / "tests").glob("test_*.py") if pat.search(p.read_text(encoding="utf-8", errors="replace"))}
                    | {rel(p) for p in base.rglob("test_*.py")})
-    # The Actions prospectus is derived from fleet-runtime-status.json, which
-    # this audit rewrites after collecting folder test results. Running its
-    # freshness assertion inside the pre-refresh folder suite is circular;
-    # fleet-runtime-truth.yml reruns it in a dedicated post-audit step after
-    # refresh_repository_evidence has converged both prospectuses.
+    # These generated prospectus assertions depend on repository evidence
+    # refreshed later in fleet-runtime-truth.yml. Record them explicitly as
+    # deferred rather than reporting the folder as fully tested prematurely.
     if folder == "buddy":
-        tests = [name for name in tests if name != "tests/test_run_prospectus.py"]
+        deferred = list(DEFERRED_GENERATED_ARTIFACT_TESTS)
+        tests = [name for name in tests if name not in DEFERRED_GENERATED_ARTIFACT_TESTS]
+        result["deferred_tests"] = deferred
     result["test_files"] = tests
     if tests and not skip_tests:
         res = run([sys.executable, "-m", "pytest", "-q", "-p", "no:cacheprovider", "--no-header", "-rN",
@@ -485,6 +489,8 @@ def verdict(entry: dict[str, Any]) -> str:
     if syntax and syntax >= max(1, entry["code_files"] // 2) or imp_fail_ratio > 0.5 or (ran and passed + failed and passed < failed):
         return "broken"
     if syntax or imp.get("failed") or failed or type_errors or not site_ok or entry.get("links_broken"):
+        return "partial"
+    if entry.get("deferred_tests"):
         return "partial"
     if not ran or passed == 0:
         return "untested"
@@ -672,6 +678,15 @@ def render_report(status: dict[str, Any], rows: list[dict[str, Any]]) -> str:
             details.append("site check: " + str(f["site_check"])[:300])
         if details:
             lines.append(f"- **{f['folder']}**: " + " | ".join(details))
+    deferred = sorted({
+        test
+        for folder in status.get("code_folders", [])
+        for test in folder.get("deferred_tests", [])
+    })
+    if deferred:
+        lines += ["", "### Deferred generated artifact tests", "",
+                  "**deferred tests not run** in the pre-refresh folder suite; the dedicated post-audit step reruns them after generated evidence is refreshed:", ""]
+        lines += [f"- `{test}`" for test in deferred]
     fx = status.get("folder_test_side_effects") or {}
     if fx.get("restored_tracked_files") or fx.get("untracked_files_created"):
         lines += ["", "### Tests that write into the checkout", "",

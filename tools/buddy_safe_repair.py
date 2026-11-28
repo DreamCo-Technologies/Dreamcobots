@@ -1,9 +1,70 @@
 #!/usr/bin/env python3
 """Allowlisted, deterministic repository repairs only; never edits source code."""
 from __future__ import annotations
-import argparse,json,subprocess,sys
-from pathlib import Path
+import argparse,json,os,subprocess,sys,tempfile
+from pathlib import Path,PurePosixPath
 from tools.buddy_failure_learning import classify,route_masterbots
+
+REPAIR_ALLOWED_PREFIXES = (
+ "artifacts/buddy-dataset-hub/", "artifacts/division-model-fleet/",
+ "command-center/data/", "config/bots/", "config/buddy/", "config/generated/",
+ "reports/", "website/data/",
+)
+REPAIR_ALLOWED_FILES = {
+ "config/master_bot_registry.json",
+ "config/freecodecamp-complete-learning-path.json",
+ "config/buddy-continuous-study-policy.json",
+}
+OUTPUT_PREFIX = "artifacts/buddy-safe-repair/"
+REPAIR_ALLOWED_COMMANDS = {
+ "tools/build_buddy_dataset_routes.py",
+ "tools/build_division_model_fleet.py",
+ "tools/build_pages_connection_index.py",
+ "tools/generate_bot_manifests.py",
+ "tools/refresh_repository_evidence.py",
+ "tools/generate_command_center_data.py",
+ "tools/build_actions_prospectus.py",
+ "tools/build_file_prospectus.py",
+}
+
+
+def repair_path_allowed(path:str)->bool:
+ p=PurePosixPath(path)
+ if (not p.parts or p.is_absolute() or "\\" in path
+     or any(x in {"", ".", ".."} for x in p.parts)
+     or p.name.lower() in {".env", ".env.local", ".env.production", "credentials.json", "secrets.json"}
+     or p.suffix.lower() in {".pem", ".key", ".p12", ".pfx"}):
+  return False
+ return path in REPAIR_ALLOWED_FILES or any(p.as_posix().startswith(prefix) for prefix in REPAIR_ALLOWED_PREFIXES)
+
+
+def safe_observation_path(root:Path,value:str)->Path:
+ p=PurePosixPath(value)
+ if (not p.parts or p.is_absolute() or "\\" in value or ".." in p.parts
+     or not p.as_posix().startswith(OUTPUT_PREFIX)):
+  raise ValueError("Observation must remain under artifacts/buddy-safe-repair/.")
+ out=(root/Path(*p.parts)).resolve()
+ try: relative=out.relative_to(root.resolve()).as_posix()
+ except ValueError: raise ValueError("Observation resolves outside the repository.")
+ if not relative.startswith(OUTPUT_PREFIX):
+  raise ValueError("Observation resolves outside artifacts/buddy-safe-repair/.")
+ return out
+
+
+def safe_output_path(root:Path,value:str)->Path:
+ p=PurePosixPath(value)
+ if (not p.parts or p.is_absolute() or "\\" in value or ".." in p.parts
+     or p.name.lower() in {".env", ".env.local", "credentials.json", "secrets.json"}
+     or p.suffix.lower() in {".pem", ".key", ".p12", ".pfx"}
+     or not p.as_posix().startswith(OUTPUT_PREFIX)):
+  raise ValueError("Repair output must remain under artifacts/buddy-safe-repair/ and cannot be a credential file.")
+ out=(root/Path(*p.parts)).resolve()
+ try: relative=out.relative_to(root.resolve()).as_posix()
+ except ValueError: raise ValueError("Repair output resolves outside the repository.")
+ if not relative.startswith(OUTPUT_PREFIX):
+  raise ValueError("Repair output resolves outside artifacts/buddy-safe-repair/.")
+ return out
+
 
 def repair_plan(observation:dict)->list[list[str]]:
  kind=classify(observation)
@@ -36,14 +97,33 @@ def run_safe_repair(observation:dict,root:Path)->dict:
  if not commands:
   result["status"]="NO_ALLOWLISTED_AUTOMATIC_REPAIR";return result
  for command in commands:
-  proc=subprocess.run(command,cwd=root,text=True,capture_output=True,timeout=300,check=False)
+  if len(command)!=2 or command[0]!=sys.executable or command[1] not in REPAIR_ALLOWED_COMMANDS:
+   result["status"]="BLOCKED_UNSAFE_COMMAND";return result
+  proc=subprocess.run([sys.executable,command[1]],cwd=root,text=True,capture_output=True,timeout=300,check=False)
   result["executed"]=True
-  result.setdefault("command_results",[]).append({"argv":command,"returncode":proc.returncode,
-   "stdout_tail":proc.stdout[-4000:],"stderr_tail":proc.stderr[-4000:]})
+  result.setdefault("command_results",[]).append({"argv":command,"returncode":proc.returncode})
   if proc.returncode:
    result["status"]="REPAIR_COMMAND_FAILED";return result
  status=subprocess.run(["git","status","--porcelain","--untracked-files=all"],cwd=root,text=True,capture_output=True,check=True).stdout
- result["changed_files"]=[line[3:] for line in status.splitlines() if len(line)>3 and not line[3:].startswith("artifacts/buddy-safe-repair/")]
+ entries=[line for line in status.splitlines() if len(line)>3 and not line[3:].startswith("artifacts/buddy-safe-repair/")]
+ blocked=[]
+ changed=[]
+ total_bytes=0
+ for line in entries:
+  path=line[3:]
+  candidate=root/path
+  if (line[:2].strip() not in {"M","A","??"} or not repair_path_allowed(path)
+      or candidate.is_symlink() or not candidate.is_file()):
+   blocked.append(path)
+  else:
+   changed.append(path);total_bytes+=candidate.stat().st_size
+ if blocked:
+  result["status"]="BLOCKED_UNEXPECTED_PATH";result["success"]=False
+  result["blocked_paths"]=sorted(set(blocked));return result
+ if len(changed)>100 or total_bytes>25*1024*1024:
+  result["status"]="BLOCKED_SIZE_LIMIT";result["success"]=False
+  result["changed_file_count"]=len(changed);result["changed_bytes"]=total_bytes;return result
+ result["changed_files"]=sorted(set(changed))
  result["success"]=True
  result["status"]="REPAIR_CANDIDATE_READY_FOR_PR" if result["changed_files"] else "REPAIR_RAN_NO_CHANGES"
  return result
@@ -51,10 +131,21 @@ def run_safe_repair(observation:dict,root:Path)->dict:
 def main():
  p=argparse.ArgumentParser();p.add_argument("--observation",required=True);p.add_argument("--out",default="artifacts/buddy-safe-repair/result.json")
  a=p.parse_args();root=Path(__file__).resolve().parents[1]
- obs=json.loads(Path(a.observation).read_text(encoding="utf-8"))
+ try:
+  observation_path=safe_observation_path(root,a.observation)
+  if observation_path.stat().st_size>5*1024*1024: raise ValueError("Observation exceeds the 5 MiB safety limit.")
+  obs=json.loads(observation_path.read_text(encoding="utf-8"))
+  if not isinstance(obs,dict): raise ValueError("Observation must be a JSON object.")
+ except (OSError,ValueError,json.JSONDecodeError) as exc:
+  p.error(str(exc))
  result=run_safe_repair(obs,root)
- out=root/a.out;out.parent.mkdir(parents=True,exist_ok=True);out.write_text(json.dumps(result,indent=2)+"\n",encoding="utf-8")
- output=Path(__import__("os").environ.get("GITHUB_OUTPUT","/dev/null"))
+ out=safe_output_path(root,a.out);out.parent.mkdir(parents=True,exist_ok=True);out.write_text(json.dumps(result,indent=2)+"\n",encoding="utf-8")
+ output_value=os.environ.get("GITHUB_OUTPUT")
+ output=Path(output_value).resolve() if output_value else Path("/dev/null")
+ if output_value:
+  runner_temp=Path(os.environ.get("RUNNER_TEMP",tempfile.gettempdir())).resolve()
+  if runner_temp not in output.parents:
+   p.error("GITHUB_OUTPUT must remain inside the runner temp directory.")
  with output.open("a",encoding="utf-8") as f:
   f.write(f"changed={'true' if result['success'] and result['changed_files'] else 'false'}\n")
   f.write(f"status={result['status']}\n")
