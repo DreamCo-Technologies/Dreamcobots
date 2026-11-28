@@ -267,14 +267,16 @@ class RuntimeBridgeTests(unittest.TestCase):
     def test_query_ranks_exact_specialist_title_before_broad_shared_matches(self):
         def lesson(resource_id, title, objective, *, division_targets=()):
             return CourseLesson(
-                resource_id=resource_id, lesson_id=f"fixture-{resource_id}", track_id="fixture-track",
+                resource_id=resource_id, lesson_id=f"fixture-{resource_id}", track_id="dreamco-division-specialist",
                 title=title, category="finance", objective=objective,
                 practice="Build a safe, deterministic practice project.",
                 assessment="Verify the result with independent tests.",
                 benchmark="Task-matched holdout and regression.",
                 source_url="", guide_path="docs/DREAMCO_UNIVERSAL_CAPABILITY_TAXONOMY.md",
-                rights_mode="metadata_only", delivery="metadata_only",
-                content_status="metadata_only", division_targets=tuple(division_targets),
+                rights_mode="dreamco_original_internal", delivery="internal_bootcamp",
+                content_status="authored", division_targets=tuple(division_targets or ("DreamFinance",)),
+                learner_visible=True, review_status="approved",
+                training_eligibility="internal_sandbox_practice_only",
             )
 
         broad_matches = [
@@ -337,12 +339,14 @@ class RuntimeBridgeTests(unittest.TestCase):
     def test_learning_queue_paginates_without_dropping_later_lessons(self):
         lessons = [
             CourseLesson(
-                resource_id=index, lesson_id=f"pagination-{index}", track_id="shared-fixture",
+                resource_id=index, lesson_id=f"pagination-{index}", track_id="dreamco-division-specialist",
                 title=f"Shared curriculum lesson {index}", category="foundation",
                 objective="Study and practice a foundational skill.", practice="Complete a guided exercise.",
                 assessment="Pass the independent check.", benchmark="Regression benchmark.",
-                source_url="", guide_path="docs/DREAMCO_UNIVERSAL_CAPABILITY_TAXONOMY.md", rights_mode="original",
-                delivery="original", content_status="authored",
+                source_url="", guide_path="docs/DREAMCO_UNIVERSAL_CAPABILITY_TAXONOMY.md", rights_mode="dreamco_original_internal",
+                delivery="internal_bootcamp", content_status="authored",
+                division_targets=("DreamFinance",), learner_visible=True, review_status="approved",
+                training_eligibility="internal_sandbox_practice_only",
             )
             for index in range(205)
         ]
