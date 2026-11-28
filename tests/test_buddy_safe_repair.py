@@ -113,3 +113,26 @@ if __name__=="__main__":unittest.main()
   self.assertFalse(repair_path_allowed("server/app.py"))
   self.assertFalse(repair_path_allowed("reports/.env"))
   self.assertFalse(repair_path_allowed("reports/private.pem"))
+
+
+
+ def test_safe_repair_blocks_symlinked_generated_outputs(self):
+  from unittest.mock import patch
+  import tempfile
+  with tempfile.TemporaryDirectory() as directory:
+   root=Path(directory)
+   link=root/"website/data/generated-link"
+   link.parent.mkdir(parents=True,exist_ok=True)
+   target=root/"outside.txt"
+   target.write_text("outside",encoding="utf-8")
+   try:
+    link.symlink_to(target)
+   except (OSError,NotImplementedError):
+    self.skipTest("symlinks are unavailable on this platform")
+   completed=subprocess.CompletedProcess(["python","builder.py"],0,"","")
+   status=subprocess.CompletedProcess(["git","status"],0,"?? website/data/generated-link\n","")
+   observation={"workflow":"Buddy Dataset Hub","job":"route-build","failed_step":"generated index mismatch"}
+   with patch("tools.buddy_safe_repair.subprocess.run",side_effect=[completed,status]):
+    result=run_safe_repair(observation,root)
+   self.assertEqual(result["status"],"BLOCKED_UNEXPECTED_PATH")
+   self.assertIn("website/data/generated-link",result["blocked_paths"])
