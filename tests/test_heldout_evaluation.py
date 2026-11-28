@@ -96,6 +96,22 @@ class HeldoutEvaluationTests(unittest.TestCase):
             dataset.write_text(json.dumps({"training_authorized":False,"rights_review_status":"PENDING"}))
             with self.assertRaisesRegex(ValueError,"dataset rights"):
                 validator.build_manifest(checkpoint,evaluation,config,dataset,metrics,45_000_000,"a"*40,"test-key-1")
+            dataset.write_text(json.dumps({"training_authorized":True,"rights_review_status":"APPROVED"}))
+            public_report = json.loads(evaluation.read_text())
+            public_report["split"] = "public_evaluation_smoke"
+            evaluation.write_text(json.dumps(public_report))
+            with self.assertRaisesRegex(ValueError, "private independent holdout"):
+                validator.build_manifest(checkpoint,evaluation,config,dataset,metrics,45_000_000,"a"*40,"test-key-1")
+            public_report["split"] = "private_independent_holdout"
+            public_report["model_version"] = "different-candidate"
+            evaluation.write_text(json.dumps(public_report))
+            with self.assertRaisesRegex(ValueError, "model version"):
+                validator.build_manifest(checkpoint,evaluation,config,dataset,metrics,45_000_000,"a"*40,"test-key-1")
+            public_report["model_version"] = "dreamcodelab-candidate-001"
+            public_report["evaluator"]["sha256"] = "0" * 64
+            evaluation.write_text(json.dumps(public_report))
+            with self.assertRaisesRegex(ValueError, "evaluator code hash"):
+                validator.build_manifest(checkpoint,evaluation,config,dataset,metrics,45_000_000,"a"*40,"test-key-1")
 
 
 if __name__ == "__main__":
