@@ -61,3 +61,12 @@ The generator fails closed unless commercial and training rights, privacy review
 ## Verification boundaries
 
 The generated JSON Schema and pytest contract are public grading interfaces, not secret benchmark answer keys. A real Mastery gate still requires a separately authored private holdout, deterministic tests, measured checkpoint, regression review, safety review, and human release approval. Never route private holdouts into training or distillation.
+
+
+## Zero-cost GitHub operating mode
+
+- The GitHub Actions workflow validates the resource manifest, compiles the generator, and runs deterministic tests. It does not provision a GPU, call a paid model API, download all 100 resources, or start model training.
+- Keep upstream discovery metadata-only until a resource has an exact version/revision, license and terms review, attribution requirements, commercial-use review, training-use permission, and an approved source-specific record.
+- Generate original lesson specifications from locally staged, approved task seeds. Keep private evaluation holdouts out of curriculum and training inputs.
+- Use existing local CPU hardware for small reproducible experiments. Treat 45M/350M/1B training as separate compute plans; GitHub Actions CI is not a free GPU-training service and remains subject to repository and Actions quotas.
+- The 500-model matrix must only enumerate verified model IDs and revisions from a real inventory. Placeholder IDs or synthetic benchmark rows must never be presented as 500 evaluated models.
