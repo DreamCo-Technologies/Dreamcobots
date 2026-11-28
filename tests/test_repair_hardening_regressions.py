@@ -74,3 +74,44 @@ def test_repair_guard_still_accepts_eligible_text_change():
         "@@ -1 +1 @@\n-old\n+new\n",
     )
     assert errors == []
+
+
+def test_repair_guard_rejects_diff_for_a_different_changed_path():
+    errors = validate_changes(
+        "M\tserver/handlers/orders.py",
+        "diff --git a/server/handlers/other.py b/server/handlers/other.py\n"
+        "--- a/server/handlers/other.py\n+++ b/server/handlers/other.py\n"
+        "@@ -1 +1 @@\n-old\n+safe\n",
+    )
+    assert any("absent from changed-file metadata" in error for error in errors)
+    assert any("no corresponding inspected diff section" in error for error in errors)
+
+
+def test_repair_guard_rejects_extra_diff_sections_not_in_inventory():
+    errors = validate_changes(
+        "M\tserver/handlers/orders.py",
+        "diff --git a/server/handlers/orders.py b/server/handlers/orders.py\n"
+        "@@ -1 +1 @@\n-old\n+safe\n"
+        "diff --git a/server/handlers/users.py b/server/handlers/users.py\n"
+        "@@ -1 +1 @@\n-old\n+unreviewed\n",
+    )
+    assert any("absent from changed-file metadata" in error for error in errors)
+
+
+def test_repair_guard_rejects_file_mode_changes():
+    errors = validate_changes(
+        "M\tserver/handlers/orders.py",
+        "diff --git a/server/handlers/orders.py b/server/handlers/orders.py\n"
+        "old mode 100644\nnew mode 100755\n"
+        "@@ -1 +1 @@\n-old\n+new\n",
+    )
+    assert any("File mode changes are not allowed" in error for error in errors)
+
+
+def test_repair_guard_rejects_non_normalized_paths():
+    errors = validate_changes(
+        "M\ttools/../server/handlers/orders.py",
+        "diff --git a/tools/../server/handlers/orders.py b/tools/../server/handlers/orders.py\n"
+        "@@ -1 +1 @@\n-old\n+new\n",
+    )
+    assert any("Unsafe or non-normalized" in error for error in errors)
