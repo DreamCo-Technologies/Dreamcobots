@@ -411,6 +411,8 @@ def main():
         shard_payload = verify_signed_shard_manifest(
             args.shard_manifest, args.shard_signature, args.manifest, args.signature, args.public_key
         )
+        if shard_payload.get("sequence_length") != int(recipe["packing"]["sequence_length"]):
+            raise ValueError("signed token-shard sequence_length does not match the selected training recipe")
         if args.token_shards.resolve() != args.shard_manifest.parent.resolve():
             raise PermissionError("--token-shards must be the directory containing the verified signed shard manifest")
         if not shard_payload.get("train"):
