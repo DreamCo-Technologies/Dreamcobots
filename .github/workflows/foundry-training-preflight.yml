@@ -150,8 +150,9 @@ jobs:
               --manifest "$DATA/manifest.json" --signature "$DATA/manifest.sig" \
               --public-key "$DATA/policy-public.pem" --output "$ARTIFACT_DIR/tokenizer" "${TOKENIZER_ARGS[@]}"
           fi
+          SEQ_LENGTH="$(python -c 'import yaml,sys; print(yaml.safe_load(open(sys.argv[1]))["packing"]["sequence_length"])' "$RECIPE_FILE")"
           if [ ! -f "$ARTIFACT_DIR/token_shards/manifest.json" ]; then
-            python -m stages.05_model_foundry.pack_tokens --sequence-length 1024 \
+            python -m stages.05_model_foundry.pack_tokens --sequence-length "$SEQ_LENGTH" \
               --manifest "$DATA/manifest.json" --signature "$DATA/manifest.sig" \
               --public-key "$DATA/policy-public.pem" --tokenizer "$ARTIFACT_DIR/tokenizer" \
               --output "$ARTIFACT_DIR/token_shards"
