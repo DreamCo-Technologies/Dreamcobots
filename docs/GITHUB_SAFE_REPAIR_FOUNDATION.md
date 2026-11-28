@@ -7,10 +7,9 @@ This repository uses GitHub Actions for keyless test execution, sanitized failur
 The DreamCo PR Quality Gate runs make test-all on every pull request targeting main. The Makefile runs:
 - JSON contract validation.
 - Five-stage pipeline and policy-boundary tests.
-- Repair-report redaction and repair-PR guard tests.
 - Python compile checks for the stage and reverse-engineering packages.
 
-The Repository Test Matrix remains a separate broader workflow. Keep its required check enabled alongside the DreamCo PR check when configuring branch protection.
+The PR Quality Gate additionally runs the failure-report and repair-diff-validator tests directly. The Repository Test Matrix remains a separate broader workflow. Keep its required check enabled alongside the DreamCo PR check when configuring branch protection.
 
 ## Failure reports
 
@@ -20,7 +19,7 @@ Sanitization is defense in depth, not a guarantee that arbitrary logs are safe t
 
 ## Mainline recovery
 
-Every push to main runs the mainline health check. A failure opens or updates an issue with the commit, workflow run, and sanitized excerpt. The workflow never pushes to main, creates an automatic revert, or invokes an AI model.
+Every push to main runs the mainline health check. A failure opens or updates an issue with the commit and workflow run link, without copying log output. The workflow never pushes to main, creates an automatic revert, or invokes an AI model.
 
 ## Safe repair pull requests
 
