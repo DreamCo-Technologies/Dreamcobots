@@ -1,6 +1,6 @@
 import unittest,sys,subprocess
 from pathlib import Path
-from tools.buddy_safe_repair import repair_plan,run_safe_repair
+from tools.buddy_safe_repair import repair_plan,run_safe_repair,safe_observation_path
 class BuddySafeRepairTests(unittest.TestCase):
  def test_repair_module_imports_from_repository_root(self):
   root=Path(__file__).resolve().parents[1]
@@ -64,6 +64,23 @@ class BuddySafeRepairTests(unittest.TestCase):
   self.assertEqual(result["command_results"], [{"argv": [sys.executable, "tools/build_buddy_dataset_routes.py"], "returncode": 0}])
   self.assertNotIn("secret-like stdout", str(result))
   self.assertNotIn("secret-like stderr", str(result))
+
+
+ def test_safe_observation_path_blocks_traversal(self):
+  root=Path(__file__).resolve().parents[1]
+  self.assertEqual(
+   safe_observation_path(root,"artifacts/buddy-safe-repair/observation.json"),
+   root/"artifacts/buddy-safe-repair/observation.json",
+  )
+  with self.assertRaises(ValueError):
+   safe_observation_path(root,"../../outside.json")
+
+ def test_safe_repair_blocks_unregistered_builder_commands(self):
+  from unittest.mock import patch
+  with patch("tools.buddy_safe_repair.repair_plan", return_value=[[sys.executable,"tools/evil.py"]]):
+   result=run_safe_repair({"failure_class":"generated-index"},Path("."))
+  self.assertEqual(result["status"],"BLOCKED_UNSAFE_COMMAND")
+  self.assertFalse(result["executed"])
 
 if __name__=="__main__":unittest.main()
 
