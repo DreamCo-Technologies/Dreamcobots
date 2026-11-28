@@ -14,6 +14,14 @@ on:
         options:
           - scratch_45m_division
           - open_weight_cpt_sft
+      base_model_revision:
+        description: Reviewed 40-character model commit SHA (open-weight recipe only)
+        required: false
+        type: string
+      base_model_license_evidence_id:
+        description: Owner-approved license evidence reference (open-weight recipe only)
+        required: false
+        type: string
 permissions:
   contents: read
 jobs:
@@ -51,6 +59,7 @@ jobs:
       FOUNDRY_DATA_DIR: ${{ vars.DREAMCO_FOUNDRY_DATA_DIR }}
       TRAINING_APPROVAL: ${{ secrets.DREAMCO_TRAINING_APPROVAL_REFERENCE }}
       BASE_MODEL_REVISION: ${{ inputs.base_model_revision }}
+      BASE_MODEL_LICENSE_EVIDENCE_ID: ${{ inputs.base_model_license_evidence_id }}
     steps:
       - uses: actions/checkout@v4
         with:
