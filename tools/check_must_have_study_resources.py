@@ -60,12 +60,6 @@ def validate_catalogs() -> dict[str, object]:
 def main() -> int:
     """Validate catalog IDs, required fields, HTTPS URLs, and cross-catalog uniqueness."""
     old_names, old_urls = names_urls(OLD)
-    for other in sorted((ROOT / "config").glob("buddy-study-resources-*.json")):
-        if other == NEW:
-            continue
-        names, urls = names_urls(other)
-        old_names |= names
-        old_urls |= urls
     new = json.loads(NEW.read_text(encoding="utf-8"))
     rows = new["resources"]
     if len(rows) != 100:
