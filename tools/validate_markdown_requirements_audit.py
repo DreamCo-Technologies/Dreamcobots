@@ -33,7 +33,7 @@ def main() -> int:
         tracked = subprocess.check_output(["git", "ls-files", "-z"], cwd=ROOT).decode().split("\0")
     except Exception as exc:
         fail(f"git ls-files failed: {exc}")
-    expected = {path for path in tracked if path.lower().endswith(".md")}
+    expected = {path for path in tracked if path.lower().endswith((".md", ".mdx"))}
     items = manifest.get("items", [])
     paths = [item.get("path") for item in items]
     if len(paths) != len(set(paths)):
