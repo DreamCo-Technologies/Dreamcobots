@@ -15,13 +15,16 @@ def load_policy(path:Path)->dict[str,Any]:
     data=yaml.safe_load(path.read_text(encoding="utf-8")) or {}
     if data.get("schema")!="dreamco.source_license_policy.v1": raise ValueError("unsupported policy schema")
     return data
-def source_is_configured(url:str,policy:dict[str,Any])->bool:
+def source_is_configured(source_id:str,url:str,policy:dict[str,Any])->bool:
     from urllib.parse import urlparse
     host=(urlparse(url).hostname or "").lower()
     for row in policy.get("sources",[]):
-        for domain in row.get("domains",[]):
-            domain=str(domain).lower()
-            if host==domain or host.endswith("."+domain): return row.get("catalog_metadata_allowed") is True
+        domains=[str(x).lower() for x in row.get("domains",[])]
+        domain_match=any(host==d or host.endswith("."+d) for d in domains)
+        id_match=source_id in row.get("catalog_source_ids",[])
+        url_match=any(url.startswith(prefix) for prefix in row.get("allowed_url_prefixes",[]))
+        if domain_match and id_match and url_match:
+            return row.get("catalog_metadata_allowed") is True
     return False
 def enumerate_source(url:str,timeout:int=1800)->list[dict[str,Any]]:
     result=subprocess.run(["yt-dlp","--flat-playlist","--dump-json","--no-warnings",url],check=True,capture_output=True,text=True,timeout=timeout)
@@ -52,7 +55,7 @@ def sync_sources(sources:list[dict[str,str]],ledger:Path=DEFAULT_LEDGER,policy_p
     policy=load_policy(policy_path); ledger.parent.mkdir(parents=True,exist_ok=True); latest=read_ledger(ledger); pending=[]; seen=set()
     for source in sources:
         url,source_id=source["url"],source["source_id"]
-        if not source_is_configured(url,policy): raise PermissionError(f"source not allowlisted for metadata cataloging: {source_id}")
+        if not source_is_configured(source_id,url,policy): raise PermissionError(f"source not allowlisted for metadata cataloging: {source_id}")
         for item in enumerator(url):
             row=normalize_item(item,url,source_id); key=f"{source_id}:{row['video_id']}"
             if key in seen: continue
