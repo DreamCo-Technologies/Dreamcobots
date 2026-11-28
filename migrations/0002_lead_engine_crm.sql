@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS lead_engine_activities (
   event_id TEXT NOT NULL,
   event_type TEXT NOT NULL CHECK (event_type IN (
     'lead_created','stage_changed','qualification_updated','consent_updated',
-    'suppression_changed','owner_note','proposal_handoff','conversion_recorded'
+    'suppression_changed','owner_note','proposal_handoff','conversion_recorded','conversion_approved'
   )),
   details JSONB NOT NULL DEFAULT '{}'::jsonb,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
