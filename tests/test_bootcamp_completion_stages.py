@@ -1,4 +1,4 @@
-import importlib.util, json, tempfile, unittest
+import importlib.util, tempfile, unittest
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 def load(name,path):
