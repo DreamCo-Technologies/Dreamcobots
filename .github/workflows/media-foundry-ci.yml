@@ -1,0 +1,46 @@
+name: DreamCo Media Foundry CI
+
+on:
+  pull_request:
+    paths:
+      - "stages/08_media_studio/**"
+      - "tests/test_media_director.py"
+      - "docs/DREAMCO_MEDIA_FOUNDRY.md"
+      - ".github/workflows/media-foundry-ci.yml"
+  push:
+    branches: [main]
+    paths:
+      - "stages/08_media_studio/**"
+      - "tests/test_media_director.py"
+      - "docs/DREAMCO_MEDIA_FOUNDRY.md"
+      - ".github/workflows/media-foundry-ci.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: media-foundry-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  plan-and-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Compile Python sources
+        run: python -m py_compile stages/08_media_studio/director.py tests/test_media_director.py
+      - name: Run CPU-only media director tests
+        run: python -m unittest discover -s tests -p "test_media_director.py" -v
+      - name: Validate sample production plan
+        run: |
+          python stages/08_media_studio/director.py \
+            stages/08_media_studio/shot-list.example.json \
+            --output "$RUNNER_TEMP/media-plan.json"
+          python -c "import json,os; p=json.load(open(os.path.join(os.environ['RUNNER_TEMP'],'media-plan.json'))); assert p['status']=='planned_not_rendered'; assert len(p['shots']) == 1"
