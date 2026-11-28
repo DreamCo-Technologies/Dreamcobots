@@ -37,6 +37,8 @@ def validate_inventory(inventory: dict[str, Any]) -> tuple[list[dict[str, Any]],
     models = inventory.get("models")
     if inventory.get("status") != "VERIFIED":
         blockers.append("inventory status must be VERIFIED after owner review")
+    if inventory.get("expected_model_count") != EXPECTED_MODELS:
+        blockers.append(f"expected_model_count must equal {EXPECTED_MODELS}")
     if not isinstance(models, list):
         return [], blockers + ["models must be a list"]
     if len(models) != EXPECTED_MODELS:
@@ -65,7 +67,7 @@ def validate_inventory(inventory: dict[str, Any]) -> tuple[list[dict[str, Any]],
             blockers.append(f"{model_id}: license_review_status must be APPROVED")
         if item["evaluation_authorized"] is not True:
             blockers.append(f"{model_id}: evaluation_authorized must be true")
-        if not str(item["model_card_uri"]).startswith(("https://", "http://")):
+        if not str(item["model_card_uri"]).startswith("https://"):
             blockers.append(f"{model_id}: model_card_uri must be an HTTP(S) reference")
         if not isinstance(item["benchmark_suites"], list) or not item["benchmark_suites"]:
             blockers.append(f"{model_id}: at least one applicable benchmark suite is required")
