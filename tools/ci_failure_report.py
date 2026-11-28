@@ -1,27 +1,48 @@
 """Create a small, sanitized CI failure report without uploading raw logs."""
 from __future__ import annotations
+
 import argparse
 import json
 import os
 import re
 from pathlib import Path
 
-REDACTIONS = (
-    (re.compile(r"(?i)\b(?:api[_-]?key|client[_-]?secret|password|access[_-]?token)\s*[:=]\s*[^\s,;]+"), "[REDACTED_CREDENTIAL]"),
-    (re.compile(r"(?i)(authorization:\s*bearer\s+)[^\s]+"), r"\1[REDACTED]"),
-    (re.compile(r"(?i)([?&](?:access_token|api_key|apikey|token|secret|password)=)[^&\s]+"), r"\1[REDACTED]"),
-    (re.compile(r"(?i)\b(?:gh[pousr]_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,})\b"), "[REDACTED_TOKEN]"),
-    (re.compile(r"\bAKIA[0-9A-Z]{16}\b"), "[REDACTED_AWS_KEY]"),
-    (re.compile(r"\bsk-[A-Za-z0-9_-]{20,}\b"), "[REDACTED_API_KEY]"),
-    (re.compile(r"-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----"), "[REDACTED_PRIVATE_KEY]"),
-    (re.compile(r"(?i)\b([A-Z0-9._%+-]+)@([A-Z0-9.-]+\.[A-Z]{2,})\b"), "[REDACTED_EMAIL]"),
-    (re.compile(r"\b\d{3}-\d{2}-\d{4}\b"), "[REDACTED_SSN]"),
-    (re.compile(r"(?<!\d)(?:\+?1[ .-]?)?\(?\d{3}\)?[ .-]\d{3}[ .-]\d{4}(?!\d)"), "[REDACTED_PHONE]"),
+
+# Match complete quoted values (including whitespace and the closing quote),
+# unquoted values, common provider tokens, and complete multiline PEM blocks.
+_PRIVATE_KEY = re.compile(
+    r"-----BEGIN [A-Z0-9 ]*PRIVATE KEY-----[\\s\\S]*?"
+    r"(?:-----END [A-Z0-9 ]*PRIVATE KEY-----|\\Z)",
+    re.IGNORECASE,
 )
+_CREDENTIAL_ASSIGNMENT = re.compile(
+    r"""(?ix)\\b(?:api[_-]?key|client[_-]?secret|password|access[_-]?token)
+    \\s*[:=]\\s*(?:"[^"\\r\\n]*(?:"|$)|'[^'\\r\\n]*(?:'|$))"""
+)
+_UNQUOTED_CREDENTIAL = re.compile(
+    r"(?i)\\b(?:api[_-]?key|client[_-]?secret|password|access[_-]?token)"
+    r"\\s*[:=]\\s*[^\\s,;'\" ]+"
+)
+REDACTIONS = (
+    (_PRIVATE_KEY, "[REDACTED_PRIVATE_KEY]"),
+    (_CREDENTIAL_ASSIGNMENT, "[REDACTED_CREDENTIAL]"),
+    (_UNQUOTED_CREDENTIAL, "[REDACTED_CREDENTIAL]"),
+    (re.compile(r"(?i)(authorization:\\s*bearer\\s+)[^\\s]+"), r"\\1[REDACTED]"),
+    (re.compile(r"(?i)([?&](?:access_token|api_key|apikey|token|secret|password)=)[^&\\s]+"), r"\\1[REDACTED]"),
+    (re.compile(r"(?i)\\b(?:gh[pousr]_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,})\\b"), "[REDACTED_TOKEN]"),
+    (re.compile(r"\\bAKIA[0-9A-Z]{16}\\b"), "[REDACTED_AWS_KEY]"),
+    (re.compile(r"\\bsk-[A-Za-z0-9_-]{20,}\\b"), "[REDACTED_API_KEY]"),
+    (re.compile(r"(?i)\\b([A-Z0-9._%+-]+)@([A-Z0-9.-]+\\.[A-Z]{2,})\\b"), "[REDACTED_EMAIL]"),
+    (re.compile(r"\\b\\d{3}-\\d{2}-\\d{4}\\b"), "[REDACTED_SSN]"),
+    (re.compile(r"(?<!\\d)(?:\\+?1[ .-]?)?\\(?\\d{3}\\)?[ .-]\\d{3}[ .-]\\d{4}(?!\\d)"), "[REDACTED_PHONE]"),
+)
+
+
 def sanitize(value: str) -> str:
     for pattern, replacement in REDACTIONS:
         value = pattern.sub(replacement, value)
     return value
+
 
 def build_report(log_text: str, exit_code: int, *, commit: str = "", run_id: str = "") -> dict:
     # Raw test output can contain arbitrary credentials or personal data.
@@ -37,6 +58,7 @@ def build_report(log_text: str, exit_code: int, *, commit: str = "", run_id: str
         "failure_excerpt": "",
     }
 
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--log", required=True)
@@ -51,8 +73,9 @@ def main() -> int:
     )
     output = Path(args.output)
     output.parent.mkdir(parents=True, exist_ok=True)
-    output.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
+    output.write_text(json.dumps(report, indent=2) + "\\n", encoding="utf-8")
     return 0
+
 
 if __name__ == "__main__":
     raise SystemExit(main())
