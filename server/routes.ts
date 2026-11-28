@@ -62,6 +62,7 @@ import {
   BlueBubblesMacRelayTransport,
   mobileBridgeReadiness,
   mobileBridgeRegistrationSchema,
+  mobileChannelSchema,
   sendMobileMessage,
 } from "./mobile-messaging-bridge";
 import {
@@ -74,16 +75,19 @@ import {
   getMobileBridgeDevice,
   listCommunicationTwinDrafts,
   listMobileBridgeDevices,
+  listMobileBridgeRegistrations,
   markCommunicationTwinDraftDeliveryUnknown,
   PostgresMobileReplayClaimStore,
   registerMobileBridgeDevice,
   rejectCommunicationTwinDraft,
+  resetCommunicationTwinDraftSendClaim,
   releaseMobileReplayEvent,
   resolveMobileContactId,
   resolveMobileProviderContactId,
   revokeMobileBridgeDevice,
   saveCommunicationTwinSettings,
   saveMobileBridgeContactMapping,
+  updateCommunicationTwinDraftBody,
 } from "./communication-twin-storage";
 import {
   buildGovernedLeadPlan,
