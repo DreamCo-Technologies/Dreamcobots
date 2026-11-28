@@ -52,14 +52,15 @@ To build final DPO preferences after a reviewer has updated the raw rollout rows
 
 ## Explicitly authorized training workflow
 
-`.github/workflows/foundry_authorized_training.yml` is separate from nightly self-play. It runs only when manually dispatched and defaults to preflight mode (`execute_training=false`). To start optimizer steps, the operator must explicitly enable training and supply a non-empty approval reference. The workflow verifies both signed source and token-shard manifests before invoking the existing training CLI with its required authorization flags.
+`.github/workflows/foundry-training-preflight.yml` is separate from nightly self-play. It runs CPU-only compile and guardrail checks on pull requests. Its optional GPU job runs only on manual dispatch when `DREAMCO_GPU_RUNNER_ENABLED=true`, and requires a locally stored policy-owner signing key plus a non-empty training approval reference. It verifies the signed source manifest, builds and signs token shards, and invokes the existing training CLI with explicit optimizer authorization.
 
-The training runner label is `self-hosted, linux, x64, dreamco-foundry`. It requires the signed source manifest, a separately signed token-shard manifest, local tokenizer/shard cache, a baseline checkpoint, and the three public verification materials supplied as repository secrets:
+The training runner label is `self-hosted, linux, x64, gpu`. It requires the signed source manifest, a separately signed token-shard manifest, local tokenizer/shard cache, a baseline checkpoint, and the local data and protected key material supplied through runner configuration:
 
-- `DREAMCO_SOURCE_MANIFEST_SIGNATURE_B64`
-- `DREAMCO_TOKEN_SHARD_SIGNATURE_B64`
-- `DREAMCO_POLICY_PUBLIC_KEY_PEM`
+- `DREAMCO_FOUNDRY_DATA_DIR` runner variable pointing to the signed manifest and public key
+- `DREAMCO_FOUNDRY_POLICY_PRIVATE_KEY_PATH` runner variable pointing to a protected 0400/0600 private key
+- `DREAMCO_TRAINING_APPROVAL_REFERENCE` secret containing the owner approval reference
+- `DREAMCO_FOUNDRY_BASELINE_CHECKPOINT_PATH` optional baseline checkpoint path
 
-After a successful training run, it evaluates baseline and candidate checkpoints against the same signed holdout suite and writes the comparison report. It uploads artifacts for review; it does not automatically merge an adapter or replace a promoted checkpoint. A failed holdout comparison blocks the workflow. For a DPO run, the signed authorization manifest must contain reviewed `verified_preferences` records; for `all`, the recipe must have non-empty authorized records for every enabled stage.
+After a successful training run, it evaluates the candidate against the signed holdout suite. If a baseline checkpoint is configured, it compares both reports and blocks promotion on regression. Without a baseline, it records candidate evaluation but explicitly leaves promotion blocked. It uploads artifacts for review; it does not automatically merge an adapter or replace a promoted checkpoint. For a DPO run, the signed authorization manifest must contain reviewed `verified_preferences` records; for `all`, the recipe must have non-empty authorized records for every enabled stage.
 
-This workflow is not a free hosted-GPU service. It uses the configured self-hosted DreamCo runner so compute, hardware, and private artifacts remain under owner control. A CPU runner can execute smaller experiments more slowly; a suitable GPU runner is recommended for larger models.
+This is not a free hosted-GPU service. It uses the configured self-hosted GPU runner so compute, hardware, and private artifacts remain under owner control.
