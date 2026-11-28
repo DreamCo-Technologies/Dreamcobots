@@ -131,6 +131,15 @@ class FolderVerdictTests(unittest.TestCase):
         with mock.patch.object(audit, "run", return_value={"code": 1}):
             self.assertFalse(audit.unit_tests_pass(skip=False))
 
+    def test_buddy_folder_defers_prospectus_freshness_until_post_audit_refresh(self):
+        probe = json.dumps({"modules": 0, "failed": {}, "missing_deps": {}, "script_style": {}})
+        with mock.patch.object(
+            audit, "run",
+            return_value={"code": 0, "out": probe, "err": "", "timeout": False},
+        ):
+            result = audit.python_checks("buddy", timeout=1, skip_tests=True)
+        self.assertNotIn("tests/test_run_prospectus.py", result["test_files"])
+
     def test_deferred_generated_artifact_tests_prevent_fully_tested_verdict(self):
         entry = {
             "code_files": 4,

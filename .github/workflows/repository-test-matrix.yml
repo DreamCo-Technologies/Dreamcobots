@@ -73,6 +73,10 @@ jobs:
         run: python3 tools/audit_all_bots_categories_and_agents.py
       - name: Regenerate canonical bot runtime manifests before repository inventory
         run: python3 tools/generate_bot_manifests.py
+      - name: Generate offline fleet E2E evidence after manifests
+        run: node --import tsx tools/run_bot_fleet_e2e.ts --write-only
+      - name: Refresh Command Center projections from fleet evidence
+        run: python3 tools/generate_command_center_data.py
       - name: Refresh derived repository registry after all generators
         run: python3 tools/generate_repository_test_registry.py
       - name: Build bounded public technology radar projection

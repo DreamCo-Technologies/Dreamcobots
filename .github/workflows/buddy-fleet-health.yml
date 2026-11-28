@@ -43,6 +43,8 @@ jobs:
       - run: npm ci --ignore-scripts
       - name: Validate fleet health workflow contract
         run: python3 -m unittest discover -s tests -p 'test_buddy_fleet_health_workflow.py' -v
+      - name: Regenerate deterministic fleet catalog
+        run: npx tsx tools/generate_bot_fleet_catalog.ts
       - name: Validate fleet catalog
         run: npm run buddy:fleet
       - name: Validate fleet quality contracts

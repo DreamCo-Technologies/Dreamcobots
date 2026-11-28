@@ -13,6 +13,12 @@ class BuddyFleetHealthWorkflowTests(unittest.TestCase):
         self.assertLess(refresh, strict_check)
         self.assertIn("Validate fleet health workflow contract", workflow)
 
+    def test_catalog_is_regenerated_before_deterministic_validation(self):
+        workflow = WORKFLOW.read_text(encoding="utf-8")
+        generate = workflow.index("npx tsx tools/generate_bot_fleet_catalog.ts")
+        validate = workflow.index("run: npm run buddy:fleet")
+        self.assertLess(generate, validate)
+
     def test_fleet_health_still_runs_real_runtime_and_contract_tests(self):
         workflow = WORKFLOW.read_text(encoding="utf-8")
         self.assertIn("npm run buddy:fleet", workflow)

@@ -30,6 +30,14 @@ on:
       - "tools/fleet_runtime_audit.py"
       - "tools/check_website_links.py"
       - "tests/test_fleet_runtime_*.py"
+      - "tests/test_actions_failure_watch_workflow_safety.py"
+      - "tests/test_buddy_division_gaps.py"
+      - "tests/test_command_center_data.py"
+      - "tests/test_buddy_fleet_health_workflow.py"
+      - "tests/test_buddy_training_taxonomy.py"
+      - "tests/test_fleet_catalog_refresh_proposal_workflow.py"
+      - "tests/specialist-prospectus-page.test.mjs"
+      - "tests/supplemental-fleet.test.ts"
       - "tests/test_generate_bot_manifests.py"
       - "tests/test_check_website_links.py"
       - ".github/workflows/**"
@@ -49,6 +57,9 @@ on:
       - "tools/refresh_repository_evidence.py"
       - "tools/build_pages_connection_index.py"
       - "tools/sync_freecodecamp_learning_inventory.py"
+      - "tools/run_bot_fleet_e2e.ts"
+      - "tools/generate_command_center_data.py"
+      - "website/data/bot-fleet-e2e.json"
       - "tests/buddy-run-page.test.mjs"
       - "tests/actions-page.test.mjs"
   schedule:
@@ -94,7 +105,7 @@ jobs:
       - name: Refresh dependent repository evidence after fleet status is current
         run: python3 tools/refresh_repository_evidence.py
       - name: Runtime, generator, auditor and link-check tests
-        run: python3 -m pytest -q -p no:cacheprovider tests/test_fleet_runtime_executor.py tests/test_fleet_runtime_customize.py tests/test_generate_bot_manifests.py tests/test_fleet_runtime_audit.py tests/test_check_website_links.py tests/test_fleet_divisions.py tests/test_pages_feature_audit.py tests/test_build_queue.py tests/test_refresh_repository_evidence.py tests/test_buddy_safe_repair.py tests/test_buddy_safe_repair_workflow_safety.py tests/test_deploy_buddy_pages_manual_gate.py tests/test_actions_failure_sweep_safety.py tests/test_benchmark_scope_contract.py tests/test_issue_lifecycle.py tests/test_deploy_buddy_pages_manual_gate.py tests/test_actions_failure_sweep_safety.py
+        run: python3 -m pytest -q -p no:cacheprovider tests/test_fleet_runtime_executor.py tests/test_fleet_runtime_customize.py tests/test_generate_bot_manifests.py tests/test_fleet_runtime_audit.py tests/test_check_website_links.py tests/test_fleet_divisions.py tests/test_pages_feature_audit.py tests/test_build_queue.py tests/test_refresh_repository_evidence.py tests/test_buddy_safe_repair.py tests/test_buddy_safe_repair_workflow_safety.py tests/test_deploy_buddy_pages_manual_gate.py tests/test_actions_failure_sweep_safety.py tests/test_actions_failure_watch_workflow_safety.py tests/test_buddy_division_gaps.py tests/test_command_center_data.py tests/test_buddy_fleet_health_workflow.py tests/test_buddy_training_taxonomy.py tests/test_fleet_catalog_refresh_proposal_workflow.py tests/test_benchmark_scope_contract.py tests/test_issue_lifecycle.py tests/test_deploy_buddy_pages_manual_gate.py tests/test_actions_failure_sweep_safety.py
       - name: Re-converge generated inventories after the full test suite
         run: python3 tools/refresh_repository_evidence.py
       - name: Verify generated prospectus contracts after all test side effects
@@ -191,6 +202,8 @@ jobs:
           npx tsx tools/generate_dreamco_search_index.ts
           python3 tools/sync_freecodecamp_learning_inventory.py
           python3 tools/build_pages_connection_index.py
+          npx tsx tools/run_bot_fleet_e2e.ts --write-only
+          python3 tools/generate_command_center_data.py
           python3 tools/refresh_repository_evidence.py
       - name: Refresh generated evidence in isolated full-audit checkout
         run: |

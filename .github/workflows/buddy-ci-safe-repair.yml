@@ -22,6 +22,8 @@ on:
       - "Buddy Open-Source Weekly Bootcamp"
       - "Buddy Bootcamp Curriculum"
       - "Full System Certification"
+      - "DreamCo Live Dashboard"
+      - "Deploy Buddy Website"
     types: [completed]
     branches: [main]
 
@@ -48,13 +50,13 @@ jobs:
         with:
           python-version: "3.12"
       - name: Install Node for canonical fleet regeneration
-        if: github.event_name == 'push' || (github.event_name == 'workflow_run' && github.event.workflow_run.name == 'Full System Certification')
+        if: github.event_name == 'push' || (github.event_name == 'workflow_run' && (github.event.workflow_run.name == 'Full System Certification' || github.event.workflow_run.name == 'DreamCo Live Dashboard' || github.event.workflow_run.name == 'Deploy Buddy Website'))
         uses: actions/setup-node@v7
         with:
           node-version: "22"
           cache: npm
       - name: Install locked Node dependencies for fleet regeneration
-        if: github.event_name == 'push' || (github.event_name == 'workflow_run' && github.event.workflow_run.name == 'Full System Certification')
+        if: github.event_name == 'push' || (github.event_name == 'workflow_run' && (github.event.workflow_run.name == 'Full System Certification' || github.event.workflow_run.name == 'DreamCo Live Dashboard' || github.event.workflow_run.name == 'Deploy Buddy Website'))
         run: npm ci
       - name: Install pinned workflow parser dependency
         run: python -m pip install --disable-pip-version-check "PyYAML==6.0.3"
@@ -102,11 +104,14 @@ jobs:
           python tools/build_division_huggingface_taxonomy_map.py
           python tools/build_division_resource_readiness_map.py
       - name: Regenerate canonical bot fleet catalog after certification drift
-        if: github.event_name == 'workflow_run' && github.event.workflow_run.name == 'Full System Certification'
+        if: github.event_name == 'workflow_run' && (github.event.workflow_run.name == 'Full System Certification' || github.event.workflow_run.name == 'DreamCo Live Dashboard' || github.event.workflow_run.name == 'Deploy Buddy Website')
         run: node --import tsx tools/generate_bot_fleet_catalog.ts
       - name: Regenerate canonical fleet end-to-end evidence after certification drift
         if: github.event_name == 'push' || (github.event_name == 'workflow_run' && github.event.workflow_run.name == 'Full System Certification')
         run: node --import tsx tools/run_bot_fleet_e2e.ts
+      - name: Refresh Command Center projections after fleet E2E evidence
+        if: github.event_name == 'push' || (github.event_name == 'workflow_run' && (github.event.workflow_run.name == 'Full System Certification' || github.event.workflow_run.name == 'DreamCo Live Dashboard' || github.event.workflow_run.name == 'Deploy Buddy Website'))
+        run: python tools/generate_command_center_data.py
       - name: Regenerate Markdown implementation-gap audit after source inventories
         run: python tools/audit_markdown_implementation_gaps.py --write
       - name: Regenerate file prospectus after all generated source inventories

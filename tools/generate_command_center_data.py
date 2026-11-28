@@ -19,6 +19,7 @@ COMMAND_DATA = ROOT / "command-center" / "data"
 WEBSITE_DATA = ROOT / "website" / "data" / "command-center"
 REGISTRY = ROOT / "config" / "master_bot_registry.json"
 BENCHMARK_INDEX = ROOT / "config" / "buddy-benchmark-index.json"
+FLEET_E2E = ROOT / "website" / "data" / "bot-fleet-e2e.json"
 
 EVIDENCE_TAXONOMY = [
     "catalogued",
@@ -197,6 +198,7 @@ def build_repository_inventory(files: list[Path]) -> dict[str, Any]:
 def build_fleet(registry: dict[str, Any]) -> tuple[dict[str, Any], dict[str, Any], dict[str, Any]]:
     bots: list[dict[str, Any]] = []
     capabilities: dict[str, dict[str, Any]] = {}
+    fleet_e2e = read_json(FLEET_E2E) if FLEET_E2E.exists() else {}
     division_bots: dict[str, list[str]] = defaultdict(list)
     for bot in registry.get("bots", []):
         identity = bot.get("identity", {})
@@ -235,6 +237,44 @@ def build_fleet(registry: dict[str, Any]) -> tuple[dict[str, Any], dict[str, Any
         )
         division_bots[division].append(slug)
 
+    bot_by_id = {str(bot["id"]): bot for bot in bots}
+    for profile in fleet_e2e.get("profiles", []):
+        slug = str(profile.get("slug", "")).strip()
+        division = str(profile.get("division", "unassigned")).strip()
+        if not slug or not division:
+            continue
+        declared = int(profile.get("declaredCapabilityCount", 0))
+        passed = int(profile.get("capabilityTestsPassed", 0))
+        failed = int(profile.get("capabilityTestsFailed", 0))
+        verified = profile.get("status") == "sandbox_certified" and failed == 0 and passed == declared
+        if slug in bot_by_id:
+            bot = bot_by_id[slug]
+            bot["division_id"] = division.lower().replace(" ", "-")
+            bot["declared_capability_count"] = declared
+            bot["capability_tests_passed"] = passed
+            bot["capability_tests_failed"] = failed
+            if verified:
+                bot["status"] = "sandbox_verified"
+                bot["source_refs"] = sorted(set(bot.get("source_refs", []) + ["website/data/bot-fleet-e2e.json"]))
+                bot["evidence_refs"] = sorted(set(bot.get("evidence_refs", []) + ["website/data/bot-fleet-e2e.json"]))
+            continue
+        bot = {
+            "id": slug,
+            "name": slug.replace("-", " ").title(),
+            "division_id": division.lower().replace(" ", "-"),
+            "category": "supplemental",
+            "status": "sandbox_verified" if verified else "catalogued",
+            "capability_ids": [],
+            "declared_capability_count": declared,
+            "capability_tests_passed": passed,
+            "capability_tests_failed": failed,
+            "source_refs": ["website/data/bot-fleet-e2e.json"],
+            "evidence_refs": ["website/data/bot-fleet-e2e.json"] if verified else [],
+        }
+        bots.append(bot)
+        bot_by_id[slug] = bot
+        division_bots[division].append(slug)
+
     original_sources = sorted(path.relative_to(ROOT).as_posix() for path in (ROOT / "original-bots").rglob("*") if path.is_file())
     for record in capabilities.values():
         record["bot_ids"] = sorted(set(record["bot_ids"]))
@@ -242,35 +282,72 @@ def build_fleet(registry: dict[str, Any]) -> tuple[dict[str, Any], dict[str, Any
         record["evidence_refs"] = sorted(set(record["evidence_refs"]))
     bots.sort(key=lambda item: item["id"])
     capability_rows = sorted(capabilities.values(), key=lambda item: item["id"])
-    divisions = [
-        {
-            "id": str(row.get("name", "")).lower().replace(" ", "-"),
-            "name": row.get("name"),
-            "bot_ids": sorted(division_bots.get(str(row.get("name", "")), [])),
-            "source_refs": [row.get("source")],
-            "status": "implemented",
-            "evidence_refs": ["config/master_bot_registry.json"],
-        }
-        for row in registry.get("divisions", [])
-    ]
-    sources = [REGISTRY, *[ROOT / ref for ref in original_sources]]
+    if FLEET_E2E.exists():
+        profiles_by_division: dict[str, list[dict[str, Any]]] = defaultdict(list)
+        for profile in fleet_e2e.get("profiles", []):
+            name = str(profile.get("division", "")).strip()
+            slug = str(profile.get("slug", "")).strip()
+            if name and slug:
+                profiles_by_division[name].append(profile)
+        divisions = []
+        for row in fleet_e2e.get("divisions", []):
+            name = str(row.get("division", "")).strip()
+            profiles = profiles_by_division.get(name, [])
+            verified = bool(profiles) and all(
+                profile.get("status") == "sandbox_certified"
+                and int(profile.get("capabilityTestsFailed", 0)) == 0
+                and int(profile.get("capabilityTestsPassed", 0)) == int(profile.get("declaredCapabilityCount", -1))
+                for profile in profiles
+            )
+            divisions.append({
+                "id": name.lower().replace(" ", "-"),
+                "name": name,
+                "bot_ids": sorted(str(profile["slug"]) for profile in profiles),
+                "source_refs": ["website/data/bot-fleet-e2e.json"],
+                "status": "sandbox_verified" if verified else "catalogued",
+                "evidence_refs": ["website/data/bot-fleet-e2e.json", "reports/BOT_FLEET_E2E.md"],
+            })
+    else:
+        divisions = [
+            {
+                "id": str(row.get("name", "")).lower().replace(" ", "-"),
+                "name": row.get("name"),
+                "bot_ids": sorted(division_bots.get(str(row.get("name", "")), [])),
+                "source_refs": [row.get("source")],
+                "status": "implemented",
+                "evidence_refs": ["config/master_bot_registry.json"],
+            }
+            for row in registry.get("divisions", [])
+        ]
+    sources = [REGISTRY, *([FLEET_E2E] if FLEET_E2E.exists() else []), *[ROOT / ref for ref in original_sources]]
     bot_payload = artifact(
         "dreamco.command_center.bots.v1",
         sources,
-        summary={"registered_bots": len(bots), "preserved_original_bot_files": len(original_sources)},
+        summary={
+            "registered_bots": len(bots),
+            "canonical_bots": len(registry.get("bots", [])),
+            "supplemental_e2e_profiles": max(0, len(bots) - len(registry.get("bots", []))),
+            "declared_capability_tests": int(fleet_e2e.get("summary", {}).get("declaredCapabilitiesTested", 0)),
+            "preserved_original_bot_files": len(original_sources),
+        },
         original_bot_sources=original_sources,
         items=bots,
     )
     division_payload = artifact(
         "dreamco.command_center.divisions.v1",
-        [REGISTRY],
+        [REGISTRY, FLEET_E2E] if FLEET_E2E.exists() else [REGISTRY],
         summary={"registered_divisions": len(divisions)},
         items=divisions,
     )
     capability_payload = artifact(
         "dreamco.command_center.capabilities.v1",
         [REGISTRY],
-        summary={"unique_capabilities": len(capability_rows), "bot_capability_edges": sum(len(row["capability_ids"]) for row in bots)},
+        summary={
+            "unique_capabilities": len(capability_rows),
+            "bot_capability_edges": sum(len(row["capability_ids"]) for row in bots),
+            "declared_capability_tests": int(fleet_e2e.get("summary", {}).get("declaredCapabilitiesTested", 0)),
+            "supplemental_declared_capability_tests": max(0, int(fleet_e2e.get("summary", {}).get("declaredCapabilitiesTested", 0)) - sum(len(row["capability_ids"]) for row in bots)),
+        },
         items=capability_rows,
     )
     return bot_payload, division_payload, capability_payload
