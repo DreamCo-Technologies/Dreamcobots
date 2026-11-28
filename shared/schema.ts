@@ -678,3 +678,41 @@ export const learningMasteryEvidence = pgTable("learning_mastery_evidence", {
     table.learnerId, table.deckId, table.itemId,
   ),
 }));
+
+/**
+ * Owner-scoped CRM persistence for the DreamCo Lead Engine.
+ * Access is additionally protected by PostgreSQL RLS in migration 0002.
+ */
+export const leadEngineRecords = pgTable("lead_engine_records", {
+  id: serial("id").primaryKey(),
+  ownerId: text("owner_id").notNull(),
+  leadId: text("lead_id").notNull(),
+  organizationName: text("organization_name").notNull(),
+  stage: text("stage").notNull(),
+  qualificationScore: integer("qualification_score").notNull().default(0),
+  qualificationTier: text("qualification_tier").notNull().default("cold"),
+  suppressionStatus: text("suppression_status").notNull().default("active"),
+  payload: jsonb("payload").notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
+}, (table) => ({
+  ownerLeadUnique: uniqueIndex("lead_engine_records_owner_lead_uq").on(table.ownerId, table.leadId),
+  ownerStageIdx: index("lead_engine_records_owner_stage_idx").on(table.ownerId, table.stage),
+  ownerUpdatedIdx: index("lead_engine_records_owner_updated_idx").on(table.ownerId, table.updatedAt),
+}));
+
+export const leadEngineActivities = pgTable("lead_engine_activities", {
+  id: serial("id").primaryKey(),
+  ownerId: text("owner_id").notNull(),
+  leadId: text("lead_id").notNull(),
+  eventId: text("event_id").notNull(),
+  eventType: text("event_type").notNull(),
+  details: jsonb("details").notNull().default(sql`'{}'::jsonb`),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+}, (table) => ({
+  ownerEventUnique: uniqueIndex("lead_engine_activities_owner_event_uq").on(table.ownerId, table.eventId),
+  ownerLeadTimeIdx: index("lead_engine_activities_owner_lead_time_idx").on(table.ownerId, table.leadId, table.createdAt),
+}));
+
+export type LeadEngineRecordRow = typeof leadEngineRecords.$inferSelect;
+export type LeadEngineActivityRow = typeof leadEngineActivities.$inferSelect;
