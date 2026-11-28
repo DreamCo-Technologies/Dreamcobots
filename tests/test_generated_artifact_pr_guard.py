@@ -51,5 +51,20 @@ class GeneratedArtifactPRGuardTests(unittest.TestCase):
         self.assertTrue(validate_changes("A\tconfig/generated/credentials.json", secret_diff))
 
 
+    def test_quoted_json_credential_fields_and_credential_filenames_are_blocked(self):
+        path = "config/generated/credentials.json"
+        status = f"A\t{path}"
+        diff = (
+            f"diff --git a/{path} b/{path}\n"
+            "--- /dev/null\n"
+            f"+++ b/{path}\n"
+            "@@ -0,0 +1 @@\n"
+            '+{"api_key":"NOT_A_REAL_KEY"}\n'
+        )
+        errors = validate_changes(status, diff)
+        self.assertTrue(any("credential-bearing" in error or "Protected path" in error for error in errors))
+        self.assertTrue(any("credential" in error.lower() for error in errors))
+
+
 if __name__ == "__main__":
     unittest.main()

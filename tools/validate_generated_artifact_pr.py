@@ -16,8 +16,8 @@ ALLOWED_PREFIXES = (
     "website/data/",
     "reports/",
 )
-BLOCKED_PARTS = {".github", "security", "policy", "secrets", "host-secrets", "workflows", "migrations"}
-BLOCKED_NAMES = {".env", ".env.example", "package-lock.json", "pnpm-lock.yaml", "yarn.lock", "poetry.lock", "Pipfile.lock"}
+BLOCKED_PARTS = {".github", "security", "policy", "secrets", "credentials", "credential", "host-secrets", "workflows", "migrations"}
+BLOCKED_NAMES = {".env", ".env.example", "credentials.json", "secrets.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock", "poetry.lock", "Pipfile.lock"}
 MAX_FILES = 20
 MAX_CHANGED_LINES = 1500
 MAX_DIFF_BYTES = 5 * 1024 * 1024
@@ -27,7 +27,8 @@ SECRET_PATTERNS = (
     re.compile(r"\bAKIA[0-9A-Z]{16}\b"),
     re.compile(r"\bsk-[A-Za-z0-9_-]{20,}\b"),
     re.compile(r"-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----"),
-    re.compile(r"""(?i)(?:api[_-]?key|secret|password|access_token)\s*[:=]\s*(?:"[^"\r\n]*"?|'[^'\r\n]*'?|[A-Za-z0-9_./+=-]{20,})"""),
+    re.compile(r"""(?i)["']?(?:api[_-]?key|client[_-]?secret|secret|password|access[_-]?token)["']?\s*[:=]\s*["'][^"'\r\n]+["']"""),
+    re.compile(r"""(?i)(?:api[_-]?key|client[_-]?secret|secret|password|access[_-]?token)\s*[:=]\s*[A-Za-z0-9_./+=-]{20,}"""),
 )
 
 
