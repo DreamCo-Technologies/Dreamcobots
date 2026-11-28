@@ -118,6 +118,62 @@ class FoundryGuardrailTests(unittest.TestCase):
         selected = TRAIN_WEIGHTS.sft_rows(rows)
         self.assertEqual(len(selected), 2)
 
+    def test_self_play_pairs_only_use_verified_lab_and_teachback_preferences(self):
+        path = ROOT / "stages" / "05_model_foundry" / "generate_self_play_pairs.py"
+        spec = importlib.util.spec_from_file_location("dreamco_self_play_pairs", path)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        common = {
+            "task_id": "task-1", "prompt": "Solve this",
+            "test_suite_sha256": "a" * 64, "rubric_sha256": "b" * 64,
+            "grader_attestation_sha256": "c" * 64, "grader_version": "grader-v1",
+        }
+        rows = [
+            {**common, "candidate_id": "good", "response": "correct",
+             "sandbox_status": "LAB_PASSED", "teach_back_status": "TEACH_BACK_VERIFIED",
+             "sandbox_run_id": "run-good"},
+            {**common, "candidate_id": "bad", "response": "incorrect",
+             "sandbox_status": "LAB_FAILED", "teach_back_status": "NOT_VERIFIED",
+             "sandbox_run_id": "run-bad"},
+            {**common, "candidate_id": "weak", "response": "unverified",
+             "sandbox_status": "LAB_PASSED", "teach_back_status": "NOT_VERIFIED",
+             "sandbox_run_id": "run-weak"},
+        ]
+        pairs, report = module.build_pairs(rows)
+        self.assertEqual(len(pairs), 1)
+        self.assertEqual(pairs[0]["chosen"], "correct")
+        self.assertEqual(pairs[0]["rejected"], "incorrect")
+        self.assertFalse(report["training_started"])
+
+    def test_self_play_pairs_reject_mismatched_test_suite_revisions(self):
+        path = ROOT / "stages" / "05_model_foundry" / "generate_self_play_pairs.py"
+        spec = importlib.util.spec_from_file_location("dreamco_self_play_pairs_mismatch", path)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        common = {"task_id":"t","grader_version":"v1","rubric_sha256":"b"*64,
+                  "grader_attestation_sha256":"c"*64}
+        rows = [
+            {**common,"candidate_id":"a","response":"good","sandbox_status":"LAB_PASSED",
+             "teach_back_status":"TEACH_BACK_VERIFIED","sandbox_run_id":"1","test_suite_sha256":"a"*64},
+            {**common,"candidate_id":"b","response":"bad","sandbox_status":"LAB_FAILED",
+             "teach_back_status":"NOT_VERIFIED","sandbox_run_id":"2","test_suite_sha256":"d"*64},
+        ]
+        pairs, _ = module.build_pairs(rows)
+        self.assertEqual(pairs, [])
+
+    def test_shared_cache_requires_explicit_public_redistribution(self):
+        path = ROOT / "stages" / "05_model_foundry" / "cache_policy.py"
+        spec = importlib.util.spec_from_file_location("dreamco_cache_policy", path)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        self.assertTrue(module.public_cache_allowed({"datasets":[
+            {"cache_visibility":"public","redistribution_allowed":True}
+        ]}))
+        self.assertFalse(module.public_cache_allowed({"datasets":[
+            {"cache_visibility":"private","redistribution_allowed":False}
+        ]}))
+        self.assertFalse(module.public_cache_allowed({"datasets":[]}))
+
 
 if __name__ == "__main__":
     unittest.main()
