@@ -123,6 +123,8 @@ class FoundryGuardrailTests(unittest.TestCase):
     def test_holdout_runner_uses_deterministic_text_normalization(self):
         self.assertEqual(HOLDOUT_RUNNER.normalized("Hello, WORLD!"), "hello world")
         self.assertEqual(HOLDOUT_RUNNER.normalized("  A   B  "), "a b")
+        self.assertTrue(HOLDOUT_RUNNER.thresholds_pass(0.96, 1.0, 0.95, 1.0))
+        self.assertFalse(HOLDOUT_RUNNER.thresholds_pass(0.94, 1.0, 0.95, 1.0))
 
     def test_holdout_gate_requires_exact_suite_and_config_evidence(self):
         report = {
