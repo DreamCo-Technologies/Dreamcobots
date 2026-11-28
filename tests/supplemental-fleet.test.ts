@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import test from 'node:test';
 import vm from 'node:vm';
-import {buildFleetCatalog,compactCatalog} from '../tools/generate_bot_fleet_catalog.ts';
+import {buildFleetCatalog,compactCatalog,writeFleetCatalog} from '../tools/generate_bot_fleet_catalog.ts';
 import {loadSupplementalBotSources,buildSupplementalBotSeeds} from '../server/seed-supplemental-bots.ts';
 import {FleetRuntimeRegistry} from '../server/fleet-runtime.ts';
 test('all registered growth specifications survive supplemental routing without promoting readiness',()=>{
@@ -47,6 +47,17 @@ test('compact published fleet preserves every canonical and supplemental profile
   const shard=JSON.parse(readFileSync(`website/data/bot-fleet/${bot.identity.division}.json`,'utf8'));
   assert.deepEqual(shard.bots.find((item:any)=>item.identity.slug===bot.identity.slug),bot);
  }
+});
+test('Dream3D remains a supplemental portfolio with its own non-domain shard',()=>{
+ const catalog=buildFleetCatalog();
+ const dream3d=JSON.parse(readFileSync('website/data/bot-fleet/Dream3D.json','utf8'));
+ assert.equal(dream3d.schema,'dreamco.bot_fleet_portfolio.v1');
+ assert.equal(dream3d.portfolio_type,'supplemental_specialist_portfolio');
+ assert.equal(dream3d.division,'Dream3D');
+ assert.ok(dream3d.bots.length>0);
+ assert.equal(catalog.divisions.some((division:any)=>division.name==='Dream3D'),false);
+ assert.equal(catalog.supplemental_divisions.some((division:any)=>division.name==='Dream3D'),false);
+ assert.doesNotThrow(()=>writeFleetCatalog({check:true}));
 });
 test('published routing and sandbox certifications agree for every fleet profile',()=>{
  const context={window:{} as Record<string,any>};
