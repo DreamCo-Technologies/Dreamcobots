@@ -326,6 +326,15 @@ class FoundryGuardrailTests(unittest.TestCase):
             root = Path(td)
             shard = root / "train-00000.bin"
             shard.write_bytes(b"\\x00" * (8 * 4))
+            shard_index = root / "train-00000.idx"
+            index_payload = {
+                "schema": "dreamco.foundry.token_shard_index.v1",
+                "bin_file": shard.name, "dtype": "uint32",
+                "sequence_length": 8, "sequence_count": 1, "token_count": 8,
+                "offset_unit": "tokens", "first_token_offset": 0,
+                "sequence_stride_tokens": 8,
+            }
+            shard_index.write_text(json.dumps(index_payload, sort_keys=True, separators=(",", ":")) + "\\n", encoding="utf-8")
             source = root / "source.json"
             source.write_text("{}", encoding="utf-8")
             payload = {
