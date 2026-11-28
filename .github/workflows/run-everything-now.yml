@@ -3,8 +3,6 @@ on:
   workflow_dispatch:
     inputs:
       mode: {description: "quick, standard, or maximum", required: false, default: "standard"}
-  schedule:
-    - cron: "11 5 * * *"
 permissions: {contents: read, issues: write, actions: read}
 concurrency:
   group: "run-everything-now-${{ github.ref }}-${{ github.event_name == 'workflow_dispatch' && 'manual' || 'automatic' }}"
