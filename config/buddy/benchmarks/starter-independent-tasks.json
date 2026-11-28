@@ -1,0 +1,73 @@
+{
+  "schema": "dreamco.benchmark_tasks.v1",
+  "license": "DreamCo-original",
+  "rights": "owned",
+  "note": "Independent authored evaluation prompts. Do not use held-out answers for training.",
+  "tasks": [
+    {
+      "id": "coding-python-001",
+      "domain": "coding",
+      "prompt": "What is the exact output of this Python code? print(sum(i*i for i in range(4))) Respond with only the integer.",
+      "expected": "14",
+      "scorer": "exact_match",
+      "study_sources": [
+        "Python official tutorial: comprehensions",
+        "Python built-in sum documentation"
+      ]
+    },
+    {
+      "id": "coding-js-001",
+      "domain": "coding",
+      "prompt": "What is the exact output of JavaScript: console.log([1,2,3].map(x=>x*2).join(','))? Respond with only the output.",
+      "expected": "2,4,6",
+      "scorer": "exact_match",
+      "study_sources": [
+        "MDN Array.map",
+        "MDN Array.join"
+      ]
+    },
+    {
+      "id": "research-evidence-001",
+      "domain": "research",
+      "prompt": "A source says a trial enrolled 120 participants, but only 95 completed follow-up. How many did not complete follow-up? Respond with only the integer.",
+      "expected": "25",
+      "scorer": "exact_match",
+      "study_sources": [
+        "Evidence assessment",
+        "Arithmetic and data provenance"
+      ]
+    },
+    {
+      "id": "research-logic-001",
+      "domain": "research",
+      "prompt": "A report was published in 2020 and updated in 2023. Which year is the update? Respond with only the year.",
+      "expected": "2023",
+      "scorer": "exact_match",
+      "study_sources": [
+        "Source freshness and revision tracking"
+      ]
+    },
+    {
+      "id": "tool-execution-001",
+      "domain": "multi_step_tools",
+      "prompt": "A tool returns inventory=8. A second tool returns reserved=3. Calculate available=inventory-reserved. Respond with only the integer.",
+      "expected": "5",
+      "scorer": "exact_match",
+      "study_sources": [
+        "Tool result validation",
+        "Stateful workflow contracts"
+      ]
+    },
+    {
+      "id": "tool-execution-002",
+      "domain": "multi_step_tools",
+      "prompt": "A workflow has steps fetch, validate, publish. If validate fails, which step must NOT run? Respond with only the step name.",
+      "expected": "publish",
+      "scorer": "exact_match",
+      "study_sources": [
+        "Failure propagation",
+        "Workflow safety gates"
+      ]
+    }
+  ]
+}
