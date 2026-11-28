@@ -213,7 +213,7 @@ def main() -> int:
         f"- Canonical bots: **{payload['canonical_bot_count']}**",
         f"- Supplemental profiles: **{payload['supplemental_bot_count']}** (catalog/sandbox scope; not production verification)",
         f"- Supplemental divisions: **{payload['supplemental_division_count']}**",
-        f"- Supplemental subportfolio profiles: **{sum(payload["supplemental_portfolio_counts"].values())}**",
+        f"- Supplemental subportfolio profiles: **{sum(payload['supplemental_portfolio_counts'].values())}**",
         f"- Divisions: **{len(division_counts)}**",
         f"- Categories: **{len(category_counts)}**",
         f"- Specialist agents outside fixed fleet: **{len(specialist_agents)}**",
