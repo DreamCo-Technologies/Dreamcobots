@@ -1,0 +1,30 @@
+{
+  "schema": "dreamco.media.policy.v1",
+  "default_mode": "plan_only",
+  "network_downloads": false,
+  "external_uploads": false,
+  "commercial_release_requires_human_approval": true,
+  "unknown_rights": "BLOCK",
+  "model_weights_must_be_reviewed_separately_from_repository_code": true,
+  "dependencies_require_sbom": true,
+  "voice_and_likeness": {
+    "require_explicit_subject_consent": true,
+    "require_active_consent_receipt": true,
+    "require_revocation_check": true,
+    "require_synthetic_media_disclosure": true,
+    "minors_allowed": false,
+    "deceptive_impersonation_blocked": true
+  },
+  "training": {
+    "requires_separate_training_permission": true,
+    "requires_signed_dataset_manifest": true,
+    "requires_asset_hashes": true,
+    "unknown_training_rights": "BLOCK"
+  },
+  "delivery": {
+    "verify_output_hashes": true,
+    "require_asset_provenance": true,
+    "require_human_release_checklist": true,
+    "do_not_claim_rendered_without_real_output": true
+  }
+}
