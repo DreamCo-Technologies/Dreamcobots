@@ -77,6 +77,14 @@ class BootcampDistillerTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "holdout"):
             distill_verified_repair(evidence)
 
+    def test_dataset_release_and_pii_scrub_are_required(self):
+        evidence = self._evidence()
+        evidence["dataset_release_approved"] = False
+        payload = {key: value for key, value in evidence.items() if key != "evidence_sha256"}
+        evidence["evidence_sha256"] = sha256_json(payload)
+        with self.assertRaisesRegex(ValueError, "dataset release"):
+            distill_verified_repair(evidence)
+
     def test_near_duplicate_lesson_is_rejected_by_minhash(self):
         evidence = self._evidence()
         signature = distill_verified_repair(evidence)[0]["lesson_minhash_signature"]
