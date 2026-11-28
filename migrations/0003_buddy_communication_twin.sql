@@ -123,28 +123,55 @@ CREATE INDEX IF NOT EXISTS mobile_bridge_delivery_owner_time_idx
   ON mobile_bridge_delivery_receipts (owner_id, created_at DESC);
 
 -- Enforce owner isolation even if a future route forgets an explicit owner filter.
-DO $$
-DECLARE table_name TEXT;
-BEGIN
-  FOREACH table_name IN ARRAY ARRAY[
-    'communication_twin_settings',
-    'mobile_bridge_devices',
-    'mobile_bridge_contact_mappings',
-    'mobile_bridge_replay_events',
-    'communication_twin_drafts',
-    'communication_twin_audit_events',
-    'mobile_bridge_delivery_receipts'
-  ] LOOP
-    EXECUTE format('ALTER TABLE %I ENABLE ROW LEVEL SECURITY', table_name);
-    EXECUTE format('ALTER TABLE %I FORCE ROW LEVEL SECURITY', table_name);
-    EXECUTE format('DROP POLICY IF EXISTS %I ON %I', table_name || '_owner_isolation', table_name);
-    EXECUTE format(
-      'CREATE POLICY %I ON %I USING (owner_id = NULLIF(current_setting(''app.owner_id'', true), '''')) WITH CHECK (owner_id = NULLIF(current_setting(''app.owner_id'', true), ''''))',
-      table_name || '_owner_isolation', table_name
-    );
-  END LOOP;
-END $$;
+ALTER TABLE communication_twin_settings ENABLE ROW LEVEL SECURITY;
+ALTER TABLE communication_twin_settings FORCE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS communication_twin_settings_owner_isolation ON communication_twin_settings;
+CREATE POLICY communication_twin_settings_owner_isolation ON communication_twin_settings
+  USING (owner_id = NULLIF(current_setting('app.owner_id', true), ''))
+  WITH CHECK (owner_id = NULLIF(current_setting('app.owner_id', true), ''));
 
+ALTER TABLE mobile_bridge_devices ENABLE ROW LEVEL SECURITY;
+ALTER TABLE mobile_bridge_devices FORCE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS mobile_bridge_devices_owner_isolation ON mobile_bridge_devices;
+CREATE POLICY mobile_bridge_devices_owner_isolation ON mobile_bridge_devices
+  USING (owner_id = NULLIF(current_setting('app.owner_id', true), ''))
+  WITH CHECK (owner_id = NULLIF(current_setting('app.owner_id', true), ''));
+
+ALTER TABLE mobile_bridge_contact_mappings ENABLE ROW LEVEL SECURITY;
+ALTER TABLE mobile_bridge_contact_mappings FORCE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS mobile_bridge_contact_mappings_owner_isolation ON mobile_bridge_contact_mappings;
+CREATE POLICY mobile_bridge_contact_mappings_owner_isolation ON mobile_bridge_contact_mappings
+  USING (owner_id = NULLIF(current_setting('app.owner_id', true), ''))
+  WITH CHECK (owner_id = NULLIF(current_setting('app.owner_id', true), ''));
+
+ALTER TABLE mobile_bridge_replay_events ENABLE ROW LEVEL SECURITY;
+ALTER TABLE mobile_bridge_replay_events FORCE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS mobile_bridge_replay_events_owner_isolation ON mobile_bridge_replay_events;
+CREATE POLICY mobile_bridge_replay_events_owner_isolation ON mobile_bridge_replay_events
+  USING (owner_id = NULLIF(current_setting('app.owner_id', true), ''))
+  WITH CHECK (owner_id = NULLIF(current_setting('app.owner_id', true), ''));
+
+ALTER TABLE communication_twin_drafts ENABLE ROW LEVEL SECURITY;
+ALTER TABLE communication_twin_drafts FORCE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS communication_twin_drafts_owner_isolation ON communication_twin_drafts;
+CREATE POLICY communication_twin_drafts_owner_isolation ON communication_twin_drafts
+  USING (owner_id = NULLIF(current_setting('app.owner_id', true), ''))
+  WITH CHECK (owner_id = NULLIF(current_setting('app.owner_id', true), ''));
+
+ALTER TABLE communication_twin_audit_events ENABLE ROW LEVEL SECURITY;
+ALTER TABLE communication_twin_audit_events FORCE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS communication_twin_audit_events_owner_isolation ON communication_twin_audit_events;
+CREATE POLICY communication_twin_audit_events_owner_isolation ON communication_twin_audit_events
+  USING (owner_id = NULLIF(current_setting('app.owner_id', true), ''))
+  WITH CHECK (owner_id = NULLIF(current_setting('app.owner_id', true), ''));
+
+ALTER TABLE mobile_bridge_delivery_receipts ENABLE ROW LEVEL SECURITY;
+ALTER TABLE mobile_bridge_delivery_receipts FORCE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS mobile_bridge_delivery_receipts_owner_isolation ON mobile_bridge_delivery_receipts;
+CREATE POLICY mobile_bridge_delivery_receipts_owner_isolation ON mobile_bridge_delivery_receipts
+  USING (owner_id = NULLIF(current_setting('app.owner_id', true), ''))
+  WITH CHECK (owner_id = NULLIF(current_setting('app.owner_id', true), ''));
+ 
 -- Communication audit history is append-only. Deletion remains available through
 -- the explicit owner data-rights workflow; updates are never permitted.
 CREATE OR REPLACE FUNCTION reject_communication_twin_audit_mutation()
