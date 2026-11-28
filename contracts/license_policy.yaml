@@ -1,0 +1,47 @@
+schema: dreamco.source_license_policy.v1
+version: 1
+policy:
+  default_tier: BLOCKED
+  missing_record: BLOCKED
+  require_item_level_license_evidence: true
+  public_metadata_does_not_grant_transcript_or_training_rights: true
+  owner_review_required_for_commercial_use: true
+sources:
+  - source_id: youtube-platform
+    domains: [youtube.com, youtu.be]
+    catalog_source_ids: [freecodecamp]
+    allowed_url_prefixes: ["https://www.youtube.com/@freecodecamp", "https://www.youtube.com/playlist?list="]
+    official_channel_id: UC8butISFwT-Wl7EV0hUK0BQ
+    tier: FACT_EXTRACTION_ONLY
+    verified: true
+    catalog_metadata_allowed: true
+    fact_extraction_allowed: true
+    transcript_extraction_allowed: false
+    commercial_training_allowed: false
+    notes: Domain tier is not an individual video license.
+  - source_id: freecodecamp-official
+    domains: [freecodecamp.org]
+    tier: FACT_EXTRACTION_ONLY
+    verified: true
+    catalog_metadata_allowed: true
+    fact_extraction_allowed: true
+    transcript_extraction_allowed: false
+    commercial_training_allowed: false
+    notes: Software license does not automatically license course text or video.
+  - source_id: huggingface-hub
+    domains: [huggingface.co]
+    tier: FACT_EXTRACTION_ONLY
+    verified: true
+    catalog_metadata_allowed: true
+    fact_extraction_allowed: true
+    transcript_extraction_allowed: false
+    commercial_training_allowed: false
+    notes: Every model and dataset needs item-level review.
+  - source_id: unknown
+    domains: []
+    tier: BLOCKED
+    verified: false
+    catalog_metadata_allowed: false
+    fact_extraction_allowed: false
+    transcript_extraction_allowed: false
+    commercial_training_allowed: false

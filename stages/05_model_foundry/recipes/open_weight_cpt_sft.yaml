@@ -1,0 +1,26 @@
+schema: dreamco.foundry.recipe.v1
+run_name: buddy-master-openweight-v1
+division_id: ALL-65-DIVISIONS
+artifact_dir: artifacts/foundry/buddy-master-openweight-v1
+mode: continued_pretraining
+base_model:
+  id: Qwen/Qwen2.5-Coder-1.5B
+  revision: PIN_A_COMMIT_SHA_BEFORE_USE
+  license_review_required: true
+tokenizer:
+  mode: extend
+  mean_initialize_new_embeddings: true
+packing:
+  sequence_length: 2048
+  dtype: uint32
+  mix_percent: {study_guides: 60, verified_trajectories: 25, general_replay: 15}
+architecture: {adapter: lora, rank: 16, alpha: 32, dropout: 0.05, use_dora: true}
+runtime:
+  optimizer: adamw_torch_fused
+  gradient_checkpointing: true
+  torch_compile: false
+  dataloader_num_workers: 2
+pretrain: {enabled: true, epochs: 1, learning_rate: 0.00002, warmup_ratio: 0.03}
+sft: {enabled: true, epochs: 2, learning_rate: 0.000015, assistant_and_tool_loss_only: true}
+dpo: {enabled: true, epochs: 1, learning_rate: 0.000005, beta: 0.1}
+evaluation: {validation_buckets: [90, 91, 92, 93, 94], holdout_buckets: [95, 96, 97, 98, 99], promotion_requires_no_regression: true}

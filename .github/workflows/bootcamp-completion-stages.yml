@@ -1,0 +1,47 @@
+name: Bootcamp Completion Stages
+# Validates exact-name links to the existing division curriculum manifest.
+on:
+  push:
+    branches: ["**"]
+    paths:
+      - "stages/05_model_foundry/**"
+      - "tests/test_foundry_training_pipeline.py"
+      - ".github/workflows/bootcamp-completion-stages.yml"
+  pull_request:
+    paths:
+      - "stages/02_clean_room_synth/**"
+      - "stages/03_learning_engine/**"
+      - "stages/04_division_matrix/**"
+      - "stages/05_model_foundry/**"
+      - "stages/07_dashboard/**"
+      - "contracts/study_guide.schema.json"
+      - "tests/test_bootcamp_completion_stages.py"
+      - ".github/workflows/bootcamp-completion-stages.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Compile new stages
+        run: python -m py_compile stages/02_clean_room_synth/clean_room.py stages/03_learning_engine/learning_engine.py stages/04_division_matrix/division_matrix.py stages/05_model_foundry/holdout.py stages/05_model_foundry/guardrails.py stages/05_model_foundry/train_tokenizer.py stages/05_model_foundry/pack_tokens.py stages/05_model_foundry/train_weights.py stages/05_model_foundry/eval_holdout.py stages/05_model_foundry/merge_adapter.py stages/05_model_foundry/run_holdout_eval.py stages/05_model_foundry/generate_self_play_rollouts.py stages/01_policy_gate/sign_training_manifest.py stages/01_policy_gate/sign_token_shards.py stages/07_dashboard/dashboard.py
+      - name: Test foundry training guardrails
+        run: python -m unittest discover -s tests -p 'test_foundry_training_pipeline.py' -v
+      - name: Test self-play rollout guardrails
+        run: python -m unittest discover -s tests -p 'test_foundry_self_play_rollouts.py' -v
+      - name: Test completion stages
+        run: python -m unittest discover -s tests -p 'test_bootcamp_completion_stages.py' -v
+      - name: Generate evidence-backed stage reports
+        run: python tools/build_bootcamp_stage_reports.py
+      - name: Upload bootcamp truth artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: dreamco-bootcamp-stage-reports
+          path: reports/bootcamp/
+          if-no-files-found: error
+          retention-days: 30

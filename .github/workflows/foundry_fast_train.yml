@@ -1,0 +1,113 @@
+name: DreamCo Foundry Fast Self-Play and Cache
+
+on:
+  workflow_dispatch:
+    inputs:
+      recipe_path:
+        description: Foundry recipe path
+        required: true
+        default: stages/05_model_foundry/recipes/scratch_45m_division.yaml
+      checkpoint_path:
+        description: Existing local checkpoint directory on the isolated runner
+        required: true
+        default: /opt/dreamco/checkpoints/buddy-division-45m-v1/dpo
+      max_tasks:
+        description: Maximum authorized training tasks
+        required: true
+        default: "25"
+  schedule:
+    - cron: "0 3 * * *"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: dreamco-foundry-selfplay
+  cancel-in-progress: false
+
+jobs:
+  self-play:
+    # Dedicated runner label: rootless Docker is required to execute model output.
+    runs-on: [self-hosted, linux, x64, dreamco-rootless-sandbox]
+    timeout-minutes: 30
+    env:
+      PYTHONUNBUFFERED: "1"
+      RECIPE: ${{ inputs.recipe_path || 'stages/05_model_foundry/recipes/scratch_45m_division.yaml' }}
+      CHECKPOINT: ${{ inputs.checkpoint_path || 'artifacts/foundry/buddy-division-45m-v1/checkpoints/03_aligned_final' }}
+      MANIFEST: data/clean_room/authorization_manifest.json
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: requirements-foundry.txt
+      - name: Install optional inference dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements-foundry.txt 'torch>=2.4,<3'
+      - name: Provision signature verification material
+        env:
+          SOURCE_SIGNATURE_B64: ${{ secrets.DREAMCO_SOURCE_MANIFEST_SIGNATURE_B64 }}
+          POLICY_PUBLIC_KEY_PEM: ${{ secrets.DREAMCO_POLICY_PUBLIC_KEY_PEM }}
+        run: |
+          test -n "$SOURCE_SIGNATURE_B64"
+          test -n "$POLICY_PUBLIC_KEY_PEM"
+          mkdir -p "$RUNNER_TEMP/dreamco-foundry"
+          printf '%s' "$SOURCE_SIGNATURE_B64" | base64 --decode > "$RUNNER_TEMP/dreamco-foundry/source.sig"
+          printf '%s' "$POLICY_PUBLIC_KEY_PEM" > "$RUNNER_TEMP/dreamco-foundry/policy-public.pem"
+          test -s "$RUNNER_TEMP/dreamco-foundry/source.sig"
+          test -s "$RUNNER_TEMP/dreamco-foundry/policy-public.pem"
+      - name: Require rootless Docker and build verifier image
+        run: |
+          docker info --format '{{json .SecurityOptions}}' | grep -qi rootless
+          docker build -f stages/05_model_foundry/Dockerfile.selfplay -t dreamco-verifier:local stages/05_model_foundry
+      - name: Compute cache policy from signed rights manifest
+        id: cache-policy
+        env:
+          SIGNATURE: ${{ runner.temp }}/dreamco-foundry/source.sig
+          PUBLIC_KEY: ${{ runner.temp }}/dreamco-foundry/policy-public.pem
+        run: |
+          test -f "$MANIFEST"
+          test -f "$RECIPE"
+          ARTIFACT_DIR=$(python -c 'import yaml,os; print(yaml.safe_load(open(os.environ["RECIPE"]))["artifact_dir"])')
+          echo "artifact_dir=$ARTIFACT_DIR" >> "$GITHUB_OUTPUT"
+          python stages/05_model_foundry/cache_policy.py \
+            --manifest "$MANIFEST" --signature "$SIGNATURE" --public-key "$PUBLIC_KEY" \
+            --recipe "$RECIPE" --output "$RUNNER_TEMP/dreamco-foundry/cache-policy.json"
+      - name: Restore publicly redistributable tokenizer and token-shard cache
+        id: cache-foundry
+        if: steps.cache-policy.outputs.cache_allowed == 'true'
+        uses: actions/cache@v4
+        with:
+          path: |
+            ${{ steps.cache-policy.outputs.artifact_dir }}/tokenizer
+            ${{ steps.cache-policy.outputs.artifact_dir }}/token_shards
+          key: dreamco-foundry-${{ steps.cache-policy.outputs.cache_key }}
+      - name: Build tokenizer and pack signed-source shards on cache miss or private-data bypass
+        if: steps.cache-foundry.outputs.cache-hit != 'true'
+        env:
+          SIGNATURE: ${{ runner.temp }}/dreamco-foundry/source.sig
+          PUBLIC_KEY: ${{ runner.temp }}/dreamco-foundry/policy-public.pem
+        run: |
+          VOCAB=$(python -c 'import yaml,os; print(yaml.safe_load(open(os.environ["RECIPE"]))["tokenizer"]["vocab_size"])')
+          SEQ=$(python -c 'import yaml,os; print(yaml.safe_load(open(os.environ["RECIPE"]))["packing"]["sequence_length"])')
+          python stages/05_model_foundry/train_tokenizer.py --manifest "$MANIFEST" --signature "$SIGNATURE" --public-key "$PUBLIC_KEY" --output "${{ steps.hashes.outputs.artifact_dir }}/tokenizer" --vocab-size "$VOCAB"
+          python stages/05_model_foundry/pack_tokens.py --manifest "$MANIFEST" --signature "$SIGNATURE" --public-key "$PUBLIC_KEY" --tokenizer "${{ steps.hashes.outputs.artifact_dir }}/tokenizer" --output "${{ steps.hashes.outputs.artifact_dir }}/token_shards" --sequence-length "$SEQ"
+      - name: Generate sandbox-graded TRAIN-only rollouts
+        env:
+          SIGNATURE: ${{ runner.temp }}/dreamco-foundry/source.sig
+          PUBLIC_KEY: ${{ runner.temp }}/dreamco-foundry/policy-public.pem
+        run: |
+          python stages/05_model_foundry/generate_self_play_rollouts.py \
+            --manifest "$MANIFEST" --signature "$SIGNATURE" --public-key "$PUBLIC_KEY" \
+            --checkpoint "$CHECKPOINT" --tokenizer "${{ steps.hashes.outputs.artifact_dir }}/tokenizer" \
+            --output "artifacts/self_play/${{ github.run_id }}/rollouts.jsonl" \
+            --max-tasks "${{ inputs.max_tasks || '25' }}"
+      - name: Upload quarantined self-play evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: dreamco-self-play-${{ github.run_id }}
+          path: artifacts/self_play/${{ github.run_id }}/
+          if-no-files-found: error
+          retention-days: 30

@@ -601,6 +601,18 @@
         "tests/test_500_model_prospectus_matrix.py"
       ],
       "reason": "Fail-closed 10x50 sharded readiness planning and no model execution"
+    },
+    {
+      "sources": [
+        "stages/02_clean_room_synth/clean_room.py",
+        "stages/03_learning_engine/learning_engine.py",
+        "stages/04_division_matrix/division_matrix.py",
+        "stages/07_dashboard/dashboard.py"
+      ],
+      "tests": [
+        "tests/test_bootcamp_completion_stages.py"
+      ],
+      "reason": "DreamCo Bootcamp clean-room, learner evidence, canonical division matrix, and evidence-truth dashboard integration tests."
     }
   ],
   "evidence_rules": {
