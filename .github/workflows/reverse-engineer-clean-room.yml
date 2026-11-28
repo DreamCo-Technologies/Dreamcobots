@@ -1,0 +1,28 @@
+name: Reverse Engineering Clean-Room Gate
+on:
+  pull_request:
+    paths: ["reverse_engineer/**", "tests/test_reverse_engineer.py", "docs/REVERSE_ENGINEERING_CLEAN_ROOM.md", ".github/workflows/reverse-engineer-clean-room.yml"]
+  push:
+    branches: [main]
+    paths: ["reverse_engineer/**", "tests/test_reverse_engineer.py", "docs/REVERSE_ENGINEERING_CLEAN_ROOM.md", ".github/workflows/reverse-engineer-clean-room.yml"]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: reverse-engineer-clean-room-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  clean-room-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: python -m pip install "pytest>=8,<10"
+        name: Install test dependency
+      - run: python -m pytest tests/test_reverse_engineer.py -q
+        name: Run focused clean-room tests
+      - run: python -m compileall -q reverse_engineer
+        name: Compile package
