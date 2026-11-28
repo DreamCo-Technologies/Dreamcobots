@@ -23,6 +23,8 @@ MAX_BODY_BYTES = 1_048_576
 def worker_ready(spool_dir: str | Path, token: str | None) -> tuple[bool, str]:
     if not token:
         return False, "worker_auth_not_configured"
+    if len(token) < 32:
+        return False, "worker_auth_token_too_short"
     try:
         root = Path(spool_dir)
         root.mkdir(parents=True, exist_ok=True)
