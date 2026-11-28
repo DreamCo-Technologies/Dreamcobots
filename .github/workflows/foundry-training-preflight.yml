@@ -56,6 +56,7 @@ jobs:
     env:
       FOUNDRY_DATA_DIR: ${{ vars.DREAMCO_FOUNDRY_DATA_DIR }}
       TRAINING_APPROVAL: ${{ secrets.DREAMCO_TRAINING_APPROVAL_REFERENCE }}
+      POLICY_PRIVATE_KEY_PATH: ${{ vars.DREAMCO_FOUNDRY_POLICY_PRIVATE_KEY_PATH }}
       BASE_MODEL_REVISION: ${{ inputs.base_model_revision }}
     steps:
       - uses: actions/checkout@v4
@@ -70,6 +71,8 @@ jobs:
           test -f "$FOUNDRY_DATA_DIR/manifest.json"
           test -f "$FOUNDRY_DATA_DIR/manifest.sig"
           test -f "$FOUNDRY_DATA_DIR/policy-public.pem"
+          test -n "$POLICY_PRIVATE_KEY_PATH"
+          test -f "$POLICY_PRIVATE_KEY_PATH"
           test -n "$TRAINING_APPROVAL"
           python -c "import torch; assert torch.cuda.is_available(), 'CUDA GPU is required'"
       - name: Install foundry runtime without replacing the runner CUDA PyTorch
