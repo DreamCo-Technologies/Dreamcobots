@@ -21,6 +21,8 @@ from tools.ci_failure_report import sanitize
 
 MAX_ATTEMPTS = 3
 MAX_REPORT_BYTES = 5 * 1024 * 1024
+MAX_REPAIR_FILES = 20
+MAX_CHANGED_LINES = 1500
 ALLOWED_COMMAND_PATHS = {
     "tools/build_buddy_dataset_routes.py",
     "tools/build_division_model_fleet.py",
@@ -123,6 +125,25 @@ def git(root: Path, *args: str) -> str:
     return proc.stdout.strip()
 
 
+def validate_candidate(changed: list[str], patch: str, prefixes: tuple[str, ...]) -> str | None:
+    if len(changed) > MAX_REPAIR_FILES:
+        return "BLOCKED_FILE_LIMIT"
+    if any(not path_is_allowed(path, prefixes) for path in changed):
+        return "BLOCKED_UNEXPECTED_PATH"
+    if "GIT binary patch" in patch or re.search(r"(?m)^Binary files .+ differ$", patch):
+        return "BLOCKED_BINARY_CHANGE"
+    if re.search(r"(?m)^(?:old|new) mode [0-7]{6}$", patch):
+        return "BLOCKED_FILE_MODE_CHANGE"
+    changed_lines = sum(
+        1 for line in patch.splitlines()
+        if (line.startswith("+") and not line.startswith("+++"))
+        or (line.startswith("-") and not line.startswith("---"))
+    )
+    if changed_lines > MAX_CHANGED_LINES:
+        return "BLOCKED_CHANGE_LIMIT"
+    return None
+
+
 def assert_trusted_main(root: Path, local_ok: bool) -> str:
     event, ref = os.getenv("GITHUB_EVENT_NAME", ""), os.getenv("GITHUB_REF", "")
     if event:
@@ -155,15 +176,25 @@ def apply_isolated(root: Path, obs: dict, prefixes: tuple[str, ...], output: Pat
                 if proc.returncode:
                     return {"status": "REPAIR_COMMAND_FAILED", "success": False, "command_results": command_results}
             status = git(worktree, "status", "--porcelain", "--untracked-files=all")
-            changed = sorted({line[3:] for line in status.splitlines() if len(line) > 3})
-            blocked = [path for path in changed if not path_is_allowed(path, prefixes)]
-            if blocked:
-                return {"status": "BLOCKED_UNEXPECTED_PATH", "success": False, "blocked_paths": blocked}
-            if not changed:
+            status_lines = status.splitlines()
+            if not status_lines:
                 return {"status": "REPAIR_RAN_NO_CHANGES",
                         "success": True, "changed_files": [], "command_results": command_results}
+            changed = []
+            for line in status_lines:
+                if len(line) < 4 or line[:2] not in {" M", "??"}:
+                    return {"status": "BLOCKED_UNSUPPORTED_CHANGE", "success": False}
+                changed.append(line[3:])
+            changed = sorted(set(changed))
+            if len(changed) > MAX_REPAIR_FILES:
+                return {"status": "BLOCKED_FILE_LIMIT", "success": False}
+            if any(not path_is_allowed(path, prefixes) for path in changed):
+                return {"status": "BLOCKED_UNEXPECTED_PATH", "success": False, "blocked_paths": changed}
             git(worktree, "add", "-N", "--", *changed)
             patch = git(worktree, "diff", "--binary", "--")
+            blocked_status = validate_candidate(changed, patch, prefixes)
+            if blocked_status:
+                return {"status": blocked_status, "success": False}
             output.parent.mkdir(parents=True, exist_ok=True)
             patch_path = output.with_suffix(".patch")
             patch_path.write_text(patch + ("\n" if patch and not patch.endswith("\n") else ""), encoding="utf-8")
