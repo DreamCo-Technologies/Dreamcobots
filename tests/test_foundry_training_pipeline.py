@@ -493,5 +493,40 @@ class FoundryGuardrailTests(unittest.TestCase):
         self.assertEqual(PACKER_MODULE._token_pool([{"content": "   "}], FakeTokenizer()), [])
 
 
+    def test_reused_manifest_rechecks_dataset_hash_after_mutation(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            task_id = next(
+                f"rehash-{i}" for i in range(10000)
+                if GUARDRAILS.split_bucket(f"rehash-{i}") < 90
+            )
+            dataset = root / "records.jsonl"
+            dataset.write_text(
+                json.dumps({"task_id": task_id, "content": "original"}) + "\n",
+                encoding="utf-8",
+            )
+            manifest = {
+                "datasets": [{
+                    "_resolved_path": str(dataset),
+                    "dataset_id": "rehash-test",
+                    "sha256": hashlib.sha256(dataset.read_bytes()).hexdigest(),
+                    "category": "study_guides",
+                    "license_tier": "DREAMCO_ORIGINAL",
+                    "policy_decision_id": "TEST-POLICY",
+                }]
+            }
+            first = list(GUARDRAILS.iter_authorized_records(
+                manifest, categories={"study_guides"}, splits={"train"}
+            ))
+            self.assertEqual(len(first), 1)
+            dataset.write_text(
+                json.dumps({"task_id": task_id, "content": "tampered"}) + "\n",
+                encoding="utf-8",
+            )
+            with self.assertRaisesRegex(ValueError, "dataset SHA-256 mismatch"):
+                list(GUARDRAILS.iter_authorized_records(
+                    manifest, categories={"study_guides"}, splits={"train"}
+                ))
+
 if __name__ == "__main__":
     unittest.main()
