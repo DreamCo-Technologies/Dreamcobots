@@ -204,6 +204,25 @@ class FoundryGuardrailTests(unittest.TestCase):
         pairs, _ = module.build_pairs(rows)
         self.assertEqual(pairs, [])
 
+    def test_holdout_promotion_validator_requires_exact_signed_task_coverage(self):
+        evaluator = importlib.import_module("stages.05_model_foundry.eval_holdout")
+        report = {
+            "schema": "dreamco.foundry.model_holdout_report.v1",
+            "holdout_access": "evaluation_only",
+            "training_access": False,
+            "evaluation_split": "holdout",
+            "source_manifest_sha256": "a" * 64,
+            "benchmark_suite_sha256": "b" * 64,
+            "evaluation_config_sha256": "c" * 64,
+            "checkpoint_sha256": "d" * 64,
+            "evaluated_task_ids": ["task-a", "task-b"],
+            "pass_rate": 0.95,
+            "safety_gate_pass_rate": 1.0,
+        }
+        evaluator.validate_report(report, ["task-a", "task-b"], "a" * 64, "b" * 64, "candidate")
+        with self.assertRaises(ValueError):
+            evaluator.validate_report(report, ["task-a", "task-b", "task-c"], "a" * 64, "b" * 64, "candidate")
+
 
 if __name__ == "__main__":
     unittest.main()
