@@ -66,3 +66,23 @@ class BuddySafeRepairTests(unittest.TestCase):
   self.assertNotIn("secret-like stderr", str(result))
 
 if __name__=="__main__":unittest.main()
+
+
+
+ def test_repair_output_path_is_confined_to_repair_artifacts(self):
+  from tools.buddy_safe_repair import safe_output_path
+  root=Path("/tmp/dreamco-repair-test")
+  self.assertEqual(safe_output_path(root,"artifacts/buddy-safe-repair/result.json"),root/"artifacts/buddy-safe-repair/result.json")
+  with self.assertRaises(ValueError):
+   safe_output_path(root,"../.github/workflows/unsafe.yml")
+  with self.assertRaises(ValueError):
+   safe_output_path(root,"reports/public.json")
+
+
+ def test_generated_repair_path_allowlist_blocks_sources_and_credentials(self):
+  from tools.buddy_safe_repair import repair_path_allowed
+  self.assertTrue(repair_path_allowed("website/data/bot-fleet-catalog.json"))
+  self.assertTrue(repair_path_allowed("config/master_bot_registry.json"))
+  self.assertFalse(repair_path_allowed("server/app.py"))
+  self.assertFalse(repair_path_allowed("reports/.env"))
+  self.assertFalse(repair_path_allowed("reports/private.pem"))
