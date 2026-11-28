@@ -69,6 +69,12 @@ class BuddyBootcampGeneratorTests(unittest.TestCase):
                             for item in manifest["resources"]))
         self.assertTrue(all(set(item["masterbot_lane_ids"]) <= valid_lane_ids
                             for item in manifest["resources"]))
+        mapped_domain_ids = {division_id for item in manifest["resources"]
+                             for division_id in item["domain_division_ids"]}
+        mapped_lane_ids = {lane_id for item in manifest["resources"]
+                           for lane_id in item["masterbot_lane_ids"]}
+        self.assertEqual(mapped_domain_ids, valid_domain_ids)
+        self.assertEqual(mapped_lane_ids, valid_lane_ids)
         layer_counts = {}
         for item in manifest["resources"]:
             layer_counts[item["layer_id"]] = layer_counts.get(item["layer_id"], 0) + 1
