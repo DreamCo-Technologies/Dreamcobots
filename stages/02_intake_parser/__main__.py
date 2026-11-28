@@ -6,7 +6,7 @@ def sanitize_har_path(value):
  path=urlsplit(str(value or "")).path
  safe=[]
  for segment in path.split("/"):
-  if (re.fullmatch(r"\\d{1,}",segment)
+  if (re.fullmatch(r"\d+",segment)
       or re.fullmatch(r"[0-9a-fA-F]{8}-[0-9a-fA-F-]{27,}",segment)
       or "@" in segment
       or re.fullmatch(r"[A-Za-z0-9_-]{32,}",segment)):
