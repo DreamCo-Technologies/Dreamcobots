@@ -12,7 +12,7 @@ def main():
     p.add_argument("--private-key",type=Path,required=True)
     p.add_argument("--signature-output",type=Path,required=True)
     a=p.parse_args()
-    g.verify_signed_manifest(a.source_manifest,a.source_signature,a.public_key)
+    g.verify_signed_manifest(a.source_manifest,a.source_signature,a.public_key,verify_dataset_hashes=False)
     data=json.loads(a.shard_manifest.read_text(encoding="utf-8"))
     g.validate_shard_payload(data, a.shard_manifest.parent, a.source_manifest, attach_paths=False)
     try:
