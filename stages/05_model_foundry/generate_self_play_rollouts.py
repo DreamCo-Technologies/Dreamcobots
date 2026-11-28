@@ -66,8 +66,9 @@ def grade(code: str, tests: str, image: str, timeout: int) -> tuple[str, str]:
         root.chmod(0o755)
         (root / "solution.py").chmod(0o644)
         (root / "test_solution.py").chmod(0o644)
+        container_name = "dreamco-rollout-" + uuid.uuid4().hex[:16]
         command = [
-            "docker", "run", "--rm", "--network=none", "--read-only",
+            "docker", "run", "--rm", "--name", container_name, "--network=none", "--read-only",
             "--cap-drop=ALL", "--security-opt=no-new-privileges",
             "--pids-limit=64", "--memory=256m", "--memory-swap=256m",
             "--cpus=0.5", "--user=65532:65532",
@@ -79,6 +80,8 @@ def grade(code: str, tests: str, image: str, timeout: int) -> tuple[str, str]:
         try:
             result = subprocess.run(command, capture_output=True, text=True, timeout=timeout, check=False)
         except subprocess.TimeoutExpired:
+            subprocess.run(["docker", "kill", container_name], capture_output=True, text=True, timeout=5, check=False)
+            subprocess.run(["docker", "rm", "-f", container_name], capture_output=True, text=True, timeout=5, check=False)
             return "LAB_FAILED", "SANDBOX_TIMEOUT"
         if result.returncode == 0:
             return "LAB_PASSED", "SANDBOX_PASS"
@@ -206,6 +209,8 @@ def main() -> None:
                 "eligible_for_training": False, "review_required": True,
             })
 
+    if not records:
+        raise ValueError("no authorized train-split self-play tasks were found")
     a.output.parent.mkdir(parents=True, exist_ok=True)
     a.output.write_text(
         "".join(json.dumps(row, sort_keys=True, ensure_ascii=False) + "\n" for row in records),
@@ -236,6 +241,7 @@ def main() -> None:
         "training_approval": False,
         "teach_back_auto_verified": False,
         "output_sha256": sha256_file(a.output),
+        "sidecar_sha256": {name: sha256_file(a.output.parent / name) for name in sidecars},
     }
     a.output.with_suffix(".manifest.json").write_text(
         json.dumps(summary, indent=2, sort_keys=True) + "\n", encoding="utf-8"
