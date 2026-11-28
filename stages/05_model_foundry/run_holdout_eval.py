@@ -101,6 +101,10 @@ def main():
            for r in prepared]
     suite_digest=hashlib.sha256(canonical_json(suite)).hexdigest()
     tokenizer_sha=tokenizer_digest(a.tokenizer)
+    adapter_config_sha=(
+        hashlib.sha256((a.checkpoint/"adapter_config.json").read_bytes()).hexdigest()
+        if base_model_auth else None
+    )
     eval_config={"max_new_tokens":a.max_new_tokens,"answer_metric":"normalized_exact_match_v1",
                  "safety_evaluator":"deterministic_refusal_marker_v1",
                  "minimum_pass_rate":a.minimum_pass_rate,
