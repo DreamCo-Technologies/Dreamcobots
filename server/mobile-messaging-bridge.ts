@@ -30,7 +30,6 @@ export const mobileInboundEventSchema = z.object({
   provider: mobileProviderSchema,
   channel: mobileChannelSchema,
   providerContactId: z.string().trim().min(1).max(200),
-  contactId: z.string().trim().min(1).max(160),
   messageId: z.string().trim().min(1).max(200),
   body: z.string().min(1).max(12_000),
   receivedAt: z.string().datetime(),
@@ -88,7 +87,9 @@ export function verifyMobileWebhookSignature(input: {
 
 export async function acceptInboundMobileMessage(input: {
   rawBody: string; headers: MobileSignatureHeaders; registration: MobileBridgeRegistration;
-  settings: CommunicationTwinSettings; secret: string; replayStore: ReplayClaimStore; nowMs?: number;
+  settings: CommunicationTwinSettings; secret: string; replayStore: ReplayClaimStore;
+  resolveContactId: (input: { ownerId: string; deviceId: string; providerContactId: string }) => Promise<string | undefined> | string | undefined;
+  nowMs?: number;
 }) {
   const registration = mobileBridgeRegistrationSchema.parse(input.registration);
   const settings = communicationTwinSettingsSchema.parse(input.settings);
@@ -108,10 +109,11 @@ export async function acceptInboundMobileMessage(input: {
   if (event.deviceId !== registration.deviceId || event.platform !== registration.platform || event.provider !== registration.provider) {
     return { accepted: false as const, status: "blocked" as const, reason: "Event device identity does not match the registered bridge." };
   }
-  if (!registration.allowedContactIds.includes(event.contactId)) {
-    return { accepted: false as const, status: "blocked" as const, reason: "Contact is not allowlisted for this device bridge." };
+  const contactId = await input.resolveContactId({ ownerId: registration.ownerId, deviceId: registration.deviceId, providerContactId: event.providerContactId });
+  if (!contactId || !registration.allowedContactIds.includes(contactId)) {
+    return { accepted: false as const, status: "blocked" as const, reason: "Provider contact is not mapped to an allowlisted Buddy contact." };
   }
-  const permission = assessCommunicationAction({ action: "read", channel: event.channel, contactId: event.contactId, sourceConsentGranted: true }, settings);
+  const permission = assessCommunicationAction({ action: "read", channel: event.channel, contactId, sourceConsentGranted: true }, settings);
   if (!permission.allowed) return { accepted: false as const, status: "blocked" as const, reason: permission.reason };
 
   const replayKey = `${registration.ownerId}:${registration.deviceId}:${event.eventId}`;
@@ -120,7 +122,7 @@ export async function acceptInboundMobileMessage(input: {
   return {
     accepted: true as const, status: "accepted" as const,
     ownerId: registration.ownerId, deviceId: registration.deviceId, platform: event.platform,
-    provider: event.provider, channel: event.channel, contactId: event.contactId,
+    provider: event.provider, channel: event.channel, contactId,
     providerContactId: event.providerContactId, messageId: event.messageId, receivedAt: event.receivedAt,
     body: event.body, persistence: "ephemeral_until_draft_generation" as const,
     rawMessageRetention: false as const, modelTrainingAuthorized: false as const,
