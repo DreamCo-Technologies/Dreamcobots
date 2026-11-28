@@ -132,7 +132,7 @@ def _course_matches(
             row for row in matches
             if row["track_match_score"] == best_track_score
             or row["lesson_id"] in preserve
-            or row["score"] >= 0.66
+            or row["score"] >= 0.50
         ]
     matches.sort(key=lambda row: (-row["track_match_score"], -row["score"], row["track_id"], row["lesson_id"]))
     return matches[:limit]
