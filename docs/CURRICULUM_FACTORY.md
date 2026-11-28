@@ -16,7 +16,9 @@ The factory uses eight-token n-gram candidate containment with a default thresho
 
 ## Artifacts
 
-The catalog fingerprint recorded in provenance is a SHA-256 of the catalog metadata record, not a hash of the video or transcript. No media bytes are fetched or represented as verified content hashes.\n\nEach run writes three separate JSON files:
+The catalog fingerprint recorded in provenance is a SHA-256 of the catalog metadata record, not a hash of the video or transcript. No media bytes are fetched or represented as verified content hashes.
+
+Each run writes three separate JSON files:
 - `<guide_id>.guide.json`: learner-facing schema only.
 - `<guide_id>.provenance.json`: source identifiers, source record digest, policy decision, and media/transcript boundary.
 - `<guide_id>.quality.json`: validation and originality evidence plus explicit review gates.
