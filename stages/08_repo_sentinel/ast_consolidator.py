@@ -14,10 +14,10 @@ from pathlib import Path
 from typing import Any
 
 SYMBOL_TYPES = (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)
-SKIP_DIRS = {".git", ".venv", "venv", "node_modules", "__pycache__", ".mypy_cache", ".pytest_cache"}
+SKIP_DIRS = {".git", ".venv", "venv", "node_modules", "__pycache__", ".mypy_cache", ".pytest_cache", ".sentinel_backups"}
 
 
-def _symbol_nodes(path: Path) -> tuple[list[tuple[ast.AST, str]], str | None]:
+def _symbol_nodes(path: Path) -> tuple[list[tuple[ast.AST, list[str]]], str | None]:
     try:
         source = path.read_text(encoding="utf-8")
         tree = ast.parse(source, filename=str(path))
@@ -114,6 +114,11 @@ def consolidate_exact_duplicates(
         if not canonical_rel:
             results.append({"symbol": symbol, "status": "unregistered_owner", "changed": []})
             continue
+        try:
+            module_path = _module_import_path(repo_root, canonical_rel)
+        except ValueError:
+            results.append({"symbol": symbol, "status": "unsafe_canonical_path", "changed": []})
+            continue
         canonical_path = repo_root / canonical_rel
         if not canonical_path.is_file():
             results.append({"symbol": symbol, "status": "canonical_file_missing", "changed": []})
@@ -124,7 +129,6 @@ def consolidate_exact_duplicates(
             results.append({"symbol": symbol, "status": "canonical_symbol_missing", "changed": []})
             continue
         canonical_digest = _node_digest(canonical_node)
-        module_path = _module_import_path(repo_root, canonical_rel)
         eligible: list[str] = []
         conflicts: list[str] = []
         for location in item.get("locations", []):
@@ -152,7 +156,6 @@ def consolidate_exact_duplicates(
                 updated = "".join(lines[:start]) + replacement + "".join(lines[end:])
                 ast.parse(updated, filename=str(path))
                 backup = backup_dir / rel
-                backup.parent.mkdir(parents=True, exist_ok=True)
                 backup.parent.mkdir(parents=True, exist_ok=True)
                 if backup.exists():
                     raise FileExistsError(f"refusing to overwrite backup: {backup}")
