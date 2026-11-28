@@ -218,7 +218,7 @@ def main() -> None:
     }
     for filename, rows in sidecars.items():
         (a.output.parent / filename).write_text(
-            "".join(json.dumps(row, sort_keys=True, ensure_ascii=False) + "\\n" for row in rows),
+            "".join(json.dumps(row, sort_keys=True, ensure_ascii=False) + "\n" for row in rows),
             encoding="utf-8",
         )
     summary = {
@@ -227,8 +227,14 @@ def main() -> None:
         "checkpoint_sha256": hashlib.sha256(
             b"".join(sorted(path.read_bytes() for path in a.checkpoint.glob("*.safetensors")))
         ).hexdigest(),
-        "records": len(records), "grpo_candidate_groups": len(grpo_groups),\n        "dpo_candidate_pairs": len(dpo_candidates), "sft_candidate_traces": len(sft_candidates),\n        "split": "train_only", "holdout_read": False,
-        "training_approval": False, "teach_back_auto_verified": False,
+        "records": len(records),
+        "grpo_candidate_groups": len(grpo_groups),
+        "dpo_candidate_pairs": len(dpo_candidates),
+        "sft_candidate_traces": len(sft_candidates),
+        "split": "train_only",
+        "holdout_read": False,
+        "training_approval": False,
+        "teach_back_auto_verified": False,
         "output_sha256": sha256_file(a.output),
     }
     a.output.with_suffix(".manifest.json").write_text(
