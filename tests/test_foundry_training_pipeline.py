@@ -122,6 +122,7 @@ class FoundryGuardrailTests(unittest.TestCase):
             "source_manifest_sha256": "a" * 64,
             "benchmark_suite_sha256": "b" * 64,
             "evaluation_config_sha256": "c" * 64,
+            "tokenizer_sha256": "e" * 64,
             "checkpoint_sha256": "d" * 64,
             "evaluated_task_ids": ["task-1"],
             "pass_rate": 0.95,
