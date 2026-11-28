@@ -41,6 +41,32 @@ class CommandCenterDataTests(unittest.TestCase):
         self.assertNotIn("config/generated/actions-health-report.json", actual)
         self.assertNotIn("tmp/dreamco-verification/latest.json", actual)
 
+    def test_every_certified_fleet_division_has_a_prospectus(self):
+        evidence = json.loads((ROOT / "website/data/bot-fleet-e2e.json").read_text(encoding="utf-8"))
+        divisions = self.payloads["divisions.json"]
+        bots = self.payloads["bots.json"]
+        capabilities = self.payloads["capabilities.json"]
+        self.assertEqual(bots["summary"]["registered_bots"], evidence["summary"]["profilesTested"])
+        self.assertEqual(bots["summary"]["declared_capability_tests"], evidence["summary"]["declaredCapabilitiesTested"])
+        self.assertEqual(capabilities["summary"]["declared_capability_tests"], evidence["summary"]["declaredCapabilitiesTested"])
+        self.assertGreater(capabilities["summary"]["supplemental_declared_capability_tests"], 0)
+        self.assertEqual({row["id"] for row in bots["items"]}, {profile["slug"] for profile in evidence["profiles"]})
+        profile_by_slug = {profile["slug"]: profile for profile in evidence["profiles"]}
+        for bot in bots["items"]:
+            profile = profile_by_slug[bot["id"]]
+            self.assertEqual(bot["division_id"], profile["division"].lower().replace(" ", "-"))
+            self.assertEqual(bot["status"], "sandbox_verified")
+        self.assertEqual(divisions["summary"]["registered_divisions"], evidence["summary"]["divisionsTested"])
+        by_name = {row["name"]: row for row in divisions["items"]}
+        self.assertEqual(set(by_name), {row["division"] for row in evidence["divisions"]})
+        profiles = {}
+        for profile in evidence["profiles"]:
+            profiles.setdefault(profile["division"], []).append(profile["slug"])
+        for name, slugs in profiles.items():
+            self.assertEqual(by_name[name]["bot_ids"], sorted(slugs))
+            self.assertEqual(by_name[name]["status"], "sandbox_verified")
+            self.assertIn("website/data/bot-fleet-e2e.json", by_name[name]["evidence_refs"])
+
     def test_all_statuses_use_evidence_taxonomy(self):
         allowed = set(MODULE.EVIDENCE_TAXONOMY)
         for payload in self.payloads.values():
