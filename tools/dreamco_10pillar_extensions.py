@@ -170,11 +170,12 @@ def distill_verified_repair(
         raise ValueError("similarity_threshold must be <= 1")
     lesson_basis = " ".join(summaries.values())
     lesson_signature = _minhash_signature(lesson_basis)
-    for old_signature in existing_signatures:
-        if len(tuple(old_signature)) != len(lesson_signature):
+    prior_signatures = [tuple(signature) for signature in existing_signatures]
+    for old_signature in prior_signatures:
+        if len(old_signature) != len(lesson_signature):
             raise ValueError("existing MinHash signatures must use the same permutation count")
-    for old_signature in existing_signatures:
-        if _signature_similarity(lesson_signature, tuple(old_signature)) >= similarity_threshold:
+    for old_signature in prior_signatures:
+        if _signature_similarity(lesson_signature, old_signature) >= similarity_threshold:
             raise ValueError("MinHash deduplication rejected a near-duplicate repair lesson")
     drills = []
     for ordinal, focus in enumerate(DRILL_FOCI, 1):
