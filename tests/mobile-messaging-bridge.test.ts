@@ -73,6 +73,13 @@ test("rejects unknown contacts and mismatched devices", async () => {
   assert.equal(mismatch.accepted, false);
 });
 
+test("rejects carrier SMS on the BlueBubbles iMessage path", async () => {
+  const event = signedEvent({ channel: "sms" });
+  const result = await acceptInboundMobileMessage({ ...event, registration: ios, settings, secret, replayStore: new InMemoryReplayClaimStore(), nowMs: now });
+  assert.equal(result.accepted, false);
+  assert.match(result.reason, /BlueBubbles supports iMessage/);
+});
+
 test("requires bridge and owner consent", async () => {
   const result = await acceptInboundMobileMessage({ ...signedEvent(), registration: { ...ios, sourceConsentGranted: false }, settings, secret, replayStore: new InMemoryReplayClaimStore(), nowMs: now });
   assert.equal(result.accepted, false);
@@ -83,6 +90,15 @@ test("default draft-only mode prevents outbound send without explicit approval",
   const transport = { async send(_input: MobileOutboundPayload) { sends++; return { providerMessageId: "provider-1" }; } };
   const result = await sendMobileMessage({ registration: ios, settings: { ...settings, autonomyMode: "draft_only" }, transport, action: "send", contactId: "contact-1", providerContactId: "handle-1", channel: "messaging", body: "Confirmed, see you then.", idempotencyKey: "send-1", sourceConsentGranted: true });
   assert.equal(result.sent, false); assert.equal(sends, 0);
+});
+
+test("does not route iPhone carrier SMS through BlueBubbles", async () => {
+  let sends = 0;
+  const transport = { async send(_input: MobileOutboundPayload) { sends++; return { providerMessageId: "must-not-send" }; } };
+  const result = await sendMobileMessage({ registration: ios, settings, transport, action: "send", contactId: "contact-1", providerContactId: "handle-1", channel: "sms", body: "This must not use BlueBubbles.", idempotencyKey: "ios-sms-1", sourceConsentGranted: true, explicitOwnerApproval: true });
+  assert.equal(result.sent, false);
+  assert.match(result.reason, /separately authorized SMS gateway/);
+  assert.equal(sends, 0);
 });
 
 test("allowlisted routine auto-replies can use Android transport", async () => {
