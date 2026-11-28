@@ -62,6 +62,8 @@ def verify_signed_manifest(manifest_path: Path, signature_path: Path, public_key
             raise PermissionError(f"{dataset_id}: commercial training rights not explicitly approved")
         if item.get("policy_decision_id") is None or not str(item["policy_decision_id"]).strip():
             raise PermissionError(f"{dataset_id}: missing policy decision reference")
+        if not isinstance(item.get("approved_by"), str) or not item["approved_by"].strip():
+            raise PermissionError(f"{dataset_id}: missing policy-owner approval identity")
         p = (root / str(item.get("path", ""))).resolve()
         if p == root or root not in p.parents:
             raise ValueError(f"{dataset_id}: dataset path escapes manifest directory")
