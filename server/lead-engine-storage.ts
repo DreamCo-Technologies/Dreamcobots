@@ -57,9 +57,6 @@ async function withOwner<T>(ownerId: string, operation: (tx: LeadEngineTx) => Pr
 
 export async function saveLeadEngineRecord(ownerId: string, input: LeadEngineRecord) {
   const { ownerId: safeOwnerId, record } = assertOwnerRecord(ownerId, input);
-  const qualification = qualifyLead(record);
-  const stagePlan = buildLeadStagePlan(record);
-
   return withOwner(safeOwnerId, async (tx) => {
     const [existing] = await tx.select()
       .from(leadEngineRecords)
