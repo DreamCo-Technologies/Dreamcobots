@@ -201,6 +201,11 @@ jobs:
           python3 tools/refresh_repository_evidence.py
       - name: Full audit (compile, import, typecheck, folder tests, links)
         run: python3 tools/fleet_runtime_audit.py --check-regressions --summary-json tmp/fleet-summary.json
+      - name: Rebuild and verify prospectuses after full-audit status is written
+        if: always()
+        run: |
+          python3 tools/refresh_repository_evidence.py
+          python3 -m pytest -q -p no:cacheprovider tests/test_run_prospectus.py tests/test_file_prospectus.py
       - name: Enforce zero failures in the four audited folder areas
         run: |
           python3 - <<'PY'
