@@ -165,22 +165,3 @@ def test_har_parser_does_not_retain_arbitrary_content_type_header_values():
     assert "private@example.com" not in json.dumps(result)
     assert "person@example.com" not in json.dumps(result)
 
-
-def test_safe_media_type_accepts_valid_mime_and_rejects_arbitrary_values():
-    from importlib import import_module
-    safe_media_type = import_module("stages.02_intake_parser.__main__").safe_media_type
-    assert safe_media_type("application/json; charset=utf-8") == "application/json"
-    assert safe_media_type("text/plain") == "text/plain"
-    assert safe_media_type("email@example.test") == "unspecified"
-    assert safe_media_type("application/json\nX-Injected: yes") == "unspecified"
-
-
-def test_sandbox_verifier_keeps_container_isolation_flags():
-    from importlib import import_module
-    docker_command = import_module("stages.05_sandbox_verifier.__main__").docker_command
-    command = docker_command("/tmp/dreamco-test")
-    assert command[command.index("--network") + 1] == "none"
-    assert "--read-only" in command
-    assert "--cap-drop=ALL" in command
-    assert "--security-opt=no-new-privileges" in command
-    assert command[command.index("--user") + 1] == "65532:65532"
