@@ -107,10 +107,57 @@ def assert_training_split(rows):
         if row.get("_split") != "train":
             raise PermissionError("only deterministic train buckets 00-89 may enter training")
 
+def validate_shard_payload(payload: dict, root: Path, source_manifest_path: Path) -> dict:
+    """Validate signed shard metadata, containment, sequence geometry and bytes."""
+    if payload.get("schema") != "dreamco.foundry.token_shards.v1":
+        raise ValueError("unsupported token-shard manifest schema")
+    sequence_length = payload.get("sequence_length")
+    if not isinstance(sequence_length, int) or sequence_length < 8:
+        raise ValueError("invalid token-shard sequence_length")
+    if payload.get("dtype") != "uint32":
+        raise ValueError("token shards must use uint32 storage")
+    if payload.get("training_splits") != ["train"] or "holdout" not in payload.get("excluded_splits", []):
+        raise PermissionError("token-shard manifest must declare train-only input and holdout exclusion")
+    if payload.get("mix_percent") != {"study_guides": 60, "verified_trajectories": 25, "general_replay": 15}:
+        raise ValueError("token-shard manifest must declare the approved 60/25/15 curriculum")
+    if payload.get("source_manifest_sha256") != sha256_file(source_manifest_path):
+        raise PermissionError("token shards do not match the verified source authorization manifest")
+    validation_expected = payload.get("validation_splits") == ["validation"]
+    if payload.get("validation_splits") not in ([], ["validation"]):
+        raise ValueError("validation_splits must be empty or contain only validation")
+    root = root.resolve()
+    for name in ("train", "validation"):
+        entry = payload.get(name)
+        if entry is None and name == "validation" and not validation_expected:
+            continue
+        if not isinstance(entry, dict):
+            raise ValueError(f"missing {name} shard manifest entry")
+        relative = str(entry.get("file", ""))
+        if not relative or Path(relative).is_absolute():
+            raise ValueError(f"invalid {name} shard path")
+        path = (root / relative).resolve()
+        if path == root or root not in path.parents or not path.is_file():
+            raise ValueError(f"invalid {name} shard path")
+        tokens = entry.get("tokens")
+        sequences = entry.get("sequences")
+        if not isinstance(tokens, int) or tokens <= 0 or tokens % sequence_length:
+            raise ValueError(f"{name} shard token count is not sequence-aligned")
+        if sequences != tokens // sequence_length or path.stat().st_size != tokens * 4:
+            raise ValueError(f"{name} shard size/sequence metadata mismatch")
+        expected_prefix = f"{name}-"
+        if not Path(relative).name.startswith(expected_prefix):
+            raise ValueError(f"{name} shard filename must start with {expected_prefix}")
+        if sha256_file(path) != entry.get("sha256"):
+            raise ValueError(f"{name} shard SHA-256 mismatch")
+        entry["_resolved_path"] = str(path)
+    if validation_expected != (payload.get("validation") is not None):
+        raise ValueError("validation split declaration and validation shard entry disagree")
+    return payload
+
 def verify_signed_shard_manifest(shard_manifest_path: Path, shard_signature_path: Path,
                                   source_manifest_path: Path, source_signature_path: Path,
                                   public_key_path: Path) -> dict:
-    """Verify policy signature, source authorization link, and every packed shard hash."""
+    """Verify source authorization, Ed25519 shard signature, and shard bytes."""
     verify_signed_manifest(source_manifest_path, source_signature_path, public_key_path)
     try:
         from cryptography.hazmat.primitives.serialization import load_pem_public_key
@@ -118,31 +165,12 @@ def verify_signed_shard_manifest(shard_manifest_path: Path, shard_signature_path
     except ImportError as exc:
         raise RuntimeError("Install cryptography to verify foundry signatures") from exc
     payload = json.loads(shard_manifest_path.read_text(encoding="utf-8"))
-    if payload.get("schema") != "dreamco.foundry.token_shards.v1":
-        raise ValueError("unsupported token-shard manifest schema")
     key = load_pem_public_key(public_key_path.read_bytes())
     if not isinstance(key, Ed25519PublicKey):
         raise ValueError("trusted policy key must be Ed25519")
     signature = base64.b64decode(shard_signature_path.read_text(encoding="ascii").strip(), validate=True)
     key.verify(signature, canonical_json(payload))
-    if payload.get("source_manifest_sha256") != sha256_file(source_manifest_path):
-        raise PermissionError("token shards do not match the verified source authorization manifest")
-    if payload.get("training_splits") != ["train"] or "holdout" not in payload.get("excluded_splits", []):
-        raise PermissionError("token-shard manifest must declare train-only input and holdout exclusion")
-    root = shard_manifest_path.parent.resolve()
-    for name in ("train", "validation"):
-        entry = payload.get(name)
-        if entry is None and name == "validation":
-            continue
-        if not isinstance(entry, dict):
-            raise ValueError(f"missing {name} shard manifest entry")
-        path = (root / str(entry.get("file", ""))).resolve()
-        if path == root or root not in path.parents or not path.is_file():
-            raise ValueError(f"invalid {name} shard path")
-        if sha256_file(path) != entry.get("sha256"):
-            raise ValueError(f"{name} shard SHA-256 mismatch")
-        entry["_resolved_path"] = str(path)
-    return payload
+    return validate_shard_payload(payload, shard_manifest_path.parent, source_manifest_path)
 
 def require_model_authorization(manifest: dict, model_id: str, revision: str) -> dict:
     """Require signed, item-level commercial permission for an exact model revision."""
