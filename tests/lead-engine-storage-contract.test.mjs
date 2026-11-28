@@ -5,6 +5,8 @@ import test from "node:test";
 const migration = readFileSync(new URL("../migrations/0002_lead_engine_crm.sql", import.meta.url), "utf8");
 const storage = readFileSync(new URL("../server/lead-engine-storage.ts", import.meta.url), "utf8");
 const schema = readFileSync(new URL("../shared/schema.ts", import.meta.url), "utf8");
+const routes = readFileSync(new URL("../server/routes.ts", import.meta.url), "utf8");
+const oauth = readFileSync(new URL("../server/oauth-login.ts", import.meta.url), "utf8");
 
 test("Lead Engine CRM tables enforce owner-scoped PostgreSQL row security", () => {
   for (const table of ["lead_engine_records", "lead_engine_activities"]) {
@@ -42,4 +44,21 @@ test("Lead Engine database schema defines owner and idempotency indexes", () => 
 test("activity history is append-only at the database layer", () => {
   assert.match(migration, /BEFORE UPDATE ON lead_engine_activities/);
   assert.match(migration, /lead engine activity history is append-only/);
+});
+
+test("CRM HTTP routes derive tenant identity from a verified OAuth session", () => {
+  assert.match(oauth, /export function getAuthenticatedOAuthIdentity/);
+  assert.match(oauth, /session\.exp <= Math\.floor\(Date\.now\(\) \/ 1000\)/);
+  assert.match(oauth, /createHash\("sha256"\)/);
+  assert.match(routes, /getAuthenticatedOAuthIdentity\(req\)/);
+  assert.match(routes, /leadEngineIdentity/);
+  assert.match(routes, /leadEngineSameOrigin/);
+  assert.match(routes, /rateLimit\(/);
+  assert.match(routes, /ownerUserId: identity\.ownerId/);
+  assert.doesNotMatch(routes, /ownerUserId: req\.body\.ownerUserId/);
+});
+
+test("CRM write routes do not send messages or execute external conversion actions", () => {
+  const crmRoutes = routes.slice(routes.indexOf('app.get("/api/buddy/lead-engine/records"'));
+  assert.doesNotMatch(crmRoutes, /sendMail|sendEmail|dispatchLead|bookAppointment|createPaymentIntent/);
 });
