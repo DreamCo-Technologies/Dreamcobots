@@ -62,13 +62,16 @@ def read_ledger(path:Path)->dict[str,str]:
             latest[f"{row.get('source_id')}:{row.get('video_id')}"]=str(row.get("content_sha256") or "")
     return latest
 def sync_sources(sources:list[dict[str,str]],ledger:Path=DEFAULT_LEDGER,policy_path:Path=DEFAULT_POLICY,enumerator=enumerate_source)->dict[str,Any]:
-    policy=load_policy(policy_path); ledger.parent.mkdir(parents=True,exist_ok=True); latest=read_ledger(ledger); pending=[]; seen=set()
+    policy=load_policy(policy_path); ledger.parent.mkdir(parents=True,exist_ok=True); latest=read_ledger(ledger); pending=[]; seen=set(); enumerated_total=0
     for source in sources:
         url,source_id=source["url"],source["source_id"]
         source_policy=registered_source(source_id,url,policy)
         if source_policy is None: raise PermissionError(f"source not allowlisted for metadata cataloging: {source_id}")
         expected_channel_id=source_policy.get("official_channel_id")
-        for item in enumerator(url):
+        items=enumerator(url)
+        if not items: raise ValueError(f"source enumeration returned zero items for {source_id}; refusing an empty sync")
+        enumerated_total += len(items)
+        for item in items:
             row=normalize_item(item,url,source_id,expected_channel_id); key=f"{source_id}:{row['video_id']}"
             if key in seen: continue
             seen.add(key); digest=canonical_hash(row)
@@ -76,7 +79,7 @@ def sync_sources(sources:list[dict[str,str]],ledger:Path=DEFAULT_LEDGER,policy_p
             row["content_sha256"]=digest; pending.append(row)
     with ledger.open("a",encoding="utf-8") as stream:
         for row in pending: stream.write(json.dumps(row,sort_keys=True,ensure_ascii=False)+"\n")
-    return {"schema":"dreamco.source_catalog_sync_report.v1","sources_scanned":len(sources),"new_or_updated_records":len(pending),
+    return {"schema":"dreamco.source_catalog_sync_report.v1","sources_scanned":len(sources),"enumerated_items":enumerated_total,"new_or_updated_records":len(pending),
       "ledger_records":sum(bool(x.strip()) for x in ledger.read_text(encoding="utf-8").splitlines()),"append_only":True,
       "media_downloaded":False,"transcripts_fetched":False}
 def main()->int:
