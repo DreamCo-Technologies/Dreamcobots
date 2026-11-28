@@ -1,5 +1,5 @@
 import argparse,subprocess,tempfile,pathlib,shutil,re,sys,uuid
-from ..common import read_json,write_json,validate
+from ..common import read_json,write_json,validate,safe_stage_path
 
 def similarity(a,b):
     tokens=lambda value:set(re.findall(r"[A-Za-z_][A-Za-z0-9_]*|\d+",value))
@@ -16,14 +16,15 @@ def main():
     p.add_argument("--threshold",type=float,default=.25); p.add_argument("--timeout",type=int,default=10)
     p.add_argument("--image",default="dreamco-verifier:local"); args=p.parse_args()
     if not 1<=args.timeout<=10 or not 0<args.threshold<=1: raise ValueError("Timeout must be 1..10 seconds and threshold must be in (0,1].")
-    module=read_json(args.input); validate(module,"course_module.schema.json")\n    files=module["reference_implementation"]["files"]+module["tests"]
+    module=read_json(args.input); validate(module,"course_module.schema.json")
+    files=module["reference_implementation"]["files"]+module["tests"]
     if len(files)>100 or sum(len(item.get("content","").encode("utf-8")) for item in files)>5*1024*1024:
         raise ValueError("Generated artifact exceeds sandbox file or size limits.")
-    report={"schema_version":"dreamco.eval_report.v1","job_id":module["job_id"],"status":"BLOCKED","tests_passed":False,"similarity_score":1.0,"policy_check":"FAIL","sandbox":{"network_disabled":True,"rootless_requested":True,"timed_out":False,"exit_code":None}}
+    report={"schema_version":"dreamco.eval_report.v1","job_id":module["job_id"],"status":"BLOCKED","tests_passed":False,"similarity_score":1.0,"policy_check":"FAIL","sandbox":{"network_disabled":True,"rootless_requested":True,"timed_out":False,"exit_code":None,"output_omitted":True}}
     if not args.reference:
         report["sandbox"]["error"]="authorized_similarity_reference_required"
     else:
-        reference=pathlib.Path(args.reference).read_text(encoding="utf-8")
+        reference=safe_stage_path(args.reference).read_text(encoding="utf-8")
         generated="\n".join(item["content"] for item in module["reference_implementation"]["files"])
         report["similarity_score"]=similarity(reference,generated)
         report["policy_check"]="PASS" if report["similarity_score"]<args.threshold else "FAIL"
@@ -48,8 +49,6 @@ def main():
                         report["sandbox"]["exit_code"]=proc.returncode
                         report["tests_passed"]=proc.returncode==0
                         report["status"]="PASS" if proc.returncode==0 else "FAIL"
-                        report["sandbox"]["stdout_tail"]=proc.stdout[-2000:]
-                        report["sandbox"]["stderr_tail"]=proc.stderr[-2000:]
                     except subprocess.TimeoutExpired:
                         report["sandbox"]["timed_out"]=True; report["status"]="FAIL"
                         subprocess.run(["docker","kill",container_name],capture_output=True,text=True,timeout=3)

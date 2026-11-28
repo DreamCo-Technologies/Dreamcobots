@@ -1,19 +1,18 @@
-from tools.ci_failure_report import build_report
-from tools.validate_repair_pr import validate_changes
+from tools.ci_failure_report import build_report, sanitize
+from tools.validate_repair_pr import validate_changes, validate_git_ref
 
 
 def test_ci_report_redacts_credentials_and_personal_data():
-    report = build_report(
-        "FAILED test_x\napi_key=fixture-secret-placeholder\n"
-        "contact person@example.com 123-45-6789\n",
-        1,
-        commit="a" * 40,
+    cleaned = sanitize(
+        "api_key=fixture-secret-placeholder "
+        "contact person@example.com 123-45-6789"
     )
-    excerpt = report["failure_excerpt"]
-    assert "fixture-secret-placeholder" not in excerpt
-    assert "person@example.com" not in excerpt
-    assert "123-45-6789" not in excerpt
+    assert "fixture-secret-placeholder" not in cleaned
+    assert "person@example.com" not in cleaned
+    assert "123-45-6789" not in cleaned
+    report = build_report("failure output", 1, commit="a" * 40)
     assert report["raw_log_included"] is False
+    assert report["failure_excerpt"] == ""
     assert report["status"] == "FAIL"
 
 
@@ -26,7 +25,7 @@ def test_ci_report_hides_success_log_excerpt():
 def test_repair_guard_accepts_small_source_change():
     errors = validate_changes(
         "M\tserver/handlers/orders.py",
-        "--- a/server/handlers/orders.py\n+++ b/server/handlers/orders.py\n@@ -1 +1 @@\n-old\n+new\n",
+        "diff --git a/server/handlers/orders.py b/server/handlers/orders.py\n--- a/server/handlers/orders.py\n+++ b/server/handlers/orders.py\n@@ -1 +1 @@\n-old\n+new\n",
     )
     assert errors == []
 
@@ -42,7 +41,8 @@ def test_repair_guard_blocks_workflows_contracts_and_security_tests():
 def test_repair_guard_blocks_deletions_and_secret_like_additions():
     errors = validate_changes(
         "D\tserver/handlers/orders.py\nM\ttools/helper.py",
-        "+api_key=abcdefghijklmnopqrstuvwxyz123456\n",
+        "diff --git a/tools/helper.py b/tools/helper.py\n"
+        "@@ -0,0 +1 @@\n+api_key=abcdefghijklmnopqrstuvwxyz123456\n",
     )
     assert any("Only added or modified" in item for item in errors)
     assert any("credential" in item for item in errors)
@@ -60,7 +60,9 @@ def test_repair_guard_blocks_its_own_policy_file():
 def test_repair_guard_allows_new_non_security_test_module():
     errors = validate_changes(
         "A\ttests/test_new_helper.py",
-        "+++ b/tests/test_new_helper.py\n+def test_new_helper(): assert True\n",
+        "diff --git a/tests/test_new_helper.py b/tests/test_new_helper.py\n"
+        "new file mode 100644\n--- /dev/null\n+++ b/tests/test_new_helper.py\n"
+        "+def test_new_helper(): assert True\n",
     )
     assert errors == []
 
@@ -71,3 +73,14 @@ def test_repair_guard_blocks_modifying_existing_tests():
         "+def test_new_helper(): assert True\n",
     )
     assert any("Only new test files may be added" in item for item in errors)
+
+
+def test_repair_validator_accepts_expected_refs():
+    assert validate_git_ref("origin/main")
+    assert validate_git_ref("origin/feature/repair-branch")
+    assert validate_git_ref("main")
+
+
+def test_repair_validator_rejects_option_and_traversal_refs():
+    for value in ("--output=/tmp/evil", "../main", "origin/../main", "origin//main", "origin/branch.lock", "bad ref"):
+        assert not validate_git_ref(value)

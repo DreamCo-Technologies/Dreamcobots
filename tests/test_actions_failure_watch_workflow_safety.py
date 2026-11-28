@@ -7,12 +7,22 @@ ROOT = Path(__file__).resolve().parents[1]
 WORKFLOW = ROOT / ".github" / "workflows" / "actions-failure-watch.yml"
 
 
-def test_failure_watch_observes_every_main_workflow_completion():
+def test_failure_watch_scopes_to_explicit_mainline_workflows():
     workflow = yaml.load(WORKFLOW.read_text(encoding="utf-8"), Loader=yaml.BaseLoader)
     trigger = workflow["on"]["workflow_run"]
     assert trigger["types"] == ["completed"]
     assert trigger["branches"] == ["main"]
-    assert "workflows" not in trigger
+    assert set(trigger["workflows"]) == {
+        "DreamCo Mainline Health Watch",
+        "DreamCo Five-Stage Reverse Engineering Gate",
+        "Repository Test Matrix",
+        "DreamCo Core Health",
+        "Code Trust Gate",
+        "CodeQL Security Scan",
+        "Actions Health",
+        "DreamCo Global Reconciliation",
+        "Fleet runtime truth",
+    }
 
 
 def test_failure_watch_excludes_itself_and_only_captures_real_failures():
@@ -23,10 +33,12 @@ def test_failure_watch_excludes_itself_and_only_captures_real_failures():
         assert f"conclusion == '{conclusion}'" in capture
 
 
-def test_failure_watch_downloads_failed_job_logs_and_does_not_file_issues():
+def test_failure_watch_captures_metadata_only_and_does_not_file_issues():
     workflow = WORKFLOW.read_text(encoding="utf-8")
-    assert "actions/jobs/$job_id/logs" in workflow
-    assert "failure-evidence/job-logs/$job_id.zip" in workflow
+    assert "Collect run and job metadata" in workflow
+    assert "failure-evidence/report.md" in workflow
+    assert "actions/jobs/$job_id/logs" not in workflow
+    assert "failure-evidence/job-logs/$job_id.zip" not in workflow
     assert "Issue filing is disabled" in workflow
 
 def test_safe_repair_reconciles_dashboard_and_pages_deployment_failures():

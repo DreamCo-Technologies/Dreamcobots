@@ -1,3 +1,5 @@
+import pytest
+
 from tools.ci_failure_report import build_report, sanitize
 
 
@@ -28,3 +30,49 @@ def test_sanitizer_redacts_common_credentials_and_contact_data():
     assert "dev@example.test" not in cleaned
     assert "555-123-4567" not in cleaned
     assert "123-45-6789" not in cleaned
+
+def test_sanitizer_redacts_quoted_credentials_with_spaces_and_closing_quote():
+    cleaned = sanitize(
+        'api_key="secret value with spaces" password=\'another secret value\''
+    )
+    assert "secret value with spaces" not in cleaned
+    assert "another secret value" not in cleaned
+    assert cleaned.count("[REDACTED_CREDENTIAL]") == 2
+
+
+def test_sanitizer_redacts_complete_multiline_pem_block():
+    begin = "-----BEGIN RSA " + "PRIVATE KEY-----"
+    end = "-----END RSA " + "PRIVATE KEY-----"
+    pem = (
+        "before\n" + begin + "\n"
+        "private-key-body-line-one\nprivate-key-body-line-two\n"
+        + end + "\nafter"
+    )
+    cleaned = sanitize(pem)
+    assert "private-key-body-line-one" not in cleaned
+    assert "private-key-body-line-two" not in cleaned
+    assert end not in cleaned
+    assert "[REDACTED_PRIVATE_KEY]" in cleaned
+
+
+def test_sanitizer_redacts_unterminated_private_key_to_end_of_input():
+    begin = "-----BEGIN " + "PRIVATE KEY-----"
+    cleaned = sanitize("prefix\n" + begin + "\nsecret-material-without-footer")
+    assert "secret-material-without-footer" not in cleaned
+    assert "[REDACTED_PRIVATE_KEY]" in cleaned
+
+
+
+def test_ci_report_paths_reject_arbitrary_external_reads_and_writes(tmp_path):
+    from tools.ci_failure_report import safe_log_path, safe_output_path
+    with pytest.raises(ValueError):
+        safe_log_path(str(tmp_path / "outside.log"))
+    with pytest.raises(ValueError):
+        safe_output_path("../../outside.json")
+
+
+def test_ci_report_paths_allow_runner_temp_logs_and_repo_outputs(tmp_path, monkeypatch):
+    from tools.ci_failure_report import REPO_ROOT, safe_log_path, safe_output_path
+    monkeypatch.setenv("RUNNER_TEMP", str(tmp_path))
+    assert safe_log_path(str(tmp_path / "runner.log")) == (tmp_path / "runner.log").resolve()
+    assert safe_output_path("reports/ci-failure-report.json") == REPO_ROOT / "reports/ci-failure-report.json"

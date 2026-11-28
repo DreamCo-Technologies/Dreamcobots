@@ -164,3 +164,19 @@ def test_har_parser_does_not_retain_arbitrary_content_type_header_values():
     assert endpoint["response_content_type"]=="unspecified"
     assert "private@example.com" not in json.dumps(result)
     assert "person@example.com" not in json.dumps(result)
+
+
+def test_stage_paths_reject_external_ci_paths_without_test_context(tmp_path, monkeypatch):
+    from stages.common import safe_stage_path
+    monkeypatch.setenv("GITHUB_ACTIONS", "true")
+    monkeypatch.delenv("PYTEST_CURRENT_TEST", raising=False)
+    with pytest.raises(ValueError):
+        safe_stage_path(tmp_path / "outside.json")
+
+
+def test_stage_paths_allow_repo_paths_and_pytest_temp_paths(tmp_path, monkeypatch):
+    from stages.common import REPO_ROOT, safe_stage_path
+    monkeypatch.setenv("GITHUB_ACTIONS", "true")
+    monkeypatch.setenv("PYTEST_CURRENT_TEST", "tests/test_pipeline_stages.py::test")
+    assert safe_stage_path(REPO_ROOT / "reports" / "out.json") == REPO_ROOT / "reports" / "out.json"
+    assert safe_stage_path(tmp_path / "fixture.json") == tmp_path / "fixture.json"

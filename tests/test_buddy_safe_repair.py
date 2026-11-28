@@ -1,6 +1,6 @@
 import unittest,sys,subprocess
 from pathlib import Path
-from tools.buddy_safe_repair import repair_plan,run_safe_repair
+from tools.buddy_safe_repair import repair_plan,run_safe_repair,safe_observation_path,safe_output_path
 class BuddySafeRepairTests(unittest.TestCase):
  def test_repair_module_imports_from_repository_root(self):
   root=Path(__file__).resolve().parents[1]
@@ -54,4 +54,86 @@ class BuddySafeRepairTests(unittest.TestCase):
   self.assertLess(e2e,markdown)
   self.assertLess(markdown,prospectus)
   self.assertLess(prospectus,verify)
+ def test_safe_repair_result_never_persists_command_output(self):
+  from unittest.mock import patch
+  completed = subprocess.CompletedProcess(["python", "builder.py"], 0, "secret-like stdout", "secret-like stderr")
+  status = subprocess.CompletedProcess(["git", "status"], 0, "", "")
+  observation = {"workflow": "Buddy Dataset Hub", "job": "route-build", "failed_step": "generated index mismatch"}
+  with patch("tools.buddy_safe_repair.subprocess.run", side_effect=[completed, status]):
+   result = run_safe_repair(observation, Path("."))
+  self.assertEqual(result["command_results"], [{"argv": [sys.executable, "tools/build_buddy_dataset_routes.py"], "returncode": 0}])
+  self.assertNotIn("secret-like stdout", str(result))
+  self.assertNotIn("secret-like stderr", str(result))
+
+
+ def test_safe_observation_path_blocks_traversal(self):
+  root=Path(__file__).resolve().parents[1]
+  self.assertEqual(
+   safe_observation_path(root,"artifacts/buddy-safe-repair/observation.json"),
+   root/"artifacts/buddy-safe-repair/observation.json",
+  )
+  with self.assertRaises(ValueError):
+   safe_observation_path(root,"../../outside.json")
+
+ def test_safe_repair_blocks_unregistered_builder_commands(self):
+  from unittest.mock import patch
+  with patch("tools.buddy_safe_repair.repair_plan", return_value=[[sys.executable,"tools/evil.py"]]):
+   result=run_safe_repair({"failure_class":"generated-index"},Path("."))
+  self.assertEqual(result["status"],"BLOCKED_UNSAFE_COMMAND")
+  self.assertFalse(result["executed"])
+
+
+ def test_safe_output_path_accepts_only_dedicated_repair_artifact_directory(self):
+  root=Path(__file__).resolve().parents[1]
+  self.assertEqual(
+   safe_output_path(root,"artifacts/buddy-safe-repair/result.json"),
+   root/"artifacts/buddy-safe-repair/result.json",
+  )
+  with self.assertRaises(ValueError):
+   safe_output_path(root,"../../outside.json")
+
+
+
+
+ def test_repair_output_path_is_confined_to_repair_artifacts(self):
+  from tools.buddy_safe_repair import safe_output_path
+  root=Path("/tmp/dreamco-repair-test")
+  self.assertEqual(safe_output_path(root,"artifacts/buddy-safe-repair/result.json"),root/"artifacts/buddy-safe-repair/result.json")
+  with self.assertRaises(ValueError):
+   safe_output_path(root,"../.github/workflows/unsafe.yml")
+  with self.assertRaises(ValueError):
+   safe_output_path(root,"reports/public.json")
+
+
+ def test_generated_repair_path_allowlist_blocks_sources_and_credentials(self):
+  from tools.buddy_safe_repair import repair_path_allowed
+  self.assertTrue(repair_path_allowed("website/data/bot-fleet-catalog.json"))
+  self.assertTrue(repair_path_allowed("config/master_bot_registry.json"))
+  self.assertFalse(repair_path_allowed("server/app.py"))
+  self.assertFalse(repair_path_allowed("reports/.env"))
+  self.assertFalse(repair_path_allowed("reports/private.pem"))
+
+
+
+ def test_safe_repair_blocks_symlinked_generated_outputs(self):
+  from unittest.mock import patch
+  import tempfile
+  with tempfile.TemporaryDirectory() as directory:
+   root=Path(directory)
+   link=root/"website/data/generated-link"
+   link.parent.mkdir(parents=True,exist_ok=True)
+   target=root/"outside.txt"
+   target.write_text("outside",encoding="utf-8")
+   try:
+    link.symlink_to(target)
+   except (OSError,NotImplementedError):
+    self.skipTest("symlinks are unavailable on this platform")
+   completed=subprocess.CompletedProcess(["python","builder.py"],0,"","")
+   status=subprocess.CompletedProcess(["git","status"],0,"?? website/data/generated-link\n","")
+   observation={"workflow":"Buddy Dataset Hub","job":"route-build","failed_step":"generated index mismatch"}
+   with patch("tools.buddy_safe_repair.subprocess.run",side_effect=[completed,status]):
+    result=run_safe_repair(observation,root)
+   self.assertEqual(result["status"],"BLOCKED_UNEXPECTED_PATH")
+   self.assertIn("website/data/generated-link",result["blocked_paths"])
+
 if __name__=="__main__":unittest.main()

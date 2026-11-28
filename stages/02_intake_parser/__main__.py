@@ -17,10 +17,7 @@ def sanitize_har_path(value):
 
 def safe_media_type(value):
  value=str(value or "").split(";",1)[0].strip().lower()
- return value if re.fullmatch(r"[a-z0-9!#def parse(text,kind):
-^_.+-]+/[a-z0-9!#def parse(text,kind):
-^_.+-]+",value) else "unspecified"
-
+ return value if re.fullmatch(r"[a-z0-9][a-z0-9.+-]*/[a-z0-9][a-z0-9.+-]*",value) else "unspecified"
 def parse(text,kind):
  if kind in {"python","python_source"}:
   tree=ast.parse(text)

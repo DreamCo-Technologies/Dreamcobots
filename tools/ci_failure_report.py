@@ -5,6 +5,7 @@ import argparse
 import json
 import os
 import re
+import tempfile
 from pathlib import Path
 
 
@@ -36,6 +37,24 @@ REDACTIONS = (
 )
 
 
+REPO_ROOT = Path(__file__).resolve().parents[1]
+
+
+def safe_log_path(value: str) -> Path:
+    candidate = Path(value).resolve()
+    temp_root = Path(os.environ.get("RUNNER_TEMP", tempfile.gettempdir())).resolve()
+    if not any(root == candidate or root in candidate.parents for root in (REPO_ROOT, temp_root)):
+        raise ValueError("CI log path must remain inside the repository or runner temp directory.")
+    return candidate
+
+
+def safe_output_path(value: str) -> Path:
+    candidate = (REPO_ROOT / value).resolve()
+    if REPO_ROOT not in candidate.parents:
+        raise ValueError("CI report output must remain inside the repository.")
+    return candidate
+
+
 def sanitize(value: str) -> str:
     for pattern, replacement in REDACTIONS:
         value = pattern.sub(replacement, value)
@@ -64,12 +83,12 @@ def main() -> int:
     parser.add_argument("--exit-code", required=True, type=int)
     args = parser.parse_args()
     report = build_report(
-        Path(args.log).read_text(encoding="utf-8", errors="replace"),
+        safe_log_path(args.log).read_text(encoding="utf-8", errors="replace"),
         args.exit_code,
         commit=os.environ.get("GITHUB_SHA", ""),
         run_id=os.environ.get("GITHUB_RUN_ID", ""),
     )
-    output = Path(args.output)
+    output = safe_output_path(args.output)
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
     return 0
