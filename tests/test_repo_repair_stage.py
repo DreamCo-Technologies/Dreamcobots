@@ -189,3 +189,51 @@ def test_candidate_validation_accepts_bounded_generated_text_patch():
         "@@ -1 +1 @@\n-old\n+new\n"
     )
     assert MODULE.validate_candidate(["config/generated/index.json"], patch, prefixes) is None
+
+
+
+def test_generated_output_paths_are_restricted_to_allowlisted_artifact_roots(tmp_path):
+    prefixes = MODULE.allowed_prefixes(None)
+    allowed = MODULE.safe_generated_path(tmp_path, "reports/repo-repair-plan.json", prefixes, "Output")
+    assert allowed == tmp_path / "reports" / "repo-repair-plan.json"
+    for path in ("server/app.py", ".github/workflows/unsafe.yml", "reports/../.github/workflows/unsafe.yml"):
+        try:
+            MODULE.safe_generated_path(tmp_path, path, prefixes, "Output")
+        except ValueError:
+            pass
+        else:
+            raise AssertionError(f"unsafe output path was accepted: {path}")
+
+
+def test_trajectory_path_is_restricted_to_allowlisted_artifact_roots(tmp_path):
+    args = _run_args(tmp_path, tmp_path / "missing.json")
+    args.trajectory_dir = "server/trajectories"
+    try:
+        MODULE.run(args)
+    except ValueError as exc:
+        assert "Trajectory path" in str(exc)
+    else:
+        raise AssertionError("trajectory path outside generated artifacts must be rejected")
+
+
+def test_generated_path_guard_blocks_credential_basenames_and_key_suffixes():
+    prefixes = MODULE.allowed_prefixes(None)
+    assert not MODULE.path_is_allowed("reports/.env", prefixes)
+    assert not MODULE.path_is_allowed("reports/private.pem", prefixes)
+    assert not MODULE.path_is_allowed("config/generated/secrets.json", prefixes)
+
+
+def test_candidate_validation_rejects_symlink_and_executable_modes():
+    prefixes = MODULE.allowed_prefixes(None)
+    patch = (
+        "diff --git a/config/generated/link b/config/generated/link\n"
+        "new file mode 120000\n--- /dev/null\n+++ b/config/generated/link\n"
+        "@@ -0,0 +1 @@\n+../../outside\n"
+    )
+    assert MODULE.validate_candidate(["config/generated/link"], patch, prefixes) == "BLOCKED_FILE_MODE_CHANGE"
+
+
+def test_candidate_validation_enforces_patch_byte_limit():
+    prefixes = MODULE.allowed_prefixes(None)
+    patch = "x" * (MODULE.MAX_PATCH_BYTES + 1)
+    assert MODULE.validate_candidate(["config/generated/index.json"], patch, prefixes) == "BLOCKED_PATCH_SIZE"
