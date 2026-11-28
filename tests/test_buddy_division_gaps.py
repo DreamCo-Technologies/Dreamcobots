@@ -19,7 +19,14 @@ class BuddyDivisionGapsTests(unittest.TestCase):
         self.assertEqual(actual, expected)
         self.assertEqual(len(report["divisions"]), 55)
         self.assertFalse(report["production_ready"])
-        self.assertTrue(all(row["production_ready"] is False for row in report["divisions"]))
+        for row in report["divisions"]:
+            manifest = ROOT / "App_bots" / f'{row["division"]}.json'
+            self.assertEqual(row["manifest_present"], manifest.is_file())
+            self.assertIn("mapping_status", row)
+            self.assertIn("owner_approval", row)
+            self.assertFalse(row["working"])
+            self.assertFalse(row["production_ready"])
+        self.assertEqual(report["working"], 0)
 
 
 if __name__ == "__main__":
