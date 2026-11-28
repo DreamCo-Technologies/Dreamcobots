@@ -21,6 +21,7 @@ def evaluate_source(source:dict[str,Any],registry:dict[str,Any],purpose:str="tra
     if not match or match.get("verified") is not True: reason="BLOCKED_MISSING_VERIFIED_SOURCE_RECORD"
     elif tier=="BLOCKED": reason="BLOCKED_SOURCE_TIER"
     elif str(source.get("source_id") or "") not in {str(x) for x in match.get("catalog_source_ids", [match.get("source_id")])}: reason="BLOCKED_SOURCE_ID_NOT_REGISTERED"
+    elif match.get("allowed_url_prefixes") and not any(str(source.get("source_url") or "").startswith(str(prefix)) for prefix in match.get("allowed_url_prefixes", [])): reason="BLOCKED_SOURCE_URL_NOT_ALLOWLISTED"
     elif not source.get("license_record_verified") or not str(source.get("license_tag") or "").strip() or source.get("license_tag")=="UNKNOWN_UNVERIFIED": reason="BLOCKED_MISSING_ITEM_LICENSE_EVIDENCE"
     elif purpose=="transcript_extraction" and match.get("transcript_extraction_allowed") is not True: reason="BLOCKED_TRANSCRIPT_PERMISSION_NOT_GRANTED"
     elif purpose=="commercial_training" and (tier not in {"PUBLIC_DOMAIN","PERMISSIVE_COMMERCIAL"} or match.get("commercial_training_allowed") is not True or source.get("commercial_training_permission") is not True): reason="BLOCKED_COMMERCIAL_TRAINING_PERMISSION"
