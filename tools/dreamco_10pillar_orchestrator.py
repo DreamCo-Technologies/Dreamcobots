@@ -104,8 +104,17 @@ def main() -> int:
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
     result = run(args.command, _read(args.input))
-    _write(args.output, result)
-    status = result.get("status", "COMPLETED") if isinstance(result, dict) else "COMPLETED"
+    if args.command == "distill":
+        drills = result["drills"]
+        args.output.parent.mkdir(parents=True, exist_ok=True)
+        args.output.write_text(
+            "".join(json.dumps(row, sort_keys=True, ensure_ascii=False) + "\\n" for row in drills),
+            encoding="utf-8",
+        )
+        status = f"GENERATED_{len(drills)}_JSONL_DRILLS"
+    else:
+        _write(args.output, result)
+        status = result.get("status", "COMPLETED") if isinstance(result, dict) else "COMPLETED"
     print(json.dumps({"command": args.command, "status": status, "output": str(args.output)}))
     return 0
 
