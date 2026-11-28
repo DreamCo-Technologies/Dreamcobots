@@ -1,14 +1,14 @@
 # Buddy iOS + Android Messaging Bridge
 
 ## iPhone / iMessage / SMS
-Use an owner-controlled Mac running an authorized BlueBubbles server as the iMessage relay. The Mac relay forwards only owner-authorized inbound events to Buddy's signed webhook envelope. This adapter supports iMessage only (`messaging` channel). BlueBubbles' official FAQ says SMS is not supported; iPhone carrier SMS must use a separate, explicitly authorized SMS gateway and must not be routed through the BlueBubbles adapter. The relay must be paired to one registered device ID and owner account. See [BlueBubbles REST API and webhook documentation](https://docs.bluebubbles.app/server/developer-guides/rest-api-and-webhooks) and [BlueBubbles FAQ](https://bluebubbles.app/faq/).
+Use an owner-controlled Mac running an authorized BlueBubbles server as the iMessage relay. BlueBubbles webhooks do not support custom headers, so the local relay must authenticate the incoming BlueBubbles callback using the configured server password on a loopback-only listener, normalize the event, and then sign the forwarded Buddy webhook using the separate Buddy relay secret. Never expose the BlueBubbles password in logs or pass it to Buddy. The Mac relay forwards only owner-authorized inbound events to Buddy's signed webhook envelope. This adapter supports iMessage only (`messaging` channel). BlueBubbles' official FAQ says SMS is not supported; iPhone carrier SMS must use a separate, explicitly authorized SMS gateway and must not be routed through the BlueBubbles adapter. The relay must be paired to one registered device ID and owner account. See [BlueBubbles REST API and webhook documentation](https://docs.bluebubbles.app/server/developer-guides/rest-api-and-webhooks) and [BlueBubbles FAQ](https://bluebubbles.app/faq/).
 
 ## Android / SMS
 Use an owner-installed Buddy Android companion or approved gateway. Grant only the OS permissions needed for the chosen feature. The initial Android contract supports SMS. Other app notifications require separate app-specific adapters and permissions; notification access is not blanket permission to read every conversation.
 
 ## Shared security contract
 - HMAC-SHA256 signs `timestampSeconds.rawRequestBody`; reject stale signatures (five-minute default).
-- Event IDs are replay-protected. The included in-memory store is for tests/development only; production must inject a durable atomic replay store.
+- Event IDs are replay-protected. The included bounded in-memory store is for tests/development only and fails closed when full; production must inject a durable atomic replay store.
 - Device ID, platform, provider, source consent, and owner/contact permissions are checked before Buddy receives message content. Provider contact IDs are resolved to Buddy contact IDs by a server-side mapping callback; the webhook payload cannot nominate its own internal contact ID.
 - Unknown and non-allowlisted contacts are denied.
 - Inbound message bodies are returned for ephemeral processing and are not persisted by this module.
