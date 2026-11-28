@@ -26,7 +26,8 @@ class MediaWorkerTests(unittest.TestCase):
     def test_readiness_requires_token_and_writable_spool(self):
         with tempfile.TemporaryDirectory() as folder:
             self.assertEqual(WORKER.worker_ready(folder, None), (False, "worker_auth_not_configured"))
-            self.assertEqual(WORKER.worker_ready(folder, "test-token"), (True, "ready"))
+            self.assertEqual(WORKER.worker_ready(folder, "t" * 40), (True, "ready"))
+            self.assertEqual(WORKER.worker_ready(folder, "short"), (False, "worker_auth_token_too_short"))
 
     def test_persists_generated_job_id_under_spool(self):
         with tempfile.TemporaryDirectory() as folder:
