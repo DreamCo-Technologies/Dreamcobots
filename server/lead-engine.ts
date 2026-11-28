@@ -222,8 +222,7 @@ export function assertLeadStageTransition(
       Boolean(next.consentEvidenceRef) &&
       next.consentEvidenceRef !== current.consentEvidenceRef &&
       Boolean(next.consentObtainedAt) &&
-      Boolean(current.consentObtainedAt) &&
-      Date.parse(next.consentObtainedAt!) > Date.parse(current.consentObtainedAt!);
+      (!current.consentObtainedAt || Date.parse(next.consentObtainedAt!) > Date.parse(current.consentObtainedAt));
     if (!explicitResubscription) {
       throw new Error("lead_engine_suppression_cannot_be_cleared_without_new_explicit_opt_in");
     }
