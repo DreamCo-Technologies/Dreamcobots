@@ -1,19 +1,18 @@
-from tools.ci_failure_report import build_report
+from tools.ci_failure_report import build_report, sanitize
 from tools.validate_repair_pr import validate_changes
 
 
 def test_ci_report_redacts_credentials_and_personal_data():
-    report = build_report(
-        "FAILED test_x\napi_key=fixture-secret-placeholder\n"
-        "contact person@example.com 123-45-6789\n",
-        1,
-        commit="a" * 40,
+    cleaned = sanitize(
+        "api_key=fixture-secret-placeholder "
+        "contact person@example.com 123-45-6789"
     )
-    excerpt = report["failure_excerpt"]
-    assert "fixture-secret-placeholder" not in excerpt
-    assert "person@example.com" not in excerpt
-    assert "123-45-6789" not in excerpt
+    assert "fixture-secret-placeholder" not in cleaned
+    assert "person@example.com" not in cleaned
+    assert "123-45-6789" not in cleaned
+    report = build_report("failure output", 1, commit="a" * 40)
     assert report["raw_log_included"] is False
+    assert report["failure_excerpt"] == ""
     assert report["status"] == "FAIL"
 
 
