@@ -73,7 +73,8 @@ def main():
         and checkpoint_manifest.get("training_split")=="train"
         and checkpoint_manifest.get("holdout_used_for_training") is False
         and checkpoint_manifest.get("weight_updates_started") is True
-        and bool(checkpoint_manifest.get("authorization_reference"))
+        and isinstance(checkpoint_manifest.get("authorization_reference_sha256"),str)
+        and len(checkpoint_manifest.get("authorization_reference_sha256",""))==64
         and bool(checkpoint_manifest.get("shard_manifest_sha256"))
         and isinstance(checkpoint_manifest.get("recipe_sha256"),str)
         and len(checkpoint_manifest.get("recipe_sha256",""))==64
