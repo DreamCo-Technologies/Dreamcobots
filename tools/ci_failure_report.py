@@ -24,7 +24,8 @@ def sanitize(value: str) -> str:
     return value
 
 def build_report(log_text: str, exit_code: int, *, commit: str = "", run_id: str = "") -> dict:
-    excerpt = "\n".join(sanitize(log_text).splitlines()[-100:])[-12000:]
+    # Raw test output can contain arbitrary credentials or personal data.
+    # Keep artifacts and public issues metadata-only; inspect details in GitHub Actions.
     return {
         "schema_version": "dreamco.ci_failure_report.v1",
         "status": "PASS" if exit_code == 0 else "FAIL",
@@ -32,7 +33,8 @@ def build_report(log_text: str, exit_code: int, *, commit: str = "", run_id: str
         "commit": commit[:40],
         "run_id": run_id[:40],
         "raw_log_included": False,
-        "failure_excerpt": excerpt if exit_code else "",
+        "log_excerpt_omitted": True,
+        "failure_excerpt": "",
     }
 
 def main() -> int:
