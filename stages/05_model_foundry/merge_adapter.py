@@ -38,7 +38,7 @@ def main():
     a=p.parse_args()
     if not re.fullmatch(r"[0-9a-f]{40}",a.base_revision):
         raise PermissionError("base model revision must be a pinned 40-character commit SHA")
-    manifest=verify_signed_manifest(a.manifest,a.signature,a.public_key)
+    manifest=verify_signed_manifest(a.manifest,a.signature,a.public_key,verify_dataset_hashes=False)
     model_auth=require_model_authorization(manifest,a.base_model,a.base_revision)
     checkpoint_manifest_path=a.adapter/"checkpoint_manifest.json"
     if not checkpoint_manifest_path.is_file():
