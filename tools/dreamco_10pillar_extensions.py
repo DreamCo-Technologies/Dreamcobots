@@ -117,11 +117,16 @@ def _signature_similarity(left: tuple[int, ...], right: tuple[int, ...]) -> floa
     return sum(a == b for a, b in zip(left, right)) / len(left)
 
 
-def distill_verified_repair(evidence: dict[str, Any], *, similarity_threshold: float = 0.90) -> list[dict[str, Any]]:
+def distill_verified_repair(
+    evidence: dict[str, Any],
+    *,
+    existing_signatures: Iterable[tuple[int, ...]] = (),
+    similarity_threshold: float = 0.90,
+) -> list[dict[str, Any]]:
     """Create 25 original rubric-backed drills from one approved, non-holdout repair."""
     required = (
         "evidence_id", "lesson_id", "division_id", "status", "human_review_status",
-        "source_rights_approved", "privacy_review_status", "holdout",
+        "source_rights_approved", "training_use_approved", "privacy_review_status", "holdout",
         "evidence_split", "failure_summary", "root_cause_summary",
         "repair_summary", "regression_test_summary", "evidence_sha256",
     )
@@ -133,7 +138,9 @@ def distill_verified_repair(evidence: dict[str, Any], *, similarity_threshold: f
         raise ValueError("repair evidence SHA-256 does not match its canonical payload")
     if evidence["status"] != "VERIFIED_REPAIR" or evidence["human_review_status"] != "APPROVED":
         raise ValueError("only human-approved verified repairs can be distilled")
-    if evidence["source_rights_approved"] is not True or evidence["privacy_review_status"] != "APPROVED":
+    if (evidence["source_rights_approved"] is not True
+            or evidence["training_use_approved"] is not True
+            or evidence["privacy_review_status"] != "APPROVED"):
         raise ValueError("source rights and privacy review must be approved")
     if evidence["holdout"] is not False or evidence["evidence_split"] not in {"practice", "curriculum"}:
         raise ValueError("holdout or evaluation evidence is never eligible for distillation")
@@ -145,8 +152,12 @@ def distill_verified_repair(evidence: dict[str, Any], *, similarity_threshold: f
     }
     if any(not value for value in summaries.values()):
         raise ValueError("all repair summaries must be non-empty")
+    lesson_basis = " ".join(summaries.values())
+    lesson_signature = _minhash_signature(lesson_basis)
+    for old_signature in existing_signatures:
+        if _signature_similarity(lesson_signature, tuple(old_signature)) >= similarity_threshold:
+            raise ValueError("MinHash deduplication rejected a near-duplicate repair lesson")
     drills = []
-    signatures: list[tuple[int, ...]] = []
     for ordinal, focus in enumerate(DRILL_FOCI, 1):
         prompt = (
             f"DreamCo Bootcamp debugging drill: {focus}. "
@@ -157,10 +168,6 @@ def distill_verified_repair(evidence: dict[str, Any], *, similarity_threshold: f
             "Explain your reasoning, list verification steps, and state uncertainty. "
             "Do not assume access to external systems."
         )
-        signature = _minhash_signature(prompt)
-        if any(_signature_similarity(signature, old) >= similarity_threshold for old in signatures):
-            continue
-        signatures.append(signature)
         drill_id = hashlib.sha256(
             f"{evidence['evidence_id']}|{ordinal}|{focus}".encode()
         ).hexdigest()[:20]
@@ -180,6 +187,7 @@ def distill_verified_repair(evidence: dict[str, Any], *, similarity_threshold: f
                 "states uncertainty and escalation criteria",
             ],
             "source_evidence_sha256": evidence["evidence_sha256"],
+            "lesson_minhash_signature": list(lesson_signature),
             "training_eligible": True,
             "holdout": False,
             "human_review_status": "APPROVED_SOURCE_REPAIR",
