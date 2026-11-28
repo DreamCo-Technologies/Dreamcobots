@@ -1,7 +1,7 @@
 """Deterministic intake detection. This module never fetches URLs."""
 import json
 from pathlib import PurePosixPath
-EXTENSIONS={".py":"python_source",".js":"javascript_source",".ts":"typescript_source",".tsx":"typescript_source",".java":"java_source",".go":"go_source",".rs":"rust_source",".json":"json",".csv":"csv",".har":"har",".yaml":"openapi_yaml",".yml":"openapi_yaml"}
+EXTENSIONS={".py":"python_source",".js":"javascript_source",".ts":"typescript_source",".tsx":"typescript_source",".java":"java_source",".go":"go_source",".rs":"rust_source",".cpp":"cpp_source",".cxx":"cpp_source",".cc":"cpp_source",".hpp":"cpp_source",".hxx":"cpp_source",".hh":"cpp_source",".cu":"cuda_source",".cuda":"cuda_source",".cuh":"cuda_source",".json":"json",".csv":"csv",".har":"har",".yaml":"openapi_yaml",".yml":"openapi_yaml"}
 def detect_artifact(filename, content):
     suffix=PurePosixPath(filename).suffix.lower()
     if suffix in EXTENSIONS: return EXTENSIONS[suffix]
