@@ -21,3 +21,12 @@ def test_fleet_runtime_full_audit_installs_scipy_from_declared_learning_requirem
     assert "Pillow>=10,<12" in install
     assert "scipy>=1.11,<2" in requirements
     assert "cryptography>=42,<50" in requirements
+    audit_source = (ROOT / "tools/fleet_runtime_audit.py").read_text(encoding="utf-8")
+    assert "deferred_generated_artifact_tests" in audit_source
+    assert "tests/test_run_prospectus.py" in audit_source
+    assert "tests/test_file_prospectus.py" in audit_source
+    assert any(
+        step.get("name") == "Rebuild and verify prospectuses after full-audit status is written"
+        for step in steps
+    )
+
