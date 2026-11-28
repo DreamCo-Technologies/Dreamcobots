@@ -60,18 +60,25 @@ def main():
         if not pools[category]:
             raise ValueError(f"category {category} contains no authorized encodable training tokens")
 
-    # Largest deterministic mixture preserving the requested 60/25/15 token ratio.
-    target_units = min(len(pools[key]) * 100 // weight for key, weight in weights.items()) // 100
-    if target_units == 0:
-        raise ValueError("not enough signed training tokens to satisfy the 60/25/15 curriculum")
+    # Allocate an integer 60/25/15 mixture inside every fixed-length sequence.
+    raw = {category: args.sequence_length * weight / 100 for category, weight in weights.items()}
+    per_sequence = {category: int(value) for category, value in raw.items()}
+    remainder = args.sequence_length - sum(per_sequence.values())
+    for category in sorted(weights, key=lambda key: raw[key] - per_sequence[key], reverse=True)[:remainder]:
+        per_sequence[category] += 1
+    sequence_count = min(
+        max(1, len(pools[category]) // per_sequence[category])
+        for category in weights
+    )
     train_tokens = []
     cursors = {category: 0 for category in weights}
-    for _ in range(target_units):
-        for category, weight in weights.items():
+    for _ in range(sequence_count):
+        for category in weights:
             pool = pools[category]
             cursor = cursors[category]
-            train_tokens.extend(pool[(cursor + offset) % len(pool)] for offset in range(weight))
-            cursors[category] = (cursor + weight) % len(pool)
+            count = per_sequence[category]
+            train_tokens.extend(pool[(cursor + offset) % len(pool)] for offset in range(count))
+            cursors[category] = (cursor + count) % len(pool)
     train_shard = _write_shard(train_tokens, args.output, "train", args.sequence_length)
     if train_shard is None:
         raise ValueError("not enough authorized tokens to form one training sequence")
