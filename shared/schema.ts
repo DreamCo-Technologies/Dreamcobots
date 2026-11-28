@@ -722,3 +722,137 @@ export const leadEngineActivities = pgTable("lead_engine_activities", {
 
 export type LeadEngineRecordRow = typeof leadEngineRecords.$inferSelect;
 export type LeadEngineActivityRow = typeof leadEngineActivities.$inferSelect;
+
+
+/** Owner-scoped Buddy communication settings and mobile bridge state. */
+export const communicationTwinSettings = pgTable("communication_twin_settings", {
+  ownerId: text("owner_id").primaryKey(),
+  settings: jsonb("settings").notNull().default(sql`'{}'::jsonb`),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
+});
+
+export const mobileBridgeDevices = pgTable("mobile_bridge_devices", {
+  id: serial("id").primaryKey(),
+  ownerId: text("owner_id").notNull(),
+  deviceId: text("device_id").notNull(),
+  platform: text("platform").notNull(),
+  provider: text("provider").notNull(),
+  enabled: boolean("enabled").notNull().default(false),
+  sourceConsentGranted: boolean("source_consent_granted").notNull().default(false),
+  secretReference: text("secret_reference").notNull(),
+  allowedContactIds: jsonb("allowed_contact_ids").notNull().default(sql`'[]'::jsonb`),
+  revokedAt: timestamp("revoked_at", { withTimezone: true }),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
+}, (table) => ({
+  ownerDeviceUnique: uniqueIndex("mobile_bridge_devices_owner_device_uq").on(table.ownerId, table.deviceId),
+  ownerEnabledIdx: index("mobile_bridge_devices_owner_enabled_idx").on(table.ownerId, table.enabled),
+}));
+
+export const mobileBridgeContactMappings = pgTable("mobile_bridge_contact_mappings", {
+  id: serial("id").primaryKey(),
+  ownerId: text("owner_id").notNull(),
+  deviceId: text("device_id").notNull(),
+  providerContactHash: text("provider_contact_hash").notNull(),
+  providerContactCiphertext: text("provider_contact_ciphertext").notNull(),
+  providerContactIv: text("provider_contact_iv").notNull(),
+  providerContactTag: text("provider_contact_tag").notNull(),
+  contactId: text("contact_id").notNull(),
+  revokedAt: timestamp("revoked_at", { withTimezone: true }),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+}, (table) => ({
+  ownerDeviceProviderHashUnique: uniqueIndex("mobile_bridge_contact_mapping_owner_device_hash_uq").on(
+    table.ownerId, table.deviceId, table.providerContactHash,
+  ),
+  ownerDeviceContactIdx: index("mobile_bridge_contact_mapping_owner_device_contact_idx").on(
+    table.ownerId, table.deviceId, table.contactId,
+  ),
+  ownerDeviceFk: foreignKey({
+    columns: [table.ownerId, table.deviceId],
+    foreignColumns: [mobileBridgeDevices.ownerId, mobileBridgeDevices.deviceId],
+    name: "mobile_bridge_contact_mapping_owner_device_fk",
+  }).onDelete("cascade"),
+}));
+
+export const mobileBridgeReplayEvents = pgTable("mobile_bridge_replay_events", {
+  id: serial("id").primaryKey(),
+  ownerId: text("owner_id").notNull(),
+  deviceId: text("device_id").notNull(),
+  eventId: text("event_id").notNull(),
+  expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+}, (table) => ({
+  ownerDeviceEventUnique: uniqueIndex("mobile_bridge_replay_owner_device_event_uq").on(
+    table.ownerId, table.deviceId, table.eventId,
+  ),
+  expiresAtIdx: index("mobile_bridge_replay_expires_at_idx").on(table.expiresAt),
+  ownerDeviceFk: foreignKey({
+    columns: [table.ownerId, table.deviceId],
+    foreignColumns: [mobileBridgeDevices.ownerId, mobileBridgeDevices.deviceId],
+    name: "mobile_bridge_replay_owner_device_fk",
+  }).onDelete("cascade"),
+}));
+
+/** Only generated drafts are stored; inbound raw message bodies are never persisted. */
+export const communicationTwinDrafts = pgTable("communication_twin_drafts", {
+  id: serial("id").primaryKey(),
+  ownerId: text("owner_id").notNull(),
+  draftId: text("draft_id").notNull(),
+  deviceId: text("device_id").notNull(),
+  messageId: text("message_id").notNull(),
+  contactId: text("contact_id").notNull(),
+  channel: text("channel").notNull(),
+  draftBody: text("draft_body").notNull(),
+  status: text("status").notNull().default("pending_approval"),
+  expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
+}, (table) => ({
+  ownerDraftUnique: uniqueIndex("communication_twin_drafts_owner_draft_uq").on(table.ownerId, table.draftId),
+  ownerDeviceMessageUnique: uniqueIndex("communication_twin_drafts_owner_device_message_uq").on(
+    table.ownerId, table.deviceId, table.messageId,
+  ),
+  ownerStatusIdx: index("communication_twin_drafts_owner_status_idx").on(table.ownerId, table.status),
+  ownerDeviceFk: foreignKey({
+    columns: [table.ownerId, table.deviceId],
+    foreignColumns: [mobileBridgeDevices.ownerId, mobileBridgeDevices.deviceId],
+    name: "communication_twin_drafts_owner_device_fk",
+  }).onDelete("cascade"),
+}));
+
+export const communicationTwinAuditEvents = pgTable("communication_twin_audit_events", {
+  id: serial("id").primaryKey(),
+  ownerId: text("owner_id").notNull(),
+  deviceId: text("device_id"),
+  action: text("action").notNull(),
+  channel: text("channel").notNull(),
+  contactId: text("contact_id").notNull(),
+  decision: text("decision").notNull(),
+  reason: text("reason").notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+}, (table) => ({
+  ownerTimeIdx: index("communication_twin_audit_owner_time_idx").on(table.ownerId, table.createdAt),
+}));
+
+export const mobileBridgeDeliveryReceipts = pgTable("mobile_bridge_delivery_receipts", {
+  id: serial("id").primaryKey(),
+  ownerId: text("owner_id").notNull(),
+  deviceId: text("device_id").notNull(),
+  idempotencyKey: text("idempotency_key").notNull(),
+  providerMessageId: text("provider_message_id").notNull(),
+  contactId: text("contact_id").notNull(),
+  channel: text("channel").notNull(),
+  status: text("status").notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+}, (table) => ({
+  ownerDeviceIdempotencyUnique: uniqueIndex("mobile_bridge_delivery_owner_device_idempotency_uq").on(
+    table.ownerId, table.deviceId, table.idempotencyKey,
+  ),
+  ownerTimeIdx: index("mobile_bridge_delivery_owner_time_idx").on(table.ownerId, table.createdAt),
+  ownerDeviceFk: foreignKey({
+    columns: [table.ownerId, table.deviceId],
+    foreignColumns: [mobileBridgeDevices.ownerId, mobileBridgeDevices.deviceId],
+    name: "mobile_bridge_delivery_owner_device_fk",
+  }).onDelete("cascade"),
+}));
