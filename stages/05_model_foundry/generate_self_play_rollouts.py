@@ -123,6 +123,7 @@ def main() -> None:
     model.eval()
 
     records = []
+    grpo_groups, dpo_candidates, sft_candidates = [], [], []
     for task in task_rows:
         if len({row["task_id"] for row in records}) >= a.max_tasks:
             break
@@ -141,6 +142,7 @@ def main() -> None:
                 eos_token_id=tokenizer.eos_token_id,
             )
         start = inputs["input_ids"].shape[1]
+        task_rollouts = []
         for index, sequence in enumerate(generated):
             response = tokenizer.decode(sequence[start:], skip_special_tokens=True).strip()
             candidate_id = hashlib.sha256(
@@ -162,7 +164,7 @@ def main() -> None:
             evidence_sha = hashlib.sha256(
                 json.dumps(evidence, sort_keys=True, separators=(",", ":")).encode("utf-8")
             ).hexdigest()
-            records.append({
+            row = {
                 **evidence, "prompt": prompt, "response": response,
                 "sandbox_run_id": str(uuid.uuid4()),
                 "grader_attestation_sha256": evidence_sha,
@@ -172,6 +174,36 @@ def main() -> None:
                 "source_policy_decision_id": task.get("_policy_decision_id"),
                 "source_license_tier": task.get("_license_tier"),
                 "review_required": True,
+            }
+            records.append(row)
+            task_rollouts.append(row)
+        if len({row["sandbox_status"] for row in task_rollouts}) > 1:
+            grpo_groups.append({
+                "task_id": task_id, "prompt": prompt,
+                "rollouts": [{"candidate_id": row["candidate_id"],
+                              "response": row["response"],
+                              "reward": 1.0 if row["sandbox_status"] == "LAB_PASSED" else 0.0,
+                              "sandbox_status": row["sandbox_status"]}
+                             for row in task_rollouts],
+                "eligible_for_training": False, "review_required": True,
+            })
+        passed = [row for row in task_rollouts if row["sandbox_status"] == "LAB_PASSED"]
+        failed = [row for row in task_rollouts if row["sandbox_status"] == "LAB_FAILED"]
+        if passed and failed:
+            dpo_candidates.append({
+                "task_id": task_id, "prompt": prompt,
+                "chosen": passed[0]["response"], "rejected": failed[0]["response"],
+                "chosen_status": "LAB_PASSED", "teach_back_verified": False,
+                "rejected_status": "LAB_FAILED", "eligible_for_training": False,
+                "review_required": True,
+            })
+        for row in passed:
+            sft_candidates.append({
+                "task_id": task_id,
+                "messages": [{"role": "user", "content": prompt},
+                             {"role": "assistant", "content": row["response"]}],
+                "lab_status": "LAB_PASSED", "teach_back_verified": False,
+                "eligible_for_training": False, "review_required": True,
             })
 
     a.output.parent.mkdir(parents=True, exist_ok=True)
@@ -179,13 +211,23 @@ def main() -> None:
         "".join(json.dumps(row, sort_keys=True, ensure_ascii=False) + "\n" for row in records),
         encoding="utf-8",
     )
+    sidecars = {
+        "grpo_candidates.jsonl": grpo_groups,
+        "dpo_candidates.jsonl": dpo_candidates,
+        "sft_candidates.jsonl": sft_candidates,
+    }
+    for filename, rows in sidecars.items():
+        (a.output.parent / filename).write_text(
+            "".join(json.dumps(row, sort_keys=True, ensure_ascii=False) + "\\n" for row in rows),
+            encoding="utf-8",
+        )
     summary = {
         "schema": "dreamco.foundry.raw_self_play.v1",
         "source_manifest_sha256": sha256_file(a.manifest),
         "checkpoint_sha256": hashlib.sha256(
             b"".join(sorted(path.read_bytes() for path in a.checkpoint.glob("*.safetensors")))
         ).hexdigest(),
-        "records": len(records), "split": "train_only", "holdout_read": False,
+        "records": len(records), "grpo_candidate_groups": len(grpo_groups),\n        "dpo_candidate_pairs": len(dpo_candidates), "sft_candidate_traces": len(sft_candidates),\n        "split": "train_only", "holdout_read": False,
         "training_approval": False, "teach_back_auto_verified": False,
         "output_sha256": sha256_file(a.output),
     }
