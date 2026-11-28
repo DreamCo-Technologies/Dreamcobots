@@ -16,7 +16,7 @@ from pathlib import Path, PurePosixPath
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
-from tools.buddy_safe_repair import repair_plan, run_safe_repair
+from tools.buddy_safe_repair import repair_plan
 from tools.ci_failure_report import sanitize
 
 MAX_ATTEMPTS = 3
@@ -143,15 +143,25 @@ def apply_isolated(root: Path, obs: dict, prefixes: tuple[str, ...], output: Pat
         worktree = Path(temp) / "repo"
         git(root, "worktree", "add", "--detach", str(worktree), head)
         try:
-            repair = run_safe_repair(obs, worktree)
+            command_results = []
+            for command in repair_plan(obs):
+                if len(command) != 2 or command[0] != sys.executable or command[1] not in ALLOWED_COMMAND_PATHS:
+                    return {"status": "BLOCKED_UNSAFE_COMMAND", "success": False}
+                proc = subprocess.run(
+                    [sys.executable, command[1]], cwd=worktree, text=True,
+                    capture_output=True, timeout=300, check=False,
+                )
+                command_results.append({"script": command[1], "returncode": proc.returncode})
+                if proc.returncode:
+                    return {"status": "REPAIR_COMMAND_FAILED", "success": False, "command_results": command_results}
             status = git(worktree, "status", "--porcelain", "--untracked-files=all")
             changed = sorted({line[3:] for line in status.splitlines() if len(line) > 3})
             blocked = [path for path in changed if not path_is_allowed(path, prefixes)]
             if blocked:
                 return {"status": "BLOCKED_UNEXPECTED_PATH", "success": False, "blocked_paths": blocked}
             if not changed:
-                return {"status": repair.get("status", "REPAIR_RAN_NO_CHANGES"),
-                        "success": bool(repair.get("success")), "changed_files": []}
+                return {"status": "REPAIR_RAN_NO_CHANGES",
+                        "success": True, "changed_files": [], "command_results": command_results}
             git(worktree, "add", "-N", "--", *changed)
             patch = git(worktree, "diff", "--binary", "--")
             output.parent.mkdir(parents=True, exist_ok=True)
@@ -162,7 +172,7 @@ def apply_isolated(root: Path, obs: dict, prefixes: tuple[str, ...], output: Pat
                 "success": True,
                 "changed_files": changed,
                 "patch_file": str(patch_path.relative_to(root)),
-                "commands": repair.get("commands", []),
+                "commands": command_results,
             }
         finally:
             subprocess.run(
@@ -179,7 +189,10 @@ def run(args: argparse.Namespace) -> dict:
         raise ValueError("Output path must remain inside the repository.")
     if bool(args.report) == bool(args.observation):
         raise ValueError("Provide exactly one of --report or --observation.")
-    source = read_object(args.report or args.observation)
+    input_path = (root / (args.report or args.observation)).resolve()
+    if root not in input_path.parents:
+        raise ValueError("Input report or observation must remain inside the repository.")
+    source = read_object(input_path)
     obs = observation_from_report(source) if args.report else source
     commands = repair_plan(obs)
     if any(
