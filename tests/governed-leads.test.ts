@@ -335,6 +335,22 @@ test("validates consent evidence, unique channels, and prohibited targeting", ()
   }));
 });
 
+test("does not clear suppression without a new explicit opt-in", () => {
+  const optedOut = { ...leadRecord, suppressionStatus: "opted_out" as const };
+  assert.throws(
+    () => assertLeadStageTransition(optedOut, { ...optedOut, suppressionStatus: "active" }),
+    /suppression_cannot_be_cleared/,
+  );
+  const resubscribed = assertLeadStageTransition(optedOut, {
+    ...optedOut,
+    suppressionStatus: "active",
+    consentBasis: "explicit_opt_in",
+    consentEvidenceRef: "consent:new-opt-in-002",
+    consentObtainedAt: "2026-11-28T12:00:00.000Z",
+  });
+  assert.equal(resubscribed.suppressionStatus, "active");
+});
+
 test("requires timestamped unexpired channel consent and explicit SMS opt-in", () => {
   assert.throws(() => leadEngineRecordSchema.parse({
     ...leadRecord,
