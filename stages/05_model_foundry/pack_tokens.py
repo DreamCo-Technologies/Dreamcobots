@@ -21,19 +21,25 @@ def main():
     weights={"study_guides":60,"verified_trajectories":25,"general_replay":15}
     rows={k:list(iter_authorized_records(manifest,categories={k},splits={"train"})) for k in weights}
     if any(not rows[k] for k in weights): raise ValueError("all three signed training categories are required for the 60/25/15 mix")
-    tokens=[]
-    for category,weight in weights.items():
+    pools={}
+    for category in weights:
         pool=[]
         for row in rows[category]:
             assert_training_split([row])
             text=row.get("content") or row.get("text") or row.get("title","")
             if row.get("messages"):
-                text="\n".join(f"<|{m.get('role','user')}|> {m.get('content','')}" for m in row["messages"])
-            ids=tok.encode(str(text),add_special_tokens=False)
-            pool.extend(ids+[tok.eos_token_id])
-        # Deterministic category weighting, no validation/holdout records.
-        repeats=max(1,weight//5)
-        tokens.extend(pool*repeats)
+                text="\\n".join(f"<|{m.get('role','user')}|> {m.get('content','')}" for m in row["messages"])
+            pool.extend(tok.encode(str(text),add_special_tokens=False)+[tok.eos_token_id])
+        if not pool: raise ValueError(f"category {category} contains no encodable text")
+        pools[category]=pool
+    # Largest exact 60/25/15 token mixture supported by all source pools.
+    cycles=min(len(pools[k])*100//weights[k] for k in weights)
+    target=(cycles//100)*100
+    if target<a.sequence_length: raise ValueError("not enough authorized tokens for one mixed sequence")
+    tokens=[]
+    for category,weight in weights.items():
+        need=target*weight//100; pool=pools[category]
+        tokens.extend((pool*((need+len(pool)-1)//len(pool)))[:need])
     usable=(len(tokens)//a.sequence_length)*a.sequence_length
     if usable==0: raise ValueError("not enough authorized tokens to form one sequence")
     arr=np.asarray(tokens[:usable],dtype=np.uint32)
