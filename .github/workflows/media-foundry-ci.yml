@@ -4,20 +4,20 @@ on:
   pull_request:
     paths:
       - "stages/08_media_studio/**"
+      - "buddy/media/model_license_gate.py"
+      - "config/buddy-media-model-registry.example.json"
       - "tests/test_media_director.py"
       - "tests/test_media_model_license_gate.py"
-      - "buddy/media/model_license_gate.py"
-      - "config/buddy-media-model-registry.example.json"
       - "docs/DREAMCO_MEDIA_FOUNDRY.md"
-      - "tests/test_media_model_license_gate.py"
-      - "buddy/media/model_license_gate.py"
-      - "config/buddy-media-model-registry.example.json"
       - ".github/workflows/media-foundry-ci.yml"
   push:
     branches: [main]
     paths:
       - "stages/08_media_studio/**"
+      - "buddy/media/model_license_gate.py"
+      - "config/buddy-media-model-registry.example.json"
       - "tests/test_media_director.py"
+      - "tests/test_media_model_license_gate.py"
       - "docs/DREAMCO_MEDIA_FOUNDRY.md"
       - ".github/workflows/media-foundry-ci.yml"
   workflow_dispatch:
@@ -41,9 +41,15 @@ jobs:
         with:
           python-version: "3.11"
       - name: Compile Python sources
-        run: python -m py_compile stages/08_media_studio/director.py buddy/media/model_license_gate.py tests/test_media_director.py tests/test_media_model_license_gate.py
-      - name: Run CPU-only media director tests
-        run: python -m unittest discover -s tests -p "test_media_*gate.py" -v
+        run: |
+          python -m py_compile \
+            stages/08_media_studio/director.py \
+            buddy/media/model_license_gate.py \
+            tests/test_media_director.py \
+            tests/test_media_model_license_gate.py
+      - name: Run CPU-only tests
+        run: |
+          python -m unittest discover -s tests -p "test_media_*gate.py" -v
           python -m unittest discover -s tests -p "test_media_director.py" -v
       - name: Validate sample production plan
         run: |
