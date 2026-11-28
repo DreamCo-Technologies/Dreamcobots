@@ -1,4 +1,5 @@
 import importlib.util
+import hashlib
 import json
 import tempfile
 import unittest
@@ -27,10 +28,75 @@ class CatalogPolicyTests(unittest.TestCase):
     def test_unregistered_youtube_channel_is_not_cataloged(self):
         self.assertFalse(catalog.source_is_configured("unknown-channel","https://www.youtube.com/@random",policy.load_registry(ROOT/"contracts/license_policy.yaml")))
 
+    def test_catalog_rejects_prefix_collision(self):
+        registry=policy.load_registry(ROOT/"contracts/license_policy.yaml")
+        self.assertFalse(catalog.source_is_configured("freecodecamp","https://www.youtube.com/@freecodecamp.evil",registry))
+
     def test_catalog_rejects_video_from_wrong_channel(self):
         with self.assertRaises(PermissionError):
             catalog.normalize_item({"id":"x","channel_id":"UC_NOT_THE_OFFICIAL_CHANNEL"},
                 "https://www.youtube.com/@freecodecamp","freecodecamp","UC8butISFwT-Wl7EV0hUK0BQ")
+
+    def test_registered_source_url_prefix_is_enforced(self):
+        source={"source_id":"freecodecamp","source_url":"https://www.youtube.com/watch?v=unlisted",
+                "license_tag":"CC-BY-4.0","license_record_verified":True}
+        result=policy.evaluate_source(source,self.registry,"fact_extraction")
+        self.assertFalse(result["allowed"])
+        self.assertEqual(result["reason"],"BLOCKED_SOURCE_URL_NOT_ALLOWLISTED")
+        source["source_url"]="https://www.youtube.com/@freecodecamp.evil"
+        result=policy.evaluate_source(source,self.registry,"fact_extraction")
+        self.assertFalse(result["allowed"])
+
+    def test_license_snapshot_hash_is_verified(self):
+        evidence_path=ROOT/"tests/fixtures/license-evidence.txt"
+        source={"source_id":"freecodecamp","source_url":"https://www.youtube.com/@freecodecamp",
+                "license_tag":"CC-BY-4.0","license_record_verified":True,
+                "license_evidence_url":"https://www.youtube.com/watch?v=example",
+                "license_evidence_path":"tests/fixtures/license-evidence.txt",
+                "license_evidence_sha256":hashlib.sha256(evidence_path.read_bytes()).hexdigest(),
+                "license_review_status":"approved","license_reviewer_id":"test-reviewer",
+                "license_reviewed_at":"2026-11-27T12:00:00+00:00"}
+        self.assertTrue(policy.evaluate_source(source,self.registry,"fact_extraction")["allowed"])
+        source["license_evidence_sha256"]="0"*64
+        self.assertFalse(policy.evaluate_source(source,self.registry,"fact_extraction")["allowed"])
+
+    def test_qwen_model_exception_is_exact_and_requires_item_license_evidence(self):
+        evidence_path=ROOT/"tests/fixtures/license-evidence.txt"
+        revision="a"*40
+        license_url=f"https://huggingface.co/Qwen/Qwen2.5-Coder-1.5B/blob/{revision}/LICENSE"
+        source={
+            "source_id":"qwen-qwen2.5-coder-1.5b",
+            "source_url":"https://huggingface.co/Qwen/Qwen2.5-Coder-1.5B",
+            "license_tag":"Apache-2.0",
+            "license_record_verified":True,
+            "license_evidence_url":license_url,
+            "license_evidence_path":"tests/fixtures/license-evidence.txt",
+            "license_evidence_sha256":hashlib.sha256(evidence_path.read_bytes()).hexdigest(),
+            "license_review_status":"approved",
+            "license_reviewer_id":"test-reviewer",
+            "license_reviewed_at":"2026-11-27T12:00:00+00:00",
+            "commercial_training_permission":True,
+            "commercial_training_evidence_ref":license_url,
+        }
+        result=policy.evaluate_source(source,self.registry,"commercial_training")
+        self.assertTrue(result["allowed"],result["reason"])
+        blocked=policy.evaluate_source({**source,"source_id":"huggingface-hub"},self.registry,"commercial_training")
+        self.assertFalse(blocked["allowed"])
+        collision=policy.evaluate_source({
+            **source,"source_url":"https://huggingface.co/Qwen/Qwen2.5-Coder-1.5B-evil"
+        },self.registry,"commercial_training")
+        self.assertFalse(collision["allowed"])
+        pending=policy.evaluate_source({
+            **source,"license_review_status":"pending"
+        },self.registry,"commercial_training")
+        self.assertFalse(pending["allowed"])
+
+    def test_missing_item_license_snapshot_fails_closed(self):
+        source={"source_id":"freecodecamp","source_url":"https://www.youtube.com/@freecodecamp",
+                "license_tag":"CC-BY-4.0","license_record_verified":True}
+        result=policy.evaluate_source(source,self.registry,"fact_extraction")
+        self.assertFalse(result["allowed"])
+        self.assertEqual(result["reason"],"BLOCKED_MISSING_OR_UNVERIFIED_ITEM_LICENSE_EVIDENCE")
 
     def test_unknown_domain_fails_closed(self):
         source={"source_url":"https://unknown.example/item","license_tag":"MIT","license_record_verified":True}
@@ -54,7 +120,15 @@ class CatalogPolicyTests(unittest.TestCase):
             rows=[json.loads(line) for line in ledger.read_text().splitlines()]
             self.assertEqual(len(rows),2)
             self.assertFalse(rows[0]["license_record_verified"])
-            self.assertNotEqual(rows[0]["content_sha256"],rows[1]["content_sha256"])
+            self.assertNotEqual(rows[0]["metadata_sha256"],rows[1]["metadata_sha256"])
+
+    def test_empty_source_enumeration_fails_without_creating_ledger(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            ledger=Path(tmp)/"catalog.jsonl"
+            with self.assertRaises(ValueError):
+                catalog.sync_sources([{"source_id":"freecodecamp","url":"https://www.youtube.com/@freecodecamp"}],
+                                     ledger,ROOT/"contracts/license_policy.yaml",lambda _: [])
+            self.assertFalse(ledger.exists())
 
     def test_hash_is_stable(self):
         self.assertEqual(catalog.canonical_hash({"video_id":"abc","duration":30}),catalog.canonical_hash({"duration":30,"video_id":"abc"}))
