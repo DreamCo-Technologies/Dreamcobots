@@ -97,6 +97,7 @@ class BuddyKnowledgeRouterTests(unittest.TestCase):
         self.assertFalse(route["external_discovery_requires_explicit_opt_in"])
         self.assertFalse(route["external_discovery_performed"])
         self.assertFalse(route["external_model_routing_performed"])
+        self.assertIn("do not route learners to external course websites", route["next_action"])
 
     def test_exact_seed_candidate_routes_to_its_bootcamp_discovery_lesson(self):
         route = route_buddy_learning_query("React 19")
