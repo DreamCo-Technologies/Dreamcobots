@@ -137,19 +137,13 @@ export function buildLeadStagePlan(input: LeadEngineRecord): LeadStagePlan {
   const currentIndex = STAGE_ORDER.indexOf(lead.stage);
   const suppressed = lead.suppressionStatus !== "active";
   const permissioned = lead.consentBasis !== "none" && Boolean(lead.consentEvidenceRef);
-  const actions = STAGE_ORDER.map((stage, index) => {
-    if (index < currentIndex) return { stage, status: "complete" as const, reason: "stage_previously_completed" };
-    if (stage === "nurture" && (!permissioned || suppressed)) {
-      return { stage, status: "blocked" as const, reason: suppressed ? "contact_suppressed" : "documented_permission_required" };
-    }
-    if (stage === "convert" && qualification.tier !== "hot") {
-      return { stage, status: "blocked" as const, reason: "hot_qualification_and_human_sales_review_required" };
-    }
-    if (stage === "convert" && (!lead.budgetConfirmed || !lead.useCase || !lead.humanReviewEvidenceRef)) {
-      return { stage, status: "blocked" as const, reason: "confirmed_budget_use_case_and_human_review_required" };
-    }
-    return { stage, status: index === currentIndex ? "ready" as const : "blocked" as const, reason: index === currentIndex ? "current_stage_ready_for_owner_workflow" : "prior_stage_completion_required" };
-  });
+  const canConvert = permissioned &&
+    !suppressed &&
+    qualification.tier === "hot" &&
+    lead.budgetConfirmed &&
+    Boolean(lead.useCase) &&
+    Boolean(lead.humanReviewEvidenceRef);
+
   const recommendedStage: LeadEngineStage = suppressed
     ? lead.stage
     : currentIndex === 0
@@ -159,10 +153,28 @@ export function buildLeadStagePlan(input: LeadEngineRecord): LeadStagePlan {
         : currentIndex === 2
           ? permissioned && qualification.tier !== "cold" ? "nurture" : "qualify"
           : currentIndex === 3
-            ? permissioned && qualification.tier === "hot" && lead.budgetConfirmed && Boolean(lead.useCase) && Boolean(lead.humanReviewEvidenceRef)
-              ? "convert"
-              : "nurture"
+            ? canConvert ? "convert" : "nurture"
             : "convert";
+
+  const actions = STAGE_ORDER.map((stage, index) => {
+    if (index < currentIndex) {
+      return { stage, status: "complete" as const, reason: "stage_previously_completed" };
+    }
+    if (stage === "nurture" && (!permissioned || suppressed)) {
+      return { stage, status: "blocked" as const, reason: suppressed ? "contact_suppressed" : "documented_permission_required" };
+    }
+    if (stage === "convert" && !canConvert) {
+      return { stage, status: "blocked" as const, reason: "hot_score_budget_use_case_permission_and_human_review_required" };
+    }
+    if (stage === lead.stage) {
+      return { stage, status: "ready" as const, reason: "current_stage_ready_for_owner_workflow" };
+    }
+    if (stage === recommendedStage) {
+      return { stage, status: "ready" as const, reason: "next_eligible_stage_recommended" };
+    }
+    return { stage, status: "blocked" as const, reason: "prior_stage_completion_required" };
+  });
+
   return {
     schema: "dreamco.lead_engine.stage_plan.v1",
     leadId: lead.leadId,
@@ -173,7 +185,6 @@ export function buildLeadStagePlan(input: LeadEngineRecord): LeadStagePlan {
     externalActionTaken: false,
   };
 }
-
 
 /** Enforces one-stage-at-a-time progression and explicit gates for nurture/convert. */
 export function assertLeadStageTransition(
