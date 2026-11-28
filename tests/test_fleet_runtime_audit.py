@@ -30,6 +30,7 @@ class ReportFormattingTests(unittest.TestCase):
                 "flags": {}, "missing_pieces": {}, "by_engine": {}, "by_division": {},
             },
             "engine_unit_tests_passed": True,
+            "deferred_generated_artifact_tests": list(audit.DEFERRED_GENERATED_ARTIFACT_TESTS),
             "divisions": [],
             "code_folders": [],
             "bot_folders": [],
@@ -40,6 +41,8 @@ class ReportFormattingTests(unittest.TestCase):
         }
         report = audit.render_report(status, [])
         self.assertTrue(all(line == line.rstrip() for line in report.splitlines()))
+        self.assertIn("tests/test_run_prospectus.py", report)
+        self.assertIn("tests/test_file_prospectus.py", report)
 
 
 class BotStateTests(unittest.TestCase):
