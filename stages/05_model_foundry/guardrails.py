@@ -108,7 +108,8 @@ def assert_training_split(rows):
         if row.get("_split") != "train":
             raise PermissionError("only deterministic train buckets 00-89 may enter training")
 
-def validate_shard_payload(payload: dict, root: Path, source_manifest_path: Path) -> dict:
+def validate_shard_payload(payload: dict, root: Path, source_manifest_path: Path,
+                           *, attach_paths: bool = True) -> dict:
     """Validate signed shard metadata, containment, sequence geometry and bytes."""
     if payload.get("schema") != "dreamco.foundry.token_shards.v1":
         raise ValueError("unsupported token-shard manifest schema")
@@ -150,7 +151,8 @@ def validate_shard_payload(payload: dict, root: Path, source_manifest_path: Path
             raise ValueError(f"{name} shard filename must start with {expected_prefix}")
         if sha256_file(path) != entry.get("sha256"):
             raise ValueError(f"{name} shard SHA-256 mismatch")
-        entry["_resolved_path"] = str(path)
+        if attach_paths:
+            entry["_resolved_path"] = str(path)
     if validation_expected != (payload.get("validation") is not None):
         raise ValueError("validation split declaration and validation shard entry disagree")
     return payload
@@ -171,7 +173,9 @@ def verify_signed_shard_manifest(shard_manifest_path: Path, shard_signature_path
         raise ValueError("trusted policy key must be Ed25519")
     signature = base64.b64decode(shard_signature_path.read_text(encoding="ascii").strip(), validate=True)
     key.verify(signature, canonical_json(payload))
-    return validate_shard_payload(payload, shard_manifest_path.parent, source_manifest_path)
+    return validate_shard_payload(
+        payload, shard_manifest_path.parent, source_manifest_path, attach_paths=True
+    )
 
 def require_model_authorization(manifest: dict, model_id: str, revision: str) -> dict:
     """Require signed, item-level commercial permission for an exact model revision."""
