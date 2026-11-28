@@ -64,9 +64,8 @@ def main():
         )
         if not hf_tokenizer.is_fast or not hasattr(hf_tokenizer, "train_new_from_iterator"):
             raise ValueError("base tokenizer must be a fast tokenizer supporting train_new_from_iterator")
-        if args.vocab_size <= len(hf_tokenizer):
-            raise ValueError("extended vocab-size must exceed the base tokenizer vocabulary")
-        hf_tokenizer = hf_tokenizer.train_new_from_iterator(corpus(manifest), vocab_size=args.vocab_size)
+        target_vocab_size = args.vocab_size if args.vocab_size > len(hf_tokenizer) else len(hf_tokenizer) + args.vocab_size
+        hf_tokenizer = hf_tokenizer.train_new_from_iterator(corpus(manifest), vocab_size=target_vocab_size)
         hf_tokenizer.add_special_tokens({
             "additional_special_tokens": [
                 token for token in SPECIAL_TOKENS
