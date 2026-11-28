@@ -14,7 +14,7 @@ The DreamCo Five-Stage Reverse Engineering Gate, Repository Test Matrix, Core He
 
 ## Failure reports
 
-The PR and mainline workflows upload metadata-only JSON reports containing status, exit code, commit, and run ID. Raw runner logs and failure excerpts are deliberately omitted from artifacts and public issues because arbitrary logs cannot be reliably sanitized. A small sanitizer remains covered by regression tests but is not used to publish log text. Diagnostic details remain in the GitHub Actions run.
+The PR and mainline workflows upload metadata-only JSON reports containing status, exit code, commit, and run ID. The Stage 06 planner stores bounded, sanitized test identifiers and never uploads the raw pytest JSON report. Safe-repair command artifacts contain command names and exit codes only; raw stdout/stderr are discarded. Raw runner logs and failure excerpts are deliberately omitted from artifacts and public issues because arbitrary logs cannot be reliably sanitized. A small sanitizer remains covered by regression tests but is not used to publish log text. Diagnostic details remain in the GitHub Actions run.
 
 ## Mainline recovery
 
