@@ -176,12 +176,14 @@ class FoundryGuardrailTests(unittest.TestCase):
             train_id = next(f"train-{i}" for i in range(10000) if GUARDRAILS.split_bucket(f"train-{i}") < 90)
             guide = root / "guide.jsonl"
             benchmark = root / "benchmark.jsonl"
-            guide.write_text(json.dumps({"task_id": train_id, "title": "allowed guide"}) + "\\n", encoding="utf-8")
-            benchmark.write_text(json.dumps({"task_id": train_id, "title": "holdout benchmark"}) + "\\n", encoding="utf-8")
+            guide.write_text(json.dumps({"task_id": train_id, "title": "allowed guide"}) + "\n", encoding="utf-8")
+            benchmark.write_text(json.dumps({"task_id": train_id, "title": "holdout benchmark"}) + "\n", encoding="utf-8")
             manifest = {"datasets": [
                 {"_resolved_path": str(guide), "dataset_id": "g", "category": "study_guides",
+                 "sha256": hashlib.sha256(guide.read_bytes()).hexdigest(),
                  "license_tier": "DREAMCO_ORIGINAL", "policy_decision_id": "P1"},
                 {"_resolved_path": str(benchmark), "dataset_id": "h", "category": "holdout_benchmarks",
+                 "sha256": hashlib.sha256(benchmark.read_bytes()).hexdigest(),
                  "license_tier": "DREAMCO_ORIGINAL", "policy_decision_id": "P1"},
             ]}
             corpus = list(TOKENIZER_MODULE.corpus(manifest))
@@ -247,11 +249,11 @@ class FoundryGuardrailTests(unittest.TestCase):
                               if GUARDRAILS.split_bucket(f"holdout-{i}") >= 95)
             dataset = root / "study_guides.jsonl"
             holdout_dataset = root / "holdout.jsonl"
-            dataset.write_text(json.dumps({"task_id": task_id, "title": "Guide"}) + "\\n", encoding="utf-8")
+            dataset.write_text(json.dumps({"task_id": task_id, "title": "Guide"}) + "\n", encoding="utf-8")
             holdout_dataset.write_text(json.dumps({
                 "task_id": holdout_id, "prompt": "holdout prompt",
                 "expected_answer": "holdout answer", "expected_safety": "ALLOW"
-            }) + "\\n", encoding="utf-8")
+            }) + "\n", encoding="utf-8")
             attestation = root / "owner-attestation.txt"
             attestation.write_text("DreamCo owns this original study guide.", encoding="utf-8")
             manifest = root / "manifest.json"
@@ -287,7 +289,7 @@ class FoundryGuardrailTests(unittest.TestCase):
             holdout_dataset.write_text(json.dumps({
                 "task_id": holdout_id, "prompt": "tampered holdout",
                 "expected_answer": "wrong", "expected_safety": "ALLOW"
-            }) + "\\n", encoding="utf-8")
+            }) + "\n", encoding="utf-8")
             verified = GUARDRAILS.verify_signed_manifest(
                 manifest, signature, public_path, verify_dataset_hashes=False
             )
@@ -303,7 +305,7 @@ class FoundryGuardrailTests(unittest.TestCase):
             shard_dir = root / "shards"
             shard_dir.mkdir()
             shard = shard_dir / "train-00000.bin"
-            shard.write_bytes(b"\\x00" * 32)
+            shard.write_bytes(b"\x00" * 32)
             shard_index = shard_dir / "train-00000.idx"
             index_payload = {
                 "schema": "dreamco.foundry.token_shard_index.v1",
@@ -312,7 +314,7 @@ class FoundryGuardrailTests(unittest.TestCase):
                 "offset_unit": "tokens", "first_token_offset": 0,
                 "sequence_stride_tokens": 8,
             }
-            shard_index.write_text(json.dumps(index_payload, sort_keys=True, separators=(",", ":")) + "\\n", encoding="utf-8")
+            shard_index.write_text(json.dumps(index_payload, sort_keys=True, separators=(",", ":")) + "\n", encoding="utf-8")
             shard_manifest = shard_dir / "manifest.json"
             shard_signature = shard_dir / "manifest.sig"
             shard_payload = {
@@ -345,7 +347,7 @@ class FoundryGuardrailTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
             shard = root / "train-00000.bin"
-            shard.write_bytes(b"\\x00" * (8 * 4))
+            shard.write_bytes(b"\x00" * (8 * 4))
             shard_index = root / "train-00000.idx"
             index_payload = {
                 "schema": "dreamco.foundry.token_shard_index.v1",
@@ -354,7 +356,7 @@ class FoundryGuardrailTests(unittest.TestCase):
                 "offset_unit": "tokens", "first_token_offset": 0,
                 "sequence_stride_tokens": 8,
             }
-            shard_index.write_text(json.dumps(index_payload, sort_keys=True, separators=(",", ":")) + "\\n", encoding="utf-8")
+            shard_index.write_text(json.dumps(index_payload, sort_keys=True, separators=(",", ":")) + "\n", encoding="utf-8")
             source = root / "source.json"
             source.write_text("{}", encoding="utf-8")
             payload = {
@@ -384,7 +386,7 @@ class FoundryGuardrailTests(unittest.TestCase):
             entries = []
             for index_number in range(2):
                 shard = root / f"train-{index_number:05d}.bin"
-                shard.write_bytes(b"\\x00" * 32)
+                shard.write_bytes(b"\x00" * 32)
                 index_path = root / f"train-{index_number:05d}.idx"
                 index_payload = {
                     "schema": "dreamco.foundry.token_shard_index.v1",
@@ -394,7 +396,7 @@ class FoundryGuardrailTests(unittest.TestCase):
                     "sequence_stride_tokens": 8,
                 }
                 index_path.write_text(
-                    json.dumps(index_payload, sort_keys=True, separators=(",", ":")) + "\\n",
+                    json.dumps(index_payload, sort_keys=True, separators=(",", ":")) + "\n",
                     encoding="utf-8",
                 )
                 entries.append({
@@ -541,6 +543,7 @@ class FoundryGuardrailTests(unittest.TestCase):
             "source_manifest_sha256": "a" * 64,
             "benchmark_suite_sha256": "b" * 64,
             "evaluation_config_sha256": "c" * 64,
+            "tokenizer_sha256": "e" * 64,
             "checkpoint_sha256": "d" * 64,
             "evaluated_task_ids": ["task-a", "task-b"],
             "pass_rate": 0.95,
