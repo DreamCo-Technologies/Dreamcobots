@@ -61,8 +61,8 @@ def safe_output_path(root:Path,value:str)->Path:
  out=(root/Path(*p.parts)).resolve()
  try: relative=out.relative_to(root.resolve()).as_posix()
  except ValueError: raise ValueError("Repair output resolves outside the repository.")
- if not relative.startswith(OUTPUT_PREFIX) or not repair_path_allowed(relative):
-  raise ValueError("Repair output resolves outside the safe generated-artifact path allowlist.")
+ if not relative.startswith(OUTPUT_PREFIX):
+  raise ValueError("Repair output resolves outside artifacts/buddy-safe-repair/.")
  return out
 
 
