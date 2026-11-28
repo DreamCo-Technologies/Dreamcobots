@@ -172,7 +172,7 @@ def apply_isolated(root: Path, obs: dict, prefixes: tuple[str, ...], output: Pat
                 "success": True,
                 "changed_files": changed,
                 "patch_file": str(patch_path.relative_to(root)),
-                "commands": command_results,
+                "command_results": command_results,
             }
         finally:
             subprocess.run(
