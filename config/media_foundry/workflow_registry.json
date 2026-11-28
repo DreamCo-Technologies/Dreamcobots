@@ -1,0 +1,118 @@
+{
+  "schema": "dreamco.media.workflow_registry.v1",
+  "workflows": [
+    {
+      "id": "youtube_episode",
+      "steps": [
+        "brief",
+        "rights_preflight",
+        "script",
+        "storyboard",
+        "character_reference",
+        "keyframes",
+        "shot_plan",
+        "voice_and_music",
+        "video_render",
+        "edit_timeline",
+        "captions",
+        "quality_gate",
+        "human_release"
+      ],
+      "required_outputs": [
+        "script",
+        "storyboard",
+        "shot_plan",
+        "timeline",
+        "rights_manifest",
+        "render_manifest",
+        "captions",
+        "release_checklist"
+      ]
+    },
+    {
+      "id": "feature_film",
+      "steps": [
+        "brief",
+        "rights_preflight",
+        "treatment",
+        "script",
+        "character_bible",
+        "storyboard",
+        "shot_plan",
+        "keyframes",
+        "animatic",
+        "voice_and_music",
+        "scene_render",
+        "edit_timeline",
+        "sound_mix",
+        "quality_gate",
+        "human_release"
+      ],
+      "required_outputs": [
+        "treatment",
+        "script",
+        "character_bible",
+        "storyboard",
+        "shot_plan",
+        "timeline",
+        "rights_manifest",
+        "render_manifest",
+        "release_checklist"
+      ]
+    },
+    {
+      "id": "music_video",
+      "steps": [
+        "brief",
+        "rights_preflight",
+        "song_rights",
+        "treatment",
+        "storyboard",
+        "character_reference",
+        "keyframes",
+        "performance_render",
+        "edit_timeline",
+        "audio_mix",
+        "quality_gate",
+        "human_release"
+      ],
+      "required_outputs": [
+        "song_rights",
+        "treatment",
+        "storyboard",
+        "timeline",
+        "rights_manifest",
+        "render_manifest",
+        "release_checklist"
+      ]
+    },
+    {
+      "id": "original_music",
+      "steps": [
+        "brief",
+        "lyrics_or_instrumental_spec",
+        "rights_preflight",
+        "composition",
+        "arrangement",
+        "render",
+        "mix",
+        "master",
+        "similarity_review",
+        "human_release"
+      ],
+      "required_outputs": [
+        "composition_manifest",
+        "source_manifest",
+        "mix_manifest",
+        "master_manifest",
+        "release_checklist"
+      ]
+    }
+  ],
+  "global_rules": [
+    "No renderer means plan-only status.",
+    "No asset or model may bypass rights preflight.",
+    "All user voice or likeness cloning requires explicit active consent.",
+    "No external publish, upload, or monetized release occurs without human approval."
+  ]
+}
