@@ -150,13 +150,19 @@ export function buildLeadStagePlan(input: LeadEngineRecord): LeadStagePlan {
     }
     return { stage, status: index === currentIndex ? "ready" as const : "blocked" as const, reason: index === currentIndex ? "current_stage_ready_for_owner_workflow" : "prior_stage_completion_required" };
   });
-  const recommendedStage = suppressed || !permissioned
-    ? "qualify"
-    : qualification.tier === "hot" && lead.budgetConfirmed && lead.useCase && lead.humanReviewEvidenceRef
-      ? "convert"
-      : qualification.tier === "warm"
-        ? "nurture"
-        : "qualify";
+  const recommendedStage: LeadEngineStage = suppressed
+    ? lead.stage
+    : currentIndex === 0
+      ? "capture"
+      : currentIndex === 1
+        ? "qualify"
+        : currentIndex === 2
+          ? permissioned && qualification.tier !== "cold" ? "nurture" : "qualify"
+          : currentIndex === 3
+            ? permissioned && qualification.tier === "hot" && lead.budgetConfirmed && Boolean(lead.useCase) && Boolean(lead.humanReviewEvidenceRef)
+              ? "convert"
+              : "nurture"
+            : "convert";
   return {
     schema: "dreamco.lead_engine.stage_plan.v1",
     leadId: lead.leadId,
