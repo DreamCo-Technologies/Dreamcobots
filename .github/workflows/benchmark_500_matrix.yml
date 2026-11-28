@@ -8,7 +8,7 @@ on:
       - "tests/test_500_model_shard_planner.py"
       - ".github/workflows/benchmark_500_matrix.yml"
   push:
-    branches: [main]
+    branches: [main, feat/dreamco-phase1-heldout-eval-checkpoint-gates]
     paths:
       - "config/verified-model-inventory.json"
       - "tools/plan_500_model_shards.py"
@@ -61,6 +61,8 @@ jobs:
       - uses: actions/setup-python@v7
         with:
           python-version: "3.13"
+      - name: Run shard planner contract tests
+        run: python -m unittest tests.test_500_model_shard_planner
       - name: Generate aggregate readiness plan
         run: |
           python tools/plan_500_model_shards.py \
