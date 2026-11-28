@@ -2,6 +2,9 @@ name: Actions Failure Sweep
 
 on:
   workflow_dispatch:
+  # Keep one low-frequency catch-all sweep so failures outside the event watcher are not missed.
+  schedule:
+    - cron: "17 12 * * *"
   push:
     branches: [main]
     paths:
