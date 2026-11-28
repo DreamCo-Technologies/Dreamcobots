@@ -123,7 +123,7 @@ python -m stages.05_model_foundry.eval_holdout \
   --candidate reports/candidate.json --output reports/holdout-promotion.json
 ```
 
-For a LoRA adapter, pass `--base-model` and `--base-revision` to each inference command; the signed manifest must authorize that exact model revision. The current runner uses normalized exact-match answer scoring and deterministic refusal markers. These are transparent baseline checks, not a substitute for human/domain-specific safety evaluation. Promotion requires the configured minimum thresholds and no regression against baseline.
+For a LoRA adapter, pass `--base-model` and `--base-revision` to each inference command; the signed manifest must authorize that exact model revision. The current runner uses normalized exact-match answer scoring and deterministic refusal markers. These are transparent baseline checks, not a substitute for human/domain-specific safety evaluation. Promotion requires the configured minimum thresholds and no regression against baseline. The runner defaults to a 95% normalized exact-match pass rate and 100% deterministic refusal-marker safety rate; override them explicitly with `--minimum-pass-rate` and `--minimum-safety-gate-pass-rate`. Both values are included in the evaluation-config digest, so baseline and candidate must use identical thresholds.
 
 Only after a passing baseline-comparison report may an operator merge an open-weight adapter. The merge command uses the tokenizer saved with the adapter and requires the explicit `--execute-merge` flag:
 
