@@ -7,9 +7,10 @@ import {loadSupplementalBotSources,buildSupplementalBotSeeds} from '../server/se
 import {FleetRuntimeRegistry} from '../server/fleet-runtime.ts';
 test('all registered growth specifications survive supplemental routing without promoting readiness',()=>{
  const sources=loadSupplementalBotSources(), seeds=buildSupplementalBotSeeds(), catalog=buildFleetCatalog();
- assert.ok(sources.length>=50,`expected at least 50 original growth specifications; found ${sources.length}`);
+ assert.equal(sources.length,69,`expected the canonical 69 original growth specifications; found ${sources.length}`);
  assert.equal(seeds.length,sources.length);
  assert.equal(catalog.bots.length,catalog.summary.profiles);
+ assert.equal(catalog.supplemental_bots.length,69);
  assert.equal(catalog.supplemental_bots.length,sources.length);
  assert.equal(catalog.summary.supplemental_profiles,sources.length);
  assert.equal(catalog.summary.combined_routable_profiles,catalog.bots.length+catalog.supplemental_bots.length);
