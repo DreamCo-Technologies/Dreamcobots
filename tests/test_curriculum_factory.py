@@ -17,7 +17,8 @@ def policy_registry():
     return {
         "schema": "dreamco.source_license_policy.v1",
         "sources": [{
-            "source_id": "fcc-reviewed",
+            "source_id": "youtube-platform",
+            "catalog_source_ids": ["freecodecamp"],
             "domains": ["youtube.com"],
             "tier": "FACT_EXTRACTION_ONLY",
             "verified": True,
@@ -95,6 +96,18 @@ class CurriculumFactoryTests(unittest.TestCase):
         commercial = factory._load_policy_gate().evaluate_source(record, policy_registry(), "commercial_training")
         self.assertFalse(transcript["allowed"])
         self.assertFalse(commercial["allowed"])
+
+    def test_short_originality_reference_fails_closed(self):
+        with self.assertRaises(ValueError):
+            factory.build_guide(source_record=source_record(), policy_registry=policy_registry(),
+                                authored_content=guide(), similarity_references=["too few tokens here"])
+
+    def test_unregistered_source_id_on_allowed_domain_is_blocked(self):
+        record = source_record()
+        record["source_id"] = "unregistered-channel"
+        with self.assertRaises(PermissionError):
+            factory.build_guide(source_record=record, policy_registry=policy_registry(),
+                                authored_content=guide(), similarity_references=["An unrelated reference with enough words for comparison."])
 
     def test_missing_originality_references_fails_closed(self):
         with self.assertRaises(PermissionError):
