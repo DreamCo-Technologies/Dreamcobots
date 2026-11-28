@@ -358,9 +358,7 @@ def execute_stage(stage: str, recipe: dict[str, Any], manifest: dict[str, Any],
         "checkpoint_sha256": hashlib.sha256(
             b"".join(path.read_bytes() for path in sorted(output.glob("*.safetensors"), key=lambda item: item.name))
         ).hexdigest() if list(output.glob("*.safetensors")) else None,
-        "source_manifest_sha256": hashlib.sha256(
-            json.dumps(manifest, sort_keys=True, default=str).encode()
-        ).hexdigest(),
+        "source_manifest_sha256": manifest.get("_source_manifest_sha256"),
         "training_split": "train",
         "holdout_used_for_training": False,
         "weight_updates_started": True,
