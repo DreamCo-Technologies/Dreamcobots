@@ -10,31 +10,37 @@ from buddy.learning.buddy_knowledge_router import ROOT, route_buddy_learning_que
 
 
 class BuddyInternalFirstLearningRouterTests(unittest.TestCase):
-    def test_query_routes_to_internal_bootcamp_instead_of_a_model(self):
-        result = route_buddy_learning_query("React 19", root=ROOT, limit=10)
+    def test_commandcore_query_routes_to_dreamco_bootcamp_instead_of_a_model(self):
+        result = route_buddy_learning_query(
+            "CommandCore capability-aware routing and approval-aware orchestration",
+            root=ROOT, limit=10,
+        )
         self.assertEqual(result["route"], "internal_bootcamp_lesson")
-        self.assertTrue(any(row["lesson_id"] == "candidate-discovery-seed-react-19" for row in result["course_lessons"]))
+        self.assertTrue(any(
+            row["track_id"] == "dreamco-division-specialist"
+            and "CommandCore" in row["division_targets"]
+            for row in result["course_lessons"]
+        ))
+        self.assertTrue(all(row["source_url"] == "" for row in result["course_lessons"]))
         self.assertFalse(result["external_discovery_performed"])
         self.assertFalse(result["external_model_routing_performed"])
         self.assertTrue(result["study_required"])
         self.assertFalse(result["mastery_awarded"])
-        self.assertTrue(all(row["completion_status"] == "queued_not_studied" for row in result["course_lessons"]))
+        self.assertTrue(all(row["completion_status"] == "queued_for_owner_review" for row in result["course_lessons"]))
 
-    def test_huggingface_onet_and_freecodecamp_tracks_are_reachable_internally(self):
-        cases = [
-            ("hugging face transformers", {"hugging-face", "huggingface-full"}),
-            ("onet occupations skills", {"onet"}),
-            ("freecodecamp javascript algorithms", {"freecodecamp", "freecodecamp-video-catalog"}),
-        ]
-        for query, expected_tracks in cases:
-            with self.subTest(query=query):
-                result = route_buddy_learning_query(query, root=ROOT, limit=25)
-                self.assertEqual(result["route"], "internal_bootcamp_lesson")
-                self.assertTrue(
-                    any(row["track_id"] in expected_tracks for row in result["course_lessons"]),
-                    [row["track_id"] for row in result["course_lessons"]],
-                )
-                self.assertFalse(result["external_model_routing_performed"])
+    def test_external_provider_tracks_are_not_learner_routes(self):
+        result = route_buddy_learning_query(
+            "Hugging Face FreeCodeCamp O*NET course materials", root=ROOT, limit=25
+        )
+        external_tracks = {
+            "onet", "hugging-face", "freecodecamp", "huggingface-full",
+            "freecodecamp-video-catalog", "freecodecamp-specialist-learning-paths",
+            "freecodecamp-metadata-triage",
+        }
+        self.assertFalse(any(row["track_id"] in external_tracks for row in result["course_lessons"]))
+        self.assertTrue(all(row["source_url"] == "" for row in result["course_lessons"]))
+        self.assertFalse(result["external_discovery_performed"])
+        self.assertFalse(result["external_model_routing_performed"])
 
     def test_approved_guide_is_retrieved_before_course_matching(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -64,7 +70,6 @@ class BuddyInternalFirstLearningRouterTests(unittest.TestCase):
             self.assertEqual(result["route"], "internal_knowledge_gap")
             self.assertIsNone(result["gap_event"])
             self.assertFalse(result["external_discovery_available"])
-            self.assertTrue(result["external_discovery_requires_explicit_opt_in"])
             self.assertFalse(result["external_discovery_performed"])
             self.assertFalse(result["external_model_routing_performed"])
             self.assertFalse((root / ".dreamco/library-knowledge-gaps.jsonl").exists())
@@ -98,7 +103,7 @@ class BuddyInternalFirstLearningRouterTests(unittest.TestCase):
 
 
     def test_course_route_includes_local_supporting_guide_excerpt(self):
-        result = route_buddy_learning_query("hugging face transformers", root=ROOT, limit=25)
+        result = route_buddy_learning_query("CommandCore capability-aware routing", root=ROOT, limit=25)
         self.assertEqual(result["route"], "internal_bootcamp_lesson")
         available = [
             row for row in result["course_lessons"]
