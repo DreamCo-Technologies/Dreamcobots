@@ -38,7 +38,7 @@ A high score does not override missing permission, suppression, or required huma
 
 ## Integration boundaries
 
-This module is a deterministic policy and persistence foundation. It does not discover or scrape prospects, send email/SMS/voice/social messages, book calendar events, create contracts, or process payments. CRM persistence is implemented in `server/lead-engine-storage.ts`, but it is not exposed through HTTP until the repository has a verified authenticated user identity and owner-scoped route guard. `leadEngineReadiness()` reports this remaining dependency honestly.
+This module is a deterministic policy and persistence foundation. It does not discover or scrape prospects, send email/SMS/voice/social messages, book calendar events, create contracts, or process payments. CRM persistence is implemented in `server/lead-engine-storage.ts`, and is exposed through OAuth-protected, owner-scoped HTTP routes. `leadEngineReadiness()` reports this remaining dependency honestly.
 
 ### CRM storage setup
 
@@ -46,20 +46,21 @@ Apply `migrations/0002_lead_engine_crm.sql` to the target PostgreSQL database us
 
 Repository functions: `saveLeadEngineRecord`, `getLeadEngineRecord`, `listLeadEngineRecords`, `appendLeadEngineActivity`, and `listLeadEngineActivities`. The repository rejects owner mismatches and stage regression; duplicate activity event IDs are idempotent.
 
-The existing `/api/buddy/lead-plan` endpoint remains the governed outreach planning entry point. The new qualification policy is not exposed through a new HTTP route in this PR because the repository's API authentication gate must be verified first. This change does not create a second dispatch route.
+The existing `/api/buddy/lead-plan` endpoint remains the governed outreach planning entry point. The qualification and CRM routes now use the repository's signed, expiring Google/Apple OAuth session. The server derives a stable opaque owner key from the verified provider subject; the request body cannot select a tenant. CRM writes require a same-origin Origin header and are rate-limited. This change does not create a second dispatch route.
 
 ## Production completion checklist
 
 - [x] Strict input schema and credential-like value rejection
 - [x] Explainable qualification score and deterministic tiering
 - [x] Five-stage plan with permission and suppression gates
+- [x] One-stage-at-a-time progression with explicit nurture permission and human-review conversion evidence
 - [x] Reuse of existing governed outreach and suppression policies
 - [x] Focused qualification regression tests added to the existing governed-leads test suite
 - [x] Storage contract tests added to the governed test suite
 - [x] Owner-scoped PostgreSQL CRM repository and tenant-isolation migration authored
 - [x] Consent evidence and suppression state included in persisted lead records
 - [ ] Apply migration in staging/production and verify RLS using the actual non-superuser application role
-- [ ] Authenticated HTTP controller and owner identity integration
+- [x] OAuth-protected CRM HTTP routes with server-derived owner identity and same-origin write checks
 - [ ] Consent evidence lifecycle, expiry checks, and durable suppression update workflows
 - [ ] Owner-configured lead magnet/form integration
 - [ ] Approved content and signal-source adapters with provenance
