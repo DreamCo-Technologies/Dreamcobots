@@ -13,6 +13,11 @@ class DreamCo10PillarOrchestratorTests(unittest.TestCase):
         self.assertEqual(result["scope_id"], "dreamcodelab")
         self.assertEqual(result["difficulty"], 1.1)
 
+    def test_ast_guard_command_blocks_dynamic_execution(self):
+        result = run("ast-guard", {"source": "eval('1 + 1')"})
+        self.assertFalse(result["passed"])
+        self.assertEqual(result["status"], "BLOCKED_STATIC_FINDINGS")
+
     def test_500_model_command_does_not_invent_models_or_execute(self):
         inventory = {
             "schema": "dreamco.verified_model_inventory.v1",
