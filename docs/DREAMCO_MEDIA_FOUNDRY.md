@@ -34,3 +34,7 @@ Open weights are not a blanket grant of rights to outputs, training data, voices
 - No voice or likeness cloning without existing consent gates.
 - No automatic publishing to YouTube or other platforms.
 - No promise of 4K, multi-minute continuity, watermark robustness, or unrestricted commercial rights without measured validation and legal review.
+
+## Model license verification
+
+The candidate registry at `config/buddy-media-model-registry.example.json` is intentionally unapproved. Candidate names are discovery leads, not license conclusions. Before commercial deployment, create a reviewed record for the exact checkpoint and supply the checkpoint SHA-256, SPDX license identifier, local license evidence file and hash, model-card HTTPS URL, explicit commercial-use and redistribution permissions, and a non-empty dependency inventory. `buddy.media.model_license_gate.verify_model_record` fails closed unless all required evidence is present and every dependency has a reviewed MIT or Apache-2.0 license record. This gate does not clear training datasets, likenesses, outputs, trademarks, or customer content; those remain separate rights decisions.
