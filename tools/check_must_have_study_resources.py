@@ -10,6 +10,7 @@ NEW = ROOT / "config" / "buddy-study-resources-1001-1100-must-have.json"
 
 
 def names_urls(path: Path) -> tuple[set[str], set[str]]:
+    """Return normalized resource names and URLs from a study-resource catalog."""
     doc = json.loads(path.read_text(encoding="utf-8"))
     names, urls = set(), set()
     for row in doc["resources"]:
@@ -19,6 +20,7 @@ def names_urls(path: Path) -> tuple[set[str], set[str]]:
 
 
 def main() -> int:
+    """Validate resource count, ID range, required fields, HTTPS URLs and uniqueness."""
     old_names, old_urls = names_urls(OLD)
     # Compare against every other study-resource set, not only 001-100.
     for other in sorted((ROOT / "config").glob("buddy-study-resources-*.json")):
@@ -34,9 +36,17 @@ def main() -> int:
     ids = [row[0] for row in rows]
     if ids != list(range(1001, 1101)):
         raise SystemExit("ids must be 1001-1100")
-    short = [row[0] for row in rows if len(row) < 6]
-    if short:
-        raise SystemExit(f"rows missing practice_method (need 6 fields): {short}")
+    malformed = [
+        row[0] for row in rows
+        if len(row) < 6 or any(not str(value).strip() for value in row[1:6])
+        or not str(row[3]).startswith("https://")
+    ]
+    if malformed:
+        raise SystemExit(f"rows need six non-empty fields and an HTTPS URL: {malformed}")
+    names = [str(row[1]).strip().lower() for row in rows]
+    urls = [str(row[3]).strip().rstrip("/").lower() for row in rows]
+    if len(set(names)) != len(names) or len(set(urls)) != len(urls):
+        raise SystemExit("duplicate resource names or URLs inside the new set")
     new_names, new_urls = names_urls(NEW)
     name_hits = sorted(old_names & new_names)
     url_hits = sorted(old_urls & new_urls)
