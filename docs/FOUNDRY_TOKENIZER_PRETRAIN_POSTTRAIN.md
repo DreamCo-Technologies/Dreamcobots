@@ -125,15 +125,15 @@ python -m stages.05_model_foundry.eval_holdout \
 
 For a LoRA adapter, pass `--base-model` and `--base-revision` to each inference command; the signed manifest must authorize that exact model revision. The current runner uses normalized exact-match answer scoring and deterministic refusal markers. These are transparent baseline checks, not a substitute for human/domain-specific safety evaluation. Promotion requires the configured minimum thresholds and no regression against baseline.
 
-Only after a passing report may an operator merge an open-weight adapter:
+Only after a passing baseline-comparison report may an operator merge an open-weight adapter. The merge command uses the tokenizer saved with the adapter and requires the explicit `--execute-merge` flag:
 
 ```bash
 python -m stages.05_model_foundry.merge_adapter \
   --base-model Qwen/Qwen2.5-Coder-1.5B --base-revision "$REVIEWED_40_CHAR_SHA" \
   --manifest data/foundry/authorization.json --signature data/foundry/authorization.sig \
   --public-key keys/foundry-policy-public.pem --adapter artifacts/foundry/candidate \
-  --tokenizer artifacts/foundry/tokenizer --holdout-report reports/holdout-promotion.json \
-  --output artifacts/foundry/merged-standalone
+  --holdout-report reports/holdout-promotion.json \
+  --output artifacts/foundry/merged-standalone --execute-merge
 ```
 
 The merge utility verifies signed model authorization, the exact source-manifest digest, the passing holdout report and the adapter checkpoint SHA-256.
@@ -143,5 +143,5 @@ The merge utility verifies signed model authorization, the exact source-manifest
 - Bucket formula: `int(sha256(task_id)[:8], 16) % 100`.
 - Train: 00–89; validation: 90–94; holdout: 95–99.
 - Tokenizer and all weight updates read only train. Validation is evaluation-only. Holdout is read only by the local inference runner and promotion gate.
-- Pull-request CI runs CPU compile and guardrail tests only. GPU training is manual and requires a self-hosted GPU runner, a protected local policy-signing key path, signed data and an explicit approval reference.
+- Pull-request CI runs CPU compile and guardrail tests only. GPU training is manual and requires a self-hosted GPU runner, a protected local policy-signing key path, signed data and an explicit approval reference. Baseline comparison is performed only when a local baseline checkpoint is configured; otherwise promotion remains blocked.
 - GitHub-hosted GPU compute, paid APIs and model-provider API keys are not required. No model weights have been trained merely by merging these code changes.
