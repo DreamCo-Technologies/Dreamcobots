@@ -685,7 +685,7 @@ def render_report(status: dict[str, Any], rows: list[dict[str, Any]]) -> str:
     })
     if deferred:
         lines += ["", "### Deferred generated artifact tests", "",
-                  "**Deferred tests not run** in the pre-refresh folder suite; the dedicated post-audit step reruns them after generated evidence is refreshed:", ""]
+                  "**deferred tests not run** in the pre-refresh folder suite; the dedicated post-audit step reruns them after generated evidence is refreshed:", ""]
         lines += [f"- `{test}`" for test in deferred]
     fx = status.get("folder_test_side_effects") or {}
     if fx.get("restored_tracked_files") or fx.get("untracked_files_created"):
