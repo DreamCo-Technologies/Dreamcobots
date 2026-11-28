@@ -75,8 +75,8 @@ jobs:
               'Workflow: ' + context.serverUrl + '/' + owner + '/' + repo + '/actions/runs/' + context.runId,
               'No AI repair, direct push, or automatic revert was attempted.',
               '',
-              'Sanitized failure excerpt:',
-              String(report.failure_excerpt || 'No excerpt captured.').slice(0, 10000),
+              'Failure details are intentionally not copied into this public issue or artifact because raw test output can contain credentials or personal data.',
+              'Open the linked GitHub Actions run to inspect diagnostic logs.',
               '',
               'Review the logs and prepare a scoped repair branch. Use the manual safe-repair PR workflow after validating the change.'
             ].join('\n');
