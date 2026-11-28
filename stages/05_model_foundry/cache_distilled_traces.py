@@ -10,6 +10,7 @@ import argparse
 import hashlib
 import json
 import os
+import re
 from pathlib import Path
 from typing import Any
 
@@ -20,6 +21,34 @@ FORBIDDEN_REASONING_FIELDS = {"chain_of_thought", "reasoning_trace", "private_re
 def _valid_sha(value: Any) -> bool:
     return isinstance(value, str) and len(value) == 64 and all(c in "0123456789abcdef" for c in value)
 
+
+
+SENSITIVE_KEYS = ("api_key", "apikey", "access_token", "refresh_token", "token",
+                  "secret", "password", "authorization", "private_key", "credential", "cookie")
+SECRET_PATTERNS = (
+    (re.compile(r"\\bsk-[A-Za-z0-9_-]{16,}\\b"), "[REDACTED_SECRET]"),
+    (re.compile(r"\\bgh[pousr]_[A-Za-z0-9]{20,}\\b"), "[REDACTED_SECRET]"),
+    (re.compile(r"\\bgithub_pat_[A-Za-z0-9_]{20,}\\b"), "[REDACTED_SECRET]"),
+    (re.compile(r"\\bAKIA[0-9A-Z]{16}\\b"), "[REDACTED_SECRET]"),
+    (re.compile(r"(?i)\\bBearer\\s+[A-Za-z0-9._~+/=-]{12,}"), "Bearer [REDACTED_SECRET]"),
+)
+
+
+def _sanitize(value: Any) -> Any:
+    if isinstance(value, dict):
+        cleaned = {}
+        for key, item in value.items():
+            normalized_key = str(key).lower().replace("-", "_")
+            cleaned[str(key)] = "[REDACTED_SECRET]" if any(token in normalized_key for token in SENSITIVE_KEYS) else _sanitize(item)
+        return cleaned
+    if isinstance(value, list):
+        return [_sanitize(item) for item in value]
+    if isinstance(value, str):
+        cleaned = value
+        for pattern, replacement in SECRET_PATTERNS:
+            cleaned = pattern.sub(replacement, cleaned)
+        return cleaned
+    return value
 
 def _canonical(value: Any) -> bytes:
     return json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
@@ -45,10 +74,10 @@ def verified_trace(row: dict[str, Any]) -> dict[str, Any] | None:
         "schema": "dreamco.foundry.distilled_trace.v1",
         "task_id": row["task_id"],
         "division_id": row["division_id"],
-        "prompt": row["prompt"],
-        "final_response": row["final_response"],
-        "explanation_summary": summary,
-        "tool_calls": tool_calls,
+        "prompt": _sanitize(row["prompt"]),
+        "final_response": _sanitize(row["final_response"]),
+        "explanation_summary": _sanitize(summary),
+        "tool_calls": _sanitize(tool_calls),
         "sandbox_run_id": row["sandbox_run_id"],
         "grader_attestation_sha256": row["grader_attestation_sha256"],
         "rubric_sha256": row["rubric_sha256"],
