@@ -11,7 +11,7 @@ OWNER={"authorized":True,"target_kind":"user_owned"}
 def test_permission_and_bypass():
     gate=PolicyGate(); assert not gate.authorize_and_scrub("x",{}).allowed; assert not gate.authorize_and_scrub("x",{**OWNER,"bypass_requested":True}).allowed
 def test_redaction():
-    r=PolicyGate().authorize_and_scrub("api_key='sk-abcdefghijklmnopqrstuvwxyz' email a@b.com 123-45-6789",OWNER); assert r.allowed; assert "sk-abcdefghijklmnopqrstuvwxyz" not in r.sanitized_content; assert "a@b.com" not in r.sanitized_content; assert "123-45-6789" not in r.sanitized_content
+    r=PolicyGate().authorize_and_scrub("api_key='TEST_FIXTURE_CREDENTIAL' email a@b.com 123-45-6789",OWNER); assert r.allowed; assert "sk-abcdefghijklmnopqrstuvwxyz" not in r.sanitized_content; assert "a@b.com" not in r.sanitized_content; assert "123-45-6789" not in r.sanitized_content
 def test_open_source_license_gate():
     gate=PolicyGate(); assert not gate.authorize_and_scrub("x",{"authorized":True,"target_kind":"open_source"}).allowed
     assert gate.authorize_and_scrub("x",{"authorized":True,"target_kind":"open_source","license_id":"MIT"}).allowed
