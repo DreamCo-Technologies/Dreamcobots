@@ -92,16 +92,22 @@ def _course_matches(
     query_tokens = _tokens(query)
     matches: list[dict[str, Any]] = []
     for lesson in _cached_course_lessons(root.resolve()):
+        if not lesson.learner_visible or lesson.source_url:
+            continue
         searchable = " ".join((
             lesson.title, lesson.lesson_id, lesson.track_id, lesson.category,
             lesson.objective, lesson.practice, lesson.assessment, lesson.benchmark,
+            " ".join(lesson.division_targets), " ".join(lesson.capability_tags),
+            " ".join(lesson.tool_tags), " ".join(lesson.learning_modes),
         ))
         overlap = query_tokens & _tokens(searchable)
-        if not overlap:
+        # An exact, independently verified seed-candidate ID is a direct match
+        # even when tokenization drops version-only tokens (for example, "19").
+        # Preserve that lesson for the exact-candidate route without broadening
+        # ordinary relevance matching.
+        if not overlap and lesson.lesson_id not in (preserve_ids or set()):
             continue
         track_text = lesson.track_id.replace("-", " ").replace("_", " ")
-        if lesson.track_id == "huggingface-full":
-            track_text += " hugging face"
         track_overlap = query_tokens & _tokens(track_text)
         track_score = round(len(track_overlap) / max(len(query_tokens), 1), 4)
         matches.append({
@@ -118,13 +124,21 @@ def _course_matches(
             "rights_mode": lesson.rights_mode,
             "score": round(len(overlap) / max(len(query_tokens), 1), 4),
             "track_match_score": track_score,
-            "completion_status": "queued_not_studied",
+            "completion_status": "queued_for_owner_review" if lesson.review_status != "approved" else "queued_not_studied",
             "mastery_awarded": False,
+            "division_targets": list(lesson.division_targets),
+            "capability_tags": list(lesson.capability_tags),
+            "tool_tags": list(lesson.tool_tags),
+            "learning_modes": list(lesson.learning_modes),
+            "exercise_ids": list(lesson.exercise_ids),
+            "project_ids": list(lesson.project_ids),
+            "assessment_ids": list(lesson.assessment_ids),
+            "review_status": lesson.review_status,
+            "training_eligibility": lesson.training_eligibility,
         })
     best_track_score = max((row["track_match_score"] for row in matches), default=0.0)
     # Rank explicit track matches first, but retain strong cross-track content
-    # matches (for example, Hugging Face Transformers is both a Hugging Face
-    # topic and a software-library candidate). Exact seed lessons are preserved
+    # matches across capability domains, such as planning and execution. Exact seed lessons are preserved
     # independently of ranking so they cannot be hidden by a competing track.
     if best_track_score > 0:
         preserve = preserve_ids or set()
@@ -215,15 +229,14 @@ def route_buddy_learning_query(
                 "seed_candidate_matches": seed_matches,
                 "knowledge_gap": library.get("knowledge_gap"),
                 "external_discovery_available": False,
-                "external_discovery_requires_explicit_opt_in": True,
+                "external_discovery_requires_explicit_opt_in": False,
                 "external_discovery_performed": False,
                 "external_model_routing_performed": False,
                 "study_required": True,
                 "candidate_verification_required": True,
                 "next_action": (
-                    "Ask the user before external research; after approval, verify the candidate against "
-                    "authoritative first-party sources, pin its exact version, review license and rights, "
-                    "then author and assess an original study guide."
+                    "Verify the candidate against DreamCo internal records. If evidence is missing, "
+                    "queue an owner-reviewed original DreamCo lesson; do not route learners to external course websites."
                 ),
                 "mastery_awarded": False,
             }
@@ -249,14 +262,14 @@ def route_buddy_learning_query(
             "seed_candidate_matches": seed_matches,
             "knowledge_gap": library.get("knowledge_gap"),
             "external_discovery_available": False,
-            "external_discovery_requires_explicit_opt_in": supporting_guide_count == 0,
+            "external_discovery_requires_explicit_opt_in": False,
             "external_discovery_performed": False,
             "external_model_routing_performed": False,
             "study_required": True,
             "next_action": (
                 "Study the repository-local supporting guide and complete the original practice. "
-                "If it does not cover the requested lesson, ask the user before external research; "
-                "then verify a first-party source, release and rights before drafting an original guide."
+                "If it does not cover the requested lesson, record a DreamCo knowledge gap and queue "
+                "original authoring; do not route learners to external course websites."
             ),
             "mastery_awarded": False,
         }
@@ -286,9 +299,9 @@ def route_buddy_learning_query(
         "knowledge_gap": gap,
         "gap_event": gap_event,
         "external_discovery_available": False,
-        "external_discovery_requires_explicit_opt_in": True,
+        "external_discovery_requires_explicit_opt_in": False,
         "external_discovery_performed": False,
         "external_model_routing_performed": False,
-        "next_action": "Ask the user before external research; then verify first-party sources, version and rights, draft an original guide, and review and assess it.",
+        "next_action": "Record a DreamCo knowledge gap and queue original authoring; do not route learners to external course websites.",
         "mastery_awarded": False,
     }
