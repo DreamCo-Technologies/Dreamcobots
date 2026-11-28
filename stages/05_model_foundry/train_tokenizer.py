@@ -12,16 +12,27 @@ SPECIAL_TOKENS = ["<|pad|>", "<|bos|>", "<|eos|>", "<|unk|>", "<|system|>", "<|u
                   "<|teach_back|>", "<|rubric_pass|>"]
 
 def corpus(manifest):
+    """Yield first-seen unique normalized train text to avoid redundant tokenizer work."""
+    seen = set()
     for row in iter_authorized_records(manifest, categories={"study_guides", "verified_trajectories", "general_replay"}, splits={"train"}):
         fields = [row.get("title", ""), row.get("core_concepts", ""),
                   row.get("worked_examples", ""), row.get("content", "")]
         objectives = row.get("learning_objectives", [])
         if isinstance(objectives, list):
             fields.extend(str(value) for value in objectives)
-        yield "\n\n".join(str(value) for value in fields if value)
+        candidates = ["\\n\\n".join(str(value) for value in fields if value)]
         for message in row.get("messages", []):
             if message.get("role") in {"assistant", "tool"} and message.get("content"):
-                yield str(message["content"])
+                candidates.append(str(message["content"]))
+        for candidate in candidates:
+            normalized = " ".join(candidate.casefold().split())
+            if not normalized:
+                continue
+            digest = hashlib.sha256(normalized.encode("utf-8")).digest()
+            if digest in seen:
+                continue
+            seen.add(digest)
+            yield normalized
 
 def main():
     parser = argparse.ArgumentParser(description="DreamCo signed-data tokenizer trainer")
