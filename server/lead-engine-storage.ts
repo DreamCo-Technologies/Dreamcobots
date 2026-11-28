@@ -115,6 +115,42 @@ export async function saveLeadEngineRecord(ownerId: string, input: LeadEngineRec
       },
     }).returning();
 
+    let auditEventType: "lead_created" | "stage_changed" | "qualification_updated" | "consent_updated" | "suppression_changed" | undefined;
+    let auditDetails: Record<string, string | number | boolean> = {};
+    if (!previous) {
+      auditEventType = "lead_created";
+      auditDetails = { stage: validatedRecord.stage, qualificationScore: validatedQualification.score };
+    } else if (previous.suppressionStatus !== validatedRecord.suppressionStatus) {
+      auditEventType = "suppression_changed";
+      auditDetails = { from: previous.suppressionStatus, to: validatedRecord.suppressionStatus };
+    } else if (
+      previous.consentEvidenceRef !== validatedRecord.consentEvidenceRef ||
+      previous.consentObtainedAt !== validatedRecord.consentObtainedAt ||
+      previous.consentExpiresAt !== validatedRecord.consentExpiresAt
+    ) {
+      auditEventType = "consent_updated";
+      auditDetails = { consentEvidenceUpdated: true };
+    } else if (previous.stage !== validatedRecord.stage) {
+      auditEventType = "stage_changed";
+      auditDetails = { fromStage: previous.stage, toStage: validatedRecord.stage };
+    } else {
+      const previousScore = qualifyLead(previous).score;
+      if (previousScore !== validatedQualification.score) {
+        auditEventType = "qualification_updated";
+        auditDetails = { previousScore, qualificationScore: validatedQualification.score };
+      }
+    }
+
+    if (auditEventType) {
+      await tx.insert(leadEngineActivities).values({
+        ownerId: safeOwnerId,
+        leadId: validatedRecord.leadId,
+        eventId: `lead-event-${randomUUID()}`,
+        eventType: auditEventType,
+        details: auditDetails,
+      });
+    }
+
     return { record: saved, qualification: validatedQualification, stagePlan: validatedStagePlan };
   });
 }
