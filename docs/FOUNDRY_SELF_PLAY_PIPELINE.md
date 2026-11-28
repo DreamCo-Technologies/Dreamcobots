@@ -44,7 +44,7 @@ To build final DPO preferences after a reviewer has updated the raw rollout rows
 ## Important limits
 
 - The script reads only the signed `train` split; it never opens validation or holdout records.
-- Test pass is not teach-back verification, legal rights clearance, or model promotion.
+- Test pass is not teach-back verification, legal rights clearance, or model promotion. The grader evidence fingerprint is an unsigned hash, not a digital signature; owner authorization and the signed dataset manifest remain separate gates.
 - The GRPO output is a research/evidence format only; a GRPO optimizer stage is not implemented by this workflow.
 - The cache is an optimization, not an authorization boundary. Training still requires the signed shard manifest and explicit weight-update approval enforced by the Stage 05 training CLI.
 - This is a self-play data-generation workflow, not a claim that Buddy has been trained or improved. Actual training and holdout promotion remain separate, explicitly authorized steps.
