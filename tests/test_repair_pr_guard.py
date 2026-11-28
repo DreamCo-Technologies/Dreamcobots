@@ -1,5 +1,5 @@
 from tools.ci_failure_report import build_report, sanitize
-from tools.validate_repair_pr import validate_changes
+from tools.validate_repair_pr import validate_changes, validate_git_ref
 
 
 def test_ci_report_redacts_credentials_and_personal_data():
@@ -73,3 +73,14 @@ def test_repair_guard_blocks_modifying_existing_tests():
         "+def test_new_helper(): assert True\n",
     )
     assert any("Only new test files may be added" in item for item in errors)
+
+
+def test_repair_validator_accepts_expected_refs():
+    assert validate_git_ref("origin/main")
+    assert validate_git_ref("origin/feature/repair-branch")
+    assert validate_git_ref("main")
+
+
+def test_repair_validator_rejects_option_and_traversal_refs():
+    for value in ("--output=/tmp/evil", "../main", "origin/../main", "origin//main", "origin/branch.lock", "bad ref"):
+        assert not validate_git_ref(value)
