@@ -1,4 +1,4 @@
-name: Foundry Training Preflight
+name: Foundry Training Preflight and Optional GPU Training
 on:
   pull_request:
     paths:
@@ -6,6 +6,14 @@ on:
       - "tests/test_foundry_training_pipeline.py"
       - ".github/workflows/foundry-training-preflight.yml"
   workflow_dispatch:
+    inputs:
+      recipe:
+        description: Foundry recipe
+        required: true
+        type: choice
+        options:
+          - scratch_45m_division
+          - open_weight_cpt_sft
 permissions:
   contents: read
 jobs:
@@ -13,20 +21,91 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
       - uses: actions/setup-python@v5
-        with: {python-version: "3.11"}
+        with:
+          python-version: "3.11"
       - name: Compile foundry scripts
         run: python -m compileall -q stages/05_model_foundry
+      - name: Validate all foundry recipe files
+        run: |
+          python - <<'PY'
+          import yaml
+          from pathlib import Path
+          for path in Path("stages/05_model_foundry/recipes").glob("*.yaml"):
+              data = yaml.safe_load(path.read_text())
+              assert data.get("schema") == "dreamco.foundry.recipe.v1", path
+              assert data.get("artifact_dir"), path
+          print("Foundry recipes valid")
+          PY
       - name: Run offline guardrail tests
         run: python -m unittest discover -s tests -p 'test_foundry_training_pipeline.py' -v
+      - name: Run Bootcamp completion tests
+        run: python -m unittest discover -s tests -p 'test_bootcamp_completion_stages.py' -v
   gpu-training:
     if: github.event_name == 'workflow_dispatch' && vars.DREAMCO_GPU_RUNNER_ENABLED == 'true'
     runs-on: [self-hosted, linux, x64, gpu]
+    timeout-minutes: 1440
+    env:
+      FOUNDRY_DATA_DIR: ${{ vars.DREAMCO_FOUNDRY_DATA_DIR }}
+      TRAINING_APPROVAL: ${{ secrets.DREAMCO_TRAINING_APPROVAL_REFERENCE }}
+      BASE_MODEL_REVISION: ${{ inputs.base_model_revision }}
     steps:
       - uses: actions/checkout@v4
-      - name: Require explicit training approval
-        env:
-          TRAINING_APPROVAL: ${{ secrets.DREAMCO_TRAINING_APPROVAL_REFERENCE }}
+        with:
+          persist-credentials: false
+      - name: Require local signed data, GPU and explicit approval
+        shell: bash
         run: |
-          test -n "$TRAINING_APPROVAL" || { echo "Missing explicit training approval"; exit 1; }
-          echo "Approval reference present; production training still requires signed local datasets and pinned recipe."
+          set -euo pipefail
+          test -n "$FOUNDRY_DATA_DIR"
+          test -d "$FOUNDRY_DATA_DIR"
+          test -f "$FOUNDRY_DATA_DIR/manifest.json"
+          test -f "$FOUNDRY_DATA_DIR/manifest.sig"
+          test -f "$FOUNDRY_DATA_DIR/policy-public.pem"
+          test -n "$TRAINING_APPROVAL"
+          python -c "import torch; assert torch.cuda.is_available(), 'CUDA GPU is required'"
+      - name: Install foundry runtime without replacing the runner CUDA PyTorch
+        shell: bash
+        run: |
+          grep -v '^torch[<=>]' stages/05_model_foundry/requirements-foundry.txt > /tmp/foundry-requirements.txt
+          python -m pip install --disable-pip-version-check -r /tmp/foundry-requirements.txt
+      - name: Run tokenizer, packing and authorized weight training
+        shell: bash
+        env:
+          RECIPE: ${{ inputs.recipe }}
+        run: |
+          set -euo pipefail
+          DATA="$FOUNDRY_DATA_DIR"
+          RECIPE_FILE="stages/05_model_foundry/recipes/$RECIPE.yaml"
+          ARTIFACT_DIR="$(python -c 'import yaml,sys; print(yaml.safe_load(open(sys.argv[1]))["artifact_dir"])' "$RECIPE_FILE")"
+          mkdir -p "$ARTIFACT_DIR"
+          if [ "$RECIPE" = "scratch_45m_division" ]; then
+            python -m stages.05_model_foundry.train_tokenizer --mode scratch --vocab-size 16384 \
+              --manifest "$DATA/manifest.json" --signature "$DATA/manifest.sig" \
+              --public-key "$DATA/policy-public.pem" --output "$ARTIFACT_DIR/tokenizer"
+          else
+            test -n "$BASE_MODEL_REVISION"
+            [[ "$BASE_MODEL_REVISION" =~ ^[0-9a-f]{40}$ ]]
+            python -m stages.05_model_foundry.train_tokenizer --mode extend --vocab-size 16384 \
+              --base-model "Qwen/Qwen2.5-Coder-1.5B" --base-revision "$BASE_MODEL_REVISION" \
+              --manifest "$DATA/manifest.json" --signature "$DATA/manifest.sig" \
+              --public-key "$DATA/policy-public.pem" --output "$ARTIFACT_DIR/tokenizer"
+          fi
+          python -m stages.05_model_foundry.pack_tokens --sequence-length 1024 \
+            --manifest "$DATA/manifest.json" --signature "$DATA/manifest.sig" \
+            --public-key "$DATA/policy-public.pem" --tokenizer "$ARTIFACT_DIR/tokenizer" \
+            --output "$ARTIFACT_DIR/token_shards"
+          python -m stages.05_model_foundry.train_weights --stage all --execute \
+            --authorize-weight-updates --authorization-reference "$TRAINING_APPROVAL" \
+            --manifest "$DATA/manifest.json" --signature "$DATA/manifest.sig" \
+            --public-key "$DATA/policy-public.pem" --recipe "$RECIPE_FILE" \
+            --tokenizer "$ARTIFACT_DIR/tokenizer" --token-shards "$ARTIFACT_DIR/token_shards"
+      - name: Upload foundry checkpoint and run manifests
+        uses: actions/upload-artifact@v4
+        with:
+          name: dreamco-foundry-${{ inputs.recipe }}-${{ github.run_id }}
+          path: artifacts/foundry/
+          if-no-files-found: error
+          retention-days: 30
