@@ -10,34 +10,34 @@ Engine unit tests passed: **True**
 
 | State | Bots |
 |---|---:|
-| SPEC_ONLY | 19 |
+| SPEC_ONLY | 0 |
 | IMPLEMENTED | 0 |
-| TESTED | 1213 |
+| TESTED | 1232 |
 | CONNECTED | 0 |
 | VERIFIED | 0 |
 | PRODUCTION | 0 |
 | BLOCKED | 0 |
 | **Total** | **1232** |
 
-Flags: duplicates **2**, placeholders **19**, capabilities_derived_from_description 112, division_missing 19, duplicate_profile 2, engine_fallback_workflow 31, engine_low_confidence 109, engine_unmapped 19, engine_weak_signal 34, fixture_generated 1204, md_only 19, placeholder_no_specific_capabilities 19, run_blocked_destructive 5, run_blocked_money 66, teammate_lane 112
+Flags: duplicates **2**, placeholders **0**, capabilities_derived_from_description 112, duplicate_profile 2, engine_fallback_workflow 25, engine_low_confidence 98, engine_weak_signal 27, fixture_generated 1223, run_blocked_destructive 5, run_blocked_money 67, shared_workforce_lane 112, supplemental_domain_unassigned_pending_owner_review 50, supplemental_specialist_portfolio 69, teammate_lane 112
 
 ## Missing contract pieces (bots missing each piece)
 
 | Piece | Missing |
 |---|---:|
 | manifest | 0 |
-| division | 19 |
-| capabilities | 19 |
-| runtime_adapter | 19 |
+| division | 0 |
+| capabilities | 0 |
+| runtime_adapter | 0 |
 | model_router | 0 |
-| tools_apis | 0 |
-| io_schema | 19 |
+| tools_apis | 19 |
+| io_schema | 0 |
 | permissions | 0 |
 | error_handling | 0 |
-| unit_test | 19 |
-| smoke_test | 19 |
+| unit_test | 0 |
+| smoke_test | 0 |
 | benchmark | 1232 |
-| health_status | 19 |
+| health_status | 0 |
 | pages_route | 0 |
 | evidence_record | 1232 |
 | readiness_state | 0 |
@@ -46,17 +46,17 @@ Flags: duplicates **2**, placeholders **19**, capabilities_derived_from_descript
 
 | Engine | SPEC_ONLY | IMPLEMENTED | TESTED | CONNECTED | VERIFIED | PRODUCTION | BLOCKED | Total |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|
-| analysis | 0 | 0 | 592 | 0 | 0 | 0 | 0 | 592 |
-| classification | 0 | 0 | 118 | 0 | 0 | 0 | 0 | 118 |
-| drafting | 0 | 0 | 184 | 0 | 0 | 0 | 0 | 184 |
-| unmapped | 19 | 0 | 0 | 0 | 0 | 0 | 0 | 19 |
-| workflow | 0 | 0 | 319 | 0 | 0 | 0 | 0 | 319 |
+| analysis | 0 | 0 | 605 | 0 | 0 | 0 | 0 | 605 |
+| classification | 0 | 0 | 120 | 0 | 0 | 0 | 0 | 120 |
+| drafting | 0 | 0 | 181 | 0 | 0 | 0 | 0 | 181 |
+| workflow | 0 | 0 | 326 | 0 | 0 | 0 | 0 | 326 |
 
 ## By division
 
 | Division | SPEC_ONLY | IMPLEMENTED | TESTED | CONNECTED | VERIFIED | PRODUCTION | BLOCKED | Total |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|
 | CommandCore | 0 | 0 | 13 | 0 | 0 | 0 | 0 | 13 |
+| Dream3D | 0 | 0 | 19 | 0 | 0 | 0 | 0 | 19 |
 | DreamAIInfra | 0 | 0 | 25 | 0 | 0 | 0 | 0 | 25 |
 | DreamAdmin | 0 | 0 | 21 | 0 | 0 | 0 | 0 | 21 |
 | DreamAffiliate | 0 | 0 | 5 | 0 | 0 | 0 | 0 | 5 |
@@ -112,7 +112,6 @@ Flags: duplicates **2**, placeholders **19**, capabilities_derived_from_descript
 | DreamTravel | 0 | 0 | 5 | 0 | 0 | 0 | 0 | 5 |
 | GameTitan | 0 | 0 | 4 | 0 | 0 | 0 | 0 | 4 |
 | GrokTeammates | 0 | 0 | 112 | 0 | 0 | 0 | 0 | 112 |
-| UNASSIGNED | 19 | 0 | 0 | 0 | 0 | 0 | 0 | 19 |
 
 ## Divisions
 
@@ -121,10 +120,11 @@ Division state comes from a division-level smoke test: one of the division's own
 | Division | State | Bots | Runnable | Smoke bots | Smoke | Sources |
 |---|---|---:|---:|---|---|---|
 | CommandCore | **TESTED** | 13 | 12 | ai-self-learner, security-compliance, buddy-bot | pass | App_bots/CommandCore.json, server/seed-bots.ts |
+| Dream3D | **TESTED** | 19 | 19 | threejs-addons, threejs-extras, threejs-animation | pass | App_bots/Dream3D.json |
 | DreamAIInfra | **TESTED** | 25 | 23 | ai-governance-hub, ai-security-scanner, deployment-manager | pass | App_bots/DreamAIInfra.json, server/seed-bots.ts |
 | DreamAdmin | **TESTED** | 21 | 20 | admin-analytics-elite, business-card-scanner, document-manager, contract-admin | pass | App_bots/DreamAdmin.json, server/seed-bots.ts |
-| DreamAffiliate | **TESTED** | 5 | 4 | offer-researcher, creative-tester | pass | App_bots/DreamAffiliate.json |
-| DreamAgency | **TESTED** | 5 | 5 | retainer-model, case-study, delivery-board | pass | App_bots/DreamAgency.json |
+| DreamAffiliate | **TESTED** | 5 | 3 | partner-tracker, creative-tester | pass | App_bots/DreamAffiliate.json |
+| DreamAgency | **TESTED** | 5 | 5 | case-study, scope-writer, delivery-board | pass | App_bots/DreamAgency.json |
 | DreamAgents | **TESTED** | 20 | 20 | beam-agent, devin-agent, agentgpt-browser | pass | App_bots/DreamAgents.json, server/seed-bots.ts |
 | DreamAgriculture | **TESTED** | 20 | 20 | ag-analytics-elite, pest-disease-scout, farm-safety-check | pass | App_bots/DreamAgriculture.json, server/seed-bots.ts |
 | DreamArts | **TESTED** | 18 | 18 | 3d-asset-mgr, music-production, brand-guidelines, animation-pipeline | pass | App_bots/DreamArts.json, server/seed-bots.ts |
@@ -144,14 +144,14 @@ Division state comes from a division-level smoke test: one of the division's own
 | DreamFinance | **TESTED** | 25 | 20 | bond-income, credit-underwriter, crypto-trading | pass | App_bots/DreamFinance.json, server/seed-bots.ts |
 | DreamFlow | **TESTED** | 5 | 5 | crm-exporter, captcha-handler | pass | App_bots/DreamFlow.json, server/seed-bots.ts |
 | DreamFood | **TESTED** | 20 | 18 | delivery-integration, health-inspection, bartender-ai | pass | App_bots/DreamFood.json, server/seed-bots.ts |
-| DreamFoundry | **TESTED** | 5 | 5 | model-card, eval-card | pass | App_bots/DreamFoundry.json |
-| DreamFranchise | **TESTED** | 5 | 5 | royalty-modeler, franchise-compliance, franchise-packager, territory-planner | pass | App_bots/DreamFranchise.json |
+| DreamFoundry | **TESTED** | 5 | 5 | eval-card, lora-plan | pass | App_bots/DreamFoundry.json |
+| DreamFranchise | **TESTED** | 5 | 5 | royalty-modeler, franchise-compliance, playbook-writer, franchise-packager | pass | App_bots/DreamFranchise.json |
 | DreamGlobal | **TESTED** | 16 | 13 | cross-border-ma, global-compliance, export-docs, intl-hr | pass | App_bots/DreamGlobal.json, server/seed-bots.ts |
 | DreamHealth | **TESTED** | 20 | 18 | chronic-care-mgr, health-compliance, therapy-notes-ai, clinical-decision | pass | App_bots/DreamHealth.json, server/seed-bots.ts |
 | DreamInfluence | **TESTED** | 25 | 25 | advocacy-scorer, cross-industry-influence, competitor-narrative | pass | App_bots/DreamInfluence.json, server/seed-bots.ts |
-| DreamIntegrations | **TESTED** | 5 | 5 | integration-runbook, api-map | pass | App_bots/DreamIntegrations.json |
+| DreamIntegrations | **TESTED** | 5 | 5 | idempotency-check, integration-runbook, api-map | pass | App_bots/DreamIntegrations.json |
 | DreamLegal | **TESTED** | 25 | 25 | compliance-kpi-monitor, cross-entity-governance, contract-loophole | pass | App_bots/DreamLegal.json, server/seed-bots.ts |
-| DreamLicensing | **TESTED** | 5 | 5 | takedown-draft, license-chooser | pass | App_bots/DreamLicensing.json |
+| DreamLicensing | **TESTED** | 5 | 5 | license-chooser, takedown-draft, renewal-calendar | pass | App_bots/DreamLicensing.json |
 | DreamLoans | **TESTED** | 23 | 16 | coupon-aggregator, business-loan, grant-finder, bill-reminder | pass | App_bots/DreamLoans.json, server/seed-bots.ts |
 | DreamMaintenance | **TESTED** | 21 | 19 | appliance-repair, electrical-inspector, building-automation | pass | App_bots/DreamMaintenance.json, server/seed-bots.ts |
 | DreamMarket | **TESTED** | 5 | 4 | arbitrage-finder, digital-franchise | pass | App_bots/DreamMarket.json, server/seed-bots.ts |
@@ -165,8 +165,8 @@ Division state comes from a division-level smoke test: one of the division's own
 | DreamProtection | **TESTED** | 20 | 20 | crowd-management, cyber-physical, crisis-management, access-control-mgr | pass | App_bots/DreamProtection.json, server/seed-bots.ts |
 | DreamRealEstate | **TESTED** | 25 | 25 | commercial-scanner, zoning-compliance, exchange-1031 | pass | App_bots/DreamRealEstate.json, server/seed-bots.ts |
 | DreamRetail | **TESTED** | 26 | 24 | brand-protector, catalog-manager, product-photo, inventory-manager | pass | App_bots/DreamRetail.json, server/seed-bots.ts |
-| DreamRobotics | **TESTED** | 5 | 5 | sim-scenario, field-log | pass | App_bots/DreamRobotics.json |
-| DreamSaaS | **TESTED** | 5 | 5 | saas-pricing, saas-builder, saas-churn | pass | App_bots/DreamSaaS.json |
+| DreamRobotics | **TESTED** | 5 | 5 | field-log, parts-list | pass | App_bots/DreamRobotics.json |
+| DreamSaaS | **TESTED** | 5 | 5 | saas-churn, saas-builder, saas-onboarding | pass | App_bots/DreamSaaS.json |
 | DreamSalesPro | **TESTED** | 37 | 33 | campaign-controller, icp-builder, landing-page-ai, appointment-setter | pass | App_bots/DreamSalesPro.json, server/seed-bots.ts |
 | DreamScience | **TESTED** | 20 | 19 | clinical-trial-mgr, citation-formatter, grant-writer-sci, chemical-inventory | pass | App_bots/DreamScience.json, server/seed-bots.ts |
 | DreamSocial | **TESTED** | 33 | 32 | advocacy-tracker, housing-services, books-app-bot, crisis-hotline | pass | App_bots/DreamSocial.json, server/seed-bots.ts |
@@ -176,7 +176,6 @@ Division state comes from a division-level smoke test: one of the division's own
 | DreamTravel | **TESTED** | 5 | 5 | budget-trip, itinerary-builder | pass | App_bots/DreamTravel.json |
 | GameTitan | **TESTED** | 4 | 4 | game-ai-player | pass | App_bots/GameTitan.json, server/seed-bots.ts |
 | GrokTeammates | **TESTED** | 112 | 106 | grok-lane-500-model-bench-runner, grok-lane-65-masterbot-os-lead, grok-lane-buddy-av-trainer, grok-lane-biz-productivity-programs | pass | config/bots/teammate-lanes.json |
-| UNASSIGNED | **SPEC_ONLY** | 19 | 0 | — | no runnable bots | bots/*.md (no division manifest source) |
 
 ## Top-level code folders
 
@@ -221,6 +220,7 @@ These files were modified/created by the folder test runs (tracked ones were res
 | Folder | Kind | Verdict | Detail |
 |---|---|---|---|
 | App_bots/CommandCore.json | division_manifest | TESTED | {"TESTED": 13} bots=13 |
+| App_bots/Dream3D.json | division_manifest | TESTED | {"TESTED": 19} bots=19 |
 | App_bots/DreamAIInfra.json | division_manifest | TESTED | {"TESTED": 25} bots=25 |
 | App_bots/DreamAdmin.json | division_manifest | TESTED | {"TESTED": 21} bots=21 |
 | App_bots/DreamAffiliate.json | division_manifest | TESTED | {"TESTED": 5} bots=5 |
@@ -276,31 +276,31 @@ These files were modified/created by the folder test runs (tracked ones were res
 | App_bots/DreamTravel.json | division_manifest | TESTED | {"TESTED": 5} bots=5 |
 | App_bots/GameTitan.json | division_manifest | TESTED | {"TESTED": 4} bots=4 |
 | App_bots/masterbots-46-65.json | division_manifest | placeholder | {} bots=0 |
-| bots/ | markdown_specs | SPEC_ONLY (Markdown specs; executed only through buddy/fleet_runtime manifests) | {"TESTED": 1101, "SPEC_ONLY": 19} files=1120 |
+| bots/ | markdown_specs | SPEC_ONLY (Markdown specs; executed only through buddy/fleet_runtime manifests) | {"TESTED": 1120} files=1120 |
 | bots/sandbox/ | js_snippets | untested | {} files=5 |
 | original-bots/ | plans | SPEC_ONLY | {"planned": 12} files=12 |
 
 ## GitHub Pages internal links
 
-Files scanned: 586; internal links/routes checked: 3254; **broken: 0**. Server-only `/api/*` references (cannot work on static Pages): 6.
+Files scanned: 672; internal links/routes checked: 3511; **broken: 0**. Server-only `/api/*` references (cannot work on static Pages): 6.
 
 
 ## Blocked bots (0)
 
 
-## Spec-only bots (19)
+## Spec-only bots (0)
 
-`threejs-addons`, `threejs-animation`, `threejs-audio`, `threejs-cameras`, `threejs-core`, `threejs-extras`, `threejs-geometries`, `threejs-global`, `threejs-helpers`, `threejs-lights`, `threejs-loaders`, `threejs-materials`, `threejs-math`, `threejs-nodes`, `threejs-objects`, `threejs-renderers`, `threejs-scenes`, `threejs-textures`, `threejs-tsl`
 
-## Bots at TESTED or above (1213)
 
-1204 via generated fixtures (`fixture_generated`), 9 via hand-written fixtures: `ach-processor`, `ad-copy`, `analytics-hub`, `app-perf-monitor`, `approval-workflow`, `blog-writer`, `compliance-scanner`, `customer-segmentation`, `task-scheduler`
+## Bots at TESTED or above (1232)
+
+1223 via generated fixtures (`fixture_generated`), 9 via hand-written fixtures: `ach-processor`, `ad-copy`, `analytics-hub`, `app-perf-monitor`, `approval-workflow`, `blog-writer`, `compliance-scanner`, `customer-segmentation`, `task-scheduler`
 
 ## Run with Buddy
 
-Run buttons enabled: **1142**. Bots that cannot be run, and why:
+Run buttons enabled: **1160**. Bots that cannot be run, and why:
 
-- **blocked_money** (66) — money movement / payments / billing / trading: never triggerable from Buddy: `ach-processor`, `affiliate-marketing`, `algo-trading`, `api-monetization`, `auto-loan`, `bill-reminder`, `buddy-code-replicator`, `cashback-tracker`, `catering-coordinator`, `churn-predictor-bot`, `client-billing`, `commodity-trader`, `cross-border-pay`, `cross-border-payments`, `cross-sell-engine`, `crypto-trading`, `data-monetization`, `dividend-investor`, `embedded-finance`, `forex-trader`, `fraud-detection-pay`, `global-ip`, `grok-lane-live-revenue-readiness`, `grok-lane-model-access-product-owner`, `grok-lane-platform-expansion-lead`, `in-app-purchase-opt`, `influencer-bot`, `landscaping-mgr`, `loan-finder`, `loan-servicing`, `massage-therapist`, `medical-billing`, `membership-mgr-care`, `mobile-pay`, `mortgage-advisor`, `options-trader`, `payment-analytics-elite`, `payment-gateway`, `payment-gateway-bot`, `payment-reconciliation`, `payout-reconciler`, `payroll-processor`, `pos-analytics`, `procurement-auto`, `rebate-tracker`, `research-data-mgr`, `returns-optimizer`, `revenue-engine`, `revenue-leakage-alert`, `saas-package-bot`, `split-pay-calc`, `stock-trading-bot`, `stripe-billing`, `subcontractor-mgr`, `subscription-billing`, `subscription-lifecycle`, `subscription-lifecycle-mgr`, `terminal-deploy`, `therapy-notes-ai`, `time-tracker`, `tip-processing`, `token-billing`, `tool-inventory`, `trade-finance`, `trade-master`, `trading-bot-mgr`
+- **blocked_money** (67) — money movement / payments / billing / trading: never triggerable from Buddy: `ach-processor`, `affiliate-marketing`, `algo-trading`, `api-monetization`, `auto-loan`, `bill-reminder`, `buddy-code-replicator`, `cashback-tracker`, `catering-coordinator`, `churn-predictor-bot`, `client-billing`, `commodity-trader`, `cross-border-pay`, `cross-border-payments`, `cross-sell-engine`, `crypto-trading`, `data-monetization`, `dividend-investor`, `embedded-finance`, `forex-trader`, `fraud-detection-pay`, `global-ip`, `grok-lane-live-revenue-readiness`, `grok-lane-model-access-product-owner`, `grok-lane-platform-expansion-lead`, `in-app-purchase-opt`, `influencer-bot`, `landscaping-mgr`, `loan-finder`, `loan-servicing`, `massage-therapist`, `medical-billing`, `membership-mgr-care`, `mobile-pay`, `mortgage-advisor`, `offer-researcher`, `options-trader`, `payment-analytics-elite`, `payment-gateway`, `payment-gateway-bot`, `payment-reconciliation`, `payout-reconciler`, `payroll-processor`, `pos-analytics`, `procurement-auto`, `rebate-tracker`, `research-data-mgr`, `returns-optimizer`, `revenue-engine`, `revenue-leakage-alert`, `saas-package-bot`, `split-pay-calc`, `stock-trading-bot`, `stripe-billing`, `subcontractor-mgr`, `subscription-billing`, `subscription-lifecycle`, `subscription-lifecycle-mgr`, `terminal-deploy`, `therapy-notes-ai`, `time-tracker`, `tip-processing`, `token-billing`, `tool-inventory`, `trade-finance`, `trade-master`, `trading-bot-mgr`
 - **blocked_destructive** (5) — delete / purge / wipe: never triggerable from Buddy: `grok-lane-branch-plan-steward`, `grok-lane-fleet-gap-closer`, `grok-lane-superbot-migration-lead`, `lib-prisma`, `memory-vault`
-- **spec_only** (19) — no shared engine fits (placeholder spec without specific capabilities): `threejs-addons`, `threejs-animation`, `threejs-audio`, `threejs-cameras`, `threejs-core`, `threejs-extras`, `threejs-geometries`, `threejs-global`, `threejs-helpers`, `threejs-lights`, `threejs-loaders`, `threejs-materials`, `threejs-math`, `threejs-nodes`, `threejs-objects`, `threejs-renderers`, `threejs-scenes`, `threejs-textures`, `threejs-tsl`
+- **spec_only** (0) — no shared engine fits (placeholder spec without specific capabilities):
 

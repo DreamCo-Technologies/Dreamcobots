@@ -3,7 +3,7 @@
 > Repository truth only. Missing evidence remains red; no plan or catalog label is promoted into a deployment claim.
 
 - Real divisions: **55** (45 canonical + 10 supplemental)
-- Routable profiles: **1101**
+- Routable profiles: **1120**
 - Production-ready divisions: **0**
 - Trained weight artifacts: **0**
 - Gesture hardware verified: **false**
@@ -81,6 +81,6 @@
 
 ## Reconciliation notes
 
+- `Dream3D` — routing or exclusion bucket; not counted as a business division.
 - `GrokTeammates` — routing or exclusion bucket; not counted as a business division.
 - `MasterbotProfilesExcluded` — routing or exclusion bucket; not counted as a business division.
-- `UNASSIGNED` — routing or exclusion bucket; not counted as a business division.
