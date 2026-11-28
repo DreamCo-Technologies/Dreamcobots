@@ -9,6 +9,9 @@ class TrainingTaxonomyTests(unittest.TestCase):
     def test_all_providers_categorized(self):
         self.assertEqual(set(PROVIDERS), {name for values in PROVIDER_CATEGORIES.values() for name in values})
 
+    def test_skill_pack_is_in_curriculum_design_category(self):
+        self.assertIn("skill_pack", CATEGORIES["curriculum_design"])
+
     def test_tokenization_search(self):
         result = search(BootcampQuery(category="tokenization_vocabulary"))
         self.assertEqual({m["id"] for m in result["methods"]}, {"tokenizer_training", "continued_pretraining"})
