@@ -49,6 +49,11 @@ class GeneratedArtifactPRGuardTests(unittest.TestCase):
             "+{\"api_key\":\"NOT_A_REAL_KEY\"}\n"
         )
         self.assertTrue(validate_changes("A\tconfig/generated/credentials.json", secret_diff))
+        ordinary_path_diff = secret_diff.replace("credentials.json", "catalog.json")
+        self.assertTrue(
+            any("credential" in error.lower() for error in
+                validate_changes("A\\tcatalog.json", ordinary_path_diff))
+        )
 
 
 if __name__ == "__main__":
