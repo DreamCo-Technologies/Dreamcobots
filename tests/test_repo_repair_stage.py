@@ -80,3 +80,65 @@ def test_failed_summary_without_node_ids_is_not_reported_as_pass():
     obs = MODULE.observation_from_report({"summary": {"failed": 1}, "tests": []})
     assert obs["failed_test_count"] == 1
     assert obs["failure_class"] == "unknown"
+
+
+def _run_args(tmp_path, report_path, *, output="artifacts/repo-repair/result.json"):
+    import argparse
+    return argparse.Namespace(
+        report=str(report_path), observation=None, max_attempts=3,
+        allowed_paths=None, trajectory_dir="artifacts/repo-repair/trajectories",
+        output=output, repo_root=str(tmp_path), apply=False, allow_local_apply=False,
+    )
+
+
+def test_output_path_traversal_is_rejected_before_report_read(tmp_path):
+    args = _run_args(tmp_path, tmp_path / "missing.json", output="../outside.json")
+    try:
+        MODULE.run(args)
+    except ValueError as exc:
+        assert "Output path" in str(exc)
+    else:
+        raise AssertionError("output path must not escape repository root")
+
+
+def test_input_report_must_remain_inside_repository(tmp_path):
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    outside = tmp_path / "outside.json"
+    outside.write_text('{"tests": [], "summary": {"failed": 0}}', encoding="utf-8")
+    args = _run_args(repo, outside)
+    try:
+        MODULE.run(args)
+    except ValueError as exc:
+        assert "Input report" in str(exc)
+    else:
+        raise AssertionError("report path must not escape repository root")
+
+
+def test_parameter_values_are_not_copied_into_failure_metadata():
+    report = {
+        "summary": {"failed": 1},
+        "tests": [{"nodeid": "tests/test_example.py::test_user[person@example.test]", "outcome": "failed"}],
+    }
+    obs = MODULE.observation_from_report(report)
+    assert "person@example.test" not in str(obs)
+    assert "[parameterized]" in str(obs)
+
+
+def test_repair_plan_cannot_inject_an_unregistered_script(monkeypatch, tmp_path):
+    import sys
+    report = {
+        "summary": {"failed": 1},
+        "tests": [{"nodeid": "tests/test_buddy_dataset_route_check.py::test_index", "outcome": "failed"}],
+    }
+    report_path = tmp_path / "report.json"
+    import json
+    report_path.write_text(json.dumps(report), encoding="utf-8")
+    monkeypatch.setattr(MODULE, "repair_plan", lambda _obs: [[sys.executable, "tools/unregistered.py"]])
+    args = _run_args(tmp_path, report_path)
+    try:
+        MODULE.run(args)
+    except ValueError as exc:
+        assert "fixed command allowlist" in str(exc)
+    else:
+        raise AssertionError("unregistered scripts must never execute")
