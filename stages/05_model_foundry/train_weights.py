@@ -122,6 +122,17 @@ def _load_runtime():
     return torch, Dataset, AutoModelForCausalLM, AutoTokenizer, LlamaConfig, LlamaForCausalLM, Trainer, TrainingArguments
 
 
+
+def validate_parameter_count(actual: int, target: int, tolerance: float = 0.01) -> None:
+    """Reject scratch architectures whose parameter count drifts beyond the recipe tolerance."""
+    if target <= 0 or not 0 < tolerance <= 0.1:
+        raise ValueError("parameter target and tolerance must be positive and bounded")
+    if abs(actual - target) / target > tolerance:
+        raise ValueError(
+            f"scratch architecture has {actual:,} parameters; target is {target:,} "
+            f"({tolerance:.1%} tolerance)"
+        )
+
 def _load_model(recipe: dict[str, Any], tokenizer, checkpoint: Path | None = None, manifest: dict[str, Any] | None = None):
     torch, _, AutoModelForCausalLM, _, LlamaConfig, LlamaForCausalLM, _, _ = _load_runtime()
     if checkpoint and (checkpoint / "adapter_config.json").exists():
@@ -159,10 +170,7 @@ def _load_model(recipe: dict[str, Any], tokenizer, checkpoint: Path | None = Non
         model = LlamaForCausalLM(config)
         target = int(arch.get("parameters_target", 45_000_000))
         actual = sum(parameter.numel() for parameter in model.parameters())
-        if abs(actual - target) / target > 0.01:
-            raise ValueError(
-                f"scratch architecture has {actual:,} parameters; target is {target:,} (1% tolerance)"
-            )
+        validate_parameter_count(actual, target, tolerance=0.01)
         print(f"Initialized scratch model with {actual:,} parameters (target {target:,})")
     else:
         base = recipe.get("base_model", {})
