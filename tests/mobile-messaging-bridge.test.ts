@@ -88,14 +88,27 @@ test("requires bridge and owner consent", async () => {
 test("default draft-only mode prevents outbound send without explicit approval", async () => {
   let sends = 0;
   const transport = { async send(_input: MobileOutboundPayload) { sends++; return { providerMessageId: "provider-1" }; } };
-  const result = await sendMobileMessage({ registration: ios, settings: { ...settings, autonomyMode: "draft_only" }, transport, action: "send", contactId: "contact-1", providerContactId: "handle-1", channel: "messaging", body: "Confirmed, see you then.", idempotencyKey: "send-1", sourceConsentGranted: true });
+  const result = await sendMobileMessage({ registration: ios, settings: { ...settings, autonomyMode: "draft_only" }, transport, action: "send", contactId: "contact-1", resolveProviderContactId: () => "handle-1", channel: "messaging", body: "Confirmed, see you then.", idempotencyKey: "send-1", sourceConsentGranted: true });
   assert.equal(result.sent, false); assert.equal(sends, 0);
+});
+
+test("outbound sending requires a server-side provider-contact mapping", async () => {
+  let sends = 0;
+  const transport = { async send(_input: MobileOutboundPayload) { sends++; return { providerMessageId: "must-not-send" }; } };
+  const result = await sendMobileMessage({
+    registration: android, settings, transport, action: "send", contactId: "contact-1",
+    resolveProviderContactId: () => undefined, channel: "sms", body: "Hello",
+    idempotencyKey: "missing-mapping", sourceConsentGranted: true, explicitOwnerApproval: true,
+  });
+  assert.equal(result.sent, false);
+  assert.match(result.reason, /server-side provider-contact mapping/);
+  assert.equal(sends, 0);
 });
 
 test("does not route iPhone carrier SMS through BlueBubbles", async () => {
   let sends = 0;
   const transport = { async send(_input: MobileOutboundPayload) { sends++; return { providerMessageId: "must-not-send" }; } };
-  const result = await sendMobileMessage({ registration: ios, settings, transport, action: "send", contactId: "contact-1", providerContactId: "handle-1", channel: "sms", body: "This must not use BlueBubbles.", idempotencyKey: "ios-sms-1", sourceConsentGranted: true, explicitOwnerApproval: true });
+  const result = await sendMobileMessage({ registration: ios, settings, transport, action: "send", contactId: "contact-1", resolveProviderContactId: () => "handle-1", channel: "sms", body: "This must not use BlueBubbles.", idempotencyKey: "ios-sms-1", sourceConsentGranted: true, explicitOwnerApproval: true });
   assert.equal(result.sent, false);
   assert.match(result.reason, /separately authorized SMS gateway/);
   assert.equal(sends, 0);
@@ -104,14 +117,14 @@ test("does not route iPhone carrier SMS through BlueBubbles", async () => {
 test("allowlisted routine auto-replies can use Android transport", async () => {
   let sentBody = "";
   const transport = { async send(input: MobileOutboundPayload) { sentBody = input.body; return { providerMessageId: "android-provider-1" }; } };
-  const result = await sendMobileMessage({ registration: android, settings, transport, action: "auto_reply", contactId: "contact-1", providerContactId: "android-contact-1", channel: "sms", body: "I got your message and will reply shortly.", idempotencyKey: "android-send-1", sourceConsentGranted: true, lowStakesRoutine: true });
+  const result = await sendMobileMessage({ registration: android, settings, transport, action: "auto_reply", contactId: "contact-1", resolveProviderContactId: () => "android-contact-1", channel: "sms", body: "I got your message and will reply shortly.", idempotencyKey: "android-send-1", sourceConsentGranted: true, lowStakesRoutine: true });
   assert.equal(result.sent, true); assert.equal(sentBody, "I got your message and will reply shortly.");
 });
 
 test("blocks high-impact content even for allowlisted contacts", async () => {
   let sends = 0;
   const transport = { async send(_input: MobileOutboundPayload) { sends++; return { providerMessageId: "must-not-send" }; } };
-  const result = await sendMobileMessage({ registration: android, settings, transport, action: "auto_reply", contactId: "contact-1", providerContactId: "android-contact-1", channel: "sms", body: "Please wire the payment funds today.", idempotencyKey: "unsafe-1", sourceConsentGranted: true, lowStakesRoutine: true });
+  const result = await sendMobileMessage({ registration: android, settings, transport, action: "auto_reply", contactId: "contact-1", resolveProviderContactId: () => "android-contact-1", channel: "sms", body: "Please wire the payment funds today.", idempotencyKey: "unsafe-1", sourceConsentGranted: true, lowStakesRoutine: true });
   assert.equal(result.sent, false); assert.equal(sends, 0);
 });
 
