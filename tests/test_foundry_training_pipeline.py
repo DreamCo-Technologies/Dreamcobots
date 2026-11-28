@@ -343,6 +343,30 @@ class FoundryGuardrailTests(unittest.TestCase):
             self.assertFalse(stored["training_authorized"])
             self.assertEqual(stored["tool_calls"][0]["arguments"]["api_key"], "[REDACTED_SECRET]")
 
+    def test_token_packing_deduplicates_normalized_examples(self):
+        class FakeTokenizer:
+            eos_token_id = 99
+            def encode(self, value, add_special_tokens=False):
+                return [ord(char) for char in value]
+
+        rows = [
+            {"task_id": "a", "content": "  UNIQUE   lesson "},
+            {"task_id": "b", "content": "unique lesson"},
+            {"task_id": "c", "content": "A different lesson"},
+        ]
+        tokens = PACKER_MODULE._token_pool(rows, FakeTokenizer())
+        expected = [ord(char) for char in "unique lesson"] + [99]
+        expected += [ord(char) for char in "a different lesson"] + [99]
+        self.assertEqual(tokens, expected)
+
+    def test_token_packing_skips_empty_normalized_examples(self):
+        class FakeTokenizer:
+            eos_token_id = 99
+            def encode(self, value, add_special_tokens=False):
+                return [ord(char) for char in value]
+
+        self.assertEqual(PACKER_MODULE._token_pool([{"content": "   "}], FakeTokenizer()), [])
+
 
 if __name__ == "__main__":
     unittest.main()
