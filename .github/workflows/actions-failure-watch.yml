@@ -45,7 +45,7 @@ jobs:
       EVENT_NAME: ${{ github.event.workflow_run.event }}
     steps:
       - name: Create evidence directory
-        run: mkdir -p failure-evidence/job-logs
+        run: mkdir -p failure-evidence
       - name: Collect run and job metadata
         shell: bash
         run: |
