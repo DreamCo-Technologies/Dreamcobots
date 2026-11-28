@@ -24,12 +24,12 @@
     "tokens per second",
     "peak RAM and optional VRAM",
     "SHA-256 artifact and provenance hashes",
-    "HMAC-SHA256 signature with managed secret"
+    "HMAC-SHA256 authentication with managed secret and explicit key ID"
   ],
   "promotion": {
     "mastery_status_requires": [
       "trained_checkpoint",
-      "signed_checkpoint_manifest",
+      "hmac_authenticated_checkpoint_manifest",
       "private_independent_holdout_pass",
       "regression_review",
       "safety_review",
@@ -40,16 +40,14 @@
   "training_boundary": "No training starts from this policy, suite, synthetic fixture, or generated blueprint. A separate approved worker must verify rights, consent, compute budget, base-model license and training authorization.",
   "security": {
     "holdout_answer_keys_in_training_paths": false,
-    "signing_secret_in_repository": false,
-    "default_network_access": false
+    "default_network_access": false,
+    "authentication_secret_in_repository": false
   },
-  "signing": {
+  "authentication": {
     "algorithm": "HMAC-SHA256",
     "require_managed_key_id": true,
     "secret_environment_variable": "DREAMCO_CHECKPOINT_HMAC_KEY",
     "key_id_environment_variable": "DREAMCO_CHECKPOINT_HMAC_KEY_ID",
-    "description": "Shared-secret message authentication; not a public-key digital signature."
-  },
-  "required_evidence": [],
-  "checks": []
+    "description": "Shared-secret message authentication code; it is not a public-key digital signature."
+  }
 }
