@@ -51,3 +51,15 @@ Prior verified snapshots are preserved so users can see progress over time.
 ## Public safety
 
 Public pages never expose credentials, private prompts/data, encryption keys, restricted endpoints, or other secrets. Third-party model and dataset licenses remain authoritative.
+
+## 10x50 sharded readiness architecture
+
+The 500-model target is not yet a verified 500-model inventory. `config/buddy/500-model-registry.json` defines 500 prospective slots; those generated IDs are placeholders, not real model records.
+
+`config/verified-model-inventory.json` is the separate rights-reviewed inventory. It begins empty and must contain exactly 500 real entries with a provider, immutable model revision, adapter, HTTPS model card, available access, approved model-license review, explicit evaluation authorization, applicable benchmark suites, and a review record.
+
+`tools/plan_500_model_shards.py` builds ten deterministic shards of 50 models only when every inventory gate passes. If the inventory is empty, incomplete, duplicated, mutable, or unapproved, all ten shards remain blocked and contain zero models. It never pads the inventory with placeholder slots.
+
+`.github/workflows/benchmark_500_matrix.yml` runs ten parallel readiness jobs and publishes JSON plans. This is free GitHub validation/planning only: it does not download weights, contact providers, train, infer, spend paid credits, or create scores. Actual execution remains blocked by `tools/run_500_model_benchmarks.py` until the approved evidence-producing runner, isolated holdouts, model-specific adapters, compute budgets, and explicit compute approval are available.
+
+A green readiness workflow means only that the planner and contract tests ran. It does not mean any model was benchmarked.
