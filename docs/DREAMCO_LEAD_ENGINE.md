@@ -10,6 +10,8 @@ The Lead Engine formalizes the five-stage customer-acquisition workflow: Attract
 - `tests/governed-leads.test.ts` covers score calculation, consent evidence, suppression, prohibited targeting, stage progression, and the external-action boundary.
 - The existing `server/governed-leads.ts` remains authoritative for channel permissions, suppression, follow-up cadence, daily caps, per-message owner approval, and dispatch packet creation.
 - Existing `server/outbound-adapters.ts` remains authoritative for configured outbound webhook transport and secret references.
+- `server/lead-engine-storage.ts` provides owner-scoped PostgreSQL persistence, idempotent activity events, and monotonic stage updates.
+- `migrations/0002_lead_engine_crm.sql` creates CRM tables, composite ownership constraints, forced row-level security (RLS), and immutable activity-event updates.
 
 ## Qualification model
 
@@ -36,7 +38,13 @@ A high score does not override missing permission, suppression, or required huma
 
 ## Integration boundaries
 
-This module is a deterministic policy layer. It does not discover or scrape prospects, persist CRM records, send email/SMS/voice/social messages, book calendar events, create contracts, or process payments. `leadEngineReadiness()` reports these dependencies honestly.
+This module is a deterministic policy and persistence foundation. It does not discover or scrape prospects, send email/SMS/voice/social messages, book calendar events, create contracts, or process payments. CRM persistence is implemented in `server/lead-engine-storage.ts`, but it is not exposed through HTTP until the repository has a verified authenticated user identity and owner-scoped route guard. `leadEngineReadiness()` reports this remaining dependency honestly.
+
+### CRM storage setup
+
+Apply `migrations/0002_lead_engine_crm.sql` to the target PostgreSQL database using the deployment's reviewed migration process. The application database role must not be a superuser or have `BYPASSRLS`. Every repository operation sets `app.owner_id` transaction-locally; PostgreSQL RLS then restricts reads and writes to that owner. Callers must derive `ownerId` from a verified authenticated identity, never from request-body input. Activity events are not editable; authorized deletion remains possible through a future data-rights workflow and the parent lead's cascade.
+
+Repository functions: `saveLeadEngineRecord`, `getLeadEngineRecord`, `listLeadEngineRecords`, `appendLeadEngineActivity`, and `listLeadEngineActivities`. The repository rejects owner mismatches and stage regression; duplicate activity event IDs are idempotent.
 
 The existing `/api/buddy/lead-plan` endpoint remains the governed outreach planning entry point. The new qualification policy is not exposed through a new HTTP route in this PR because the repository's API authentication gate must be verified first. This change does not create a second dispatch route.
 
@@ -46,9 +54,13 @@ The existing `/api/buddy/lead-plan` endpoint remains the governed outreach plann
 - [x] Explainable qualification score and deterministic tiering
 - [x] Five-stage plan with permission and suppression gates
 - [x] Reuse of existing governed outreach and suppression policies
-- [x] Focused regression tests added to the existing governed-leads test suite
-- [ ] Authenticated CRM persistence and tenant isolation
-- [ ] Consent evidence lifecycle and durable suppression storage
+- [x] Focused qualification regression tests added to the existing governed-leads test suite
+- [x] Storage contract tests added to the governed test suite
+- [x] Owner-scoped PostgreSQL CRM repository and tenant-isolation migration authored
+- [x] Consent evidence and suppression state included in persisted lead records
+- [ ] Apply migration in staging/production and verify RLS using the actual non-superuser application role
+- [ ] Authenticated HTTP controller and owner identity integration
+- [ ] Consent evidence lifecycle, expiry checks, and durable suppression update workflows
 - [ ] Owner-configured lead magnet/form integration
 - [ ] Approved content and signal-source adapters with provenance
 - [ ] Calendar integration for owner-authorized booking
@@ -58,4 +70,4 @@ The existing `/api/buddy/lead-plan` endpoint remains the governed outreach plann
 
 ## Release truth
 
-This PR implements the qualification and stage-planning foundation. It does not certify the full Lead Engine as production-ready. The remaining checklist items require separate integration work, configured credentials, owner authorization, and passing evidence.
+This PR now implements qualification, stage planning, and an owner-scoped PostgreSQL CRM persistence foundation. It does not certify the full Lead Engine as production-ready. The migration has not been applied to a live database, RLS has not been exercised against the deployed application role, and authenticated HTTP, lead acquisition, nurturing, booking, and conversion integrations remain gated on separate integration work and passing evidence.
