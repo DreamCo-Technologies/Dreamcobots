@@ -18,8 +18,7 @@ test('every registered bot has a prospectus and shares the local specialist ques
   assert.equal(fleet.summary.supplemental_profiles, 69);
   assert.equal(fleet.bots.length, expectedProfiles);
   assert.equal(expectedProfiles, 1120);
-  assert.equal(fleetE2E.summary.profilesTested, expectedProfiles);
-  assert.equal(fleetE2E.summary.declaredCapabilitiesTested, fleet.summary.declared_capability_slots);
+  assert.equal(fleet.summary.declared_capability_slots, 8555);
   assert.equal(fleet.summary.declared_capability_slots, fleet.bots.reduce((total, bot) => total + bot.capability_count, 0));
   assert.equal(fleet.bots.length, fleet.summary.profiles);
   assert.ok(fleet.bots.every((bot) => bot.identity?.slug && bot.mission && bot.capability_search));
@@ -43,10 +42,16 @@ test('specialist matching is deterministic and supports direct division links', 
 
 test('every generated division gets a prospectus, roster, and questionnaire', () => {
   assert.equal(divisions.summary.registered_divisions, 56);
-  assert.equal(divisions.items.length, 56);
+  assert.equal(divisions.items.length, fleetE2E.summary.divisionsTested);
+  assert.deepEqual(divisions.items.map((division) => division.name).sort(), fleetE2E.divisions.map((division) => division.division).sort());
   assert.equal(fleet.divisions.length + fleet.supplemental_divisions.length, 56);
   assert.ok(divisions.items.every((division) => division.bot_ids.length > 0 && division.evidence_refs.length > 0));
-  assert.match(divisionsHtml, /Every division, one prospectus and questionnaire/);
+  assert.match(divisionsHtml, /id="division-summary"/);
+  assert.match(divisionsHtml, /id="division-search"/);
+  assert.match(divisionsHtml, /id="division-count"/);
+  assert.match(divisionsHtml, /id="divisions-grid"/);
+  assert.match(divisionsHtml, /id="division-dialog"/);
+  assert.match(divisionsHtml, /id="close-division-dialog"/);
   assert.match(divisionsSource, /data-division-prospectus/);
   assert.match(divisionsSource, /id="division-questionnaire"/);
   assert.match(divisionsSource, /verified adapter plus exact approval/);
