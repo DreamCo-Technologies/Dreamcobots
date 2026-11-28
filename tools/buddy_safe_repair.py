@@ -107,14 +107,23 @@ def run_safe_repair(observation:dict,root:Path)->dict:
  status=subprocess.run(["git","status","--porcelain","--untracked-files=all"],cwd=root,text=True,capture_output=True,check=True).stdout
  entries=[line for line in status.splitlines() if len(line)>3 and not line[3:].startswith("artifacts/buddy-safe-repair/")]
  blocked=[]
+ changed=[]
+ total_bytes=0
  for line in entries:
   path=line[3:]
-  if line[:2].strip() not in {"M","A","??"} or not repair_path_allowed(path):
+  candidate=root/path
+  if (line[:2].strip() not in {"M","A","??"} or not repair_path_allowed(path)
+      or candidate.is_symlink() or not candidate.is_file()):
    blocked.append(path)
+  else:
+   changed.append(path);total_bytes+=candidate.stat().st_size
  if blocked:
   result["status"]="BLOCKED_UNEXPECTED_PATH";result["success"]=False
   result["blocked_paths"]=sorted(set(blocked));return result
- result["changed_files"]=sorted({line[3:] for line in entries})
+ if len(changed)>100 or total_bytes>25*1024*1024:
+  result["status"]="BLOCKED_SIZE_LIMIT";result["success"]=False
+  result["changed_file_count"]=len(changed);result["changed_bytes"]=total_bytes;return result
+ result["changed_files"]=sorted(set(changed))
  result["success"]=True
  result["status"]="REPAIR_CANDIDATE_READY_FOR_PR" if result["changed_files"] else "REPAIR_RAN_NO_CHANGES"
  return result
