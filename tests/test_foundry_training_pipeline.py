@@ -86,12 +86,28 @@ class FoundryGuardrailTests(unittest.TestCase):
                 "commercial_use": True,
                 "policy_decision_id": "POLICY-1",
                 "license_evidence_id": "LICENSE-1",
+                "approved_by": "Policy Owner",
             }]
         }
         result = GUARDRAILS.require_model_authorization(approved, "example/model", "a" * 40)
         self.assertEqual(result["license_evidence_id"], "LICENSE-1")
         with self.assertRaises(PermissionError):
             GUARDRAILS.require_model_authorization(approved, "example/model", "b" * 40)
+
+    def test_holdout_helpers_use_same_fixed_split_as_guardrails(self):
+        holdout_spec = importlib.util.spec_from_file_location(
+            "dreamco_foundry_holdout", MODULE_PATH.parent / "holdout.py"
+        )
+        holdout_module = importlib.util.module_from_spec(holdout_spec)
+        assert holdout_spec and holdout_spec.loader
+        holdout_spec.loader.exec_module(holdout_module)
+        ids = [f"task-{i}" for i in range(1000)]
+        self.assertEqual(
+            [holdout_module.bucket(value) for value in ids],
+            [GUARDRAILS.split_bucket(value) for value in ids],
+        )
+        with self.assertRaises(ValueError):
+            holdout_module.split_tasks([{"task_id": "x"}], holdout_percent=20)
 
     def test_sft_rows_require_assistant_or_tool_targets(self):
         rows = [
