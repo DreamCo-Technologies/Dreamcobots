@@ -71,12 +71,21 @@ class FoundryGuardrailTests(unittest.TestCase):
             ))
 
     def test_dpo_accepts_only_lab_pass_teachback_against_lab_failure(self):
+        evidence = {
+            "sandbox_run_id": "run-good", "rejected_sandbox_run_id": "run-bad",
+            "grader_version": "grader-v1", "test_suite_sha256": "a" * 64,
+            "rubric_sha256": "b" * 64, "grader_attestation_sha256": "c" * 64,
+            "rejected_grader_attestation_sha256": "d" * 64,
+        }
         rows = [
             {"prompt": "p", "chosen": "good", "rejected": "bad",
              "chosen_status": "LAB_PASSED", "teach_back_verified": True,
-             "rejected_status": "LAB_FAILED"},
+             "rejected_status": "LAB_FAILED", **evidence},
             {"prompt": "p", "chosen": "unverified", "rejected": "bad",
              "chosen_status": "LAB_PASSED", "teach_back_verified": False,
+             "rejected_status": "LAB_FAILED", **evidence},
+            {"prompt": "p", "chosen": "no-attestation", "rejected": "bad",
+             "chosen_status": "LAB_PASSED", "teach_back_verified": True,
              "rejected_status": "LAB_FAILED"},
         ]
         pairs = TRAIN_WEIGHTS.validated_preferences(rows)
