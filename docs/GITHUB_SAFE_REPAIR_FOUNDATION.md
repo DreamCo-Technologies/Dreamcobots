@@ -18,7 +18,7 @@ The PR and mainline workflows upload metadata-only JSON reports containing statu
 
 ## Mainline recovery
 
-Every push to `main` runs the mainline health check. A failure opens or updates an issue with the commit and workflow-run link, without copying log output. The workflow never pushes to `main`, creates an automatic revert, or invokes an AI model.
+Every push to `main` runs the mainline health check. A failure opens or updates an issue with the commit and workflow-run link, without copying log output. The generated-artifact recovery lane may push a separate allowlisted repair branch; it never pushes to `main`, creates an automatic revert, or invokes an AI model. A human must open and review the repair PR.
 
 ## Safe repair pull requests
 
@@ -53,8 +53,8 @@ Stage 06 (`stages/06_repo_repair/__main__.py`) consumes a `pytest-json-report` f
 
 - Pull-request runs are **dry-run only**. The PR Quality Gate publishes a repair plan alongside the sanitized CI report; it never edits the contributor's branch.
 - Only five known generated-index test families can map to fixed, repository-owned builder commands. Unknown, ambiguous, security, permissions, billing, dependency, source-code, and policy failures return `NO_ALLOWLISTED_AUTOMATIC_REPAIR` for human triage.
-- The path allowlist is hard-coded to generated artifacts under `artifacts/`, `command-center/data/`, `config/bots/`, `config/generated/`, `reports/`, and `website/data/`. A caller cannot expand it to source, tests, workflows, contracts, or secrets.
-- `--apply` is blocked in pull-request and non-main GitHub contexts. It requires a clean trusted `main` checkout and runs fixed commands in a detached temporary Git worktree. The resulting patch is an unmerged review artifact; it does not commit, push, open, approve, or merge a PR.
+- The path allowlist is hard-coded to generated artifacts under `artifacts/`, `command-center/data/`, `config/bots/`, `config/generated/`, `reports/`, and `website/data/`. A caller cannot expand it to source, tests, workflows, contracts, or secrets. Output and trajectory paths must also resolve inside those generated-artifact roots.
+- `--apply` is blocked in pull-request and non-main GitHub contexts. It requires a clean trusted `main` checkout and runs fixed commands in a detached temporary Git worktree. The resulting patch is an unmerged review artifact; it does not commit, push, open, approve, or merge a PR. Candidates are limited to 20 files, 1,500 changed lines, and 5 MiB of patch data; binary changes, symlinks, credential files, unsafe file modes, and paths outside the allowlist are rejected.
 - Attempt history is capped at three per failure fingerprint. No model is called and no API key is needed.
 
 Run the report and planner locally without applying changes:
