@@ -1,7 +1,7 @@
 import argparse,subprocess,tempfile,pathlib,shutil,re,sys,os
 from ..common import read_json,write_json,validate
 def similarity(a,b):
-    toks=lambda s:set(re.findall(r"[A-Za-z_][A-Za-z0-9_]*|\\d+",s))
+    toks=lambda s:set(re.findall(r"[A-Za-z_][A-Za-z0-9_]*|\d+",s))
     x,y=toks(a),toks(b); return len(x&y)/max(1,len(x|y))
 def docker_command(root,image="dreamco-verifier:local"):
     return ["docker","run","--rm","--network","none","--read-only","--cap-drop=ALL","--security-opt=no-new-privileges","--pids-limit","64","--memory","256m","--cpus","0.5","--user","65532:65532","--tmpfs","/tmp:rw,noexec,nosuid,size=32m,mode=1777","-v",f"{root}:/work:ro","-w","/tmp",image,"sh","-lc","cp -R /work /tmp/work && cd /tmp/work && python -m pytest -q"]
