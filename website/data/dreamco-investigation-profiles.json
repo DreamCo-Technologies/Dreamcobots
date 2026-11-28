@@ -1,0 +1,169 @@
+{
+  "schema": "dreamco.investigation_profiles.v1",
+  "profiles": {
+    "code_repository": {
+      "label": "Source repository",
+      "evidence": [
+        "immutable revision and license",
+        "file and dependency inventory",
+        "architecture and API evidence",
+        "upstream tests and build instructions",
+        "security and secret scan"
+      ],
+      "tests": [
+        "static review",
+        "unit and integration tests",
+        "compatibility tests",
+        "mutation and regression tests",
+        "resource and performance measurements"
+      ],
+      "execution": "disposable local sandbox; no network or secrets by default"
+    },
+    "open_weights_model": {
+      "label": "Open or downloadable model weights",
+      "evidence": [
+        "immutable model revision and publisher",
+        "license and use restrictions",
+        "file hashes and weight format",
+        "model card, architecture, tokenizer, and inference requirements",
+        "malware and serialization scan"
+      ],
+      "tests": [
+        "safe-format load check",
+        "same-fixture capability tests",
+        "quality and safety grading",
+        "latency, memory, throughput, and cost",
+        "hidden holdout and regression suite"
+      ],
+      "execution": "local disposable sandbox; reject pickle and remote code by default; never give model access to host secrets"
+    },
+    "frontier_model_api": {
+      "label": "Frontier or hosted model API",
+      "evidence": [
+        "exact provider and model id",
+        "provider terms and data controls",
+        "credential scope, quota, and budget",
+        "request and response schema",
+        "provider-side logging and retention settings"
+      ],
+      "tests": [
+        "same signed fixtures as local models",
+        "quality, reasoning, and groundedness",
+        "tool-use permissions in mock mode",
+        "latency, rate limits, and cost",
+        "safety and privacy regression"
+      ],
+      "execution": "provider API adapter; store credentials in the user's OS secret store; never include secrets in plans, logs, or prompts"
+    },
+    "website": {
+      "label": "Website or web application",
+      "evidence": [
+        "owner-approved URLs and routes",
+        "DOM, accessibility tree, and screenshots",
+        "navigation and visible state changes",
+        "network requests in an isolated browser profile",
+        "performance and error evidence"
+      ],
+      "tests": [
+        "user journey and form validation",
+        "keyboard and screen-reader accessibility",
+        "responsive and cross-browser behavior",
+        "performance and visual regression",
+        "security checks only within written scope"
+      ],
+      "execution": "isolated ephemeral browser profile; no saved login state; scope allowlist and request-rate limits"
+    },
+    "mobile_app": {
+      "label": "Mobile application",
+      "evidence": [
+        "owner-provided source or package hash",
+        "manifest, permissions, dependencies, and signing metadata",
+        "screens and state transitions",
+        "storage and API behavior in test account",
+        "device and OS matrix"
+      ],
+      "tests": [
+        "static checks",
+        "emulator snapshot and functional tests",
+        "privacy and permission behavior",
+        "accessibility and device compatibility",
+        "performance and crash recovery"
+      ],
+      "execution": "disposable emulator or owner device in test mode; test accounts only; no production account or endpoint"
+    },
+    "game": {
+      "label": "Game or interactive experience",
+      "evidence": [
+        "owner-provided source/build and version",
+        "controls, state transitions, rules, and level observations",
+        "frame timing, memory, and resource profiles",
+        "accessibility and input-device behavior",
+        "save/load behavior using disposable profiles"
+      ],
+      "tests": [
+        "repeatable user-play scenarios",
+        "physics and rule invariants",
+        "level progression and edge cases",
+        "performance across target hardware",
+        "accessibility, input, save, and recovery tests"
+      ],
+      "execution": "owner-authorized build in disposable local profile; no anti-cheat evasion, DRM circumvention, or live-service abuse"
+    },
+    "film_or_media": {
+      "label": "Film, audio, or other media",
+      "evidence": [
+        "user-provided licensed file and hash",
+        "duration, codec, tracks, and chapter metadata",
+        "scene or segment boundaries",
+        "transcript and accessibility track quality",
+        "user-noted visual, audio, and pacing observations"
+      ],
+      "tests": [
+        "metadata and format compatibility",
+        "caption, transcript, and audio-description quality",
+        "segment timing and playback behavior",
+        "accessibility and device compatibility",
+        "rights review for any generated or shared output"
+      ],
+      "execution": "local analysis of authorized files; reports metadata and user notes rather than reproducing protected scenes or soundtracks"
+    },
+    "general_api": {
+      "label": "API or service contract",
+      "evidence": [
+        "owner-approved base URL and API schema",
+        "test credential scopes",
+        "rate limits, terms, and cost bounds",
+        "request/response contracts",
+        "data retention and deletion behavior"
+      ],
+      "tests": [
+        "contract and schema validation",
+        "authentication and authorization using test roles",
+        "idempotency and error handling",
+        "performance within approved quotas",
+        "webhook signatures in a provider sandbox"
+      ],
+      "execution": "mock or staging environment by default; production tests need endpoint-specific approval and a non-destructive allowlist"
+    }
+  },
+  "universal_gates": [
+    "owner authorization",
+    "written scope",
+    "clean-room implementation",
+    "at least two user-selected customizations",
+    "original differentiator",
+    "evidence and uncertainty log",
+    "data minimization",
+    "resource and time limits",
+    "human review before external action"
+  ],
+  "never_automate": [
+    "access-control bypass",
+    "DRM or anti-cheat circumvention",
+    "credential theft or secret extraction",
+    "production-destructive tests",
+    "copying proprietary source or media",
+    "claiming compatibility without reproducible evidence"
+  ],
+  "capability_truth": "Profiles define review and test plans. Actual execution requires an installed or configured, isolated adapter and produces evidence only after a run."
+}

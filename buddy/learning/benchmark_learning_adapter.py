@@ -12,7 +12,7 @@ def benchmark_to_event(result: dict[str, Any]) -> dict[str, Any]:
     """
     passed = bool(result.get("passed", False))
     verified = bool(result.get("verified", False))
-    return {
+    event = {
         "event_id": str(result.get("event_id") or result.get("benchmark_id") or "unknown"),
         "event_type": "benchmark",
         "capability": str(result.get("capability") or result.get("division") or "unknown"),
@@ -23,3 +23,10 @@ def benchmark_to_event(result: dict[str, Any]) -> dict[str, Any]:
         "native_success": bool(result.get("native_success", False)),
         "external_assistance": bool(result.get("external_assistance", False)),
     }
+    if result.get("goal_id"):
+        event["goal_ids"] = [str(result["goal_id"])]
+    if result.get("goal_ids"):
+        event["goal_ids"] = [str(value) for value in result["goal_ids"] if value]
+    if result.get("wikipedia_source_ids"):
+        event["wikipedia_source_ids"] = [str(value) for value in result["wikipedia_source_ids"] if value]
+    return event
