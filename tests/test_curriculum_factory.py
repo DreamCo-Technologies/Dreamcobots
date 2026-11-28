@@ -39,7 +39,8 @@ def source_record():
         "license_tag": "CC-BY-4.0",
         "license_record_verified": True,
         "license_evidence_url": "https://www.youtube.com/t/terms",
-        "license_evidence_sha256": hashlib.sha256(b"license evidence snapshot").hexdigest(),
+        "license_evidence_path": "tests/fixtures/license-evidence.txt",
+        "license_evidence_sha256": hashlib.sha256((ROOT / "tests/fixtures/license-evidence.txt").read_bytes()).hexdigest(),
         "license_review_status": "approved",
         "license_reviewer_id": "owner-reviewer-1",
         "license_reviewed_at": "2026-11-27T12:00:00+00:00",
@@ -93,6 +94,13 @@ class CurriculumFactoryTests(unittest.TestCase):
         with self.assertRaises(PermissionError):
             factory.build_guide(source_record=record, policy_registry=policy_registry(),
                                 authored_content=guide(), similarity_references=["A sufficiently long unrelated reference."])
+
+    def test_tampered_license_snapshot_fails_closed(self):
+        record = source_record()
+        record["license_evidence_sha256"] = "0" * 64
+        with self.assertRaises(PermissionError):
+            factory.build_guide(source_record=record, policy_registry=policy_registry(),
+                                authored_content=guide(), similarity_references=["An unrelated reference with enough words for comparison."])
 
     def test_missing_license_snapshot_evidence_fails_closed(self):
         record = source_record()
