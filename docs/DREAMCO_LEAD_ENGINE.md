@@ -53,6 +53,7 @@ Repository functions: `saveLeadEngineRecord`, `getLeadEngineRecord`, `listLeadEn
 - `GET /api/buddy/lead-engine/records/:leadId` — read one owner-scoped record.
 - `GET /api/buddy/lead-engine/records/:leadId/activities` — read activity history.
 - `POST /api/buddy/lead-engine/records/:leadId/activities` — append an idempotent activity event.
+- `POST /api/buddy/lead-engine/records/:leadId/approve-conversion` — record an explicit owner approval and return an evidence reference; conversion writes verify that reference against the protected activity ledger.
 
 These endpoints require a valid signed Google or Apple OAuth session. Write requests require a same-host Origin header and are rate-limited. The API does not send campaigns, book meetings, or execute payments.
 
