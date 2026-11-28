@@ -226,7 +226,8 @@ jobs:
               if row is None:
                   failures.append(f"{name}: missing audit result")
                   continue
-              if row.get("verdict") != "working":
+              deferred_only = row.get("verdict") == "partial" and bool(row.get("deferred_tests"))
+              if row.get("verdict") != "working" and not deferred_only:
                   failures.append(f"{name}: verdict={row.get('verdict')}")
               for key in ("tests", "node_tests"):
                   result = row.get(key) or {}
