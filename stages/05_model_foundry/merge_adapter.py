@@ -1,6 +1,6 @@
 """Merge a LoRA adapter only after signed holdout evaluation passes."""
 from __future__ import annotations
-import argparse, hashlib, json, shutil, re
+import argparse, hashlib, json, re
 from pathlib import Path
 from .guardrails import require_model_authorization, sha256_file, verify_signed_manifest
 
