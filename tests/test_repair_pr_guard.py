@@ -4,13 +4,13 @@ from tools.validate_repair_pr import validate_changes
 
 def test_ci_report_redacts_credentials_and_personal_data():
     report = build_report(
-        "FAILED test_x\napi_key=sk-abcdefghijklmnopqrstuvwxyz\n"
+        "FAILED test_x\napi_key=fixture-secret-placeholder\n"
         "contact person@example.com 123-45-6789\n",
         1,
         commit="a" * 40,
     )
     excerpt = report["failure_excerpt"]
-    assert "placeholder-secret-value" not in excerpt
+    assert "fixture-secret-placeholder" not in excerpt
     assert "person@example.com" not in excerpt
     assert "123-45-6789" not in excerpt
     assert report["raw_log_included"] is False
