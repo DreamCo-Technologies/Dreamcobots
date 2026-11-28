@@ -129,3 +129,17 @@ def test_non_python_languages_use_tree_sitter_not_python_ast(monkeypatch):
         assert result["language"]==language
         assert result["functions"]==[{"arity":2}]
     assert calls==list(expected.values())
+
+
+def test_har_parser_redacts_dynamic_path_identifiers():
+    from importlib import import_module
+    parse=import_module("stages.02_intake_parser.__main__").parse
+    har={"log":{"entries":[
+        {"request":{"method":"GET","url":"https://api.example.test/users/123456/orders/550e8400-e29b-41d4-a716-446655440000?token=private"},"response":{"status":200}},
+        {"request":{"method":"GET","url":"https://api.example.test/accounts/person@example.com"},"response":{"status":200}}
+    ]}}
+    result=parse(json.dumps(har),"har")
+    paths=[item["path"] for item in result["endpoints"]]
+    assert paths==["/users/{id}/orders/{id}","/accounts/{id}"]
+    assert "123456" not in json.dumps(result)
+    assert "person@example.com" not in json.dumps(result)
