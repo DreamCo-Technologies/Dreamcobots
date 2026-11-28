@@ -29,15 +29,32 @@ def main():
     if data.get("schema")!="dreamco.foundry.authorization.v1" or not data.get("datasets"):
         raise ValueError("unsupported or empty foundry authorization manifest")
     registry=load_registry(a.registry)
+    root=a.manifest.parent.resolve()
+    seen=set()
+    allowed_categories={"study_guides","verified_trajectories","general_replay","verified_preferences","holdout_benchmarks"}
     for item in data["datasets"]:
+        dataset_id=item.get("dataset_id")
+        if not isinstance(dataset_id,str) or not dataset_id.strip() or dataset_id in seen:
+            raise ValueError("dataset_id values must be unique non-empty strings")
+        seen.add(dataset_id)
+        if item.get("category") not in allowed_categories:
+            raise ValueError(f"{dataset_id}: unsupported dataset category")
+        if item.get("commercial_use") is not True:
+            raise PermissionError(f"{dataset_id}: commercial_use must be explicitly true")
         if item.get("license_tier") not in {"PUBLIC_DOMAIN","PERMISSIVE_COMMERCIAL","DREAMCO_ORIGINAL"}:
             raise PermissionError("only commercial-use tiers may be signed")
+        source_path=(root/str(item.get("path",""))).resolve()
+        if source_path==root or root not in source_path.parents or not source_path.is_file():
+            raise ValueError(f"{dataset_id}: dataset path is missing or escapes manifest directory")
+        expected_hash=str(item.get("sha256","")).lower()
+        if len(expected_hash)!=64 or sha256_file(source_path)!=expected_hash:
+            raise ValueError(f"{dataset_id}: dataset SHA-256 mismatch")
         item["policy_decision_id"]=a.policy_decision_id
         item["approved_by"]=a.approved_by
         if item["license_tier"]=="DREAMCO_ORIGINAL":
-            evidence=Path(item.get("owner_attestation_path",""))
-            if not evidence.is_file() or sha256_file(evidence)!=item.get("owner_attestation_sha256"):
-                raise PermissionError("DreamCo-original records require matching owner attestation evidence")
+            evidence=(root/str(item.get("owner_attestation_path",""))).resolve()
+            if evidence==root or root not in evidence.parents or not evidence.is_file() or sha256_file(evidence)!=item.get("owner_attestation_sha256"):
+                raise PermissionError("DreamCo-original records require matching in-manifest owner attestation evidence")
         else:
             sources=item.get("source_evidence")
             if not isinstance(sources,list) or not sources:
