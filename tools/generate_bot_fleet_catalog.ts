@@ -717,38 +717,26 @@ export function writeFleetCatalog({ check = false } = {}) {
   const publicCatalog = compactCatalog(catalog, { includeSupplemental: true });
   const routingIndex = browserRoutingIndex(catalog);
   const allBots = [...catalog.bots, ...catalog.supplemental_bots];
-  const domainDivisionNames = new Set(catalog.divisions.map((division) => division.name));
+  const canonicalDivisionNames = new Set(catalog.divisions.map((division) => division.name));
   const supplementalDivisionNames = new Set(catalog.supplemental_divisions.map((division) => division.name));
-  // Every published identity.division must have a compact shard. Supplemental
-  // portfolios such as Dream3D remain portfolios, not additional domain divisions.
-  const shardNames = new Set([
-    ...domainDivisionNames,
-    ...supplementalDivisionNames,
-    ...allBots.map((bot) => bot.identity.division).filter(Boolean),
-  ]);
-  const divisionShards = [...shardNames].sort().map((name) => [
+  const allDomainDivisionNames = new Set([...canonicalDivisionNames, ...supplementalDivisionNames]);
+  // Domain divisions get domain shards; specialist portfolios get their own
+  // portfolio schema below, so no output path is written twice.
+  const divisionShards = [...allDomainDivisionNames].sort().map((name) => [
     join(WEBSITE_SHARD_DIR, `${name}.json`),
     JSON.stringify({
       schema: "dreamco.bot_fleet_division.v2",
       division: name,
-      group_type: domainDivisionNames.has(name)
-        ? "domain_division"
-        : supplementalDivisionNames.has(name)
-          ? "supplemental_division"
-          : "portfolio_or_shared_group",
+      group_type: canonicalDivisionNames.has(name) ? "domain_division" : "supplemental_division",
       bots: allBots.filter((bot) => bot.identity.division === name),
     }),
   ] as const);
 
   // Specialist portfolios remain distinct from domain divisions but still need a generated fleet shard.
-  const domainDivisionNames = new Set([
-    ...catalog.divisions.map((division) => division.name),
-    ...catalog.supplemental_divisions.map((division) => division.name),
-  ]);
   const specialistPortfolioBots = new Map<string, typeof catalog.supplemental_bots>();
   for (const bot of catalog.supplemental_bots) {
     const name = bot.identity.division;
-    if (domainDivisionNames.has(name)) continue;
+    if (allDomainDivisionNames.has(name)) continue;
     specialistPortfolioBots.set(name, [...(specialistPortfolioBots.get(name) || []), bot]);
   }
   const specialistPortfolioShards = [...specialistPortfolioBots.entries()].map(([name, bots]) => [
