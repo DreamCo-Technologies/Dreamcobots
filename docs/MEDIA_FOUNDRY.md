@@ -20,10 +20,10 @@ Initial candidates:
 - LongCat-Video — MIT repository; checkpoint license remains unverified.
 - ACE-Step 1.5 — MIT repository; DiT/LM/base checkpoint and dependency review
   remains open.
-- Whisper — MIT repository; exact checkpoint and dependency review remains open.
+- Whisper — MIT code and model weights; exact immutable revision and dependency review remain open.
 
 Excluded from commercial workflows:
-- F5-TTS: non-commercial restriction reported for its license.
+- F5-TTS: code is MIT, but official pretrained checkpoints are CC-BY-NC-4.0; do not use those weights for monetized or commercial outputs.
 - FLUX.2 Klein 9B: FLUX Non-Commercial license.
 
 No model is marked deployment-approved in the initial registry. The owner must
