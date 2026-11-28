@@ -5,11 +5,24 @@ from pathlib import Path
 from .guardrails import require_model_authorization, sha256_file, verify_signed_manifest
 
 def safetensors_digest(folder: Path) -> str:
-    files=sorted(folder.glob("*.safetensors"))
+    files=sorted(folder.glob("*.safetensors"),key=lambda item:item.name)
     if not files: raise ValueError("adapter directory has no .safetensors weights")
-    h=hashlib.sha256()
-    h.update(b"".join(path.read_bytes() for path in files))
-    return h.hexdigest()
+    return hashlib.sha256(b"".join(path.read_bytes() for path in files)).hexdigest()
+
+def tokenizer_digest(folder: Path) -> str:
+    names={"tokenizer.json","tokenizer_config.json","special_tokens_map.json",
+           "added_tokens.json","vocab.json","merges.txt","tokenizer.model",
+           "spiece.model","foundry-tokenizer-manifest.json"}
+    files=sorted((item for item in folder.rglob("*") if item.is_file() and item.name in names),
+                 key=lambda item:item.relative_to(folder).as_posix())
+    if not files: raise ValueError("adapter directory has no tokenizer artifacts")
+    digest=hashlib.sha256()
+    for item in files:
+        digest.update(item.relative_to(folder).as_posix().encode("utf-8"))
+        digest.update(b"\\0")
+        digest.update(item.read_bytes())
+        digest.update(b"\\0")
+    return digest.hexdigest()
 
 def main():
     p=argparse.ArgumentParser()
@@ -38,6 +51,8 @@ def main():
     adapter_hash=safetensors_digest(a.adapter)
     if report.get("candidate_checkpoint_sha256")!=adapter_hash:
         raise PermissionError("holdout report does not attest to this exact adapter checkpoint")
+    if report.get("candidate_tokenizer_sha256")!=tokenizer_digest(a.adapter):
+        raise PermissionError("holdout report does not attest to the tokenizer stored with this adapter")
     if not a.execute_merge:
         print(json.dumps({"preflight":"passed","adapter_sha256":adapter_hash,
           "base_model":a.base_model,"base_revision":a.base_revision,"merge_started":False},sort_keys=True))
