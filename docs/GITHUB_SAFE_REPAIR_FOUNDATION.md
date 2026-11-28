@@ -14,7 +14,7 @@ The Repository Test Matrix remains a separate broader workflow. Keep its require
 
 ## Failure reports
 
-The PR and mainline workflows upload bounded JSON reports. Raw runner logs are not uploaded by these new workflows. The report generator redacts common credential formats, email addresses, phone numbers, and SSNs before storing a short excerpt.
+The PR and mainline workflows upload bounded JSON reports. Raw runner logs are not uploaded by these new workflows. The report generator stores only status, exit code, commit, and run metadata. It deliberately omits all raw log excerpts from artifacts and public issues because arbitrary logs cannot be reliably sanitized. A small sanitizer remains covered by tests but is not used to publish log text.
 
 Sanitization is defense in depth, not a guarantee that arbitrary logs are safe to publish. Treat report artifacts as internal diagnostic material and review them before sharing externally.
 
@@ -28,7 +28,7 @@ The Promote Validated Repair Branch workflow is manually dispatched from the Act
 
 The validator is fail-closed. It permits only added or modified files under buddy/, server/, client/, shared/, or tools/, with a 20-file and 1,500-changed-line limit. It blocks workflow, contract, policy, security, migration, and secret paths; modifications or deletions of existing tests; sensitive security/policy/auth tests; deletions and renames; credential-like additions; and changes to the validator itself. New non-security Python test modules may be added.
 
-Passing this structural check does not mean the code is correct. The resulting PR must pass all required checks and receive human review before merge.
+Every changed-file status entry must have a matching inspected diff section; unmatched or extra diff sections, binary content, renames, and file-mode changes are rejected. Passing this structural check does not mean the code is correct. The resulting PR must pass all required checks and receive human review before merge.
 
 ## Required repository settings
 
