@@ -24,6 +24,9 @@ TRAIN_WEIGHTS_SPEC.loader.exec_module(TRAIN_WEIGHTS)
 HOLDOUT_HELPERS = importlib.import_module("stages.05_model_foundry.holdout")
 HOLDOUT_RUNNER = importlib.import_module("stages.05_model_foundry.run_holdout_eval")
 HOLDOUT_GATE = importlib.import_module("stages.05_model_foundry.eval_holdout")
+TOKENIZER_MODULE = importlib.import_module("stages.05_model_foundry.train_tokenizer")
+PACKER_MODULE = importlib.import_module("stages.05_model_foundry.pack_tokens")
+MERGE_MODULE = importlib.import_module("stages.05_model_foundry.merge_adapter")
 
 
 class FoundryGuardrailTests(unittest.TestCase):
@@ -112,7 +115,10 @@ class FoundryGuardrailTests(unittest.TestCase):
 
     def test_holdout_gate_requires_exact_suite_and_config_evidence(self):
         report = {
+            "schema": "dreamco.foundry.model_holdout_report.v1",
             "evaluation_split": "holdout",
+            "holdout_access": "evaluation_only",
+            "training_access": False,
             "source_manifest_sha256": "a" * 64,
             "benchmark_suite_sha256": "b" * 64,
             "evaluation_config_sha256": "c" * 64,
@@ -124,6 +130,71 @@ class FoundryGuardrailTests(unittest.TestCase):
         HOLDOUT_GATE.validate_report(report, ["task-1"], "a" * 64, "b" * 64, "candidate")
         with self.assertRaises(ValueError):
             HOLDOUT_GATE.validate_report(report, ["task-2"], "a" * 64, "b" * 64, "candidate")
+
+    def test_tokenizer_corpus_excludes_holdout_benchmark_category(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            train_id = next(f"train-{i}" for i in range(10000) if GUARDRAILS.split_bucket(f"train-{i}") < 90)
+            guide = root / "guide.jsonl"
+            benchmark = root / "benchmark.jsonl"
+            guide.write_text(json.dumps({"task_id": train_id, "title": "allowed guide"}) + "\\n", encoding="utf-8")
+            benchmark.write_text(json.dumps({"task_id": train_id, "title": "holdout benchmark"}) + "\\n", encoding="utf-8")
+            manifest = {"datasets": [
+                {"_resolved_path": str(guide), "dataset_id": "g", "category": "study_guides",
+                 "license_tier": "DREAMCO_ORIGINAL", "policy_decision_id": "P1"},
+                {"_resolved_path": str(benchmark), "dataset_id": "h", "category": "holdout_benchmarks",
+                 "license_tier": "DREAMCO_ORIGINAL", "policy_decision_id": "P1"},
+            ]}
+            corpus = list(TOKENIZER_MODULE.corpus(manifest))
+            self.assertTrue(any("allowed guide" in item for item in corpus))
+            self.assertFalse(any("holdout benchmark" in item for item in corpus))
+
+    def test_packer_uses_reserved_tool_call_token(self):
+        class DummyTokenizer:
+            eos_token_id = 2
+            seen = ""
+            def encode(self, value, add_special_tokens=False):
+                self.seen = value
+                return [1, 2]
+        tokenizer = DummyTokenizer()
+        PACKER_MODULE._token_pool(
+            [{"messages": [{"role": "tool", "content": "tool result"}]}], tokenizer
+        )
+        self.assertIn("<|tool_call|>", tokenizer.seen)
+        self.assertNotIn("<|tool|>", tokenizer.seen)
+
+    def test_signed_shard_payload_checks_sequence_geometry(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            shard = root / "train-00000.bin"
+            shard.write_bytes(b"\\x00" * (8 * 4))
+            source = root / "source.json"
+            source.write_text("{}", encoding="utf-8")
+            payload = {
+                "schema": "dreamco.foundry.token_shards.v1",
+                "sequence_length": 8, "dtype": "uint32",
+                "training_splits": ["train"], "validation_splits": [],
+                "excluded_splits": ["holdout"],
+                "mix_percent": {"study_guides": 60, "verified_trajectories": 25, "general_replay": 15},
+                "source_manifest_sha256": hashlib.sha256(source.read_bytes()).hexdigest(),
+                "train": {"file": shard.name, "tokens": 8, "sequences": 1,
+                          "sha256": hashlib.sha256(shard.read_bytes()).hexdigest()},
+                "validation": None,
+            }
+            validated = GUARDRAILS.validate_shard_payload(payload, root, source)
+            self.assertEqual(validated["train"]["_resolved_path"], str(shard.resolve()))
+            payload["train"]["tokens"] = 7
+            with self.assertRaises(ValueError):
+                GUARDRAILS.validate_shard_payload(payload, root, source)
+
+    def test_merge_adapter_digest_requires_safetensors(self):
+        with tempfile.TemporaryDirectory() as td:
+            folder = Path(td)
+            (folder / "adapter_model.safetensors").write_bytes(b"weights")
+            self.assertEqual(
+                MERGE_MODULE.safetensors_digest(folder),
+                hashlib.sha256(b"weights").hexdigest(),
+            )
 
     def test_sft_rows_require_assistant_or_tool_targets(self):
         rows = [
