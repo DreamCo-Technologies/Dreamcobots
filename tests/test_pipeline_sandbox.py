@@ -31,3 +31,12 @@ def test_stage_five_blocks_without_similarity_reference(tmp_path):
     assert result.returncode==2
     saved=json.loads(report.read_text())
     assert saved["status"]=="BLOCKED" and saved["policy_check"]=="FAIL" and not saved["tests_passed"]
+
+def test_similarity_reference_is_mandatory_for_pass(tmp_path):
+    import json,subprocess,sys
+    course=tmp_path/"course.json"; report=tmp_path/"report.json"
+    course.write_text(json.dumps({"job_id":"verify-test","reference_implementation":{"files":[{"path":"solution.py","content":"pass"}]},"tests":[{"path":"test_solution.py","content":"def test_ok(): assert True"}]}))
+    result=subprocess.run([sys.executable,"-m","stages.05_sandbox_verifier","--input",str(course),"--output",str(report)],capture_output=True,text=True)
+    assert result.returncode==2
+    saved=json.loads(report.read_text())
+    assert saved["status"]=="BLOCKED" and saved["policy_check"]=="FAIL" and not saved["tests_passed"]
