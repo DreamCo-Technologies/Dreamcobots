@@ -20,15 +20,21 @@ OUTPUT_PREFIX = "artifacts/buddy-safe-repair/"
 
 def repair_path_allowed(path:str)->bool:
  p=PurePosixPath(path)
- return bool(p.parts) and not p.is_absolute() and not any(x in {"", ".", ".."} for x in p.parts) and (
-  path in REPAIR_ALLOWED_FILES or any(p.as_posix().startswith(prefix) for prefix in REPAIR_ALLOWED_PREFIXES)
- )
+ if (not p.parts or p.is_absolute() or "\\" in path
+     or any(x in {"", ".", ".."} for x in p.parts)
+     or p.name.lower() in {".env", ".env.local", ".env.production", "credentials.json", "secrets.json"}
+     or p.suffix.lower() in {".pem", ".key", ".p12", ".pfx"}):
+  return False
+ return path in REPAIR_ALLOWED_FILES or any(p.as_posix().startswith(prefix) for prefix in REPAIR_ALLOWED_PREFIXES)
 
 
 def safe_output_path(root:Path,value:str)->Path:
  p=PurePosixPath(value)
- if not p.parts or p.is_absolute() or ".." in p.parts or not p.as_posix().startswith(OUTPUT_PREFIX):
-  raise ValueError("Repair output must remain under artifacts/buddy-safe-repair/.")
+ if (not p.parts or p.is_absolute() or "\\" in value or ".." in p.parts
+     or p.name.lower() in {".env", ".env.local", "credentials.json", "secrets.json"}
+     or p.suffix.lower() in {".pem", ".key", ".p12", ".pfx"}
+     or not p.as_posix().startswith(OUTPUT_PREFIX)):
+  raise ValueError("Repair output must remain under artifacts/buddy-safe-repair/ and cannot be a credential file.")
  out=(root/Path(*p.parts)).resolve()
  try: relative=out.relative_to(root.resolve()).as_posix()
  except ValueError: raise ValueError("Repair output resolves outside the repository.")
