@@ -40,6 +40,7 @@ class BuddyBootcampGeneratorTests(unittest.TestCase):
         challenge = generator.build_challenge(self.row, division, self.rights,
                                               "test-source", "test-license", 1)
         self.assertEqual(challenge["division"]["id"], 11)
+        self.assertEqual(challenge["division"]["slug"], "dreamcodelab")
         self.assertEqual(challenge["source"]["source_task_id"], "T-1")
         self.assertEqual(challenge["response_schema"]["type"], "object")
         self.assertEqual(challenge["provenance"]["holdout_split"], "NEVER_GENERATE_FROM_THIS_TOOL")
@@ -62,6 +63,17 @@ class BuddyBootcampGeneratorTests(unittest.TestCase):
                          {item["id"] for item in registry["divisions"]})
         self.assertTrue(all(item["domain_division_ids"] for item in manifest["resources"]))
         self.assertTrue(all(item["masterbot_lane_ids"] for item in manifest["resources"]))
+        valid_domain_ids = {item["id"] for item in manifest["canonical_divisions"]}
+        valid_lane_ids = {item["id"] for item in registry["divisions"]}
+        self.assertTrue(all(set(item["domain_division_ids"]) <= valid_domain_ids
+                            for item in manifest["resources"]))
+        self.assertTrue(all(set(item["masterbot_lane_ids"]) <= valid_lane_ids
+                            for item in manifest["resources"]))
+        layer_counts = {}
+        for item in manifest["resources"]:
+            layer_counts[item["layer_id"]] = layer_counts.get(item["layer_id"], 0) + 1
+        self.assertEqual(len(layer_counts), 10)
+        self.assertEqual(set(layer_counts.values()), {10})
 
 
 if __name__ == "__main__":
