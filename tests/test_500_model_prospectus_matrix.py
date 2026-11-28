@@ -91,7 +91,7 @@ class Build500ModelProspectusMatrixTests(unittest.TestCase):
             inventory["models"][1]["license_review_status"] = "PENDING"
             catalog.write_text(json.dumps(inventory) + "\n", encoding="utf-8")
             output = self._run_with_temp_root(module, root, catalog)
-            self.assertEqual(output["status"], "READY_WITH_VERIFIED_MODEL_RECORDS")
+            self.assertEqual(output["status"], "BLOCKED_NO_VERIFIED_500_MODEL_INVENTORY")
             self.assertEqual(output["catalogued_models"], 2)
             self.assertEqual(output["matrix_rows"], 4)
             self.assertEqual(output["unverified_rows"], 4)
