@@ -9,7 +9,8 @@ from __future__ import annotations
 import ast
 import importlib
 import json
-import shutil
+import os
+import tempfile
 from pathlib import Path
 from typing import Any
 
@@ -95,6 +96,34 @@ def _shim(symbol: str, module_path: str) -> str:
     )
 
 
+def _top_level_symbols(source: str, symbol: str) -> list[ast.AST]:
+    tree = ast.parse(source)
+    return [node for node in tree.body if isinstance(node, SYMBOL_TYPES) and node.name == symbol]
+
+
+def _inside_repo(repo_root: Path, path: Path) -> bool:
+    root = repo_root.resolve()
+    candidate = path.resolve()
+    return candidate == root or root in candidate.parents
+
+
+def _atomic_write_text(path: Path, content: str) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    fd, temporary = tempfile.mkstemp(prefix=f".{path.name}.", dir=str(path.parent))
+    try:
+        with os.fdopen(fd, "w", encoding="utf-8") as handle:
+            handle.write(content)
+            handle.flush()
+            os.fsync(handle.fileno())
+        os.replace(temporary, path)
+    except Exception:
+        try:
+            os.unlink(temporary)
+        except OSError:
+            pass
+        raise
+
+
 def consolidate_exact_duplicates(
     repo_root: Path,
     overlaps: list[dict[str, Any]],
@@ -120,6 +149,9 @@ def consolidate_exact_duplicates(
             results.append({"symbol": symbol, "status": "unsafe_canonical_path", "changed": []})
             continue
         canonical_path = repo_root / canonical_rel
+        if canonical_path.is_symlink() or not _inside_repo(repo_root, canonical_path):
+            results.append({"symbol": symbol, "status": "unsafe_canonical_path", "changed": []})
+            continue
         if not canonical_path.is_file():
             results.append({"symbol": symbol, "status": "canonical_file_missing", "changed": []})
             continue
@@ -131,17 +163,25 @@ def consolidate_exact_duplicates(
         canonical_digest = _node_digest(canonical_node)
         eligible: list[str] = []
         conflicts: list[str] = []
+        seen_paths: set[str] = set()
         for location in item.get("locations", []):
             rel = location["path"]
             if rel == canonical_rel:
                 continue
+            if rel in seen_paths:
+                conflicts.append(f"{rel}: multiple top-level definitions are ambiguous")
+                continue
+            seen_paths.add(rel)
             duplicate_path = repo_root / rel
+            if duplicate_path.is_symlink() or not _inside_repo(repo_root, duplicate_path):
+                conflicts.append(f"{rel}: symlink or path escapes repository")
+                continue
             if not duplicate_path.is_file():
                 conflicts.append(rel)
                 continue
             duplicate_source = duplicate_path.read_text(encoding="utf-8")
-            duplicate_node, _, _ = _find_top_level_node(duplicate_source, symbol)
-            if duplicate_node is None or _node_digest(duplicate_node) != canonical_digest:
+            duplicate_nodes = _top_level_symbols(duplicate_source, symbol)
+            if len(duplicate_nodes) != 1 or _node_digest(duplicate_nodes[0]) != canonical_digest:
                 conflicts.append(rel)
             else:
                 eligible.append(rel)
@@ -159,8 +199,8 @@ def consolidate_exact_duplicates(
                 backup.parent.mkdir(parents=True, exist_ok=True)
                 if backup.exists():
                     raise FileExistsError(f"refusing to overwrite backup: {backup}")
-                backup.write_text(source, encoding="utf-8")
-                path.write_text(updated, encoding="utf-8")
+                _atomic_write_text(backup, source)
+                _atomic_write_text(path, updated)
                 changed.append(rel)
         results.append({
             "symbol": symbol,
