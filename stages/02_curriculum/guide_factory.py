@@ -108,6 +108,8 @@ def build_guide(
         raise PermissionError("BLOCKED_MISSING_ITEM_LICENSE_EVIDENCE")
     if not isinstance(similarity_references, list) or not similarity_references:
         raise PermissionError("BLOCKED_MISSING_ORIGINALITY_REFERENCE_SET")
+    if any(not isinstance(ref, str) or len(_tokens(ref)) < 8 for ref in similarity_references):
+        raise ValueError("every originality reference must contain at least eight tokens")
     if not 0.0 <= similarity_threshold <= 1.0:
         raise ValueError("similarity_threshold must be between 0 and 1")
 
