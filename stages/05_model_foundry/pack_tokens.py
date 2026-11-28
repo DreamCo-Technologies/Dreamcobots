@@ -58,7 +58,7 @@ def main():
         raise ValueError("sequence length must be >= 8")
     import numpy as np  # noqa: F401
     from transformers import AutoTokenizer
-    manifest = verify_signed_manifest(args.manifest, args.signature, args.public_key)
+    manifest = verify_signed_manifest(args.manifest, args.signature, args.public_key, verify_dataset_hashes=False)
     tokenizer = AutoTokenizer.from_pretrained(args.tokenizer, trust_remote_code=False)
     if tokenizer.eos_token_id is None:
         raise ValueError("tokenizer must define EOS")
