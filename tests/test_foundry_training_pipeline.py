@@ -287,6 +287,11 @@ class FoundryGuardrailTests(unittest.TestCase):
                 hashlib.sha256(b"weights").hexdigest(),
             )
 
+    def test_scratch_model_parameter_target_is_enforced(self):
+        TRAIN_WEIGHTS.validate_parameter_count(45_148_256, 45_148_864, tolerance=0.01)
+        with self.assertRaises(ValueError):
+            TRAIN_WEIGHTS.validate_parameter_count(40_000_000, 45_148_864, tolerance=0.01)
+
     def test_sft_rows_require_assistant_or_tool_targets(self):
         rows = [
             {"messages": [{"role": "user", "content": "question"}]},
