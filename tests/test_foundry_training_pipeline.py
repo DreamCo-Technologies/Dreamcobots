@@ -305,7 +305,7 @@ class FoundryGuardrailTests(unittest.TestCase):
         spec.loader.exec_module(module)
         common = {
             "task_id":"task-1","division_id":"DIV-01","prompt":"Write a function",
-            "final_response":"def answer(): return 42","tool_calls":[{"name":"python","arguments":{"code":"print(42)"}}],
+            "final_response":"def answer(): return 42","tool_calls":[{"name":"python","arguments":{"code":"print(42)","api_key":"sk-12345678901234567890"}}],
             "explanation_summary":"The function returns the requested constant.",
             "sandbox_run_id":"run-1","sandbox_status":"LAB_PASSED",
             "teach_back_status":"TEACH_BACK_VERIFIED","grader_attestation_sha256":"a"*64,
@@ -322,6 +322,7 @@ class FoundryGuardrailTests(unittest.TestCase):
             stored = json.loads(output.read_text().strip())
             self.assertNotIn("chain_of_thought", stored)
             self.assertFalse(stored["training_authorized"])
+            self.assertEqual(stored["tool_calls"][0]["arguments"]["api_key"], "[REDACTED_SECRET]")
 
 
 if __name__ == "__main__":
