@@ -147,7 +147,8 @@ export class AndroidCompanionTransport extends SignedMobileWebhookTransport {
 
 export async function sendMobileMessage(input: {
   registration: MobileBridgeRegistration; settings: CommunicationTwinSettings; transport: MobileOutboundTransport;
-  action: "send" | "auto_reply"; contactId: string; providerContactId: string;
+  action: "send" | "auto_reply"; contactId: string;
+  resolveProviderContactId: (input: { ownerId: string; deviceId: string; contactId: string }) => Promise<string | undefined> | string | undefined;
   channel: z.infer<typeof mobileChannelSchema>; body: string; idempotencyKey: string;
   explicitOwnerApproval?: boolean; lowStakesRoutine?: boolean; sourceConsentGranted: boolean;
 }) {
@@ -157,6 +158,10 @@ export async function sendMobileMessage(input: {
     return { sent: false as const, status: "blocked" as const, reason: "The device bridge and owner source consent must both be enabled." };
   }
   if (!registration.allowedContactIds.includes(input.contactId)) return { sent: false as const, status: "blocked" as const, reason: "Contact is not allowlisted for this device bridge." };
+  const providerContactId = await input.resolveProviderContactId({
+    ownerId: registration.ownerId, deviceId: registration.deviceId, contactId: input.contactId,
+  });
+  if (!providerContactId) return { sent: false as const, status: "blocked" as const, reason: "No server-side provider-contact mapping exists for this Buddy contact and device." };
   if (registration.platform === "ios" && input.channel !== "messaging") return { sent: false as const, status: "blocked" as const, reason: "BlueBubbles transport is for iMessage; use a separately authorized SMS gateway for carrier SMS." };
   if (registration.platform === "android" && input.channel !== "sms") return { sent: false as const, status: "blocked" as const, reason: "The Android companion transport currently supports SMS only." };
   if (!input.body.trim() || input.body.length > 12_000) return { sent: false as const, status: "blocked" as const, reason: "Message body must contain 1–12,000 characters." };
@@ -168,7 +173,7 @@ export async function sendMobileMessage(input: {
   }, settings);
   if (!decision.allowed || decision.requiresOwnerApproval) return { sent: false as const, status: "approval_required" as const, reason: decision.reason };
   const result = await input.transport.send({
-    deviceId: registration.deviceId, contactId: input.contactId, providerContactId: input.providerContactId,
+    deviceId: registration.deviceId, contactId: input.contactId, providerContactId,
     channel: input.channel, body: input.body, idempotencyKey: input.idempotencyKey,
   });
   return { sent: true as const, status: "accepted" as const, providerMessageId: result.providerMessageId, messageContentStored: false as const };
