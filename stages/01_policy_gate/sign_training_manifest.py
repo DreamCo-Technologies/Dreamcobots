@@ -46,6 +46,27 @@ def main():
                 result=evaluate_source(source,registry,purpose="commercial_training")
                 if not result["allowed"] or result.get("permission_tier")!=item["license_tier"]:
                     raise PermissionError(f"policy gate rejected source: {result['reason']}")
+    models=data.get("models", [])
+    if not isinstance(models, list):
+        raise ValueError("models must be a list in the signed authorization manifest")
+    for model in models:
+        model_id=model.get("model_id")
+        revision=model.get("revision")
+        if not isinstance(model_id,str) or not model_id.strip() or not isinstance(revision,str) or len(revision)!=40 or any(c not in "0123456789abcdef" for c in revision):
+            raise ValueError("each model authorization requires an exact model ID and 40-character revision")
+        if model.get("license_tier") not in {"PUBLIC_DOMAIN","PERMISSIVE_COMMERCIAL","DREAMCO_ORIGINAL"} or model.get("commercial_use") is not True:
+            raise PermissionError(f"model {model_id} is not approved for commercial training")
+        if not str(model.get("license_evidence_id","")).strip():
+            raise PermissionError(f"model {model_id} requires an item-level license_evidence_id")
+        sources=model.get("source_evidence")
+        if not isinstance(sources,list) or not sources:
+            raise PermissionError(f"model {model_id} requires item-level source_evidence")
+        for source in sources:
+            result=evaluate_source(source,registry,purpose="commercial_training")
+            if not result["allowed"] or result.get("permission_tier")!=model["license_tier"]:
+                raise PermissionError(f"policy gate rejected model license source: {result['reason']}")
+        model["policy_decision_id"]=a.policy_decision_id
+        model["approved_by"]=a.approved_by
     try:
         from cryptography.hazmat.primitives.serialization import load_pem_private_key
         from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
