@@ -24,7 +24,7 @@ The workflow expects:
 
 - `data/clean_room/authorization_manifest.json` containing a policy-owner-approved manifest with a `verified_trajectories` dataset.
 - Repository secrets `DREAMCO_SOURCE_MANIFEST_SIGNATURE_B64` and `DREAMCO_POLICY_PUBLIC_KEY_PEM`.
-- An existing local checkpoint directory with safetensors weights, plus the cached/local tokenizer.
+- An existing local checkpoint directory with safetensors weights outside the GitHub checkout workspace (default: `/opt/dreamco/checkpoints/buddy-division-45m-v1/dpo`), plus the cached/local tokenizer. The checkout action cleans untracked workspace files, so do not store the only checkpoint copy under the repository checkout.
 - Every eligible task to have a stable `task_id`, a prompt, an owner-authored `test_suite` that imports `solution` and contains real pytest tests, and optional rubric keywords.
 
 The nightly schedule is 03:00 UTC. If the dedicated runner is offline, GitHub queues the job until a matching runner is available. No paid model API or provider key is used.
