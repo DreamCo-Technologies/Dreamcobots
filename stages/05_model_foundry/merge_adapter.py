@@ -48,6 +48,7 @@ def main():
     if not adapter_config_path.is_file():
         raise PermissionError("LoRA adapter_config.json is required")
     adapter_config=json.loads(adapter_config_path.read_text(encoding="utf-8"))
+    adapter_config_sha=sha256_file(adapter_config_path)
     report=json.loads(a.holdout_report.read_text(encoding="utf-8"))
     if (report.get("schema")!="dreamco.foundry.holdout_evaluation.v1"
             or report.get("promotion_eligible") is not True
@@ -65,6 +66,8 @@ def main():
         and checkpoint_manifest.get("base_model_id")==a.base_model
         and checkpoint_manifest.get("base_model_revision")==a.base_revision
         and adapter_config.get("base_model_name_or_path")==a.base_model
+        and checkpoint_manifest.get("adapter_config_sha256")==adapter_config_sha
+        and report.get("candidate_adapter_config_sha256")==adapter_config_sha
         and report.get("candidate_base_model_id")==a.base_model
         and report.get("candidate_base_model_revision")==a.base_revision
         and report.get("candidate_base_model_license_evidence_id")==model_auth.get("license_evidence_id")
@@ -112,6 +115,7 @@ def main():
       "base_revision":a.base_revision,"license_evidence_id":model_auth["license_evidence_id"],
       "checkpoint_manifest_sha256":sha256_file(checkpoint_manifest_path),
       "tokenizer_sha256":tokenizer_digest(a.adapter),
+      "adapter_config_sha256":adapter_config_sha,
       "source_manifest_sha256":sha256_file(a.manifest),"adapter_sha256":adapter_hash,
       "holdout_report_sha256":sha256_file(a.holdout_report),"merged_weights_sha256":weights,
       "promotion_gate":"passed","merge_started":True}
