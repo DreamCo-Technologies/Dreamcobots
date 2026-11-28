@@ -94,6 +94,8 @@ def _load_model(recipe: dict[str, Any], tokenizer, checkpoint: Path | None = Non
         model_id, revision = base.get("id"), base.get("revision")
         if not model_id or not isinstance(revision, str) or not re.fullmatch(r"[0-9a-f]{40}", revision):
             raise PermissionError("loading a LoRA checkpoint requires the pinned base model revision")
+        if base.get("license_review_status") != "APPROVED" or not str(base.get("license_evidence_id", "")).strip():
+            raise PermissionError("loading an open-weight adapter requires approved model license evidence")
         base_model = AutoModelForCausalLM.from_pretrained(
             model_id, revision=revision, trust_remote_code=False,
             use_safetensors=True, torch_dtype="auto",
@@ -131,6 +133,8 @@ def _load_model(recipe: dict[str, Any], tokenizer, checkpoint: Path | None = Non
         revision = base.get("revision")
         if not model_id or not isinstance(revision, str) or not re.fullmatch(r"[0-9a-f]{40}", revision):
             raise PermissionError("open-weight base model requires an exact 40-character reviewed commit SHA")
+        if base.get("license_review_status") != "APPROVED" or not str(base.get("license_evidence_id", "")).strip():
+            raise PermissionError("open-weight training requires owner-approved model license evidence")
         model = AutoModelForCausalLM.from_pretrained(
             model_id, revision=revision, trust_remote_code=False,
             use_safetensors=True, torch_dtype="auto",
