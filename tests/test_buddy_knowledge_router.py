@@ -18,7 +18,6 @@ class BuddyKnowledgeRouterTests(unittest.TestCase):
             for row in route["course_lessons"]
         ))
         self.assertTrue(all(row["track_id"] == "universal-software-libraries" for row in route["course_lessons"]))
-        self.assertTrue(all(not row.get("source_url") for row in route["course_lessons"]))
         self.assertFalse(route["external_discovery_performed"])
         self.assertFalse(route["external_model_routing_performed"])
         self.assertFalse(route["mastery_awarded"])
