@@ -14,7 +14,12 @@ packing:
   sequence_length: 2048
   dtype: uint32
   mix_percent: {study_guides: 60, verified_trajectories: 25, general_replay: 15}
-architecture: {adapter: lora, rank: 16, alpha: 32, dropout: 0.05}
+architecture: {adapter: lora, rank: 16, alpha: 32, dropout: 0.05, use_dora: true}
+runtime:
+  optimizer: adamw_torch_fused
+  gradient_checkpointing: true
+  torch_compile: false
+  dataloader_num_workers: 2
 pretrain: {enabled: true, epochs: 1, learning_rate: 0.00002, warmup_ratio: 0.03}
 sft: {enabled: true, epochs: 2, learning_rate: 0.000015, assistant_and_tool_loss_only: true}
 dpo: {enabled: true, epochs: 1, learning_rate: 0.000005, beta: 0.1}
