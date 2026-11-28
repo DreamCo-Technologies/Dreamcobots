@@ -29,9 +29,11 @@ jobs:
         with:
           python-version: "3.11"
       - name: Compile new stages
-        run: python -m py_compile stages/02_clean_room_synth/clean_room.py stages/03_learning_engine/learning_engine.py stages/04_division_matrix/division_matrix.py stages/05_model_foundry/holdout.py stages/05_model_foundry/guardrails.py stages/05_model_foundry/train_tokenizer.py stages/05_model_foundry/pack_tokens.py stages/05_model_foundry/train_weights.py stages/05_model_foundry/eval_holdout.py stages/05_model_foundry/merge_adapter.py stages/05_model_foundry/run_holdout_eval.py stages/01_policy_gate/sign_training_manifest.py stages/01_policy_gate/sign_token_shards.py stages/07_dashboard/dashboard.py
+        run: python -m py_compile stages/02_clean_room_synth/clean_room.py stages/03_learning_engine/learning_engine.py stages/04_division_matrix/division_matrix.py stages/05_model_foundry/holdout.py stages/05_model_foundry/guardrails.py stages/05_model_foundry/train_tokenizer.py stages/05_model_foundry/pack_tokens.py stages/05_model_foundry/train_weights.py stages/05_model_foundry/eval_holdout.py stages/05_model_foundry/merge_adapter.py stages/05_model_foundry/run_holdout_eval.py stages/05_model_foundry/generate_self_play_rollouts.py stages/01_policy_gate/sign_training_manifest.py stages/01_policy_gate/sign_token_shards.py stages/07_dashboard/dashboard.py
       - name: Test foundry training guardrails
         run: python -m unittest discover -s tests -p 'test_foundry_training_pipeline.py' -v
+      - name: Test self-play rollout guardrails
+        run: python -m unittest discover -s tests -p 'test_foundry_self_play_rollouts.py' -v
       - name: Test completion stages
         run: python -m unittest discover -s tests -p 'test_bootcamp_completion_stages.py' -v
       - name: Generate evidence-backed stage reports
