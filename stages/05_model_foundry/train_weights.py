@@ -32,10 +32,26 @@ def tokenizer_digest(path: Path) -> str:
     digest=hashlib.sha256()
     for item in files:
         digest.update(item.relative_to(path).as_posix().encode("utf-8"))
-        digest.update(b"\\0")
+        digest.update(b"\0")
         digest.update(item.read_bytes())
-        digest.update(b"\\0")
+        digest.update(b"\0")
     return digest.hexdigest()
+
+def safetensors_digest(folder: Path) -> str | None:
+    """Hash a stable, unambiguous ordered list of weight filenames and bytes."""
+    files = sorted(folder.glob("*.safetensors"), key=lambda item: item.name)
+    if not files:
+        return None
+    digest = hashlib.sha256()
+    for item in files:
+        digest.update(item.name.encode("utf-8"))
+        digest.update(b"\0")
+        with item.open("rb") as stream:
+            for chunk in iter(lambda: stream.read(1024 * 1024), b""):
+                digest.update(chunk)
+        digest.update(b"\0")
+    return digest.hexdigest()
+
 
 def load_recipe(path: Path) -> dict[str, Any]:
     text = path.read_text(encoding="utf-8")
@@ -99,7 +115,7 @@ def study_guide_sft_rows(records: list[dict[str, Any]]) -> list[dict[str, Any]]:
         objectives = row.get("learning_objectives", [])
         if not isinstance(objectives, list):
             objectives = [str(objectives)]
-        objectives_text = "\\n".join(
+        objectives_text = "\n".join(
             f"- {str(item).strip()}" for item in objectives if str(item).strip()
         )
         sections = [
@@ -108,8 +124,8 @@ def study_guide_sft_rows(records: list[dict[str, Any]]) -> list[dict[str, Any]]:
             ("Worked examples", str(row.get("worked_examples") or "").strip()),
             ("Common pitfalls", str(row.get("common_pitfalls") or "").strip()),
         ]
-        answer = "\\n\\n".join(
-            f"{heading}:\\n{content}" for heading, content in sections if content
+        answer = "\n\n".join(
+            f"{heading}:\n{content}" for heading, content in sections if content
         )
         if not answer:
             continue
@@ -453,9 +469,7 @@ def execute_stage(stage: str, recipe: dict[str, Any], manifest: dict[str, Any],
         "schema": "dreamco.foundry.checkpoint.v1",
         "stage": stage,
         "checkpoint_dir": str(output),
-        "checkpoint_sha256": hashlib.sha256(
-            b"".join(path.read_bytes() for path in sorted(output.glob("*.safetensors"), key=lambda item: item.name))
-        ).hexdigest() if list(output.glob("*.safetensors")) else None,
+        "checkpoint_sha256": safetensors_digest(output),
         "adapter_config_sha256": (
             hashlib.sha256((output / "adapter_config.json").read_bytes()).hexdigest()
             if (output / "adapter_config.json").is_file() else None
