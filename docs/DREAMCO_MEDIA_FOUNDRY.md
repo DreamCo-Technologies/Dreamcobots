@@ -19,7 +19,7 @@ Run `python stages/08_media_studio/director.py stages/08_media_studio/shot-list.
 
 ## Render adapter contract
 
-A worker adapter implements `render_shot(shot, context)` and returns an `asset_uri`. Call `render_production` with an explicit rights manifest and adapter mapping. Every asset must pass the canonical sellability gate. Commercial rendering accepts only `sellable` decisions. `train_only` and `reference_only` assets cannot produce commercial deliverables.
+A worker adapter implements `render_shot(shot, context)` and returns an `asset_uri`. Call `render_production` with an explicit rights manifest, a non-empty model checkpoint manifest, a local license-evidence root, and an adapter mapping. Every asset must pass the canonical sellability gate and explicitly set commercial redistribution permission to true. Every model checkpoint and dependency must pass `buddy.media.model_license_gate.verify_model_record`. All render inputs must be sellable; `train_only` and `reference_only` assets cannot be rendered.
 
 For real-person references, include `subject_type: real_person`, `reference_path`, `consent_registry_path`, `kind` (`voice` or `image`), and `consent_purpose`. The registry checks the exact file hash, scope, revocation and expiry.
 
