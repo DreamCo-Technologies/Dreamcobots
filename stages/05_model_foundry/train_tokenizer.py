@@ -61,37 +61,45 @@ def main():
         require_model_authorization(manifest, args.base_model, args.base_revision)
         from tokenizers import Tokenizer, models, pre_tokenizers, decoders, trainers
         from transformers import AutoTokenizer
-        hf_tokenizer = AutoTokenizer.from_pretrained(
+        base_tokenizer = AutoTokenizer.from_pretrained(
             args.base_model, revision=args.base_revision, trust_remote_code=False, use_fast=True,
         )
-        if not hf_tokenizer.is_fast:
-            raise ValueError("base tokenizer must be a fast tokenizer")
-        # Learn a domain vocabulary separately, then add only genuinely new tokens.
-        # This preserves every existing base-token ID.
+        if not base_tokenizer.is_fast:
+            raise ValueError("base tokenizer must be fast to preserve its existing vocabulary IDs")
+        # Learn domain BPE pieces separately, then append only missing tokens.
+        # This preserves every existing base-token ID and embedding row.
         domain_tokenizer = Tokenizer(models.BPE(unk_token="<|unk|>"))
         domain_tokenizer.pre_tokenizer = pre_tokenizers.ByteLevel(add_prefix_space=False)
         domain_tokenizer.decoder = decoders.ByteLevel()
         domain_trainer = trainers.BpeTrainer(
             vocab_size=args.vocab_size, min_frequency=2,
-            special_tokens=["<|unk|>"],
+            special_tokens=SPECIAL_TOKENS,
             initial_alphabet=pre_tokenizers.ByteLevel.alphabet(),
         )
         domain_tokenizer.train_from_iterator(corpus(manifest), trainer=domain_trainer)
-        existing_vocab = hf_tokenizer.get_vocab()
-        domain_vocab = sorted(domain_tokenizer.get_vocab().items(), key=lambda pair: pair[1])
-        domain_tokens = [token for token, _ in domain_vocab if token not in existing_vocab]
-        added_domain_tokens = hf_tokenizer.add_tokens(domain_tokens)
-        hf_tokenizer.add_special_tokens({
+        base_vocab = base_tokenizer.get_vocab()
+        domain_vocab = domain_tokenizer.get_vocab()
+        domain_tokens = [
+            token for token, _ in sorted(domain_vocab.items(), key=lambda pair: pair[1])
+            if token not in base_vocab and token not in SPECIAL_TOKENS
+        ]
+        if domain_tokens:
+            base_tokenizer.add_tokens(domain_tokens)
+        base_tokenizer.add_special_tokens({
             "additional_special_tokens": [
                 token for token in SPECIAL_TOKENS
-                if token not in {hf_tokenizer.pad_token, hf_tokenizer.bos_token,
-                                 hf_tokenizer.eos_token, hf_tokenizer.unk_token}
+                if token not in {base_tokenizer.pad_token, base_tokenizer.bos_token,
+                                 base_tokenizer.eos_token, base_tokenizer.unk_token}
             ]
         })
-        if hf_tokenizer.pad_token is None:
-            hf_tokenizer.add_special_tokens({"pad_token": "<|pad|>"})
+        if base_tokenizer.pad_token is None:
+            base_tokenizer.add_special_tokens({"pad_token": "<|pad|>"})
+        hf_tokenizer = base_tokenizer
+        added_domain_tokens = domain_tokens
+
 
     hf_tokenizer.save_pretrained(args.output)
+    added_domain_tokens = locals().get("added_domain_tokens", [])
     metadata = {
         "schema": "dreamco.foundry.tokenizer_artifact.v1", "mode": args.mode,
         "vocab_size": len(hf_tokenizer),
@@ -100,7 +108,13 @@ def main():
         "source_manifest_sha256": hashlib.sha256(args.manifest.read_bytes()).hexdigest(),
         "training_splits": ["train"], "excluded_splits": ["validation", "holdout"],
         "policy_decisions": sorted({item["policy_decision_id"] for item in manifest["datasets"]}),
-        "special_tokens": SPECIAL_TOKENS,\n        "added_domain_tokens": added_domain_tokens if args.mode == "extend" else None,\n        "mean_initialize_new_embeddings": args.mode == "extend",
+        "special_tokens": SPECIAL_TOKENS,
+        "added_domain_tokens": added_domain_tokens,
+        "trainable_token_ids": sorted({
+            int(hf_tokenizer.convert_tokens_to_ids(token))
+            for token in added_domain_tokens
+            if hf_tokenizer.convert_tokens_to_ids(token) is not None
+        }),\n        "added_domain_tokens": added_domain_tokens if args.mode == "extend" else None,\n        "mean_initialize_new_embeddings": args.mode == "extend",
     }
     (args.output / "foundry-tokenizer-manifest.json").write_text(
         json.dumps(metadata, indent=2) + "\n", encoding="utf-8",
