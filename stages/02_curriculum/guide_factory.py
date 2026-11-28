@@ -12,10 +12,11 @@ import importlib.util
 import json
 import re
 from pathlib import Path
-from typing import Any, Callable
+from typing import Any
 
 ROOT = Path(__file__).resolve().parents[2]
 POLICY_GATE_PATH = ROOT / "stages" / "01_policy_gate" / "policy_gate.py"
+CATALOG_SYNC_PATH = ROOT / "stages" / "00_catalog_sync" / "catalog_sync.py"
 REQUIRED = ("guide_id", "title", "learning_objectives", "lesson", "practice_lab", "assessment", "safety_notes")
 HEX_64 = re.compile(r"^[a-f0-9]{64}$")
 TOKEN_RE = re.compile(r"[a-z0-9_]+")
@@ -25,6 +26,15 @@ def _load_policy_gate():
     spec = importlib.util.spec_from_file_location("dreamco_stage01_policy_gate", POLICY_GATE_PATH)
     if spec is None or spec.loader is None:
         raise RuntimeError("Stage 01 policy gate could not be loaded")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def _load_catalog_sync():
+    spec = importlib.util.spec_from_file_location("dreamco_stage00_catalog_sync", CATALOG_SYNC_PATH)
+    if spec is None or spec.loader is None:
+        raise RuntimeError("Stage 00 catalog sync module could not be loaded")
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     return module
@@ -102,8 +112,11 @@ def build_guide(
         raise ValueError("unsupported or missing source catalog record schema")
     if not source_record.get("source_id") or not source_record.get("video_id"):
         raise ValueError("catalog record must include source_id and video_id")
-    if not HEX_64.fullmatch(str(source_record.get("content_sha256", "")).lower()):
-        raise ValueError("catalog record must include a valid SHA-256 content hash")
+    metadata_fingerprint = str(source_record.get("metadata_sha256") or source_record.get("content_sha256") or "").lower()
+    if not HEX_64.fullmatch(metadata_fingerprint):
+        raise ValueError("catalog record must include a valid metadata SHA-256 fingerprint")
+    if _load_catalog_sync().canonical_hash(source_record) != metadata_fingerprint:
+        raise ValueError("catalog metadata fingerprint does not match the supplied record")
     if source_record.get("license_record_verified") is not True:
         raise PermissionError("BLOCKED_MISSING_ITEM_LICENSE_EVIDENCE")
     if not isinstance(similarity_references, list) or not similarity_references:
@@ -129,17 +142,19 @@ def build_guide(
         [guide["title"], *guide["learning_objectives"], guide["lesson"],
          guide["practice_lab"], guide["assessment"], *guide["safety_notes"]]
     )
+    if len(_tokens(candidate_text)) < 8:
+        raise ValueError("candidate guide must contain at least eight tokens for originality screening")
     scores = [ngram_containment(candidate_text, ref, n=8) for ref in similarity_references]
     max_score = max(scores, default=1.0)
     originality_passed = max_score < similarity_threshold
-    source_fingerprint = str(source_record["content_sha256"]).lower()
+    metadata_fingerprint = str(source_record.get("metadata_sha256") or source_record.get("content_sha256")).lower()
     provenance = {
         "schema": "dreamco.guide_provenance.v1",
         "source_id": source_record["source_id"],
         "video_id": source_record["video_id"],
         "source_url": source_record.get("source_url"),
         "source_record_sha256": _canonical_digest(source_record),
-        "source_content_sha256": source_fingerprint,
+        "catalog_metadata_sha256": metadata_fingerprint,
         "policy_decision": decision,
         "source_use": "fact_extraction_only",
         "transcript_downloaded": False,
