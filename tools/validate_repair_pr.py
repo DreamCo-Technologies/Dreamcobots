@@ -16,6 +16,15 @@ BLOCKED_PARTS = {".github", "contracts", "security", "policy", "secrets", "host-
 BLOCKED_NAMES = {".env", ".env.example", "package-lock.json", "pnpm-lock.yaml", "yarn.lock", "poetry.lock", "Pipfile.lock"}
 MAX_FILES = 20
 MAX_CHANGED_LINES = 1500
+
+def validate_git_ref(value: str) -> bool:
+    return bool(
+        re.fullmatch(r"(?:origin/)?[A-Za-z0-9][A-Za-z0-9._/-]{0,127}", value)
+        and ".." not in value
+        and "//" not in value
+        and not value.endswith(("/", ".", ".lock"))
+    )
+
 SECRET_PATTERNS = (
     re.compile(r"(?i)\b(?:gh[pousr]_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,})\b"),
     re.compile(r"\bAKIA[0-9A-Z]{16}\b"),
@@ -121,6 +130,8 @@ def main() -> int:
     parser.add_argument("--base", required=True)
     parser.add_argument("--head", required=True)
     args = parser.parse_args()
+    if not validate_git_ref(args.base) or not validate_git_ref(args.head):
+        parser.error("--base and --head must be valid, bounded Git ref names.")
     name_status = subprocess.run(
         ["git", "diff", "--name-status", "--no-renames", f"{args.base}...{args.head}"],
         check=True, capture_output=True, text=True,
