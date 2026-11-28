@@ -387,15 +387,17 @@ def python_checks(folder: str, timeout: int, skip_tests: bool) -> dict[str, Any]
         "tests/test_run_prospectus.py",
         "tests/test_file_prospectus.py",
     }
-    tests = sorted(
-        test_path for test_path in (
-            {rel(p) for p in (ROOT / "tests").glob("test_*.py")
-             if pat.search(p.read_text(encoding="utf-8", errors="replace"))}
-            | {rel(p) for p in base.rglob("test_*.py")}
-        )
-        if test_path not in deferred_generated_artifact_tests
+    discovered_tests = sorted(
+        {rel(p) for p in (ROOT / "tests").glob("test_*.py")
+         if pat.search(p.read_text(encoding="utf-8", errors="replace"))}
+        | {rel(p) for p in base.rglob("test_*.py")}
     )
+    deferred_tests = sorted(set(discovered_tests) & deferred_generated_artifact_tests)
+    tests = [test_path for test_path in discovered_tests if test_path not in deferred_generated_artifact_tests]
     result["test_files"] = tests
+    result["deferred_tests"] = deferred_tests
+    result["deferred_tests_ran"] = False
+    result["python_tests_fully_run"] = not deferred_tests and not skip_tests
     if tests and not skip_tests:
         res = run([sys.executable, "-m", "pytest", "-q", "-p", "no:cacheprovider", "--no-header", "-rN",
                    "--continue-on-collection-errors", *tests],
@@ -487,7 +489,7 @@ def verdict(entry: dict[str, Any]) -> str:
     site_ok = entry.get("site_check_ok", True)
     if syntax and syntax >= max(1, entry["code_files"] // 2) or imp_fail_ratio > 0.5 or (ran and passed + failed and passed < failed):
         return "broken"
-    if syntax or imp.get("failed") or failed or type_errors or not site_ok or entry.get("links_broken"):
+    if syntax or imp.get("failed") or failed or type_errors or not site_ok or entry.get("links_broken") or entry.get("deferred_tests"):
         return "partial"
     if not ran or passed == 0:
         return "untested"
@@ -659,6 +661,8 @@ def render_report(status: dict[str, Any], rows: list[dict[str, Any]]) -> str:
     lines += ["", "### Folder failure details", ""]
     for f in status["code_folders"]:
         details = []
+        if f.get("deferred_tests"):
+            details.append("deferred tests not run: " + ", ".join(f["deferred_tests"]))
         if f.get("syntax_errors"):
             details.append("syntax: " + "; ".join(f["syntax_errors"][:5]))
         if (f.get("js") or {}).get("syntax_errors"):
