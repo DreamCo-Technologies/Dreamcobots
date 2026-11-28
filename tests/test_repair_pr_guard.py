@@ -61,7 +61,9 @@ def test_repair_guard_blocks_its_own_policy_file():
 def test_repair_guard_allows_new_non_security_test_module():
     errors = validate_changes(
         "A\ttests/test_new_helper.py",
-        "+++ b/tests/test_new_helper.py\n+def test_new_helper(): assert True\n",
+        "diff --git a/tests/test_new_helper.py b/tests/test_new_helper.py\n"
+        "new file mode 100644\n--- /dev/null\n+++ b/tests/test_new_helper.py\n"
+        "+def test_new_helper(): assert True\n",
     )
     assert errors == []
 
