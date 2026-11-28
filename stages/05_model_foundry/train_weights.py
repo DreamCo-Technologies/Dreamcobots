@@ -159,10 +159,11 @@ def _load_model(recipe: dict[str, Any], tokenizer, checkpoint: Path | None = Non
         model = LlamaForCausalLM(config)
         target = int(arch.get("parameters_target", 45_000_000))
         actual = sum(parameter.numel() for parameter in model.parameters())
-        if abs(actual - target) / target > 0.20:
+        if abs(actual - target) / target > 0.01:
             raise ValueError(
-                f"scratch architecture has {actual:,} parameters; target is {target:,} (20% tolerance)"
+                f"scratch architecture has {actual:,} parameters; target is {target:,} (1% tolerance)"
             )
+        print(f"Initialized scratch model with {actual:,} parameters (target {target:,})")
     else:
         base = recipe.get("base_model", {})
         model_id = base.get("id")
