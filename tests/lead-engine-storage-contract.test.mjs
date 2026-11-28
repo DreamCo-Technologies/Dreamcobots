@@ -69,3 +69,15 @@ test("Buddy advertises the five-stage Lead Engine and safe readiness metadata", 
   assert.match(routes, /server\/lead-engine\.ts \+ server\/lead-engine-storage\.ts \+ server\/governed-leads\.ts/);
   assert.match(routes, /pipeline: \["attract", "capture", "qualify", "nurture", "convert"\]/);
 });
+
+test("conversion requires a persisted owner approval event that ordinary activity writes cannot forge", () => {
+  assert.match(migration, /conversion_approved/);
+  assert.match(storage, /export async function approveLeadConversion/);
+  assert.match(storage, /eventType: "conversion_approved"/);
+  assert.match(storage, /eq\(leadEngineActivities\.eventType, "conversion_approved"\)/);
+  assert.match(storage, /lead_engine_conversion_approval_evidence_missing/);
+  const publicActivitySchema = storage.slice(storage.indexOf("const activitySchema"), storage.indexOf("export type LeadEngineActivityInput"));
+  assert.doesNotMatch(publicActivitySchema, /conversion_approved/);
+  assert.match(routes, /records\/:leadId\/approve-conversion/);
+  assert.match(routes, /approveLeadConversion\(identity\.ownerId, req\.params\.leadId\)/);
+});
