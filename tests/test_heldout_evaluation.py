@@ -56,9 +56,30 @@ class HeldoutEvaluationTests(unittest.TestCase):
             checkpoint = root / "weights.bin"
             checkpoint.write_bytes(b"not-real-weights-test-fixture")
             evaluation = root / "evaluation.json"
-            evaluation.write_text(json.dumps({"split":"private_independent_holdout","training_use":"NEVER_TRAIN","passed":True,"accuracy":1.0,"required_accuracy":0.85,"suite_id":"suite","suite_sha256":"abc"}))
+            evaluation.write_text(json.dumps({
+                "schema": "dreamco.heldout_evaluation_report.v1",
+                "evaluator": {
+                    "tool": "tools/run_heldout_evaluation.py",
+                    "sha256": validator.sha256_file(ROOT / "tools/run_heldout_evaluation.py"),
+                },
+                "split": "private_independent_holdout",
+                "training_use": "NEVER_TRAIN",
+                "passed": True,
+                "accuracy": 1.0,
+                "required_accuracy": 0.85,
+                "total_tasks": 1,
+                "passed_tasks": 1,
+                "suite_id": "suite",
+                "suite_sha256": __import__("hashlib").sha256(b"suite").hexdigest(),
+                "model_version": "dreamcodelab-candidate-001",
+            }))
             config = root / "training.json"
-            config.write_text(json.dumps({"seed":7,"code_revision":"abc123","base_model":"approved-base"}))
+            config.write_text(json.dumps({
+                "seed": 7,
+                "code_revision": "abc123",
+                "base_model": "approved-base",
+                "candidate_model_version": "dreamcodelab-candidate-001",
+            }))
             dataset = root / "dataset.json"
             dataset.write_text(json.dumps({"training_authorized":True,"rights_review_status":"APPROVED"}))
             metrics = root / "metrics.json"
