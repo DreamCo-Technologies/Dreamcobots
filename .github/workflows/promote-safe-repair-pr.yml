@@ -1,0 +1,46 @@
+name: Promote Validated Repair Branch
+on:
+  workflow_dispatch:
+    inputs:
+      head_branch:
+        description: Existing repair branch to validate and open as a PR
+        required: true
+        type: string
+permissions:
+  contents: read
+  pull-requests: write
+jobs:
+  validate-and-open:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check out trusted main workflow code
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - name: Validate and fetch repair branch
+        env:
+          REPAIR_HEAD_BRANCH: ${{ inputs.head_branch }}
+        shell: bash
+        run: |
+          if [ "$REPAIR_HEAD_BRANCH" = "main" ] || ! git check-ref-format --branch "$REPAIR_HEAD_BRANCH" >/dev/null 2>&1; then
+            echo "A valid non-main branch name is required."
+            exit 1
+          fi
+          git fetch --no-tags origin "refs/heads/$REPAIR_HEAD_BRANCH:refs/remotes/origin/$REPAIR_HEAD_BRANCH"
+      - name: Enforce repair diff policy
+        env:
+          REPAIR_HEAD_BRANCH: ${{ inputs.head_branch }}
+        run: python tools/validate_repair_pr.py --base origin/main --head "origin/$REPAIR_HEAD_BRANCH"
+      - name: Open review-only repair pull request
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPAIR_HEAD_BRANCH: ${{ inputs.head_branch }}
+        shell: bash
+        run: |
+          if gh pr view "$REPAIR_HEAD_BRANCH" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "A pull request already exists for this branch."
+            exit 0
+          fi
+          gh pr create --repo "$GITHUB_REPOSITORY" --base main --head "$REPAIR_HEAD_BRANCH" --title "Review safe repair: $REPAIR_HEAD_BRANCH" --body "Passed structural allowlist checks only. Candidate code was not executed. Human review and passing CI are mandatory."

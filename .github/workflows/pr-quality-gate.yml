@@ -1,0 +1,43 @@
+name: DreamCo PR Quality Gate
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: dreamco-pr-quality-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+jobs:
+  required-tests:
+    name: DreamCo required tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: requirements-reverse-engineer.txt
+      - name: Install test dependencies
+        run: python -m pip install --disable-pip-version-check "pytest>=8,<10" "jsonschema>=4.22,<5"
+      - name: Run full test suite and create sanitized report
+        shell: bash
+        run: |
+          mkdir -p reports
+          set +e
+          make test-all 2>&1 | tee "$RUNNER_TEMP/dreamco-test.log"
+          test_status=${PIPESTATUS[0]}
+          python tools/ci_failure_report.py --log "$RUNNER_TEMP/dreamco-test.log" --output reports/ci-failure-report.json --exit-code "$test_status"
+          report_status=$?
+          if [ "$report_status" -ne 0 ]; then exit "$report_status"; fi
+          exit "$test_status"
+      - name: Upload sanitized CI report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dreamco-pr-ci-report-${{ github.run_id }}
+          path: reports/ci-failure-report.json
+          if-no-files-found: ignore
+          retention-days: 14

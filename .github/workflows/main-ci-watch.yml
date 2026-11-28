@@ -1,0 +1,89 @@
+name: DreamCo Mainline Health Watch
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: dreamco-mainline-health
+  cancel-in-progress: false
+jobs:
+  verify-main:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: requirements-reverse-engineer.txt
+      - name: Install test dependencies
+        run: python -m pip install --disable-pip-version-check "pytest>=8,<10" "jsonschema>=4.22,<5"
+      - name: Run mainline verification and create sanitized report
+        shell: bash
+        run: |
+          mkdir -p reports
+          set +e
+          make test-all 2>&1 | tee "$RUNNER_TEMP/dreamco-main-test.log"
+          test_status=${PIPESTATUS[0]}
+          python tools/ci_failure_report.py --log "$RUNNER_TEMP/dreamco-main-test.log" --output reports/mainline-failure-report.json --exit-code "$test_status"
+          report_status=$?
+          if [ "$report_status" -ne 0 ]; then exit "$report_status"; fi
+          exit "$test_status"
+      - name: Upload sanitized mainline report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dreamco-mainline-report-${{ github.run_id }}
+          path: reports/mainline-failure-report.json
+          if-no-files-found: ignore
+          retention-days: 30
+  report-main-failure:
+    needs: verify-main
+    if: failure()
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download sanitized report
+        continue-on-error: true
+        uses: actions/download-artifact@v4
+        with:
+          name: dreamco-mainline-report-${{ github.run_id }}
+          path: reports
+      - name: Open or update a mainline failure issue
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const p = 'reports/mainline-failure-report.json';
+            const report = fs.existsSync(p) ? JSON.parse(fs.readFileSync(p, 'utf8')) : {failure_excerpt: 'Sanitized report unavailable.'};
+            const owner = context.repo.owner, repo = context.repo.repo, sha = context.sha;
+            const title = 'Mainline CI failure: ' + sha.slice(0, 7);
+            const existing = await github.rest.issues.listForRepo({owner, repo, state: 'open', per_page: 100});
+            const prior = existing.data.find(issue => issue.title === title);
+            const body = [
+              'DreamCo mainline verification failed.',
+              '',
+              'Commit: ' + sha,
+              'Workflow: ' + context.serverUrl + '/' + owner + '/' + repo + '/actions/runs/' + context.runId,
+              'No AI repair, direct push, or automatic revert was attempted.',
+              '',
+              'Failure details are intentionally not copied into this public issue or artifact because raw test output can contain credentials or personal data.',
+              'Open the linked GitHub Actions run to inspect diagnostic logs.',
+              '',
+              'Review the logs and prepare a scoped repair branch. Use the manual safe-repair PR workflow after validating the change.'
+            ].join('\n');
+            if (prior) {
+              await github.rest.issues.createComment({owner, repo, issue_number: prior.number, body});
+              core.info('Updated issue #' + prior.number);
+            } else {
+              const created = await github.rest.issues.create({owner, repo, title, body});
+              core.info('Created issue #' + created.data.number);
+            }
