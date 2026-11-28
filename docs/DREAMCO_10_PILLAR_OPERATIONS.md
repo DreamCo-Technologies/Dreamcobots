@@ -15,7 +15,7 @@ The 500-model inventory is intentionally empty until each model has an immutable
 | 3. 500-model sharding | `tools/plan_500_model_shards.py` | Ten 50-slot readiness shards; no execution until 500 real records and separate compute approval |
 | 4. Ratings and Pareto | `tools/leaderboard_math.py` | Glicko-2 requires head-to-head results; Pareto compares accuracy, latency, and parameter count |
 | 5. Adaptive curriculum | `update_curriculum_state` | Practice-only updates; 95%+ raises difficulty 10% and doubles interval; below 70% lowers difficulty 10% and resets interval |
-| 6. Bootcamp distillation | `distill_verified_repair` | Exactly 25 original rubric drills from human-reviewed, rights-approved, privacy-approved non-holdout repair evidence; MinHash compares lesson signatures |
+| 6. Bootcamp distillation | `distill_verified_repair` | Exactly 25 original rubric drills from human-reviewed, rights-approved, training-authorized, dataset-release-approved, PII-scrubbed, privacy-approved non-holdout repair evidence; MinHash compares lesson signatures |
 | 7. Swarm evaluation | `evaluate_swarm_handoff` | Measures supplied route, schema, latency, and tool-selection evidence; it does not execute external tools |
 | 8. PR regression | `build_regression_issue_draft` | Relative score drop greater than 0.5% creates a reviewable issue draft; no issue is opened automatically |
 | 9. Buyer readiness | `audit_buyer_readiness` | HMAC-verified network-isolation receipt and quantization drift are required to reach human review; no compliance badge is issued |
@@ -40,6 +40,8 @@ python tools/dreamco_10pillar_orchestrator.py curriculum \
 ```
 
 Other subcommands are `pareto`, `distill`, `swarm`, `regression`, `buyer-readiness`, and `upgrade-101`. The input contracts are enforced by the Python functions and their unit tests.
+
+A distillation input must contain a single `evidence` object with a canonical SHA-256 over all evidence fields except `evidence_sha256`. It must explicitly set `status=VERIFIED_REPAIR`, `human_review_status=APPROVED`, `source_rights_approved=true`, `training_use_approved=true`, `dataset_release_approved=true`, `pii_scrubbed=true`, `privacy_review_status=APPROVED`, `holdout=false`, and `evidence_split=practice` or `curriculum`. Optional `existing_signatures` is the saved list of MinHash signatures for previously distilled lessons. The `distill` command writes one JSON object per line (JSONL), with the MinHash signature included for the next run.
 
 For buyer-readiness, set `DREAMCO_ISOLATION_HMAC_KEY` and `DREAMCO_ISOLATION_HMAC_KEY_ID` from GitHub Actions secrets or a local secret manager. Never commit the key. The isolation receipt must be produced by a trusted runner that actually blocks network egress and records the kit hash; monkeypatching Python sockets is not an air-gap test.
 
