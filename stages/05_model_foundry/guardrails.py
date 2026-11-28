@@ -129,7 +129,7 @@ def assert_training_split(rows):
 
 def validate_shard_payload(payload: dict, root: Path, source_manifest_path: Path,
                            *, attach_paths: bool = True) -> dict:
-    """Validate signed shard metadata, containment, sequence geometry and bytes."""
+    """Validate signed multi-shard metadata, containment, sequence geometry and bytes."""
     if payload.get("schema") != "dreamco.foundry.token_shards.v1":
         raise ValueError("unsupported token-shard manifest schema")
     sequence_length = payload.get("sequence_length")
@@ -146,57 +146,76 @@ def validate_shard_payload(payload: dict, root: Path, source_manifest_path: Path
     validation_expected = payload.get("validation_splits") == ["validation"]
     if payload.get("validation_splits") not in ([], ["validation"]):
         raise ValueError("validation_splits must be empty or contain only validation")
+
+    def entries_for(name: str) -> list[dict]:
+        raw = payload.get(name)
+        if name == "train" and raw is None:
+            raise ValueError("missing train shard entries")
+        if raw is None:
+            return []
+        if isinstance(raw, dict):
+            return [raw]
+        if isinstance(raw, list) and all(isinstance(item, dict) for item in raw):
+            return raw
+        raise ValueError(f"{name} shard entries must be an object or list of objects")
+
     root = root.resolve()
+    seen_files = set()
     for name in ("train", "validation"):
-        entry = payload.get(name)
-        if entry is None and name == "validation" and not validation_expected:
-            continue
-        if not isinstance(entry, dict):
-            raise ValueError(f"missing {name} shard manifest entry")
-        relative = str(entry.get("file", ""))
-        if not relative or Path(relative).is_absolute():
-            raise ValueError(f"invalid {name} shard path")
-        path = (root / relative).resolve()
-        if path == root or root not in path.parents or not path.is_file():
-            raise ValueError(f"invalid {name} shard path")
-        tokens = entry.get("tokens")
-        sequences = entry.get("sequences")
-        if not isinstance(tokens, int) or tokens <= 0 or tokens % sequence_length:
-            raise ValueError(f"{name} shard token count is not sequence-aligned")
-        if sequences != tokens // sequence_length or path.stat().st_size != tokens * 4:
-            raise ValueError(f"{name} shard size/sequence metadata mismatch")
-        expected_prefix = f"{name}-"
-        if not Path(relative).name.startswith(expected_prefix):
-            raise ValueError(f"{name} shard filename must start with {expected_prefix}")
-        if sha256_file(path) != entry.get("sha256"):
-            raise ValueError(f"{name} shard SHA-256 mismatch")
-        index_relative = str(entry.get("index_file", ""))
-        if not index_relative or Path(index_relative).is_absolute():
-            raise ValueError(f"{name} shard requires a relative .idx path")
-        index_path = (root / index_relative).resolve()
-        if index_path == root or root not in index_path.parents or not index_path.is_file():
-            raise ValueError(f"invalid {name} shard .idx path")
-        if sha256_file(index_path) != entry.get("index_sha256"):
-            raise ValueError(f"{name} shard .idx SHA-256 mismatch")
-        index = json.loads(index_path.read_text(encoding="utf-8"))
-        expected_index = {
-            "schema": "dreamco.foundry.token_shard_index.v1",
-            "bin_file": path.name,
-            "dtype": "uint32",
-            "sequence_length": sequence_length,
-            "sequence_count": sequences,
-            "token_count": tokens,
-            "offset_unit": "tokens",
-            "first_token_offset": 0,
-            "sequence_stride_tokens": sequence_length,
-        }
-        if index != expected_index:
-            raise ValueError(f"{name} shard .idx geometry mismatch")
-        if attach_paths:
-            entry["_resolved_path"] = str(path)
-            entry["_resolved_index_path"] = str(index_path)
-    if validation_expected != (payload.get("validation") is not None):
-        raise ValueError("validation split declaration and validation shard entry disagree")
+        entries = entries_for(name)
+        if name == "train" and not entries:
+            raise ValueError("at least one train shard is required")
+        if name == "validation" and validation_expected != bool(entries):
+            raise ValueError("validation split declaration and validation shard entries disagree")
+        for entry in entries:
+            relative = str(entry.get("file", ""))
+            if not relative or Path(relative).is_absolute():
+                raise ValueError(f"invalid {name} shard path")
+            path = (root / relative).resolve()
+            if path == root or root not in path.parents or not path.is_file():
+                raise ValueError(f"invalid {name} shard path")
+            if relative in seen_files:
+                raise ValueError("duplicate token shard file path")
+            seen_files.add(relative)
+            tokens = entry.get("tokens")
+            sequences = entry.get("sequences")
+            if not isinstance(tokens, int) or tokens <= 0 or tokens % sequence_length:
+                raise ValueError(f"{name} shard token count is not sequence-aligned")
+            if sequences != tokens // sequence_length or path.stat().st_size != tokens * 4:
+                raise ValueError(f"{name} shard size/sequence metadata mismatch")
+            expected_prefix = f"{name}-"
+            if not Path(relative).name.startswith(expected_prefix):
+                raise ValueError(f"{name} shard filename must start with {expected_prefix}")
+            if sha256_file(path) != entry.get("sha256"):
+                raise ValueError(f"{name} shard SHA-256 mismatch")
+            index_relative = str(entry.get("index_file", ""))
+            if not index_relative or Path(index_relative).is_absolute():
+                raise ValueError(f"{name} shard requires a relative .idx path")
+            index_path = (root / index_relative).resolve()
+            if index_path == root or root not in index_path.parents or not index_path.is_file():
+                raise ValueError(f"invalid {name} shard .idx path")
+            if index_relative in seen_files:
+                raise ValueError("duplicate token shard index path")
+            seen_files.add(index_relative)
+            if sha256_file(index_path) != entry.get("index_sha256"):
+                raise ValueError(f"{name} shard .idx SHA-256 mismatch")
+            index = json.loads(index_path.read_text(encoding="utf-8"))
+            expected_index = {
+                "schema": "dreamco.foundry.token_shard_index.v1",
+                "bin_file": path.name,
+                "dtype": "uint32",
+                "sequence_length": sequence_length,
+                "sequence_count": sequences,
+                "token_count": tokens,
+                "offset_unit": "tokens",
+                "first_token_offset": 0,
+                "sequence_stride_tokens": sequence_length,
+            }
+            if index != expected_index:
+                raise ValueError(f"{name} shard .idx geometry mismatch")
+            if attach_paths:
+                entry["_resolved_path"] = str(path)
+                entry["_resolved_index_path"] = str(index_path)
     return payload
 
 def verify_signed_shard_manifest(shard_manifest_path: Path, shard_signature_path: Path,
