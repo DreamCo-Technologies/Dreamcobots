@@ -10,6 +10,7 @@ NEW = ROOT / "config" / "buddy-study-resources-1001-1100-must-have.json"
 
 
 def names_urls(path: Path) -> tuple[set[str], set[str]]:
+    """Return normalized resource names and URLs from one study-resource catalog."""
     doc = json.loads(path.read_text(encoding="utf-8"))
     names, urls = set(), set()
     for row in doc["resources"]:
@@ -57,6 +58,7 @@ def validate_catalogs() -> dict[str, object]:
 
 
 def main() -> int:
+    """Validate catalog IDs, required fields, HTTPS URLs, and cross-catalog uniqueness."""
     old_names, old_urls = names_urls(OLD)
     new = json.loads(NEW.read_text(encoding="utf-8"))
     rows = new["resources"]
@@ -65,12 +67,25 @@ def main() -> int:
     ids = [row[0] for row in rows]
     if ids != list(range(1001, 1101)):
         raise SystemExit("ids must be 1001-1100")
+    malformed = [
+        row[0] for row in rows
+        if len(row) < 6 or any(not str(value).strip() for value in row[1:6])
+        or not str(row[3]).startswith("https://")
+    ]
+    if malformed:
+        raise SystemExit(f"rows need six non-empty fields and an HTTPS URL: {malformed}")
+    names = [str(row[1]).strip().lower() for row in rows]
+    urls = [str(row[3]).strip().rstrip("/").lower() for row in rows]
+    if len(set(names)) != len(names) or len(set(urls)) != len(urls):
+        raise SystemExit("duplicate names or URLs inside the 1001-1100 catalog")
     new_names, new_urls = names_urls(NEW)
     name_hits = sorted(old_names & new_names)
     url_hits = sorted(old_urls & new_urls)
     if name_hits or url_hits:
         raise SystemExit(f"duplicates names={name_hits} urls={url_hits}")
-    print(json.dumps({"ok": True, "added": 100, "name_overlap": 0, "url_overlap": 0}))
+    expansion = validate_catalogs()
+    print(json.dumps({"ok": True, "added": 100, "name_overlap": 0,
+                      "url_overlap": 0, "expansion": expansion}))
     return 0
 
 
