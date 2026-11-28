@@ -19,6 +19,23 @@ except ImportError:  # direct script invocation from this directory
     from guardrails import assert_training_split, iter_authorized_records, require_model_authorization, verify_signed_manifest, verify_signed_shard_manifest
 
 
+
+def tokenizer_digest(path: Path) -> str:
+    names={"tokenizer.json","tokenizer_config.json","special_tokens_map.json",
+           "added_tokens.json","vocab.json","merges.txt","tokenizer.model",
+           "spiece.model","foundry-tokenizer-manifest.json"}
+    files=sorted((item for item in path.rglob("*") if item.is_file() and item.name in names),
+                 key=lambda item:item.relative_to(path).as_posix())
+    if not files:
+        raise ValueError("tokenizer directory has no recognized tokenizer artifacts")
+    digest=hashlib.sha256()
+    for item in files:
+        digest.update(item.relative_to(path).as_posix().encode("utf-8"))
+        digest.update(b"\\0")
+        digest.update(item.read_bytes())
+        digest.update(b"\\0")
+    return digest.hexdigest()
+
 def load_recipe(path: Path) -> dict[str, Any]:
     text = path.read_text(encoding="utf-8")
     if path.suffix.lower() == ".json":
@@ -376,6 +393,15 @@ def execute_stage(stage: str, recipe: dict[str, Any], manifest: dict[str, Any],
             b"".join(path.read_bytes() for path in sorted(output.glob("*.safetensors"), key=lambda item: item.name))
         ).hexdigest() if list(output.glob("*.safetensors")) else None,
         "source_manifest_sha256": manifest.get("_source_manifest_sha256"),
+        "recipe_sha256": manifest.get("_recipe_sha256"),
+        "tokenizer_sha256": manifest.get("_tokenizer_sha256"),
+        "shard_manifest_sha256": manifest.get("_shard_manifest_sha256"),
+        "authorization_reference": manifest.get("_authorization_reference"),
+        "base_model_id": manifest.get("_base_model_id"),
+        "base_model_revision": manifest.get("_base_model_revision"),
+        "license_evidence_id": manifest.get("_base_model_license_evidence_id"),
+        "run_name": recipe.get("run_name"),
+        "division_id": recipe.get("division_id"),
         "training_split": "train",
         "holdout_used_for_training": False,
         "weight_updates_started": True,
@@ -404,6 +430,18 @@ def main():
 
     recipe = load_recipe(args.recipe)
     manifest = verify_signed_manifest(args.manifest, args.signature, args.public_key)
+    manifest["_recipe_sha256"] = hashlib.sha256(args.recipe.read_bytes()).hexdigest()
+    manifest["_tokenizer_sha256"] = tokenizer_digest(args.tokenizer)
+    manifest["_shard_manifest_sha256"] = (
+        hashlib.sha256(args.shard_manifest.read_bytes()).hexdigest()
+        if args.shard_manifest and args.shard_manifest.is_file() else None
+    )
+    if recipe.get("mode") != "scratch":
+        base = recipe.get("base_model", {})
+        model_auth = require_model_authorization(manifest, base.get("id"), base.get("revision"))
+        manifest["_base_model_id"] = base.get("id")
+        manifest["_base_model_revision"] = base.get("revision")
+        manifest["_base_model_license_evidence_id"] = model_auth["license_evidence_id"]
     stages = (
         [name for name in ("pretrain", "sft", "dpo") if recipe.get(name, {}).get("enabled", True)]
         if args.stage == "all" else [args.stage]
@@ -449,6 +487,7 @@ def main():
         raise PermissionError("optimizer steps require --authorize-weight-updates and --authorization-reference")
     if not args.authorization_reference.strip():
         raise PermissionError("authorization reference must be non-empty")
+    manifest["_authorization_reference"] = args.authorization_reference.strip()
 
     active = args.input_checkpoint
     if stages[0] in {"sft", "dpo"} and active is None:
