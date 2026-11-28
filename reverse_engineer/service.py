@@ -12,7 +12,7 @@ def analyze(filename,content,permission,system_name,purpose=""):
     if not gate.allowed:raise PermissionError(gate.reason)
     artifact=route_artifact(filename,gate.sanitized_content,permission)
     parsers={"python_source":parse_python,"openapi_json":parse_openapi_json,"har":parse_har,"csv":parse_csv,"json":parse_json_data}
-    language={"javascript_source":"javascript","typescript_source":"typescript","java_source":"java","go_source":"go","rust_source":"rust"}.get(artifact["artifact_type"])
+    language={"javascript_source":"javascript","typescript_source":"typescript","java_source":"java","go_source":"go","rust_source":"rust","cpp_source":"cpp","cuda_source":"cuda"}.get(artifact["artifact_type"])
     if language:parsed=parse_tree_sitter(artifact["content"],language)
     else:
         if artifact["artifact_type"]=="openapi_yaml":raise NotImplementedError("Safe YAML adapter is not installed; parser is disabled.")
