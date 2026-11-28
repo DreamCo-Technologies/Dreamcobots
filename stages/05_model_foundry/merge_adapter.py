@@ -8,7 +8,7 @@ def safetensors_digest(folder: Path) -> str:
     files=sorted(folder.glob("*.safetensors"))
     if not files: raise ValueError("adapter directory has no .safetensors weights")
     h=hashlib.sha256()
-    h.update(b"".join(sorted(path.read_bytes() for path in files)))
+    h.update(b"".join(path.read_bytes() for path in files))
     return h.hexdigest()
 
 def main():
