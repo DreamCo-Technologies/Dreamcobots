@@ -1,0 +1,75 @@
+name: DreamCo 55-Division Curriculum
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/dreamco-division-curriculum.yml"
+      - "buddy/learning/division_curriculum_builder.py"
+      - "buddy/learning/course_track_registry.py"
+      - "buddy/learning/buddy_knowledge_router.py"
+      - "buddy/learning/runtime_bridge.py"
+      - "config/dreamco-division-curricula-manifest.json"
+      - "config/dreamco-universal-capability-taxonomy.json"
+      - "config/dreamco-universal-division-mastery-contract.json"
+      - "config/buddy-course-track-registry.json"
+      - "config/buddy-continuous-study-policy.json"
+      - "data/dreamco_training/division_curricula/**"
+      - "tests/test_buddy_division_curriculum_builder.py"
+      - "tests/test_commandcore_bootcamp_smoke.py"
+      - "tools/build_buddy_division_curricula.py"
+      - "tools/smoke_commandcore_bootcamp.py"
+  push:
+    branches: [main]
+    paths:
+      - "buddy/learning/division_curriculum_builder.py"
+      - "buddy/learning/course_track_registry.py"
+      - "buddy/learning/buddy_knowledge_router.py"
+      - "buddy/learning/runtime_bridge.py"
+      - "config/dreamco-division-curricula-manifest.json"
+      - "config/dreamco-universal-capability-taxonomy.json"
+      - "config/dreamco-universal-division-mastery-contract.json"
+      - "config/buddy-course-track-registry.json"
+      - "tools/build_buddy_division_curricula.py"
+  schedule:
+    - cron: "17 2 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: dreamco-division-curriculum-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  validate-curriculum:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Install repository-declared learning dependencies
+        run: python -m pip install --upgrade pip && python -m pip install -r requirements-buddy-learning.txt pytest
+      - name: Generate original DreamCo curriculum drafts
+        run: python tools/build_buddy_division_curricula.py --write
+      - name: Validate all 55 division artifacts and manifest
+        run: python tools/build_buddy_division_curricula.py --check
+      - name: Run curriculum and workflow contracts
+        run: |
+          python -m unittest tests.test_buddy_division_curriculum_builder
+          python -m pytest -q tests/test_buddy_bootcamp_model_kits_workflow.py
+      - name: Run CommandCore end-to-end Bootcamp routing smoke
+        run: python tools/smoke_commandcore_bootcamp.py
+      - name: Upload generated curriculum evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dreamco-55-division-curriculum-evidence
+          path: |
+            config/dreamco-division-curricula-manifest.json
+            data/dreamco_training/division_curricula/*.json
+            config/generated/commandcore-bootcamp-smoke.json
+          if-no-files-found: warn
+          retention-days: 14
