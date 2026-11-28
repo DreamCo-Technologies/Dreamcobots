@@ -43,6 +43,8 @@ class Shot:
 
     @classmethod
     def from_mapping(cls, value: Mapping[str, Any]) -> "Shot":
+        if not isinstance(value, Mapping):
+            raise MediaPlanError("Each shot must be an object")
         unknown = set(value) - set(REQUIRED_SHOT_FIELDS) - OPTIONAL_SHOT_FIELDS
         if unknown:
             raise MediaPlanError(f"Unknown shot fields: {', '.join(sorted(unknown))}")
@@ -57,6 +59,9 @@ class Shot:
         for name in ("shot_id", "visual_prompt"):
             if not isinstance(value[name], str) or not value[name].strip():
                 raise MediaPlanError(f"{name} must be a non-empty string")
+        for name in OPTIONAL_SHOT_FIELDS - {"character_ids"}:
+            if name in value and not isinstance(value[name], str):
+                raise MediaPlanError(f"{name} must be a string")
         ids = value.get("character_ids", ())
         if not isinstance(ids, (list, tuple)) or any(not isinstance(x, str) or not x for x in ids):
             raise MediaPlanError("character_ids must be a list of non-empty strings")
@@ -87,6 +92,8 @@ class ProductionPlan:
 def validate_shot_list(shots: Sequence[Mapping[str, Any]]) -> tuple[Shot, ...]:
     if not isinstance(shots, (list, tuple)) or not shots:
         raise MediaPlanError("A production must contain at least one shot")
+    if any(not isinstance(item, Mapping) for item in shots):
+        raise MediaPlanError("Every shot must be an object")
     parsed = tuple(Shot.from_mapping(item) for item in shots)
     ids = [shot.shot_id for shot in parsed]
     if len(ids) != len(set(ids)):
