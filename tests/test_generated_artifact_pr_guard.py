@@ -52,7 +52,7 @@ class GeneratedArtifactPRGuardTests(unittest.TestCase):
         ordinary_path_diff = secret_diff.replace("credentials.json", "catalog.json")
         self.assertTrue(
             any("credential" in error.lower() for error in
-                validate_changes("A\\tcatalog.json", ordinary_path_diff))
+                validate_changes("A\tcatalog.json", ordinary_path_diff))
         )
 
 
