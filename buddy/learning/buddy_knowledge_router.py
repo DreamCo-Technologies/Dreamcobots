@@ -92,12 +92,23 @@ def _course_matches(
     query_tokens = _tokens(query)
     matches: list[dict[str, Any]] = []
     for lesson in _cached_course_lessons(root.resolve()):
+        if not lesson.learner_visible or lesson.source_url:
+            continue
         searchable = " ".join((
             lesson.title, lesson.lesson_id, lesson.track_id, lesson.category,
             lesson.objective, lesson.practice, lesson.assessment, lesson.benchmark,
+            " ".join(lesson.division_targets), " ".join(lesson.capability_tags),
+            " ".join(lesson.tool_tags), " ".join(lesson.learning_modes),
         ))
         overlap = query_tokens & _tokens(searchable)
-        if not overlap:
+        title_overlap = query_tokens & _tokens(lesson.title)
+        if (
+            lesson.lesson_id not in (preserve_ids or set())
+            and len(overlap) < 2
+            and not (len(query_tokens) == 1 and title_overlap == query_tokens)
+        ):
+            continue
+        if not overlap and lesson.lesson_id not in (preserve_ids or set()):
             continue
         track_text = lesson.track_id.replace("-", " ").replace("_", " ")
         if lesson.track_id == "huggingface-full":
@@ -118,8 +129,17 @@ def _course_matches(
             "rights_mode": lesson.rights_mode,
             "score": round(len(overlap) / max(len(query_tokens), 1), 4),
             "track_match_score": track_score,
-            "completion_status": "queued_not_studied",
+            "completion_status": "queued_for_owner_review" if lesson.review_status != "approved" else "queued_not_studied",
             "mastery_awarded": False,
+            "division_targets": list(lesson.division_targets),
+            "capability_tags": list(lesson.capability_tags),
+            "tool_tags": list(lesson.tool_tags),
+            "learning_modes": list(lesson.learning_modes),
+            "exercise_ids": list(lesson.exercise_ids),
+            "project_ids": list(lesson.project_ids),
+            "assessment_ids": list(lesson.assessment_ids),
+            "review_status": lesson.review_status,
+            "training_eligibility": lesson.training_eligibility,
         })
     best_track_score = max((row["track_match_score"] for row in matches), default=0.0)
     # Rank explicit track matches first, but retain strong cross-track content
