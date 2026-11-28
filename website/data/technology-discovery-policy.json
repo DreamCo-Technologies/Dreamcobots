@@ -465,6 +465,39 @@
       "trust_tier": "industry_analysis",
       "record_kind": "agent_framework_comparison",
       "description": "Industry comparison of agent frameworks and observability practices. Use for discovery; verify current features against official documentation."
+    },
+    {
+      "id": "huggingface-datasets",
+      "name": "Hugging Face Datasets API",
+      "kind": "json_collection",
+      "url": "https://huggingface.co/api/datasets?sort=downloads&direction=-1&limit=100",
+      "title_field": "id",
+      "url_template": "https://huggingface.co/datasets/{id}",
+      "summary_field": "cardData.description",
+      "date_field": "lastModified",
+      "id_field": "id",
+      "metadata_fields": {
+        "license": "cardData.license",
+        "language": "cardData.language",
+        "task_categories": "cardData.task_categories",
+        "size_categories": "cardData.size_categories",
+        "gated": "gated",
+        "downloads": "downloads",
+        "likes": "likes",
+        "last_modified": "lastModified",
+        "tags": "tags"
+      },
+      "trust_tier": "catalog",
+      "record_kind": "dataset"
+    },
+    {
+      "id": "ollama-library",
+      "name": "Ollama Official Model Library",
+      "kind": "html_page",
+      "url": "https://ollama.com/library",
+      "trust_tier": "primary",
+      "record_kind": "local_model_catalog",
+      "description": "Official Ollama model library discovery page. Individual model license, digest, parameter count, and runtime compatibility require per-model verification."
     }
   ],
   "truth_rules": [
@@ -474,5 +507,11 @@
     "Only official provider documentation and reproducible tests can establish product capabilities, access, pricing, terms, or integration status.",
     "Community and news signals must be corroborated before they change production routing or user-facing factual claims.",
     "No fixed item count, category count, provider count, tool count, or permanent best ranking is an acceptance criterion."
-  ]
+  ],
+  "public_site": {
+    "maximum_records": 500,
+    "projection_mode": "newest_records_bounded_view",
+    "canonical_archive": "config/generated/buddy-technology-radar.json",
+    "note": "The full append-only archive remains in the repository; GitHub Pages receives only the newest 500 records to stay within the zero-cost static-site budget."
+  }
 }
