@@ -41,9 +41,10 @@ test("Lead Engine database schema defines owner and idempotency indexes", () => 
   assert.match(schema, /lead_engine_activities_owner_event_uq/);
 });
 
-test("activity history is append-only at the database layer", () => {
+test("activity events cannot be edited while authorized deletion remains possible", () => {
   assert.match(migration, /BEFORE UPDATE ON lead_engine_activities/);
   assert.match(migration, /lead engine activity history is append-only/);
+  assert.doesNotMatch(migration, /BEFORE DELETE ON lead_engine_activities/);
 });
 
 test("CRM HTTP routes derive tenant identity from a verified OAuth session", () => {
