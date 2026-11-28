@@ -6,7 +6,7 @@ test-contracts:
 test-stages:
 	$(PYTHON) -m pytest -q tests/test_pipeline_stages.py tests/test_pipeline_sandbox.py
 test-ci-tools:
-	$(PYTHON) -m pytest -q tests/test_repair_pr_guard.py tests/test_ci_failure_report.py
+	$(PYTHON) -m pytest -q tests/test_repair_pr_guard.py tests/test_ci_failure_report.py tests/test_repair_hardening_regressions.py
 compile:
 	$(PYTHON) -m compileall -q stages reverse_engineer
 build-sandbox:
