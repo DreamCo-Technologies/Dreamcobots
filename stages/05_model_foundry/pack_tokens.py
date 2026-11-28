@@ -42,8 +42,28 @@ def _write_shard(tokens, output: Path, prefix: str, sequence_length: int):
         return None
     path = output / f"{prefix}-00000.bin"
     np.asarray(tokens[:usable], dtype=np.uint32).tofile(path)
-    return {"file": path.name, "sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
-            "tokens": int(usable), "sequences": int(usable // sequence_length)}
+    sequence_count = int(usable // sequence_length)
+    index_path = path.with_suffix(".idx")
+    index = {
+        "schema": "dreamco.foundry.token_shard_index.v1",
+        "bin_file": path.name,
+        "dtype": "uint32",
+        "sequence_length": int(sequence_length),
+        "sequence_count": sequence_count,
+        "token_count": int(usable),
+        "offset_unit": "tokens",
+        "first_token_offset": 0,
+        "sequence_stride_tokens": int(sequence_length),
+    }
+    index_path.write_text(json.dumps(index, sort_keys=True, separators=(",", ":")) + "\\n", encoding="utf-8")
+    return {
+        "file": path.name,
+        "sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
+        "index_file": index_path.name,
+        "index_sha256": hashlib.sha256(index_path.read_bytes()).hexdigest(),
+        "tokens": int(usable),
+        "sequences": sequence_count,
+    }
 
 def main():
     parser = argparse.ArgumentParser(description="Pack signed DreamCo training data")
