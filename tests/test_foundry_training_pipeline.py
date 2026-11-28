@@ -152,8 +152,8 @@ class FoundryGuardrailTests(unittest.TestCase):
             train_id = next(f"train-{i}" for i in range(10000) if GUARDRAILS.split_bucket(f"train-{i}") < 90)
             guide = root / "guide.jsonl"
             benchmark = root / "benchmark.jsonl"
-            guide.write_text(json.dumps({"task_id": train_id, "title": "allowed guide"}) + "\\n", encoding="utf-8")
-            benchmark.write_text(json.dumps({"task_id": train_id, "title": "holdout benchmark"}) + "\\n", encoding="utf-8")
+            guide.write_text(json.dumps({"task_id": train_id, "title": "allowed guide"}) + "\n", encoding="utf-8")
+            benchmark.write_text(json.dumps({"task_id": train_id, "title": "holdout benchmark"}) + "\n", encoding="utf-8")
             manifest = {"datasets": [
                 {"_resolved_path": str(guide), "dataset_id": "g", "category": "study_guides",
                  "license_tier": "DREAMCO_ORIGINAL", "policy_decision_id": "P1"},
@@ -200,7 +200,7 @@ class FoundryGuardrailTests(unittest.TestCase):
             task_id = next(f"signer-{i}" for i in range(10000)
                            if GUARDRAILS.split_bucket(f"signer-{i}") < 90)
             dataset = root / "study_guides.jsonl"
-            dataset.write_text(json.dumps({"task_id": task_id, "title": "Guide"}) + "\\n", encoding="utf-8")
+            dataset.write_text(json.dumps({"task_id": task_id, "title": "Guide"}) + "\n", encoding="utf-8")
             attestation = root / "owner-attestation.txt"
             attestation.write_text("DreamCo owns this original study guide.", encoding="utf-8")
             manifest = root / "manifest.json"
@@ -230,7 +230,7 @@ class FoundryGuardrailTests(unittest.TestCase):
             shard_dir = root / "shards"
             shard_dir.mkdir()
             shard = shard_dir / "train-00000.bin"
-            shard.write_bytes(b"\\x00" * 32)
+            shard.write_bytes(b"\x00" * 32)
             shard_manifest = shard_dir / "manifest.json"
             shard_signature = shard_dir / "manifest.sig"
             shard_payload = {
@@ -260,7 +260,7 @@ class FoundryGuardrailTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
             shard = root / "train-00000.bin"
-            shard.write_bytes(b"\\x00" * (8 * 4))
+            shard.write_bytes(b"\x00" * (8 * 4))
             source = root / "source.json"
             source.write_text("{}", encoding="utf-8")
             payload = {
@@ -404,6 +404,7 @@ class FoundryGuardrailTests(unittest.TestCase):
             "source_manifest_sha256": "a" * 64,
             "benchmark_suite_sha256": "b" * 64,
             "evaluation_config_sha256": "c" * 64,
+            "tokenizer_sha256": "e" * 64,
             "checkpoint_sha256": "d" * 64,
             "evaluated_task_ids": ["task-a", "task-b"],
             "pass_rate": 0.95,
