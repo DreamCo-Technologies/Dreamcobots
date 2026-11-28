@@ -59,14 +59,14 @@ def main():
         if not a.base_model or not a.base_revision: raise PermissionError("LoRA evaluation requires its pinned authorized base model")
         require_model_authorization(manifest,a.base_model,a.base_revision)
         base=AutoModelForCausalLM.from_pretrained(a.base_model,revision=a.base_revision,
-            local_files_only=True,trust_remote_code=False,use_safetensors=True)
+            local_files_only=True,trust_remote_code=False,use_safetensors=True,torch_dtype="auto")
         if len(tokenizer)!=base.get_input_embeddings().weight.shape[0]:
             base.resize_token_embeddings(len(tokenizer),mean_resizing=True)
         from peft import PeftModel
         model=PeftModel.from_pretrained(base,a.checkpoint,is_trainable=False)
     else:
         model=AutoModelForCausalLM.from_pretrained(a.checkpoint,local_files_only=True,
-            trust_remote_code=False,use_safetensors=True)
+            trust_remote_code=False,use_safetensors=True,torch_dtype="auto")
         if len(tokenizer)!=model.get_input_embeddings().weight.shape[0]:
             raise ValueError("full checkpoint vocabulary does not match the supplied tokenizer artifacts")
     device="cuda" if torch.cuda.is_available() else "cpu"
