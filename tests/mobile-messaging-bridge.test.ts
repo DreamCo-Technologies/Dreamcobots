@@ -81,7 +81,7 @@ test("rejects carrier SMS on the BlueBubbles iMessage path", async () => {
 });
 
 test("requires bridge and owner consent", async () => {
-  const result = await acceptInboundMobileMessage({ ...signedEvent(), registration: { ...ios, sourceConsentGranted: false }, settings, secret, replayStore: new InMemoryReplayClaimStore(), nowMs: now });
+  const result = await acceptInboundMobileMessage({ ...signedEvent(), registration: { ...ios, sourceConsentGranted: false }, settings, secret, replayStore: new InMemoryReplayClaimStore(), resolveContactId: () => "contact-1", nowMs: now });
   assert.equal(result.accepted, false);
 });
 
@@ -157,4 +157,8 @@ test("provider transports deliver only through configured HTTPS relay adapters",
   assert.equal(JSON.parse(requests[1].body).provider, "android_companion");
   assert.equal(requests[0].url, "https://relay.example.com/ios");
   assert.equal(requests[1].url, "https://relay.example.com/android");
+  await assert.rejects(
+    () => new BlueBubblesMacRelayTransport(iosWebhook).send({ ...payload, channel: "sms" }),
+    /BlueBubbles transport supports iMessage only/,
+  );
 });
