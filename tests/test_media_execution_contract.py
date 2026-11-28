@@ -4,9 +4,11 @@ from __future__ import annotations
 import hashlib
 import tempfile
 import unittest
+import sys
 from pathlib import Path
 
-from stages_08_media_execution_contract import (  # loaded below from the stage path
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "stages" / "08_media_studio" / "worker"))
+from execution_contract import (
     Artifact, ExecutionContractError, ExecutionRequest, ResourceRequest, WorkerSpec,
     transition_job_state, validate_execution_request, validate_worker_spec, verify_artifacts,
 )
