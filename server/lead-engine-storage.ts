@@ -23,7 +23,7 @@ const activitySchema = z.object({
     "proposal_handoff",
     "conversion_recorded",
   ]),
-  details: z.record(z.union([z.string().max(500), z.number().finite(), z.boolean()])).default({}),
+  details: z.record(z.string(), z.union([z.string().max(500), z.number().finite(), z.boolean()])).default({}),
 }).strict();
 
 export type LeadEngineActivityInput = z.infer<typeof activitySchema>;
