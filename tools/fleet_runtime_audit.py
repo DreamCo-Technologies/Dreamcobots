@@ -66,6 +66,10 @@ CODE_FOLDERS: dict[str, dict[str, Any]] = {
     "systems": {"kind": "python"},
 }
 CODE_EXT = {".py", ".ts", ".tsx", ".js", ".mjs", ".cjs"}
+DEFERRED_GENERATED_ARTIFACT_TESTS = (
+    "tests/test_file_prospectus.py",
+    "tests/test_run_prospectus.py",
+)
 
 
 # --------------------------------------------------------------------- utils
@@ -383,10 +387,7 @@ def python_checks(folder: str, timeout: int, skip_tests: bool) -> dict[str, Any]
                                   "modules_needing_missing_deps": len(data["missing_deps"]),
                                   "script_style_imports": len(data["script_style"])}
     pat = re.compile(rf"^\s*(from|import)\s+{re.escape(folder)}(\.|\s|$)", re.M)
-    deferred_generated_artifact_tests = {
-        "tests/test_run_prospectus.py",
-        "tests/test_file_prospectus.py",
-    }
+    deferred_generated_artifact_tests = set(DEFERRED_GENERATED_ARTIFACT_TESTS)
     discovered_tests = sorted(
         {rel(p) for p in (ROOT / "tests").glob("test_*.py")
          if pat.search(p.read_text(encoding="utf-8", errors="replace"))}
@@ -588,6 +589,7 @@ def build_status(rows, summary, bot_folders, code_folders, links, unit_ok, manif
         "truth_policy": "States are computed from manifests, offline runs of the shared runtime, fixtures and committed evidence. IMPLEMENTED/TESTED prove offline wiring only; CONNECTED and above need committed evidence records. PRODUCTION is never hand-set.",
         "manifest_digest": manifest_digest,
         "contract_pieces": list(PIECE_IDS),
+        "deferred_generated_artifact_tests": list(DEFERRED_GENERATED_ARTIFACT_TESTS),
         "states": list(STATES_ALL),
         "engine_unit_tests_passed": unit_ok,
         "summary": summary,
@@ -623,6 +625,9 @@ def render_report(status: dict[str, Any], rows: list[dict[str, Any]]) -> str:
         "`buddy/fleet_runtime/fixtures.py`, flagged `fixture_generated`). Neither proves model quality or live integrations. CONNECTED and above need committed "
         "evidence records under `evidence/fleet-runtime/`.", "",
         f"Engine unit tests passed: **{status['engine_unit_tests_passed']}**", "",
+        "## Deferred generated-artifact tests", "",
+        "The following tests are intentionally excluded from per-folder test runs because they require generated prospectus artifacts. They were not run by this audit and are not counted as passing:", "",
+        *[f"- `{path}`" for path in status.get("deferred_generated_artifact_tests", [])], "",
         "## Bots by state", "", "| State | Bots |", "|---|---:|",
     ]
     lines += [f"| {k} | {v} |" for k, v in s["by_state"].items()]
