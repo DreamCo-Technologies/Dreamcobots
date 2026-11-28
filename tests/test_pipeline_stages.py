@@ -81,3 +81,11 @@ def test_local_onet_catalog_is_read_only_and_deterministic(tmp_path):
     result=match("software applications user requirements",str(database))
     assert result[0]["onet_soc_code"]=="15-1252.00"
     assert result[0]["human_required"] is True
+
+def test_training_export_rejects_nan_similarity():
+    import math
+    from stages.training_export import verified_record
+    spec={"schema_version":"dreamco.functional_spec.v1","job_id":"x","system_label":"x","inputs":[],"outputs":[],"state_rules":[],"edge_cases":[],"onet_tasks":[],"clean_room":{"original_source_available":False,"source_identifiers_removed":True,"generator_input":"functional_spec_only"}}
+    course={"schema_version":"dreamco.course_module.v1","job_id":"x","module_title":"x","learning_objectives":["x"],"reference_implementation":{"language":"python","files":[{"path":"solution.py","content":"pass"}]},"tests":[{"path":"test.py","content":"def test_x(): assert True"}],"challenges":[{"step":1,"instruction":"x","success_criteria":"x"}],"provenance":{"model_id":"mock","model_license":"DreamCo-Proprietary","source_onet_id":None,"generation_mode":"mock"}}
+    report={"schema_version":"dreamco.eval_report.v1","job_id":"x","status":"PASS","tests_passed":True,"similarity_score":float("nan"),"policy_check":"PASS","sandbox":{"network_disabled":True,"rootless_requested":True,"timed_out":False,"exit_code":0}}
+    with pytest.raises(PermissionError): verified_record(spec,course,report)
