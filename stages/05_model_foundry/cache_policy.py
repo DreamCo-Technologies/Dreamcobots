@@ -8,9 +8,9 @@ import os
 from pathlib import Path
 
 try:
-    from .guardrails import verify_signed_manifest, verify_manifest_dataset_hashes
+    from .guardrails import verify_signed_manifest, verify_manifest_dataset_hashes, verify_manifest_dataset_hashes
 except ImportError:
-    from guardrails import verify_signed_manifest, verify_manifest_dataset_hashes
+    from guardrails import verify_signed_manifest, verify_manifest_dataset_hashes, verify_manifest_dataset_hashes
 
 
 def public_cache_allowed(manifest: dict) -> bool:
