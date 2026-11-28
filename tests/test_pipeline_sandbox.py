@@ -1,5 +1,5 @@
 import pytest
-from stages.05_sandbox_verifier.__main__ import docker_command,similarity
+from importlib import import_module\n_sandbox=import_module("stages.05_sandbox_verifier.__main__")\ndocker_command=_sandbox.docker_command\nsimilarity=_sandbox.similarity
 from stages.training_export import verified_record
 def test_sandbox_is_rootless_network_isolated_and_resource_limited():
     cmd=docker_command("/tmp/work")
