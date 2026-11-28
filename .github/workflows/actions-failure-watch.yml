@@ -2,6 +2,16 @@ name: Actions Failure Watch
 
 on:
   workflow_run:
+    workflows:
+      - DreamCo Mainline Health Watch
+      - DreamCo Five-Stage Reverse Engineering Gate
+      - Repository Test Matrix
+      - DreamCo Core Health
+      - Code Trust Gate
+      - CodeQL Security Scan
+      - Actions Health
+      - DreamCo Global Reconciliation
+      - Fleet runtime truth
     types: [completed]
     branches: [main]
 
