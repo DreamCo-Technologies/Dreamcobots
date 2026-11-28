@@ -1,108 +1,808 @@
 {
   "set": "1001-1100-must-have",
-  "purpose": "Grok-added must-have study sources that do not duplicate config/buddy-study-resources-001-100.json. Hugging Face Hub/Docs/Evaluate/Datasets/Transformers/Spaces stay in 1-5; this set adds sibling hubs, PEFT/LoRA, RAG stores, eval harnesses, and lab cards.",
+  "purpose": "DreamCo Bootcamp must-have study sources covering model hubs, PEFT/LoRA, SFT/DPO post-training, serving, retrieval, evaluation, safety and license governance.",
   "extends": "config/buddy-study-resources-001-100.json",
   "automatic_download": false,
   "resources": [
-    [1001,"Hugging Face Hub API","AI/ML","https://huggingface.co/docs/huggingface_hub","Programmatic search and pin revisions.","Metadata only in CI."],
-    [1002,"Hugging Face Text Embeddings Inference","serving","https://huggingface.co/docs/text-embeddings-inference","Production embedding and reranker serving.","Metadata and license review only; document a serve plan, no weight downloads in Actions."],
-    [1003,"Hugging Face AutoTrain","training","https://huggingface.co/docs/autotrain","No-code/low-code fine-tune jobs.","Read then write a train plan; do not launch GPUs in Actions."],
-    [1004,"Liger Kernel","efficiency","https://github.com/linkedin/Liger-Kernel","Fused Triton kernels for LLM training.","Read then write a train plan; do not launch GPUs in Actions."],
-    [1005,"LLM Compressor","quant","https://github.com/vllm-project/llm-compressor","Quantization and sparsity recipes for serving.","Document a quantize-then-eval plan; compare quality deltas on holdouts."],
-    [1006,"Hugging Face Text Generation Inference","serving","https://huggingface.co/docs/text-generation-inference","Production HF serve patterns.","Lesson, then exercise, then targeted benchmark, then spaced retest."],
-    [1007,"Hugging Face Course","education","https://huggingface.co/learn/nlp-course","Official NLP course beyond the raw docs.","Lesson, then exercise, then targeted benchmark, then spaced retest."],
-    [1008,"Open LLM Leaderboard","eval","https://huggingface.co/spaces/open-llm-leaderboard/open_llm_leaderboard","Public open-weight scores; not Buddy-native mastery.","Metadata only in CI; run a cached holdout baseline and compare before/after mastery."],
-    [1009,"xAI Grok Docs","frontier teacher","https://docs.x.ai","Teacher/router for grok-<bot> twins.","Lesson, then exercise, then targeted benchmark, then spaced retest."],
-    [1010,"DeepSeek-R1 README","methods","https://github.com/deepseek-ai/DeepSeek-R1","Public RL + distill cycle. Study methods, not files.","Lesson, then exercise, then targeted benchmark, then spaced retest."],
-    [1011,"DeepSeek-V3 paper","architecture","https://arxiv.org/abs/2412.19437","MoE and efficient attention ideas.","Apply to one Buddy service in a sandbox and add a proof test."],
-    [1012,"AllenAI OLMo","open US stack","https://allenai.org/olmo","Open weights plus training artifacts.","Lesson, then exercise, then targeted benchmark, then spaced retest."],
-    [1013,"Dolma Dataset","pretrain data","https://huggingface.co/datasets/allenai/dolma","License-check before any train job.","Read then write a train plan; do not launch GPUs in Actions."],
-    [1014,"Llama Recipes","US base","https://github.com/meta-llama/llama-recipes","Official fine-tune recipes; community license applies.","Lesson, then exercise, then targeted benchmark, then spaced retest."],
-    [1015,"Gemma Docs","US open weights","https://ai.google.dev/gemma/docs","Gemma terms, not OSI by default.","Lesson, then exercise, then targeted benchmark, then spaced retest."],
-    [1016,"Qwen Docs","coder student","https://qwen.readthedocs.io","pack.code student candidate.","Lesson, then exercise, then targeted benchmark, then spaced retest."],
-    [1017,"Ollama Library","local packs","https://ollama.com/library","Local GGUF-style packaging.","Metadata and license review only; document a serve/run plan, no weight downloads in Actions."],
-    [1018,"Hugging Face Diffusers","generative models","https://huggingface.co/docs/diffusers","Diffusion pipelines for image/audio generation.","Metadata and license review only; document a pipeline plan, no weight downloads in Actions."],
-    [1019,"MMMU","multimodal eval","https://mmmu-benchmark.github.io","Expert-level multimodal understanding benchmark.","Metadata only in CI; cached multimodal holdout baseline."],
-    [1020,"LM Studio Docs","local UX","https://lmstudio.ai/docs","Desktop local models; metadata study.","Metadata and license review only; document a serve/run plan, no weight downloads in Actions."],
-    [1021,"GitHub Models","hosted catalog","https://github.com/marketplace/models","Peer hub to Hugging Face.","Metadata and license review only; document a serve/run plan, no weight downloads in Actions."],
-    [1022,"ModelScope","peer hub","https://www.modelscope.cn","China hub; metadata and license first.","Metadata and license review only; document a serve/run plan, no weight downloads in Actions."],
-    [1023,"Replicate Docs","hosted run","https://replicate.com/docs","Run catalog, not weight ownership.","Metadata and license review only; document a serve/run plan, no weight downloads in Actions."],
-    [1024,"Together Docs","hosted infer","https://docs.together.ai","Open-weight hosting peer.","Metadata and license review only; document a serve/run plan, no weight downloads in Actions."],
-    [1025,"OpenRouter Docs","router catalog","https://openrouter.ai/docs","Multi-provider routing catalog.","Metadata and license review only; document a serve/run plan, no weight downloads in Actions."],
-    [1026,"Kaggle Models","hub","https://www.kaggle.com/models","Alternate model cards and notebooks.","Metadata and license review only; document a serve/run plan, no weight downloads in Actions."],
-    [1027,"PyTorch Hub","research hub","https://pytorch.org/hub/","Research checkpoints; hash before load.","Metadata and license review only; document a serve/run plan, no weight downloads in Actions."],
-    [1028,"NVIDIA NGC","enterprise catalog","https://catalog.ngc.nvidia.com","US enterprise containers and models.","Metadata and license review only; document a serve/run plan, no weight downloads in Actions."],
-    [1029,"Hugging Face smolagents","agents","https://huggingface.co/docs/smolagents","Minimal code-acting agent framework.","Build a tiny sandboxed agent task and benchmark tool-call accuracy."],
-    [1030,"Stanford HELM","eval","https://crfm.stanford.edu/helm/","Broad holistic eval.","Metadata only in CI; run a cached holdout baseline and compare before/after mastery."],
-    [1031,"Hugging Face LeRobot","robotics","https://github.com/huggingface/lerobot","Open robotics datasets and policies.","Study dataset cards and policy recipes; simulation only, no hardware in Actions."],
-    [1032,"Hugging Face Lighteval","eval","https://github.com/huggingface/lighteval","Lightweight multi-backend LLM eval.","Metadata only in CI; run a cached holdout baseline and compare before/after mastery."],
-    [1033,"arXiv cs.LG","research","https://arxiv.org/list/cs.LG/recent","Primary ML papers.","Lesson, then exercise, then targeted benchmark, then spaced retest."],
-    [1034,"ONNX Runtime","serve","https://onnxruntime.ai/docs/","Cross-platform optimized inference.","Export a tiny model and compare latency and quality in a sandbox."],
-    [1035,"Unsloth Docs","efficient FT","https://docs.unsloth.ai","Faster LoRA recipes.","Read then write a train plan; do not launch GPUs in Actions."],
-    [1036,"OpenVINO","serve","https://docs.openvino.ai","CPU/edge-optimized inference toolkit.","Benchmark a small model on CPU; record latency and accuracy deltas."],
-    [1037,"LLaMA-Factory","FT toolkit","https://github.com/hiyouga/LLaMA-Factory","UI + recipes for SFT/DPO.","Read then write a train plan; do not launch GPUs in Actions."],
-    [1038,"EvalPlus","code eval","https://github.com/evalplus/evalplus","Harder test suites for code generation.","Cached code holdout; contamination-aware."],
-    [1039,"Guardrails AI","safety","https://www.guardrailsai.com/docs","Output validation and structured guards.","Convert into validators on Buddy outputs and add failing-case tests."],
-    [1040,"NVIDIA garak","safety eval","https://github.com/NVIDIA/garak","LLM vulnerability scanner.","Run probes against a sandbox endpoint only; log findings, never production."],
-    [1041,"Cohere Labs Aya","multilingual","https://cohere.com/research/aya","Open multilingual models and datasets.","License review first; plan multilingual holdouts."],
-    [1042,"Sentence Transformers","embeddings","https://www.sbert.net","Default embedding study path.","Build a tiny local retrieval sandbox and benchmark recall."],
-    [1043,"FAISS","vectors","https://faiss.ai","Local dense search.","Build a tiny local retrieval sandbox and benchmark recall."],
-    [1044,"Chroma Docs","vectors","https://docs.trychroma.com","Dev vector store.","Build a tiny local retrieval sandbox and benchmark recall."],
-    [1045,"Qdrant Docs","vectors","https://qdrant.tech/documentation/","Prod filters + hybrid.","Build a tiny local retrieval sandbox and benchmark recall."],
-    [1046,"Weaviate Docs","vectors","https://docs.weaviate.io","Hybrid search modules.","Build a tiny local retrieval sandbox and benchmark recall."],
-    [1047,"Milvus Docs","vectors","https://milvus.io/docs","Large-scale vectors.","Build a tiny local retrieval sandbox and benchmark recall."],
-    [1048,"pgvector","vectors","https://github.com/pgvector/pgvector","Postgres RAG.","Build a tiny local retrieval sandbox and benchmark recall."],
-    [1049,"Pinecone Docs","vectors","https://docs.pinecone.io","Managed vectors; pin US region.","Build a tiny local retrieval sandbox and benchmark recall."],
-    [1050,"Gradio","app UX","https://www.gradio.app/docs","Quick ML demo front ends.","Build a tiny local demo of one lesson."],
-    [1051,"Haystack Docs","RAG","https://docs.haystack.deepset.ai","Pipeline RAG.","Build a tiny local retrieval sandbox and benchmark recall."],
-    [1052,"TruthfulQA","reason eval","https://github.com/sylinrl/TruthfulQA","Measures imitative falsehoods.","Holdout truthfulness check; contamination-aware."],
-    [1053,"Instructor","structured output","https://python.useinstructor.com","Typed structured outputs from LLMs.","Build schema-validated extraction drills and score parse success."],
-    [1054,"OWASP Top 10 for LLM Applications","security","https://genai.owasp.org","LLM-specific risks such as prompt injection.","Map each risk to a Buddy test case and gate."],
-    [1055,"MITRE ATLAS","security","https://atlas.mitre.org","Adversarial threat landscape for AI systems.","Threat-model Buddy pipelines against ATLAS tactics."],
-    [1056,"verl","RL training","https://github.com/volcengine/verl","RL post-training library for LLMs.","Read then write an RL plan; do not launch GPUs in Actions."],
-    [1057,"MATH Dataset","reason eval","https://github.com/hendrycks/math","Competition math problems with solutions.","Math holdout beyond GSM8K; contamination-aware."],
-    [1058,"HellaSwag","reason eval","https://rowanzellers.com/hellaswag/","Commonsense sentence completion.","Cached commonsense baseline; compare before/after mastery."],
-    [1059,"The Stack BigCode","code data","https://www.bigcode-project.org","License-aware code pretrain data.","License and safety review first; no automatic ingestion."],
-    [1060,"StarCoder2 paper","code models","https://arxiv.org/abs/2402.19173","Code student family.","Lesson, then exercise, then targeted benchmark, then spaced retest."],
-    [1061,"NVIDIA RULER","long-context eval","https://github.com/NVIDIA/RULER","Synthetic long-context capability tests.","Measure effective context length before memory claims."],
-    [1062,"Partnership on AI","policy","https://partnershiponai.org","Multi-stakeholder responsible AI guidance.","Convert guidance into release and disclosure checks."],
-    [1063,"GSM8K","reason eval","https://github.com/openai/grade-school-math","Math holdout.","Metadata only in CI; run a cached holdout baseline and compare before/after mastery."],
-    [1064,"MMLU","reason eval","https://github.com/hendrycks/test","Broad knowledge eval; contamination-aware.","Metadata only in CI; run a cached holdout baseline and compare before/after mastery."],
-    [1065,"Hugging Face Open R1","methods","https://github.com/huggingface/open-r1","Open reproduction of reasoning-model training.","Study methods and data recipes, not weights; write a distill plan."],
-    [1066,"Berkeley Function Calling Leaderboard","tools","https://gorilla.cs.berkeley.edu/leaderboard.html","Tool-call eval.","Lesson, then exercise, then targeted benchmark, then spaced retest."],
-    [1067,"Gorilla LLM","tools","https://gorilla.cs.berkeley.edu","API-calling research.","Lesson, then exercise, then targeted benchmark, then spaced retest."],
-    [1068,"NVIDIA NeMo","train","https://docs.nvidia.com/nemo-framework","US enterprise train stack.","Read then write a train plan; do not launch GPUs in Actions."],
-    [1069,"Meta Purple Llama","safety","https://github.com/meta-llama/PurpleLlama","Llama Guard and CyberSecEval safety tools.","Study safety classifiers; evaluate in sandbox, license first."],
-    [1070,"PyTorch ExecuTorch","edge infer","https://pytorch.org/executorch/","On-device PyTorch runtime.","Document an edge export plan; no device deploys from Actions."],
-    [1071,"OpenAI gpt-oss","US open weights","https://openai.com/open-models/","Apache-plus-policy open weights.","Lesson, then exercise, then targeted benchmark, then spaced retest."],
-    [1072,"Anthropic Constitutional AI","safety methods","https://www.anthropic.com/research","Public safety-method papers.","Convert into license or safety checks on packs."],
-    [1073,"NIST AI RMF Playbook","safety ops","https://airc.nist.gov/airmf-resources/playbook/","Operationalizes NIST AI RMF already in item 46.","Apply to one Buddy service in a sandbox and add a proof test."],
-    [1074,"OECD AI Principles","policy","https://oecd.ai/en/ai-principles","International AI policy baseline.","Convert into license or safety checks on packs."],
-    [1075,"EU AI Act official text","policy","https://artificialintelligenceact.eu","Compliance study, not a how-to evade.","Convert into license or safety checks on packs."],
-    [1076,"Creative Commons","licenses","https://creativecommons.org/licenses/","Dataset license literacy.","Convert into license or safety checks on packs."],
-    [1077,"SPDX License List","licenses","https://spdx.org/licenses/","Pin licenses on packs.","Convert into license or safety checks on packs."],
-    [1078,"OSI Licenses","licenses","https://opensource.org/licenses","Open-source vs open-weight distinction.","Convert into license or safety checks on packs."],
-    [1079,"Linux Foundation LF AI","community","https://lfaidata.foundation","US-friendly open AI projects.","Convert into license or safety checks on packs."],
-    [1080,"Apache Software Foundation","community","https://www.apache.org","Foundational OSS governance.","Convert into license or safety checks on packs."],
-    [1081,"Keras","training","https://keras.io","High-level multi-backend DL API.","Reproduce a small model and benchmark against a PyTorch baseline."],
-    [1082,"12-Factor App","architecture","https://12factor.net","Service design for Buddy APIs.","Apply to one Buddy service in a sandbox and add a proof test."],
-    [1083,"Google SRE Book","ops","https://sre.google/sre-book/table-of-contents/","Reliability for Actions and serve.","Apply to one Buddy service in a sandbox and add a proof test."],
-    [1084,"Staff Eng Book","engineering","https://staffeng.com/book","How to grow the platform without bot sprawl.","Apply to one Buddy service in a sandbox and add a proof test."],
-    [1085,"Architecture of Open Source Applications","engineering","https://aosabook.org/en/index.html","Study real system designs.","Apply to one Buddy service in a sandbox and add a proof test."],
-    [1086,"Triton Language","kernels","https://triton-lang.org","Python GPU kernel authoring.","Read then write a kernel study plan; do not launch GPUs in Actions."],
-    [1087,"The Batch DeepLearning.AI","news","https://www.deeplearning.ai/the-batch/","Freshness without hype as evidence.","Lesson, then exercise, then targeted benchmark, then spaced retest."],
-    [1088,"Label Studio","data labeling","https://labelstud.io/guide/","Open data labeling workflows.","Design a small labeling task and measure inter-annotator agreement."],
-    [1089,"Andrej Karpathy Neural Nets Zero to Hero","education","https://karpathy.ai/zero-to-hero.html","Foundations before MoE.","Lesson, then exercise, then targeted benchmark, then spaced retest."],
-    [1090,"Our World in Data AI","context","https://ourworldindata.org/artificial-intelligence","Public AI trend facts.","Lesson, then exercise, then targeted benchmark, then spaced retest."],
-    [1091,"Stanford CRFM","research org","https://crfm.stanford.edu","Foundation-model research home for HELM.","Lesson, then exercise, then targeted benchmark, then spaced retest."],
-    [1092,"EleutherAI Blog","research org","https://blog.eleuther.ai","Open eval and GPT-Neo history.","Lesson, then exercise, then targeted benchmark, then spaced retest."],
-    [1093,"Argilla","data quality","https://docs.argilla.io","Human feedback and dataset curation.","Curate a small preference set with provenance notes."],
-    [1094,"Great Expectations","data quality","https://docs.greatexpectations.io","Data validation tests for pipelines.","Add expectations to one Buddy dataset and fail on drift."],
-    [1095,"LAION","data caution","https://laion.ai","Know it; do not auto-ingest. Safety and license review required.","License and safety review first; no automatic ingestion."],
-    [1096,"MLCommons AILuminate","safety eval","https://mlcommons.org/ailuminate/","Standardized AI safety hazard benchmark.","Study hazard taxonomy; map to Buddy safety holdouts."],
-    [1097,"DataComp","data eval","https://www.datacomp.ai","How to score pretrain data.","Metadata only in CI; run a cached holdout baseline and compare before/after mastery."],
-    [1098,"Evidently AI","observability","https://docs.evidentlyai.com","ML and LLM monitoring and drift reports.","Add a drift report to one Buddy eval run."],
-    [1099,"Inspect AI UK AISI","eval harness","https://inspect.aisi.org.uk","Modern agent eval runner.","Metadata only in CI; run a cached holdout baseline and compare before/after mastery."],
-    [1100,"UK AISI","safety org","https://www.aisi.gov.uk","Public safety eval culture; not a weight source.","Convert into license or safety checks on packs."]
+    [
+      1001,
+      "Hugging Face Hub API",
+      "AI/ML",
+      "https://huggingface.co/docs/huggingface_hub",
+      "Programmatic search and pin revisions.",
+      "Metadata only in CI."
+    ],
+    [
+      1002,
+      "Hugging Face Text Embeddings Inference",
+      "serving",
+      "https://huggingface.co/docs/text-embeddings-inference",
+      "Production embedding and reranker serving.",
+      "Metadata and license review only; document a serve plan, no weight downloads in Actions."
+    ],
+    [
+      1003,
+      "Hugging Face PEFT",
+      "training",
+      "https://huggingface.co/docs/peft/index",
+      "Parameter-efficient fine-tuning including LoRA, QLoRA and trainable-token adapters.",
+      "Implement a LoRA adapter and sparse new-token embedding updates; verify a safe merge."
+    ],
+    [
+      1004,
+      "Liger Kernel",
+      "efficiency",
+      "https://github.com/linkedin/Liger-Kernel",
+      "Fused Triton kernels for LLM training.",
+      "Read then write a train plan; do not launch GPUs in Actions."
+    ],
+    [
+      1005,
+      "LLM Compressor",
+      "quant",
+      "https://github.com/vllm-project/llm-compressor",
+      "Quantization and sparsity recipes for serving.",
+      "Document a quantize-then-eval plan; compare quality deltas on holdouts."
+    ],
+    [
+      1006,
+      "Hugging Face TRL",
+      "post-training",
+      "https://huggingface.co/docs/trl/index",
+      "Maintained trainer APIs for supervised fine-tuning, DPO and GRPO.",
+      "Build SFT and preference-training labs using signed, verified chosen/rejected pairs."
+    ],
+    [
+      1007,
+      "Hugging Face Course",
+      "education",
+      "https://huggingface.co/learn/nlp-course",
+      "Official NLP course beyond the raw docs.",
+      "Lesson, then exercise, then targeted benchmark, then spaced retest."
+    ],
+    [
+      1008,
+      "Open LLM Leaderboard",
+      "eval",
+      "https://huggingface.co/spaces/open-llm-leaderboard/open_llm_leaderboard",
+      "Public open-weight scores; not Buddy-native mastery.",
+      "Metadata only in CI; run a cached holdout baseline and compare before/after mastery."
+    ],
+    [
+      1009,
+      "xAI Grok Docs",
+      "frontier teacher",
+      "https://docs.x.ai",
+      "Teacher/router for grok-<bot> twins.",
+      "Lesson, then exercise, then targeted benchmark, then spaced retest."
+    ],
+    [
+      1010,
+      "DeepSeek-R1 README",
+      "methods",
+      "https://github.com/deepseek-ai/DeepSeek-R1",
+      "Public RL + distill cycle. Study methods, not files.",
+      "Lesson, then exercise, then targeted benchmark, then spaced retest."
+    ],
+    [
+      1011,
+      "DeepSeek-V3 paper",
+      "architecture",
+      "https://arxiv.org/abs/2412.19437",
+      "MoE and efficient attention ideas.",
+      "Apply to one Buddy service in a sandbox and add a proof test."
+    ],
+    [
+      1012,
+      "AllenAI OLMo",
+      "open US stack",
+      "https://allenai.org/olmo",
+      "Open weights plus training artifacts.",
+      "Lesson, then exercise, then targeted benchmark, then spaced retest."
+    ],
+    [
+      1013,
+      "Dolma Dataset",
+      "pretrain data",
+      "https://huggingface.co/datasets/allenai/dolma",
+      "License-check before any train job.",
+      "Read then write a train plan; do not launch GPUs in Actions."
+    ],
+    [
+      1014,
+      "Llama Recipes",
+      "US base",
+      "https://github.com/meta-llama/llama-recipes",
+      "Official fine-tune recipes; community license applies.",
+      "Lesson, then exercise, then targeted benchmark, then spaced retest."
+    ],
+    [
+      1015,
+      "Gemma Docs",
+      "US open weights",
+      "https://ai.google.dev/gemma/docs",
+      "Gemma terms, not OSI by default.",
+      "Lesson, then exercise, then targeted benchmark, then spaced retest."
+    ],
+    [
+      1016,
+      "Qwen Docs",
+      "coder student",
+      "https://qwen.readthedocs.io",
+      "pack.code student candidate.",
+      "Lesson, then exercise, then targeted benchmark, then spaced retest."
+    ],
+    [
+      1017,
+      "Ollama Library",
+      "local packs",
+      "https://ollama.com/library",
+      "Local GGUF-style packaging.",
+      "Metadata and license review only; document a serve/run plan, no weight downloads in Actions."
+    ],
+    [
+      1018,
+      "Hugging Face Diffusers",
+      "generative models",
+      "https://huggingface.co/docs/diffusers",
+      "Diffusion pipelines for image/audio generation.",
+      "Metadata and license review only; document a pipeline plan, no weight downloads in Actions."
+    ],
+    [
+      1019,
+      "MMMU",
+      "multimodal eval",
+      "https://mmmu-benchmark.github.io",
+      "Expert-level multimodal understanding benchmark.",
+      "Metadata only in CI; cached multimodal holdout baseline."
+    ],
+    [
+      1020,
+      "LM Studio Docs",
+      "local UX",
+      "https://lmstudio.ai/docs",
+      "Desktop local models; metadata study.",
+      "Metadata and license review only; document a serve/run plan, no weight downloads in Actions."
+    ],
+    [
+      1021,
+      "GitHub Models",
+      "hosted catalog",
+      "https://github.com/marketplace/models",
+      "Peer hub to Hugging Face.",
+      "Metadata and license review only; document a serve/run plan, no weight downloads in Actions."
+    ],
+    [
+      1022,
+      "ModelScope",
+      "peer hub",
+      "https://www.modelscope.cn",
+      "China hub; metadata and license first.",
+      "Metadata and license review only; document a serve/run plan, no weight downloads in Actions."
+    ],
+    [
+      1023,
+      "vLLM Docs",
+      "serving",
+      "https://docs.vllm.ai/en/latest/",
+      "High-throughput inference serving for pinned open-weight models.",
+      "Serve a local model in a sandbox; benchmark latency, memory and tool-call reliability."
+    ],
+    [
+      1024,
+      "Together Docs",
+      "hosted infer",
+      "https://docs.together.ai",
+      "Open-weight hosting peer.",
+      "Metadata and license review only; document a serve/run plan, no weight downloads in Actions."
+    ],
+    [
+      1025,
+      "OpenRouter Docs",
+      "router catalog",
+      "https://openrouter.ai/docs",
+      "Multi-provider routing catalog.",
+      "Metadata and license review only; document a serve/run plan, no weight downloads in Actions."
+    ],
+    [
+      1026,
+      "Kaggle Models",
+      "hub",
+      "https://www.kaggle.com/models",
+      "Alternate model cards and notebooks.",
+      "Metadata and license review only; document a serve/run plan, no weight downloads in Actions."
+    ],
+    [
+      1027,
+      "PyTorch Hub",
+      "research hub",
+      "https://pytorch.org/hub/",
+      "Research checkpoints; hash before load.",
+      "Metadata and license review only; document a serve/run plan, no weight downloads in Actions."
+    ],
+    [
+      1028,
+      "NVIDIA NGC",
+      "enterprise catalog",
+      "https://catalog.ngc.nvidia.com",
+      "US enterprise containers and models.",
+      "Metadata and license review only; document a serve/run plan, no weight downloads in Actions."
+    ],
+    [
+      1029,
+      "Hugging Face smolagents",
+      "agents",
+      "https://huggingface.co/docs/smolagents",
+      "Minimal code-acting agent framework.",
+      "Build a tiny sandboxed agent task and benchmark tool-call accuracy."
+    ],
+    [
+      1030,
+      "Stanford HELM",
+      "eval",
+      "https://crfm.stanford.edu/helm/",
+      "Broad holistic eval.",
+      "Metadata only in CI; run a cached holdout baseline and compare before/after mastery."
+    ],
+    [
+      1031,
+      "Hugging Face LeRobot",
+      "robotics",
+      "https://github.com/huggingface/lerobot",
+      "Open robotics datasets and policies.",
+      "Study dataset cards and policy recipes; simulation only, no hardware in Actions."
+    ],
+    [
+      1032,
+      "Hugging Face Lighteval",
+      "eval",
+      "https://github.com/huggingface/lighteval",
+      "Lightweight multi-backend LLM eval.",
+      "Metadata only in CI; run a cached holdout baseline and compare before/after mastery."
+    ],
+    [
+      1033,
+      "arXiv cs.LG",
+      "research",
+      "https://arxiv.org/list/cs.LG/recent",
+      "Primary ML papers.",
+      "Lesson, then exercise, then targeted benchmark, then spaced retest."
+    ],
+    [
+      1034,
+      "ONNX Runtime",
+      "serve",
+      "https://onnxruntime.ai/docs/",
+      "Cross-platform optimized inference.",
+      "Export a tiny model and compare latency and quality in a sandbox."
+    ],
+    [
+      1035,
+      "Unsloth Docs",
+      "efficient FT",
+      "https://docs.unsloth.ai",
+      "Faster LoRA recipes.",
+      "Read then write a train plan; do not launch GPUs in Actions."
+    ],
+    [
+      1036,
+      "OpenVINO",
+      "serve",
+      "https://docs.openvino.ai",
+      "CPU/edge-optimized inference toolkit.",
+      "Benchmark a small model on CPU; record latency and accuracy deltas."
+    ],
+    [
+      1037,
+      "LLaMA-Factory",
+      "FT toolkit",
+      "https://github.com/hiyouga/LLaMA-Factory",
+      "UI + recipes for SFT/DPO.",
+      "Read then write a train plan; do not launch GPUs in Actions."
+    ],
+    [
+      1038,
+      "EvalPlus",
+      "code eval",
+      "https://github.com/evalplus/evalplus",
+      "Harder test suites for code generation.",
+      "Cached code holdout; contamination-aware."
+    ],
+    [
+      1039,
+      "Guardrails AI",
+      "safety",
+      "https://www.guardrailsai.com/docs",
+      "Output validation and structured guards.",
+      "Convert into validators on Buddy outputs and add failing-case tests."
+    ],
+    [
+      1040,
+      "NVIDIA garak",
+      "safety eval",
+      "https://github.com/NVIDIA/garak",
+      "LLM vulnerability scanner.",
+      "Run probes against a sandbox endpoint only; log findings, never production."
+    ],
+    [
+      1041,
+      "Cohere Labs Aya",
+      "multilingual",
+      "https://cohere.com/research/aya",
+      "Open multilingual models and datasets.",
+      "License review first; plan multilingual holdouts."
+    ],
+    [
+      1042,
+      "Sentence Transformers",
+      "embeddings",
+      "https://www.sbert.net",
+      "Default embedding study path.",
+      "Build a tiny local retrieval sandbox and benchmark recall."
+    ],
+    [
+      1043,
+      "FAISS",
+      "vectors",
+      "https://faiss.ai",
+      "Local dense search.",
+      "Build a tiny local retrieval sandbox and benchmark recall."
+    ],
+    [
+      1044,
+      "Chroma Docs",
+      "vectors",
+      "https://docs.trychroma.com",
+      "Dev vector store.",
+      "Build a tiny local retrieval sandbox and benchmark recall."
+    ],
+    [
+      1045,
+      "Qdrant Docs",
+      "vectors",
+      "https://qdrant.tech/documentation/",
+      "Prod filters + hybrid.",
+      "Build a tiny local retrieval sandbox and benchmark recall."
+    ],
+    [
+      1046,
+      "Weaviate Docs",
+      "vectors",
+      "https://docs.weaviate.io",
+      "Hybrid search modules.",
+      "Build a tiny local retrieval sandbox and benchmark recall."
+    ],
+    [
+      1047,
+      "Milvus Docs",
+      "vectors",
+      "https://milvus.io/docs",
+      "Large-scale vectors.",
+      "Build a tiny local retrieval sandbox and benchmark recall."
+    ],
+    [
+      1048,
+      "pgvector",
+      "vectors",
+      "https://github.com/pgvector/pgvector",
+      "Postgres RAG.",
+      "Build a tiny local retrieval sandbox and benchmark recall."
+    ],
+    [
+      1049,
+      "Pinecone Docs",
+      "vectors",
+      "https://docs.pinecone.io",
+      "Managed vectors; pin US region.",
+      "Build a tiny local retrieval sandbox and benchmark recall."
+    ],
+    [
+      1050,
+      "Gradio",
+      "app UX",
+      "https://www.gradio.app/docs",
+      "Quick ML demo front ends.",
+      "Build a tiny local demo of one lesson."
+    ],
+    [
+      1051,
+      "Haystack Docs",
+      "RAG",
+      "https://docs.haystack.deepset.ai",
+      "Pipeline RAG.",
+      "Build a tiny local retrieval sandbox and benchmark recall."
+    ],
+    [
+      1052,
+      "TruthfulQA",
+      "reason eval",
+      "https://github.com/sylinrl/TruthfulQA",
+      "Measures imitative falsehoods.",
+      "Holdout truthfulness check; contamination-aware."
+    ],
+    [
+      1053,
+      "Instructor",
+      "structured output",
+      "https://python.useinstructor.com",
+      "Typed structured outputs from LLMs.",
+      "Build schema-validated extraction drills and score parse success."
+    ],
+    [
+      1054,
+      "OWASP Top 10 for LLM Applications",
+      "security",
+      "https://genai.owasp.org",
+      "LLM-specific risks such as prompt injection.",
+      "Map each risk to a Buddy test case and gate."
+    ],
+    [
+      1055,
+      "MITRE ATLAS",
+      "security",
+      "https://atlas.mitre.org",
+      "Adversarial threat landscape for AI systems.",
+      "Threat-model Buddy pipelines against ATLAS tactics."
+    ],
+    [
+      1056,
+      "verl",
+      "RL training",
+      "https://github.com/volcengine/verl",
+      "RL post-training library for LLMs.",
+      "Read then write an RL plan; do not launch GPUs in Actions."
+    ],
+    [
+      1057,
+      "MATH Dataset",
+      "reason eval",
+      "https://github.com/hendrycks/math",
+      "Competition math problems with solutions.",
+      "Math holdout beyond GSM8K; contamination-aware."
+    ],
+    [
+      1058,
+      "HellaSwag",
+      "reason eval",
+      "https://rowanzellers.com/hellaswag/",
+      "Commonsense sentence completion.",
+      "Cached commonsense baseline; compare before/after mastery."
+    ],
+    [
+      1059,
+      "The Stack BigCode",
+      "code data",
+      "https://www.bigcode-project.org",
+      "License-aware code pretrain data.",
+      "License and safety review first; no automatic ingestion."
+    ],
+    [
+      1060,
+      "StarCoder2 paper",
+      "code models",
+      "https://arxiv.org/abs/2402.19173",
+      "Code student family.",
+      "Lesson, then exercise, then targeted benchmark, then spaced retest."
+    ],
+    [
+      1061,
+      "NVIDIA RULER",
+      "long-context eval",
+      "https://github.com/NVIDIA/RULER",
+      "Synthetic long-context capability tests.",
+      "Measure effective context length before memory claims."
+    ],
+    [
+      1062,
+      "Partnership on AI",
+      "policy",
+      "https://partnershiponai.org",
+      "Multi-stakeholder responsible AI guidance.",
+      "Convert guidance into release and disclosure checks."
+    ],
+    [
+      1063,
+      "GSM8K",
+      "reason eval",
+      "https://github.com/openai/grade-school-math",
+      "Math holdout.",
+      "Metadata only in CI; run a cached holdout baseline and compare before/after mastery."
+    ],
+    [
+      1064,
+      "MMLU",
+      "reason eval",
+      "https://github.com/hendrycks/test",
+      "Broad knowledge eval; contamination-aware.",
+      "Metadata only in CI; run a cached holdout baseline and compare before/after mastery."
+    ],
+    [
+      1065,
+      "Hugging Face Open R1",
+      "methods",
+      "https://github.com/huggingface/open-r1",
+      "Open reproduction of reasoning-model training.",
+      "Study methods and data recipes, not weights; write a distill plan."
+    ],
+    [
+      1066,
+      "Berkeley Function Calling Leaderboard",
+      "tools",
+      "https://gorilla.cs.berkeley.edu/leaderboard.html",
+      "Tool-call eval.",
+      "Lesson, then exercise, then targeted benchmark, then spaced retest."
+    ],
+    [
+      1067,
+      "Gorilla LLM",
+      "tools",
+      "https://gorilla.cs.berkeley.edu",
+      "API-calling research.",
+      "Lesson, then exercise, then targeted benchmark, then spaced retest."
+    ],
+    [
+      1068,
+      "NVIDIA NeMo",
+      "train",
+      "https://docs.nvidia.com/nemo-framework",
+      "US enterprise train stack.",
+      "Read then write a train plan; do not launch GPUs in Actions."
+    ],
+    [
+      1069,
+      "Meta Purple Llama",
+      "safety",
+      "https://github.com/meta-llama/PurpleLlama",
+      "Llama Guard and CyberSecEval safety tools.",
+      "Study safety classifiers; evaluate in sandbox, license first."
+    ],
+    [
+      1070,
+      "PyTorch ExecuTorch",
+      "edge infer",
+      "https://pytorch.org/executorch/",
+      "On-device PyTorch runtime.",
+      "Document an edge export plan; no device deploys from Actions."
+    ],
+    [
+      1071,
+      "OpenAI gpt-oss",
+      "US open weights",
+      "https://openai.com/open-models/",
+      "Apache-plus-policy open weights.",
+      "Lesson, then exercise, then targeted benchmark, then spaced retest."
+    ],
+    [
+      1072,
+      "Anthropic Constitutional AI",
+      "safety methods",
+      "https://www.anthropic.com/research",
+      "Public safety-method papers.",
+      "Convert into license or safety checks on packs."
+    ],
+    [
+      1073,
+      "NIST AI RMF Playbook",
+      "safety ops",
+      "https://airc.nist.gov/airmf-resources/playbook/",
+      "Operationalizes NIST AI RMF already in item 46.",
+      "Apply to one Buddy service in a sandbox and add a proof test."
+    ],
+    [
+      1074,
+      "OECD AI Principles",
+      "policy",
+      "https://oecd.ai/en/ai-principles",
+      "International AI policy baseline.",
+      "Convert into license or safety checks on packs."
+    ],
+    [
+      1075,
+      "EU AI Act official text",
+      "policy",
+      "https://eur-lex.europa.eu/eli/reg/2024/1689/oj/eng",
+      "Authoritative EU AI Act legal text for compliance study.",
+      "Map applicable obligations to documented risk controls and release checks."
+    ],
+    [
+      1076,
+      "Creative Commons",
+      "licenses",
+      "https://creativecommons.org/licenses/",
+      "Dataset license literacy.",
+      "Convert into license or safety checks on packs."
+    ],
+    [
+      1077,
+      "SPDX License List",
+      "licenses",
+      "https://spdx.org/licenses/",
+      "Pin licenses on packs.",
+      "Convert into license or safety checks on packs."
+    ],
+    [
+      1078,
+      "OSI Licenses",
+      "licenses",
+      "https://opensource.org/licenses",
+      "Open-source vs open-weight distinction.",
+      "Convert into license or safety checks on packs."
+    ],
+    [
+      1079,
+      "Linux Foundation LF AI",
+      "community",
+      "https://lfaidata.foundation",
+      "US-friendly open AI projects.",
+      "Convert into license or safety checks on packs."
+    ],
+    [
+      1080,
+      "Apache Software Foundation",
+      "community",
+      "https://www.apache.org",
+      "Foundational OSS governance.",
+      "Convert into license or safety checks on packs."
+    ],
+    [
+      1081,
+      "Keras",
+      "training",
+      "https://keras.io",
+      "High-level multi-backend DL API.",
+      "Reproduce a small model and benchmark against a PyTorch baseline."
+    ],
+    [
+      1082,
+      "12-Factor App",
+      "architecture",
+      "https://12factor.net",
+      "Service design for Buddy APIs.",
+      "Apply to one Buddy service in a sandbox and add a proof test."
+    ],
+    [
+      1083,
+      "Google SRE Book",
+      "ops",
+      "https://sre.google/sre-book/table-of-contents/",
+      "Reliability for Actions and serve.",
+      "Apply to one Buddy service in a sandbox and add a proof test."
+    ],
+    [
+      1084,
+      "Staff Eng Book",
+      "engineering",
+      "https://staffeng.com/book",
+      "How to grow the platform without bot sprawl.",
+      "Apply to one Buddy service in a sandbox and add a proof test."
+    ],
+    [
+      1085,
+      "Architecture of Open Source Applications",
+      "engineering",
+      "https://aosabook.org/en/index.html",
+      "Study real system designs.",
+      "Apply to one Buddy service in a sandbox and add a proof test."
+    ],
+    [
+      1086,
+      "Triton Language",
+      "kernels",
+      "https://triton-lang.org",
+      "Python GPU kernel authoring.",
+      "Read then write a kernel study plan; do not launch GPUs in Actions."
+    ],
+    [
+      1087,
+      "The Batch DeepLearning.AI",
+      "news",
+      "https://www.deeplearning.ai/the-batch/",
+      "Freshness without hype as evidence.",
+      "Lesson, then exercise, then targeted benchmark, then spaced retest."
+    ],
+    [
+      1088,
+      "Label Studio",
+      "data labeling",
+      "https://labelstud.io/guide/",
+      "Open data labeling workflows.",
+      "Design a small labeling task and measure inter-annotator agreement."
+    ],
+    [
+      1089,
+      "Andrej Karpathy Neural Nets Zero to Hero",
+      "education",
+      "https://karpathy.ai/zero-to-hero.html",
+      "Foundations before MoE.",
+      "Lesson, then exercise, then targeted benchmark, then spaced retest."
+    ],
+    [
+      1090,
+      "Our World in Data AI",
+      "context",
+      "https://ourworldindata.org/artificial-intelligence",
+      "Public AI trend facts.",
+      "Lesson, then exercise, then targeted benchmark, then spaced retest."
+    ],
+    [
+      1091,
+      "Stanford CRFM",
+      "research org",
+      "https://crfm.stanford.edu",
+      "Foundation-model research home for HELM.",
+      "Lesson, then exercise, then targeted benchmark, then spaced retest."
+    ],
+    [
+      1092,
+      "EleutherAI Blog",
+      "research org",
+      "https://blog.eleuther.ai",
+      "Open eval and GPT-Neo history.",
+      "Lesson, then exercise, then targeted benchmark, then spaced retest."
+    ],
+    [
+      1093,
+      "Argilla",
+      "data quality",
+      "https://docs.argilla.io",
+      "Human feedback and dataset curation.",
+      "Curate a small preference set with provenance notes."
+    ],
+    [
+      1094,
+      "Great Expectations",
+      "data quality",
+      "https://docs.greatexpectations.io",
+      "Data validation tests for pipelines.",
+      "Add expectations to one Buddy dataset and fail on drift."
+    ],
+    [
+      1095,
+      "LAION",
+      "data caution",
+      "https://laion.ai",
+      "Know it; do not auto-ingest. Safety and license review required.",
+      "License and safety review first; no automatic ingestion."
+    ],
+    [
+      1096,
+      "MLCommons AILuminate",
+      "safety eval",
+      "https://mlcommons.org/ailuminate/",
+      "Standardized AI safety hazard benchmark.",
+      "Study hazard taxonomy; map to Buddy safety holdouts."
+    ],
+    [
+      1097,
+      "DataComp",
+      "data eval",
+      "https://www.datacomp.ai",
+      "How to score pretrain data.",
+      "Metadata only in CI; run a cached holdout baseline and compare before/after mastery."
+    ],
+    [
+      1098,
+      "Evidently AI",
+      "observability",
+      "https://docs.evidentlyai.com",
+      "ML and LLM monitoring and drift reports.",
+      "Add a drift report to one Buddy eval run."
+    ],
+    [
+      1099,
+      "Inspect AI UK AISI",
+      "eval harness",
+      "https://inspect.aisi.org.uk",
+      "Modern agent eval runner.",
+      "Metadata only in CI; run a cached holdout baseline and compare before/after mastery."
+    ],
+    [
+      1100,
+      "UK AISI",
+      "safety org",
+      "https://www.aisi.gov.uk",
+      "Public safety eval culture; not a weight source.",
+      "Convert into license or safety checks on packs."
+    ]
   ]
 }
