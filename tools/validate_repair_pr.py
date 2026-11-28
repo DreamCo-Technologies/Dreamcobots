@@ -113,7 +113,7 @@ def validate_changes(name_status: str, diff_text: str) -> list[str]:
     if missing:
         errors.append("Changed-file metadata has no corresponding inspected diff section: " + ", ".join(missing))
     if changed_lines > MAX_CHANGED_LINES:
-        errors.append(f"Change set exceeds the {MAX_CHANGED_LINES}-line limit.")
+        errors.append(f"Change set exceeds the {MAX_CHANGED_LINES:,}-line limit.")
     return sorted(set(errors))
 
 def main() -> int:
