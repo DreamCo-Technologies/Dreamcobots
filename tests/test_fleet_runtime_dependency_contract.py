@@ -23,10 +23,15 @@ def test_fleet_runtime_full_audit_installs_scipy_from_declared_learning_requirem
     assert "cryptography>=42,<50" in requirements
     audit_source = (ROOT / "tools/fleet_runtime_audit.py").read_text(encoding="utf-8")
     assert "deferred_generated_artifact_tests" in audit_source
+    assert '"deferred_tests"' in audit_source
+    assert "python_tests_fully_run" in audit_source
     assert "tests/test_run_prospectus.py" in audit_source
     assert "tests/test_file_prospectus.py" in audit_source
     assert any(
         step.get("name") == "Rebuild and verify prospectuses after full-audit status is written"
         for step in steps
     )
+    package = json.loads((ROOT / "package.json").read_text(encoding="utf-8"))
+    governed = package["scripts"]["test:governed"]
+    assert governed.index("npx tsx tools/generate_bot_fleet_catalog.ts") < governed.index("node --import tsx --test")
 
