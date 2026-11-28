@@ -10,13 +10,15 @@ from buddy.learning.buddy_knowledge_router import route_buddy_learning_query
 
 
 class BuddyKnowledgeRouterTests(unittest.TestCase):
-    def test_track_specific_query_prioritizes_its_named_curriculum_track(self):
+    def test_platform_query_uses_dreamco_authored_software_library_track(self):
         route = route_buddy_learning_query("hugging face transformers", limit=25)
         self.assertEqual(route["route"], "internal_bootcamp_lesson")
         self.assertTrue(any(
-            row["track_id"] in {"hugging-face", "huggingface-full"}
+            row["track_id"] == "universal-software-libraries"
             for row in route["course_lessons"]
         ))
+        self.assertTrue(all(row["track_id"] == "universal-software-libraries" for row in route["course_lessons"]))
+        self.assertTrue(all(not row.get("source_url") for row in route["course_lessons"]))
         self.assertFalse(route["external_discovery_performed"])
         self.assertFalse(route["external_model_routing_performed"])
         self.assertFalse(route["mastery_awarded"])
@@ -27,8 +29,8 @@ class BuddyKnowledgeRouterTests(unittest.TestCase):
 
         self.assertEqual(route["route"], "internal_bootcamp_lesson")
         track_ids = {row["track_id"] for row in route["course_lessons"]}
-        self.assertTrue(track_ids.intersection({"hugging-face", "huggingface-full"}))
-        self.assertIn("universal-software-libraries", track_ids)
+        self.assertEqual(track_ids, {"universal-software-libraries"})
+        self.assertTrue(all(not row.get("source_url") for row in route["course_lessons"]))
         self.assertFalse(route["external_discovery_performed"])
         self.assertFalse(route["mastery_awarded"])
 
