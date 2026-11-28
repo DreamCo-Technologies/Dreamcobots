@@ -668,7 +668,7 @@ class FoundryGuardrailTests(unittest.TestCase):
             "core_concepts": "Use explicit trust boundaries.",
             "learning_objectives": ["Validate input", "Protect credentials"],
         }
-        with unittest.mock.patch.object(
+        with patch.object(
             TOKENIZER_MODULE, "iter_authorized_records", return_value=iter([record])
         ):
             corpus = list(TOKENIZER_MODULE.corpus({}))
