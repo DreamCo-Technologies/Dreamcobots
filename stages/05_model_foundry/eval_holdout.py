@@ -39,7 +39,11 @@ def validate_report(report: dict, expected_ids: list[str], manifest_sha256: str,
     if not isinstance(checkpoint_sha, str) or not re.fullmatch(r"[0-9a-f]{64}", checkpoint_sha):
         raise ValueError(f"{label}: checkpoint_sha256 is required")
     evaluated = report.get("evaluated_task_ids")
-    if not isinstance(evaluated, list) or sorted(set(evaluated)) != expected_ids:
+    if (not isinstance(evaluated, list)
+            or any(not isinstance(item, str) for item in evaluated)
+            or len(set(evaluated)) != len(evaluated)
+            or sorted(evaluated) != expected_ids
+            or report.get("evaluated_count") != len(expected_ids)):
         raise ValueError(f"{label}: report must cover every holdout task exactly once")
     for metric in METRICS:
         value = report.get(metric)
