@@ -32,6 +32,9 @@ def validate_report(report: dict, expected_ids: list[str], manifest_sha256: str,
     config_sha = report.get("evaluation_config_sha256")
     if not isinstance(config_sha, str) or not re.fullmatch(r"[0-9a-f]{64}", config_sha):
         raise ValueError(f"{label}: evaluation_config_sha256 is required")
+    tokenizer_sha = report.get("tokenizer_sha256")
+    if not isinstance(tokenizer_sha, str) or not re.fullmatch(r"[0-9a-f]{64}", tokenizer_sha):
+        raise ValueError(f"{label}: tokenizer_sha256 is required")
     checkpoint_sha = report.get("checkpoint_sha256")
     if not isinstance(checkpoint_sha, str) or not re.fullmatch(r"[0-9a-f]{64}", checkpoint_sha):
         raise ValueError(f"{label}: checkpoint_sha256 is required")
@@ -76,6 +79,8 @@ def main():
     validate_report(candidate, holdout_ids, manifest_sha, benchmark_sha, "candidate")
     if baseline["evaluation_config_sha256"] != candidate["evaluation_config_sha256"]:
         raise ValueError("baseline and candidate must use identical generation and scoring settings")
+    if baseline["tokenizer_sha256"] != candidate["tokenizer_sha256"]:
+        raise ValueError("baseline and candidate must use the same exact tokenizer artifacts")
     regressions = {
         metric: {"baseline": baseline[metric], "candidate": candidate[metric]}
         for metric in METRICS if candidate[metric] < baseline[metric]
@@ -92,6 +97,7 @@ def main():
         "source_manifest_sha256": manifest_sha,
         "benchmark_suite_sha256": benchmark_sha,
         "evaluation_config_sha256": candidate["evaluation_config_sha256"],
+        "candidate_tokenizer_sha256": candidate["tokenizer_sha256"],
         "evaluation_split": "holdout",
         "holdout_access": "evaluation_only",
         "training_access": False,
