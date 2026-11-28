@@ -87,15 +87,14 @@ def _load_runtime():
     return torch, Dataset, AutoModelForCausalLM, AutoTokenizer, LlamaConfig, LlamaForCausalLM, Trainer, TrainingArguments
 
 
-def _load_model(recipe: dict[str, Any], tokenizer, checkpoint: Path | None = None):
+def _load_model(recipe: dict[str, Any], tokenizer, checkpoint: Path | None = None, manifest: dict[str, Any] | None = None):
     torch, _, AutoModelForCausalLM, _, LlamaConfig, LlamaForCausalLM, _, _ = _load_runtime()
     if checkpoint and (checkpoint / "adapter_config.json").exists():
         base = recipe.get("base_model", {})
         model_id, revision = base.get("id"), base.get("revision")
         if not model_id or not isinstance(revision, str) or not re.fullmatch(r"[0-9a-f]{40}", revision):
             raise PermissionError("loading a LoRA checkpoint requires the pinned base model revision")
-        if base.get("license_review_status") != "APPROVED" or not str(base.get("license_evidence_id", "")).strip():
-            raise PermissionError("loading an open-weight adapter requires approved model license evidence")
+        require_model_authorization(manifest or {}, model_id, revision)
         base_model = AutoModelForCausalLM.from_pretrained(
             model_id, revision=revision, trust_remote_code=False,
             use_safetensors=True, torch_dtype="auto",
@@ -133,8 +132,7 @@ def _load_model(recipe: dict[str, Any], tokenizer, checkpoint: Path | None = Non
         revision = base.get("revision")
         if not model_id or not isinstance(revision, str) or not re.fullmatch(r"[0-9a-f]{40}", revision):
             raise PermissionError("open-weight base model requires an exact 40-character reviewed commit SHA")
-        if base.get("license_review_status") != "APPROVED" or not str(base.get("license_evidence_id", "")).strip():
-            raise PermissionError("open-weight training requires owner-approved model license evidence")
+        require_model_authorization(manifest or {}, model_id, revision)
         model = AutoModelForCausalLM.from_pretrained(
             model_id, revision=revision, trust_remote_code=False,
             use_safetensors=True, torch_dtype="auto",
@@ -257,7 +255,7 @@ def execute_stage(stage: str, recipe: dict[str, Any], manifest: dict[str, Any],
                   output: Path) -> Path:
     torch, _, AutoModelForCausalLM, AutoTokenizer, _, _, Trainer, _ = _load_runtime()
     tokenizer = AutoTokenizer.from_pretrained(tokenizer_path, trust_remote_code=False)
-    model = _load_model(recipe, tokenizer, checkpoint)
+    model = _load_model(recipe, tokenizer, checkpoint, manifest)
     adapter = recipe.get("architecture", {}).get("adapter")
     if adapter == "lora" and stage in {"pretrain", "sft", "dpo"} and not hasattr(model, "peft_config"):
         try:
