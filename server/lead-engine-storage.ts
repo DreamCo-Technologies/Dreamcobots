@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import { and, desc, eq, sql } from "drizzle-orm";
 import { z } from "zod";
 import { db } from "./db";
@@ -78,6 +79,19 @@ export async function saveLeadEngineRecord(ownerId: string, input: LeadEngineRec
     const validatedQualification = qualifyLead(validatedRecord);
     const validatedStagePlan = buildLeadStagePlan(validatedRecord);
 
+    if (validatedRecord.stage === "convert" && previous?.stage !== "convert") {
+      const [approval] = await tx.select({ id: leadEngineActivities.id })
+        .from(leadEngineActivities)
+        .where(and(
+          eq(leadEngineActivities.ownerId, safeOwnerId),
+          eq(leadEngineActivities.leadId, validatedRecord.leadId),
+          eq(leadEngineActivities.eventId, validatedRecord.humanReviewEvidenceRef!),
+          eq(leadEngineActivities.eventType, "conversion_approved"),
+        ))
+        .limit(1);
+      if (!approval) throw new Error("lead_engine_conversion_approval_evidence_missing");
+    }
+
     const [saved] = await tx.insert(leadEngineRecords).values({
       ownerId: safeOwnerId,
       leadId: validatedRecord.leadId,
@@ -101,6 +115,59 @@ export async function saveLeadEngineRecord(ownerId: string, input: LeadEngineRec
     }).returning();
 
     return { record: saved, qualification: validatedQualification, stagePlan: validatedStagePlan };
+  });
+}
+
+/**
+ * Records an explicit authenticated-owner approval for a qualified conversion.
+ * The returned evidence reference is verified again by saveLeadEngineRecord
+ * before a record may enter the convert stage.
+ */
+export async function approveLeadConversion(ownerId: string, leadId: string) {
+  const safeOwnerId = ownerIdSchema.parse(ownerId);
+  const safeLeadId = z.string().regex(/^lead-[A-Za-z0-9-]{4,80}$/).parse(leadId);
+
+  return withOwner(safeOwnerId, async (tx) => {
+    const [row] = await tx.select().from(leadEngineRecords).where(and(
+      eq(leadEngineRecords.ownerId, safeOwnerId),
+      eq(leadEngineRecords.leadId, safeLeadId),
+    )).limit(1);
+    if (!row) throw new Error("lead_engine_record_not_found");
+
+    const lead = leadEngineRecordSchema.parse(row.payload);
+    const qualification = qualifyLead(lead);
+    if (
+      lead.stage !== "nurture" ||
+      qualification.tier !== "hot" ||
+      !lead.budgetConfirmed ||
+      !lead.useCase ||
+      lead.consentBasis === "none" ||
+      !lead.consentEvidenceRef ||
+      lead.suppressionStatus !== "active"
+    ) {
+      throw new Error("lead_engine_conversion_not_eligible_for_owner_approval");
+    }
+
+    const evidenceRef = `lead-event-${randomUUID()}`;
+    await tx.insert(leadEngineActivities).values({
+      ownerId: safeOwnerId,
+      leadId: safeLeadId,
+      eventId: evidenceRef,
+      eventType: "conversion_approved",
+      details: {
+        approval: "explicit_owner_approval",
+        ownerId: safeOwnerId,
+        qualificationScore: qualification.score,
+        policy: "lead_engine_conversion_gate_v1",
+      },
+    });
+    return {
+      approved: true as const,
+      leadId: safeLeadId,
+      evidenceRef,
+      qualificationScore: qualification.score,
+      approvalRequiredAgainForEachNewLead: true as const,
+    };
   });
 }
 
