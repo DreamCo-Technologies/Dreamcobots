@@ -38,24 +38,54 @@ def load_registry(path:Path)->dict[str,Any]:
         if row.get("tier") not in VALID_TIERS: raise ValueError(f"invalid tier for {row.get('source_id')}")
     return data
 def evaluate_source(source:dict[str,Any],registry:dict[str,Any],purpose:str="transcript_extraction")->dict[str,Any]:
-    host=(urlparse(str(source.get("source_url") or "")).hostname or "").lower(); match=None
+    source_url=str(source.get("source_url") or "").strip()
+    host=(urlparse(source_url).hostname or "").lower()
+    source_id=str(source.get("source_id") or "")
+    domain_matches=[]
     for row in registry.get("sources",[]):
-        for domain in row.get("domains",[]):
-            domain=str(domain).lower()
-            if host==domain or host.endswith("."+domain): match=row; break
-        if match: break
-    tier=match.get("tier") if match else None; reason="ALLOW"; allowed=False
-    if not match or match.get("verified") is not True: reason="BLOCKED_MISSING_VERIFIED_SOURCE_RECORD"
-    elif tier=="BLOCKED": reason="BLOCKED_SOURCE_TIER"
-    elif str(source.get("source_id") or "") not in {str(x) for x in match.get("catalog_source_ids", [match.get("source_id")])}: reason="BLOCKED_SOURCE_ID_NOT_REGISTERED"
-    elif match.get("allowed_url_prefixes") and not any(_url_matches_prefix(str(source.get("source_url") or ""), str(prefix)) for prefix in match.get("allowed_url_prefixes", [])): reason="BLOCKED_SOURCE_URL_NOT_ALLOWLISTED"
-    elif not _item_license_evidence_valid(source): reason="BLOCKED_MISSING_OR_UNVERIFIED_ITEM_LICENSE_EVIDENCE"
-    elif purpose=="transcript_extraction" and match.get("transcript_extraction_allowed") is not True: reason="BLOCKED_TRANSCRIPT_PERMISSION_NOT_GRANTED"
-    elif purpose=="commercial_training" and (tier not in {"PUBLIC_DOMAIN","PERMISSIVE_COMMERCIAL"} or match.get("commercial_training_allowed") is not True or source.get("commercial_training_permission") is not True or not str(source.get("commercial_training_evidence_ref") or "").strip()): reason="BLOCKED_COMMERCIAL_TRAINING_PERMISSION"
-    elif purpose=="fact_extraction" and tier in {"PUBLIC_DOMAIN","PERMISSIVE_COMMERCIAL","FACT_EXTRACTION_ONLY"} and match.get("fact_extraction_allowed") is True: allowed=True
-    elif purpose=="transcript_extraction" and tier in {"PUBLIC_DOMAIN","PERMISSIVE_COMMERCIAL"}: allowed=True
-    else: reason="BLOCKED_PURPOSE_NOT_AUTHORIZED"
-    return {"allowed":allowed,"reason":reason,"permission_tier":tier or "UNREGISTERED","source_id":match.get("source_id") if match else None,"purpose":purpose}
+        if any(host==str(domain).lower() or host.endswith("."+str(domain).lower())
+               for domain in row.get("domains",[])):
+            domain_matches.append(row)
+    match=None
+    for row in domain_matches:
+        allowed_ids={str(value) for value in row.get("catalog_source_ids",[row.get("source_id")])}
+        if source_id in allowed_ids:
+            match=row
+            break
+    if match is None and domain_matches:
+        match=domain_matches[0]
+    tier=match.get("tier") if match else None
+    reason="ALLOW"
+    allowed=False
+    if not match or match.get("verified") is not True:
+        reason="BLOCKED_MISSING_VERIFIED_SOURCE_RECORD"
+    elif tier=="BLOCKED":
+        reason="BLOCKED_SOURCE_TIER"
+    elif source_id not in {str(value) for value in match.get("catalog_source_ids",[match.get("source_id")])}:
+        reason="BLOCKED_SOURCE_ID_NOT_REGISTERED"
+    elif match.get("allowed_url_prefixes") and not any(
+        _url_matches_prefix(source_url,str(prefix)) for prefix in match.get("allowed_url_prefixes",[])
+    ):
+        reason="BLOCKED_SOURCE_URL_NOT_ALLOWLISTED"
+    elif not _item_license_evidence_valid(source):
+        reason="BLOCKED_MISSING_OR_UNVERIFIED_ITEM_LICENSE_EVIDENCE"
+    elif purpose=="transcript_extraction" and match.get("transcript_extraction_allowed") is not True:
+        reason="BLOCKED_TRANSCRIPT_PERMISSION_NOT_GRANTED"
+    elif purpose=="commercial_training" and (
+        tier not in {"PUBLIC_DOMAIN","PERMISSIVE_COMMERCIAL"}
+        or match.get("commercial_training_allowed") is not True
+        or source.get("commercial_training_permission") is not True
+        or not str(source.get("commercial_training_evidence_ref") or "").strip()
+    ):
+        reason="BLOCKED_COMMERCIAL_TRAINING_PERMISSION"
+    elif purpose=="fact_extraction" and tier in {"PUBLIC_DOMAIN","PERMISSIVE_COMMERCIAL","FACT_EXTRACTION_ONLY"} and match.get("fact_extraction_allowed") is True:
+        allowed=True
+    elif purpose=="transcript_extraction" and tier in {"PUBLIC_DOMAIN","PERMISSIVE_COMMERCIAL"}:
+        allowed=True
+    else:
+        reason="BLOCKED_PURPOSE_NOT_AUTHORIZED"
+    return {"allowed":allowed,"reason":reason,"permission_tier":tier or "UNREGISTERED",
+            "source_id":match.get("source_id") if match else None,"purpose":purpose}
 def require_source_permission(source:dict[str,Any],registry:dict[str,Any],purpose:str)->None:
     result=evaluate_source(source,registry,purpose)
     if not result["allowed"]: raise PermissionError(result["reason"])
