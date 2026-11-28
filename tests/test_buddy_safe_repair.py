@@ -92,7 +92,6 @@ class BuddySafeRepairTests(unittest.TestCase):
   with self.assertRaises(ValueError):
    safe_output_path(root,"../../outside.json")
 
-if __name__=="__main__":unittest.main()
 
 
 
@@ -136,3 +135,5 @@ if __name__=="__main__":unittest.main()
     result=run_safe_repair(observation,root)
    self.assertEqual(result["status"],"BLOCKED_UNEXPECTED_PATH")
    self.assertIn("website/data/generated-link",result["blocked_paths"])
+
+if __name__=="__main__":unittest.main()

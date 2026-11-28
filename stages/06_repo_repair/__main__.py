@@ -253,6 +253,7 @@ def run(args: argparse.Namespace) -> dict:
     root = Path(args.repo_root).resolve()
     prefixes = allowed_prefixes(args.allowed_paths)
     output_path = safe_generated_path(root, args.output, prefixes, "Output")
+    history_dir = safe_generated_path(root, args.trajectory_dir, prefixes, "Trajectory")
     if bool(args.report) == bool(args.observation):
         raise ValueError("Provide exactly one of --report or --observation.")
     input_path = (root / (args.report or args.observation)).resolve()
@@ -275,7 +276,6 @@ def run(args: argparse.Namespace) -> dict:
         "failed_test_ids": obs.get("failed_test_ids", [])[:100],
     }
     fingerprint = hashlib.sha256(json.dumps(fingerprint_data, sort_keys=True).encode()).hexdigest()[:24]
-    history_dir = safe_generated_path(root, args.trajectory_dir, prefixes, "Trajectory")
     history_path = safe_generated_path(
         root, str(PurePosixPath(args.trajectory_dir) / (fingerprint + ".json")), prefixes, "Trajectory record"
     )
