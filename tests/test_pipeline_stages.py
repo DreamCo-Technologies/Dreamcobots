@@ -108,3 +108,23 @@ def test_policy_rejects_zip_bomb_metadata(tmp_path):
     dump(raw,{"content":"archive intake","archive_base64":base64.b64encode(buffer.getvalue()).decode(),"permission":{"authorized":True,"target_kind":"user_owned"}})
     assert run("stages.01_policy_gate",raw,out).returncode==2
     assert json.loads(out.read_text())["policy"]["audit_code"]=="ARCHIVE_LIMIT_EXCEEDED"
+
+
+def test_non_python_languages_use_tree_sitter_not_python_ast(monkeypatch):
+    import sys
+    from types import ModuleType
+    from importlib import import_module
+    calls=[]
+    fake=ModuleType("reverse_engineer.parsers.treesitter")
+    def fake_parse(source,language):
+        calls.append(language)
+        return {"facts":{"functions":[{"parameter_node_count":2}],"control_flow":[],"dependencies":["sample"]}}
+    fake.parse_tree_sitter=fake_parse
+    monkeypatch.setitem(sys.modules,"reverse_engineer.parsers.treesitter",fake)
+    parse=import_module("stages.02_intake_parser.__main__").parse
+    expected={"javascript_source":"javascript","typescript_source":"typescript","java_source":"java","go_source":"go","rust_source":"rust"}
+    for kind,language in expected.items():
+        result=parse("not valid Python syntax: {",kind)
+        assert result["language"]==language
+        assert result["functions"]==[{"arity":2}]
+    assert calls==list(expected.values())
