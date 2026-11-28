@@ -24,6 +24,7 @@ class CustomerModelBuilderTest(unittest.TestCase):
         self.assertFalse(oss["trained_weights_exist"])
         with patch("sys.argv", ["build_customer_model_plan.py"]):
             self.assertEqual(main(), 0)
+        self.assertEqual(main([]), 0)
 
 
 if __name__ == "__main__":
