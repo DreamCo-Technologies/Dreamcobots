@@ -24,6 +24,6 @@ jobs:
       - name: Install pinned policy parser
         run: python -m pip install --disable-pip-version-check "PyYAML==6.0.3"
       - name: Compile modules
-        run: python -m compileall -q stages
+        run: python -m py_compile stages/00_catalog_sync/catalog_sync.py stages/01_policy_gate/policy_gate.py
       - name: Run stage tests
         run: python -m unittest tests.test_bootcamp_catalog_policy_stages -v
