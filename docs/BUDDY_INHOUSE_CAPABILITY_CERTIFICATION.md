@@ -20,6 +20,13 @@ The generated JSON is written to `website/data/buddy-capability-certification.js
 The GitHub Actions workflow produces an artifact on scheduled and manual runs.
 It does not commit artifacts or automatically deploy to Pages.
 
+The optional 25M local trainer is not called by CI. It requires a separate
+authorization manifest, explicit execution approval, a matching training-split
+SHA-256, a distinct holdout hash, and a zero-dollar local CPU/MPS compute profile
+before importing PyTorch. A manifest is an owner attestation, not independent
+verification of dataset rights. The trainer never invokes a teacher API, downloads
+datasets, selects CUDA, or allocates hosted compute.
+
 ## Evidence required for independent verification
 - Named capability and exact source revision, dependency lock and runtime environment.
 - Executable functional tests, held-out independent task suite and repeated runs.
