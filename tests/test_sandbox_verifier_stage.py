@@ -1,4 +1,5 @@
 from importlib import import_module
+from pathlib import Path
 
 
 def test_sandbox_verifier_keeps_container_isolation_flags():
