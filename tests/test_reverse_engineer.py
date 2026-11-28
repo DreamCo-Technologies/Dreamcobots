@@ -34,3 +34,9 @@ def test_fixture_and_similarity():
     g=PolicyGate(); assert g.verify_equivalence([{"ok":True}],[{"ok":True}]).allowed; assert not g.verify_equivalence([1],[2]).allowed; assert not g.similarity_audit("def a(): return 1","def a(): return 1").allowed
 def test_end_to_end():
     b=analyze("service.py","def create_item(name): return name",OWNER,"Inventory"); assert b["schema_version"]=="dreamco.reverse_engineering.blueprint.v1"; assert b["policy"]["source_content_persisted"] is False
+
+def test_tree_sitter_blueprint_preserves_signature_metadata():
+    parsed={"artifact_type":"code","facts":{"language":"typescript","functions":[{"name":"save","kind":"function","parameters":[],"parameter_node_count":3,"returns_annotation_present":True}],"control_flow":[],"dependencies":[]},"warnings":[]}
+    blueprint=build_blueprint(parsed,"TypeScript service")
+    assert blueprint["language"]=="typescript"
+    assert blueprint["inputs"][0]["parameter_count"]==3
