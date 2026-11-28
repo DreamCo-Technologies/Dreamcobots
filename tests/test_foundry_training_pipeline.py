@@ -4,6 +4,7 @@ import hashlib
 import json
 import tempfile
 import unittest
+import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -12,6 +13,13 @@ SPEC = importlib.util.spec_from_file_location("dreamco_foundry_guardrails", MODU
 GUARDRAILS = importlib.util.module_from_spec(SPEC)
 assert SPEC and SPEC.loader
 SPEC.loader.exec_module(GUARDRAILS)
+sys.path.insert(0, str(MODULE_PATH.parent))
+TRAIN_WEIGHTS_SPEC = importlib.util.spec_from_file_location(
+    "dreamco_foundry_train_weights", MODULE_PATH.parent / "train_weights.py"
+)
+TRAIN_WEIGHTS = importlib.util.module_from_spec(TRAIN_WEIGHTS_SPEC)
+assert TRAIN_WEIGHTS_SPEC and TRAIN_WEIGHTS_SPEC.loader
+TRAIN_WEIGHTS_SPEC.loader.exec_module(TRAIN_WEIGHTS)
 
 
 class FoundryGuardrailTests(unittest.TestCase):
@@ -54,6 +62,28 @@ class FoundryGuardrailTests(unittest.TestCase):
             list(GUARDRAILS.iter_authorized_records(
                 {"datasets": []}, splits={"train", "holdout"}
             ))
+
+    def test_dpo_accepts_only_lab_pass_teachback_against_lab_failure(self):
+        rows = [
+            {"prompt": "p", "chosen": "good", "rejected": "bad",
+             "chosen_status": "LAB_PASSED", "teach_back_verified": True,
+             "rejected_status": "LAB_FAILED"},
+            {"prompt": "p", "chosen": "unverified", "rejected": "bad",
+             "chosen_status": "LAB_PASSED", "teach_back_verified": False,
+             "rejected_status": "LAB_FAILED"},
+        ]
+        pairs = TRAIN_WEIGHTS.validated_preferences(rows)
+        self.assertEqual(len(pairs), 1)
+        self.assertEqual(pairs[0]["chosen"], "good")
+
+    def test_sft_rows_require_assistant_or_tool_targets(self):
+        rows = [
+            {"messages": [{"role": "user", "content": "question"}]},
+            {"messages": [{"role": "assistant", "content": "verified answer"}]},
+            {"messages": [{"role": "tool", "content": "tool result"}]},
+        ]
+        selected = TRAIN_WEIGHTS.sft_rows(rows)
+        self.assertEqual(len(selected), 2)
 
 
 if __name__ == "__main__":
