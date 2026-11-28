@@ -4,7 +4,7 @@ import { dirname, join } from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
 
-import { buildFleetCatalog } from "../tools/generate_bot_fleet_catalog";
+import { buildFleetCatalog, writeFleetCatalog } from "../tools/generate_bot_fleet_catalog";
 
 test("maps every division profile to a verified Buddy route and sandbox blueprint", () => {
   const catalog = buildFleetCatalog();
@@ -87,6 +87,7 @@ test("Dream3D remains a 19-profile supplemental portfolio, not a domain division
   const dream3d = catalog.supplemental_bots.filter((bot) => bot.identity.division === "Dream3D");
   assert.equal(dream3d.length, 19);
   assert.ok(!catalog.supplemental_divisions.some((division) => division.name === "Dream3D"));
+  assert.doesNotThrow(() => writeFleetCatalog({ check: true }));
 });
 
 
