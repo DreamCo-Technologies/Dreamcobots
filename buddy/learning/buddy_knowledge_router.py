@@ -25,7 +25,9 @@ def _tokens(value: str) -> set[str]:
     normalized = value.lower().replace("huggingface", "hugging face")
     return {
         token for token in re.findall(r"[a-z0-9][a-z0-9_.+-]*", normalized)
-        if len(token) > 1 and any(char.isalpha() for char in token)
+        if len(token) > 1
+        and any(char.isalpha() for char in token)
+        and token not in {"capability", "capabilities", "unmapped", "unknown", "general", "guide", "lesson"}
     }
 
 
@@ -132,7 +134,7 @@ def _course_matches(
             row for row in matches
             if row["track_match_score"] == best_track_score
             or row["lesson_id"] in preserve
-            or row["score"] >= 0.66
+            or row["score"] >= (1.0 / max(len(query_tokens), 1))
         ]
     matches.sort(key=lambda row: (-row["track_match_score"], -row["score"], row["track_id"], row["lesson_id"]))
     return matches[:limit]
