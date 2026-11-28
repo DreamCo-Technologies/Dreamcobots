@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from buddy.bootcamp.training_methods_hub import METHODS, PROVIDERS
 
 CATEGORIES = {
-    "foundations": ("prompting", "rag", "evaluation"),
+    "foundations": ("prompting", "rag", "evaluation", "skill_pack"),
     "tokenization_vocabulary": ("tokenizer_training", "continued_pretraining"),
     "model_weights": ("sft", "full_finetuning", "continued_pretraining"),
     "efficient_finetuning": ("lora", "qlora"),
