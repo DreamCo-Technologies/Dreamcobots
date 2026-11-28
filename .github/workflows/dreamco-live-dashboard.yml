@@ -27,6 +27,8 @@ on:
       - "config/buddy-model-selection-registry.json"
       - "tools/audit_actions_health.py"
       - "tools/generate_bot_fleet_catalog.ts"
+      - "tools/run_bot_fleet_e2e.ts"
+      - "website/data/bot-fleet-e2e.json"
       - "tools/generate_dreamco_search_index.ts"
       - "tools/build_buddy_learning_os_connection_graph.py"
       - "tools/generate_command_center_data.py"
@@ -62,6 +64,7 @@ jobs:
         run: |
           node --import tsx tools/generate_bot_fleet_catalog.ts
           node --import tsx tools/generate_dreamco_search_index.ts
+          node --import tsx tools/run_bot_fleet_e2e.ts --write-only
           python3 tools/build_buddy_learning_os_connection_graph.py
           python3 tools/generate_command_center_data.py
       - name: Run current DreamCo checks
