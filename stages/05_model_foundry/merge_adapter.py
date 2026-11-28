@@ -5,6 +5,10 @@ import hashlib
 import json
 import re
 from pathlib import Path
+try:
+    from .guardrails import require_model_authorization, verify_signed_manifest
+except ImportError:
+    from guardrails import require_model_authorization, verify_signed_manifest
 
 def checkpoint_digest(directory: Path) -> str:
     files = sorted(directory.glob("*.safetensors"))
@@ -19,7 +23,9 @@ def main():
     parser = argparse.ArgumentParser(description="Merge a verified DreamCo LoRA adapter")
     parser.add_argument("--base-model", required=True)
     parser.add_argument("--base-revision", required=True)
-    parser.add_argument("--license-evidence-id", required=True)
+    parser.add_argument("--manifest", type=Path, required=True)
+    parser.add_argument("--signature", type=Path, required=True)
+    parser.add_argument("--public-key", type=Path, required=True)
     parser.add_argument("--adapter", type=Path, required=True)
     parser.add_argument("--tokenizer", type=Path, required=True)
     parser.add_argument("--holdout-report", type=Path, required=True)
@@ -27,8 +33,8 @@ def main():
     args = parser.parse_args()
     if not re.fullmatch(r"[0-9a-f]{40}", args.base_revision):
         raise ValueError("base revision must be a pinned 40-character commit SHA")
-    if not args.license_evidence_id.strip():
-        raise PermissionError("approved base-model license evidence is required")
+    manifest = verify_signed_manifest(args.manifest, args.signature, args.public_key)
+    model_authorization = require_model_authorization(manifest, args.base_model, args.base_revision)
     report = json.loads(args.holdout_report.read_text(encoding="utf-8"))
     if report.get("promotion_eligible") is not True or report.get("regressions"):
         raise PermissionError("adapter merge is blocked until holdout verification passes")
@@ -54,7 +60,7 @@ def main():
         "schema": "dreamco.foundry.merged_checkpoint.v1",
         "base_model": args.base_model,
         "base_revision": args.base_revision,
-        "license_evidence_id": args.license_evidence_id,
+        "license_evidence_id": model_authorization["license_evidence_id"],
         "adapter_sha256": actual,
         "holdout_report_sha256": hashlib.sha256(args.holdout_report.read_bytes()).hexdigest(),
         "merged_checkpoint_files": sorted(path.name for path in args.output.glob("*.safetensors")),
