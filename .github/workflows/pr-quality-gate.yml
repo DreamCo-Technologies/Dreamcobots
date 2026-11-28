@@ -33,6 +33,7 @@ jobs:
             python stages/06_repo_repair/__main__.py --report reports/pytest-report.json --output reports/repo-repair-plan.json --trajectory-dir reports/repo-repair-trajectories
             echo "## Keyless Stage 06 repair triage" >> "$GITHUB_STEP_SUMMARY"
             python -c 'import json; d=json.load(open("reports/repo-repair-plan.json")); print("- Status: **" + d["status"] + "**"); print("- Automatic model calls: 0"); print("- Source edits: disabled on pull requests")' >> "$GITHUB_STEP_SUMMARY"
+            rm -f reports/pytest-report.json
           fi
           python tools/ci_failure_report.py --log "$RUNNER_TEMP/dreamco-test.log" --output reports/ci-failure-report.json --exit-code "$test_status"
           report_status=$?
@@ -45,7 +46,6 @@ jobs:
           name: dreamco-pr-ci-report-${{ github.run_id }}
           path: |
             reports/ci-failure-report.json
-            reports/pytest-report.json
             reports/repo-repair-plan.json
           if-no-files-found: ignore
           retention-days: 14
