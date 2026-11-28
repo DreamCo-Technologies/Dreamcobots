@@ -40,6 +40,17 @@ python -m stages.05_model_foundry.train_weights --stage pretrain --manifest data
 
 The weight runner has opt-in PT/CPT, SFT and DPO execution paths. It requires signed source data, signed token-shard manifests for pretraining, an explicit runtime approval flag and a policy reference. Run a preflight first (omit --execute); only pass --execute after reviewing the manifest, model license, pinned revision, recipe, and compute budget. The sample open-weight recipe is intentionally blocked until its revision is replaced with a reviewed 40-character commit SHA.
 
+## Local holdout evaluation and adapter promotion
+After training, run the isolated local inference runner separately for the baseline and candidate checkpoints. Holdout rows must contain `prompt`, `expected_answer`, and `expected_safety` (`ALLOW` or `REFUSE`). The runner loads only local model/tokenizer files and reads buckets 95–99:
+
+```bash
+python -m stages.05_model_foundry.run_holdout_eval --manifest data/foundry/authorization.json --signature data/foundry/authorization.sig --public-key keys/foundry-policy-public.pem --checkpoint artifacts/foundry/baseline --tokenizer artifacts/foundry/tokenizer --output reports/baseline.json
+python -m stages.05_model_foundry.run_holdout_eval --manifest data/foundry/authorization.json --signature data/foundry/authorization.sig --public-key keys/foundry-policy-public.pem --checkpoint artifacts/foundry/candidate --tokenizer artifacts/foundry/tokenizer --output reports/candidate.json
+python -m stages.05_model_foundry.eval_holdout --manifest data/foundry/authorization.json --signature data/foundry/authorization.sig --public-key keys/foundry-policy-public.pem --baseline reports/baseline.json --candidate reports/candidate.json --output reports/holdout-promotion.json
+```
+
+For an open-weight LoRA adapter, include `--base-model` and `--base-revision` in the evaluation command; the signed manifest must authorize that exact model revision. The merge utility is a separate explicit action and refuses to merge unless the holdout promotion report passes and its checkpoint digest matches the adapter.
+
 ## Holdout and compute
 - Bucket calculation: `int(sha256(task_id)[:8], 16) % 100`.
 - Train: 00–89; validation: 90–94; holdout: 95–99.
