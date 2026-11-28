@@ -215,6 +215,19 @@ export function assertLeadStageTransition(
   }
   const current = leadEngineRecordSchema.parse(existing);
   const currentIndex = STAGE_ORDER.indexOf(current.stage);
+  if (current.suppressionStatus !== "active" && next.suppressionStatus === "active") {
+    const explicitResubscription =
+      current.suppressionStatus === "opted_out" &&
+      next.consentBasis === "explicit_opt_in" &&
+      Boolean(next.consentEvidenceRef) &&
+      next.consentEvidenceRef !== current.consentEvidenceRef &&
+      Boolean(next.consentObtainedAt) &&
+      Boolean(current.consentObtainedAt) &&
+      Date.parse(next.consentObtainedAt!) > Date.parse(current.consentObtainedAt!);
+    if (!explicitResubscription) {
+      throw new Error("lead_engine_suppression_cannot_be_cleared_without_new_explicit_opt_in");
+    }
+  }
   if (nextIndex < currentIndex) throw new Error("lead_engine_stage_regression_forbidden");
   if (nextIndex > currentIndex + 1) throw new Error("lead_engine_stage_skip_forbidden");
   if (nextIndex === currentIndex + 1 && next.stage === "nurture") {
