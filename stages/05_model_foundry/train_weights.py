@@ -400,7 +400,7 @@ def execute_stage(stage: str, recipe: dict[str, Any], manifest: dict[str, Any],
         "recipe_sha256": manifest.get("_recipe_sha256"),
         "tokenizer_sha256": manifest.get("_tokenizer_sha256"),
         "shard_manifest_sha256": manifest.get("_shard_manifest_sha256"),
-        "authorization_reference": manifest.get("_authorization_reference"),
+        "authorization_reference_sha256": manifest.get("_authorization_reference_sha256"),
         "base_model_id": manifest.get("_base_model_id"),
         "base_model_revision": manifest.get("_base_model_revision"),
         "license_evidence_id": manifest.get("_base_model_license_evidence_id"),
@@ -491,7 +491,9 @@ def main():
         raise PermissionError("optimizer steps require --authorize-weight-updates and --authorization-reference")
     if not args.authorization_reference.strip():
         raise PermissionError("authorization reference must be non-empty")
-    manifest["_authorization_reference"] = args.authorization_reference.strip()
+    manifest["_authorization_reference_sha256"] = hashlib.sha256(
+        args.authorization_reference.strip().encode("utf-8")
+    ).hexdigest()
 
     active = args.input_checkpoint
     if stages[0] in {"sft", "dpo"} and active is None:
