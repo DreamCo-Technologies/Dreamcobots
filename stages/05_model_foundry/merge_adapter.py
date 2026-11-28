@@ -28,8 +28,13 @@ def main():
     manifest=verify_signed_manifest(a.manifest,a.signature,a.public_key)
     require_model_authorization(manifest,a.base_model,a.base_revision)
     report=json.loads(a.holdout_report.read_text(encoding="utf-8"))
-    if report.get("schema")!="dreamco.foundry.holdout_evaluation.v1" or report.get("promotion_eligible") is not True:
-        raise PermissionError("a passing isolated holdout evaluation is required before adapter merge")
+    if (report.get("schema")!="dreamco.foundry.holdout_evaluation.v1"
+            or report.get("promotion_eligible") is not True
+            or report.get("regressions")
+            or report.get("holdout_access")!="evaluation_only"
+            or report.get("training_access") is not False
+            or report.get("source_manifest_sha256")!=sha256_file(a.manifest)):
+        raise PermissionError("a passing baseline-comparison report for this signed holdout manifest is required before adapter merge")
     adapter_hash=safetensors_digest(a.adapter)
     if report.get("candidate_checkpoint_sha256")!=adapter_hash:
         raise PermissionError("holdout report does not attest to this exact adapter checkpoint")
@@ -44,17 +49,20 @@ def main():
         from peft import PeftModel
     except ImportError as exc:
         raise RuntimeError("Install requirements-foundry-training.txt to merge LoRA adapters") from exc
+    tokenizer=AutoTokenizer.from_pretrained(a.adapter,trust_remote_code=False,local_files_only=True)
     base=AutoModelForCausalLM.from_pretrained(a.base_model,revision=a.base_revision,
-        trust_remote_code=False,use_safetensors=True,torch_dtype="auto")
+        trust_remote_code=False,use_safetensors=True,torch_dtype="auto",local_files_only=True)
+    if len(tokenizer)!=base.get_input_embeddings().weight.shape[0]:
+        base.resize_token_embeddings(len(tokenizer),mean_resizing=True)
     adapter=PeftModel.from_pretrained(base,a.adapter,is_trainable=False)
-    merged=adapter.merge_and_unload()
+    merged=adapter.merge_and_unload(safe_merge=True)
     a.output.mkdir(parents=True,exist_ok=True)
     merged.save_pretrained(a.output,safe_serialization=True)
-    tokenizer=AutoTokenizer.from_pretrained(a.adapter,trust_remote_code=False)
     tokenizer.save_pretrained(a.output)
     weights=safetensors_digest(a.output)
     payload={"schema":"dreamco.foundry.merged_checkpoint.v1","base_model":a.base_model,
-      "base_revision":a.base_revision,"adapter_sha256":adapter_hash,
+      "base_revision":a.base_revision,"license_evidence_id":require_model_authorization(manifest,a.base_model,a.base_revision)["license_evidence_id"],
+      "source_manifest_sha256":sha256_file(a.manifest),"adapter_sha256":adapter_hash,
       "holdout_report_sha256":sha256_file(a.holdout_report),"merged_weights_sha256":weights,
       "promotion_gate":"passed","merge_started":True}
     (a.output/"merge_manifest.json").write_text(json.dumps(payload,indent=2)+"\n",encoding="utf-8")
