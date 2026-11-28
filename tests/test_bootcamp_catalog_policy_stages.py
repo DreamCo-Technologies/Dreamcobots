@@ -24,6 +24,9 @@ class CatalogPolicyTests(unittest.TestCase):
         self.assertFalse(policy.evaluate_source(source,self.registry,"transcript_extraction")["allowed"])
         self.assertFalse(policy.evaluate_source(source,self.registry,"commercial_training")["allowed"])
 
+    def test_unregistered_youtube_channel_is_not_cataloged(self):
+        self.assertFalse(catalog.source_is_configured("unknown-channel","https://www.youtube.com/@random",policy.load_registry(ROOT/"contracts/license_policy.yaml")))
+
     def test_unknown_domain_fails_closed(self):
         source={"source_url":"https://unknown.example/item","license_tag":"MIT","license_record_verified":True}
         result=policy.evaluate_source(source,self.registry)
@@ -34,7 +37,7 @@ class CatalogPolicyTests(unittest.TestCase):
         item={"id":"abc123","title":"Example","upload_date":"20261127","duration":42}
         with tempfile.TemporaryDirectory() as tmp:
             ledger=Path(tmp)/"source_catalog.jsonl"
-            sources=[{"source_id":"official-youtube","url":"https://www.youtube.com/@example"}]
+            sources=[{"source_id":"freecodecamp","url":"https://www.youtube.com/@example"}]
             first=catalog.sync_sources(sources,ledger,ROOT/"contracts/license_policy.yaml",lambda _: [item])
             self.assertEqual(first["new_or_updated_records"],1)
             original=ledger.read_text()
