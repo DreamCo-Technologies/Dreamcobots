@@ -376,6 +376,47 @@ class FoundryGuardrailTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 GUARDRAILS.validate_shard_payload(payload, root, source)
 
+    def test_signed_shard_manifest_validates_multiple_bin_idx_pairs(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            source = root / "source.json"
+            source.write_text("{}", encoding="utf-8")
+            entries = []
+            for index_number in range(2):
+                shard = root / f"train-{index_number:05d}.bin"
+                shard.write_bytes(b"\\x00" * 32)
+                index_path = root / f"train-{index_number:05d}.idx"
+                index_payload = {
+                    "schema": "dreamco.foundry.token_shard_index.v1",
+                    "bin_file": shard.name, "dtype": "uint32",
+                    "sequence_length": 8, "sequence_count": 1, "token_count": 8,
+                    "offset_unit": "tokens", "first_token_offset": 0,
+                    "sequence_stride_tokens": 8,
+                }
+                index_path.write_text(
+                    json.dumps(index_payload, sort_keys=True, separators=(",", ":")) + "\\n",
+                    encoding="utf-8",
+                )
+                entries.append({
+                    "file": shard.name, "sha256": hashlib.sha256(shard.read_bytes()).hexdigest(),
+                    "index_file": index_path.name,
+                    "index_sha256": hashlib.sha256(index_path.read_bytes()).hexdigest(),
+                    "tokens": 8, "sequences": 1,
+                })
+            payload = {
+                "schema": "dreamco.foundry.token_shards.v1",
+                "sequence_length": 8, "dtype": "uint32",
+                "training_splits": ["train"], "validation_splits": [],
+                "excluded_splits": ["holdout"],
+                "mix_percent": {"study_guides": 60, "verified_trajectories": 25, "general_replay": 15},
+                "source_manifest_sha256": hashlib.sha256(source.read_bytes()).hexdigest(),
+                "train": entries, "validation": [],
+            }
+            validated = GUARDRAILS.validate_shard_payload(payload, root, source)
+            self.assertEqual(len(validated["train"]), 2)
+            self.assertTrue(all(item["_resolved_path"] for item in validated["train"]))
+            self.assertTrue(all(item["_resolved_index_path"] for item in validated["train"]))
+
     def test_merge_adapter_digest_requires_safetensors(self):
         with tempfile.TemporaryDirectory() as td:
             folder = Path(td)
