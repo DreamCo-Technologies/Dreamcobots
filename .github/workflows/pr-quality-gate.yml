@@ -15,6 +15,21 @@ jobs:
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install locked Node dependencies
+        run: npm ci
+      - name: Type-check the complete application
+        run: npm run check
+      - name: Run governed Lead Engine, OAuth, and outbound regression tests
+        run: >-
+          node --import tsx --test
+          tests/governed-leads.test.ts
+          tests/lead-engine-storage-contract.test.mjs
+          tests/oauth-login-policy.test.mjs
+          tests/outbound-adapters.test.ts
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
