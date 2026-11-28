@@ -64,8 +64,8 @@ def update_curriculum_state(
     scope_type: str,
     scope_id: str,
     pass_rate: float,
-    difficulty: float = 1.0,
-    interval_days: int = 1,
+    difficulty: float | None = None,
+    interval_days: int | None = None,
     evidence_split: str = "practice",
 ) -> dict[str, Any]:
     """Adjust one of 55 domain divisions or 65 MasterBot lanes from practice only."""
@@ -76,8 +76,13 @@ def update_curriculum_state(
     if evidence_split not in {"practice", "curriculum"}:
         raise ValueError("evaluation and holdout evidence cannot change curriculum state")
     rate = _finite(pass_rate, "pass_rate", minimum=0.0)
-    level = _finite(difficulty, "difficulty", minimum=0.5)
-    interval = int(interval_days)
+    scope_key = f"{scope_type}:{scope_id}"
+    stored = state.get("scopes", {}).get(scope_key, {}) if isinstance(state, dict) else {}
+    level = _finite(
+        difficulty if difficulty is not None else stored.get("difficulty", 1.0),
+        "difficulty", minimum=0.5,
+    )
+    interval = int(interval_days if interval_days is not None else stored.get("spaced_interval_days", 1))
     if rate > 1 or level > 5 or interval < 1:
         raise ValueError("pass_rate must be <= 1, difficulty <= 5, interval >= 1")
     next_level, next_interval = level, interval
@@ -87,8 +92,7 @@ def update_curriculum_state(
     elif rate < 0.70:
         next_level = max(0.5, round(level * 0.90, 2))
         next_interval = 1
-    return {
-        "schema": "dreamco.curriculum_state.v1",
+    updated = {
         "scope_type": scope_type,
         "scope_id": str(scope_id),
         "difficulty": next_level,
@@ -97,6 +101,13 @@ def update_curriculum_state(
         "last_updated_at": datetime.now(timezone.utc).isoformat(),
         "evidence_split": evidence_split,
         "mastery_awarded": False,
+    }
+    scopes = dict(state.get("scopes", {})) if isinstance(state, dict) else {}
+    scopes[scope_key] = updated
+    return {
+        "schema": "dreamco.curriculum_state.v1",
+        **updated,
+        "scopes": scopes,
         "truth_boundary": "Practice scheduling is not a model certification or mastery award.",
     }
 
@@ -154,8 +165,14 @@ def distill_verified_repair(
     }
     if any(not value for value in summaries.values()):
         raise ValueError("all repair summaries must be non-empty")
+    similarity_threshold = _finite(similarity_threshold, "similarity_threshold", minimum=0.0)
+    if similarity_threshold > 1:
+        raise ValueError("similarity_threshold must be <= 1")
     lesson_basis = " ".join(summaries.values())
     lesson_signature = _minhash_signature(lesson_basis)
+    for old_signature in existing_signatures:
+        if len(tuple(old_signature)) != len(lesson_signature):
+            raise ValueError("existing MinHash signatures must use the same permutation count")
     for old_signature in existing_signatures:
         if _signature_similarity(lesson_signature, tuple(old_signature)) >= similarity_threshold:
             raise ValueError("MinHash deduplication rejected a near-duplicate repair lesson")
