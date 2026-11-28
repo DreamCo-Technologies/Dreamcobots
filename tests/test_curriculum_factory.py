@@ -20,6 +20,7 @@ def policy_registry():
             "source_id": "youtube-platform",
             "catalog_source_ids": ["freecodecamp"],
             "domains": ["youtube.com"],
+            "allowed_url_prefixes": ["https://www.youtube.com/@freecodecamp", "https://www.youtube.com/playlist?list="],
             "tier": "FACT_EXTRACTION_ONLY",
             "verified": True,
             "fact_extraction_allowed": True,
@@ -30,16 +31,23 @@ def policy_registry():
 
 
 def source_record():
-    return {
+    record = {
         "schema": "dreamco.source_catalog_record.v1",
         "source_id": "freecodecamp",
-        "source_url": "https://www.youtube.com/watch?v=example",
+        "source_url": "https://www.youtube.com/@freecodecamp",
         "video_id": "example",
         "license_tag": "CC-BY-4.0",
         "license_record_verified": True,
-        "content_sha256": hashlib.sha256(b"reviewed item").hexdigest(),
+        "license_evidence_url": "https://www.youtube.com/t/terms",
+        "license_evidence_path": "tests/fixtures/license-evidence.txt",
+        "license_evidence_sha256": hashlib.sha256((ROOT / "tests/fixtures/license-evidence.txt").read_bytes()).hexdigest(),
+        "license_review_status": "approved",
+        "license_reviewer_id": "owner-reviewer-1",
+        "license_reviewed_at": "2026-11-27T12:00:00+00:00",
         "commercial_training_permission": False,
     }
+    record["metadata_sha256"] = factory._load_catalog_sync().canonical_hash(record)
+    return record
 
 
 def guide():
@@ -84,9 +92,33 @@ class CurriculumFactoryTests(unittest.TestCase):
     def test_missing_item_license_evidence_fails_closed(self):
         record = source_record()
         record["license_record_verified"] = False
+        record["metadata_sha256"] = factory._load_catalog_sync().canonical_hash(record)
         with self.assertRaises(PermissionError):
             factory.build_guide(source_record=record, policy_registry=policy_registry(),
                                 authored_content=guide(), similarity_references=["A sufficiently long unrelated reference."])
+
+    def test_tampered_catalog_metadata_fingerprint_fails_closed(self):
+        record = source_record()
+        record["duration"] = 99
+        with self.assertRaises(ValueError):
+            factory.build_guide(source_record=record, policy_registry=policy_registry(),
+                                authored_content=guide(), similarity_references=["An unrelated reference with enough words for comparison."])
+
+    def test_tampered_license_snapshot_fails_closed(self):
+        record = source_record()
+        record["license_evidence_sha256"] = "0" * 64
+        record["metadata_sha256"] = factory._load_catalog_sync().canonical_hash(record)
+        with self.assertRaises(PermissionError):
+            factory.build_guide(source_record=record, policy_registry=policy_registry(),
+                                authored_content=guide(), similarity_references=["An unrelated reference with enough words for comparison."])
+
+    def test_missing_license_snapshot_evidence_fails_closed(self):
+        record = source_record()
+        record.pop("license_evidence_sha256")
+        record["metadata_sha256"] = factory._load_catalog_sync().canonical_hash(record)
+        with self.assertRaises(PermissionError):
+            factory.build_guide(source_record=record, policy_registry=policy_registry(),
+                                authored_content=guide(), similarity_references=["An unrelated reference with enough words for comparison."])
 
     def test_fcc_fact_extraction_only_does_not_authorize_transcripts_or_commercial_training(self):
         record = source_record()
@@ -105,9 +137,18 @@ class CurriculumFactoryTests(unittest.TestCase):
     def test_unregistered_source_id_on_allowed_domain_is_blocked(self):
         record = source_record()
         record["source_id"] = "unregistered-channel"
+        record["metadata_sha256"] = factory._load_catalog_sync().canonical_hash(record)
         with self.assertRaises(PermissionError):
             factory.build_guide(source_record=record, policy_registry=policy_registry(),
                                 authored_content=guide(), similarity_references=["An unrelated reference with enough words for comparison."])
+
+    def test_short_candidate_guide_fails_closed(self):
+        short = {"guide_id": "short", "title": "One", "learning_objectives": ["Two"],
+                 "lesson": "Three", "practice_lab": "Four", "assessment": "Five",
+                 "safety_notes": ["Six"]}
+        with self.assertRaises(ValueError):
+            factory.build_guide(source_record=source_record(), policy_registry=policy_registry(),
+                                authored_content=short, similarity_references=["An unrelated reference with enough words for comparison."])
 
     def test_missing_originality_references_fails_closed(self):
         with self.assertRaises(PermissionError):
