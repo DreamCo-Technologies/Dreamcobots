@@ -50,7 +50,7 @@ class HeldoutEvaluationTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "isolated from training"):
             evaluator.evaluate(suite, [], "test-model")
 
-    def test_checkpoint_signing_requires_rights_eval_and_measured_parameters(self):
+    def test_checkpoint_authentication_requires_rights_eval_and_measured_parameters(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             checkpoint = root / "weights.bin"
@@ -63,12 +63,18 @@ class HeldoutEvaluationTests(unittest.TestCase):
             dataset.write_text(json.dumps({"training_authorized":True,"rights_review_status":"APPROVED"}))
             metrics = root / "metrics.json"
             metrics.write_text(json.dumps({"parameter_count":45_000_000,"validation_perplexity":4.2,"tokens_per_second":120,"peak_ram_mb":1024,"peak_vram_mb":0}))
-            manifest = validator.build_manifest(checkpoint,evaluation,config,dataset,metrics,45_000_000,"a"*40)
+            manifest = validator.build_manifest(checkpoint,evaluation,config,dataset,metrics,45_000_000,"a"*40,"test-key-1")
             self.assertEqual(manifest["status"],"VERIFIED_CHECKPOINT_EVIDENCE")
-            self.assertEqual(manifest["signature"]["algorithm"],"HMAC-SHA256")
+            self.assertEqual(manifest["authentication"]["algorithm"],"HMAC-SHA256")
+            self.assertEqual(manifest["authentication"]["key_id"],"test-key-1")
+            self.assertTrue(validator.verify_manifest_authentication(manifest,"a"*40,"test-key-1"))
+            tampered = json.loads(json.dumps(manifest))
+            tampered["metrics"]["tokens_per_second"] = 999
+            self.assertFalse(validator.verify_manifest_authentication(tampered,"a"*40,"test-key-1"))
+            self.assertFalse(validator.verify_manifest_authentication(manifest,"a"*40,"wrong-key-id"))
             dataset.write_text(json.dumps({"training_authorized":False,"rights_review_status":"PENDING"}))
             with self.assertRaisesRegex(ValueError,"dataset rights"):
-                validator.build_manifest(checkpoint,evaluation,config,dataset,metrics,45_000_000,"a"*40)
+                validator.build_manifest(checkpoint,evaluation,config,dataset,metrics,45_000_000,"a"*40,"test-key-1")
 
 
 if __name__ == "__main__":
