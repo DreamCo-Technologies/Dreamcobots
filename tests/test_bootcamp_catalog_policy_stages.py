@@ -27,6 +27,10 @@ class CatalogPolicyTests(unittest.TestCase):
     def test_unregistered_youtube_channel_is_not_cataloged(self):
         self.assertFalse(catalog.source_is_configured("unknown-channel","https://www.youtube.com/@random",policy.load_registry(ROOT/"contracts/license_policy.yaml")))
 
+    def test_catalog_rejects_prefix_collision(self):
+        registry=policy.load_registry(ROOT/"contracts/license_policy.yaml")
+        self.assertFalse(catalog.source_is_configured("freecodecamp","https://www.youtube.com/@freecodecamp.evil",registry))
+
     def test_catalog_rejects_video_from_wrong_channel(self):
         with self.assertRaises(PermissionError):
             catalog.normalize_item({"id":"x","channel_id":"UC_NOT_THE_OFFICIAL_CHANNEL"},
@@ -38,6 +42,9 @@ class CatalogPolicyTests(unittest.TestCase):
         result=policy.evaluate_source(source,self.registry,"fact_extraction")
         self.assertFalse(result["allowed"])
         self.assertEqual(result["reason"],"BLOCKED_SOURCE_URL_NOT_ALLOWLISTED")
+        source["source_url"]="https://www.youtube.com/@freecodecamp.evil"
+        result=policy.evaluate_source(source,self.registry,"fact_extraction")
+        self.assertFalse(result["allowed"])
 
     def test_unknown_domain_fails_closed(self):
         source={"source_url":"https://unknown.example/item","license_tag":"MIT","license_record_verified":True}
