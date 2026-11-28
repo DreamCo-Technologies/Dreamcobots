@@ -7,6 +7,7 @@ import re
 from pathlib import Path
 
 REDACTIONS = (
+    (re.compile(r"(?i)\b(?:api[_-]?key|client[_-]?secret|password|access[_-]?token)\s*[:=]\s*[^\s,;]+"), "[REDACTED_CREDENTIAL]"),
     (re.compile(r"(?i)(authorization:\s*bearer\s+)[^\s]+"), r"\1[REDACTED]"),
     (re.compile(r"(?i)([?&](?:access_token|api_key|apikey|token|secret|password)=)[^&\s]+"), r"\1[REDACTED]"),
     (re.compile(r"(?i)\b(?:gh[pousr]_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,})\b"), "[REDACTED_TOKEN]"),
