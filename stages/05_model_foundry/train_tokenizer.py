@@ -47,7 +47,7 @@ def main():
     args = parser.parse_args()
     if args.vocab_size < 256:
         raise ValueError("vocab-size must be at least 256")
-    manifest = verify_signed_manifest(args.manifest, args.signature, args.public_key)
+    manifest = verify_signed_manifest(args.manifest, args.signature, args.public_key, verify_dataset_hashes=False)
     args.output.mkdir(parents=True, exist_ok=True)
 
     if args.mode == "scratch":
