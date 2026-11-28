@@ -59,3 +59,18 @@ def test_sanitizer_redacts_unterminated_private_key_to_end_of_input():
     assert "secret-material-without-footer" not in cleaned
     assert "[REDACTED_PRIVATE_KEY]" in cleaned
 
+
+
+def test_ci_report_paths_reject_arbitrary_external_reads_and_writes(tmp_path):
+    from tools.ci_failure_report import safe_log_path, safe_output_path
+    with pytest.raises(ValueError):
+        safe_log_path(str(tmp_path / "outside.log"))
+    with pytest.raises(ValueError):
+        safe_output_path("../../outside.json")
+
+
+def test_ci_report_paths_allow_runner_temp_logs_and_repo_outputs(tmp_path, monkeypatch):
+    from tools.ci_failure_report import REPO_ROOT, safe_log_path, safe_output_path
+    monkeypatch.setenv("RUNNER_TEMP", str(tmp_path))
+    assert safe_log_path(str(tmp_path / "runner.log")) == (tmp_path / "runner.log").resolve()
+    assert safe_output_path("reports/ci-failure-report.json") == REPO_ROOT / "reports/ci-failure-report.json"
