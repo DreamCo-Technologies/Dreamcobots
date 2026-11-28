@@ -62,7 +62,8 @@ def rows(value: Any) -> list[dict[str, Any]]:
 
 def verified_models(value: Any) -> list[dict[str, Any]]:
     """Only explicitly reviewed, executable model records count as catalogued."""
-    if not isinstance(value, dict) or value.get("status") != "VERIFIED":
+    if (not isinstance(value, dict) or value.get("status") != "VERIFIED"
+            or value.get("expected_model_count") != 500):
         return []
     candidates = value.get("models")
     if not isinstance(candidates, list):
@@ -135,10 +136,15 @@ def main() -> int:
                 "last_verified": record.get("execution_timestamp") if record else None,
             })
 
-    inventory_ready = isinstance(catalog_source, dict) and catalog_source.get("status") == "VERIFIED"
+    inventory_ready = (
+        isinstance(catalog_source, dict)
+        and catalog_source.get("status") == "VERIFIED"
+        and catalog_source.get("expected_model_count") == 500
+        and len(catalog) == 500
+    )
     output = {
         "schema": "dreamco.buddy_500_model_prospectus_matrix.v1",
-        "status": "READY_WITH_VERIFIED_MODEL_RECORDS" if inventory_ready else "BLOCKED_NO_VERIFIED_500_MODEL_INVENTORY",
+        "status": "READY_FOR_500_MODEL_MATRIX" if inventory_ready else "BLOCKED_NO_VERIFIED_500_MODEL_INVENTORY",
         "expected_models": 500,
         "prospective_slots_not_models": prospective_slots,
         "generated_at": datetime.now(timezone.utc).isoformat(),
