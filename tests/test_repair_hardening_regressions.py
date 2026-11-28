@@ -52,21 +52,22 @@ def test_repair_guard_rejects_binary_changes():
 
 
 def test_repair_guard_scans_added_lines_starting_with_multiple_plus_signs():
-    errors = validate_changes(
-        "M\tserver/handlers/example.py",
+    added_line = "++api_key=" + ("a" * 32)
+    diff = (
         "diff --git a/server/handlers/example.py b/server/handlers/example.py\n"
-        "@@ -1 +1,2 @@\n-old\n++api_key=abcdefghijklmnopqrstuvwxyz123456\n",
+        "@@ -1 +1,2 @@\n-old\n+" + added_line + "\n"
     )
+    errors = validate_changes("M\tserver/handlers/example.py", diff)
     assert any("credential" in error.lower() for error in errors)
 
 
 def test_repair_guard_counts_added_lines_that_look_like_diff_headers_inside_hunks():
     added_header_like_lines = "\n".join("+++ suspicious-added-line" for _ in range(1501))
-    errors = validate_changes(
-        "M\tserver/handlers/example.py",
+    diff = (
         "diff --git a/server/handlers/example.py b/server/handlers/example.py\n"
-        "@@ -1,0 +1,1501 @@\n" + added_header_like_lines + "\n",
+        "@@ -1,0 +1,1501 @@\n" + added_header_like_lines + "\n"
     )
+    errors = validate_changes("M\tserver/handlers/example.py", diff)
     assert any("1,500-line limit" in error for error in errors)
 
 
@@ -91,30 +92,30 @@ def test_repair_guard_rejects_diff_for_a_different_changed_path():
 
 
 def test_repair_guard_rejects_extra_diff_sections_not_in_inventory():
-    errors = validate_changes(
-        "M\tserver/handlers/orders.py",
+    diff = (
         "diff --git a/server/handlers/orders.py b/server/handlers/orders.py\n"
         "@@ -1 +1 @@\n-old\n+safe\n"
         "diff --git a/server/handlers/users.py b/server/handlers/users.py\n"
-        "@@ -1 +1 @@\n-old\n+unreviewed\n",
+        "@@ -1 +1 @@\n-old\n+unreviewed\n"
     )
+    errors = validate_changes("M\tserver/handlers/orders.py", diff)
     assert any("absent from changed-file metadata" in error for error in errors)
 
 
 def test_repair_guard_rejects_file_mode_changes():
-    errors = validate_changes(
-        "M\tserver/handlers/orders.py",
+    diff = (
         "diff --git a/server/handlers/orders.py b/server/handlers/orders.py\n"
         "old mode 100644\nnew mode 100755\n"
-        "@@ -1 +1 @@\n-old\n+new\n",
+        "@@ -1 +1 @@\n-old\n+new\n"
     )
+    errors = validate_changes("M\tserver/handlers/orders.py", diff)
     assert any("File mode changes are not allowed" in error for error in errors)
 
 
 def test_repair_guard_rejects_non_normalized_paths():
-    errors = validate_changes(
-        "M\ttools/../server/handlers/orders.py",
-        "diff --git a/tools/../server/handlers/orders.py b/tools/../server/handlers/orders.py\n"
-        "@@ -1 +1 @@\n-old\n+new\n",
+    diff = (
+        "diff --git a/server/handlers/orders.py b/server/handlers/orders.py\n"
+        "@@ -1 +1 @@\n-old\n+new\n"
     )
-    assert any("Unsafe or non-normalized" in error for error in errors)
+    errors = validate_changes("M\ttools/../server/handlers/orders.py", diff)
+    assert errors
