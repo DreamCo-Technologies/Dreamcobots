@@ -10,7 +10,7 @@ on:
       checkpoint_path:
         description: Existing local checkpoint directory on the isolated runner
         required: true
-        default: artifacts/foundry/buddy-division-45m-v1/checkpoints/03_aligned_final
+        default: artifacts/foundry/buddy-division-45m-v1/checkpoints/dpo
       max_tasks:
         description: Maximum authorized training tasks
         required: true
@@ -41,11 +41,11 @@ jobs:
         with:
           python-version: "3.11"
           cache: pip
-          cache-dependency-path: requirements-foundry-training.txt
+          cache-dependency-path: requirements-foundry.txt
       - name: Install optional inference dependencies
         run: |
           python -m pip install --upgrade pip
-          python -m pip install -r requirements-foundry-training.txt
+          python -m pip install -r requirements-foundry.txt 'torch>=2.4,<3'
       - name: Provision signature verification material
         env:
           SOURCE_SIGNATURE_B64: ${{ secrets.DREAMCO_SOURCE_MANIFEST_SIGNATURE_B64 }}
