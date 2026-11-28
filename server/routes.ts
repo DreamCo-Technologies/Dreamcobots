@@ -53,6 +53,7 @@ import {
   buildGovernedLeadPlan,
   leadCampaignRequestSchema,
 } from "./governed-leads";
+import { buildLeadStagePlan, leadEngineReadiness, leadEngineRecordSchema } from "./lead-engine";
 import {
   createDeviceActionPlan,
   deviceActionPlanRequestSchema,
@@ -1705,6 +1706,20 @@ export async function registerRoutes(
       if (error instanceof z.ZodError) return res.status(400).json(zodValidationError(error));
       throw error;
     }
+  });
+
+  app.post("/api/buddy/lead-engine/qualify", (req, res) => {
+    try {
+      const lead = leadEngineRecordSchema.parse(req.body);
+      res.status(201).json(buildLeadStagePlan(lead));
+    } catch (error) {
+      if (error instanceof z.ZodError) return res.status(400).json(zodValidationError(error));
+      throw error;
+    }
+  });
+
+  app.get("/api/buddy/lead-engine/readiness", (_req, res) => {
+    res.json(leadEngineReadiness());
   });
 
   app.get("/api/buddy/features", async (_req, res) => {
