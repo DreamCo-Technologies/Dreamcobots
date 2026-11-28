@@ -199,8 +199,15 @@ class FoundryGuardrailTests(unittest.TestCase):
             ))
             task_id = next(f"signer-{i}" for i in range(10000)
                            if GUARDRAILS.split_bucket(f"signer-{i}") < 90)
+            holdout_id = next(f"holdout-{i}" for i in range(10000)
+                              if GUARDRAILS.split_bucket(f"holdout-{i}") >= 95)
             dataset = root / "study_guides.jsonl"
+            holdout_dataset = root / "holdout.jsonl"
             dataset.write_text(json.dumps({"task_id": task_id, "title": "Guide"}) + "\\n", encoding="utf-8")
+            holdout_dataset.write_text(json.dumps({
+                "task_id": holdout_id, "prompt": "holdout prompt",
+                "expected_answer": "holdout answer", "expected_safety": "ALLOW"
+            }) + "\\n", encoding="utf-8")
             attestation = root / "owner-attestation.txt"
             attestation.write_text("DreamCo owns this original study guide.", encoding="utf-8")
             manifest = root / "manifest.json"
@@ -214,6 +221,13 @@ class FoundryGuardrailTests(unittest.TestCase):
                     "category": "study_guides",
                     "owner_attestation_path": attestation.name,
                     "owner_attestation_sha256": hashlib.sha256(attestation.read_bytes()).hexdigest(),
+                }, {
+                    "dataset_id": "holdout-1", "path": holdout_dataset.name,
+                    "sha256": hashlib.sha256(holdout_dataset.read_bytes()).hexdigest(),
+                    "license_tier": "DREAMCO_ORIGINAL", "commercial_use": True,
+                    "category": "holdout_benchmarks",
+                    "owner_attestation_path": attestation.name,
+                    "owner_attestation_sha256": hashlib.sha256(attestation.read_bytes()).hexdigest(),
                 }],
                 "models": [],
             }
@@ -224,8 +238,23 @@ class FoundryGuardrailTests(unittest.TestCase):
                     "--approve-commercial-training", "--approved-by", "Unit Test Owner",
                     "--policy-decision-id", "TEST-POLICY-1"]):
                 SIGN_MANIFEST.main()
-            verified = GUARDRAILS.verify_signed_manifest(manifest, signature, public_path)
-            self.assertEqual(verified["datasets"][0]["approved_by"], "Unit Test Owner")
+            verified_all = GUARDRAILS.verify_signed_manifest(manifest, signature, public_path)
+            self.assertEqual(verified_all["datasets"][0]["approved_by"], "Unit Test Owner")
+            holdout_dataset.write_text(json.dumps({
+                "task_id": holdout_id, "prompt": "tampered holdout",
+                "expected_answer": "wrong", "expected_safety": "ALLOW"
+            }) + "\\n", encoding="utf-8")
+            verified = GUARDRAILS.verify_signed_manifest(
+                manifest, signature, public_path, verify_dataset_hashes=False
+            )
+            train_rows = list(GUARDRAILS.iter_authorized_records(
+                verified, categories={"study_guides"}, splits={"train"}
+            ))
+            self.assertEqual(len(train_rows), 1)
+            with self.assertRaises(ValueError):
+                list(GUARDRAILS.iter_authorized_records(
+                    verified, categories={"holdout_benchmarks"}, splits={"holdout"}
+                ))
 
             shard_dir = root / "shards"
             shard_dir.mkdir()
