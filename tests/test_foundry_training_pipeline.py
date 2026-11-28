@@ -227,6 +227,31 @@ class FoundryGuardrailTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             evaluator.validate_report(report, ["task-a", "task-b", "task-c"], "a" * 64, "b" * 64, "candidate")
 
+    def test_distilled_trace_cache_is_verified_deduplicated_and_cot_free(self):
+        path = ROOT / "stages" / "05_model_foundry" / "cache_distilled_traces.py"
+        spec = importlib.util.spec_from_file_location("dreamco_distilled_trace_cache", path)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        common = {
+            "task_id":"task-1","division_id":"DIV-01","prompt":"Write a function",
+            "final_response":"def answer(): return 42","tool_calls":[{"name":"python","arguments":{"code":"print(42)"}}],
+            "explanation_summary":"The function returns the requested constant.",
+            "sandbox_run_id":"run-1","sandbox_status":"LAB_PASSED",
+            "teach_back_status":"TEACH_BACK_VERIFIED","grader_attestation_sha256":"a"*64,
+            "rubric_sha256":"b"*64,"test_suite_sha256":"c"*64,
+        }
+        with tempfile.TemporaryDirectory() as td:
+            output = Path(td) / "distilled_traces.jsonl"
+            first = module.append_verified_traces([common], output)
+            second = module.append_verified_traces([common], output)
+            rejected = module.append_verified_traces([{**common,"chain_of_thought":"private reasoning"}], output)
+            self.assertEqual(first["appended"], 1)
+            self.assertEqual(second["duplicates"], 1)
+            self.assertEqual(rejected["rejected"], 1)
+            stored = json.loads(output.read_text().strip())
+            self.assertNotIn("chain_of_thought", stored)
+            self.assertFalse(stored["training_authorized"])
+
 
 if __name__ == "__main__":
     unittest.main()
