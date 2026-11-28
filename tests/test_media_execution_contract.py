@@ -46,6 +46,18 @@ class ExecutionContractTests(unittest.TestCase):
         with self.assertRaises(ExecutionContractError):
             validate_execution_request(bad, self.worker, self.root)
 
+    def test_output_directory_must_be_relative_and_contained(self):
+        for output_dir in ("../escape", "/tmp/out", "safe/../escape"):
+            bad = ExecutionRequest(**{**self.request.__dict__, "output_dir": output_dir})
+            with self.subTest(output_dir=output_dir), self.assertRaises(ExecutionContractError):
+                validate_execution_request(bad, self.worker, self.root)
+
+    def test_gpu_count_and_memory_must_be_consistent(self):
+        bad = ExecutionRequest(**{**self.request.__dict__,
+            "resources": ResourceRequest(gpu_count=1, gpu_memory_mb=0)})
+        with self.assertRaises(ExecutionContractError):
+            validate_execution_request(bad, self.worker, self.root)
+
     def test_worker_spec_rejects_invalid_concurrency(self):
         with self.assertRaises(ExecutionContractError):
             validate_worker_spec(WorkerSpec("worker", "wan", ("movie",), True, 0))
