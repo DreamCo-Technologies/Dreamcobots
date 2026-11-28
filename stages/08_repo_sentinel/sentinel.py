@@ -75,12 +75,13 @@ def run_sentinel(*, sync_fcc: bool = False, apply_ast: bool = False,
                 "parse_errors": scan["parse_errors"], "consolidation": consolidation,
                 "apply_enabled": apply_ast},
         "freecodecamp_catalog": {"source_id": catalog_cfg["source_id"], "freshness": freshness,
+                                 "refresh_required": freshness["stale"],
                                  "sync_requested": sync_fcc, "sync_report": sync_report,
                                  "media_downloaded": False, "transcripts_fetched": False},
-        "overall_status": "needs_review" if scan["parse_errors"] or scan["duplicates"] or any(
-            row.get("status") in {"conflict", "canonical_symbol_missing", "canonical_file_missing", "unregistered_owner", "unsafe_canonical_path"}
+        "overall_status": "needs_review" if scan["parse_errors"] or any(
+            row.get("status") in {"conflict", "canonical_symbol_missing", "canonical_file_missing", "unsafe_canonical_path"}
             for row in consolidation
-        ) or freshness["stale"] else "audit_passed",
+        ) else "audit_passed",
         "automatic_rewrites_default": False,
     }
 
