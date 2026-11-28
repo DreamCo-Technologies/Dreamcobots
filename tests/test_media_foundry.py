@@ -22,9 +22,16 @@ class MediaFoundryTests(unittest.TestCase):
             "ownership_class": "dreamco_owned",
             "review_status": "approved",
             "permissions": {"display": True, "commercial_use": True},
+            "source_sha256": "a" * 64,
+            "observed_sha256": "a" * 64,
         }
         self.assertTrue(rights.authorize_asset(record, "display", commercial=True).allowed)
         self.assertFalse(rights.authorize_asset(record, "train", commercial=True).allowed)
+
+    def test_unrecognized_ownership_class_is_blocked_even_with_permission_flags(self):
+        record = {"asset_id": "untrusted", "ownership_class": "made_up", "review_status": "approved",
+                  "permissions": {"display": True}, "source_sha256": "a" * 64, "observed_sha256": "a" * 64}
+        self.assertFalse(rights.authorize_asset(record, "display").allowed)
 
     def test_model_code_license_does_not_substitute_for_weights_and_dependencies(self):
         model = {
@@ -47,7 +54,8 @@ class MediaFoundryTests(unittest.TestCase):
             [{"shot_id": "shot-001", "description": "Original DreamCo logo appears over a dark studio stage",
               "duration_seconds": 5, "asset_ids": ["logo"]}],
             assets=[{"asset_id": "logo", "ownership_class": "dreamco_owned", "review_status": "approved",
-                     "permissions": {"display": True, "commercial_use": True}}],
+                     "permissions": {"display": True, "commercial_use": True},
+                     "source_sha256": "a" * 64, "observed_sha256": "a" * 64}],
             commercial=True,
         )
         self.assertEqual(packet["status"], "planned_not_rendered")
