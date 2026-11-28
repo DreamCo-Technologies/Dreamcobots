@@ -26,7 +26,7 @@ def test_ci_report_hides_success_log_excerpt():
 def test_repair_guard_accepts_small_source_change():
     errors = validate_changes(
         "M\tserver/handlers/orders.py",
-        "--- a/server/handlers/orders.py\n+++ b/server/handlers/orders.py\n@@ -1 +1 @@\n-old\n+new\n",
+        "diff --git a/server/handlers/orders.py b/server/handlers/orders.py\n--- a/server/handlers/orders.py\n+++ b/server/handlers/orders.py\n@@ -1 +1 @@\n-old\n+new\n",
     )
     assert errors == []
 
