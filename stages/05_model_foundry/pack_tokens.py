@@ -13,7 +13,7 @@ def _token_pool(records, tokenizer):
         text = row.get("content") or row.get("text") or row.get("title", "")
         if row.get("messages"):
             text = "\n".join(
-                f"<|{message.get('role', 'user')}|> {message.get('content', '')}"
+                f"{'<|tool_call|>' if message.get('role') == 'tool' else '<|' + message.get('role', 'user') + '|>'} {message.get('content', '')}"
                 for message in row["messages"]
             )
         encoded = tokenizer.encode(str(text), add_special_tokens=False)
@@ -65,10 +65,13 @@ def main():
     if target_units == 0:
         raise ValueError("not enough signed training tokens to satisfy the 60/25/15 curriculum")
     train_tokens = []
-    for category, weight in weights.items():
-        required = target_units * weight
-        pool = pools[category]
-        train_tokens.extend((pool * ((required + len(pool) - 1) // len(pool)))[:required])
+    cursors = {category: 0 for category in weights}
+    for _ in range(target_units):
+        for category, weight in weights.items():
+            pool = pools[category]
+            cursor = cursors[category]
+            train_tokens.extend(pool[(cursor + offset) % len(pool)] for offset in range(weight))
+            cursors[category] = (cursor + weight) % len(pool)
     train_shard = _write_shard(train_tokens, args.output, "train", args.sequence_length)
     if train_shard is None:
         raise ValueError("not enough authorized tokens to form one training sequence")
