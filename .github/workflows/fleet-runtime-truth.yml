@@ -49,6 +49,9 @@ on:
       - "tools/refresh_repository_evidence.py"
       - "tools/build_pages_connection_index.py"
       - "tools/sync_freecodecamp_learning_inventory.py"
+      - "tools/run_bot_fleet_e2e.ts"
+      - "tools/generate_command_center_data.py"
+      - "website/data/bot-fleet-e2e.json"
       - "tests/buddy-run-page.test.mjs"
       - "tests/actions-page.test.mjs"
   schedule:
@@ -191,6 +194,8 @@ jobs:
           npx tsx tools/generate_dreamco_search_index.ts
           python3 tools/sync_freecodecamp_learning_inventory.py
           python3 tools/build_pages_connection_index.py
+          npx tsx tools/run_bot_fleet_e2e.ts --write-only
+          python3 tools/generate_command_center_data.py
           python3 tools/refresh_repository_evidence.py
       - name: Refresh generated evidence in isolated full-audit checkout
         run: |
