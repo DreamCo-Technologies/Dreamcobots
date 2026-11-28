@@ -55,11 +55,7 @@ export class InMemoryReplayClaimStore implements ReplayClaimStore {
   claim(key: string, expiresAt: number) {
     const now = Date.now();
     for (const [existingKey, expiry] of this.claims) if (expiry <= now) this.claims.delete(existingKey);
-    if (this.claims.has(key)) return false;
-    if (this.claims.size >= this.maximumClaims) {
-      const oldest = this.claims.keys().next().value;
-      if (oldest) this.claims.delete(oldest);
-    }
+    if (this.claims.has(key) || this.claims.size >= this.maximumClaims) return false;
     this.claims.set(key, expiresAt);
     return true;
   }
