@@ -7,11 +7,12 @@ adapters backed by a secret manager, never inline rule values.
 """
 from __future__ import annotations
 
+import http.client
 import ipaddress
 import json
 import socket
+import ssl
 import urllib.error
-import urllib.request
 from typing import Any
 from urllib.parse import urlsplit
 
@@ -21,7 +22,7 @@ MAX_RESPONSE_BYTES = 2 * 1024 * 1024
 DEFAULT_TIMEOUT_SECONDS = 10
 
 
-def validate_public_https_url(url: str) -> None:
+def _resolve_public_https_url(url: str) -> tuple[Any, list[str]]:
     parsed = urlsplit(url)
     if parsed.scheme != "https" or not parsed.hostname:
         raise ValueError("JSON feed targets must be absolute HTTPS URLs.")
@@ -34,19 +35,37 @@ def validate_public_https_url(url: str) -> None:
         raise ValueError("Local network targets are blocked.")
     try:
         literal = ipaddress.ip_address(host)
-        addresses = [literal]
+        addresses = [str(literal)]
     except ValueError:
         try:
-            addresses = [ipaddress.ip_address(row[4][0]) for row in socket.getaddrinfo(host, 443, type=socket.SOCK_STREAM)]
+            addresses = sorted({row[4][0] for row in socket.getaddrinfo(host, 443, type=socket.SOCK_STREAM)})
         except OSError as exc:
             raise ValueError("Feed hostname could not be resolved.") from exc
-    if not addresses or any(not address.is_global for address in addresses):
+    parsed_addresses = [ipaddress.ip_address(address) for address in addresses]
+    if not parsed_addresses or any(not address.is_global for address in parsed_addresses):
         raise ValueError("Feed host resolves to a non-public network address.")
+    return parsed, addresses
 
 
-class _NoRedirect(urllib.request.HTTPRedirectHandler):
-    def redirect_request(self, req, fp, code, msg, headers, newurl):
-        raise urllib.error.HTTPError(req.full_url, code, "Redirects are disabled for feed adapters.", headers, fp)
+def validate_public_https_url(url: str) -> None:
+    """Validate a feed URL and reject any non-public DNS/IP result."""
+    _resolve_public_https_url(url)
+
+
+class _PinnedHTTPSConnection(http.client.HTTPSConnection):
+    """Connect to a prevalidated IP while retaining hostname TLS verification."""
+
+    def __init__(self, hostname: str, address: str, timeout: int):
+        super().__init__(hostname, port=443, timeout=timeout, context=ssl.create_default_context())
+        self._pinned_address = address
+
+    def connect(self) -> None:
+        raw = socket.create_connection((self._pinned_address, 443), self.timeout)
+        self.sock = self._context.wrap_socket(raw, server_hostname=self.host)
+
+
+
+
 
 
 class JsonFeedAdapter:
@@ -63,17 +82,36 @@ class JsonFeedAdapter:
         rule.validate()
         if rule.adapter != "json_feed":
             raise ValueError("JsonFeedAdapter only supports json_feed rules.")
-        validate_public_https_url(rule.target)
-        request = urllib.request.Request(
-            rule.target,
-            headers={"Accept": "application/json", "User-Agent": "DreamCo-Watchtower/1.0"},
-            method="GET",
-        )
-        with self._opener.open(request, timeout=self.timeout_seconds) as response:
-            content_type = response.headers.get_content_type()
-            if content_type not in {"application/json", "application/problem+json"}:
-                raise ValueError(f"Unsupported feed content type: {content_type}")
-            body = response.read(self.max_bytes + 1)
+        parsed, addresses = _resolve_public_https_url(rule.target)
+        path = parsed.path or "/"
+        if parsed.query:
+            path += "?" + parsed.query
+        body = None
+        last_error = None
+        for address in addresses:
+            connection = _PinnedHTTPSConnection(parsed.hostname, address, self.timeout_seconds)
+            try:
+                connection.request(
+                    "GET",
+                    path,
+                    headers={"Accept": "application/json", "User-Agent": "DreamCo-Watchtower/1.0"},
+                )
+                response = connection.getresponse()
+                if 300 <= response.status < 400:
+                    raise ValueError("Feed redirects are disabled.")
+                if response.status < 200 or response.status >= 300:
+                    raise ValueError(f"Feed returned HTTP status {response.status}.")
+                content_type = response.getheader("Content-Type", "").split(";", 1)[0].strip().lower()
+                if content_type not in {"application/json", "application/problem+json"}:
+                    raise ValueError(f"Unsupported feed content type: {content_type}")
+                body = response.read(self.max_bytes + 1)
+                break
+            except (OSError, http.client.HTTPException) as exc:
+                last_error = exc
+            finally:
+                connection.close()
+        if body is None:
+            raise ValueError("Could not retrieve the public JSON feed.") from last_error
         if len(body) > self.max_bytes:
             raise ValueError("Feed response exceeded the configured byte limit.")
         try:
