@@ -139,6 +139,10 @@ def authorize_render_assets(assets: Sequence[Mapping[str, Any]], *, purpose: str
             raise MediaRightsError("Every rights manifest entry must be an object")
         result = dict(_rights_decision(asset))
         decision = result["decision"]
+        if asset.get("commercial_redistribution_allowed") is not True:
+            raise MediaRightsError(
+                f"Asset {asset.get('asset_id', '<unknown>')} lacks explicit commercial redistribution permission"
+            )
         if decision != "sellable":
             raise MediaRightsError(
                 f"Asset {asset.get('asset_id', '<unknown>')} is {decision}; render inputs must be sellable"
