@@ -6,7 +6,7 @@ test-contracts:
 test-stages:
 	$(PYTHON) -m pytest -q tests/test_pipeline_stages.py tests/test_pipeline_sandbox.py
 compile:
-	$(PYTHON) -m compileall -q stages
+	$(PYTHON) -m compileall -q stages reverse_engineer
 build-sandbox:
 	docker build --network=default -f stages/05_sandbox_verifier/Dockerfile -t dreamco-verifier:local .
 test-sandbox-integration:
