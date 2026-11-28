@@ -118,14 +118,17 @@
       "repository": "https://github.com/openai/whisper",
       "code_license": "MIT",
       "code_license_status": "source_verified",
-      "weights_license_status": "unverified",
-      "commercial_use_allowed": false,
-      "training_allowed": false,
+      "weights_license_status": "verified",
+      "commercial_use_allowed": true,
+      "training_allowed": true,
       "dependencies_reviewed": false,
       "status": "quarantined_pending_asset_level_review",
       "restrictions": [
-        "exact checkpoint and dependency licenses must be recorded"
-      ]
+        "exact immutable revision and dependency SBOM still require review"
+      ],
+      "weights_license": "MIT",
+      "code_license_evidence": "https://github.com/openai/whisper/blob/main/LICENSE",
+      "weights_license_evidence": "https://github.com/openai/whisper#license"
     },
     {
       "model_id": "f5-tts",
@@ -135,16 +138,19 @@
         "voice_cloning"
       ],
       "repository": "https://github.com/SWivid/F5-TTS",
-      "code_license": "CC-BY-NC",
-      "code_license_status": "source_reported_noncommercial",
-      "weights_license_status": "unverified",
+      "code_license": "MIT",
+      "code_license_status": "verified",
+      "weights_license_status": "verified",
       "commercial_use_allowed": false,
       "training_allowed": false,
       "dependencies_reviewed": false,
       "status": "excluded",
       "restrictions": [
-        "non-commercial restriction; do not use for DreamCo commercial production"
-      ]
+        "official pretrained checkpoints are CC-BY-NC-4.0; do not use for monetized or commercial outputs"
+      ],
+      "code_license_evidence": "https://github.com/SWivid/F5-TTS/blob/main/LICENSE",
+      "weights_license": "CC-BY-NC-4.0",
+      "weights_license_evidence": "https://github.com/SWivid/F5-TTS/blob/main/src/f5_tts/infer/SHARED.md"
     },
     {
       "model_id": "flux2-klein-9b",
