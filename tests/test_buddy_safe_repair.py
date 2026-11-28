@@ -55,3 +55,15 @@ class BuddySafeRepairTests(unittest.TestCase):
   self.assertLess(markdown,prospectus)
   self.assertLess(prospectus,verify)
 if __name__=="__main__":unittest.main()
+
+
+ def test_safe_repair_result_never_persists_command_output(self):
+  from unittest.mock import patch
+  completed = subprocess.CompletedProcess(["python", "builder.py"], 0, "secret-like stdout", "secret-like stderr")
+  status = subprocess.CompletedProcess(["git", "status"], 0, "", "")
+  observation = {"workflow": "Buddy Dataset Hub", "job": "route-build", "failed_step": "generated index mismatch"}
+  with patch("tools.buddy_safe_repair.subprocess.run", side_effect=[completed, status]):
+   result = run_safe_repair(observation, Path("."))
+  self.assertEqual(result["command_results"], [{"argv": [sys.executable, "tools/build_buddy_dataset_routes.py"], "returncode": 0}])
+  self.assertNotIn("secret-like stdout", str(result))
+  self.assertNotIn("secret-like stderr", str(result))
