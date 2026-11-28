@@ -93,10 +93,10 @@ def iter_authorized_records(manifest: dict, *, categories: set[str] | None = Non
         if categories and dataset.get("category") not in categories:
             continue
         path = Path(dataset["_resolved_path"])
-        if not dataset.get("_hash_verified"):
-            if sha256_file(path) != dataset.get("sha256"):
-                raise ValueError(f"{dataset['dataset_id']}: dataset SHA-256 mismatch")
-            dataset["_hash_verified"] = True
+        # Re-hash on every read. A previous successful pass must not authorize
+        # later reads after the underlying file has changed.
+        if sha256_file(path) != dataset.get("sha256"):
+            raise ValueError(f"{dataset['dataset_id']}: dataset SHA-256 mismatch")
         with path.open(encoding="utf-8") as stream:
             for line_no, line in enumerate(stream, 1):
                 if not line.strip():
