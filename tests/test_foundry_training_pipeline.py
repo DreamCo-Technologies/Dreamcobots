@@ -158,6 +158,8 @@ class FoundryGuardrailTests(unittest.TestCase):
             "tokenizer_sha256": "e" * 64,
             "checkpoint_sha256": "d" * 64,
             "base_model_id": "Qwen/Qwen2.5-Coder-1.5B",
+            "base_model_revision": "a" * 40,
+            "base_model_license_evidence_id": "QWEN-APACHE-2.0-REVISION",
             "evaluated_task_ids": ["task-1"],
             "evaluated_count": 1,
             "pass_rate": 0.95,
