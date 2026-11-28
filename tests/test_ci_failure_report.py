@@ -1,3 +1,5 @@
+import pytest
+
 from tools.ci_failure_report import build_report, sanitize
 
 
