@@ -14,9 +14,9 @@ from pathlib import Path
 from typing import Any
 
 try:
-    from .guardrails import assert_training_split, iter_authorized_records, verify_signed_manifest, verify_signed_shard_manifest
+    from .guardrails import assert_training_split, iter_authorized_records, require_model_authorization, verify_signed_manifest, verify_signed_shard_manifest
 except ImportError:  # direct script invocation from this directory
-    from guardrails import assert_training_split, iter_authorized_records, verify_signed_manifest, verify_signed_shard_manifest
+    from guardrails import assert_training_split, iter_authorized_records, require_model_authorization, verify_signed_manifest, verify_signed_shard_manifest
 
 
 def load_recipe(path: Path) -> dict[str, Any]:
@@ -95,6 +95,7 @@ def _load_model(recipe: dict[str, Any], tokenizer, checkpoint: Path | None = Non
         if not model_id or not isinstance(revision, str) or not re.fullmatch(r"[0-9a-f]{40}", revision):
             raise PermissionError("loading a LoRA checkpoint requires the pinned base model revision")
         require_model_authorization(manifest or {}, model_id, revision)
+        require_model_authorization(manifest or {}, model_id, revision)
         base_model = AutoModelForCausalLM.from_pretrained(
             model_id, revision=revision, trust_remote_code=False,
             use_safetensors=True, torch_dtype="auto",
@@ -132,6 +133,7 @@ def _load_model(recipe: dict[str, Any], tokenizer, checkpoint: Path | None = Non
         revision = base.get("revision")
         if not model_id or not isinstance(revision, str) or not re.fullmatch(r"[0-9a-f]{40}", revision):
             raise PermissionError("open-weight base model requires an exact 40-character reviewed commit SHA")
+        require_model_authorization(manifest or {}, model_id, revision)
         require_model_authorization(manifest or {}, model_id, revision)
         model = AutoModelForCausalLM.from_pretrained(
             model_id, revision=revision, trust_remote_code=False,
