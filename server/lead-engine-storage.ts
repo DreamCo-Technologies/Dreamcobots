@@ -23,7 +23,14 @@ const activitySchema = z.object({
     "proposal_handoff",
     "conversion_recorded",
   ]),
-  details: z.record(z.string(), z.union([z.string().max(500), z.number().finite(), z.boolean()])).default({}),
+  details: z.record(z.string(), z.union([
+    z.string().max(500).refine(
+      (value) => !/(?:[\\w.+-]+@[\\w.-]+\\.[A-Za-z]{2,}|\\+?\\d[\\d\\s().-]{7,}\\d|github_pat_|ghs_|sk_(?:live|test)_)/i.test(value),
+      "Activity details must not contain contact details or credentials",
+    ),
+    z.number().finite(),
+    z.boolean(),
+  ])).default({}),
 }).strict();
 
 export type LeadEngineActivityInput = z.infer<typeof activitySchema>;
