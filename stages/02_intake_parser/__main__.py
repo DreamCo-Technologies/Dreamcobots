@@ -15,6 +15,12 @@ def sanitize_har_path(value):
    safe.append(segment)
  return "/".join(safe)
 
+def safe_media_type(value):
+ value=str(value or "").split(";",1)[0].strip().lower()
+ return value if re.fullmatch(r"[a-z0-9!#def parse(text,kind):
+^_.+-]+/[a-z0-9!#def parse(text,kind):
+^_.+-]+",value) else "unspecified"
+
 def parse(text,kind):
  if kind in {"python","python_source"}:
   tree=ast.parse(text)
@@ -27,7 +33,7 @@ def parse(text,kind):
     request=entry.get("request",{}); response=entry.get("response",{})
     request_headers={str(h.get("name","")).lower():h.get("value") for h in request.get("headers",[])}
     response_names=sorted({str(h.get("name","")).lower() for h in response.get("headers",[])})
-    endpoints.append({"method":request.get("method",""),"path":sanitize_har_path(request.get("url","")),"status":response.get("status"),"request_content_type":request_headers.get("content-type",""),"request_body_present":bool(request.get("postData")),"request_body_size":len(str(request.get("postData",{}).get("text",""))) if isinstance(request.get("postData"),dict) else 0,"response_header_names":[name for name in response_names if "rate" in name or name=="retry-after"],"response_content_type":next((h.get("value","") for h in response.get("headers",[]) if str(h.get("name","")).lower()=="content-type"),"")})
+    endpoints.append({"method":request.get("method",""),"path":sanitize_har_path(request.get("url","")),"status":response.get("status"),"request_content_type":safe_media_type(request_headers.get("content-type","")),"request_body_present":bool(request.get("postData")),"request_body_size":len(str(request.get("postData",{}).get("text",""))) if isinstance(request.get("postData"),dict) else 0,"response_header_names":[name for name in response_names if "rate" in name or name=="retry-after"],"response_content_type":safe_media_type(next((h.get("value","") for h in response.get("headers",[]) if str(h.get("name","")).lower()=="content-type"),""))})
    return {"endpoints":endpoints}
   if kind=="openapi_json":
    endpoints=[]

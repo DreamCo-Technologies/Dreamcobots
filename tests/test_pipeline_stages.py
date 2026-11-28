@@ -56,9 +56,16 @@ def test_spec_uses_abstract_operation_names(tmp_path):
 
 def test_generator_requires_explicit_mock_and_source_free_spec(tmp_path):
     spec=tmp_path/"spec.json"; out=tmp_path/"course.json"
-    dump(spec,{"schema_version":"dreamco.functional_spec.v1","job_id":"abc12345","system_label":"user_system","inputs":[],"outputs":[],"state_rules":[],"edge_cases":[],"onet_tasks":[],"clean_room":{"original_source_available":False}})
+    dump(spec,{"schema_version":"dreamco.functional_spec.v1","job_id":"abc12345","system_label":"user_system","inputs":[],"outputs":[],"state_rules":[],"edge_cases":[],"onet_tasks":[],"clean_room":{"original_source_available":False,"source_identifiers_removed":True,"generator_input":"functional_spec_only"}})
     assert run("stages.04_clean_room_gen",spec,out).returncode!=0
     assert run("stages.04_clean_room_gen",spec,out,"--mock").returncode==0
+
+
+def test_generator_rejects_specs_with_source_identifiers(tmp_path):
+    spec=tmp_path/"spec.json"; out=tmp_path/"course.json"
+    dump(spec,{"schema_version":"dreamco.functional_spec.v1","job_id":"abc12345","system_label":"user_system","inputs":[],"outputs":[],"state_rules":[],"edge_cases":[],"onet_tasks":[],"clean_room":{"original_source_available":False,"source_identifiers_removed":False,"generator_input":"functional_spec_only"}})
+    result=run("stages.04_clean_room_gen",spec,out,"--mock")
+    assert result.returncode!=0
 
 def test_static_parsers_cover_openapi_har_and_csv():
     from importlib import import_module
@@ -142,4 +149,18 @@ def test_har_parser_redacts_dynamic_path_identifiers():
     paths=[item["path"] for item in result["endpoints"]]
     assert paths==["/users/{id}/orders/{id}","/accounts/{id}"]
     assert "123456" not in json.dumps(result)
+    assert "person@example.com" not in json.dumps(result)
+
+
+def test_har_parser_does_not_retain_arbitrary_content_type_header_values():
+    from importlib import import_module
+    parse=import_module("stages.02_intake_parser.__main__").parse
+    har={"log":{"entries":[
+        {"request":{"method":"POST","url":"https://api.example.test/items","headers":[{"name":"Content-Type","value":"application/json; boundary=private@example.com"}]},"response":{"status":200,"headers":[{"name":"Content-Type","value":"person@example.com"}]}}
+    ]}}
+    result=parse(json.dumps(har),"har")
+    endpoint=result["endpoints"][0]
+    assert endpoint["request_content_type"]=="application/json"
+    assert endpoint["response_content_type"]=="unspecified"
+    assert "private@example.com" not in json.dumps(result)
     assert "person@example.com" not in json.dumps(result)
