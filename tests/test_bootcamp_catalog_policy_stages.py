@@ -91,6 +91,14 @@ class CatalogPolicyTests(unittest.TestCase):
             self.assertFalse(rows[0]["license_record_verified"])
             self.assertNotEqual(rows[0]["content_sha256"],rows[1]["content_sha256"])
 
+    def test_empty_source_enumeration_fails_without_creating_ledger(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            ledger=Path(tmp)/"catalog.jsonl"
+            with self.assertRaises(ValueError):
+                catalog.sync_sources([{"source_id":"freecodecamp","url":"https://www.youtube.com/@freecodecamp"}],
+                                     ledger,ROOT/"contracts/license_policy.yaml",lambda _: [])
+            self.assertFalse(ledger.exists())
+
     def test_hash_is_stable(self):
         self.assertEqual(catalog.canonical_hash({"video_id":"abc","duration":30}),catalog.canonical_hash({"duration":30,"video_id":"abc"}))
 
