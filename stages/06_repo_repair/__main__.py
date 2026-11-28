@@ -6,6 +6,7 @@ import argparse
 import hashlib
 import json
 import os
+import re
 import subprocess
 import sys
 import tempfile
@@ -19,6 +20,17 @@ from tools.buddy_safe_repair import repair_plan, run_safe_repair
 from tools.ci_failure_report import sanitize
 
 MAX_ATTEMPTS = 3
+MAX_REPORT_BYTES = 5 * 1024 * 1024
+ALLOWED_COMMAND_PATHS = {
+    "tools/build_buddy_dataset_routes.py",
+    "tools/build_division_model_fleet.py",
+    "tools/build_pages_connection_index.py",
+    "tools/generate_bot_manifests.py",
+    "tools/refresh_repository_evidence.py",
+    "tools/generate_command_center_data.py",
+    "tools/build_actions_prospectus.py",
+    "tools/build_file_prospectus.py",
+}
 HARD_ALLOWED = (
     "artifacts/", "command-center/data/", "config/bots/",
     "config/generated/", "reports/", "website/data/",
@@ -33,7 +45,10 @@ FAMILIES = (
 
 
 def read_object(path: str | Path) -> dict:
-    value = json.loads(Path(path).read_text(encoding="utf-8"))
+    source = Path(path)
+    if source.stat().st_size > MAX_REPORT_BYTES:
+        raise ValueError("Input JSON exceeds the 5 MiB safety limit.")
+    value = json.loads(source.read_text(encoding="utf-8"))
     if not isinstance(value, dict):
         raise ValueError("Input JSON must be an object.")
     return value
@@ -44,7 +59,7 @@ def observation_from_report(report: dict, commit: str = "") -> dict:
     if not isinstance(tests, list) or len(tests) > 10000:
         raise ValueError("pytest-json-report must contain a bounded tests array.")
     failed = sorted({
-        str(item.get("nodeid", ""))[:500]
+        re.sub(r"\[[^\]]{1,200}\]", "[parameterized]", sanitize(str(item.get("nodeid", ""))))[:500]
         for item in tests
         if isinstance(item, dict) and item.get("outcome") in {"failed", "error"} and item.get("nodeid")
     })
@@ -159,11 +174,19 @@ def apply_isolated(root: Path, obs: dict, prefixes: tuple[str, ...], output: Pat
 def run(args: argparse.Namespace) -> dict:
     root = Path(args.repo_root).resolve()
     prefixes = allowed_prefixes(args.allowed_paths)
+    output_path = (root / args.output).resolve()
+    if root not in output_path.parents:
+        raise ValueError("Output path must remain inside the repository.")
     if bool(args.report) == bool(args.observation):
         raise ValueError("Provide exactly one of --report or --observation.")
     source = read_object(args.report or args.observation)
     obs = observation_from_report(source) if args.report else source
     commands = repair_plan(obs)
+    if any(
+        len(command) != 2 or command[0] != sys.executable or command[1] not in ALLOWED_COMMAND_PATHS
+        for command in commands
+    ):
+        raise ValueError("Repair plan contains a command outside the fixed command allowlist.")
     fingerprint_data = {
         "commit": str(obs.get("commit", ""))[:40],
         "workflow": str(obs.get("workflow", ""))[:160],
@@ -203,7 +226,7 @@ def run(args: argparse.Namespace) -> dict:
         result["status"] = "MAX_ATTEMPTS_REACHED"
     else:
         head = assert_trusted_main(root, args.allow_local_apply)
-        result.update(apply_isolated(root, obs, prefixes, root / args.output))
+        result.update(apply_isolated(root, obs, prefixes, output_path))
         result["source_commit"] = head
         result["attempts_used"] = len(history.get("attempts", [])) + 1
         history.setdefault("attempts", []).append({
@@ -215,11 +238,8 @@ def run(args: argparse.Namespace) -> dict:
         })
         history_dir.mkdir(parents=True, exist_ok=True)
         history_path.write_text(json.dumps(history, indent=2, sort_keys=True) + "\n", encoding="utf-8")
-    output = (root / args.output).resolve()
-    if root not in output.parents:
-        raise ValueError("Output path must remain inside the repository.")
-    output.parent.mkdir(parents=True, exist_ok=True)
-    output.write_text(json.dumps(result, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    output_path.write_text(json.dumps(result, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     return result
 
 
