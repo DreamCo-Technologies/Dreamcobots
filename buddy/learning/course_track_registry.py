@@ -48,6 +48,13 @@ class CourseLesson:
     buddy_demo: str = ""
     source_video_id: str = ""
     video_categories: tuple[str, ...] = ()
+    learner_visible: bool = True
+    review_status: str = "approved"
+    training_eligibility: str = "internal_sandbox_practice_only"
+    exercise_ids: tuple[str, ...] = ()
+    project_ids: tuple[str, ...] = ()
+    assessment_ids: tuple[str, ...] = ()
+    retraining_policy_id: str = ""
 
 
 def _read(path: Path) -> dict:
@@ -61,6 +68,10 @@ def _stable_id(track_id: str, lesson_id: str) -> int:
 
 def _rows(track: dict, data: dict, root: Path = ROOT, *, include_blueprint: bool = False) -> list[dict]:
     parser = track["parser"]
+    if parser == "dreamco_division_specialist":
+        from buddy.learning.division_curriculum_builder import build_division_curricula
+        catalog = build_division_curricula(root)
+        return [lesson for course in catalog["artifacts"] for lesson in course["lessons"]]
     if parser == "universal_library_curriculum":
         ecosystem_data = _read(root / "config/library_ecosystems.json")
         rows = []
@@ -175,7 +186,8 @@ def _rows(track: dict, data: dict, root: Path = ROOT, *, include_blueprint: bool
                         "and regression review. Candidate discovery alone is not mastery."
                     ),
                     "benchmark": "Library candidate provenance and study-guide evidence benchmark.",
-                    "source_url": "https://github.com/DreamCo-Technologies/Dreamcobots/blob/main/server/seed-buddy-bot.ts",
+                    "source_url": "",  # Internal DreamCo lesson; provenance stays in the seed catalog.
+                    "learner_visible": True,
                     "rights_mode": "metadata_discovery_only_no_download_no_execution",
                 })
         return rows
@@ -626,12 +638,12 @@ def load_course_lessons(root: Path = ROOT) -> list[CourseLesson]:
                 lesson_id=lesson_id,
                 track_id=track["id"],
                 title=title,
-                category=track["category"],
+                category=str(row.get("category") or track["category"]),
                 objective=str(row.get("objective", "")).strip(),
                 practice=str(row.get("practice", "")).strip(),
                 assessment=str(row.get("assessment", "")).strip(),
                 benchmark=str(row.get("benchmark", "independent task and regression suite")).strip(),
-                source_url=str(row.get("source_url") or track["source_url"]),
+                source_url=str(row.get("source_url") if "source_url" in row else track["source_url"]),
                 guide_path=str(row.get("guide_path") or track["guide"]),
                 rights_mode=str(row.get("rights_mode") or track["rights"]),
                 delivery=track["delivery"],
@@ -646,6 +658,13 @@ def load_course_lessons(root: Path = ROOT) -> list[CourseLesson]:
                 buddy_demo=str(row.get("buddy_demo", "")),
                 source_video_id=str(row.get("source_video_id", "")),
                 video_categories=tuple(str(value) for value in row.get("video_categories", [])),
+                learner_visible=bool(row.get("learner_visible", track.get("learner_visible", not bool(row.get("source_url") or track.get("source_url"))))),
+                review_status=str(row.get("review_status", "approved")),
+                training_eligibility=str(row.get("training_eligibility", "internal_sandbox_practice_only")),
+                exercise_ids=tuple(str(value) for value in row.get("exercise_ids", [])),
+                project_ids=tuple(str(value) for value in row.get("project_ids", [])),
+                assessment_ids=tuple(str(value) for value in row.get("assessment_ids", [])),
+                retraining_policy_id=str(row.get("retraining_policy_id", "")),
             ))
     return lessons
 
@@ -658,10 +677,13 @@ def resources_for_division(division: str, root: Path = ROOT) -> list[Resource]:
         raise ValueError(f"unknown canonical division: {division}")
     return [
         Resource(id=lesson.resource_id, name=lesson.title, category=lesson.category, url=lesson.source_url,
-                 methods=("study_original_dreamco_guide", "practice_in_sandbox", "complete_assessment",
-                          "run_independent_benchmark", "record_evidence"))
+                 methods=("review_original_dreamco_lesson", "practice_in_sandbox", "complete_exercises",
+                          "complete_project", "complete_assessment", "run_independent_benchmark",
+                          "record_evidence", "trigger_targeted_retraining"))
         for lesson in load_course_lessons(root)
         if lesson.content_status == "authored"
+        and lesson.learner_visible
+        and not lesson.source_url
         and (not lesson.division_targets or division in lesson.division_targets)
     ]
 
@@ -678,6 +700,8 @@ def resources_for_masterbot(masterbot: str, root: Path = ROOT) -> list[Resource]
                           "run_independent_benchmark", "record_evidence"))
         for lesson in load_course_lessons(root)
         if lesson.content_status == "authored"
+        and lesson.learner_visible
+        and not lesson.source_url
         and (not lesson.masterbot_targets or masterbot in lesson.masterbot_targets)
     ]
 
@@ -716,7 +740,13 @@ def plan_next_for_division(
         "implementation_steps": list(lesson.implementation_steps),
         "buddy_demo": lesson.buddy_demo,
         "source_video_id": lesson.source_video_id,
-        "completion_status": "queued_not_studied",
+        "review_status": lesson.review_status,
+        "training_eligibility": lesson.training_eligibility,
+        "exercise_ids": list(lesson.exercise_ids),
+        "project_ids": list(lesson.project_ids),
+        "assessment_ids": list(lesson.assessment_ids),
+        "retraining_policy_id": lesson.retraining_policy_id,
+        "completion_status": "queued_for_owner_review" if lesson.review_status != "approved" else "queued_not_studied",
         "mastery_awarded": False,
         "model_weight_training_authorized": False,
         "paid_compute_authorized": False,
