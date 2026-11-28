@@ -89,6 +89,44 @@ def validated_preferences(records: list[dict[str, Any]]) -> list[dict[str, str]]
     return result
 
 
+def study_guide_sft_rows(records: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Convert signed clean-room lessons into user/assistant teaching examples."""
+    rows = []
+    for row in records:
+        title = str(row.get("title") or "").strip()
+        if not title:
+            continue
+        objectives = row.get("learning_objectives", [])
+        if not isinstance(objectives, list):
+            objectives = [str(objectives)]
+        objectives_text = "\\n".join(
+            f"- {str(item).strip()}" for item in objectives if str(item).strip()
+        )
+        sections = [
+            ("Learning objectives", objectives_text),
+            ("Core concepts", str(row.get("core_concepts") or "").strip()),
+            ("Worked examples", str(row.get("worked_examples") or "").strip()),
+            ("Common pitfalls", str(row.get("common_pitfalls") or "").strip()),
+        ]
+        answer = "\\n\\n".join(
+            f"{heading}:\\n{content}" for heading, content in sections if content
+        )
+        if not answer:
+            continue
+        rows.append({"messages": [
+            {
+                "role": "system",
+                "content": "You are Buddy, a careful technical instructor. Teach only from the supplied clean-room lesson and do not invent unsupported facts.",
+            },
+            {
+                "role": "user",
+                "content": f"Teach me {title}. Explain the objectives, core concepts, worked examples, and common pitfalls.",
+            },
+            {"role": "assistant", "content": answer},
+        ]})
+    return rows
+
+
 def sft_rows(records: list[dict[str, Any]]) -> list[dict[str, Any]]:
     rows = []
     for row in records:
@@ -371,8 +409,9 @@ def execute_stage(stage: str, recipe: dict[str, Any], manifest: dict[str, Any],
             data_collator=lambda batch: _collate(batch, tokenizer),
         )
     elif stage == "sft":
-        records = list(iter_authorized_records(manifest, categories={"verified_trajectories"}, splits={"train"}))
-        rows = sft_rows(records)
+        guide_records = list(iter_authorized_records(manifest, categories={"study_guides"}, splits={"train"}))
+        trajectory_records = list(iter_authorized_records(manifest, categories={"verified_trajectories"}, splits={"train"}))
+        rows = study_guide_sft_rows(guide_records) + sft_rows(trajectory_records)
         dataset = _sft_dataset(rows, tokenizer, int(recipe.get("sft", {}).get("max_seq_length", 2048)))
         cfg = recipe.get("sft", {})
         trainer = Trainer(
@@ -479,7 +518,7 @@ def main():
         raise ValueError("recipe has no enabled training stages")
     categories = {
         "pretrain": {"study_guides", "verified_trajectories", "general_replay"},
-        "sft": {"verified_trajectories"},
+        "sft": {"study_guides", "verified_trajectories"},
         "dpo": {"verified_preferences"},
     }
     counts = {
