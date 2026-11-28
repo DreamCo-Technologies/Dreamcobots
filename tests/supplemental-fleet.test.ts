@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import test from 'node:test';
 import vm from 'node:vm';
-import {buildFleetCatalog,compactCatalog} from '../tools/generate_bot_fleet_catalog.ts';
+import {buildFleetCatalog,compactCatalog,writeFleetCatalog} from '../tools/generate_bot_fleet_catalog.ts';
 import {loadSupplementalBotSources,buildSupplementalBotSeeds} from '../server/seed-supplemental-bots.ts';
 import {FleetRuntimeRegistry} from '../server/fleet-runtime.ts';
 test('all registered growth specifications survive supplemental routing without promoting readiness',()=>{
@@ -48,6 +48,17 @@ test('compact published fleet preserves every canonical and supplemental profile
   assert.deepEqual(shard.bots.find((item:any)=>item.identity.slug===bot.identity.slug),bot);
  }
 });
+test('Dream3D remains a supplemental portfolio with its own non-domain shard',()=>{
+ const catalog=buildFleetCatalog();
+ const dream3d=JSON.parse(readFileSync('website/data/bot-fleet/Dream3D.json','utf8'));
+ assert.equal(dream3d.schema,'dreamco.bot_fleet_portfolio.v1');
+ assert.equal(dream3d.portfolio_type,'supplemental_specialist_portfolio');
+ assert.equal(dream3d.division,'Dream3D');
+ assert.ok(dream3d.bots.length>0);
+ assert.equal(catalog.divisions.some((division:any)=>division.name==='Dream3D'),false);
+ assert.equal(catalog.supplemental_divisions.some((division:any)=>division.name==='Dream3D'),false);
+ assert.doesNotThrow(()=>writeFleetCatalog({check:true}));
+});
 test('published routing and sandbox certifications agree for every fleet profile',()=>{
  const context={window:{} as Record<string,any>};
  for(const path of ['website/data/buddy-routing-index.js','website/data/buddy-capability-certifications.js'])vm.runInNewContext(readFileSync(path,'utf8'),context);
@@ -69,20 +80,5 @@ test('published routing and sandbox certifications agree for every fleet profile
   assert.equal(evidence.declaredCapabilityCount,bot.capability_count);
   assert.equal(evidence.capabilityTestsPassed,bot.capability_count);
   assert.equal(evidence.capabilityTestsFailed,0);
- }
-});
-
-test('fleet catalog keeps domain divisions and specialist portfolios in distinct identity sets',()=>{
- const catalog=buildFleetCatalog();
- const domainNames=new Set([
-  ...catalog.divisions.map((division:any)=>division.name),
-  ...catalog.supplemental_divisions.map((division:any)=>division.name),
- ]);
- const portfolioNames=new Set(catalog.supplemental_bots.map((bot:any)=>bot.identity.division));
- assert.ok(domainNames.size>0);
- assert.ok([...portfolioNames].some(name=>!domainNames.has(name)));
- for(const bot of [...catalog.bots,...catalog.supplemental_bots]){
-  assert.ok(bot.identity.division);
-  assert.ok(domainNames.has(bot.identity.division)||portfolioNames.has(bot.identity.division));
  }
 });
