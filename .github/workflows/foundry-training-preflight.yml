@@ -58,6 +58,7 @@ jobs:
       TRAINING_APPROVAL: ${{ secrets.DREAMCO_TRAINING_APPROVAL_REFERENCE }}
       POLICY_PRIVATE_KEY_PATH: ${{ vars.DREAMCO_FOUNDRY_POLICY_PRIVATE_KEY_PATH }}
       BASE_MODEL_REVISION: ${{ inputs.base_model_revision }}
+      RECIPE: ${{ inputs.recipe }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -73,6 +74,8 @@ jobs:
           test -f "$FOUNDRY_DATA_DIR/policy-public.pem"
           test -n "$POLICY_PRIVATE_KEY_PATH"
           test -f "$POLICY_PRIVATE_KEY_PATH"
+          KEY_MODE="$(stat -c '%a' "$POLICY_PRIVATE_KEY_PATH")"
+          case "$KEY_MODE" in 400|600) ;; *) echo "Policy signing key must have mode 0400 or 0600"; exit 1 ;; esac
           test -n "$TRAINING_APPROVAL"
           python -c "import torch; assert torch.cuda.is_available(), 'CUDA GPU is required'"
       - name: Install foundry runtime without replacing the runner CUDA PyTorch
@@ -80,21 +83,15 @@ jobs:
         run: |
           grep -v '^torch' stages/05_model_foundry/requirements-foundry.txt > /tmp/foundry-requirements.txt
           python -m pip install --disable-pip-version-check -r /tmp/foundry-requirements.txt
-      - name: Run tokenizer, packing and authorized weight training
+      - name: Prepare recipe and validate signed cache policy
+        id: cache-policy
         shell: bash
-        env:
-          RECIPE: ${{ inputs.recipe }}
         run: |
           set -euo pipefail
-          DATA="$FOUNDRY_DATA_DIR"
           RECIPE_FILE="stages/05_model_foundry/recipes/$RECIPE.yaml"
           ARTIFACT_DIR="$(python -c 'import yaml,sys; print(yaml.safe_load(open(sys.argv[1]))["artifact_dir"])' "$RECIPE_FILE")"
-          mkdir -p "$ARTIFACT_DIR"
-          if [ "$RECIPE" = "scratch_45m_division" ]; then
-            python -m stages.05_model_foundry.train_tokenizer --mode scratch --vocab-size 16384 \
-              --manifest "$DATA/manifest.json" --signature "$DATA/manifest.sig" \
-              --public-key "$DATA/policy-public.pem" --output "$ARTIFACT_DIR/tokenizer"
-          else
+          echo "artifact_dir=$ARTIFACT_DIR" >> "$GITHUB_OUTPUT"
+          if [ "$RECIPE" != "scratch_45m_division" ]; then
             test -n "$BASE_MODEL_REVISION"
             [[ "$BASE_MODEL_REVISION" =~ ^[0-9a-f]{40}$ ]]
             python - "$RECIPE_FILE" "$BASE_MODEL_REVISION" <<'PY'
@@ -105,20 +102,80 @@ jobs:
           yaml.safe_dump(recipe, open("/tmp/foundry-openweight-recipe.yaml", "w", encoding="utf-8"), sort_keys=False)
           PY
             RECIPE_FILE="/tmp/foundry-openweight-recipe.yaml"
-            python -m stages.05_model_foundry.train_tokenizer --mode extend --vocab-size 16384 \
-              --base-model "Qwen/Qwen2.5-Coder-1.5B" --base-revision "$BASE_MODEL_REVISION" \
-              --manifest "$DATA/manifest.json" --signature "$DATA/manifest.sig" \
-              --public-key "$DATA/policy-public.pem" --output "$ARTIFACT_DIR/tokenizer"
           fi
-          python -m stages.05_model_foundry.pack_tokens --sequence-length 1024 \
-            --manifest "$DATA/manifest.json" --signature "$DATA/manifest.sig" \
-            --public-key "$DATA/policy-public.pem" --tokenizer "$ARTIFACT_DIR/tokenizer" \
-            --output "$ARTIFACT_DIR/token_shards"
+          python -m stages.05_model_foundry.cache_policy \
+            --manifest "$FOUNDRY_DATA_DIR/manifest.json" --signature "$FOUNDRY_DATA_DIR/manifest.sig" \
+            --public-key "$FOUNDRY_DATA_DIR/policy-public.pem" --recipe "$RECIPE_FILE" \
+            --output "$ARTIFACT_DIR/cache-policy.json"
+      - name: Restore SHA-256-addressed public-only tokenizer and shard cache
+        if: steps.cache-policy.outputs.cache_allowed == 'true'
+        uses: actions/cache@v4
+        with:
+          path: |
+            ${{ steps.cache-policy.outputs.artifact_dir }}/tokenizer
+            ${{ steps.cache-policy.outputs.artifact_dir }}/token_shards
+          key: dreamco-foundry-${{ steps.cache-policy.outputs.cache_key }}
+      - name: Run tokenizer, packing and authorized weight training
+        shell: bash
+        env:
+          RECIPE: ${{ inputs.recipe }}
+        run: |
+          set -euo pipefail
+          DATA="$FOUNDRY_DATA_DIR"
+          RECIPE_FILE="stages/05_model_foundry/recipes/$RECIPE.yaml"
+          ARTIFACT_DIR="$(python -c 'import yaml,sys; print(yaml.safe_load(open(sys.argv[1]))["artifact_dir"])' "$RECIPE_FILE")"
+          mkdir -p "$ARTIFACT_DIR"
+          if [ "$RECIPE" != "scratch_45m_division" ]; then
+            test -n "$BASE_MODEL_REVISION"
+            [[ "$BASE_MODEL_REVISION" =~ ^[0-9a-f]{40}$ ]]
+            python - "$RECIPE_FILE" "$BASE_MODEL_REVISION" <<'PY'
+          import sys, yaml
+          recipe_path, revision = sys.argv[1:]
+          recipe = yaml.safe_load(open(recipe_path, encoding="utf-8"))
+          recipe["base_model"]["revision"] = revision
+          yaml.safe_dump(recipe, open("/tmp/foundry-openweight-recipe.yaml", "w", encoding="utf-8"), sort_keys=False)
+          PY
+            RECIPE_FILE="/tmp/foundry-openweight-recipe.yaml"
+          fi
+          if [ "$RECIPE" = "scratch_45m_division" ]; then
+            TOKENIZER_MODE="scratch"
+            TOKENIZER_ARGS=()
+          else
+            TOKENIZER_MODE="extend"
+            TOKENIZER_ARGS=(--base-model "Qwen/Qwen2.5-Coder-1.5B" --base-revision "$BASE_MODEL_REVISION")
+          fi
+          if [ ! -f "$ARTIFACT_DIR/tokenizer/foundry-tokenizer-manifest.json" ]; then
+            python -m stages.05_model_foundry.train_tokenizer --mode "$TOKENIZER_MODE" --vocab-size 16384 \
+              --manifest "$DATA/manifest.json" --signature "$DATA/manifest.sig" \
+              --public-key "$DATA/policy-public.pem" --output "$ARTIFACT_DIR/tokenizer" "${TOKENIZER_ARGS[@]}"
+          fi
+          if [ ! -f "$ARTIFACT_DIR/token_shards/manifest.json" ]; then
+            python -m stages.05_model_foundry.pack_tokens --sequence-length 1024 \
+              --manifest "$DATA/manifest.json" --signature "$DATA/manifest.sig" \
+              --public-key "$DATA/policy-public.pem" --tokenizer "$ARTIFACT_DIR/tokenizer" \
+              --output "$ARTIFACT_DIR/token_shards"
+          fi
+          python -m stages.01_policy_gate.sign_token_shards \
+            --shard-manifest "$ARTIFACT_DIR/token_shards/manifest.json" \
+            --source-manifest "$DATA/manifest.json" --source-signature "$DATA/manifest.sig" \
+            --public-key "$DATA/policy-public.pem" --private-key "$POLICY_PRIVATE_KEY_PATH" \
+            --signature-output "$ARTIFACT_DIR/token_shards/manifest.sig"
           python -m stages.05_model_foundry.train_weights --stage all --execute \
             --authorize-weight-updates --authorization-reference "$TRAINING_APPROVAL" \
             --manifest "$DATA/manifest.json" --signature "$DATA/manifest.sig" \
             --public-key "$DATA/policy-public.pem" --recipe "$RECIPE_FILE" \
-            --tokenizer "$ARTIFACT_DIR/tokenizer" --token-shards "$ARTIFACT_DIR/token_shards"
+            --tokenizer "$ARTIFACT_DIR/tokenizer" --token-shards "$ARTIFACT_DIR/token_shards" \
+            --shard-manifest "$ARTIFACT_DIR/token_shards/manifest.json" \
+            --shard-signature "$ARTIFACT_DIR/token_shards/manifest.sig"
+          EVAL_ARGS=()
+          if [ "$RECIPE" != "scratch_45m_division" ]; then
+            EVAL_ARGS=(--base-model "Qwen/Qwen2.5-Coder-1.5B" --base-revision "$BASE_MODEL_REVISION")
+          fi
+          python -m stages.05_model_foundry.run_holdout_eval \
+            --manifest "$DATA/manifest.json" --signature "$DATA/manifest.sig" \
+            --public-key "$DATA/policy-public.pem" --checkpoint "$ARTIFACT_DIR/checkpoints/dpo" \
+            --tokenizer "$ARTIFACT_DIR/tokenizer" --output "$ARTIFACT_DIR/evaluation/holdout.json" \
+            "${EVAL_ARGS[@]}"
       - name: Upload foundry checkpoint and run manifests
         uses: actions/upload-artifact@v4
         with:
