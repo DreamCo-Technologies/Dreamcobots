@@ -10,20 +10,24 @@ import json
 import re
 from pathlib import Path
 try:
-    from .guardrails import iter_authorized_records, verify_signed_manifest
+    from .guardrails import canonical_json, iter_authorized_records, verify_signed_manifest
 except ImportError:
-    from guardrails import iter_authorized_records, verify_signed_manifest
+    from guardrails import canonical_json, iter_authorized_records, verify_signed_manifest
 
 METRICS = ("pass_rate", "safety_gate_pass_rate")
 
-def validate_report(report: dict, expected_ids: list[str], manifest_sha256: str, label: str) -> None:
+def validate_report(report: dict, expected_ids: list[str], manifest_sha256: str,
+                    benchmark_sha256: str, label: str) -> None:
     if report.get("evaluation_split") != "holdout":
         raise ValueError(f"{label}: evaluation_split must be holdout")
     if report.get("source_manifest_sha256") != manifest_sha256:
         raise ValueError(f"{label}: report must reference the exact signed dataset manifest")
     suite_sha = report.get("benchmark_suite_sha256")
-    if not isinstance(suite_sha, str) or not re.fullmatch(r"[0-9a-f]{64}", suite_sha):
-        raise ValueError(f"{label}: benchmark_suite_sha256 is required")
+    if suite_sha != benchmark_sha256:
+        raise ValueError(f"{label}: report does not match the signed holdout benchmark suite")
+    config_sha = report.get("evaluation_config_sha256")
+    if not isinstance(config_sha, str) or not re.fullmatch(r"[0-9a-f]{64}", config_sha):
+        raise ValueError(f"{label}: evaluation_config_sha256 is required")
     checkpoint_sha = report.get("checkpoint_sha256")
     if not isinstance(checkpoint_sha, str) or not re.fullmatch(r"[0-9a-f]{64}", checkpoint_sha):
         raise ValueError(f"{label}: checkpoint_sha256 is required")
@@ -46,29 +50,44 @@ def main():
     args = parser.parse_args()
 
     manifest = verify_signed_manifest(args.manifest, args.signature, args.public_key)
-    rows = list(iter_authorized_records(manifest, splits={"holdout"}))
+    rows = list(iter_authorized_records(
+        manifest, categories={"holdout_benchmarks"}, splits={"holdout"}
+    ))
     if not rows:
         raise ValueError("no isolated holdout records found")
     holdout_ids = sorted(str(row.get("task_id") or row.get("id")) for row in rows)
     if len(holdout_ids) != len(set(holdout_ids)):
         raise ValueError("holdout task IDs must be unique")
     manifest_sha = hashlib.sha256(args.manifest.read_bytes()).hexdigest()
+    suite = [{
+        "task_id": row.get("task_id") or row.get("id"),
+        "prompt": row["prompt"],
+        "expected_answer": row["expected_answer"],
+        "expected_safety": row["expected_safety"],
+    } for row in rows]
+    benchmark_sha = hashlib.sha256(canonical_json(suite)).hexdigest()
     baseline = json.loads(args.baseline.read_text(encoding="utf-8"))
     candidate = json.loads(args.candidate.read_text(encoding="utf-8"))
-    validate_report(baseline, holdout_ids, manifest_sha, "baseline")
-    validate_report(candidate, holdout_ids, manifest_sha, "candidate")
-    if baseline["benchmark_suite_sha256"] != candidate["benchmark_suite_sha256"]:
-        raise ValueError("baseline and candidate must use the same benchmark suite")
+    validate_report(baseline, holdout_ids, manifest_sha, benchmark_sha, "baseline")
+    validate_report(candidate, holdout_ids, manifest_sha, benchmark_sha, "candidate")
+    if baseline["evaluation_config_sha256"] != candidate["evaluation_config_sha256"]:
+        raise ValueError("baseline and candidate must use identical generation and scoring settings")
     regressions = {
         metric: {"baseline": baseline[metric], "candidate": candidate[metric]}
         for metric in METRICS if candidate[metric] < baseline[metric]
     }
+    if candidate.get("promotion_eligible") is not True:
+        regressions["minimum_promotion_thresholds"] = {
+            "baseline": baseline.get("promotion_eligible"),
+            "candidate": candidate.get("promotion_eligible"),
+        }
     report = {
         "schema": "dreamco.foundry.holdout_evaluation.v1",
         "holdout_records": len(rows),
         "evaluated_task_ids_sha256": hashlib.sha256("\n".join(holdout_ids).encode()).hexdigest(),
         "source_manifest_sha256": manifest_sha,
-        "benchmark_suite_sha256": candidate["benchmark_suite_sha256"],
+        "benchmark_suite_sha256": benchmark_sha,
+        "evaluation_config_sha256": candidate["evaluation_config_sha256"],
         "evaluation_split": "holdout",
         "holdout_access": "evaluation_only",
         "training_access": False,
