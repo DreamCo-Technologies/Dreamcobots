@@ -13,12 +13,16 @@ from pathlib import Path
 from .training_gate import evaluate_training
 
 
-def _authorized_training_input(data_path: str, authorization_path: str) -> tuple[bytes, dict]:
+def _authorized_training_input(
+    data_path: str, holdout_data_path: str, authorization_path: str
+) -> tuple[bytes, dict]:
     data_file = Path(data_path)
+    holdout_file = Path(holdout_data_path)
     auth_file = Path(authorization_path)
-    if not data_file.is_file() or not auth_file.is_file():
-        raise PermissionError("training data and authorization manifest must both exist")
+    if not data_file.is_file() or not holdout_file.is_file() or not auth_file.is_file():
+        raise PermissionError("train data, independent holdout data, and authorization manifest must all exist")
     raw = data_file.read_bytes()
+    holdout_raw = holdout_file.read_bytes()
     spec = json.loads(auth_file.read_text(encoding="utf-8"))
     gate = evaluate_training(spec)
     if not gate["ready_for_review"]:
@@ -32,7 +36,10 @@ def _authorized_training_input(data_path: str, authorization_path: str) -> tuple
     digest = hashlib.sha256(raw).hexdigest()
     if spec.get("train_split_sha256") != digest:
         raise PermissionError("training split SHA-256 does not match the supplied file")
-    if spec.get("holdout_split_sha256") == digest:
+    holdout_digest = hashlib.sha256(holdout_raw).hexdigest()
+    if spec.get("holdout_split_sha256") != holdout_digest:
+        raise PermissionError("holdout split SHA-256 does not match the supplied holdout file")
+    if spec.get("holdout_split_sha256") == digest or holdout_digest == digest:
         raise PermissionError("training and holdout splits must be independent")
     if len(str(spec.get("dataset_sha256", ""))) != 64:
         raise PermissionError("dataset SHA-256 must be a 64-character digest")
@@ -44,6 +51,7 @@ def train(
     output_dir: str,
     steps: int = 100,
     *,
+    holdout_data_path: str,
     authorization_path: str,
     context: int = 128,
     seed: int = 42,
@@ -52,7 +60,7 @@ def train(
         raise ValueError("unsafe training configuration")
     # All rights, owner, holdout, explicit-run, and zero-cost checks happen
     # before importing the training framework or allocating compute.
-    raw, authorization = _authorized_training_input(data_path, authorization_path)
+    raw, authorization = _authorized_training_input(data_path, holdout_data_path, authorization_path)
     import torch
     from torch import nn
 
@@ -146,6 +154,7 @@ def train(
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--licensed-data", required=True)
+    parser.add_argument("--holdout-data", required=True)
     parser.add_argument("--authorization", required=True)
     parser.add_argument("--output-dir", required=True)
     parser.add_argument("--steps", type=int, default=100)
@@ -155,6 +164,7 @@ def main():
         args.licensed_data,
         args.output_dir,
         args.steps,
+        holdout_data_path=args.holdout_data,
         authorization_path=args.authorization,
         context=args.context,
     ), indent=2))
