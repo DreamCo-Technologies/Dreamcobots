@@ -306,6 +306,8 @@ class RuntimeBridgeTests(unittest.TestCase):
                 queue = self.bridge.bootcamp_learning_queue(division=division, limit=10)
                 self.assertEqual(queue["available_count"], 6)
                 self.assertEqual(queue["track_ids"], ["dreamco-division-specialist"])
+                self.assertEqual(queue["study_ready_count"], 0)
+                self.assertEqual(queue["authoring_backlog_count"], 6)
                 self.assertTrue(all(division in item["division_targets"] for item in queue["items"]))
                 self.assertTrue(all(item["source_url"] == "" for item in queue["items"]))
                 self.assertTrue(all(item["exercise_ids"] and item["project_ids"] and item["assessment_ids"] for item in queue["items"]))
