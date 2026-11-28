@@ -1,6 +1,6 @@
 # Markdown requirements audit
 
-This checklist inventory covers **1622 tracked Markdown files** found on `main` at source tree `8896319d73cdc138a4643c68a27bed16ae8bedf6` (2026-11-09). It includes every Markdown path in the repository tree, not just the `docs/` folder.
+This checklist inventory covers **1,816 tracked Markdown files** on `main` at source tree `9ca81cfa196098388ccf68d258ba7c0afd09cf30` (2026-11-28): 1,816 `.md` files and 0 `.mdx` files. The validator includes both extensions so future `.mdx` files are covered. This is a path inventory, not a claim that every file has been semantically reviewed.
 
 ## Per-file checklist
 
