@@ -7,7 +7,10 @@ import json
 import os
 from pathlib import Path
 
-from .guardrails import verify_signed_manifest
+try:
+    from .guardrails import verify_signed_manifest
+except ImportError:
+    from guardrails import verify_signed_manifest
 
 
 def public_cache_allowed(manifest: dict) -> bool:
