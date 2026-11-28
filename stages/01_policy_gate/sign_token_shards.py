@@ -14,7 +14,7 @@ def main():
     a=p.parse_args()
     g.verify_signed_manifest(a.source_manifest,a.source_signature,a.public_key)
     data=json.loads(a.shard_manifest.read_text(encoding="utf-8"))
-    g.validate_shard_payload(data, a.shard_manifest.parent, a.source_manifest)
+    g.validate_shard_payload(data, a.shard_manifest.parent, a.source_manifest, attach_paths=False)
     try:
         from cryptography.hazmat.primitives.serialization import load_pem_private_key
         from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
