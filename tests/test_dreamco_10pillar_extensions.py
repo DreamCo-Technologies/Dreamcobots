@@ -31,6 +31,19 @@ class CurriculumSchedulerTests(unittest.TestCase):
         self.assertEqual(result["difficulty"], 0.9)
         self.assertEqual(result["spaced_interval_days"], 1)
 
+    def test_scheduler_reuses_persisted_difficulty_and_spacing(self):
+        first = update_curriculum_state(
+            {}, scope_type="domain_division", scope_id="dreamcodelab",
+            pass_rate=0.96, difficulty=2.0, interval_days=3,
+        )
+        second = update_curriculum_state(
+            first, scope_type="domain_division", scope_id="dreamcodelab",
+            pass_rate=0.80,
+        )
+        self.assertEqual(second["difficulty"], 2.2)
+        self.assertEqual(second["spaced_interval_days"], 6)
+        self.assertIn("domain_division:dreamcodelab", second["scopes"])
+
     def test_holdout_data_cannot_change_curriculum(self):
         with self.assertRaisesRegex(ValueError, "holdout"):
             update_curriculum_state(
