@@ -120,6 +120,7 @@ def _atomic_write_text(path: Path, content: str) -> None:
         try:
             os.unlink(temporary)
         except OSError:
+            # Cleanup is best-effort; preserve the original write/replace exception.
             pass
         raise
 
