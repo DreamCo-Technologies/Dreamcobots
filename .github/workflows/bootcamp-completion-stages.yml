@@ -1,6 +1,12 @@
 name: Bootcamp Completion Stages
 # Validates exact-name links to the existing division curriculum manifest.
 on:
+  push:
+    branches: ["**"]
+    paths:
+      - "stages/05_model_foundry/**"
+      - "tests/test_foundry_training_pipeline.py"
+      - ".github/workflows/bootcamp-completion-stages.yml"
   pull_request:
     paths:
       - "stages/02_clean_room_synth/**"
