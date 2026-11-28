@@ -3,9 +3,9 @@ from __future__ import annotations
 import argparse, hashlib, json, re
 from pathlib import Path
 try:
-    from .guardrails import iter_authorized_records, verify_signed_manifest
+    from .guardrails import iter_authorized_records, require_model_authorization, verify_signed_manifest
 except ImportError:
-    from guardrails import iter_authorized_records, verify_signed_manifest
+    from guardrails import iter_authorized_records, require_model_authorization, verify_signed_manifest
 
 SPECIAL_TOKENS = ["<|pad|>", "<|bos|>", "<|eos|>", "<|unk|>", "<|system|>", "<|user|>",
                   "<|assistant|>", "<|tool_call|>", "<|division_id|>", "<|sandbox_stdout|>",
@@ -58,6 +58,7 @@ def main():
     else:
         if not args.base_model or not isinstance(args.base_revision, str) or not re.fullmatch(r"[0-9a-f]{40}", args.base_revision):
             raise PermissionError("tokenizer extension requires a base model and exact reviewed 40-character commit SHA")
+        require_model_authorization(manifest, args.base_model, args.base_revision)
         from transformers import AutoTokenizer
         hf_tokenizer = AutoTokenizer.from_pretrained(
             args.base_model, revision=args.base_revision, trust_remote_code=False, use_fast=True,
