@@ -21,7 +21,7 @@ The manifest is JSON with schema `dreamco.foundry.authorization.v1`. It lives at
 
 Open-weight base models require a signed `models` entry with exact `model_id` and 40-character `revision`, an allowed commercial-use tier, `commercial_use: true`, `license_evidence_id`, and item-level `source_evidence`. The policy signer validates the evidence before signing the whole manifest.
 
-The detached signature is base64 Ed25519 over canonical JSON (UTF-8, sorted keys, compact separators). The trusted public key must be provisioned out-of-band; never commit a private signing key. A platform license label, scraped metadata, or row-level boolean is not authorization. Missing rights evidence, signatures, or file hashes fail closed.
+The detached signature is base64 Ed25519 over canonical JSON (UTF-8, sorted keys, compact separators). Copy the trusted public key to `data/foundry/policy-public.pem` for the self-hosted workflow. The trusted public key must be provisioned out-of-band; never commit a private signing key. A platform license label, scraped metadata, or row-level boolean is not authorization. Missing rights evidence, signatures, or file hashes fail closed.
 
 ## Sign the source manifest
 
@@ -98,7 +98,7 @@ python -m stages.05_model_foundry.train_weights --stage all \
   --token-shards artifacts/foundry/token_shards
 ```
 
-Only after reviewing the source rights, model authorization, recipe, hardware budget and preflight output should an operator add `--execute --authorize-weight-updates --authorization-reference POLICY-APPROVAL-ID`. The training script masks SFT loss to assistant and tool-call tokens. DPO pairs are accepted only when the chosen response has `LAB_PASSED` plus `TEACH_BACK_VERIFIED` and the rejected response has `LAB_FAILED`.
+Only after reviewing the source rights, model authorization, recipe, hardware budget and preflight output should an operator add `--execute --authorize-weight-updates --authorization-reference POLICY-APPROVAL-ID`. The training script masks SFT loss to assistant and tool-call tokens. DPO pairs are accepted only when the chosen response has `LAB_PASSED` plus `TEACH_BACK_VERIFIED` and the rejected response has `LAB_FAILED`. The self-play pair builder excludes all validation and holdout task IDs; its output still requires a new signed `verified_preferences` manifest entry before training.
 
 ## Holdout inference and promotion
 
@@ -143,5 +143,5 @@ The merge utility verifies signed model authorization, the exact source-manifest
 - Bucket formula: `int(sha256(task_id)[:8], 16) % 100`.
 - Train: 00–89; validation: 90–94; holdout: 95–99.
 - Tokenizer and all weight updates read only train. Validation is evaluation-only. Holdout is read only by the local inference runner and promotion gate.
-- Pull-request CI runs CPU compile and guardrail tests only. GPU training is manual and requires a self-hosted GPU runner, a protected local policy-signing key path, signed data and an explicit approval reference. Baseline comparison is performed only when a local baseline checkpoint is configured; otherwise promotion remains blocked.
+- Pull-request CI runs CPU compile and guardrail tests only. The manual workflow expects repository variables `DREAMCO_GPU_RUNNER_ENABLED=true`, `DREAMCO_FOUNDRY_DATA_DIR`, and `DREAMCO_FOUNDRY_POLICY_PRIVATE_KEY_PATH`, plus the `DREAMCO_TRAINING_APPROVAL_REFERENCE` secret. An optional `DREAMCO_FOUNDRY_BASELINE_CHECKPOINT_PATH` enables baseline comparison. GPU training is manual and requires a self-hosted GPU runner, a protected local policy-signing key path, signed data and an explicit approval reference. Baseline comparison is performed only when a local baseline checkpoint is configured; otherwise promotion remains blocked.
 - GitHub-hosted GPU compute, paid APIs and model-provider API keys are not required. No model weights have been trained merely by merging these code changes.
