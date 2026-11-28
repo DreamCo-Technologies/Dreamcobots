@@ -279,12 +279,24 @@ class BuddyLearningBridge:
             "buddy_demo": lesson.buddy_demo,
             "rights_mode": lesson.rights_mode,
             "content_status": lesson.content_status,
+            "review_status": lesson.review_status,
+            "training_eligibility": lesson.training_eligibility,
+            "exercise_ids": list(lesson.exercise_ids),
+            "project_ids": list(lesson.project_ids),
+            "assessment_ids": list(lesson.assessment_ids),
+            "retraining_policy_id": lesson.retraining_policy_id,
             "completion_status": (
-                "queued_not_studied" if lesson.content_status == "authored"
-                else "metadata_only" if lesson.content_status == "metadata_only"
+                "queued_for_owner_review" if lesson.review_status != "approved"
+                else "queued_not_studied" if lesson.content_status == "authored"
                 else "authoring_backlog"
             ),
-            "study_allowed": lesson.content_status == "authored",
+            "study_allowed": (
+                lesson.content_status == "authored"
+                and lesson.review_status == "approved"
+                and lesson.training_eligibility in {"internal_sandbox_practice_only", "approved_for_training"}
+                and lesson.learner_visible
+                and not lesson.source_url
+            ),
             "authoring_required": lesson.content_status in {"authoring_backlog", "metadata_only", "original_implementation_brief"},
             "mastery_awarded": False,
             "model_weight_training_authorized": False,
@@ -297,6 +309,8 @@ class BuddyLearningBridge:
             "available_count": len(lessons),
             "returned_count": len(items),
             "items": items,
+            "track_ids": sorted({lesson.track_id for lesson in lessons}),
+            "external_discovery_performed": False,
             "external_model_call_performed": False,
         }
 
@@ -319,7 +333,13 @@ class BuddyLearningBridge:
             resources_for_masterbot(str(masterbot))
             owner = {"masterbot": masterbot}
 
-        catalog_lessons = load_course_lessons()
+        catalog_lessons = [
+            lesson for lesson in load_course_lessons()
+            if lesson.track_id == "dreamco-division-specialist"
+            and lesson.learner_visible
+            and not lesson.source_url
+            and lesson.content_status == "authored"
+        ]
         if division:
             shared_categories, domain_profiles = _freecodecamp_division_category_profiles()
             domain_categories = domain_profiles.get(division.casefold())
