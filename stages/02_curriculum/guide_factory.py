@@ -102,8 +102,9 @@ def build_guide(
         raise ValueError("unsupported or missing source catalog record schema")
     if not source_record.get("source_id") or not source_record.get("video_id"):
         raise ValueError("catalog record must include source_id and video_id")
-    if not HEX_64.fullmatch(str(source_record.get("content_sha256", "")).lower()):
-        raise ValueError("catalog record must include a valid SHA-256 content hash")
+    metadata_fingerprint = str(source_record.get("metadata_sha256") or source_record.get("content_sha256") or "").lower()
+    if not HEX_64.fullmatch(metadata_fingerprint):
+        raise ValueError("catalog record must include a valid metadata SHA-256 fingerprint")
     if source_record.get("license_record_verified") is not True:
         raise PermissionError("BLOCKED_MISSING_ITEM_LICENSE_EVIDENCE")
     if not isinstance(similarity_references, list) or not similarity_references:
@@ -134,14 +135,14 @@ def build_guide(
     scores = [ngram_containment(candidate_text, ref, n=8) for ref in similarity_references]
     max_score = max(scores, default=1.0)
     originality_passed = max_score < similarity_threshold
-    source_fingerprint = str(source_record["content_sha256"]).lower()
+    metadata_fingerprint = str(source_record.get("metadata_sha256") or source_record.get("content_sha256")).lower()
     provenance = {
         "schema": "dreamco.guide_provenance.v1",
         "source_id": source_record["source_id"],
         "video_id": source_record["video_id"],
         "source_url": source_record.get("source_url"),
         "source_record_sha256": _canonical_digest(source_record),
-        "source_content_sha256": source_fingerprint,
+        "catalog_metadata_sha256": metadata_fingerprint,
         "policy_decision": decision,
         "source_use": "fact_extraction_only",
         "transcript_downloaded": False,
