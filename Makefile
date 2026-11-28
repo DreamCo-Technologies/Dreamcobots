@@ -1,6 +1,6 @@
 PYTHON ?= python3
-.PHONY: test-all test-contracts test-stages test-ci-tools test-repair-stage compile build-sandbox test-sandbox-integration test-report
-test-all: test-contracts test-stages test-ci-tools test-repair-stage compile
+.PHONY: test-all test-contracts test-stages test-ci-tools test-repair-stage test-watchtower compile build-sandbox test-sandbox-integration test-report
+test-all: test-contracts test-stages test-ci-tools test-repair-stage test-watchtower compile
 test-contracts:
 	$(PYTHON) -m pytest -q tests/test_pipeline_contracts.py
 test-stages:
@@ -9,6 +9,8 @@ test-ci-tools:
 	$(PYTHON) -m pytest -q tests/test_repair_pr_guard.py tests/test_ci_failure_report.py tests/test_repair_hardening_regressions.py tests/test_buddy_safe_repair.py tests/test_generated_artifact_pr_guard.py tests/test_buddy_fleet_workflow_safety.py
 test-repair-stage:
 	$(PYTHON) -m pytest -q tests/test_repo_repair_stage.py
+test-watchtower:
+	$(PYTHON) -m pytest -q tests/test_watchtower_engine.py
 compile:
 	$(PYTHON) -m compileall -q stages reverse_engineer
 build-sandbox:
