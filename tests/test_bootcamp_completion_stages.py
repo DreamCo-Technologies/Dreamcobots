@@ -28,8 +28,10 @@ class TestCompletionStages(unittest.TestCase):
  def test_holdout_is_deterministic_and_disjoint(self):
   tasks=[{"task_id":f"t{i}","prompt":str(i)} for i in range(100)]
   a=foundry.split_tasks(tasks); b=foundry.split_tasks(tasks)
-  self.assertEqual(a,b); self.assertFalse(set(a["train_ids"])&set(a["holdout_ids"]))
-  self.assertEqual(set(a["train_ids"])|set(a["holdout_ids"]),{x["task_id"] for x in tasks})
+  self.assertEqual(a,b)
+  train, validation, holdout = map(set, (a["train_ids"], a["validation_ids"], a["holdout_ids"]))
+  self.assertFalse(train & validation); self.assertFalse(train & holdout); self.assertFalse(validation & holdout)
+  self.assertEqual(train | validation | holdout, {x["task_id"] for x in tasks})
  def test_dashboard_reports_no_unproven_model(self):
   with tempfile.TemporaryDirectory() as d:
    db=learn.LearningEngine(Path(d)/"p.db"); db.close()
