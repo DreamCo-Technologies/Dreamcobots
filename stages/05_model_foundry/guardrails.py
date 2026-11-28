@@ -73,6 +73,7 @@ def verify_signed_manifest(manifest_path: Path, signature_path: Path, public_key
         if len(expected) != 64 or sha256_file(p) != expected:
             raise ValueError(f"{dataset_id}: dataset SHA-256 mismatch")
         item["_resolved_path"] = str(p)
+    manifest["_source_manifest_sha256"] = sha256_file(manifest_path)
     return manifest
 
 def iter_authorized_records(manifest: dict, *, categories: set[str] | None = None,
