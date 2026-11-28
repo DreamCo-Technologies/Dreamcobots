@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Allowlisted, deterministic repository repairs only; never edits source code."""
 from __future__ import annotations
-import argparse,json,subprocess,sys
+import argparse,json,os,subprocess,sys,tempfile
 from pathlib import Path,PurePosixPath
 from tools.buddy_failure_learning import classify,route_masterbots
 
@@ -140,7 +140,12 @@ def main():
   p.error(str(exc))
  result=run_safe_repair(obs,root)
  out=safe_output_path(root,a.out);out.parent.mkdir(parents=True,exist_ok=True);out.write_text(json.dumps(result,indent=2)+"\n",encoding="utf-8")
- output=Path(__import__("os").environ.get("GITHUB_OUTPUT","/dev/null"))
+ output_value=os.environ.get("GITHUB_OUTPUT")
+ output=Path(output_value).resolve() if output_value else Path("/dev/null")
+ if output_value:
+  runner_temp=Path(os.environ.get("RUNNER_TEMP",tempfile.gettempdir())).resolve()
+  if runner_temp not in output.parents:
+   p.error("GITHUB_OUTPUT must remain inside the runner temp directory.")
  with output.open("a",encoding="utf-8") as f:
   f.write(f"changed={'true' if result['success'] and result['changed_files'] else 'false'}\n")
   f.write(f"status={result['status']}\n")
