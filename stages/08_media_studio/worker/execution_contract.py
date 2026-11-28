@@ -90,9 +90,16 @@ class ExecutionAdapter(Protocol):
 
 
 def _contained_file(root: Path, relative_path: str) -> Path:
+    if (not isinstance(relative_path, str) or not relative_path or "\\" in relative_path
+            or relative_path.startswith("/")
+            or any(part in {"", ".", ".."} for part in relative_path.split("/"))):
+        raise ExecutionContractError("unsafe_relative_path")
     unresolved = root / relative_path
-    if unresolved.is_symlink():
-        raise ExecutionContractError("symlink_paths_are_blocked")
+    cursor = root
+    for part in relative_path.split("/"):
+        cursor = cursor / part
+        if cursor.is_symlink():
+            raise ExecutionContractError("symlink_paths_are_blocked")
     candidate = unresolved.resolve()
     if root.resolve() not in candidate.parents:
         raise ExecutionContractError("path_escapes_configured_root")
