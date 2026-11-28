@@ -1,8 +1,19 @@
 """Fail-closed source rights gate used before transcript or derivative processing."""
 from pathlib import Path
+from datetime import datetime
+import re
 from typing import Any
 from urllib.parse import urlparse
 VALID_TIERS={"PUBLIC_DOMAIN","PERMISSIVE_COMMERCIAL","FACT_EXTRACTION_ONLY","BLOCKED"}
+SHA256_RE=re.compile(r"^[0-9a-f]{64}$")
+def _item_license_evidence_valid(source:dict[str,Any])->bool:
+    if source.get("license_record_verified") is not True or not str(source.get("license_tag") or "").strip() or source.get("license_tag")=="UNKNOWN_UNVERIFIED": return False
+    if not str(source.get("license_evidence_url") or "").startswith("https://"): return False
+    if not SHA256_RE.fullmatch(str(source.get("license_evidence_sha256") or "").lower()): return False
+    if source.get("license_review_status")!="approved" or not str(source.get("license_reviewer_id") or "").strip(): return False
+    try: datetime.fromisoformat(str(source.get("license_reviewed_at") or "").replace("Z","+00:00"))
+    except ValueError: return False
+    return True
 def _url_matches_prefix(url:str,prefix:str)->bool:
     url=url.strip(); prefix=prefix.strip()
     if prefix.endswith("="): return url.startswith(prefix) and len(url)>len(prefix)
@@ -27,9 +38,9 @@ def evaluate_source(source:dict[str,Any],registry:dict[str,Any],purpose:str="tra
     elif tier=="BLOCKED": reason="BLOCKED_SOURCE_TIER"
     elif str(source.get("source_id") or "") not in {str(x) for x in match.get("catalog_source_ids", [match.get("source_id")])}: reason="BLOCKED_SOURCE_ID_NOT_REGISTERED"
     elif match.get("allowed_url_prefixes") and not any(_url_matches_prefix(str(source.get("source_url") or ""), str(prefix)) for prefix in match.get("allowed_url_prefixes", [])): reason="BLOCKED_SOURCE_URL_NOT_ALLOWLISTED"
-    elif not source.get("license_record_verified") or not str(source.get("license_tag") or "").strip() or source.get("license_tag")=="UNKNOWN_UNVERIFIED": reason="BLOCKED_MISSING_ITEM_LICENSE_EVIDENCE"
+    elif not _item_license_evidence_valid(source): reason="BLOCKED_MISSING_OR_UNVERIFIED_ITEM_LICENSE_EVIDENCE"
     elif purpose=="transcript_extraction" and match.get("transcript_extraction_allowed") is not True: reason="BLOCKED_TRANSCRIPT_PERMISSION_NOT_GRANTED"
-    elif purpose=="commercial_training" and (tier not in {"PUBLIC_DOMAIN","PERMISSIVE_COMMERCIAL"} or match.get("commercial_training_allowed") is not True or source.get("commercial_training_permission") is not True): reason="BLOCKED_COMMERCIAL_TRAINING_PERMISSION"
+    elif purpose=="commercial_training" and (tier not in {"PUBLIC_DOMAIN","PERMISSIVE_COMMERCIAL"} or match.get("commercial_training_allowed") is not True or source.get("commercial_training_permission") is not True or not str(source.get("commercial_training_evidence_ref") or "").strip()): reason="BLOCKED_COMMERCIAL_TRAINING_PERMISSION"
     elif purpose=="fact_extraction" and tier in {"PUBLIC_DOMAIN","PERMISSIVE_COMMERCIAL","FACT_EXTRACTION_ONLY"} and match.get("fact_extraction_allowed") is True: allowed=True
     elif purpose=="transcript_extraction" and tier in {"PUBLIC_DOMAIN","PERMISSIVE_COMMERCIAL"}: allowed=True
     else: reason="BLOCKED_PURPOSE_NOT_AUTHORIZED"
