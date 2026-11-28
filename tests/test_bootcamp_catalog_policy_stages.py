@@ -89,7 +89,7 @@ class CatalogPolicyTests(unittest.TestCase):
             rows=[json.loads(line) for line in ledger.read_text().splitlines()]
             self.assertEqual(len(rows),2)
             self.assertFalse(rows[0]["license_record_verified"])
-            self.assertNotEqual(rows[0]["content_sha256"],rows[1]["content_sha256"])
+            self.assertNotEqual(rows[0]["metadata_sha256"],rows[1]["metadata_sha256"])
 
     def test_empty_source_enumeration_fails_without_creating_ledger(self):
         with tempfile.TemporaryDirectory() as tmp:
