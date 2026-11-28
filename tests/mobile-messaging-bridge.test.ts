@@ -9,7 +9,7 @@ import {
 import { communicationTwinSettingsSchema } from "../server/communication-twin";
 import { SecureJsonWebhookAdapter } from "../server/outbound-adapters";
 
-const secret = "test-mobile-webhook-secret";
+const secret = "test-mobile-webhook-secret-32-bytes-minimum";
 const now = 1_800_000_000_000;
 const timestamp = Math.floor(now / 1000);
 const settings = communicationTwinSettingsSchema.parse({
@@ -49,6 +49,17 @@ test("accepts Android companion SMS using the shared contact policy", async () =
   const result = await acceptInboundMobileMessage({ ...event, registration: android, settings, secret, replayStore: new InMemoryReplayClaimStore(), resolveContactId: () => "contact-1", nowMs: now });
   assert.equal(result.accepted, true);
   if (result.accepted) assert.equal(result.platform, "android");
+});
+
+test("rejects undersized webhook secrets", () => {
+  assert.throws(() => signMobileWebhook("{}", timestamp, "short-secret"), /at least 32 bytes/);
+  assert.equal(
+    verifyMobileWebhookSignature({
+      rawBody: "{}", headers: { timestamp: String(timestamp), signature: "0".repeat(64) },
+      secret: "short-secret", nowMs: now,
+    }),
+    false,
+  );
 });
 
 test("rejects invalid, stale, and tampered signatures", async () => {
