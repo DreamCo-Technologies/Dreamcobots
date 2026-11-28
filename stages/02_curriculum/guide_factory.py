@@ -12,7 +12,7 @@ import importlib.util
 import json
 import re
 from pathlib import Path
-from typing import Any, Callable
+from typing import Any
 
 ROOT = Path(__file__).resolve().parents[2]
 POLICY_GATE_PATH = ROOT / "stages" / "01_policy_gate" / "policy_gate.py"
