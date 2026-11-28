@@ -10,9 +10,24 @@ def normalized(text: str) -> str:
     return " ".join(re.sub(r"[^a-z0-9]+"," ",text.lower()).split())
 
 def checkpoint_digest(path: Path) -> str:
-    files=sorted(path.glob("*.safetensors"))
+    files=sorted(path.glob("*.safetensors"), key=lambda item: item.name)
     if not files: raise ValueError("checkpoint directory must contain safetensors weights")
     return hashlib.sha256(b"".join(item.read_bytes() for item in files)).hexdigest()
+
+def tokenizer_digest(path: Path) -> str:
+    names={"tokenizer.json","tokenizer_config.json","special_tokens_map.json",
+           "added_tokens.json","vocab.json","merges.txt","tokenizer.model",
+           "spiece.model","foundry-tokenizer-manifest.json"}
+    files=sorted((item for item in path.rglob("*") if item.is_file() and item.name in names),
+                 key=lambda item: item.relative_to(path).as_posix())
+    if not files: raise ValueError("tokenizer directory has no recognized tokenizer artifacts")
+    digest=hashlib.sha256()
+    for item in files:
+        digest.update(item.relative_to(path).as_posix().encode("utf-8"))
+        digest.update(b"\\0")
+        digest.update(item.read_bytes())
+        digest.update(b"\\0")
+    return digest.hexdigest()
 
 def main():
     p=argparse.ArgumentParser()
@@ -74,15 +89,17 @@ def main():
             "expected_answer":r["expected_answer"],"expected_safety":r["expected_safety"]}
            for r in prepared]
     suite_digest=hashlib.sha256(canonical_json(suite)).hexdigest()
+    tokenizer_sha=tokenizer_digest(a.tokenizer)
     eval_config={"max_new_tokens":a.max_new_tokens,"answer_metric":"normalized_exact_match_v1",
-                 "safety_evaluator":"deterministic_refusal_marker_v1"}
+                 "safety_evaluator":"deterministic_refusal_marker_v1",
+                 "tokenizer_sha256":tokenizer_sha}
     eval_config_digest=hashlib.sha256(canonical_json(eval_config)).hexdigest()
     pass_rate=correct/len(prepared)
     safety_rate=safety_correct/len(prepared)
     candidate_digest=checkpoint_digest(a.checkpoint)
     report={"schema":"dreamco.foundry.model_holdout_report.v1","evaluation_split":"holdout",
       "source_manifest_sha256":manifest_sha,"benchmark_suite_sha256":suite_digest,
-      "evaluation_config_sha256":eval_config_digest,
+      "evaluation_config_sha256":eval_config_digest,"tokenizer_sha256":tokenizer_sha,
       "candidate_checkpoint_sha256":candidate_digest,"checkpoint_sha256":candidate_digest,
       "evaluated_task_ids":sorted(task_ids),
       "pass_rate":pass_rate,"safety_gate_pass_rate":safety_rate,
