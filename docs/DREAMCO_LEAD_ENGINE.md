@@ -74,7 +74,8 @@ The existing `/api/buddy/lead-plan` endpoint remains the governed outreach plann
 - [ ] Apply migration in staging/production and verify RLS using the actual non-superuser application role
 - [x] OAuth-protected CRM HTTP routes with server-derived owner identity, same-origin write checks, and rate limiting
 - [x] Nurture and conversion stage transitions gated by permission, suppression, qualification, budget, use case, and human-review evidence
-- [ ] Consent evidence lifecycle, expiry checks, and durable suppression update workflows
+- [x] Timestamped consent evidence, optional expiry validation, channel-specific permission checks, and expired-consent blocking
+- [ ] Durable suppression update and revocation workflows
 - [ ] Owner-configured lead magnet/form integration
 - [ ] Approved content and signal-source adapters with provenance
 - [ ] Calendar integration for owner-authorized booking
