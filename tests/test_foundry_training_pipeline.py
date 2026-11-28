@@ -178,7 +178,10 @@ class FoundryGuardrailTests(unittest.TestCase):
 
     def test_policy_signers_bind_dataset_and_shard_bytes(self):
         from unittest.mock import patch
-        from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
+        try:
+            from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
+        except ImportError:
+            self.skipTest("cryptography is installed by the foundry preflight workflow")
         from cryptography.hazmat.primitives.serialization import (
             Encoding, PrivateFormat, NoEncryption, PublicFormat,
         )
