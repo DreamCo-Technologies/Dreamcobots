@@ -54,7 +54,7 @@ import {
   buildGovernedLeadPlan,
   leadCampaignRequestSchema,
 } from "./governed-leads";
-import { leadEngineRecordSchema } from "./lead-engine";
+import { leadEngineReadiness, leadEngineRecordSchema } from "./lead-engine";
 import {
   appendLeadEngineActivity,
   getLeadEngineRecord,
@@ -1663,7 +1663,9 @@ export async function registerRoutes(
       res.json({
         schema: "dreamco.governed_lead_capabilities.v1",
         botProfiles: catalog.summary?.per_bot_governed_lead_systems ?? 0,
-        engine: "server/governed-leads.ts",
+        engine: "server/lead-engine.ts + server/lead-engine-storage.ts + server/governed-leads.ts",
+        pipeline: ["attract", "capture", "qualify", "nurture", "convert"],
+        crm: { authenticated: true, ownerScoped: true, persistence: "postgresql_rls", activityHistory: true },
         workflow: ["research", "deduplicate", "qualify", "verify permission", "draft", "owner approval", "configured adapter", "follow-up", "stop and report"],
         guardrails: {
           recipientPermissionRequired: true,
@@ -1714,6 +1716,10 @@ export async function registerRoutes(
       if (error instanceof z.ZodError) return res.status(400).json(zodValidationError(error));
       throw error;
     }
+  });
+
+  app.get("/api/buddy/lead-engine/readiness", (_req, res) => {
+    res.json(leadEngineReadiness());
   });
 
   const leadEngineRateLimit = rateLimit({
