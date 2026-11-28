@@ -6,6 +6,8 @@ on:
       - "stages/00_catalog_sync/**"
       - "stages/08_repo_sentinel/**"
       - "tests/test_repo_sentinel.py"
+      - "tests/test_bootcamp_catalog_policy_stages.py"
+      - "stages/01_policy_gate/policy_gate.py"
       - "contracts/license_policy.yaml"
       - ".github/workflows/repo-sentinel.yml"
   workflow_dispatch:
@@ -34,7 +36,7 @@ jobs:
       - name: Test curriculum factory offline
         run: python -m unittest discover -s tests -p 'test_curriculum_factory.py' -v
       - name: Generate audit report without rewriting files or accessing the network
-        run: python stages/08_repo_sentinel/sentinel.py --report reports/repo-sentinel/sentinel_report.json
+        run: python stages/08_repo_sentinel/sentinel.py --strict-ast --report reports/repo-sentinel/sentinel_report.json
       - uses: actions/upload-artifact@v4
         with:
           name: dreamco-repo-sentinel-audit
