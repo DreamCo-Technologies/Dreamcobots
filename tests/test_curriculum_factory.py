@@ -44,7 +44,7 @@ def source_record():
         "license_review_status": "approved",
         "license_reviewer_id": "owner-reviewer-1",
         "license_reviewed_at": "2026-11-27T12:00:00+00:00",
-        "content_sha256": hashlib.sha256(b"reviewed item").hexdigest(),
+        "metadata_sha256": hashlib.sha256(b"reviewed catalog metadata").hexdigest(),
         "commercial_training_permission": False,
     }
 
