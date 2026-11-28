@@ -57,7 +57,7 @@ def observation_from_report(report: dict, commit: str = "") -> dict:
         "error_signature": "pytest failure without an allowlisted generated-index match",
         "failure_class": "unknown",
         "commit": (commit or os.getenv("GITHUB_SHA", ""))[:40],
-        "failed_test_count": len(failed),
+        "failed_test_count": max(len(failed), int(summary.get("failed", 0) or 0)),
         "failed_test_ids": failed[:100],
         "summary": {
             "passed": int(summary.get("passed", 0) or 0),
