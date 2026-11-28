@@ -62,3 +62,9 @@ test("CRM write routes do not send messages or execute external conversion actio
   const crmRoutes = routes.slice(routes.indexOf('app.get("/api/buddy/lead-engine/records"'));
   assert.doesNotMatch(crmRoutes, /sendMail|sendEmail|dispatchLead|bookAppointment|createPaymentIntent/);
 });
+
+test("Buddy advertises the five-stage Lead Engine and safe readiness metadata", () => {
+  assert.match(routes, /api\/buddy\/lead-engine\/readiness/);
+  assert.match(routes, /server\/lead-engine\.ts \+ server\/lead-engine-storage\.ts \+ server\/governed-leads\.ts/);
+  assert.match(routes, /pipeline: \["attract", "capture", "qualify", "nurture", "convert"\]/);
+});
