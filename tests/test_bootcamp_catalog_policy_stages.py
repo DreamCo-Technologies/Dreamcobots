@@ -60,6 +60,37 @@ class CatalogPolicyTests(unittest.TestCase):
         source["license_evidence_sha256"]="0"*64
         self.assertFalse(policy.evaluate_source(source,self.registry,"fact_extraction")["allowed"])
 
+    def test_qwen_model_exception_is_exact_and_requires_item_license_evidence(self):
+        evidence_path=ROOT/"tests/fixtures/license-evidence.txt"
+        revision="a"*40
+        license_url=f"https://huggingface.co/Qwen/Qwen2.5-Coder-1.5B/blob/{revision}/LICENSE"
+        source={
+            "source_id":"qwen-qwen2.5-coder-1.5b",
+            "source_url":"https://huggingface.co/Qwen/Qwen2.5-Coder-1.5B",
+            "license_tag":"Apache-2.0",
+            "license_record_verified":True,
+            "license_evidence_url":license_url,
+            "license_evidence_path":"tests/fixtures/license-evidence.txt",
+            "license_evidence_sha256":hashlib.sha256(evidence_path.read_bytes()).hexdigest(),
+            "license_review_status":"approved",
+            "license_reviewer_id":"test-reviewer",
+            "license_reviewed_at":"2026-11-27T12:00:00+00:00",
+            "commercial_training_permission":True,
+            "commercial_training_evidence_ref":license_url,
+        }
+        result=policy.evaluate_source(source,self.registry,"commercial_training")
+        self.assertTrue(result["allowed"],result["reason"])
+        blocked=policy.evaluate_source({**source,"source_id":"huggingface-hub"},self.registry,"commercial_training")
+        self.assertFalse(blocked["allowed"])
+        collision=policy.evaluate_source({
+            **source,"source_url":"https://huggingface.co/Qwen/Qwen2.5-Coder-1.5B-evil"
+        },self.registry,"commercial_training")
+        self.assertFalse(collision["allowed"])
+        pending=policy.evaluate_source({
+            **source,"license_review_status":"pending"
+        },self.registry,"commercial_training")
+        self.assertFalse(pending["allowed"])
+
     def test_missing_item_license_snapshot_fails_closed(self):
         source={"source_id":"freecodecamp","source_url":"https://www.youtube.com/@freecodecamp",
                 "license_tag":"CC-BY-4.0","license_record_verified":True}
