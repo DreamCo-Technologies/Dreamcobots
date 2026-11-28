@@ -1,0 +1,23 @@
+[
+  {
+    "rule_id": "grocery-deals",
+    "name": "Public grocery deals feed",
+    "adapter": "json_feed",
+    "target": "https://example.org/public/deals.json",
+    "enabled": false,
+    "interval_seconds": 900,
+    "min_score": 50,
+    "include_any": [
+      "eggs",
+      "milk",
+      "chicken"
+    ],
+    "exclude": [
+      "expired"
+    ],
+    "max_price": 8,
+    "currency": "USD",
+    "cooldown_seconds": 3600,
+    "max_items": 100
+  }
+]
