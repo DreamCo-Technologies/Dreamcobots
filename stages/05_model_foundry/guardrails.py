@@ -56,7 +56,9 @@ def verify_signed_manifest(manifest_path: Path, signature_path: Path, public_key
         if not isinstance(dataset_id, str) or not dataset_id or dataset_id in seen:
             raise ValueError("dataset_id values must be unique non-empty strings")
         seen.add(dataset_id)
-        if item.get("category") not in {"study_guides", "verified_trajectories", "general_replay", "verified_preferences"}:\n            raise ValueError(f"{dataset_id}: unsupported dataset category")\n        if item.get("license_tier") not in ALLOWED_TIERS or item.get("commercial_use") is not True:
+        if item.get("category") not in {"study_guides", "verified_trajectories", "general_replay", "verified_preferences"}:
+            raise ValueError(f"{dataset_id}: unsupported dataset category")
+        if item.get("license_tier") not in ALLOWED_TIERS or item.get("commercial_use") is not True:
             raise PermissionError(f"{dataset_id}: commercial training rights not explicitly approved")
         if item.get("policy_decision_id") is None or not str(item["policy_decision_id"]).strip():
             raise PermissionError(f"{dataset_id}: missing policy decision reference")
