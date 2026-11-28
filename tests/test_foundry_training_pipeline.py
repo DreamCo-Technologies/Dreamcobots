@@ -32,6 +32,29 @@ SIGN_SHARDS = importlib.import_module("stages.01_policy_gate.sign_token_shards")
 
 
 class FoundryGuardrailTests(unittest.TestCase):
+    def test_sign_token_shards_rejects_malformed_signed_shard_payload(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            shard_manifest = root / "shards.json"
+            source_manifest = root / "source.json"
+            source_signature = root / "source.sig"
+            public_key = root / "public.pem"
+            private_key = root / "private.pem"
+            shard_signature = root / "shards.sig"
+            source_manifest.write_text("{}", encoding="utf-8")
+            source_signature.write_text("", encoding="ascii")
+            public_key.write_text("not-a-key", encoding="ascii")
+            private_key.write_text("not-a-key", encoding="ascii")
+            shard_manifest.write_text(json.dumps({"schema": "invalid"}), encoding="utf-8")
+            with unittest.mock.patch("sys.argv", [
+                "sign_token_shards", "--shard-manifest", str(shard_manifest),
+                "--source-manifest", str(source_manifest), "--source-signature", str(source_signature),
+                "--public-key", str(public_key), "--private-key", str(private_key),
+                "--signature-output", str(shard_signature),
+            ]):
+                with self.assertRaises(Exception):
+                    SIGN_SHARDS.main()
+
     def test_split_is_deterministic_and_disjoint(self):
         ids = [f"task-{i}" for i in range(10000)]
         buckets = [GUARDRAILS.split_bucket(value) for value in ids]
@@ -191,10 +214,7 @@ class FoundryGuardrailTests(unittest.TestCase):
             self.assertFalse(any("holdout benchmark" in item for item in corpus))
 
     def test_packer_emits_signed_bin_and_index_metadata(self):
-        try:
-            import numpy  # noqa: F401
-        except ImportError:
-            self.skipTest("NumPy is installed by the Foundry CPU preflight workflow")
+        import numpy  # noqa: F401
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
             entry = PACKER_MODULE._write_shard(list(range(16)), root, "train", 8)
