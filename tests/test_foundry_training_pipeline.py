@@ -32,6 +32,7 @@ SIGN_SHARDS = importlib.import_module("stages.01_policy_gate.sign_token_shards")
 
 
 class FoundryGuardrailTests(unittest.TestCase):
+
     def test_split_is_deterministic_and_disjoint(self):
         ids = [f"task-{i}" for i in range(10000)]
         buckets = [GUARDRAILS.split_bucket(value) for value in ids]
@@ -156,8 +157,10 @@ class FoundryGuardrailTests(unittest.TestCase):
             benchmark.write_text(json.dumps({"task_id": train_id, "title": "holdout benchmark"}) + "\n", encoding="utf-8")
             manifest = {"datasets": [
                 {"_resolved_path": str(guide), "dataset_id": "g", "category": "study_guides",
+                 "sha256": hashlib.sha256(guide.read_bytes()).hexdigest(),
                  "license_tier": "DREAMCO_ORIGINAL", "policy_decision_id": "P1"},
                 {"_resolved_path": str(benchmark), "dataset_id": "h", "category": "holdout_benchmarks",
+                 "sha256": hashlib.sha256(benchmark.read_bytes()).hexdigest(),
                  "license_tier": "DREAMCO_ORIGINAL", "policy_decision_id": "P1"},
             ]}
             corpus = list(TOKENIZER_MODULE.corpus(manifest))
@@ -261,17 +264,28 @@ class FoundryGuardrailTests(unittest.TestCase):
             root = Path(td)
             shard = root / "train-00000.bin"
             shard.write_bytes(b"\x00" * (8 * 4))
+            shard_index = root / "train-00000.idx"
+            index_payload = {
+                "schema": "dreamco.foundry.token_shard_index.v1",
+                "bin_file": shard.name, "dtype": "uint32",
+                "sequence_length": 8, "sequence_count": 1, "token_count": 8,
+                "offset_unit": "tokens", "first_token_offset": 0,
+                "sequence_stride_tokens": 8,
+            }
+            shard_index.write_text(json.dumps(index_payload, sort_keys=True, separators=(",", ":")) + "\n", encoding="utf-8")
             source = root / "source.json"
             source.write_text("{}", encoding="utf-8")
             payload = {
                 "schema": "dreamco.foundry.token_shards.v1",
-                "sequence_length": 8, "dtype": "uint32",
+                "sequence_length": 8, "shard_size_tokens": 8, "dtype": "uint32",
                 "training_splits": ["train"], "validation_splits": [],
                 "excluded_splits": ["holdout"],
                 "mix_percent": {"study_guides": 60, "verified_trajectories": 25, "general_replay": 15},
                 "source_manifest_sha256": hashlib.sha256(source.read_bytes()).hexdigest(),
                 "train": {"file": shard.name, "tokens": 8, "sequences": 1,
-                          "sha256": hashlib.sha256(shard.read_bytes()).hexdigest()},
+                          "sha256": hashlib.sha256(shard.read_bytes()).hexdigest(),
+                          "index_file": shard_index.name,
+                          "index_sha256": hashlib.sha256(shard_index.read_bytes()).hexdigest()},
                 "validation": None,
             }
             validated = GUARDRAILS.validate_shard_payload(payload, root, source)
@@ -464,6 +478,238 @@ class FoundryGuardrailTests(unittest.TestCase):
 
         self.assertEqual(PACKER_MODULE._token_pool([{"content": "   "}], FakeTokenizer()), [])
 
+    def test_lora_holdout_report_binds_adapter_configuration(self):
+        report = {
+            "schema": "dreamco.foundry.model_holdout_report.v1",
+            "evaluation_split": "holdout",
+            "holdout_access": "evaluation_only",
+            "training_access": False,
+            "source_manifest_sha256": "a" * 64,
+            "benchmark_suite_sha256": "b" * 64,
+            "evaluation_config_sha256": "c" * 64,
+            "tokenizer_sha256": "e" * 64,
+            "checkpoint_sha256": "d" * 64,
+            "base_model_id": "Qwen/Qwen2.5-Coder-1.5B",
+            "base_model_revision": "a" * 40,
+            "base_model_license_evidence_id": "QWEN-APACHE-2.0-REVISION",
+            "evaluated_task_ids": ["task-1"],
+            "evaluated_count": 1,
+            "pass_rate": 0.95,
+            "safety_gate_pass_rate": 1.0,
+        }
+        with self.assertRaises(ValueError):
+            HOLDOUT_GATE.validate_report(report, ["task-1"], "a" * 64, "b" * 64, "candidate")
+        report["adapter_config_sha256"] = "f" * 64
+        HOLDOUT_GATE.validate_report(report, ["task-1"], "a" * 64, "b" * 64, "candidate")
+
+    def test_packer_emits_signed_bin_and_index_metadata(self):
+        import numpy  # noqa: F401
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            entry = PACKER_MODULE._write_shard(list(range(16)), root, "train", 8)
+            self.assertEqual(entry["tokens"], 16)
+            self.assertEqual(entry["sequences"], 2)
+            self.assertTrue((root / entry["file"]).is_file())
+            self.assertTrue((root / entry["index_file"]).is_file())
+            index = json.loads((root / entry["index_file"]).read_text(encoding="utf-8"))
+            self.assertEqual(index["sequence_stride_tokens"], 8)
+            self.assertEqual(index["sequence_count"], 2)
+            self.assertEqual(
+                entry["index_sha256"],
+                hashlib.sha256((root / entry["index_file"]).read_bytes()).hexdigest(),
+            )
+
+    def test_sign_token_shards_and_policy_signers_bind_dataset_and_shard_bytes(self):
+        from unittest.mock import patch
+        from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
+        from cryptography.hazmat.primitives.serialization import (
+            Encoding, PrivateFormat, NoEncryption, PublicFormat,
+        )
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            private = Ed25519PrivateKey.generate()
+            private_path, public_path = root / "private.pem", root / "public.pem"
+            private_path.write_bytes(private.private_bytes(
+                Encoding.PEM, PrivateFormat.PKCS8, NoEncryption()
+            ))
+            public_path.write_bytes(private.public_key().public_bytes(
+                Encoding.PEM, PublicFormat.SubjectPublicKeyInfo
+            ))
+            task_id = next(f"signer-{i}" for i in range(10000)
+                           if GUARDRAILS.split_bucket(f"signer-{i}") < 90)
+            holdout_id = next(f"holdout-{i}" for i in range(10000)
+                              if GUARDRAILS.split_bucket(f"holdout-{i}") >= 95)
+            dataset = root / "study_guides.jsonl"
+            holdout_dataset = root / "holdout.jsonl"
+            dataset.write_text(json.dumps({"task_id": task_id, "title": "Guide"}) + "\n", encoding="utf-8")
+            holdout_dataset.write_text(json.dumps({
+                "task_id": holdout_id, "prompt": "holdout prompt",
+                "expected_answer": "holdout answer", "expected_safety": "ALLOW"
+            }) + "\n", encoding="utf-8")
+            attestation = root / "owner-attestation.txt"
+            attestation.write_text("DreamCo owns this original study guide.", encoding="utf-8")
+            manifest = root / "manifest.json"
+            signature = root / "manifest.sig"
+            payload = {
+                "schema": "dreamco.foundry.authorization.v1",
+                "datasets": [{
+                    "dataset_id": "guide-1", "path": dataset.name,
+                    "sha256": hashlib.sha256(dataset.read_bytes()).hexdigest(),
+                    "license_tier": "DREAMCO_ORIGINAL", "commercial_use": True,
+                    "category": "study_guides",
+                    "owner_attestation_path": attestation.name,
+                    "owner_attestation_sha256": hashlib.sha256(attestation.read_bytes()).hexdigest(),
+                }, {
+                    "dataset_id": "holdout-1", "path": holdout_dataset.name,
+                    "sha256": hashlib.sha256(holdout_dataset.read_bytes()).hexdigest(),
+                    "license_tier": "DREAMCO_ORIGINAL", "commercial_use": True,
+                    "category": "holdout_benchmarks",
+                    "owner_attestation_path": attestation.name,
+                    "owner_attestation_sha256": hashlib.sha256(attestation.read_bytes()).hexdigest(),
+                }],
+                "models": [],
+            }
+            manifest.write_text(json.dumps(payload), encoding="utf-8")
+            with patch("sys.argv", ["sign_training_manifest", "--manifest", str(manifest),
+                    "--registry", str(ROOT / "contracts/license_policy.yaml"),
+                    "--private-key", str(private_path), "--signature-output", str(signature),
+                    "--approve-commercial-training", "--approved-by", "Unit Test Owner",
+                    "--policy-decision-id", "TEST-POLICY-1"]):
+                SIGN_MANIFEST.main()
+            verified_all = GUARDRAILS.verify_signed_manifest(manifest, signature, public_path)
+            self.assertEqual(verified_all["datasets"][0]["approved_by"], "Unit Test Owner")
+            holdout_dataset.write_text(json.dumps({
+                "task_id": holdout_id, "prompt": "tampered holdout",
+                "expected_answer": "wrong", "expected_safety": "ALLOW"
+            }) + "\n", encoding="utf-8")
+            verified = GUARDRAILS.verify_signed_manifest(
+                manifest, signature, public_path, verify_dataset_hashes=False
+            )
+            train_rows = list(GUARDRAILS.iter_authorized_records(
+                verified, categories={"study_guides"}, splits={"train"}
+            ))
+            self.assertEqual(len(train_rows), 1)
+            with self.assertRaises(ValueError):
+                list(GUARDRAILS.iter_authorized_records(
+                    verified, categories={"holdout_benchmarks"}, splits={"holdout"}
+                ))
+
+            shard_dir = root / "shards"
+            shard_dir.mkdir()
+            shard = shard_dir / "train-00000.bin"
+            shard.write_bytes(b"\x00" * 32)
+            shard_index = shard_dir / "train-00000.idx"
+            index_payload = {
+                "schema": "dreamco.foundry.token_shard_index.v1",
+                "bin_file": shard.name, "dtype": "uint32",
+                "sequence_length": 8, "sequence_count": 1, "token_count": 8,
+                "offset_unit": "tokens", "first_token_offset": 0,
+                "sequence_stride_tokens": 8,
+            }
+            shard_index.write_text(json.dumps(index_payload, sort_keys=True, separators=(",", ":")) + "\n", encoding="utf-8")
+            shard_manifest = shard_dir / "manifest.json"
+            shard_signature = shard_dir / "manifest.sig"
+            shard_payload = {
+                "schema": "dreamco.foundry.token_shards.v1",
+                "sequence_length": 8, "shard_size_tokens": 8, "dtype": "uint32",
+                "source_manifest_sha256": hashlib.sha256(manifest.read_bytes()).hexdigest(),
+                "training_splits": ["train"], "validation_splits": [],
+                "excluded_splits": ["holdout"],
+                "mix_percent": {"study_guides": 60, "verified_trajectories": 25, "general_replay": 15},
+                "train": {"file": shard.name, "tokens": 8, "sequences": 1,
+                          "sha256": hashlib.sha256(shard.read_bytes()).hexdigest(),
+                          "index_file": shard_index.name,
+                          "index_sha256": hashlib.sha256(shard_index.read_bytes()).hexdigest()},
+                "validation": None,
+            }
+            shard_manifest.write_text(json.dumps(shard_payload), encoding="utf-8")
+            with patch("sys.argv", ["sign_token_shards", "--shard-manifest", str(shard_manifest),
+                    "--source-manifest", str(manifest), "--source-signature", str(signature),
+                    "--public-key", str(public_path), "--private-key", str(private_path),
+                    "--signature-output", str(shard_signature)]):
+                SIGN_SHARDS.main()
+            verified_shards = GUARDRAILS.verify_signed_shard_manifest(
+                shard_manifest, shard_signature, manifest, signature, public_path
+            )
+            self.assertEqual(verified_shards["train"]["_resolved_path"], str(shard.resolve()))
+            self.assertEqual(verified_shards["train"]["_resolved_index_path"], str(shard_index.resolve()))
+            self.assertNotIn("_resolved_path", json.loads(shard_manifest.read_text())["train"])
+
+    def test_signed_shard_manifest_validates_multiple_bin_idx_pairs(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            source = root / "source.json"
+            source.write_text("{}", encoding="utf-8")
+            entries = []
+            for index_number in range(2):
+                shard = root / f"train-{index_number:05d}.bin"
+                shard.write_bytes(b"\x00" * 32)
+                index_path = root / f"train-{index_number:05d}.idx"
+                index_payload = {
+                    "schema": "dreamco.foundry.token_shard_index.v1",
+                    "bin_file": shard.name, "dtype": "uint32",
+                    "sequence_length": 8, "sequence_count": 1, "token_count": 8,
+                    "offset_unit": "tokens", "first_token_offset": 0,
+                    "sequence_stride_tokens": 8,
+                }
+                index_path.write_text(
+                    json.dumps(index_payload, sort_keys=True, separators=(",", ":")) + "\n",
+                    encoding="utf-8",
+                )
+                entries.append({
+                    "file": shard.name, "sha256": hashlib.sha256(shard.read_bytes()).hexdigest(),
+                    "index_file": index_path.name,
+                    "index_sha256": hashlib.sha256(index_path.read_bytes()).hexdigest(),
+                    "tokens": 8, "sequences": 1,
+                })
+            payload = {
+                "schema": "dreamco.foundry.token_shards.v1",
+                "sequence_length": 8, "shard_size_tokens": 8, "dtype": "uint32",
+                "training_splits": ["train"], "validation_splits": [],
+                "excluded_splits": ["holdout"],
+                "mix_percent": {"study_guides": 60, "verified_trajectories": 25, "general_replay": 15},
+                "source_manifest_sha256": hashlib.sha256(source.read_bytes()).hexdigest(),
+                "train": entries, "validation": [],
+            }
+            validated = GUARDRAILS.validate_shard_payload(payload, root, source)
+            self.assertEqual(len(validated["train"]), 2)
+            self.assertTrue(all(item["_resolved_path"] for item in validated["train"]))
+            self.assertTrue(all(item["_resolved_index_path"] for item in validated["train"]))
+
+    def test_reused_manifest_rechecks_dataset_hash_after_mutation(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            task_id = next(
+                f"rehash-{i}" for i in range(10000)
+                if GUARDRAILS.split_bucket(f"rehash-{i}") < 90
+            )
+            dataset = root / "records.jsonl"
+            dataset.write_text(
+                json.dumps({"task_id": task_id, "content": "original"}) + "\n",
+                encoding="utf-8",
+            )
+            manifest = {
+                "datasets": [{
+                    "_resolved_path": str(dataset),
+                    "dataset_id": "rehash-test",
+                    "sha256": hashlib.sha256(dataset.read_bytes()).hexdigest(),
+                    "category": "study_guides",
+                    "license_tier": "DREAMCO_ORIGINAL",
+                    "policy_decision_id": "TEST-POLICY",
+                }]
+            }
+            first = list(GUARDRAILS.iter_authorized_records(
+                manifest, categories={"study_guides"}, splits={"train"}
+            ))
+            self.assertEqual(len(first), 1)
+            dataset.write_text(
+                json.dumps({"task_id": task_id, "content": "tampered"}) + "\n",
+                encoding="utf-8",
+            )
+            with self.assertRaisesRegex(ValueError, "dataset SHA-256 mismatch"):
+                list(GUARDRAILS.iter_authorized_records(
+                    manifest, categories={"study_guides"}, splits={"train"}
+                ))
 
 if __name__ == "__main__":
     unittest.main()
