@@ -31,7 +31,7 @@ def policy_registry():
 
 
 def source_record():
-    return {
+    record = {
         "schema": "dreamco.source_catalog_record.v1",
         "source_id": "freecodecamp",
         "source_url": "https://www.youtube.com/@freecodecamp",
@@ -44,9 +44,10 @@ def source_record():
         "license_review_status": "approved",
         "license_reviewer_id": "owner-reviewer-1",
         "license_reviewed_at": "2026-11-27T12:00:00+00:00",
-        "metadata_sha256": hashlib.sha256(b"reviewed catalog metadata").hexdigest(),
         "commercial_training_permission": False,
     }
+    record["metadata_sha256"] = factory._load_catalog_sync().canonical_hash(record)
+    return record
 
 
 def guide():
@@ -94,6 +95,13 @@ class CurriculumFactoryTests(unittest.TestCase):
         with self.assertRaises(PermissionError):
             factory.build_guide(source_record=record, policy_registry=policy_registry(),
                                 authored_content=guide(), similarity_references=["A sufficiently long unrelated reference."])
+
+    def test_tampered_catalog_metadata_fingerprint_fails_closed(self):
+        record = source_record()
+        record["duration"] = 99
+        with self.assertRaises(ValueError):
+            factory.build_guide(source_record=record, policy_registry=policy_registry(),
+                                authored_content=guide(), similarity_references=["An unrelated reference with enough words for comparison."])
 
     def test_tampered_license_snapshot_fails_closed(self):
         record = source_record()
