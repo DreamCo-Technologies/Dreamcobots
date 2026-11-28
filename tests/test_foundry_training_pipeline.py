@@ -598,6 +598,34 @@ class FoundryGuardrailTests(unittest.TestCase):
             self.assertTrue(all(item["_resolved_path"] for item in validated["train"]))
             self.assertTrue(all(item["_resolved_index_path"] for item in validated["train"]))
 
+    def test_dataset_hash_verification_accepts_uppercase_hex_digest(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            task_id = next(
+                f"uppercase-{i}" for i in range(10000)
+                if GUARDRAILS.split_bucket(f"uppercase-{i}") < 90
+            )
+            dataset = root / "records.jsonl"
+            dataset.write_text(
+                json.dumps({"task_id": task_id, "content": "authorized"}) + "\n",
+                encoding="utf-8",
+            )
+            manifest = {
+                "datasets": [{
+                    "_resolved_path": str(dataset),
+                    "dataset_id": "uppercase-hash",
+                    "sha256": hashlib.sha256(dataset.read_bytes()).hexdigest().upper(),
+                    "category": "study_guides",
+                    "license_tier": "DREAMCO_ORIGINAL",
+                    "policy_decision_id": "TEST-POLICY",
+                }]
+            }
+            rows = list(GUARDRAILS.iter_authorized_records(
+                manifest, categories={"study_guides"}, splits={"train"}
+            ))
+            self.assertEqual(len(rows), 1)
+            self.assertEqual(rows[0]["content"], "authorized")
+
     def test_reused_manifest_rechecks_dataset_hash_after_mutation(self):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
