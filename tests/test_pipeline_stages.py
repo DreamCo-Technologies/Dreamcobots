@@ -63,9 +63,12 @@ def test_static_parsers_cover_openapi_har_and_csv():
     from importlib import import_module
     parse = import_module("stages.02_intake_parser.__main__").parse
     openapi=parse('{"openapi":"3.0.0","paths":{"/items":{"get":{},"post":{}}}}',"openapi_json")
-    assert openapi=={"endpoints":[{"method":"GET","path":"/items"},{"method":"POST","path":"/items"}]}
+    assert [(endpoint["method"],endpoint["path"]) for endpoint in openapi["endpoints"]]==[("GET","/items"),("POST","/items")]
+    assert openapi["endpoints"][0]["response_codes"]==[]
     har=parse('{"log":{"entries":[{"request":{"method":"GET","url":"https://example.test/orders?token=secret"},"response":{"status":200}}]}}',"har")
-    assert har["endpoints"]==[{"method":"GET","path":"/orders","status":200}]
+    assert har["endpoints"][0]["method"]=="GET" and har["endpoints"][0]["path"]=="/orders" and har["endpoints"][0]["status"]==200
+    assert har["endpoints"][0]["response_header_names"]==["x-ratelimit-remaining"]
+    assert "secret" not in json.dumps(har)
     csv=parse("id,name\n1,A\n2,B\n","csv")
     assert csv["row_count"]==2 and csv["columns"][0]["name"]=="field_1"
 
