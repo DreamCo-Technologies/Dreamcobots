@@ -6,6 +6,7 @@ import { leadEngineActivities, leadEngineRecords } from "@shared/schema";
 import {
   assertLeadStageTransition,
   buildLeadStagePlan,
+  hasCurrentLeadConsent,
   leadEngineRecordSchema,
   qualifyLead,
   type LeadEngineRecord,
@@ -141,8 +142,7 @@ export async function approveLeadConversion(ownerId: string, leadId: string) {
       qualification.tier !== "hot" ||
       !lead.budgetConfirmed ||
       !lead.useCase ||
-      lead.consentBasis === "none" ||
-      !lead.consentEvidenceRef ||
+      !hasCurrentLeadConsent(lead) ||
       lead.suppressionStatus !== "active"
     ) {
       throw new Error("lead_engine_conversion_not_eligible_for_owner_approval");
