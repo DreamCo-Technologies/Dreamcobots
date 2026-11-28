@@ -76,6 +76,22 @@ class FoundryGuardrailTests(unittest.TestCase):
         self.assertEqual(len(pairs), 1)
         self.assertEqual(pairs[0]["chosen"], "good")
 
+    def test_open_weight_requires_exact_signed_license_evidence(self):
+        approved = {
+            "models": [{
+                "model_id": "example/model",
+                "revision": "a" * 40,
+                "license_tier": "PERMISSIVE_COMMERCIAL",
+                "commercial_use": True,
+                "policy_decision_id": "POLICY-1",
+                "license_evidence_id": "LICENSE-1",
+            }]
+        }
+        result = GUARDRAILS.require_model_authorization(approved, "example/model", "a" * 40)
+        self.assertEqual(result["license_evidence_id"], "LICENSE-1")
+        with self.assertRaises(PermissionError):
+            GUARDRAILS.require_model_authorization(approved, "example/model", "b" * 40)
+
     def test_sft_rows_require_assistant_or_tool_targets(self):
         rows = [
             {"messages": [{"role": "user", "content": "question"}]},
