@@ -22,7 +22,7 @@ python tools/run_heldout_evaluation.py \
   --model-version dreamcodelab-candidate-001
 ```
 
-The evaluator is deterministic and offline. Missing, duplicate, or unknown predictions fail closed. Reports contain task-level outcomes and a SHA-256 hash of the suite. Public smoke suites can validate the harness only; the checkpoint evidence validator rejects them and requires a private independent holdout report.
+The evaluator is deterministic and offline. Missing, duplicate, or unknown predictions fail closed. Reports contain task-level outcomes and a SHA-256 hash of the suite. Public smoke suites can validate the harness only; the checkpoint evidence validator rejects them and requires a private independent holdout report. The report also binds the exact candidate model version and the SHA-256 hash of the evaluator code; checkpoint validation rejects stale evaluator hashes, public smoke reports, partial passes, or a model-version mismatch.
 
 ## Checkpoint evidence
 
