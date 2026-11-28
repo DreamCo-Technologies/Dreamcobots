@@ -66,7 +66,7 @@ def verify_model_record(record: Mapping[str, Any], evidence_root: str | Path) ->
                 reasons.append(f"dependency_{index}_invalid_record")
                 continue
             dep_license = dependency.get("license_id")
-            if dep_license not in PERMISSIVE_LICENSES:
+            if not isinstance(dep_license, str) or dep_license not in PERMISSIVE_LICENSES:
                 reasons.append(f"dependency_{index}_license_not_allowlisted:{dep_license}")
             if dependency.get("reviewed") is not True:
                 reasons.append(f"dependency_{index}_not_reviewed")
