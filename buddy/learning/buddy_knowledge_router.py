@@ -148,8 +148,10 @@ def _course_matches(
             primary,
             key=lambda row: (-row["score"], row["track_id"], row["lesson_id"]),
         )[:max(0, limit - len(cross_track))]
+        remaining.sort(key=lambda row: (-row["score"], row["track_id"], row["lesson_id"]))
         matches = primary + cross_track + remaining
-    matches.sort(key=lambda row: (-row["track_match_score"], -row["score"], row["track_id"], row["lesson_id"]))
+        return matches[:limit]
+    matches.sort(key=lambda row: (-row["score"], row["track_id"], row["lesson_id"]))
     return matches[:limit]
 
 
