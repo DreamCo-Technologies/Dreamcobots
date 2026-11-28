@@ -90,9 +90,10 @@ test("nurture and conversion require timestamped, current, channel-specific cons
 });
 
 test("CRM lifecycle changes are audited and opt-out suppression cannot be silently cleared", () => {
-  assert.match(storage, /auditEventType = "lead_created"/);
-  assert.match(storage, /auditEventType = "suppression_changed"/);
-  assert.match(storage, /eventType: auditEventType/);
+  assert.match(storage, /eventType: "lead_created"/);
+  assert.match(storage, /eventType: "suppression_changed"/);
+  assert.match(storage, /for \(const event of auditEvents\)/);
+  assert.match(storage, /eventType: event\.eventType/);
   assert.match(storage, /lead-event-\$\{randomUUID\(\)\}/);
   assert.match(readFileSync(new URL("../server/lead-engine.ts", import.meta.url), "utf8"), /suppression_cannot_be_cleared_without_new_explicit_opt_in/);
 });
