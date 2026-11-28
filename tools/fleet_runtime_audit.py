@@ -383,8 +383,18 @@ def python_checks(folder: str, timeout: int, skip_tests: bool) -> dict[str, Any]
                                   "modules_needing_missing_deps": len(data["missing_deps"]),
                                   "script_style_imports": len(data["script_style"])}
     pat = re.compile(rf"^\s*(from|import)\s+{re.escape(folder)}(\.|\s|$)", re.M)
-    tests = sorted({rel(p) for p in (ROOT / "tests").glob("test_*.py") if pat.search(p.read_text(encoding="utf-8", errors="replace"))}
-                   | {rel(p) for p in base.rglob("test_*.py")})
+    deferred_generated_artifact_tests = {
+        "tests/test_run_prospectus.py",
+        "tests/test_file_prospectus.py",
+    }
+    tests = sorted(
+        test_path for test_path in (
+            {rel(p) for p in (ROOT / "tests").glob("test_*.py")
+             if pat.search(p.read_text(encoding="utf-8", errors="replace"))}
+            | {rel(p) for p in base.rglob("test_*.py")}
+        )
+        if test_path not in deferred_generated_artifact_tests
+    )
     result["test_files"] = tests
     if tests and not skip_tests:
         res = run([sys.executable, "-m", "pytest", "-q", "-p", "no:cacheprovider", "--no-header", "-rN",
