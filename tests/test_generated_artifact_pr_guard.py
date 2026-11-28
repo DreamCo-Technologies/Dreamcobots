@@ -46,7 +46,7 @@ class GeneratedArtifactPRGuardTests(unittest.TestCase):
             "--- a/config/generated/credentials.json\n"
             "+++ b/config/generated/credentials.json\n"
             "@@ -0,0 +1 @@\n"
-            "+{\"api_key\":\"sk-123456789012345678901234\"}\n"
+            "+{\"api_key\":\"NOT_A_REAL_KEY\"}\n"
         )
         self.assertTrue(validate_changes("A\tconfig/generated/credentials.json", secret_diff))
 
