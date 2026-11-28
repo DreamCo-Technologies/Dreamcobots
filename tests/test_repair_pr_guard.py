@@ -26,7 +26,7 @@ def test_ci_report_hides_success_log_excerpt():
 def test_repair_guard_accepts_small_source_change():
     errors = validate_changes(
         "M\tserver/handlers/orders.py",
-        "--- a/server/handlers/orders.py\n+++ b/server/handlers/orders.py\n@@ -1 +1 @@\n-old\n+new\n",
+        "diff --git a/server/handlers/orders.py b/server/handlers/orders.py\n--- a/server/handlers/orders.py\n+++ b/server/handlers/orders.py\n@@ -1 +1 @@\n-old\n+new\n",
     )
     assert errors == []
 
@@ -60,7 +60,7 @@ def test_repair_guard_blocks_its_own_policy_file():
 def test_repair_guard_allows_new_non_security_test_module():
     errors = validate_changes(
         "A\ttests/test_new_helper.py",
-        "+++ b/tests/test_new_helper.py\n+def test_new_helper(): assert True\n",
+        "diff --git a/tests/test_new_helper.py b/tests/test_new_helper.py\nnew file mode 100644\n--- /dev/null\n+++ b/tests/test_new_helper.py\n+def test_new_helper(): assert True\n",
     )
     assert errors == []
 
@@ -71,3 +71,35 @@ def test_repair_guard_blocks_modifying_existing_tests():
         "+def test_new_helper(): assert True\n",
     )
     assert any("Only new test files may be added" in item for item in errors)
+
+
+def test_repair_guard_rejects_uninspected_changed_file():
+    errors = validate_changes(
+        "M\tserver/handlers/orders.py",
+        "diff --git a/server/handlers/other.py b/server/handlers/other.py\n"
+        "--- a/server/handlers/other.py\n+++ b/server/handlers/other.py\n+safe\n",
+    )
+    assert any("absent from changed-file metadata" in item for item in errors)
+    assert any("no corresponding inspected diff section" in item for item in errors)
+
+
+def test_repair_guard_rejects_binary_and_file_mode_changes():
+    errors = validate_changes(
+        "M\tserver/handlers/orders.py",
+        "diff --git a/server/handlers/orders.py b/server/handlers/orders.py\n"
+        "old mode 100644\nnew mode 100755\nBinary files a/x and b/x differ\n",
+    )
+    assert any("Binary changes are not allowed" in item for item in errors)
+    assert any("File mode changes are not allowed" in item for item in errors)
+
+
+def test_repair_guard_rejects_diff_sections_missing_from_metadata():
+    errors = validate_changes(
+        "M\tserver/handlers/orders.py",
+        "diff --git a/server/handlers/orders.py b/server/handlers/orders.py\n"
+        "--- a/server/handlers/orders.py\n+++ b/server/handlers/orders.py\n"
+        "+safe\n"
+        "diff --git a/server/handlers/users.py b/server/handlers/users.py\n"
+        "--- a/server/handlers/users.py\n+++ b/server/handlers/users.py\n+unreviewed\n",
+    )
+    assert any("absent from changed-file metadata" in item for item in errors)
