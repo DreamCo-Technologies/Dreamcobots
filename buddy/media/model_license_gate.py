@@ -36,6 +36,7 @@ def verify_model_record(record: Mapping[str, Any], evidence_root: str | Path) ->
     if len(checkpoint_hash) != 64 or any(c not in "0123456789abcdef" for c in checkpoint_hash):
         reasons.append("invalid:checkpoint_sha256")
 
+    root = Path(evidence_root).resolve()
     checkpoint_path = (root / str(record["checkpoint_path"])).resolve()
     if root not in checkpoint_path.parents:
         reasons.append("checkpoint_path_escapes_evidence_root")
@@ -56,7 +57,6 @@ def verify_model_record(record: Mapping[str, Any], evidence_root: str | Path) ->
     if not card_url.startswith("https://"):
         reasons.append("model_card_url_must_use_https")
 
-    root = Path(evidence_root).resolve()
     evidence = (root / str(record["license_evidence_path"])).resolve()
     if root not in evidence.parents:
         reasons.append("license_evidence_path_escapes_evidence_root")
