@@ -61,6 +61,9 @@ on:
       - "buddy/bootcamp/sources/TRANSCRIPT_EVALUATION.md"
       - "config/buddy-tolkien-study-track.json"
       - "config/buddy-course-track-registry.json"
+      - "config/dreamco-universal-division-mastery-contract.json"
+      - "tools/build_division_learning_model_kits.py"
+      - "tests/test_division_learning_model_kits.py"
       - "config/freecodecamp-division-routing-overrides.json"
       - "tests/test_freecodecamp_specialist_routing.py"
       - ".github/workflows/freecodecamp-study-guide-pipeline.yml"
@@ -405,6 +408,13 @@ jobs:
           python -m unittest discover -s tests -p 'test_dreamco_original_training_examples.py' -v
           python -m py_compile tools/build_dreamco_bootcamp_seed_data.py tools/build_dreamco_training_factory.py tools/build_dreamco_training_examples.py
           python -m unittest tests.test_buddy_dataset_route_check -v
+      - name: Generate division learning model-kit blueprints
+        run: python tools/build_division_learning_model_kits.py --write
+      - name: Validate division learning model-kit blueprints
+        run: |
+          python tools/build_division_learning_model_kits.py --check
+          python -m unittest tests.test_division_learning_model_kits -v
+
       - name: Upload generated study artifacts for review
         if: always()
         uses: actions/upload-artifact@v4
@@ -418,6 +428,7 @@ jobs:
             ${{ runner.temp }}/freecodecamp-source-routes.json
             config/generated/daily-lesson-production-plan.json
             config/generated/buddy-bootcamp-curriculum.json
+            config/generated/division-learning-model-kits/
           if-no-files-found: warn
           retention-days: 14
 
