@@ -170,8 +170,31 @@ def validate_shard_payload(payload: dict, root: Path, source_manifest_path: Path
             raise ValueError(f"{name} shard filename must start with {expected_prefix}")
         if sha256_file(path) != entry.get("sha256"):
             raise ValueError(f"{name} shard SHA-256 mismatch")
+        index_relative = str(entry.get("index_file", ""))
+        if not index_relative or Path(index_relative).is_absolute():
+            raise ValueError(f"{name} shard requires a relative .idx path")
+        index_path = (root / index_relative).resolve()
+        if index_path == root or root not in index_path.parents or not index_path.is_file():
+            raise ValueError(f"invalid {name} shard .idx path")
+        if sha256_file(index_path) != entry.get("index_sha256"):
+            raise ValueError(f"{name} shard .idx SHA-256 mismatch")
+        index = json.loads(index_path.read_text(encoding="utf-8"))
+        expected_index = {
+            "schema": "dreamco.foundry.token_shard_index.v1",
+            "bin_file": path.name,
+            "dtype": "uint32",
+            "sequence_length": sequence_length,
+            "sequence_count": sequences,
+            "token_count": tokens,
+            "offset_unit": "tokens",
+            "first_token_offset": 0,
+            "sequence_stride_tokens": sequence_length,
+        }
+        if index != expected_index:
+            raise ValueError(f"{name} shard .idx geometry mismatch")
         if attach_paths:
             entry["_resolved_path"] = str(path)
+            entry["_resolved_index_path"] = str(index_path)
     if validation_expected != (payload.get("validation") is not None):
         raise ValueError("validation split declaration and validation shard entry disagree")
     return payload
