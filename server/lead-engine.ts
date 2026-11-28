@@ -27,6 +27,8 @@ export const leadEngineRecordSchema = z.object({
   stage: z.enum(LEAD_ENGINE_STAGES).default("capture"),
   consentBasis: z.enum(["explicit_opt_in", "inbound_request", "existing_relationship", "none"]),
   consentEvidenceRef: z.string().trim().min(3).max(240).optional(),
+  consentObtainedAt: z.string().datetime({ offset: true }).optional(),
+  consentExpiresAt: z.string().datetime({ offset: true }).optional(),
   consentChannels: z.array(z.enum(["email", "sms", "voice_call", "social_dm"])).max(4).default([]),
   fitScore: z.number().finite().min(0).max(100).default(0),
   intentScore: z.number().finite().min(0).max(100).default(0),
@@ -48,8 +50,14 @@ export const leadEngineRecordSchema = z.object({
   if (lead.consentBasis === "none" && lead.consentChannels.length > 0) {
     context.addIssue({ code: z.ZodIssueCode.custom, path: ["consentChannels"], message: "A lead without consent cannot have outreach channels" });
   }
-  if (lead.consentBasis !== "none" && !lead.consentEvidenceRef) {
-    context.addIssue({ code: z.ZodIssueCode.custom, path: ["consentEvidenceRef"], message: "Permission requires a consent evidence reference" });
+  if (lead.consentBasis !== "none" && (!lead.consentEvidenceRef || !lead.consentObtainedAt)) {
+    context.addIssue({ code: z.ZodIssueCode.custom, path: ["consentEvidenceRef"], message: "Permission requires timestamped consent evidence" });
+  }
+  if (lead.consentExpiresAt && lead.consentObtainedAt && Date.parse(lead.consentExpiresAt) <= Date.parse(lead.consentObtainedAt)) {
+    context.addIssue({ code: z.ZodIssueCode.custom, path: ["consentExpiresAt"], message: "Consent expiry must be after consent was obtained" });
+  }
+  if (lead.consentChannels.some((channel) => channel === "sms" || channel === "voice_call") && lead.consentBasis !== "explicit_opt_in") {
+    context.addIssue({ code: z.ZodIssueCode.custom, path: ["consentBasis"], message: "SMS and voice calls require explicit opt-in" });
   }
   if (lead.stage === "convert" && !lead.humanReviewEvidenceRef) {
     context.addIssue({ code: z.ZodIssueCode.custom, path: ["humanReviewEvidenceRef"], message: "Conversion requires documented human review evidence" });
@@ -57,6 +65,14 @@ export const leadEngineRecordSchema = z.object({
 });
 
 export type LeadEngineRecord = z.infer<typeof leadEngineRecordSchema>;
+
+export function hasCurrentLeadConsent(lead: LeadEngineRecord, now = new Date()): boolean {
+  return lead.consentBasis !== "none" &&
+    Boolean(lead.consentEvidenceRef) &&
+    Boolean(lead.consentObtainedAt) &&
+    lead.consentChannels.length > 0 &&
+    (!lead.consentExpiresAt || Date.parse(lead.consentExpiresAt) > now.getTime());
+}
 
 export type LeadQualification = {
   score: number;
@@ -96,7 +112,7 @@ export function qualifyLead(input: LeadEngineRecord): LeadQualification {
   };
   const score = Object.values(breakdown).reduce((total, points) => total + points, 0);
   const suppressed = lead.suppressionStatus !== "active";
-  const permissioned = lead.consentBasis !== "none" && Boolean(lead.consentEvidenceRef);
+  const permissioned = hasCurrentLeadConsent(lead);
   const tier = score >= 80 ? "hot" : score >= 50 ? "warm" : "cold";
   const reasons = [
     `buying_intent:${breakdown.buyingIntent}/30`,
@@ -202,7 +218,7 @@ export function assertLeadStageTransition(
   if (nextIndex < currentIndex) throw new Error("lead_engine_stage_regression_forbidden");
   if (nextIndex > currentIndex + 1) throw new Error("lead_engine_stage_skip_forbidden");
   if (nextIndex === currentIndex + 1 && next.stage === "nurture") {
-    if (next.consentBasis === "none" || !next.consentEvidenceRef || next.suppressionStatus !== "active") {
+    if (!hasCurrentLeadConsent(next) || next.suppressionStatus !== "active") {
       throw new Error("lead_engine_nurture_requires_current_permission_and_active_contact");
     }
   }
@@ -213,8 +229,7 @@ export function assertLeadStageTransition(
       !next.budgetConfirmed ||
       !next.useCase ||
       !next.humanReviewEvidenceRef ||
-      next.consentBasis === "none" ||
-      !next.consentEvidenceRef ||
+      !hasCurrentLeadConsent(next) ||
       next.suppressionStatus !== "active"
     ) {
       throw new Error("lead_engine_conversion_requires_hot_lead_budget_use_case_permission_and_human_review");
