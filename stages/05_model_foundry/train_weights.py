@@ -340,14 +340,26 @@ def execute_stage(stage: str, recipe: dict[str, Any], manifest: dict[str, Any],
     if stage == "pretrain":
         if shard_dir is None:
             raise ValueError("pretrain requires --token-shards pointing to pack_tokens.py output")
-        if not shard_payload or not shard_payload.get("train", {}).get("_resolved_path"):
+        if not shard_payload:
             raise PermissionError("pretraining requires a verified signed train-shard entry")
-        shard_paths = [Path(shard_payload["train"]["_resolved_path"])]
-        if not shard_paths[0].is_file():
-            raise FileNotFoundError("verified train shard is missing")
+        train_entries = shard_payload.get("train")
+        if isinstance(train_entries, dict):
+            train_entries = [train_entries]
+        if not isinstance(train_entries, list) or not train_entries or any(
+            not item.get("_resolved_path") for item in train_entries
+        ):
+            raise PermissionError("pretraining requires verified signed train-shard entries")
+        shard_paths = [Path(item["_resolved_path"]) for item in train_entries]
+        if any(not path.is_file() for path in shard_paths):
+            raise FileNotFoundError("one or more verified train shards are missing")
         dataset = _PackedDataset(shard_paths, int(recipe["packing"]["sequence_length"]))
-        validation_entry = (shard_payload or {}).get("validation")
-        validation_paths = [Path(validation_entry["_resolved_path"])] if validation_entry and validation_entry.get("_resolved_path") else []
+        validation_entries = shard_payload.get("validation")
+        if isinstance(validation_entries, dict):
+            validation_entries = [validation_entries]
+        validation_paths = [
+            Path(item["_resolved_path"]) for item in (validation_entries or [])
+            if item.get("_resolved_path")
+        ]
         validation_dataset = (
             _PackedDataset(validation_paths, int(recipe["packing"]["sequence_length"]))
             if validation_paths else None
