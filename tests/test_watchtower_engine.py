@@ -5,10 +5,19 @@ from pathlib import Path
 from unittest.mock import patch
 
 import importlib
+import sys
+import types
 
-_adapters = importlib.import_module("stages.09_watchtower.adapters")
-_cli = importlib.import_module("stages.09_watchtower.cli")
-_engine = importlib.import_module("stages.09_watchtower.engine")
+_WATCHTOWER_ROOT = Path(__file__).resolve().parents[1] / "stages" / "09_watchtower"
+_WATCHTOWER_PACKAGE = "dreamco_watchtower"
+if _WATCHTOWER_PACKAGE not in sys.modules:
+    package = types.ModuleType(_WATCHTOWER_PACKAGE)
+    package.__path__ = [str(_WATCHTOWER_ROOT)]
+    sys.modules[_WATCHTOWER_PACKAGE] = package
+
+_adapters = importlib.import_module(f"{_WATCHTOWER_PACKAGE}.adapters")
+_cli = importlib.import_module(f"{_WATCHTOWER_PACKAGE}.cli")
+_engine = importlib.import_module(f"{_WATCHTOWER_PACKAGE}.engine")
 validate_public_https_url = _adapters.validate_public_https_url
 _atomic_write = _cli._atomic_write
 Observation, WatchRule, evaluate = _engine.Observation, _engine.WatchRule, _engine.evaluate
