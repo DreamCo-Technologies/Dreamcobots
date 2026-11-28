@@ -56,9 +56,16 @@ def test_spec_uses_abstract_operation_names(tmp_path):
 
 def test_generator_requires_explicit_mock_and_source_free_spec(tmp_path):
     spec=tmp_path/"spec.json"; out=tmp_path/"course.json"
-    dump(spec,{"schema_version":"dreamco.functional_spec.v1","job_id":"abc12345","system_label":"user_system","inputs":[],"outputs":[],"state_rules":[],"edge_cases":[],"onet_tasks":[],"clean_room":{"original_source_available":False}})
+    dump(spec,{"schema_version":"dreamco.functional_spec.v1","job_id":"abc12345","system_label":"user_system","inputs":[],"outputs":[],"state_rules":[],"edge_cases":[],"onet_tasks":[],"clean_room":{"original_source_available":False,"source_identifiers_removed":True,"generator_input":"functional_spec_only"}})
     assert run("stages.04_clean_room_gen",spec,out).returncode!=0
     assert run("stages.04_clean_room_gen",spec,out,"--mock").returncode==0
+
+
+def test_generator_rejects_specs_with_source_identifiers(tmp_path):
+    spec=tmp_path/"spec.json"; out=tmp_path/"course.json"
+    dump(spec,{"schema_version":"dreamco.functional_spec.v1","job_id":"abc12345","system_label":"user_system","inputs":[],"outputs":[],"state_rules":[],"edge_cases":[],"onet_tasks":[],"clean_room":{"original_source_available":False,"source_identifiers_removed":False,"generator_input":"functional_spec_only"}})
+    result=run("stages.04_clean_room_gen",spec,out,"--mock")
+    assert result.returncode!=0
 
 def test_static_parsers_cover_openapi_har_and_csv():
     from importlib import import_module
