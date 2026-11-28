@@ -78,6 +78,10 @@ def evaluate_source(source:dict[str,Any],registry:dict[str,Any],purpose:str="tra
         or not str(source.get("commercial_training_evidence_ref") or "").strip()
     ):
         reason="BLOCKED_COMMERCIAL_TRAINING_PERMISSION"
+    elif purpose=="commercial_training":
+        # The denial branch above enforces tier, registry permission, item permission,
+        # and a pinned commercial-training evidence reference before this allow.
+        allowed=True
     elif purpose=="fact_extraction" and tier in {"PUBLIC_DOMAIN","PERMISSIVE_COMMERCIAL","FACT_EXTRACTION_ONLY"} and match.get("fact_extraction_allowed") is True:
         allowed=True
     elif purpose=="transcript_extraction" and tier in {"PUBLIC_DOMAIN","PERMISSIVE_COMMERCIAL"}:
