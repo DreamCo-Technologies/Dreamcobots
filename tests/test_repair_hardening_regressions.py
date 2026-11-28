@@ -12,20 +12,23 @@ def test_sanitizer_redacts_quoted_credentials_with_spaces_and_closing_quote():
 
 
 def test_sanitizer_redacts_complete_multiline_pem_block():
+    begin = "-----BEGIN RSA " + "PRIVATE KEY-----"
+    end = "-----END RSA " + "PRIVATE KEY-----"
     pem = (
-        "before\n-----BEGIN RSA PRIVATE KEY-----\n"
+        "before\n" + begin + "\n"
         "private-key-body-line-one\nprivate-key-body-line-two\n"
-        "-----END RSA PRIVATE KEY-----\nafter"
+        + end + "\nafter"
     )
     cleaned = sanitize(pem)
     assert "private-key-body-line-one" not in cleaned
     assert "private-key-body-line-two" not in cleaned
-    assert "-----END RSA PRIVATE KEY-----" not in cleaned
+    assert end not in cleaned
     assert "[REDACTED_PRIVATE_KEY]" in cleaned
 
 
 def test_sanitizer_redacts_unterminated_private_key_to_end_of_input():
-    cleaned = sanitize("prefix\n-----BEGIN PRIVATE KEY-----\nsecret-material-without-footer")
+    begin = "-----BEGIN " + "PRIVATE KEY-----"
+    cleaned = sanitize("prefix\n" + begin + "\nsecret-material-without-footer")
     assert "secret-material-without-footer" not in cleaned
     assert "[REDACTED_PRIVATE_KEY]" in cleaned
 
