@@ -242,16 +242,12 @@ def route_buddy_learning_query(
                 "seed_candidate_matches": seed_matches,
                 "knowledge_gap": library.get("knowledge_gap"),
                 "external_discovery_available": False,
-                "external_discovery_requires_explicit_opt_in": True,
+                "external_discovery_requires_explicit_opt_in": False,
                 "external_discovery_performed": False,
                 "external_model_routing_performed": False,
                 "study_required": True,
                 "candidate_verification_required": True,
-                "next_action": (
-                    "Ask the user before external research; after approval, verify the candidate against "
-                    "authoritative first-party sources, pin its exact version, review license and rights, "
-                    "then author and assess an original study guide."
-                ),
+                "next_action": "Verify candidates only in DreamCo's approved internal authoring workflow; do not route learners to external course websites.",
                 "mastery_awarded": False,
             }
 
@@ -276,15 +272,11 @@ def route_buddy_learning_query(
             "seed_candidate_matches": seed_matches,
             "knowledge_gap": library.get("knowledge_gap"),
             "external_discovery_available": False,
-            "external_discovery_requires_explicit_opt_in": supporting_guide_count == 0,
+            "external_discovery_requires_explicit_opt_in": False,
             "external_discovery_performed": False,
             "external_model_routing_performed": False,
             "study_required": True,
-            "next_action": (
-                "Study the repository-local supporting guide and complete the original practice. "
-                "If it does not cover the requested lesson, ask the user before external research; "
-                "then verify a first-party source, release and rights before drafting an original guide."
-            ),
+            "next_action": "Study the DreamCo-authored lesson and complete the original practice; do not route learners to external course websites.",
             "mastery_awarded": False,
         }
 
@@ -313,9 +305,9 @@ def route_buddy_learning_query(
         "knowledge_gap": gap,
         "gap_event": gap_event,
         "external_discovery_available": False,
-        "external_discovery_requires_explicit_opt_in": True,
+        "external_discovery_requires_explicit_opt_in": False,
         "external_discovery_performed": False,
         "external_model_routing_performed": False,
-        "next_action": "Ask the user before external research; then verify first-party sources, version and rights, draft an original guide, and review and assess it.",
+        "next_action": "Record a DreamCo knowledge gap and queue original authoring; do not route learners to external course websites.",
         "mastery_awarded": False,
     }
