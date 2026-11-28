@@ -56,6 +56,7 @@ Stage 06 (`stages/06_repo_repair/__main__.py`) consumes a `pytest-json-report` f
 - The path allowlist is hard-coded to generated artifacts under `artifacts/`, `command-center/data/`, `config/bots/`, `config/generated/`, `reports/`, and `website/data/`. A caller cannot expand it to source, tests, workflows, contracts, or secrets. Output and trajectory paths must also resolve inside those generated-artifact roots.
 - `--apply` is blocked in pull-request and non-main GitHub contexts. It requires a clean trusted `main` checkout and runs fixed commands in a detached temporary Git worktree. The resulting patch is an unmerged review artifact; it does not commit, push, open, approve, or merge a PR. Candidates are limited to 20 files, 1,500 changed lines, and 5 MiB of patch data; binary changes, symlinks, credential files, unsafe file modes, and paths outside the allowlist are rejected.
 - Attempt history is capped at three per failure fingerprint. No model is called and no API key is needed.
+- Shared stage JSON helpers constrain CI file access to repository paths; test fixtures may use the runner temp directory only while `PYTEST_CURRENT_TEST` is set. The sandbox evaluator and repair evidence omit raw stdout/stderr, and repair command results retain exit codes only.
 
 Run the report and planner locally without applying changes:
 
