@@ -58,6 +58,7 @@ jobs:
       TRAINING_APPROVAL: ${{ secrets.DREAMCO_TRAINING_APPROVAL_REFERENCE }}
       POLICY_PRIVATE_KEY_PATH: ${{ vars.DREAMCO_FOUNDRY_POLICY_PRIVATE_KEY_PATH }}
       BASE_MODEL_REVISION: ${{ inputs.base_model_revision }}
+      BASELINE_CHECKPOINT_PATH: ${{ vars.DREAMCO_FOUNDRY_BASELINE_CHECKPOINT_PATH }}
       RECIPE: ${{ inputs.recipe }}
     steps:
       - uses: actions/checkout@v4
