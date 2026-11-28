@@ -71,3 +71,18 @@ test('published routing and sandbox certifications agree for every fleet profile
   assert.equal(evidence.capabilityTestsFailed,0);
  }
 });
+
+test('fleet catalog keeps domain divisions and specialist portfolios in distinct identity sets',()=>{
+ const catalog=buildFleetCatalog();
+ const domainNames=new Set([
+  ...catalog.divisions.map((division:any)=>division.name),
+  ...catalog.supplemental_divisions.map((division:any)=>division.name),
+ ]);
+ const portfolioNames=new Set(catalog.supplemental_bots.map((bot:any)=>bot.identity.division));
+ assert.ok(domainNames.size>0);
+ assert.ok([...portfolioNames].some(name=>!domainNames.has(name)));
+ for(const bot of [...catalog.bots,...catalog.supplemental_bots]){
+  assert.ok(bot.identity.division);
+  assert.ok(domainNames.has(bot.identity.division)||portfolioNames.has(bot.identity.division));
+ }
+});
