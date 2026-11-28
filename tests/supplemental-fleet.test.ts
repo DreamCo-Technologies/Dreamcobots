@@ -49,14 +49,15 @@ test('compact published fleet preserves every canonical and supplemental profile
   assert.deepEqual(shard.bots.find((item:any)=>item.identity.slug===bot.identity.slug),bot);
  }
 });
-test('Dream3D remains a supplemental portfolio with its own non-domain shard',()=>{
+test('Dream3D remains a canonical domain division with a generated domain shard',()=>{
  const catalog=buildFleetCatalog();
+ writeFleetCatalog();
  const dream3d=JSON.parse(readFileSync('website/data/bot-fleet/Dream3D.json','utf8'));
- assert.equal(dream3d.schema,'dreamco.bot_fleet_portfolio.v1');
- assert.equal(dream3d.portfolio_type,'supplemental_specialist_portfolio');
+ assert.equal(dream3d.schema,'dreamco.bot_fleet_division.v2');
+ assert.equal(dream3d.group_type,'domain_division');
  assert.equal(dream3d.division,'Dream3D');
  assert.ok(dream3d.bots.length>0);
- assert.equal(catalog.divisions.some((division:any)=>division.name==='Dream3D'),false);
+ assert.equal(catalog.divisions.some((division:any)=>division.name==='Dream3D'),true);
  assert.equal(catalog.supplemental_divisions.some((division:any)=>division.name==='Dream3D'),false);
  assert.doesNotThrow(()=>writeFleetCatalog({check:true}));
 });

@@ -1,6 +1,7 @@
 (function () {
   const box = document.getElementById("bench");
   const lead = document.getElementById("bench-lead");
+  const discovery = document.getElementById("wikipedia-learning-links");
 
   function card(title, body) {
     const article = document.createElement("article");
@@ -22,9 +23,11 @@
   Promise.all([
     fetch("data/benchmarks.json").then(function (response) { return response.json(); }),
     fetch("data/benchmark-index.json").then(function (response) { return response.json(); }),
+    fetch("data/wikipedia-learning-target-map.json").then(function (response) { return response.json(); }),
   ]).then(function (payload) {
     const score = payload[0];
     const index = payload[1];
+    const learningMap = payload[2];
     const summary = index.summary || {};
     lead.textContent = "Measured here: " + score.passed + " of " + score.checks + " gate checks passed. Catalog: " + summary.repositorySuites + " suites and " + summary.benchmarkPrograms + " programs. Live program runs completed: " + summary.liveBenchmarkPrograms + ". A catalog entry is not a score.";
 
@@ -46,6 +49,25 @@
     (index.programs || []).forEach(function (program) {
       box.append(card(program.name, "Live results completed: " + program.live_results_completed + ". Data: " + program.public_data));
     });
+
+    section("Wikipedia discovery linked to goals and benchmarks");
+    function appendSearchGroup(title, rows) {
+      const heading = document.createElement("h3");
+      heading.textContent = title;
+      discovery.append(heading);
+      rows.forEach(function (row) {
+        const link = document.createElement("a");
+        link.href = row.wikipedia_search_url;
+        link.target = "_blank";
+        link.rel = "noopener noreferrer";
+        link.textContent = row.label;
+        const item = document.createElement("p");
+        item.append(link);
+        discovery.append(item);
+      });
+    }
+    appendSearchGroup("Learning goals", learningMap.goals || []);
+    appendSearchGroup("Benchmarks", learningMap.benchmarks || []);
 
     section("Open these pages");
     [

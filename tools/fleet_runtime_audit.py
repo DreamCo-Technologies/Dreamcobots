@@ -678,11 +678,14 @@ def render_report(status: dict[str, Any], rows: list[dict[str, Any]]) -> str:
             details.append("site check: " + str(f["site_check"])[:300])
         if details:
             lines.append(f"- **{f['folder']}**: " + " | ".join(details))
-    deferred = sorted({
-        test
-        for folder in status.get("code_folders", [])
-        for test in folder.get("deferred_tests", [])
-    })
+    deferred = sorted(
+        set(status.get("deferred_generated_artifact_tests", []))
+        | {
+            test
+            for folder in status.get("code_folders", [])
+            for test in folder.get("deferred_tests", [])
+        }
+    )
     if deferred:
         lines += ["", "### Deferred generated artifact tests", "",
                   "**deferred tests not run** in the pre-refresh folder suite; the dedicated post-audit step reruns them after generated evidence is refreshed:", ""]
