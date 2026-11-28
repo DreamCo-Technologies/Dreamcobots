@@ -12,10 +12,12 @@ from .guardrails import verify_signed_manifest
 
 def public_cache_allowed(manifest: dict) -> bool:
     datasets = manifest.get("datasets", [])
+    models = manifest.get("models", [])
+    resources = list(datasets) + list(models)
     return bool(datasets) and all(
         item.get("cache_visibility") == "public"
         and item.get("redistribution_allowed") is True
-        for item in datasets
+        for item in resources
     )
 
 
