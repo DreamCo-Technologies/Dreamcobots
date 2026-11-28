@@ -1,4 +1,4 @@
-import { and, desc, eq } from "drizzle-orm";
+import { and, desc, eq, sql } from "drizzle-orm";
 import { z } from "zod";
 import { db } from "./db";
 import { leadEngineActivities, leadEngineRecords } from "@shared/schema";
@@ -37,6 +37,8 @@ function assertOwnerRecord(ownerId: string, record: LeadEngineRecord) {
   return { ownerId: parsedOwner, record: parsedRecord };
 }
 
+type LeadEngineTx = Parameters<Parameters<typeof db.transaction>[0]>[0];
+
 function stageIndex(stage: LeadEngineRecord["stage"]) {
   return LEAD_ENGINE_STAGES.indexOf(stage);
 }
@@ -46,12 +48,12 @@ function stageIndex(stage: LeadEngineRecord["stage"]) {
  * owner context. PostgreSQL RLS is the final isolation boundary; caller code
  * must obtain ownerId from an authenticated identity, never request JSON.
  */
-async function withOwner<T>(ownerId: string, operation: (tx: Parameters<Parameters<typeof db.transaction>[0]>[0]) => Promise<T>): Promise<T> {
+async function withOwner<T>(ownerId: string, operation: (tx: LeadEngineTx) => Promise<T>): Promise<T> {
   const safeOwnerId = ownerIdSchema.parse(ownerId);
   return db.transaction(async (tx) => {
     await tx.execute(
       // SET LOCAL equivalent: automatically cleared when this transaction ends.
-      (await import("drizzle-orm")).sql`select set_config('app.owner_id', ${safeOwnerId}, true)`,
+      sql`select set_config('app.owner_id', ${safeOwnerId}, true)`,
     );
     return operation(tx);
   });
