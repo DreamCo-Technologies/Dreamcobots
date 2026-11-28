@@ -22,7 +22,7 @@ def verify_model_record(record: Mapping[str, Any], evidence_root: str | Path) ->
     """Return approved only when checkpoint, license evidence and all dependency records pass."""
     reasons: list[str] = []
     required = (
-        "model_id", "checkpoint_sha256", "license_id", "license_evidence_path",
+        "model_id", "checkpoint_path", "checkpoint_sha256", "license_id", "license_evidence_path",
         "license_evidence_sha256", "model_card_url", "commercial_use_allowed",
         "redistribution_allowed", "dependencies",
     )
@@ -35,6 +35,14 @@ def verify_model_record(record: Mapping[str, Any], evidence_root: str | Path) ->
     checkpoint_hash = str(record["checkpoint_sha256"]).lower()
     if len(checkpoint_hash) != 64 or any(c not in "0123456789abcdef" for c in checkpoint_hash):
         reasons.append("invalid:checkpoint_sha256")
+
+    checkpoint_path = (root / str(record["checkpoint_path"])).resolve()
+    if root not in checkpoint_path.parents:
+        reasons.append("checkpoint_path_escapes_evidence_root")
+    elif not checkpoint_path.is_file():
+        reasons.append("checkpoint_file_missing")
+    elif len(checkpoint_hash) == 64 and _sha256(checkpoint_path) != checkpoint_hash:
+        reasons.append("checkpoint_hash_mismatch")
 
     license_id = str(record["license_id"])
     if license_id not in PERMISSIVE_LICENSES:
