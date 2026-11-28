@@ -62,28 +62,29 @@ jobs:
         run: |
           docker info --format '{{json .SecurityOptions}}' | grep -qi rootless
           docker build -f stages/05_model_foundry/Dockerfile.selfplay -t dreamco-verifier:local stages/05_model_foundry
-      - name: Hash signed data and recipe
-        id: hashes
+      - name: Compute cache policy from signed rights manifest
+        id: cache-policy
+        env:
+          SIGNATURE: ${{ runner.temp }}/dreamco-foundry/source.sig
+          PUBLIC_KEY: ${{ runner.temp }}/dreamco-foundry/policy-public.pem
         run: |
           test -f "$MANIFEST"
           test -f "$RECIPE"
-          DATA_HASH=$(sha256sum "$MANIFEST" | cut -d ' ' -f 1)
-          RECIPE_HASH=$(sha256sum "$RECIPE" | cut -d ' ' -f 1)
-          CODE_HASH=$(cat stages/05_model_foundry/train_tokenizer.py stages/05_model_foundry/pack_tokens.py requirements-foundry.txt | sha256sum | cut -d ' ' -f 1)
           ARTIFACT_DIR=$(python -c 'import yaml,os; print(yaml.safe_load(open(os.environ["RECIPE"]))["artifact_dir"])')
-          echo "data_hash=$DATA_HASH" >> "$GITHUB_OUTPUT"
-          echo "recipe_hash=$RECIPE_HASH" >> "$GITHUB_OUTPUT"
-          echo "code_hash=$CODE_HASH" >> "$GITHUB_OUTPUT"
           echo "artifact_dir=$ARTIFACT_DIR" >> "$GITHUB_OUTPUT"
-      - name: Restore tokenizer and token-shard cache
+          python stages/05_model_foundry/cache_policy.py \
+            --manifest "$MANIFEST" --signature "$SIGNATURE" --public-key "$PUBLIC_KEY" \
+            --recipe "$RECIPE" --output "$RUNNER_TEMP/dreamco-foundry/cache-policy.json"
+      - name: Restore publicly redistributable tokenizer and token-shard cache
         id: cache-foundry
+        if: steps.cache-policy.outputs.cache_allowed == 'true'
         uses: actions/cache@v4
         with:
           path: |
-            ${{ steps.hashes.outputs.artifact_dir }}/tokenizer
-            ${{ steps.hashes.outputs.artifact_dir }}/token_shards
-          key: dreamco-foundry-${{ steps.hashes.outputs.recipe_hash }}-${{ steps.hashes.outputs.data_hash }}-${{ steps.hashes.outputs.code_hash }}
-      - name: Build tokenizer and pack signed-source shards on cache miss
+            ${{ steps.cache-policy.outputs.artifact_dir }}/tokenizer
+            ${{ steps.cache-policy.outputs.artifact_dir }}/token_shards
+          key: dreamco-foundry-${{ steps.cache-policy.outputs.cache_key }}
+      - name: Build tokenizer and pack signed-source shards on cache miss or private-data bypass
         if: steps.cache-foundry.outputs.cache-hit != 'true'
         env:
           SIGNATURE: ${{ runner.temp }}/dreamco-foundry/source.sig
