@@ -7,6 +7,8 @@ on:
       - "tools/run_heldout_evaluation.py"
       - "tools/validate_checkpoint.py"
       - "tests/test_heldout_evaluation.py"
+      - "tools/leaderboard_math.py"
+      - "tests/test_leaderboard_math.py"
       - ".github/workflows/dreamco-heldout-evaluation.yml"
   workflow_dispatch:
 
@@ -27,6 +29,6 @@ jobs:
         with:
           python-version: "3.13"
       - name: Compile evaluation tools
-        run: python -m py_compile tools/run_heldout_evaluation.py tools/validate_checkpoint.py
+        run: python -m py_compile tools/run_heldout_evaluation.py tools/validate_checkpoint.py tools/leaderboard_math.py
       - name: Run held-out evaluator and checkpoint evidence tests
-        run: python -m unittest tests.test_heldout_evaluation -v
+        run: python -m unittest tests.test_heldout_evaluation tests.test_leaderboard_math -v
