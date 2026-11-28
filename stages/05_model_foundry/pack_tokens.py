@@ -158,6 +158,7 @@ def main():
             validation_shards.append(entry)
     report = {
         "schema": "dreamco.foundry.token_shards.v1", "sequence_length": args.sequence_length,
+        "shard_size_tokens": args.shard_size_tokens,
         "dtype": "uint32", "training_splits": ["train"],
         "validation_splits": ["validation"] if validation_shards else [],
         "excluded_splits": ["holdout"], "mix_percent": weights,
