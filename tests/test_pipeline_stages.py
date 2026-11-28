@@ -58,3 +58,13 @@ def test_generator_requires_explicit_mock_and_source_free_spec(tmp_path):
     dump(spec,{"schema_version":"dreamco.functional_spec.v1","job_id":"abc12345","system_label":"user_system","inputs":[],"outputs":[],"state_rules":[],"edge_cases":[],"onet_tasks":[],"clean_room":{"original_source_available":False}})
     assert run("stages.04_clean_room_gen",spec,out).returncode!=0
     assert run("stages.04_clean_room_gen",spec,out,"--mock").returncode==0
+
+def test_static_parsers_cover_openapi_har_and_csv():
+    from importlib import import_module
+    parse = import_module("stages.02_intake_parser.__main__").parse
+    openapi=parse('{"openapi":"3.0.0","paths":{"/items":{"get":{},"post":{}}}}',"openapi_json")
+    assert openapi=={"endpoints":[{"method":"GET","path":"/items"},{"method":"POST","path":"/items"}]}
+    har=parse('{"log":{"entries":[{"request":{"method":"GET","url":"https://example.test/orders?token=secret"},"response":{"status":200}}]}}',"har")
+    assert har["endpoints"]==[{"method":"GET","path":"/orders","status":200}]
+    csv=parse("id,name\\n1,A\\n2,B\\n","csv")
+    assert csv["row_count"]==2 and csv["columns"][0]["name"]=="field_1"
