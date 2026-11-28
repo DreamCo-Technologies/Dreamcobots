@@ -75,7 +75,7 @@ jobs:
       - name: Install foundry runtime without replacing the runner CUDA PyTorch
         shell: bash
         run: |
-          grep -v '^torch[<=>]' stages/05_model_foundry/requirements-foundry.txt > /tmp/foundry-requirements.txt
+          grep -v '^torch' stages/05_model_foundry/requirements-foundry.txt > /tmp/foundry-requirements.txt
           python -m pip install --disable-pip-version-check -r /tmp/foundry-requirements.txt
       - name: Run tokenizer, packing and authorized weight training
         shell: bash
@@ -94,6 +94,14 @@ jobs:
           else
             test -n "$BASE_MODEL_REVISION"
             [[ "$BASE_MODEL_REVISION" =~ ^[0-9a-f]{40}$ ]]
+            python - "$RECIPE_FILE" "$BASE_MODEL_REVISION" <<'PY'
+          import sys, yaml
+          recipe_path, revision = sys.argv[1:]
+          recipe = yaml.safe_load(open(recipe_path, encoding="utf-8"))
+          recipe["base_model"]["revision"] = revision
+          yaml.safe_dump(recipe, open("/tmp/foundry-openweight-recipe.yaml", "w", encoding="utf-8"), sort_keys=False)
+          PY
+            RECIPE_FILE="/tmp/foundry-openweight-recipe.yaml"
             python -m stages.05_model_foundry.train_tokenizer --mode extend --vocab-size 16384 \
               --base-model "Qwen/Qwen2.5-Coder-1.5B" --base-revision "$BASE_MODEL_REVISION" \
               --manifest "$DATA/manifest.json" --signature "$DATA/manifest.sig" \
