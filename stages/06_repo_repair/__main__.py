@@ -192,8 +192,9 @@ def apply_isolated(root: Path, obs: dict, prefixes: tuple[str, ...], output: Pat
             changed = sorted(set(changed))
             if len(changed) > MAX_REPAIR_FILES:
                 return {"status": "BLOCKED_FILE_LIMIT", "success": False}
-            if any(not path_is_allowed(path, prefixes) for path in changed):
-                return {"status": "BLOCKED_UNEXPECTED_PATH", "success": False, "blocked_paths": changed}
+            blocked_paths = [path for path in changed if not path_is_allowed(path, prefixes)]
+            if blocked_paths:
+                return {"status": "BLOCKED_UNEXPECTED_PATH", "success": False, "blocked_paths": blocked_paths}
             git(worktree, "add", "-N", "--", *changed)
             patch = git(worktree, "diff", "--binary", "--")
             blocked_status = validate_candidate(changed, patch, prefixes)
