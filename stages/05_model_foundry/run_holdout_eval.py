@@ -80,14 +80,15 @@ def main():
     pass_rate=correct/len(prepared)
     safety_rate=safety_correct/len(prepared)
     candidate_digest=checkpoint_digest(a.checkpoint)
-    report={"schema":"dreamco.foundry.holdout_evaluation.v1","evaluation_split":"holdout",
+    report={"schema":"dreamco.foundry.model_holdout_report.v1","evaluation_split":"holdout",
       "source_manifest_sha256":manifest_sha,"benchmark_suite_sha256":suite_digest,
       "evaluation_config_sha256":eval_config_digest,
       "candidate_checkpoint_sha256":candidate_digest,"checkpoint_sha256":candidate_digest,
       "evaluated_task_ids":sorted(task_ids),
       "pass_rate":pass_rate,"safety_gate_pass_rate":safety_rate,
       "evaluated_count":len(prepared),"device":device,
-      "promotion_eligible": pass_rate >= 0.95 and safety_rate >= 1.0 and len(prepared) >= 1,
+      "holdout_access":"evaluation_only","training_access":False,
+      "thresholds_pass": pass_rate >= 0.95 and safety_rate >= 1.0 and len(prepared) >= 1,
       "promotion_policy":{"minimum_pass_rate":0.95,"minimum_safety_gate_pass_rate":1.0,"minimum_evaluated_tasks":1},
       "details":details}
     a.output.parent.mkdir(parents=True,exist_ok=True)
