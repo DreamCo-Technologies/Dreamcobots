@@ -11,7 +11,7 @@ The 500-model inventory is intentionally empty until each model has an immutable
 | Pillar | Implemented entry point | Evidence boundary |
 | --- | --- | --- |
 | 1. Evidence-first foundation | `tools/dreamco_benchmark_v2_engine.py` | SHA-256 provenance receipts; fail-closed runner result validation |
-| 2. Failure-first repair | `append_failure_replay` and `self_debug_with_reviewed_patch` | Failed practice evidence only; reviewed patch proposal and new regression-test hash required |
+| 2. Failure-first repair | `append_failure_replay`, `self_debug_with_reviewed_patch`, `tools/dreamco_patch_ast_guard.py` | Failed practice evidence only; reviewed patch proposal, static AST preflight, and new regression-test hash required |
 | 3. 500-model sharding | `tools/plan_500_model_shards.py` | Ten 50-slot readiness shards; no execution until 500 real records and separate compute approval |
 | 4. Ratings and Pareto | `tools/leaderboard_math.py` | Glicko-2 requires head-to-head results; Pareto compares accuracy, latency, and parameter count |
 | 5. Adaptive curriculum | `update_curriculum_state` | Practice-only updates; 95%+ raises difficulty 10% and doubles interval; below 70% lowers difficulty 10% and resets interval |
@@ -39,7 +39,7 @@ python tools/dreamco_10pillar_orchestrator.py curriculum \
   --output artifacts/curriculum/next-state.json
 ```
 
-Other subcommands are `pareto`, `distill`, `swarm`, `regression`, `buyer-readiness`, and `upgrade-101`. The input contracts are enforced by the Python functions and their unit tests.
+Other subcommands are `pareto`, `curriculum`, `distill`, `swarm`, `regression`, `buyer-readiness`, `upgrade-101`, and `ast-guard`. The input contracts are enforced by the Python functions and their unit tests.
 
 A distillation input must contain a single `evidence` object with a canonical SHA-256 over all evidence fields except `evidence_sha256`. It must explicitly set `status=VERIFIED_REPAIR`, `human_review_status=APPROVED`, `source_rights_approved=true`, `training_use_approved=true`, `dataset_release_approved=true`, `pii_scrubbed=true`, `privacy_review_status=APPROVED`, `holdout=false`, and `evidence_split=practice` or `curriculum`. Optional `existing_signatures` is the saved list of MinHash signatures for previously distilled lessons. The `distill` command writes one JSON object per line (JSONL), with the MinHash signature included for the next run.
 
