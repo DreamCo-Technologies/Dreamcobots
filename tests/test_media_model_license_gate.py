@@ -11,9 +11,13 @@ class ModelLicenseGateTests(unittest.TestCase):
         evidence = self.root / "licenses" / "model.txt"
         evidence.parent.mkdir()
         evidence.write_text("SPDX-License-Identifier: MIT\n", encoding="utf-8")
+        checkpoint = self.root / "models" / "checkpoint.bin"
+        checkpoint.parent.mkdir()
+        checkpoint.write_bytes(b"DreamCo test checkpoint bytes")
         self.record = {
             "model_id": "example/model",
-            "checkpoint_sha256": "a" * 64,
+            "checkpoint_path": "models/checkpoint.bin",
+            "checkpoint_sha256": hashlib.sha256(checkpoint.read_bytes()).hexdigest(),
             "license_id": "MIT",
             "license_evidence_path": "licenses/model.txt",
             "license_evidence_sha256": hashlib.sha256(evidence.read_bytes()).hexdigest(),
@@ -30,6 +34,16 @@ class ModelLicenseGateTests(unittest.TestCase):
         result = verify_model_record(self.record, self.root)
         self.assertEqual(result["decision"], "approved")
         self.assertEqual(result["reasons"], [])
+
+    def test_checkpoint_hash_must_match_actual_file(self):
+        self.record["checkpoint_sha256"] = "a" * 64
+        self.assertIn("checkpoint_hash_mismatch",
+                      verify_model_record(self.record, self.root)["reasons"])
+
+    def test_checkpoint_path_traversal_is_blocked(self):
+        self.record["checkpoint_path"] = "../outside.bin"
+        self.assertIn("checkpoint_path_escapes_evidence_root",
+                      verify_model_record(self.record, self.root)["reasons"])
 
     def test_unknown_or_noncommercial_license_is_blocked(self):
         self.record["license_id"] = "CC-BY-NC-4.0"
