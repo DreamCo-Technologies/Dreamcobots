@@ -49,7 +49,43 @@ import {
   fleetExecutionRequestSchema,
   getFleetRuntimeRegistry,
 } from "./fleet-runtime";
-import { outboundAdapterReadiness } from "./outbound-adapters";
+import { outboundAdapterReadiness, SecureJsonWebhookAdapter } from "./outbound-adapters";
+import { buildCommunicationPlan } from "./communication-behavior";
+import {
+  assessCommunicationAction,
+  communicationTwinSettingsSchema,
+  type CommunicationTwinSettings,
+} from "./communication-twin";
+import {
+  acceptInboundMobileMessage,
+  AndroidCompanionTransport,
+  BlueBubblesMacRelayTransport,
+  mobileBridgeReadiness,
+  mobileBridgeRegistrationSchema,
+  PostgresMobileReplayClaimStore,
+  sendMobileMessage,
+} from "./mobile-messaging-bridge";
+import {
+  appendCommunicationTwinAudit,
+  claimCommunicationTwinDraftForSend,
+  completeCommunicationTwinDraftSend,
+  createCommunicationTwinDraft,
+  getCommunicationTwinDraft,
+  getCommunicationTwinSettings,
+  getMobileBridgeDevice,
+  listCommunicationTwinDrafts,
+  listMobileBridgeDevices,
+  markCommunicationTwinDraftDeliveryUnknown,
+  PostgresMobileReplayClaimStore as _UnusedReplayStore,
+  registerMobileBridgeDevice,
+  rejectCommunicationTwinDraft,
+  releaseMobileReplayEvent,
+  resolveMobileContactId,
+  resolveMobileProviderContactId,
+  revokeMobileBridgeDevice,
+  saveCommunicationTwinSettings,
+  saveMobileBridgeContactMapping,
+} from "./communication-twin-storage";
 import {
   buildGovernedLeadPlan,
   leadCampaignRequestSchema,
