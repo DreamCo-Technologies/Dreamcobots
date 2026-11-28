@@ -135,6 +135,9 @@ def validate_shard_payload(payload: dict, root: Path, source_manifest_path: Path
     sequence_length = payload.get("sequence_length")
     if not isinstance(sequence_length, int) or sequence_length < 8:
         raise ValueError("invalid token-shard sequence_length")
+    shard_size_tokens = payload.get("shard_size_tokens")
+    if not isinstance(shard_size_tokens, int) or shard_size_tokens < sequence_length:
+        raise ValueError("invalid token-shard size limit")
     if payload.get("dtype") != "uint32":
         raise ValueError("token shards must use uint32 storage")
     if payload.get("training_splits") != ["train"] or "holdout" not in payload.get("excluded_splits", []):
@@ -181,6 +184,8 @@ def validate_shard_payload(payload: dict, root: Path, source_manifest_path: Path
             sequences = entry.get("sequences")
             if not isinstance(tokens, int) or tokens <= 0 or tokens % sequence_length:
                 raise ValueError(f"{name} shard token count is not sequence-aligned")
+            if tokens > shard_size_tokens:
+                raise ValueError(f"{name} shard exceeds the signed shard_size_tokens limit")
             if sequences != tokens // sequence_length or path.stat().st_size != tokens * 4:
                 raise ValueError(f"{name} shard size/sequence metadata mismatch")
             expected_prefix = f"{name}-"
