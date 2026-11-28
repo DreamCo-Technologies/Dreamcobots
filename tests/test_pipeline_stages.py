@@ -150,3 +150,17 @@ def test_har_parser_redacts_dynamic_path_identifiers():
     assert paths==["/users/{id}/orders/{id}","/accounts/{id}"]
     assert "123456" not in json.dumps(result)
     assert "person@example.com" not in json.dumps(result)
+
+
+def test_har_parser_does_not_retain_arbitrary_content_type_header_values():
+    from importlib import import_module
+    parse=import_module("stages.02_intake_parser.__main__").parse
+    har={"log":{"entries":[
+        {"request":{"method":"POST","url":"https://api.example.test/items","headers":[{"name":"Content-Type","value":"application/json; boundary=private@example.com"}]},"response":{"status":200,"headers":[{"name":"Content-Type","value":"person@example.com"}]}}
+    ]}}
+    result=parse(json.dumps(har),"har")
+    endpoint=result["endpoints"][0]
+    assert endpoint["request_content_type"]=="application/json"
+    assert endpoint["response_content_type"]=="unspecified"
+    assert "private@example.com" not in json.dumps(result)
+    assert "person@example.com" not in json.dumps(result)
