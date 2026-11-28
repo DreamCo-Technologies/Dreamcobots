@@ -10,7 +10,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 WORKER_PATH = ROOT / "stages" / "08_media_studio" / "worker" / "server.py"
-sys.path.insert(0, str(WORKER_PATH.parent))
+sys.path.insert(0, str(WORKER_PATH.parents[1]))
 SPEC = importlib.util.spec_from_file_location("dreamco_media_worker", WORKER_PATH)
 assert SPEC and SPEC.loader
 WORKER = importlib.util.module_from_spec(SPEC)
