@@ -20,7 +20,7 @@ def corpus(manifest):
         objectives = row.get("learning_objectives", [])
         if isinstance(objectives, list):
             fields.extend(str(value) for value in objectives)
-        candidates = ["\\n\\n".join(str(value) for value in fields if value)]
+        candidates = ["\n\n".join(str(value) for value in fields if value)]
         for message in row.get("messages", []):
             if message.get("role") in {"assistant", "tool"} and message.get("content"):
                 candidates.append(str(message["content"]))
