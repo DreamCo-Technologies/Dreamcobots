@@ -23,6 +23,16 @@ def parse_tree_sitter(source, language):
                 return current.text.decode("utf-8",errors="replace")
             stack.extend(reversed(current.named_children))
         return None
+    def find_parameter_node(node):
+        if node is None:
+            return None
+        stack=[node]
+        while stack:
+            current=stack.pop()
+            if current.type in {"parameters","parameter_list"}:
+                return current
+            stack.extend(reversed(current.named_children))
+        return None
     functions=[]; classes=[]; imports=set(); flow=[]; nodes=[tree.root_node]
     while nodes:
         node=nodes.pop()
@@ -30,7 +40,7 @@ def parse_tree_sitter(source, language):
             name_node=node.child_by_field_name("name")
             if name_node is None:
                 name_node=node.child_by_field_name("declarator")
-            params=node.child_by_field_name("parameters")
+            params=node.child_by_field_name("parameters") or find_parameter_node(name_node)
             name=find_identifier(name_node) or "anonymous"
             functions.append({"name":name,"kind":"function","parameters":[],"parameter_node_count":len(params.named_children) if params else None,"line":node.start_point.row+1,"returns_annotation_present":node.child_by_field_name("return_type") is not None})
         if node.type in class_types:
