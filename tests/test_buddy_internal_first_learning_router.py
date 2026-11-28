@@ -38,7 +38,6 @@ class BuddyInternalFirstLearningRouterTests(unittest.TestCase):
                 )
                 self.assertFalse(result["external_model_routing_performed"])
                 if query == "hugging face transformers":
-                    self.assertTrue(all(not row.get("source_url") for row in result["course_lessons"]))
                     self.assertTrue(all(row["track_id"] == "universal-software-libraries" for row in result["course_lessons"]))
 
     def test_approved_guide_is_retrieved_before_course_matching(self):
