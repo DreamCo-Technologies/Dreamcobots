@@ -1,0 +1,23 @@
+schema: dreamco.foundry.recipe.v1
+run_name: buddy-division-45m-v1
+division_id: DIV-01-SOFTWARE-ENG
+artifact_dir: artifacts/foundry/buddy-division-45m-v1
+mode: scratch
+tokenizer:
+  algorithm: byte_level_bpe
+  vocab_size: 16384
+  special_tokens: [<|pad|>, <|bos|>, <|eos|>, <|unk|>, <|system|>, <|user|>, <|assistant|>, <|tool_call|>, <|division_id|>, <|sandbox_stdout|>, <|teach_back|>, <|rubric_pass|>]
+packing:
+  sequence_length: 1024
+  dtype: uint32
+  mix_percent: {study_guides: 60, verified_trajectories: 25, general_replay: 15}
+architecture:
+  parameters_target: 45000000
+  hidden_size: 512
+  layers: 8
+  attention_heads: 8
+  intermediate_size: 1376
+pretrain: {enabled: true, epochs: 2, learning_rate: 0.0006, warmup_ratio: 0.05}
+sft: {enabled: true, epochs: 2, learning_rate: 0.0001, assistant_and_tool_loss_only: true}
+dpo: {enabled: true, epochs: 1, beta: 0.1}
+evaluation: {validation_buckets: [90, 91, 92, 93, 94], holdout_buckets: [95, 96, 97, 98, 99], promotion_requires_no_regression: true}

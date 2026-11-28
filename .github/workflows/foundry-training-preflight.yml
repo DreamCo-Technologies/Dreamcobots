@@ -1,0 +1,32 @@
+name: Foundry Training Preflight
+on:
+  pull_request:
+    paths:
+      - "stages/05_model_foundry/**"
+      - "tests/test_foundry_training_pipeline.py"
+      - ".github/workflows/foundry-training-preflight.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  cpu-guardrail-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - name: Compile foundry scripts
+        run: python -m compileall -q stages/05_model_foundry
+      - name: Run offline guardrail tests
+        run: python -m unittest discover -s tests -p 'test_foundry_training_pipeline.py' -v
+  gpu-training:
+    if: github.event_name == 'workflow_dispatch' && vars.DREAMCO_GPU_RUNNER_ENABLED == 'true'
+    runs-on: [self-hosted, linux, x64, gpu]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Require explicit training approval
+        env:
+          TRAINING_APPROVAL: ${{ secrets.DREAMCO_TRAINING_APPROVAL_REFERENCE }}
+        run: |
+          test -n "$TRAINING_APPROVAL" || { echo "Missing explicit training approval"; exit 1; }
+          echo "Approval reference present; production training still requires signed local datasets and pinned recipe."
