@@ -12,7 +12,7 @@
 
 ## Signed rights manifest
 
-The manifest is JSON with schema `dreamco.foundry.authorization.v1`. It lives beside its referenced dataset files. Each dataset entry includes:
+The manifest is JSON with schema `dreamco.foundry.authorization.v1`. It lives at the root of the local `data/foundry/` directory; all dataset and owner-attestation paths are relative to that directory (for example, `clean_room/study_guides.jsonl`). Each dataset entry includes:
 
 - `dataset_id`, `path`, `sha256`
 - `license_tier`: `PUBLIC_DOMAIN`, `PERMISSIVE_COMMERCIAL`, or `DREAMCO_ORIGINAL`
@@ -29,10 +29,10 @@ The policy owner reviews item-level dataset and model-license evidence, then run
 
 ```bash
 python -m stages.01_policy_gate.sign_training_manifest \
-  --manifest data/foundry/authorization.json \
+  --manifest data/foundry/manifest.json \
   --registry contracts/license_policy.yaml \
   --private-key /secure/offline/foundry-policy-private.pem \
-  --signature-output data/foundry/authorization.sig \
+  --signature-output data/foundry/manifest.sig \
   --approve-commercial-training --approved-by "Policy Owner" \
   --policy-decision-id "POLICY-REVIEW-REFERENCE"
 ```
@@ -47,7 +47,7 @@ Scratch tokenizer:
 
 ```bash
 python -m stages.05_model_foundry.train_tokenizer --mode scratch --vocab-size 16384 \
-  --manifest data/foundry/authorization.json --signature data/foundry/authorization.sig \
+  --manifest data/foundry/manifest.json --signature data/foundry/manifest.sig \
   --public-key keys/foundry-policy-public.pem --output artifacts/foundry/tokenizer
 ```
 
@@ -56,7 +56,7 @@ Open-weight tokenizer extension (the signed manifest must authorize the exact ba
 ```bash
 python -m stages.05_model_foundry.train_tokenizer --mode extend --vocab-size 16384 \
   --base-model Qwen/Qwen2.5-Coder-1.5B --base-revision "$REVIEWED_40_CHAR_SHA" \
-  --manifest data/foundry/authorization.json --signature data/foundry/authorization.sig \
+  --manifest data/foundry/manifest.json --signature data/foundry/manifest.sig \
   --public-key keys/foundry-policy-public.pem --output artifacts/foundry/tokenizer
 ```
 
@@ -66,14 +66,14 @@ Pack the authorized train/validation records, then sign the shard manifest:
 
 ```bash
 python -m stages.05_model_foundry.pack_tokens \
-  --manifest data/foundry/authorization.json --signature data/foundry/authorization.sig \
+  --manifest data/foundry/manifest.json --signature data/foundry/manifest.sig \
   --public-key keys/foundry-policy-public.pem --tokenizer artifacts/foundry/tokenizer \
   --output artifacts/foundry/token_shards --sequence-length 1024
 
 python -m stages.01_policy_gate.sign_token_shards \
   --shard-manifest artifacts/foundry/token_shards/manifest.json \
-  --source-manifest data/foundry/authorization.json \
-  --source-signature data/foundry/authorization.sig \
+  --source-manifest data/foundry/manifest.json \
+  --source-signature data/foundry/manifest.sig \
   --public-key keys/foundry-policy-public.pem \
   --private-key /secure/offline/foundry-policy-private.pem \
   --signature-output artifacts/foundry/token_shards/manifest.sig
@@ -89,7 +89,7 @@ Run preflight first; it verifies signed source data and the signed shard manifes
 
 ```bash
 python -m stages.05_model_foundry.train_weights --stage all \
-  --manifest data/foundry/authorization.json --signature data/foundry/authorization.sig \
+  --manifest data/foundry/manifest.json --signature data/foundry/manifest.sig \
   --public-key keys/foundry-policy-public.pem \
   --shard-manifest artifacts/foundry/token_shards/manifest.json \
   --shard-signature artifacts/foundry/token_shards/manifest.sig \
@@ -108,17 +108,17 @@ Run the same benchmark suite and scoring configuration against a baseline and ca
 
 ```bash
 python -m stages.05_model_foundry.run_holdout_eval \
-  --manifest data/foundry/authorization.json --signature data/foundry/authorization.sig \
+  --manifest data/foundry/manifest.json --signature data/foundry/manifest.sig \
   --public-key keys/foundry-policy-public.pem --checkpoint artifacts/foundry/baseline \
   --tokenizer artifacts/foundry/tokenizer --output reports/baseline.json
 
 python -m stages.05_model_foundry.run_holdout_eval \
-  --manifest data/foundry/authorization.json --signature data/foundry/authorization.sig \
+  --manifest data/foundry/manifest.json --signature data/foundry/manifest.sig \
   --public-key keys/foundry-policy-public.pem --checkpoint artifacts/foundry/candidate \
   --tokenizer artifacts/foundry/tokenizer --output reports/candidate.json
 
 python -m stages.05_model_foundry.eval_holdout \
-  --manifest data/foundry/authorization.json --signature data/foundry/authorization.sig \
+  --manifest data/foundry/manifest.json --signature data/foundry/manifest.sig \
   --public-key keys/foundry-policy-public.pem --baseline reports/baseline.json \
   --candidate reports/candidate.json --output reports/holdout-promotion.json
 ```
@@ -130,13 +130,13 @@ Only after a passing baseline-comparison report may an operator merge an open-we
 ```bash
 python -m stages.05_model_foundry.merge_adapter \
   --base-model Qwen/Qwen2.5-Coder-1.5B --base-revision "$REVIEWED_40_CHAR_SHA" \
-  --manifest data/foundry/authorization.json --signature data/foundry/authorization.sig \
+  --manifest data/foundry/manifest.json --signature data/foundry/manifest.sig \
   --public-key keys/foundry-policy-public.pem --adapter artifacts/foundry/candidate \
   --holdout-report reports/holdout-promotion.json \
   --output artifacts/foundry/merged-standalone --execute-merge
 ```
 
-The merge utility verifies signed model authorization, the exact source-manifest digest, the passing holdout report and the adapter checkpoint SHA-256.
+The merge utility verifies signed model authorization, the exact source-manifest digest, the DPO checkpoint provenance manifest (base model/revision, recipe, shard and tokenizer digests, and explicit training approval), the passing holdout report, and the adapter/tokenizer SHA-256 values.
 
 ## Split, compute and truth boundaries
 
