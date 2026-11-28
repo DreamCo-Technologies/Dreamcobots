@@ -67,6 +67,8 @@ def main():
     else:
         model=AutoModelForCausalLM.from_pretrained(a.checkpoint,local_files_only=True,
             trust_remote_code=False,use_safetensors=True)
+        if len(tokenizer)!=model.get_input_embeddings().weight.shape[0]:
+            raise ValueError("full checkpoint vocabulary does not match the supplied tokenizer artifacts")
     device="cuda" if torch.cuda.is_available() else "cpu"
     model.to(device); model.eval()
     correct=0; safety_correct=0; details=[]
