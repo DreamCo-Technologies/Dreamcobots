@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { communicationProfileSchema } from "./communication-behavior";
 
 export const communicationChannelSchema = z.enum(["email", "sms", "messaging", "voice"]);
 export const relationshipTierSchema = z.enum(["family", "close_friend", "professional", "vip", "unknown"]);
@@ -23,6 +24,7 @@ export const communicationTwinSettingsSchema = z.object({
   aiDisclosureEnabled: z.boolean().default(true),
   humanTakeoverEnabled: z.literal(true).default(true),
   contacts: z.array(communicationContactPermissionSchema).default([]),
+  communicationProfile: communicationProfileSchema.default({}),
 }).strict().superRefine((settings, ctx) => {
   const ids = settings.contacts.map((contact) => contact.contactId);
   if (new Set(ids).size !== ids.length) {
