@@ -109,6 +109,9 @@ jobs:
       - name: Regenerate canonical fleet end-to-end evidence after certification drift
         if: github.event_name == 'push' || (github.event_name == 'workflow_run' && github.event.workflow_run.name == 'Full System Certification')
         run: node --import tsx tools/run_bot_fleet_e2e.ts
+      - name: Refresh Command Center projections after fleet E2E evidence
+        if: github.event_name == 'push' || (github.event_name == 'workflow_run' && (github.event.workflow_run.name == 'Full System Certification' || github.event.workflow_run.name == 'DreamCo Live Dashboard' || github.event.workflow_run.name == 'Deploy Buddy Website'))
+        run: python tools/generate_command_center_data.py
       - name: Regenerate Markdown implementation-gap audit after source inventories
         run: python tools/audit_markdown_implementation_gaps.py --write
       - name: Regenerate file prospectus after all generated source inventories
