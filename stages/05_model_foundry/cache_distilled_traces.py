@@ -26,11 +26,11 @@ def _valid_sha(value: Any) -> bool:
 SENSITIVE_KEYS = ("api_key", "apikey", "access_token", "refresh_token", "token",
                   "secret", "password", "authorization", "private_key", "credential", "cookie")
 SECRET_PATTERNS = (
-    (re.compile(r"\\bsk-[A-Za-z0-9_-]{16,}\\b"), "[REDACTED_SECRET]"),
-    (re.compile(r"\\bgh[pousr]_[A-Za-z0-9]{20,}\\b"), "[REDACTED_SECRET]"),
-    (re.compile(r"\\bgithub_pat_[A-Za-z0-9_]{20,}\\b"), "[REDACTED_SECRET]"),
-    (re.compile(r"\\bAKIA[0-9A-Z]{16}\\b"), "[REDACTED_SECRET]"),
-    (re.compile(r"(?i)\\bBearer\\s+[A-Za-z0-9._~+/=-]{12,}"), "Bearer [REDACTED_SECRET]"),
+    (re.compile(r"\bsk-[A-Za-z0-9_-]{16,}\b"), "[REDACTED_SECRET]"),
+    (re.compile(r"\bgh[pousr]_[A-Za-z0-9]{20,}\b"), "[REDACTED_SECRET]"),
+    (re.compile(r"\bgithub_pat_[A-Za-z0-9_]{20,}\b"), "[REDACTED_SECRET]"),
+    (re.compile(r"\bAKIA[0-9A-Z]{16}\b"), "[REDACTED_SECRET]"),
+    (re.compile(r"(?i)\bBearer\s+[A-Za-z0-9._~+/=-]{12,}"), "Bearer [REDACTED_SECRET]"),
 )
 
 
