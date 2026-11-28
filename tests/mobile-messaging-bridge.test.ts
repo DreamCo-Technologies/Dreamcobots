@@ -53,7 +53,7 @@ test("accepts Android companion SMS using the shared contact policy", async () =
 
 test("rejects invalid, stale, and tampered signatures", async () => {
   const event = signedEvent();
-  const invalid = await acceptInboundMobileMessage({ ...event, headers: { ...event.headers, signature: "0".repeat(64) }, registration: ios, settings, secret, replayStore: new InMemoryReplayClaimStore(), nowMs: now });
+  const invalid = await acceptInboundMobileMessage({ ...event, headers: { ...event.headers, signature: "0".repeat(64) }, registration: ios, settings, secret, replayStore: new InMemoryReplayClaimStore(), resolveContactId: () => "contact-1", nowMs: now });
   const stale = await acceptInboundMobileMessage({ ...event, registration: ios, settings, secret, replayStore: new InMemoryReplayClaimStore(), resolveContactId: () => "contact-1", nowMs: now + 600_000 });
   assert.equal(invalid.accepted, false); assert.equal(stale.accepted, false);
 });
@@ -67,15 +67,15 @@ test("rejects duplicate event IDs", async () => {
 });
 
 test("rejects unknown contacts and mismatched devices", async () => {
-  const unknown = await acceptInboundMobileMessage({ ...signedEvent({ contactId: "unknown-contact" }), registration: ios, settings, secret, replayStore: new InMemoryReplayClaimStore(), nowMs: now });
-  const mismatch = await acceptInboundMobileMessage({ ...signedEvent({ deviceId: "other-device" }), registration: ios, settings, secret, replayStore: new InMemoryReplayClaimStore(), nowMs: now });
-  assert.equal(unknown.accepted, false); assert.match(unknown.reason, /not allowlisted/);
+  const unknown = await acceptInboundMobileMessage({ ...signedEvent(), registration: ios, settings, secret, replayStore: new InMemoryReplayClaimStore(), resolveContactId: () => "unknown-contact", nowMs: now });
+  const mismatch = await acceptInboundMobileMessage({ ...signedEvent({ deviceId: "other-device" }), registration: ios, settings, secret, replayStore: new InMemoryReplayClaimStore(), resolveContactId: () => "contact-1", nowMs: now });
+  assert.equal(unknown.accepted, false); assert.match(unknown.reason, /not mapped to an allowlisted/);
   assert.equal(mismatch.accepted, false);
 });
 
 test("rejects carrier SMS on the BlueBubbles iMessage path", async () => {
   const event = signedEvent({ channel: "sms" });
-  const result = await acceptInboundMobileMessage({ ...event, registration: ios, settings, secret, replayStore: new InMemoryReplayClaimStore(), nowMs: now });
+  const result = await acceptInboundMobileMessage({ ...event, registration: ios, settings, secret, replayStore: new InMemoryReplayClaimStore(), resolveContactId: () => "contact-1", nowMs: now });
   assert.equal(result.accepted, false);
   assert.match(result.reason, /BlueBubbles supports iMessage/);
 });
