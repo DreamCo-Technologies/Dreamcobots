@@ -36,9 +36,6 @@ def validate_changes(name_status: str, diff_text: str) -> list[str]:
     if "GIT binary patch" in diff_text or re.search(r"(?m)^Binary files .+ differ$", diff_text):
         errors.append("Binary changes are not allowed because their contents cannot be inspected.")
 
-    if "GIT binary patch" in diff_text or re.search(r"(?m)^Binary files .+ differ$", diff_text):
-        errors.append("Binary changes are not allowed because their contents cannot be inspected.")
-
     statuses = {}
     for entry in entries:
         status = entry[0]
