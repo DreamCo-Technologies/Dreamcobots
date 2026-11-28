@@ -2,9 +2,11 @@
 import importlib.util
 from pathlib import Path
 import unittest
+import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 MODULE = ROOT / "stages" / "05_model_foundry" / "generate_self_play_rollouts.py"
+sys.path.insert(0, str(MODULE.parent))
 SPEC = importlib.util.spec_from_file_location("dreamco_selfplay_rollouts", MODULE)
 MOD = importlib.util.module_from_spec(SPEC)
 assert SPEC and SPEC.loader
