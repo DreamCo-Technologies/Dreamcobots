@@ -13,6 +13,21 @@ The manifest is JSON with schema `dreamco.foundry.authorization.v1`. It lives be
 
 A platform license label, scraped metadata, or row-level boolean is not an authorization. The policy gate owner must verify item-level rights and sign the manifest. If the signing key, signature, evidence, or file hash is missing, processing fails closed.
 
+## Sign the rights manifest
+The policy owner must review the item-level evidence, then run the signer in a protected environment. The private key is never stored in the repository:
+
+```bash
+python -m stages.01_policy_gate.sign_training_manifest \\
+  --manifest data/foundry/authorization.json \\
+  --registry contracts/license_policy.yaml \\
+  --private-key /secure/offline/foundry-policy-private.pem \\
+  --signature-output data/foundry/authorization.sig \\
+  --approve-commercial-training --approved-by "Policy Owner" \\
+  --policy-decision-id "POLICY-REVIEW-REFERENCE"
+```
+
+The signer rejects third-party items unless the existing policy gate grants commercial-training permission and the item-level license evidence is verified. DreamCo-original data requires a matching owner-attestation file and SHA-256. The signed manifest is then verified by every downstream reader.
+
 ## Commands
 Install optional dependencies in an isolated environment: `cryptography`, `tokenizers`, `transformers`, `numpy`, and `pyyaml`.
 
