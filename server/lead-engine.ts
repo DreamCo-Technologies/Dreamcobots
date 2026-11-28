@@ -51,6 +51,9 @@ export const leadEngineRecordSchema = z.object({
   if (lead.consentBasis !== "none" && !lead.consentEvidenceRef) {
     context.addIssue({ code: z.ZodIssueCode.custom, path: ["consentEvidenceRef"], message: "Permission requires a consent evidence reference" });
   }
+  if (lead.stage === "convert" && !lead.humanReviewEvidenceRef) {
+    context.addIssue({ code: z.ZodIssueCode.custom, path: ["humanReviewEvidenceRef"], message: "Conversion requires documented human review evidence" });
+  }
 });
 
 export type LeadEngineRecord = z.infer<typeof leadEngineRecordSchema>;
@@ -142,14 +145,14 @@ export function buildLeadStagePlan(input: LeadEngineRecord): LeadStagePlan {
     if (stage === "convert" && qualification.tier !== "hot") {
       return { stage, status: "blocked" as const, reason: "hot_qualification_and_human_sales_review_required" };
     }
-    if (stage === "convert" && (!lead.budgetConfirmed || !lead.useCase)) {
-      return { stage, status: "blocked" as const, reason: "confirmed_budget_and_documented_use_case_required" };
+    if (stage === "convert" && (!lead.budgetConfirmed || !lead.useCase || !lead.humanReviewEvidenceRef)) {
+      return { stage, status: "blocked" as const, reason: "confirmed_budget_use_case_and_human_review_required" };
     }
     return { stage, status: index === currentIndex ? "ready" as const : "blocked" as const, reason: index === currentIndex ? "current_stage_ready_for_owner_workflow" : "prior_stage_completion_required" };
   });
   const recommendedStage = suppressed || !permissioned
     ? "qualify"
-    : qualification.tier === "hot" && lead.budgetConfirmed && lead.useCase
+    : qualification.tier === "hot" && lead.budgetConfirmed && lead.useCase && lead.humanReviewEvidenceRef
       ? "convert"
       : qualification.tier === "warm"
         ? "nurture"
