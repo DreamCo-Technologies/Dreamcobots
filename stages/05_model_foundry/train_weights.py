@@ -135,7 +135,6 @@ def _load_model(recipe: dict[str, Any], tokenizer, checkpoint: Path | None = Non
         if not model_id or not isinstance(revision, str) or not re.fullmatch(r"[0-9a-f]{40}", revision):
             raise PermissionError("open-weight base model requires an exact 40-character reviewed commit SHA")
         require_model_authorization(manifest or {}, model_id, revision)
-        require_model_authorization(manifest or {}, model_id, revision)
         model = AutoModelForCausalLM.from_pretrained(
             model_id, revision=revision, trust_remote_code=False,
             use_safetensors=True, torch_dtype="auto",
@@ -244,6 +243,10 @@ def _training_args(output: Path, stage_cfg: dict[str, Any], recipe: dict[str, An
         warmup_ratio=float(stage_cfg.get("warmup_ratio", 0.03)),
         weight_decay=float(stage_cfg.get("weight_decay", 0.01)),
         logging_steps=10,
+        optim=stage_cfg.get("optimizer", recipe.get("runtime", {}).get("optimizer", "adamw_torch")),
+        gradient_checkpointing=bool(stage_cfg.get("gradient_checkpointing", recipe.get("runtime", {}).get("gradient_checkpointing", True))),
+        torch_compile=bool(stage_cfg.get("torch_compile", recipe.get("runtime", {}).get("torch_compile", False))),
+        dataloader_num_workers=int(stage_cfg.get("dataloader_num_workers", recipe.get("runtime", {}).get("dataloader_num_workers", 0))),
         save_strategy="epoch",
         eval_strategy="epoch" if eval_enabled else "no",
         report_to="none",
@@ -273,6 +276,7 @@ def execute_stage(stage: str, recipe: dict[str, Any], manifest: dict[str, Any],
             "lora_alpha": int(recipe["architecture"].get("alpha", 32)),
             "lora_dropout": float(recipe["architecture"].get("dropout", 0.05)),
             "bias": "none", "task_type": "CAUSAL_LM",
+            "use_dora": bool(recipe["architecture"].get("use_dora", False)),
             "target_modules": ["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"],
         }
         if trainable_token_ids:
