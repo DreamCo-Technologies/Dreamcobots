@@ -35,12 +35,12 @@ def _token_pool(records, tokenizer):
             tokens.append(tokenizer.eos_token_id)
     return tokens
 
-def _write_shard(tokens, output: Path, prefix: str, sequence_length: int):
+def _write_shard(tokens, output: Path, prefix: str, sequence_length: int, shard_index: int = 0):
     import numpy as np
     usable = (len(tokens) // sequence_length) * sequence_length
     if usable == 0:
         return None
-    path = output / f"{prefix}-00000.bin"
+    path = output / f"{prefix}-{shard_index:05d}.bin"
     np.asarray(tokens[:usable], dtype=np.uint32).tofile(path)
     sequence_count = int(usable // sequence_length)
     index_path = path.with_suffix(".idx")
@@ -73,9 +73,13 @@ def main():
     parser.add_argument("--tokenizer", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--sequence-length", type=int, default=1024)
+    parser.add_argument("--shard-size-tokens", type=int, default=5_000_000)
     args = parser.parse_args()
     if args.sequence_length < 8:
         raise ValueError("sequence length must be >= 8")
+    if args.shard_size_tokens < args.sequence_length:
+        raise ValueError("shard size must be at least one complete sequence")
+    sequences_per_shard = max(1, args.shard_size_tokens // args.sequence_length)
     import numpy as np  # noqa: F401
     from transformers import AutoTokenizer
     manifest = verify_signed_manifest(args.manifest, args.signature, args.public_key, verify_dataset_hashes=False)
@@ -109,18 +113,29 @@ def main():
             f"not enough unique tokens for one complete 60/25/15 sequence; "
             f"available={available}, required={per_sequence}"
         )
-    train_tokens = []
+    train_shards = []
     cursors = {category: 0 for category in weights}
-    for _ in range(sequence_count):
-        for category in weights:
-            pool = pools[category]
-            cursor = cursors[category]
-            count = per_sequence[category]
-            train_tokens.extend(pool[(cursor + offset) % len(pool)] for offset in range(count))
-            cursors[category] = (cursor + count) % len(pool)
-    train_shard = _write_shard(train_tokens, args.output, "train", args.sequence_length)
-    if train_shard is None:
-        raise ValueError("not enough authorized tokens to form one training sequence")
+    shard_index = 0
+    for first_sequence in range(0, sequence_count, sequences_per_shard):
+        shard_sequences = min(sequences_per_shard, sequence_count - first_sequence)
+        shard_tokens = np.empty(shard_sequences * args.sequence_length, dtype=np.uint32)
+        position = 0
+        for _ in range(shard_sequences):
+            for category in weights:
+                pool = pools[category]
+                cursor = cursors[category]
+                count = per_sequence[category]
+                for offset in range(count):
+                    shard_tokens[position + offset] = pool[(cursor + offset) % len(pool)]
+                position += count
+                cursors[category] = (cursor + count) % len(pool)
+        entry = _write_shard(
+            shard_tokens, args.output, "train", args.sequence_length, shard_index
+        )
+        if entry is None:
+            raise ValueError("not enough authorized tokens to form a training shard")
+        train_shards.append(entry)
+        shard_index += 1
 
     # Validation is a separate evaluation-only shard, never mixed into train data.
     validation_categories = {"study_guides", "verified_trajectories", "general_replay"}
@@ -128,13 +143,25 @@ def main():
         manifest, categories=validation_categories, splits={"validation"}
     ))
     validation_tokens = _token_pool(validation_rows, tokenizer)
-    validation_shard = _write_shard(validation_tokens, args.output, "validation", args.sequence_length)
+    validation_shards = []
+    validation_sequence_count = len(validation_tokens) // args.sequence_length
+    for shard_index, first_sequence in enumerate(range(0, validation_sequence_count, sequences_per_shard)):
+        start_token = first_sequence * args.sequence_length
+        end_token = min(
+            validation_sequence_count, first_sequence + sequences_per_shard
+        ) * args.sequence_length
+        entry = _write_shard(
+            validation_tokens[start_token:end_token], args.output,
+            "validation", args.sequence_length, shard_index
+        )
+        if entry is not None:
+            validation_shards.append(entry)
     report = {
         "schema": "dreamco.foundry.token_shards.v1", "sequence_length": args.sequence_length,
         "dtype": "uint32", "training_splits": ["train"],
-        "validation_splits": ["validation"] if validation_shard else [],
+        "validation_splits": ["validation"] if validation_shards else [],
         "excluded_splits": ["holdout"], "mix_percent": weights,
-        "train": train_shard, "validation": validation_shard,
+        "train": train_shards, "validation": validation_shards,
         "source_manifest_sha256": hashlib.sha256(args.manifest.read_bytes()).hexdigest(),
     }
     (args.output / "manifest.json").write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
