@@ -256,7 +256,7 @@ const leadRecord = {
   stage: "capture" as const,
   consentBasis: "explicit_opt_in" as const,
   consentEvidenceRef: "consent:form-001",
-  consentChannels: ["email"] as const,
+  consentChannels: ["email"],
   fitScore: 100,
   intentScore: 100,
   budgetFitScore: 100,
