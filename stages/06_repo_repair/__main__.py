@@ -134,11 +134,15 @@ def validate_candidate(changed: list[str], patch: str, prefixes: tuple[str, ...]
         return "BLOCKED_BINARY_CHANGE"
     if re.search(r"(?m)^(?:old|new) mode [0-7]{6}$", patch):
         return "BLOCKED_FILE_MODE_CHANGE"
-    changed_lines = sum(
-        1 for line in patch.splitlines()
-        if (line.startswith("+") and not line.startswith("+++"))
-        or (line.startswith("-") and not line.startswith("---"))
-    )
+    changed_lines = 0
+    in_hunk = False
+    for line in patch.splitlines():
+        if line.startswith("diff --git "):
+            in_hunk = False
+        elif line.startswith("@@"):
+            in_hunk = True
+        elif in_hunk and line.startswith(("+", "-")):
+            changed_lines += 1
     if changed_lines > MAX_CHANGED_LINES:
         return "BLOCKED_CHANGE_LIMIT"
     return None
