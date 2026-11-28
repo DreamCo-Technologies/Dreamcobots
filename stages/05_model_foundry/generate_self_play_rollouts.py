@@ -15,8 +15,6 @@ import tempfile
 import uuid
 from pathlib import Path
 
-import torch
-from transformers import AutoModelForCausalLM, AutoTokenizer
 
 try:
     from .guardrails import iter_authorized_records, sha256_file, verify_signed_manifest
@@ -65,6 +63,9 @@ def grade(code: str, tests: str, image: str, timeout: int) -> tuple[str, str]:
         root = Path(tmp).resolve()
         (root / "solution.py").write_text(code, encoding="utf-8")
         (root / "test_solution.py").write_text(tests, encoding="utf-8")
+        root.chmod(0o755)
+        (root / "solution.py").chmod(0o644)
+        (root / "test_solution.py").chmod(0o644)
         command = [
             "docker", "run", "--rm", "--network=none", "--read-only",
             "--cap-drop=ALL", "--security-opt=no-new-privileges",
@@ -105,6 +106,9 @@ def main() -> None:
         raise ValueError("max-new-tokens must be 1..1024 and timeout 1..10")
     if not a.checkpoint.is_dir() or not a.tokenizer.is_dir():
         raise FileNotFoundError("local checkpoint and tokenizer directories are required")
+
+    import torch
+    from transformers import AutoModelForCausalLM, AutoTokenizer
 
     manifest = verify_signed_manifest(a.manifest, a.signature, a.public_key)
     task_rows = iter_authorized_records(
