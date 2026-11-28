@@ -3,6 +3,9 @@
 **Status:** initial curated resource map; not a claim that all resources have been ingested, rights-cleared, or turned into lessons.  
 **Purpose:** build a DreamCo-owned curriculum in original wording, backed by source links, exercises, reproducible labs, and explicit data-use permissions.
 
+**Internal-use boundary:** this file is a research and provenance index for DreamCo authors. The customer-facing Buddy Bootcamp uses DreamCo's own capability taxonomy, explanations, exercises, projects, assessments, and books. It does not route learners to third-party course websites or present third-party course structures as DreamCo curriculum.
+
+
 ## Model discovery, datasets and model training
 
 | Resource | Best use | Access / caution |
