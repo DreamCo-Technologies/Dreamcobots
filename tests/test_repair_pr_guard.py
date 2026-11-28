@@ -54,3 +54,20 @@ def test_repair_guard_blocks_its_own_policy_file():
         "+print('changed')\n",
     )
     assert any("cannot modify itself" in item for item in errors)
+
+
+
+def test_repair_guard_allows_new_non_security_test_module():
+    errors = validate_changes(
+        "A\ttests/test_new_helper.py",
+        "+++ b/tests/test_new_helper.py\n+def test_new_helper(): assert True\n",
+    )
+    assert errors == []
+
+
+def test_repair_guard_blocks_modifying_existing_tests():
+    errors = validate_changes(
+        "M\ttests/test_existing_helper.py",
+        "+def test_new_helper(): assert True\n",
+    )
+    assert any("Only new test files may be added" in item for item in errors)
