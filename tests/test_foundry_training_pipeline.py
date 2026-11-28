@@ -46,7 +46,7 @@ class FoundryGuardrailTests(unittest.TestCase):
             public_key.write_text("not-a-key", encoding="ascii")
             private_key.write_text("not-a-key", encoding="ascii")
             shard_manifest.write_text(json.dumps({"schema": "invalid"}), encoding="utf-8")
-            with unittest.mock.patch("sys.argv", [
+            with patch("sys.argv", [
                 "sign_token_shards", "--shard-manifest", str(shard_manifest),
                 "--source-manifest", str(source_manifest), "--source-signature", str(source_signature),
                 "--public-key", str(public_key), "--private-key", str(private_key),
