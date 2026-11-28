@@ -49,6 +49,7 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
+      actions: write
     steps:
       - uses: actions/checkout@v4
         with:
@@ -104,6 +105,10 @@ jobs:
           else
             gh pr edit "$pr_number" --title "chore(catalog): refresh FreeCodeCamp metadata" --body "$body"
           fi
+          # GITHUB_TOKEN-created PRs do not trigger pull_request workflows. Dispatch the
+          # repository's validation workflows explicitly against the review branch.
+          gh workflow run bootcamp-source-catalog-policy.yml --ref bot/fcc-catalog-delta
+          gh workflow run bootcamp-completion-stages.yml --ref bot/fcc-catalog-delta
       - uses: actions/upload-artifact@v4
         if: always()
         with:
