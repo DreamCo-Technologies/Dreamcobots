@@ -214,7 +214,7 @@ export function leadEngineReadiness() {
     thresholds: { hot: 80, warm: 50, cold: 0 },
     integrations: {
       governedOutreach: "existing_governed_leads_policy",
-      crmPersistence: "owner_scoped_postgres_repository_requires_authenticated_controller_and_migration",
+      crmPersistence: "oauth_protected_owner_scoped_postgres_api_requires_migration_and_staging_rls_verification",
       emailDelivery: "requires_configured_approved_adapter",
       calendarBooking: "requires_owner_authorized_calendar_adapter",
       payments: "requires_separate_payment_authorization",
