@@ -21,8 +21,11 @@ from tools.ci_failure_report import sanitize
 
 MAX_ATTEMPTS = 3
 MAX_REPORT_BYTES = 5 * 1024 * 1024
+MAX_PATCH_BYTES = 5 * 1024 * 1024
 MAX_REPAIR_FILES = 20
 MAX_CHANGED_LINES = 1500
+BLOCKED_BASENAMES = {".env", ".env.local", ".env.production", "credentials.json", "secrets.json"}
+BLOCKED_SUFFIXES = {".pem", ".key", ".p12", ".pfx"}
 ALLOWED_COMMAND_PATHS = {
     "tools/build_buddy_dataset_routes.py",
     "tools/build_division_model_fleet.py",
@@ -113,9 +116,26 @@ def allowed_prefixes(value: str | None) -> tuple[str, ...]:
 
 def path_is_allowed(path: str, prefixes: tuple[str, ...]) -> bool:
     item = PurePosixPath(path)
-    return bool(item.parts) and not item.is_absolute() and ".." not in item.parts and any(
-        item.as_posix().startswith(prefix) for prefix in prefixes
-    )
+    if (not item.parts or item.is_absolute() or "\\" in path
+            or any(part in {"", ".", ".."} for part in item.parts)):
+        return False
+    if item.name.lower() in BLOCKED_BASENAMES or item.suffix.lower() in BLOCKED_SUFFIXES:
+        return False
+    return any(item.as_posix().startswith(prefix) for prefix in prefixes)
+
+
+def safe_generated_path(root: Path, value: str, prefixes: tuple[str, ...], label: str) -> Path:
+    item = PurePosixPath(str(value))
+    if not path_is_allowed(item.as_posix(), prefixes):
+        raise ValueError(f"{label} path must stay inside the fixed generated-artifact allowlist.")
+    resolved = (root / Path(*item.parts)).resolve()
+    try:
+        relative = resolved.relative_to(root.resolve()).as_posix()
+    except ValueError:
+        raise ValueError(f"{label} path resolves outside the repository.")
+    if not path_is_allowed(relative, prefixes):
+        raise ValueError(f"{label} path resolves outside the fixed generated-artifact allowlist.")
+    return resolved
 
 
 def git(root: Path, *args: str) -> str:
@@ -128,11 +148,15 @@ def git(root: Path, *args: str) -> str:
 def validate_candidate(changed: list[str], patch: str, prefixes: tuple[str, ...]) -> str | None:
     if len(changed) > MAX_REPAIR_FILES:
         return "BLOCKED_FILE_LIMIT"
+    if len(patch.encode("utf-8")) > MAX_PATCH_BYTES:
+        return "BLOCKED_PATCH_SIZE"
     if any(not path_is_allowed(path, prefixes) for path in changed):
         return "BLOCKED_UNEXPECTED_PATH"
     if "GIT binary patch" in patch or re.search(r"(?m)^Binary files .+ differ$", patch):
         return "BLOCKED_BINARY_CHANGE"
-    if re.search(r"(?m)^(?:old|new) mode [0-7]{6}$", patch):
+    if re.search(r"(?m)^(?:old|new) mode [0-7]{6}$", patch) or re.search(
+        r"(?m)^new file mode (?!100644$)[0-7]{6}$", patch
+    ):
         return "BLOCKED_FILE_MODE_CHANGE"
     changed_lines = 0
     in_hunk = False
@@ -192,9 +216,17 @@ def apply_isolated(root: Path, obs: dict, prefixes: tuple[str, ...], output: Pat
             changed = sorted(set(changed))
             if len(changed) > MAX_REPAIR_FILES:
                 return {"status": "BLOCKED_FILE_LIMIT", "success": False}
-            blocked_paths = [path for path in changed if not path_is_allowed(path, prefixes)]
+            blocked_paths = [
+                path for path in changed
+                if (not path_is_allowed(path, prefixes)
+                    or (worktree / path).is_symlink()
+                    or not (worktree / path).is_file())
+            ]
             if blocked_paths:
                 return {"status": "BLOCKED_UNEXPECTED_PATH", "success": False, "blocked_paths": blocked_paths}
+            total_bytes = sum((worktree / path).stat().st_size for path in changed)
+            if total_bytes > MAX_PATCH_BYTES:
+                return {"status": "BLOCKED_PATCH_SIZE", "success": False, "changed_bytes": total_bytes}
             git(worktree, "add", "-N", "--", *changed)
             patch = git(worktree, "diff", "--binary", "--")
             blocked_status = validate_candidate(changed, patch, prefixes)
@@ -220,9 +252,7 @@ def apply_isolated(root: Path, obs: dict, prefixes: tuple[str, ...], output: Pat
 def run(args: argparse.Namespace) -> dict:
     root = Path(args.repo_root).resolve()
     prefixes = allowed_prefixes(args.allowed_paths)
-    output_path = (root / args.output).resolve()
-    if root not in output_path.parents:
-        raise ValueError("Output path must remain inside the repository.")
+    output_path = safe_generated_path(root, args.output, prefixes, "Output")
     if bool(args.report) == bool(args.observation):
         raise ValueError("Provide exactly one of --report or --observation.")
     input_path = (root / (args.report or args.observation)).resolve()
@@ -245,10 +275,10 @@ def run(args: argparse.Namespace) -> dict:
         "failed_test_ids": obs.get("failed_test_ids", [])[:100],
     }
     fingerprint = hashlib.sha256(json.dumps(fingerprint_data, sort_keys=True).encode()).hexdigest()[:24]
-    history_dir = (root / args.trajectory_dir).resolve()
-    if root not in history_dir.parents:
-        raise ValueError("Trajectory directory must remain inside the repository.")
-    history_path = history_dir / (fingerprint + ".json")
+    history_dir = safe_generated_path(root, args.trajectory_dir, prefixes, "Trajectory")
+    history_path = safe_generated_path(
+        root, str(PurePosixPath(args.trajectory_dir) / (fingerprint + ".json")), prefixes, "Trajectory record"
+    )
     history = read_object(history_path) if history_path.exists() else {"schema": "dreamco.repo_repair_trajectory.v1", "attempts": []}
     result = {
         "schema": "dreamco.repo_repair_result.v1",
