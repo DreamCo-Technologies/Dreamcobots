@@ -13,6 +13,10 @@ The first deliverable is a CPU-only production planner and rights-gated adapter 
 - A worker injects render adapters; the control plane has no hard-coded provider.
 - Outputs should carry provenance sidecars and pass the existing media quality gate.
 
+## CPU planning worker
+
+The provider-neutral service in `stages/08_media_studio/worker/` exposes liveness/readiness endpoints and an authenticated plan-submission endpoint. It persists only validated plans beneath a configured spool directory. It binds to loopback by default, requires a runtime bearer token, limits request bodies, and runs in a non-root container. It does not execute arbitrary commands or render media. See the worker README for deployment and network-boundary guidance.
+
 ## Plan-only workflow
 
 Run `python stages/08_media_studio/director.py stages/08_media_studio/shot-list.example.json --output media-plan.json`. The output status is `planned_not_rendered`. This is suitable for a CPU runner.
@@ -37,4 +41,4 @@ Open weights are not a blanket grant of rights to outputs, training data, voices
 
 ## Model license verification
 
-The candidate registry at `config/buddy-media-model-registry.example.json` is intentionally unapproved. Candidate names are discovery leads, not license conclusions. Before commercial deployment, create a reviewed record for the exact checkpoint and supply the checkpoint SHA-256, SPDX license identifier, local license evidence file and hash, model-card HTTPS URL, explicit commercial-use and redistribution permissions, and a non-empty dependency inventory. `buddy.media.model_license_gate.verify_model_record` fails closed unless all required evidence is present and every dependency has a reviewed MIT or Apache-2.0 license record. This gate does not clear training datasets, likenesses, outputs, trademarks, or customer content; those remain separate rights decisions.
+The candidate registry at `config/buddy-media-model-registry.example.json` is intentionally unapproved. Candidate names are discovery leads, not license conclusions. Before commercial deployment, create a reviewed record for the exact checkpoint and supply a checkpoint file path contained within the evidence root and verify its actual bytes against the checkpoint SHA-256, plus the SPDX license identifier, local license evidence file and hash, model-card HTTPS URL, explicit commercial-use and redistribution permissions, and a non-empty dependency inventory. The gate hashes the checkpoint file itself on every verification; a declared hash without the corresponding file is not sufficient. `buddy.media.model_license_gate.verify_model_record` fails closed unless all required evidence is present and every dependency has a reviewed MIT or Apache-2.0 license record. This gate does not clear training datasets, likenesses, outputs, trademarks, or customer content; those remain separate rights decisions.
