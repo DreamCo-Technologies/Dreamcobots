@@ -126,7 +126,7 @@ def distill_verified_repair(
     """Create 25 original rubric-backed drills from one approved, non-holdout repair."""
     required = (
         "evidence_id", "lesson_id", "division_id", "status", "human_review_status",
-        "source_rights_approved", "training_use_approved", "privacy_review_status", "holdout",
+        "source_rights_approved", "training_use_approved", "dataset_release_approved", "pii_scrubbed", "privacy_review_status", "holdout",
         "evidence_split", "failure_summary", "root_cause_summary",
         "repair_summary", "regression_test_summary", "evidence_sha256",
     )
@@ -140,8 +140,10 @@ def distill_verified_repair(
         raise ValueError("only human-approved verified repairs can be distilled")
     if (evidence["source_rights_approved"] is not True
             or evidence["training_use_approved"] is not True
+            or evidence["dataset_release_approved"] is not True
+            or evidence["pii_scrubbed"] is not True
             or evidence["privacy_review_status"] != "APPROVED"):
-        raise ValueError("source rights and privacy review must be approved")
+        raise ValueError("source rights, training use, dataset release, PII scrub, and privacy review must be approved")
     if evidence["holdout"] is not False or evidence["evidence_split"] not in {"practice", "curriculum"}:
         raise ValueError("holdout or evaluation evidence is never eligible for distillation")
     summaries = {
@@ -194,7 +196,7 @@ def distill_verified_repair(
             "created_at": datetime.now(timezone.utc).isoformat(),
         })
     if len(drills) != 25:
-        raise ValueError(f"MinHash deduplication retained {len(drills)} of 25 drills; review lesson specificity")
+        raise ValueError(f"expected 25 distinct drill foci; generated {len(drills)}")
     return drills
 
 
