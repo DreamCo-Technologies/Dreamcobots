@@ -385,6 +385,13 @@ def python_checks(folder: str, timeout: int, skip_tests: bool) -> dict[str, Any]
     pat = re.compile(rf"^\s*(from|import)\s+{re.escape(folder)}(\.|\s|$)", re.M)
     tests = sorted({rel(p) for p in (ROOT / "tests").glob("test_*.py") if pat.search(p.read_text(encoding="utf-8", errors="replace"))}
                    | {rel(p) for p in base.rglob("test_*.py")})
+    # The Actions prospectus is derived from fleet-runtime-status.json, which
+    # this audit rewrites after collecting folder test results. Running its
+    # freshness assertion inside the pre-refresh folder suite is circular;
+    # fleet-runtime-truth.yml reruns it in a dedicated post-audit step after
+    # refresh_repository_evidence has converged both prospectuses.
+    if folder == "buddy":
+        tests = [name for name in tests if name != "tests/test_run_prospectus.py"]
     result["test_files"] = tests
     if tests and not skip_tests:
         res = run([sys.executable, "-m", "pytest", "-q", "-p", "no:cacheprovider", "--no-header", "-rN",
