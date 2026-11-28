@@ -1,10 +1,12 @@
 PYTHON ?= python3
-.PHONY: test-all test-contracts test-stages compile build-sandbox test-sandbox-integration
-test-all: test-contracts test-stages compile
+.PHONY: test-all test-contracts test-stages test-ci-tools compile build-sandbox test-sandbox-integration
+test-all: test-contracts test-stages test-ci-tools compile
 test-contracts:
 	$(PYTHON) -m pytest -q tests/test_pipeline_contracts.py
 test-stages:
 	$(PYTHON) -m pytest -q tests/test_pipeline_stages.py tests/test_pipeline_sandbox.py
+test-ci-tools:
+	$(PYTHON) -m pytest -q tests/test_repair_pr_guard.py tests/test_ci_failure_report.py
 compile:
 	$(PYTHON) -m compileall -q stages reverse_engineer
 build-sandbox:
