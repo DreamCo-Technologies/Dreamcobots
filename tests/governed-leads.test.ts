@@ -334,6 +334,18 @@ test("validates consent evidence, unique channels, and prohibited targeting", ()
   }));
 });
 
+test("recommends only the next eligible stage without skipping pipeline steps", () => {
+  assert.equal(buildLeadStagePlan(leadRecord).recommendedStage, "qualify");
+  const qualified = { ...leadRecord, stage: "qualify" as const };
+  assert.equal(buildLeadStagePlan(qualified).recommendedStage, "nurture");
+  const nurtured = { ...leadRecord, stage: "nurture" as const };
+  assert.equal(buildLeadStagePlan(nurtured).recommendedStage, "nurture");
+  assert.equal(buildLeadStagePlan({
+    ...nurtured,
+    humanReviewEvidenceRef: "review:owner-approval-001",
+  }).recommendedStage, "convert");
+});
+
 test("allows only one-stage-at-a-time progression and blocks skipped stages", () => {
   assert.throws(() => assertLeadStageTransition(undefined, { ...leadRecord, stage: "nurture" }), /initial_stage/);
   assert.equal(assertLeadStageTransition(undefined, leadRecord).stage, "capture");
