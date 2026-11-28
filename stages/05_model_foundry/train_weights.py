@@ -499,8 +499,18 @@ def main():
             raise ValueError("signed token-shard sequence_length does not match the selected training recipe")
         if args.token_shards.resolve() != args.shard_manifest.parent.resolve():
             raise PermissionError("--token-shards must be the directory containing the verified signed shard manifest")
-        if not shard_payload.get("train"):
+        train_entries = shard_payload.get("train")
+        if isinstance(train_entries, dict):
+            train_entries = [train_entries]
+        validation_entries = shard_payload.get("validation")
+        if isinstance(validation_entries, dict):
+            validation_entries = [validation_entries]
+        all_shard_entries = list(train_entries or []) + list(validation_entries or [])
+        if not train_entries:
             raise ValueError("signed shard manifest has no train shard")
+        shard_limit = int(recipe["packing"].get("shard_size_tokens", 5_000_000))
+        if any(int(item.get("tokens", 0)) > shard_limit for item in all_shard_entries):
+            raise ValueError("signed token shard exceeds the recipe shard_size_tokens limit")
 
     if not args.execute:
         summary = {
