@@ -119,6 +119,8 @@ def main() -> int:
         _write(args.output, result)
         status = result.get("status", "COMPLETED") if isinstance(result, dict) else "COMPLETED"
     print(json.dumps({"command": args.command, "status": status, "output": str(args.output)}))
+    if args.command == "ast-guard" and not result.get("passed", False):
+        return 1
     return 0
 
 
