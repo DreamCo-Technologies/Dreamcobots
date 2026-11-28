@@ -164,4 +164,3 @@ def test_har_parser_does_not_retain_arbitrary_content_type_header_values():
     assert endpoint["response_content_type"]=="unspecified"
     assert "private@example.com" not in json.dumps(result)
     assert "person@example.com" not in json.dumps(result)
-
