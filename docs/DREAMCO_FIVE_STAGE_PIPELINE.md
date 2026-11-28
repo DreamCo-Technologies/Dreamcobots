@@ -25,7 +25,7 @@ Every stage reads one JSON contract and writes one JSON contract. Contract schem
 ## Stage boundaries
 
 - Stage 1 requires explicit authorization, applies heuristic secret/PII redaction, checks a 5 MiB text limit and bounded ZIP metadata, and rejects unsupported/restricted URL targets. Redaction is not a guarantee; manually review high-risk material.
-- Stage 2 uses Python AST, JSON, OpenAPI JSON, HAR and CSV parsing only. It does not import or execute uploaded source. Unsupported formats fail closed.
+- Stage 2 uses Python AST, JSON, OpenAPI JSON, HAR and CSV parsing only. OpenAPI facts include parameter counts, request/response content types, response codes, security flags and rate-limit extension names; HAR facts retain header names and body-size/presence metadata but discard header values, query values and bodies. CSV facts include inferred types, null counts and candidate unique keys. It does not import or execute uploaded source. Unsupported formats fail closed.
 - Stage 3 replaces function and field identifiers with abstract operation labels. O*NET matching is optional and uses an owner-provisioned SQLite catalog; lexical matching is triage, not an official job classification. A human must confirm the match.
 - Stage 4 currently supports deterministic mock generation only. No external model is called. Add a model adapter only after license, model provenance, data retention and structured-output controls are independently reviewed.
 - Stage 5 requires an owner-authorized comparison reference and a rootless Docker daemon. The container is network-disabled, read-only, non-root, capability-dropped, PID/memory/CPU bounded and limited to 10 seconds. Similarity is a heuristic, not legal proof of originality.
