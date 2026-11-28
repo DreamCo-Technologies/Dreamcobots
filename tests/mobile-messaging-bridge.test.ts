@@ -162,3 +162,10 @@ test("provider transports deliver only through configured HTTPS relay adapters",
     /BlueBubbles transport supports iMessage only/,
   );
 });
+
+test("fails closed when the bounded in-memory replay store is full", async () => {
+  const store = new InMemoryReplayClaimStore(1);
+  assert.equal(await store.claim("first", now + 60_000), true);
+  assert.equal(await store.claim("second", now + 60_000), false);
+  assert.equal(await store.claim("first", now + 60_000), false);
+});
