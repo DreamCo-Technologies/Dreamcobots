@@ -41,3 +41,14 @@ def test_training_export_rejects_nan_similarity():
     course={"schema_version":"dreamco.course_module.v1","job_id":"x","module_title":"x","learning_objectives":["x"],"reference_implementation":{"language":"python","files":[{"path":"solution.py","content":"pass"}]},"tests":[{"path":"test.py","content":"def test_x(): assert True"}],"challenges":[{"step":1,"instruction":"x","success_criteria":"x"}],"provenance":{"model_id":"mock","model_license":"DreamCo-Proprietary","source_onet_id":None,"generation_mode":"mock"}}
     report={"schema_version":"dreamco.eval_report.v1","job_id":"x","status":"PASS","tests_passed":True,"similarity_score":float("nan"),"policy_check":"PASS","sandbox":{"network_disabled":True,"rootless_requested":True,"timed_out":False,"exit_code":0}}
     with pytest.raises(PermissionError): verified_record(spec,course,report)
+
+def test_stage_five_similarity_rejects_identical_reference(tmp_path):
+    import json,subprocess,sys
+    course=tmp_path/"course.json"; report=tmp_path/"report.json"; reference=tmp_path/"source.py"
+    code="def execute(payload): return payload"
+    course.write_text(json.dumps({"schema_version":"dreamco.course_module.v1","job_id":"plagiarism-test","module_title":"x","learning_objectives":["x"],"reference_implementation":{"language":"python","files":[{"path":"solution.py","content":code}]},"tests":[{"path":"test_solution.py","content":"def test_x(): assert True"}],"challenges":[{"step":1,"instruction":"x","success_criteria":"x"}],"provenance":{"model_id":"mock","model_license":"DreamCo-Proprietary","source_onet_id":None,"generation_mode":"mock"}}))
+    reference.write_text(code)
+    result=subprocess.run([sys.executable,"-m","stages.05_sandbox_verifier","--input",str(course),"--output",str(report),"--reference",str(reference)],capture_output=True,text=True)
+    assert result.returncode==2
+    saved=json.loads(report.read_text())
+    assert saved["policy_check"]=="FAIL" and saved["similarity_score"]==1.0
