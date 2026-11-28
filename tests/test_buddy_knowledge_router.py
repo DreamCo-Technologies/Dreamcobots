@@ -94,7 +94,7 @@ class BuddyKnowledgeRouterTests(unittest.TestCase):
                     root=Path(directory),
                 )
         self.assertFalse(route["external_discovery_available"])
-        self.assertFalse(route["external_discovery_requires_explicit_opt_in"])
+        self.assertTrue(route["external_discovery_requires_explicit_opt_in"])
         self.assertFalse(route["external_discovery_performed"])
         self.assertFalse(route["external_model_routing_performed"])
         self.assertIn("do not route learners to external course websites", route["next_action"])
@@ -111,7 +111,7 @@ class BuddyKnowledgeRouterTests(unittest.TestCase):
             )
         )
         self.assertTrue(route["candidate_verification_required"])
-        self.assertFalse(route["external_discovery_requires_explicit_opt_in"])
+        self.assertTrue(route["external_discovery_requires_explicit_opt_in"])
         self.assertIn("do not route learners to external course websites", route["next_action"])
         self.assertFalse(route["external_discovery_performed"])
         self.assertFalse(route["external_model_routing_performed"])
