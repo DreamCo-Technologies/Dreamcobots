@@ -128,13 +128,30 @@ def _course_matches(
     # independently of ranking so they cannot be hidden by a competing track.
     if best_track_score > 0:
         preserve = preserve_ids or set()
-        matches = [
+        primary = [row for row in matches if row["track_match_score"] == best_track_score]
+        cross_track = [
             row for row in matches
-            if row["track_match_score"] == best_track_score
-            or row["lesson_id"] in preserve
-            or row["score"] >= 0.66
+            if row["track_match_score"] != best_track_score
+            and (row["lesson_id"] in preserve or row["score"] >= 0.50)
         ]
-    matches.sort(key=lambda row: (-row["track_match_score"], -row["score"], row["track_id"], row["lesson_id"]))
+        remaining = [
+            row for row in matches
+            if row not in primary and row not in cross_track
+        ]
+        # Reserve up to five slots for high-overlap cross-track lessons. This
+        # keeps a specialist track useful without hiding shared platform skills.
+        cross_track = sorted(
+            cross_track,
+            key=lambda row: (-row["score"], row["track_id"], row["lesson_id"]),
+        )[:min(5, limit)]
+        primary = sorted(
+            primary,
+            key=lambda row: (-row["score"], row["track_id"], row["lesson_id"]),
+        )[:max(0, limit - len(cross_track))]
+        remaining.sort(key=lambda row: (-row["score"], row["track_id"], row["lesson_id"]))
+        matches = primary + cross_track + remaining
+        return matches[:limit]
+    matches.sort(key=lambda row: (-row["score"], row["track_id"], row["lesson_id"]))
     return matches[:limit]
 
 
