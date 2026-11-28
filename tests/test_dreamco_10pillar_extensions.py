@@ -49,6 +49,8 @@ class BootcampDistillerTests(unittest.TestCase):
             "human_review_status": "APPROVED",
             "source_rights_approved": True,
             "training_use_approved": True,
+            "dataset_release_approved": True,
+            "pii_scrubbed": True,
             "privacy_review_status": "APPROVED",
             "holdout": False,
             "evidence_split": "practice",
