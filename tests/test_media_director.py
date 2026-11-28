@@ -31,6 +31,16 @@ class MediaDirectorTests(unittest.TestCase):
         request = self.request(); request["shots"] = []
         with self.assertRaises(DIRECTOR.MediaPlanError): DIRECTOR.build_production_plan(request)
 
+    def test_rejects_non_object_shot(self):
+        request = self.request(); request["shots"] = [None]
+        with self.assertRaises(DIRECTOR.MediaPlanError):
+            DIRECTOR.build_production_plan(request)
+
+    def test_rejects_non_string_optional_shot_field(self):
+        request = self.request(); request["shots"][0]["dialogue_line"] = {"unexpected": "object"}
+        with self.assertRaises(DIRECTOR.MediaPlanError):
+            DIRECTOR.build_production_plan(request)
+
     def test_rejects_duplicate_shot_ids(self):
         request = self.request(); request["shots"][1]["shot_id"] = "s1"
         with self.assertRaises(DIRECTOR.MediaPlanError): DIRECTOR.build_production_plan(request)
