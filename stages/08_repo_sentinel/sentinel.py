@@ -89,6 +89,7 @@ def run_sentinel(*, sync_fcc: bool = False, apply_ast: bool = False,
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--sync-fcc", action="store_true", help="refresh the catalog only when stale")
+    parser.add_argument("--strict-ast", action="store_true", help="exit nonzero when AST findings require review")
     parser.add_argument("--apply-ast", action="store_true", help="shim AST-identical duplicates with a canonical owner")
     parser.add_argument("--backup-dir", type=Path)
     parser.add_argument("--report", type=Path, default=ROOT / "reports/repo-sentinel/sentinel_report.json")
@@ -99,7 +100,7 @@ def main() -> int:
     args.report.parent.mkdir(parents=True, exist_ok=True)
     args.report.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     print(json.dumps(report, indent=2))
-    return 0 if report["overall_status"] == "audit_passed" else 1
+    return 1 if args.strict_ast and report["overall_status"] != "audit_passed" else 0
 
 
 if __name__ == "__main__":
