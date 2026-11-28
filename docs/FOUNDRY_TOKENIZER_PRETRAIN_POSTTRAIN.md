@@ -34,10 +34,11 @@ Install optional dependencies in an isolated environment: `cryptography`, `token
 ```bash
 python -m stages.05_model_foundry.train_tokenizer --manifest data/foundry/authorization.json --signature data/foundry/authorization.sig --public-key keys/foundry-policy-public.pem --output artifacts/foundry/tokenizer
 python -m stages.05_model_foundry.pack_tokens --manifest data/foundry/authorization.json --signature data/foundry/authorization.sig --public-key keys/foundry-policy-public.pem --tokenizer artifacts/foundry/tokenizer --output artifacts/foundry/shards --sequence-length 1024
-python -m stages.05_model_foundry.train_weights --stage pretrain --manifest data/foundry/authorization.json --signature data/foundry/authorization.sig --public-key keys/foundry-policy-public.pem --recipe stages/05_model_foundry/recipes/scratch_45m_division.yaml --dry-run
+python -m stages.01_policy_gate.sign_token_shards --shard-manifest artifacts/foundry/shards/manifest.json --source-manifest data/foundry/authorization.json --source-signature data/foundry/authorization.sig --public-key keys/foundry-policy-public.pem --private-key /secure/offline/foundry-policy-private.pem --signature-output artifacts/foundry/shards/manifest.sig
+python -m stages.05_model_foundry.train_weights --stage pretrain --manifest data/foundry/authorization.json --signature data/foundry/authorization.sig --public-key keys/foundry-policy-public.pem --recipe stages/05_model_foundry/recipes/scratch_45m_division.yaml --tokenizer artifacts/foundry/tokenizer --token-shards artifacts/foundry/shards --shard-manifest artifacts/foundry/shards/manifest.json --shard-signature artifacts/foundry/shards/manifest.sig
 ```
 
-The current weight runner is a strict preflight boundary, not a claim that PT/CPT, SFT or DPO backends have been executed. A backend must be pinned, reviewed and separately enabled before any weight updates. This avoids silently running expensive jobs or accepting unreviewed TRL/Transformers API changes.
+The weight runner has opt-in PT/CPT, SFT and DPO execution paths. It requires signed source data, signed token-shard manifests for pretraining, an explicit runtime approval flag and a policy reference. Run a preflight first (omit --execute); only pass --execute after reviewing the manifest, model license, pinned revision, recipe, and compute budget. The sample open-weight recipe is intentionally blocked until its revision is replaced with a reviewed 40-character commit SHA.
 
 ## Holdout and compute
 - Bucket calculation: `int(sha256(task_id)[:8], 16) % 100`.
