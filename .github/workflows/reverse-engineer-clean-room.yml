@@ -1,18 +1,18 @@
-name: Reverse Engineering Clean-Room Gate
+name: DreamCo Five-Stage Reverse Engineering Gate
 on:
   pull_request:
-    paths: ["reverse_engineer/**", "tests/test_reverse_engineer.py", "docs/REVERSE_ENGINEERING_CLEAN_ROOM.md", ".github/workflows/reverse-engineer-clean-room.yml"]
+    paths: ["contracts/**", "stages/**", "tests/test_pipeline_*.py", "Makefile", "requirements-reverse-engineer.txt", ".github/workflows/reverse-engineer-clean-room.yml"]
   push:
     branches: [main]
-    paths: ["reverse_engineer/**", "tests/test_reverse_engineer.py", "docs/REVERSE_ENGINEERING_CLEAN_ROOM.md", ".github/workflows/reverse-engineer-clean-room.yml"]
+    paths: ["contracts/**", "stages/**", "tests/test_pipeline_*.py", "Makefile", "requirements-reverse-engineer.txt", ".github/workflows/reverse-engineer-clean-room.yml"]
   workflow_dispatch:
 permissions:
   contents: read
 concurrency:
-  group: reverse-engineer-clean-room-${{ github.ref }}
+  group: dreamco-five-stage-${{ github.ref }}
   cancel-in-progress: true
 jobs:
-  clean-room-tests:
+  contracts-and-stages:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -20,9 +20,14 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-      - run: python -m pip install "pytest>=8,<10"
-        name: Install test dependency
-      - run: python -m pytest tests/test_reverse_engineer.py -q
-        name: Run focused clean-room tests
-      - run: python -m compileall -q reverse_engineer
-        name: Compile package
+          cache: pip
+          cache-dependency-path: requirements-reverse-engineer.txt
+      - name: Install deterministic test dependencies
+        run: python -m pip install "pytest>=8,<10" "jsonschema>=4.22,<5"
+      - name: Run all five-stage contract and boundary tests
+        run: make test-all
+      - name: Confirm no accidental tracked bytecode
+        run: |
+          if git ls-files | grep -E '(^|/)__pycache__/|\.pyc$'; then
+            echo "Tracked Python bytecode is prohibited"; exit 1
+          fi

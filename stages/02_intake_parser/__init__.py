@@ -1,0 +1,1 @@
+"""Stage 2: deterministic, non-executing intake parsers."""
