@@ -36,6 +36,9 @@ def validate_report(report: dict, expected_ids: list[str], manifest_sha256: str,
     if not isinstance(tokenizer_sha, str) or not re.fullmatch(r"[0-9a-f]{64}", tokenizer_sha):
         raise ValueError(f"{label}: tokenizer_sha256 is required")
     if report.get("base_model_id") is not None:
+        for field in ("base_model_revision", "base_model_license_evidence_id"):
+            if not isinstance(report.get(field), str) or not report.get(field).strip():
+                raise ValueError(f"{label}: {field} is required for LoRA checkpoints")
         adapter_sha = report.get("adapter_config_sha256")
         if not isinstance(adapter_sha, str) or not re.fullmatch(r"[0-9a-f]{64}", adapter_sha):
             raise ValueError(f"{label}: adapter_config_sha256 is required for LoRA checkpoints")
