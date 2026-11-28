@@ -121,11 +121,11 @@ def main() -> None:
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.report.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(
-        "".join(json.dumps(row, sort_keys=True) + "\\n" for row in pairs),
+        "".join(json.dumps(row, sort_keys=True) + "\n" for row in pairs),
         encoding="utf-8",
     )
     report["output_sha256"] = hashlib.sha256(args.output.read_bytes()).hexdigest()
-    args.report.write_text(json.dumps(report, indent=2, sort_keys=True) + "\\n", encoding="utf-8")
+    args.report.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     print(json.dumps(report, sort_keys=True))
 
 
