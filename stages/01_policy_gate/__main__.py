@@ -52,7 +52,7 @@ def restricted_url(value):
     return False
 def main():
     args=parser("DreamCo Stage 1 policy gate").parse_args()
-    raw=read_json(args.input); text=raw.get("content",""); permission=raw.get("permission",{})
+    raw=read_json(args.input)\n    if not isinstance(raw,dict): raw={}\n    text=raw.get("content",""); permission=raw.get("permission",{})\n    if not isinstance(permission,dict): permission={}
     code="ACCEPTED"; findings=[]
     if not isinstance(text,str): code="INVALID_CONTENT"; text=""
     elif len(text.encode("utf-8"))>MAX_BYTES: code="FILE_TOO_LARGE"
@@ -60,7 +60,7 @@ def main():
     elif permission.get("target_kind") not in {"user_owned","public_api","open_source","user_authorized_logs","user_authorized_workflow","user_authorized_schema"}: code="TARGET_NOT_ALLOWED"
     elif permission.get("bypass_requested") or permission.get("drm_circumvention") or permission.get("unauthorized_login_scraping"): code="PROHIBITED_ACCESS"
     elif permission.get("target_kind")=="open_source" and permission.get("license_id") not in {"MIT","Apache-2.0","BSD-2-Clause","BSD-3-Clause","ISC","0BSD"}: code="LICENSE_REVIEW_REQUIRED"
-    elif restricted_url(raw.get("source_url","")): code="RESTRICTED_DOMAIN"
+    elif raw.get("source_url") and (not isinstance(raw.get("source_url"),str) or restricted_url(raw.get("source_url"))): code="RESTRICTED_DOMAIN"
     archive=raw.get("archive_base64")
     if code=="ACCEPTED" and archive:
         try:
