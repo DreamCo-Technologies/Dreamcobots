@@ -87,6 +87,20 @@ test("voice answering requires disclosure and human takeover", () => {
   assert.match(result.reason, /disclosure/);
 });
 
+test("voice synthesis is blocked for contacts without voice permission", () => {
+  const settings = communicationTwinSettingsSchema.parse({
+    sourceConsentGranted: true,
+    ownerVoiceCloneConsent: true,
+    contacts: [{ contactId: "contact-no-voice", canDraft: true }],
+  });
+  const result = assessCommunicationAction({
+    action: "synthesize_owner_voice", channel: "voice", contactId: "contact-no-voice",
+    ownerVoiceCloneConsent: true, aiDisclosureDelivered: true, ...consent,
+  }, settings);
+  assert.equal(result.allowed, false);
+  assert.match(result.reason, /not authorized for this contact/);
+});
+
 test("voice synthesis requires owner consent and AI disclosure", () => {
   const settings = communicationTwinSettingsSchema.parse({
     ...baseSettings, ownerVoiceCloneConsent: true,
